@@ -135,6 +135,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		readonly ProcessesVM owner;
+		bool refreshTitleOnPause;
 
 		public ProcessVM(ProcessesVM owner, DbgProcess process, IProcessContext context, int order) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -145,6 +146,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			process.PropertyChanged += DbgProcess_PropertyChanged;
 			process.IsRunningChanged += DbgProcess_IsRunningChanged;
 			process.DelayedIsRunningChanged += DbgProcess_DelayedIsRunningChanged;
+			refreshTitleOnPause = true;
 		}
 
 		// random thread
@@ -227,16 +229,15 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// DbgManager thread
-		void DbgProcess_IsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
-		bool refreshTitlesOnPause;
+		void DbgProcess_IsRunningChanged(object sender, EventArgs e) => UI(() => {
+			if (refreshTitleOnPause && !Process.IsRunning) {
+				refreshTitleOnPause = false;
+				RefreshTitle_UI();
+			}
+		});
 
 		// DbgManager thread
-		void DbgProcess_DelayedIsRunningChanged(object sender, EventArgs e) {
-			if (refreshTitlesOnPause && !Process.IsRunning) {
-				refreshTitlesOnPause = false;
-				UI(() => RefreshTitle_UI());
-			}
-		}
+		void DbgProcess_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitleOnPause = true);
 
 		// UI thread
 		internal void Dispose() {
