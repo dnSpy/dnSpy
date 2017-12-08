@@ -187,7 +187,7 @@
     <value>局部变量和参数</value>
   </data>
   <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
-    <value>{0} returned</value>
+    <value>{0} 返回</value>
   </data>
   <data name="LocalsWindow_TypeVariables" xml:space="preserve">
     <value>类型变量</value>
@@ -211,7 +211,7 @@
     <value>结构</value>
   </data>
   <data name="SystemCoreDllNotLoaded" xml:space="preserve">
-    <value>Results View requires {0} to be referenced</value>
+    <value>结果视图要求引用 {0}</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
     <value>程序集 '{1}' 中不存在类型 '{0}' </value>

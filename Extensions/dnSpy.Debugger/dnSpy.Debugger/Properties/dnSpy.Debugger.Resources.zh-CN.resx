@@ -333,8 +333,8 @@
     <value>当未捕捉异常发生时无法计算</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>Could not start '{0}'
-ERROR: {1}</value>
+    <value>无法启动 '{0}' 
+错误: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>异常设置(_X)</value>
@@ -1387,7 +1387,7 @@ ERROR: {1}</value>
     <value>刷新</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
-    <value>Group parameters and locals together</value>
+    <value>组合参数和局部变量</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
     <value>显示编译器生成的变量</value>
@@ -1405,10 +1405,10 @@ ERROR: {1}</value>
     <value>隐藏编译器生成的成员</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
-    <value>Implicit function evaluation is turned off by the user</value>
+    <value>隐式函数评估被用户关闭</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>Respect attributes that hide members</value>
+    <value>遵守隐藏成员的属性</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>内部调试器错误</value>
@@ -1444,16 +1444,16 @@ ERROR: {1}</value>
     <value>在模块加载时禁用JIT优化</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
-    <value>Program modules</value>
+    <value>程序模块</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
-    <value>System modules</value>
+    <value>系统模块</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
     <value>运行时无法计算此表达式。</value>
   </data>
   <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
-    <value>Enable or disable all exceptions matching the current search criteria</value>
+    <value>启用或禁用与当前搜索条件匹配的所有异常</value>
   </data>
   <data name="DisableBreakpointCommand2" xml:space="preserve">
     <value>禁用断点(_D)</value>
@@ -1465,12 +1465,12 @@ ERROR: {1}</value>
     <value>要停止调试吗？</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>Give focus to debugged process</value>
+    <value>把焦点放到调试的进程</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
-    <value>Open All Modules</value>
+    <value>打开所有模块</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>Hide deprecated members in variables windows</value>
+    <value>在变量窗口中隐藏已弃用的成员</value>
   </data>
 </root>

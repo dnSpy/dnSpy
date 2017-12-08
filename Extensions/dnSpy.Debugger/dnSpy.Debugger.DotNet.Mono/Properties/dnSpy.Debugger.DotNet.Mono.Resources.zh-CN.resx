@@ -223,7 +223,7 @@
     <value>进程已暂停，等待调试器</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>The runtime doesn't support setting a new statement</value>
+    <value>运行环境不支持设置新语句</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
     <value>附加到进程 ({0})...</value>
@@ -241,7 +241,7 @@
     <value>E_xecutable</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
-    <value>Make sure you have patched the game's mono.dll file</value>
+    <value>确保您已经修补了游戏的 mono.dll 文件</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
     <value>_Timeout (s)</value>

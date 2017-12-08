@@ -238,12 +238,12 @@
     <value>Es kann kein Haltepunkt gesetzt werden, solange der Prozess angehalten ist.</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
-    <value>E_xecutable</value>
+    <value>Ausführbare _Dateien</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
-    <value>Make sure you have patched the game's mono.dll file</value>
+    <value>Stellen Sie sicher, dass die mono.dll-Datei des Spiels angepasst wurde</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
-    <value>_Timeout (s)</value>
+    <value>_Zeitüberschreitung (s)</value>
   </data>
 </root>
