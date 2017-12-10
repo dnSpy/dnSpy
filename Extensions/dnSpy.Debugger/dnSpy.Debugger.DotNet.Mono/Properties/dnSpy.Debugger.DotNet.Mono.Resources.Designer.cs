@@ -70,6 +70,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is for Unity Debug builds only.
+        /// </summary>
+        public static string AttachToUnityProcess_DebugBuildsOnlyMessage {
+            get {
+                return ResourceManager.GetString("AttachToUnityProcess_DebugBuildsOnlyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t set a breakpoint when the process is paused..
         /// </summary>
         public static string CanNotSetABreakpointWhenProcessIsPaused {

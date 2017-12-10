@@ -246,4 +246,7 @@
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
     <value>_Timeout (s)</value>
   </data>
+  <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
+    <value>This is for Unity Debug builds only</value>
+  </data>
 </root>

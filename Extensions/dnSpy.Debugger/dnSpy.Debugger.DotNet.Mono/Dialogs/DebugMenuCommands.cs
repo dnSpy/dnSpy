@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
 						PredefinedAttachProgramOptionsProviderNames.UnityEditor,
 						PredefinedAttachProgramOptionsProviderNames.UnityPlayer,
 					},
-					Message = string.Empty,
+					Message = dnSpy_Debugger_DotNet_Mono_Resources.AttachToUnityProcess_DebugBuildsOnlyMessage,
 					InfoLink = new AttachToProcessLinkInfo {
 						ToolTipMessage = DebuggingUnityGamesHelper.DebuggingUnityGamesText,
 						Url = DebuggingUnityGamesHelper.DebuggingUnityGamesUrl,
