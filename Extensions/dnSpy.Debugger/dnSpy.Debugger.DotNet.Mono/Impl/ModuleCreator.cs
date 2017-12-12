@@ -60,15 +60,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		DbgEngineModule CreateModuleCore<T>(T data) where T : class {
 			DbgImageLayout imageLayout;
 
+			string filename = monoModule.FullyQualifiedName;
 			const string InMemoryModulePrefix = "data-";
-			if (monoModule.FullyQualifiedName.StartsWith(InMemoryModulePrefix, StringComparison.Ordinal)) {
+			if (filename.StartsWith(InMemoryModulePrefix, StringComparison.Ordinal)) {
 				isDynamic = false;
 				isInMemory = true;
 				moduleAddress = 0;
 				moduleSize = 0;
 				imageLayout = DbgImageLayout.File;
 
-				var hexAddrString = monoModule.FullyQualifiedName.Substring(InMemoryModulePrefix.Length);
+				var hexAddrString = filename.Substring(InMemoryModulePrefix.Length);
 				bool b = ulong.TryParse(hexAddrString, NumberStyles.HexNumber, null, out var inMemoryAddr);
 				Debug.Assert(b);
 				if (b) {
@@ -79,12 +80,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						moduleSize = imageSize;
 				}
 			}
-			else if (File.Exists(monoModule.FullyQualifiedName)) {
+			else if (File.Exists(filename)) {
+				filename = NormalizeFilename(filename);
 				isDynamic = false;
 				isInMemory = false;
 				moduleAddress = 0;
 				moduleSize = 0;
-				if (PortableExecutableHelper.TryGetModuleAddressAndSize(engine.DbgRuntime.Process, monoModule.FullyQualifiedName, out var imageAddr, out var imageSize)) {
+				if (PortableExecutableHelper.TryGetModuleAddressAndSize(engine.DbgRuntime.Process, filename, out var imageAddr, out var imageSize)) {
 					moduleAddress = imageAddr;
 					moduleSize = imageSize;
 				}
@@ -98,8 +100,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				imageLayout = DbgImageLayout.Unknown;
 			}
 
-			string name = GetFilename(monoModule.FullyQualifiedName);
-			string filename = monoModule.FullyQualifiedName;
+			string name = GetFilename(filename);
 			bool? isOptimized = CalculateIsOptimized();
 			InitializeExeFields(filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
 
@@ -107,11 +108,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			var closedListenerCollection = new ClosedListenerCollection();
 			var getMetadata = CreateGetMetadataDelegate(closedListenerCollection, imageLayout);
-			var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, monoModule.FullyQualifiedName);
+			var fullyQualifiedName = DmdModule.GetFullyQualifiedName(isInMemory, isDynamic, filename);
 			DmdAssembly reflectionAssembly;
 			DmdModule reflectionModule;
 			if (monoModule == monoModule.Assembly.ManifestModule) {
-				var assemblyLocation = isInMemory || isDynamic ? string.Empty : monoModule.FullyQualifiedName;
+				var assemblyLocation = isInMemory || isDynamic ? string.Empty : filename;
 				var asmOptions = DmdCreateAssemblyOptions.None;
 				if (isInMemory)
 					asmOptions |= DmdCreateAssemblyOptions.InMemory;
@@ -135,6 +136,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			var internalModule = new DbgMonoDebugInternalModuleImpl(reflectionModule, closedListenerCollection);
 			return objectFactory.CreateModule(appDomain, internalModule, isExe, moduleAddress, moduleSize, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, moduleOrder, timestamp, version, engine.GetMessageFlags(), data: data, onCreated: engineModule => internalModule.SetModule(engineModule.Module));
+		}
+
+		static string NormalizeFilename(string filename) {
+			if (!File.Exists(filename))
+				return filename;
+			try {
+				return Path.GetFullPath(filename);
+			}
+			catch {
+			}
+			return filename;
 		}
 
 		Func<DmdLazyMetadataBytes> CreateGetMetadataDelegate(ClosedListenerCollection closedListenerCollection, DbgImageLayout imageLayout) {

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using dndbg.COM.CorDebug;
@@ -133,6 +134,19 @@ namespace dndbg.Engine {
 			IsDynamic = hr >= 0 && b != 0;
 			hr = module.IsInMemory(out b);
 			IsInMemory = hr >= 0 && b != 0;
+			if (!IsDynamic && !IsInMemory)
+				Name = NormalizeFilename(Name);
+		}
+
+		static string NormalizeFilename(string filename) {
+			if (!File.Exists(filename))
+				return filename;
+			try {
+				return Path.GetFullPath(filename);
+			}
+			catch {
+			}
+			return filename;
 		}
 
 		static string GetName(ICorDebugModule module) {
