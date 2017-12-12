@@ -641,7 +641,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
 					DebugMessageDispatcher = debuggerThread.GetDebugMessageDispatcher(),
 					CurrentDirectory = options.WorkingDirectory,
-					Filename = options.Filename,
+					Filename = PathUtils.NormalizeFilename(options.Filename),
 					CommandLine = options.CommandLine,
 					BreakProcessKind = GetBreakProcessKind(options.BreakKind),
 					Environment = env.Environment,
