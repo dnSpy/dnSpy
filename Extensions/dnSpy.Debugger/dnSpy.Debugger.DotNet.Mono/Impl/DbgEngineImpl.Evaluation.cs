@@ -284,6 +284,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var args = argsCount == 0 ? Array.Empty<Value>() : new Value[argsCount];
 					DmdType origType;
 					Value hiddenThisValue;
+					Value createdResultValue = null;
 					if (!method.IsStatic && !newObj) {
 						var declType = method.DeclaringType;
 						if (method is DmdMethodInfo m)
@@ -302,6 +303,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							hiddenThisValue = BoxIfNeeded(monoThread.Domain, val.Value, declType, origType);
 						if (val.Value == hiddenThisValue && val.Value is StructMirror && vm.Version.AtLeast(2, 35))
 							funcEvalOptions |= FuncEvalOptions.ReturnOutThis;
+					}
+					else if (newObj && method.ReflectedType.IsValueType) {
+						if (contextOpt != null && frameOpt != null) {
+							//TODO: The Mono fork Unity uses doesn't support this, it returns nothing
+							hiddenThisValue = CreateValueType(contextOpt, frameOpt, method.ReflectedType, 0, cancellationToken);
+							createdResultValue = hiddenThisValue;
+							newObj = false;
+							if (hiddenThisValue is StructMirror && vm.Version.AtLeast(2, 35))
+								funcEvalOptions |= FuncEvalOptions.ReturnOutThis;
+						}
+						else
+							hiddenThisValue = null;
 					}
 					else
 						hiddenThisValue = null;
@@ -325,7 +338,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							return new DbgDotNetValueResult(error);
 					}
 					var returnType = (method as DmdMethodInfo)?.ReturnType ?? method.ReflectedType;
-					var returnValue = res.Exception ?? res.Result ?? new PrimitiveValue(vm, ElementType.Object, null);
+					var returnValue = res.Exception ?? res.Result ?? createdResultValue ?? new PrimitiveValue(vm, ElementType.Object, null);
 					var valueLocation = new NoValueLocation(returnType, returnValue);
 					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(valueLocation), valueIsException: res.Exception != null);
 				}
@@ -481,6 +494,57 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 			}
 			return method;
+		}
+
+		TypeMirror GetType(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken) =>
+			MonoDebugTypeCreator.GetType(this, type, TryCreateMonoTypeLoader(context, frame, cancellationToken));
+
+		internal Value CreateValueType(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, int recursionCounter, CancellationToken cancellationToken) {
+			if (recursionCounter > 100)
+				throw new InvalidOperationException();
+			if (!type.IsValueType)
+				throw new InvalidOperationException();
+			var monoType = GetType(context, frame, type, cancellationToken);
+			var fields = type.DeclaredFields;
+			var monoFields = monoType.GetFields();
+			if (fields.Count != monoFields.Length)
+				throw new InvalidOperationException();
+			var fieldValues = new List<Value>(monoFields.Length);
+			for (int i = 0; i < monoFields.Length; i++) {
+				Debug.Assert(fields[i].Name == monoFields[i].Name);
+				var field = fields[i];
+				if (field.IsStatic || field.IsLiteral)
+					continue;
+				fieldValues.Add(CreateDefaultValue(context, frame, field, 0, cancellationToken));
+			}
+			if (type.IsEnum)
+				return monoType.VirtualMachine.CreateEnumMirror(monoType, (PrimitiveValue)fieldValues[0]);
+			return monoType.VirtualMachine.CreateStructMirror(monoType, fieldValues.ToArray());
+		}
+
+		Value CreateDefaultValue(DbgEvaluationContext context, DbgStackFrame frame, DmdFieldInfo field, int recursionCounter, CancellationToken cancellationToken) {
+			var type = field.FieldType;
+			if (!type.IsValueType)
+				return new PrimitiveValue(vm, ElementType.Object, null);
+			if (type.IsPointer || type.IsFunctionPointer)
+				return new PrimitiveValue(vm, ElementType.Ptr, 0L);
+			if (!type.IsEnum) {
+				switch (DmdType.GetTypeCode(type)) {
+				case TypeCode.Boolean:		return new PrimitiveValue(vm, ElementType.Boolean, false);
+				case TypeCode.Char:			return new PrimitiveValue(vm, ElementType.Char, '\0');
+				case TypeCode.SByte:		return new PrimitiveValue(vm, ElementType.I1, (sbyte)0);
+				case TypeCode.Byte:			return new PrimitiveValue(vm, ElementType.U1, (byte)0);
+				case TypeCode.Int16:		return new PrimitiveValue(vm, ElementType.I2, (short)0);
+				case TypeCode.UInt16:		return new PrimitiveValue(vm, ElementType.U2, (ushort)0);
+				case TypeCode.Int32:		return new PrimitiveValue(vm, ElementType.I4, 0);
+				case TypeCode.UInt32:		return new PrimitiveValue(vm, ElementType.U4, 0U);
+				case TypeCode.Int64:		return new PrimitiveValue(vm, ElementType.I8, 0L);
+				case TypeCode.UInt64:		return new PrimitiveValue(vm, ElementType.U8, 0UL);
+				case TypeCode.Single:		return new PrimitiveValue(vm, ElementType.R4, 0f);
+				case TypeCode.Double:		return new PrimitiveValue(vm, ElementType.R8, 0d);
+				}
+			}
+			return CreateValueType(context, frame, type, recursionCounter + 1, cancellationToken);
 		}
 	}
 
