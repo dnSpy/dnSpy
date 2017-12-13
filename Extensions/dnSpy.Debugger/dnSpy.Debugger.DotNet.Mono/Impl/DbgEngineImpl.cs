@@ -750,7 +750,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				case EventType.Exception:
 					var ee = (ExceptionEvent)evt;
-					if (ee.TryGetRequest() == uncaughtRequest)
+					// Unhandled exceptions in Unity seems to be ignored by Unity. Report them to the user but
+					// don't set isUnhandledException to true since we won't be able to func-eval.
+					if (ee.TryGetRequest() == uncaughtRequest && monoDebugRuntimeKind == MonoDebugRuntimeKind.Mono)
 						isUnhandledException = true;
 					if (IsEvaluating && !isUnhandledException) {
 						expectedSuspendPolicy = SuspendPolicy.None;
