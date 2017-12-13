@@ -719,10 +719,10 @@ namespace dnSpy.AsmEditor.Compiler {
 					throw new InvalidOperationException();
 
 				foreach (var nestedTargetType in targetType.NestedTypes) {
-					targetTypes.Remove(nestedTargetType);
 					if (newTypes.TryGetValue(nestedTargetType, out var nestedNewType)) {
 						// If it's a state machine type, it's a new type
 						if (!newStateMachineTypes.Contains(nestedNewType)) {
+							targetTypes.Remove(nestedTargetType);
 							newTypes.Remove(nestedTargetType);
 							var nestedImportedType = AddMergedType(nestedNewType, nestedTargetType);
 							importedType.NewOrExistingNestedTypes.Add(nestedImportedType);
