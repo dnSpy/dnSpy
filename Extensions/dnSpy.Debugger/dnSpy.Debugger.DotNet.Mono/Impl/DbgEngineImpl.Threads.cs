@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					toEngineThread.Remove(monoThread);
 			}
 			if (engineThread != null)
-				engineThread.Remove(GetMessageFlags());
+				engineThread.Remove(GetMessageFlags() | DbgEngineMessageFlags.Running);
 		}
 
 		bool IsMainThread(ThreadMirror thread) {

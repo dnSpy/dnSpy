@@ -651,9 +651,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					break;
 
 				case EventType.ThreadDeath:
-					expectedSuspendPolicy = SuspendPolicy.All;
+					expectedSuspendPolicy = SuspendPolicy.None;
 					var tde = (ThreadDeathEvent)evt;
-					SendMessage(new DelegatePendingMessage(true, () => DestroyThread(TryGetThreadMirror(tde))));
+					SendMessage(new DelegatePendingMessage(false, () => DestroyThread(TryGetThreadMirror(tde))));
 					break;
 
 				case EventType.AppDomainCreate:

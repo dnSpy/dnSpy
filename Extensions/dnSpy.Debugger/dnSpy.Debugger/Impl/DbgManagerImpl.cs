@@ -773,8 +773,13 @@ namespace dnSpy.Debugger.Impl {
 			Dispatcher.VerifyAccess();
 
 			bool pauseProgram = (messageFlags & DbgEngineMessageFlags.Pause) != 0;
+			bool isRunning = (messageFlags & DbgEngineMessageFlags.Running) != 0;
 			var builder = new DbgBreakInfoCollectionBuilder();
 			RaiseMessage_DbgThread(ref builder, e);
+			// Don't try to break it if it's already running. It's running if it can't be paused,
+			// eg. it's Unity and a ThreadDeath event. If we try to pause it, it could hang the game.
+			if (isRunning)
+				return;
 			bool otherPauseProgram = false;
 			if (!pauseProgram && builder.IsEmpty) {
 				lock (lockObj) {
