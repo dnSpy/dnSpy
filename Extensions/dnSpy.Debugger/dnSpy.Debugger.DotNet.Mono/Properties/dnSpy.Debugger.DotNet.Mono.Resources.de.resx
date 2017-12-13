@@ -246,4 +246,7 @@
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
     <value>_Zeitüberschreitung (s)</value>
   </data>
+  <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
+    <value>Diese Funktion ist ausschließlich für Unity Debug Builds</value>
+  </data>
 </root>

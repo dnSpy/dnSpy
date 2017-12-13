@@ -246,4 +246,7 @@
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
     <value>Idő_túllépés (mp)</value>
   </data>
+  <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
+    <value>Ez csak a Unity hibakeresős fordításaival működik</value>
+  </data>
 </root>
