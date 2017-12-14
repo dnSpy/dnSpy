@@ -107,6 +107,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			foreach (var row in rows) {
 				if (row.dwRemoteAddr == addr && (ushort)row.dwRemotePort == port) {
 					foreach (var row2 in rows) {
+						if (row2.dwOwningPid == 0)
+							continue;
 						if ((ushort)row.dwLocalPort == (ushort)row2.dwRemotePort && row.dwLocalAddr == row2.dwRemoteAddr)
 							return (int)row2.dwOwningPid;
 					}
