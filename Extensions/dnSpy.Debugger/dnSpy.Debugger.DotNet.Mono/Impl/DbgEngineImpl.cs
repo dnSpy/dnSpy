@@ -176,12 +176,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		abstract class PendingMessage {
 			public abstract bool MustWaitForRun { get; }
+			public abstract bool RequireResumeVM { get; }
 			public abstract bool RaiseMessage();
 		}
 		sealed class NormalPendingMessage : PendingMessage {
 			readonly DbgEngineImpl engine;
 			readonly DbgEngineMessage message;
 			public override bool MustWaitForRun { get; }
+			public override bool RequireResumeVM => true;
 			public NormalPendingMessage(DbgEngineImpl engine, bool mustWaitForRun, DbgEngineMessage message) {
 				this.engine = engine;
 				MustWaitForRun = mustWaitForRun;
@@ -196,12 +198,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			readonly Action actionRaiseMessage;
 			readonly Func<bool> funcRaiseMessage;
 			public override bool MustWaitForRun { get; }
+			public override bool RequireResumeVM { get; }
 			public DelegatePendingMessage(bool mustWaitForRun, Action raiseMessage) {
 				MustWaitForRun = mustWaitForRun;
+				RequireResumeVM = true;
 				actionRaiseMessage = raiseMessage;
 			}
-			public DelegatePendingMessage(bool mustWaitForRun, Func<bool> raiseMessage) {
+			public DelegatePendingMessage(bool mustWaitForRun, bool requireResumeVM, Func<bool> raiseMessage) {
 				MustWaitForRun = mustWaitForRun;
+				RequireResumeVM = requireResumeVM;
 				funcRaiseMessage = raiseMessage;
 			}
 			public override bool RaiseMessage() {
@@ -237,9 +242,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var pendingMessage = pendingMessages[0];
 					pendingMessages.RemoveAt(0);
 					bool raisedMessage = pendingMessage.RaiseMessage();
-					if (raisedMessage && pendingMessage.MustWaitForRun) {
-						nextSendRunCounter = runCounter + 1;
-						return true;
+					if (pendingMessage.MustWaitForRun) {
+						if (raisedMessage) {
+							nextSendRunCounter = runCounter + 1;
+							return true;
+						}
+						else if (pendingMessage.RequireResumeVM) {
+							try {
+								vm.Resume();
+								DecrementSuspendCount();
+							}
+							catch (VMDisconnectedException) {
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -646,8 +662,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.ThreadStart:
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var tse = (ThreadStartEvent)evt;
-					SendMessage(new DelegatePendingMessage(true, () => InitializeDomain(tse.Thread.Domain)));
-					SendMessage(new DelegatePendingMessage(true, () => CreateThread(tse.Thread)));
+					SendMessage(new DelegatePendingMessage(true, false, () => InitializeDomain(tse.Thread.Domain)));
+					SendMessage(new DelegatePendingMessage(true, true, () => CreateThread(tse.Thread)));
 					break;
 
 				case EventType.ThreadDeath:
@@ -659,7 +675,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.AppDomainCreate:
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var adce = (AppDomainCreateEvent)evt;
-					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(adce.Domain, isNewAppDomainEvent: true)));
+					SendMessage(new DelegatePendingMessage(true, true, () => CreateAppDomain(adce.Domain, isNewAppDomainEvent: true)));
 					break;
 
 				case EventType.AppDomainUnload:
@@ -683,9 +699,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.AssemblyLoad:
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var ale = (AssemblyLoadEvent)evt;
-					SendMessage(new DelegatePendingMessage(true, () => InitializeDomain(ale.Assembly.Domain)));
+					SendMessage(new DelegatePendingMessage(true, false, () => InitializeDomain(ale.Assembly.Domain)));
 					// The debugger agent doesn't support netmodules...
-					SendMessage(new DelegatePendingMessage(true, () => CreateModule(ale.Assembly.ManifestModule)));
+					SendMessage(new DelegatePendingMessage(true, true, () => CreateModule(ale.Assembly.ManifestModule)));
 					break;
 
 				case EventType.AssemblyUnload:
@@ -1219,13 +1235,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					InitializeVirtualMachine();
 					// Create the root AppDomain now since we want it to get id=1, which isn't guaranteed
 					// if it's an attach and we wait for AppDomainCreate events.
-					SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(vm.RootDomain, isNewAppDomainEvent: !processWasRunningOnAttach)));
+					SendMessage(new DelegatePendingMessage(true, false, () => CreateAppDomain(vm.RootDomain, isNewAppDomainEvent: !processWasRunningOnAttach)));
 					// We need to add all threads even if it's an attach. Unity notifies us of all threads,
 					// except it sends the same thread N times in a row (N = number of threads).
 					foreach (var monoThread in vm.GetThreads()) {
-						SendMessage(new DelegatePendingMessage(true, () => CreateAppDomain(monoThread.Domain, isNewAppDomainEvent: !processWasRunningOnAttach)));
-						SendMessage(new DelegatePendingMessage(true, () => CreateModule(monoThread.Domain.Corlib.ManifestModule)));
-						SendMessage(new DelegatePendingMessage(true, () => CreateThread(monoThread)));
+						SendMessage(new DelegatePendingMessage(true, false, () => CreateAppDomain(monoThread.Domain, isNewAppDomainEvent: !processWasRunningOnAttach)));
+						SendMessage(new DelegatePendingMessage(true, false, () => CreateModule(monoThread.Domain.Corlib.ManifestModule)));
+						SendMessage(new DelegatePendingMessage(true, false, () => CreateThread(monoThread)));
 					}
 				}
 			}
