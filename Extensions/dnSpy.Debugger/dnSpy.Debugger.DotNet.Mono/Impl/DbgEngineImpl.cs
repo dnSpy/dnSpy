@@ -248,13 +248,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							return true;
 						}
 						else if (pendingMessage.RequireResumeVM) {
-							try {
-								vm.Resume();
-								DecrementSuspendCount();
-							}
-							catch (VMDisconnectedException) {
+							if (!DecrementAndResume())
 								break;
-							}
 						}
 					}
 				}
@@ -500,6 +495,39 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			Debug.Assert(suspendCount > 0);
 			suspendCount--;
+		}
+
+		bool DecrementAndResume() {
+			debuggerThread.VerifyAccess();
+			try {
+				ResumeVirtualMachine();
+				DecrementSuspendCount();
+				return true;
+			}
+			catch (VMDisconnectedException) {
+			}
+			return false;
+		}
+
+		void ResumeVirtualMachine() {
+			debuggerThread.VerifyAccess();
+			try {
+				vm.Resume();
+			}
+			catch (VMNotSuspendedException) {
+			}
+		}
+
+		bool IncrementAndSuspend() {
+			debuggerThread.VerifyAccess();
+			try {
+				vm.Suspend();
+				IncrementSuspendCount();
+				return true;
+			}
+			catch (VMDisconnectedException) {
+			}
+			return false;
 		}
 
 		void EnableEvent(EventType evt, SuspendPolicy suspendPolicy) => vm.EnableEvents(new[] { evt }, suspendPolicy);
@@ -843,24 +871,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (suspCounter < 0) {
 				Debug.Assert(suspCounter == -1);
 				while (suspCounter++ < 0) {
-					try {
-						vm.Resume();
-						DecrementSuspendCount();
-					}
-					catch (VMDisconnectedException) {
+					if (!DecrementAndResume())
 						break;
-					}
 				}
 			}
 			else if (suspCounter > 0) {
 				while (suspCounter-- > 0) {
-					try {
-						vm.Suspend();
-						IncrementSuspendCount();
-					}
-					catch (VMDisconnectedException) {
+					if (!IncrementAndSuspend())
 						break;
-					}
 				}
 			}
 			if (wasRunning && pendingRunCore && eventHandlerRecursionCounter == 1) {
@@ -1121,10 +1139,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			if (suspendCount == 0) {
 				try {
-					vm.Suspend();
-					IncrementSuspendCount();
-				}
-				catch (VMDisconnectedException) {
+					IncrementAndSuspend();
 				}
 				catch (Exception ex) {
 					Debug.Fail(ex.Message);
@@ -1255,13 +1270,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!HasConnected_MonoDebugThread)
 				return;
 			try {
-				if (suspendCount == 0) {
-					vm.Suspend();
-					IncrementSuspendCount();
-				}
-				SendMessage(new DbgMessageBreak(GetThreadPreferMain_MonoDebug(), GetMessageFlags()));
-			}
-			catch (VMDisconnectedException) {
+				bool sendMsg = true;
+				if (suspendCount == 0)
+					sendMsg = IncrementAndSuspend();
+				if (sendMsg)
+					SendMessage(new DbgMessageBreak(GetThreadPreferMain_MonoDebug(), GetMessageFlags()));
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.Message);
@@ -1303,17 +1316,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			while (suspendCount > 0) {
 				thrownException = null;
-				ResumeVirtualMachine();
-				DecrementSuspendCount();
-			}
-		}
-
-		void ResumeVirtualMachine() {
-			debuggerThread.VerifyAccess();
-			try {
-				vm.Resume();
-			}
-			catch (VMNotSuspendedException) {
+				DecrementAndResume();
 			}
 		}
 
