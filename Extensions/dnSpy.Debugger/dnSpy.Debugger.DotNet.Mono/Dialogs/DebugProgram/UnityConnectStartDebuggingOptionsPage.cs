@@ -32,6 +32,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		// Shouldn't be localized
 		public override string DisplayName => "Unity (" + dnSpy_Debugger_DotNet_Mono_Resources.DbgAsm_Connect_To_Process + ")";
 
+		// Default port used by the patched mono.dll
+		const ushort DEFAULT_PORT = 55555;
+
 		public ICommand DebuggingUnityGamesCommand => new RelayCommand(a => DebuggingUnityGamesHelper.OpenDebuggingUnityGames());
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
@@ -50,8 +53,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			return CreateOptions(breakKind);
 		}
 
-		UnityConnectStartDebuggingOptions CreateOptions(string breakKind) =>
-			InitializeDefault(new UnityConnectStartDebuggingOptions(), breakKind);
+		UnityConnectStartDebuggingOptions CreateOptions(string breakKind) {
+			var options = InitializeDefault(new UnityConnectStartDebuggingOptions(), breakKind);
+			options.Port = DEFAULT_PORT;
+			return options;
+		}
 
 		void Initialize(UnityConnectStartDebuggingOptions options) {
 			base.Initialize(options);
