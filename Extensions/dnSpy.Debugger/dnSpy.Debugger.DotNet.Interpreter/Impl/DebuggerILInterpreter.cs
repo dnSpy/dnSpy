@@ -90,12 +90,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			return res;
 		}
 
-		ILValue Convert(ILValue value, DmdType targetType) {
+		ILValue Convert(ILValue value, DmdType targetType, bool boxIfNeeded = true) {
 			// We want to return the same ILValue, if possible, since it can contain extra information,
 			// such as address of value that the caller (debugger) would like to keep.
 			var type = value.Type;
 			if (targetType.IsAssignableFrom(type)) {
-				if (type.IsValueType && type != targetType)
+				if (boxIfNeeded && type.IsValueType && type != targetType)
 					value = debuggerRuntime.Box(value, type) ?? value;
 				return value;
 			}
@@ -4281,7 +4281,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					else {
 						if (ilValueStack.Count != 1)
 							ThrowInvalidMethodBodyInterpreterException();
-						return Convert(Pop1(), currentMethod.GetMethodSignature().ReturnType);
+						const bool IsLastEmulatedMethod = true;
+						return Convert(Pop1(), currentMethod.GetMethodSignature().ReturnType, boxIfNeeded: !IsLastEmulatedMethod);
 					}
 
 				case OpCode.Jmp:
