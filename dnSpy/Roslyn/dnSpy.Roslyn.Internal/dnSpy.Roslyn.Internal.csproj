@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Roslyn.Internal</RootNamespace>
     <AssemblyName>Roslyn.Services.Editor.CSharp.UnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>

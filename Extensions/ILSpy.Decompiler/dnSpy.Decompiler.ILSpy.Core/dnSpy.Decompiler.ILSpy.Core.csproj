@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Decompiler.ILSpy.Core</RootNamespace>
     <AssemblyName>dnSpy.Decompiler.ILSpy.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -117,9 +117,6 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.hu.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

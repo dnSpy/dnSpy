@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Contracts</RootNamespace>
     <AssemblyName>dnSpy.Contracts.Logic</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -141,9 +141,6 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.hu.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

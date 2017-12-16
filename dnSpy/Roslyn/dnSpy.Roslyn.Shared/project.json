@@ -1,6 +1,5 @@
 {
 	"dependencies": {
-		"System.ValueTuple": "4.4.0",
 		"Microsoft.CodeAnalysis.CSharp.Features": "2.4.0",
 		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.4.0",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26201",
@@ -8,7 +7,7 @@
 		"Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime": "15.0.25726-Preview5"
 	},
 	"frameworks": {
-		"net462": { }
+		"net471": { }
 	},
 	"runtimes": {
 		"win": { }
