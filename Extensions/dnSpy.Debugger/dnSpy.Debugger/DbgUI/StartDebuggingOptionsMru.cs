@@ -26,6 +26,7 @@ namespace dnSpy.Debugger.DbgUI {
 	sealed class StartDebuggingOptionsMru {
 		const int MRU_SIZE = 10;
 		readonly List<Info> list;
+		(StartDebuggingOptions options, Guid pageGuid)? lastOptions;
 
 		sealed class Info {
 			public string Filename { get; }
@@ -49,10 +50,11 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public void Add(string filename, StartDebuggingOptions options, Guid pageGuid) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
+			lastOptions = ((StartDebuggingOptions)options.Clone(), pageGuid);
+			if (filename == null)
+				return;
 			var info = Find(filename);
 			if (info != null) {
 				bool b = list.Remove(info);
@@ -77,11 +79,6 @@ namespace dnSpy.Debugger.DbgUI {
 			return (info.Options, info.PageGuid);
 		}
 
-		public (StartDebuggingOptions options, Guid pageGuid)? TryGetLastOptions() {
-			if (list.Count == 0)
-				return null;
-			var info = list[list.Count - 1];
-			return (info.Options, info.PageGuid);
-		}
+		public (StartDebuggingOptions options, Guid pageGuid)? TryGetLastOptions() => lastOptions;
 	}
 }

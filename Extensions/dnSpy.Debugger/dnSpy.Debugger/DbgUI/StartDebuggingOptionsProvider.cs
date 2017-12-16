@@ -108,8 +108,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (res != true)
 				return null;
 			var info = vm.StartDebuggingOptions;
-			if (info.Filename != null)
-				mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
+			mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
 			return info.Options;
 		}
 
