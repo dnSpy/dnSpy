@@ -368,7 +368,7 @@ namespace dnSpy.MainApp {
 
 		bool CanLoadExtension(Assembly asm) {
 			var ourPublicKeyToken = GetType().Assembly.GetName().GetPublicKeyToken();
-			var minimumVersion = new Version(3, 0, 0, 0);
+			var minimumVersion = new Version(5, 0, 0, 0);
 			foreach (var a in asm.GetReferencedAssemblies()) {
 				if (!Equals(ourPublicKeyToken, a.GetPublicKeyToken()))
 					continue;
