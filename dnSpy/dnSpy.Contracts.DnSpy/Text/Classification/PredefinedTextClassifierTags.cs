@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Text classifier tags
@@ -83,30 +81,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Bookmarks window column: Module
 		/// </summary>
 		public static readonly string BookmarksWindowModule = "Module";
-
-		/// <summary>
-		/// Breakpoints window column: Name
-		/// </summary>
-		[Obsolete("Use code breakpoints constants instead", true)]
-		public static readonly string BreakpointsWindowName = "Name";
-
-		/// <summary>
-		/// Breakpoints window column: Assembly
-		/// </summary>
-		[Obsolete("Use code breakpoints constants instead", true)]
-		public static readonly string BreakpointsWindowAssembly = "Assembly";
-
-		/// <summary>
-		/// Breakpoints window column: Module
-		/// </summary>
-		[Obsolete("Use code breakpoints constants instead", true)]
-		public static readonly string BreakpointsWindowModule = "Module";
-
-		/// <summary>
-		/// Breakpoints window column: File
-		/// </summary>
-		[Obsolete("Use code breakpoints constants instead", true)]
-		public static readonly string BreakpointsWindowFile = "File";
 
 		/// <summary>
 		/// Code breakpoints window column: Name
@@ -202,18 +176,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Attach to Process window column: Command Line
 		/// </summary>
 		public static readonly string AttachToProcessWindowCommandLine = "CommandLine";
-
-		/// <summary>
-		/// Don't use
-		/// </summary>
-		[Obsolete("Not used", error: true)]
-		public static readonly string AttachToProcessWindowFilename = "Filename";
-
-		/// <summary>
-		/// Don't use
-		/// </summary>
-		[Obsolete("Not used", error: true)]
-		public static readonly string AttachToProcessWindowClrVersion = "CLRVersion";
 
 		/// <summary>
 		/// Exception Settings window column: Break When Thrown

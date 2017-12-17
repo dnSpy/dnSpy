@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Contracts.BackgroundImage {
 	/// <summary>
 	/// Defines background image options. Use <see cref="ExportBackgroundImageOptionDefinitionAttribute"/>
-	/// to export an instance. See also <see cref="IBackgroundImageOptionDefinition2"/>
+	/// to export an instance.
 	/// </summary>
 	public interface IBackgroundImageOptionDefinition {
 		/// <summary>
@@ -60,13 +60,7 @@ namespace dnSpy.Contracts.BackgroundImage {
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
 		bool IsSupported(ITextView textView);
-	}
 
-	/// <summary>
-	/// Defines background image options. Use <see cref="ExportBackgroundImageOptionDefinitionAttribute"/>
-	/// to export an instance.
-	/// </summary>
-	public interface IBackgroundImageOptionDefinition2 : IBackgroundImageOptionDefinition {
 		/// <summary>
 		/// Returns true if the hex view should use this instance's background image settings
 		/// </summary>

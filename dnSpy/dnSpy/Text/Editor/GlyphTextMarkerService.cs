@@ -82,12 +82,6 @@ namespace dnSpy.Text.Editor {
 			GlyphTextMarkerMouseProcessorProviders = Orderer.Order(glyphTextMarkerMouseProcessorProviders).ToArray();
 		}
 
-		IGlyphTextMethodMarker IGlyphTextMarkerService.AddMarker(MethodDef method, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			return AddMarker(new ModuleId(), 0, ilOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
-		}
-
 		IGlyphTextMethodMarker IGlyphTextMarkerService.AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) =>
 			AddMarker(tokenId.Module, tokenId.Token, ilOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 
@@ -211,12 +205,12 @@ namespace dnSpy.Text.Editor {
 			return e.Result ?? Array.Empty<GlyphTextMarkerAndSpan>();
 		}
 
-		public void SetMethodOffsetSpanMap(ITextView textView, IMethodOffsetSpanMap map) {
+		public void SetDotNetSpanMap(ITextView textView, IDotNetSpanMap map) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			var service = GlyphTextViewMarkerService.TryGet(textView);
 			Debug.Assert(service != null);
-			service?.SetMethodOffsetSpanMap(map);
+			service?.SetDotNetSpanMap(map);
 		}
 	}
 }

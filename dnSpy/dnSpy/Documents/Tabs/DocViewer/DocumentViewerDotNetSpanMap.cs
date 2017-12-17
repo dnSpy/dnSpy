@@ -42,11 +42,6 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.references = references ?? throw new ArgumentNullException(nameof(references));
 		}
 
-		Span? IMethodOffsetSpanMap.ToSpan(ModuleTokenId method, uint ilOffset) {
-			Debug.Fail($"Shouldn't be called");
-			return null;
-		}
-
 		Span? IDotNetSpanMap.ToSpan(ModuleId module, uint token, uint ilOffset) {
 			if (toMethodDebugInfo == null) {
 				toMethodDebugInfo = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);

@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 	sealed class RoslynTagger : AsyncTagger<IClassificationTag, RoslynTaggerAsyncState>, ISynchronousTagger<IClassificationTag> {
 		readonly ITextBuffer textBuffer;
 		readonly IClassificationType defaultClassificationType;
-		readonly RoslynClassificationTypes2 roslynClassificationTypes;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		public RoslynTagger(ITextBuffer textBuffer, IThemeClassificationTypeService themeClassificationTypeService, IRoslynDocumentChangedService roslynDocumentChangedService) {
@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
-			roslynClassificationTypes = RoslynClassificationTypes2.GetClassificationTypeInstance(themeClassificationTypeService);
+			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
 			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			roslynDocumentChangedService.DocumentChanged += RoslynDocumentChangedService_DocumentChanged;
 		}

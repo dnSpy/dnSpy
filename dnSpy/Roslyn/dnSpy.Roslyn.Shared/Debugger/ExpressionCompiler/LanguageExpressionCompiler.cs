@@ -442,7 +442,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				var doc = workspace.AddDocument(projectInfo.Id, "A", SourceText.From(documentText));
 				var syntaxRoot = doc.GetSyntaxRootAsync().GetAwaiter().GetResult();
 				var semanticModel = doc.GetSemanticModelAsync().GetAwaiter().GetResult();
-				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, RoslynClassificationTypes2.Default, null, cancellationToken);
+				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, RoslynClassificationTypes.Default, null, cancellationToken);
 				var textSpan = new Microsoft.CodeAnalysis.Text.TextSpan(documentTextExpressionOffset, expression.Length);
 
 				int pos = textSpan.Start;

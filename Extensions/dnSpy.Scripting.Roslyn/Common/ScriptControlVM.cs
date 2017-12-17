@@ -152,7 +152,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		readonly Dispatcher dispatcher;
-		readonly RoslynClassificationTypes2 roslynClassificationTypes;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
 		readonly ReplSettings replSettings;
 
@@ -167,7 +167,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ReplEditor.TextView.Options.OptionChanged += Options_OptionChanged;
 
 			var themeClassificationTypeService = serviceLocator.Resolve<IThemeClassificationTypeService>();
-			roslynClassificationTypes = RoslynClassificationTypes2.GetClassificationTypeInstance(themeClassificationTypeService);
+			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 
 			toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);

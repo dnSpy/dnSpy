@@ -37,7 +37,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextViewMarkerService {
 		IWpfTextView TextView { get; }
-		void SetMethodOffsetSpanMap(IMethodOffsetSpanMap map);
+		void SetDotNetSpanMap(IDotNetSpanMap map);
 	}
 
 	interface IGlyphTextMarkerListener {
@@ -586,7 +586,7 @@ namespace dnSpy.Text.Editor {
 			return service;
 		}
 
-		void IGlyphTextViewMarkerService.SetMethodOffsetSpanMap(IMethodOffsetSpanMap map) {
+		void IGlyphTextViewMarkerService.SetDotNetSpanMap(IDotNetSpanMap map) {
 			if (dotNetSpanMap == map)
 				return;
 			dotNetSpanMap = map as IDotNetSpanMap;

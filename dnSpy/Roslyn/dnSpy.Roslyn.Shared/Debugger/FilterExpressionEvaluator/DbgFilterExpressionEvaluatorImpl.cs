@@ -133,12 +133,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 
 				var syntaxRoot = doc.GetSyntaxRootAsync().GetAwaiter().GetResult();
 				var semanticModel = doc.GetSemanticModelAsync().GetAwaiter().GetResult();
-				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, RoslynClassificationTypes2.Default, null, CancellationToken.None);
+				var classifier = new RoslynClassifier(syntaxRoot, semanticModel, workspace, RoslynClassificationTypes.Default, null, CancellationToken.None);
 				var textSpan = new TextSpan(exprOffset, expr.Length);
 
 				int pos = textSpan.Start;
-				var paramColor = RoslynClassificationTypes2.Default.Parameter;
-				var propColor = RoslynClassificationTypes2.Default.InstanceProperty;
+				var paramColor = RoslynClassificationTypes.Default.Parameter;
+				var propColor = RoslynClassificationTypes.Default.InstanceProperty;
 				foreach (var info in classifier.GetColors(textSpan)) {
 					if (pos < info.Span.Start)
 						output.Write(BoxedTextColor.Text, expr.Substring(pos - textSpan.Start, info.Span.Start - pos));

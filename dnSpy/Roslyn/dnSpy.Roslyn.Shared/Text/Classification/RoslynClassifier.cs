@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -26,39 +25,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Roslyn.Shared.Text.Classification {
 	/// <summary>
 	/// Classifier result
 	/// </summary>
-	[Obsolete("Use " + nameof(ClassifierResult2))]
 	public struct ClassifierResult {
-		/// <summary>
-		/// Span
-		/// </summary>
-		public readonly Span Span;
-
-		/// <summary>
-		/// Classification type
-		/// </summary>
-		public readonly IClassificationType Type;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="span">Span</param>
-		/// <param name="type">Classification type</param>
-		public ClassifierResult(Span span, IClassificationType type) {
-			Span = span;
-			Type = type;
-		}
-	}
-
-	/// <summary>
-	/// Classifier result
-	/// </summary>
-	public struct ClassifierResult2 {
 		/// <summary>
 		/// Span
 		/// </summary>
@@ -74,7 +46,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// </summary>
 		/// <param name="span">Span</param>
 		/// <param name="color">Color</param>
-		public ClassifierResult2(Span span, object color) {
+		public ClassifierResult(Span span, object color) {
 			Span = span;
 			Color = color;
 		}
@@ -87,29 +59,9 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		readonly SyntaxNode syntaxRoot;
 		readonly SemanticModel semanticModel;
 		readonly Workspace workspace;
-		readonly RoslynClassificationTypes2 roslynClassificationTypes;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly object defaultColor;
 		/*readonly*/ CancellationToken cancellationToken;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="syntaxRoot">Syntax root</param>
-		/// <param name="semanticModel">Semantic model</param>
-		/// <param name="workspace">Workspace</param>
-		/// <param name="roslynClassificationTypes">Classification types</param>
-		/// <param name="defaultClassificationType">Default classification type if a token can't be classified or null to not use anything</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-#pragma warning disable 0618 // Type or member is obsolete
-		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes roslynClassificationTypes, IClassificationType defaultClassificationType, CancellationToken cancellationToken) {
-#pragma warning restore 0618 // Type or member is obsolete
-			this.syntaxRoot = syntaxRoot;
-			this.semanticModel = semanticModel;
-			this.workspace = workspace;
-			this.roslynClassificationTypes = new RoslynClassificationTypes2(roslynClassificationTypes);
-			this.defaultColor = defaultClassificationType;
-			this.cancellationToken = cancellationToken;
-		}
 
 		/// <summary>
 		/// Constructor
@@ -120,7 +72,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		/// <param name="roslynClassificationTypes">Colors</param>
 		/// <param name="defaultColor">Default color if a token can't be classified or null to not use anything</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes2 roslynClassificationTypes, object defaultColor, CancellationToken cancellationToken) {
+		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes roslynClassificationTypes, object defaultColor, CancellationToken cancellationToken) {
 			this.syntaxRoot = syntaxRoot;
 			this.semanticModel = semanticModel;
 			this.workspace = workspace;
@@ -130,29 +82,15 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 		}
 
 		/// <summary>
-		/// Returns all classifications
-		/// </summary>
-		/// <param name="textSpan">Span to classify</param>
-		/// <returns></returns>
-		[Obsolete("Use " + nameof(GetColors))]
-		public IEnumerable<ClassifierResult> GetClassifications(TextSpan textSpan) {
-			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
-				var color = GetClassificationType(cspan) ?? defaultColor;
-				if (color != null)
-					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), (IClassificationType)color);
-			}
-		}
-
-		/// <summary>
 		/// Returns all colors
 		/// </summary>
 		/// <param name="textSpan">Span to classify</param>
 		/// <returns></returns>
-		public IEnumerable<ClassifierResult2> GetColors(TextSpan textSpan) {
+		public IEnumerable<ClassifierResult> GetColors(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
 				var color = GetClassificationType(cspan) ?? defaultColor;
 				if (color != null)
-					yield return new ClassifierResult2(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color);
+					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color);
 			}
 		}
 
