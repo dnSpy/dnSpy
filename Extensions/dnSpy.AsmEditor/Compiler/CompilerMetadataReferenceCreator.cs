@@ -22,19 +22,34 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	static class CompilerMetadataReferenceCreator {
-		public static CompilerMetadataReference? Create(RawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
-			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
-			if (moduleData == null)
-				return null;
-			if (makeEverythingPublic) {
-				bool success = new MetadataFixer(moduleData).MakePublic();
-				if (!success)
-					return null;
+		public unsafe static (RawModuleBytes rawData, CompilerMetadataReference mdRef) Create(RawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
+			var info = rawModuleBytesProvider.GetRawModuleBytes(module);
+			if (info.rawData == null)
+				return default;
+			bool error = true;
+			try {
+				// Only file layout is supported by CompilerMetadataReference
+				if (!info.isFileLayout)
+					return default;
+
+				if (makeEverythingPublic) {
+					bool success = new MetadataFixer(info.rawData, info.isFileLayout).MakePublic();
+					if (!success)
+						return default;
+				}
+				var asmRef = module.Assembly.ToAssemblyRef();
+				CompilerMetadataReference mdRef;
+				if (module.IsManifestModule)
+					mdRef = CompilerMetadataReference.CreateAssemblyReference(info.rawData.Pointer, info.rawData.Size, asmRef, module.Location);
+				else
+					mdRef = CompilerMetadataReference.CreateModuleReference(info.rawData.Pointer, info.rawData.Size, asmRef, module.Location);
+				error = false;
+				return (info.rawData, mdRef);
 			}
-			var asmRef = module.Assembly.ToAssemblyRef();
-			if (module.IsManifestModule)
-				return CompilerMetadataReference.CreateAssemblyReference(moduleData, asmRef, module.Location);
-			return CompilerMetadataReference.CreateModuleReference(moduleData, asmRef, module.Location);
+			finally {
+				if (error)
+					info.rawData.Dispose();
+			}
 		}
 	}
 }

@@ -26,6 +26,7 @@
     <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.Shared.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
     <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.Shared.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Compiler\CodeEditorOptionsDefinitions.cs" />
@@ -179,7 +181,6 @@
     <Compile Include="Text\TextBufferSourceTextContainer.cs" />
     <Compile Include="Text\TextSnapshotSourceText.cs" />
     <Compile Include="Text\TextSnapshotTextLineCollection.cs" />
-    <Compile Include="Utilities\ImmutableArrayUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

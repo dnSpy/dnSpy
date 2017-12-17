@@ -17,10 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Roslyn.Shared.Documentation;
-using dnSpy.Roslyn.Shared.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
 
@@ -40,11 +40,13 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			}
 		}
 
-		public static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef, IRoslynDocumentationProviderFactory docFactory) {
+		public unsafe static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef, IRoslynDocumentationProviderFactory docFactory) {
 			var docProvider = docFactory.TryCreate(mdRef.Filename);
-			if (mdRef.IsAssemblyReference)
-				return MetadataReference.CreateFromImage(ImmutableArrayUtilities<byte>.ToImmutableArray(mdRef.Data), MetadataReferenceProperties.Assembly, docProvider, mdRef.Filename);
-			var moduleMetadata = ModuleMetadata.CreateFromImage(ImmutableArrayUtilities<byte>.ToImmutableArray(mdRef.Data));
+			var moduleMetadata = ModuleMetadata.CreateFromImage((IntPtr)mdRef.Data, mdRef.Size);
+			if (mdRef.IsAssemblyReference) {
+				var assemblyMetadata = AssemblyMetadata.Create(moduleMetadata);
+				return assemblyMetadata.GetReference(docProvider, MetadataReferenceProperties.Assembly.Aliases, MetadataReferenceProperties.Assembly.EmbedInteropTypes, mdRef.Filename);
+			}
 			return moduleMetadata.GetReference(docProvider, mdRef.Filename);
 		}
 

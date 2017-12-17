@@ -24,11 +24,16 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Metadata reference
 	/// </summary>
-	public struct CompilerMetadataReference {
+	public unsafe struct CompilerMetadataReference {
 		/// <summary>
 		/// Raw bytes
 		/// </summary>
-		public byte[] Data { get; }
+		public void* Data { get; }
+
+		/// <summary>
+		/// Gets the size of <see cref="Data"/>
+		/// </summary>
+		public int Size { get; }
 
 		/// <summary>
 		/// Gets the assembly or null
@@ -45,8 +50,13 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		public bool IsAssemblyReference { get; }
 
-		CompilerMetadataReference(byte[] data, IAssembly assembly, string filename, bool isAssemblyReference) {
-			Data = data ?? throw new ArgumentNullException(nameof(data));
+		CompilerMetadataReference(void* data, int size, IAssembly assembly, string filename, bool isAssemblyReference) {
+			if (data == null)
+				throw new ArgumentNullException(nameof(data));
+			if (size <= 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
+			Data = data;
+			Size = size;
 			Assembly = assembly;
 			Filename = filename;
 			IsAssemblyReference = isAssemblyReference;
@@ -56,18 +66,20 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Creates an assembly metadata reference
 		/// </summary>
 		/// <param name="data">File data</param>
+		/// <param name="size">Size of data</param>
 		/// <param name="assembly">Assembly owner or null</param>
 		/// <param name="filename">Filename or null if it doesn't exist on disk</param>
 		/// <returns></returns>
-		public static CompilerMetadataReference CreateAssemblyReference(byte[] data, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, assembly, filename, true);
+		public static CompilerMetadataReference CreateAssemblyReference(void* data, int size, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, size, assembly, filename, true);
 
 		/// <summary>
 		/// Creates a module metadata reference
 		/// </summary>
 		/// <param name="data">File data</param>
+		/// <param name="size">Size of data</param>
 		/// <param name="assembly">Assembly owner or null</param>
 		/// <param name="filename">Filename or null if it doesn't exist on disk</param>
 		/// <returns></returns>
-		public static CompilerMetadataReference CreateModuleReference(byte[] data, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, assembly, filename, false);
+		public static CompilerMetadataReference CreateModuleReference(void* data, int size, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, size, assembly, filename, false);
 	}
 }

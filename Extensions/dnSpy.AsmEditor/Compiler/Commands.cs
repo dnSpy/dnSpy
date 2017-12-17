@@ -137,20 +137,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var vm = editCodeVMCreator.CreateEditMethodCode(methodNode.MethodDef, statements ?? Array.Empty<MethodSourceStatement>());
-			var win = new EditCodeDlg();
-			win.DataContext = vm;
-			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
+			using (var vm = editCodeVMCreator.CreateEditMethodCode(methodNode.MethodDef, statements ?? Array.Empty<MethodSourceStatement>())) {
+				var win = new EditCodeDlg();
+				win.DataContext = vm;
+				win.Owner = appService.MainWindow;
+				win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
 
-			if (win.ShowDialog() != true) {
-				vm.Dispose();
-				return;
+				if (win.ShowDialog() != true)
+					return;
+				Debug.Assert(vm.Result != null);
+
+				undoCommandService.Value.Add(new EditMethodBodyCodeCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			}
-			Debug.Assert(vm.Result != null);
-
-			undoCommandService.Value.Add(new EditMethodBodyCodeCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
-			vm.Dispose();
 		}
 
 		EditMethodBodyCodeCommand(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer)

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 
@@ -26,12 +27,27 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IAssemblyResolver assemblyResolver;
 		readonly ModuleDef defaultSourceModule;
 		readonly bool makeEverythingPublic;
+		readonly List<RawModuleBytes> rawModuleBytesList;
 
 		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.defaultSourceModule = defaultSourceModule;
 			this.makeEverythingPublic = makeEverythingPublic;
+			rawModuleBytesList = new List<RawModuleBytes>();
+		}
+
+		CompilerMetadataReference? Save((RawModuleBytes rawData, CompilerMetadataReference mdRef) info) {
+			if (info.rawData == null)
+				return null;
+			try {
+				rawModuleBytesList.Add(info.rawData);
+			}
+			catch {
+				info.rawData.Dispose();
+				throw;
+			}
+			return info.mdRef;
 		}
 
 		public CompilerMetadataReference? Resolve(IAssembly asmRef) {
@@ -40,13 +56,19 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (asm == null)
 				return null;
 
-			return CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic);
+			return Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic));
 		}
 
 		public CompilerMetadataReference? Create(AssemblyDef asm) =>
-			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic);
+			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic));
 
 		public CompilerMetadataReference? Create(ModuleDef module) =>
-			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, module, makeEverythingPublic);
+			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, module, makeEverythingPublic));
+
+		public void Dispose() {
+			foreach (var rawData in rawModuleBytesList)
+				rawData.Dispose();
+			rawModuleBytesList.Clear();
+		}
 	}
 }

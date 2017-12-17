@@ -26,19 +26,23 @@ namespace dnSpy.AsmEditor.Compiler {
 	/// <summary>
 	/// Overwrites the metadata to make everything public
 	/// </summary>
-	struct MetadataFixer {
-		readonly byte[] data;
+	unsafe struct MetadataFixer {
+		readonly byte* data;
+		readonly int dataSize;
+		readonly bool isFileLayout;
 		IMetaData md;
 
-		public MetadataFixer(byte[] data) {
-			this.data = data;
+		public MetadataFixer(RawModuleBytes rawData, bool isFileLayout) {
+			data = (byte*)rawData.Pointer;
+			dataSize = rawData.Size;
+			this.isFileLayout = isFileLayout;
 			md = null;
 		}
 
 		public bool MakePublic() {
 			try {
 				try {
-					md = MetaDataCreator.CreateMetaData(new PEImage(data));
+					md = MetaDataCreator.CreateMetaData(new PEImage((IntPtr)data, dataSize, isFileLayout ? ImageLayout.File : ImageLayout.Memory, verify: true));
 				}
 				catch (IOException) {
 					return false;
