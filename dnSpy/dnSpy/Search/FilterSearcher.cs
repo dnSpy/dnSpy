@@ -467,14 +467,27 @@ namespace dnSpy.Search {
 			}
 		}
 
+		bool CheckMatch(MethodDef method) {
+			if (IsMatch(method.Name, method))
+				return true;
+			if (IsMatch(method.DeclaringType.FullName + "." + method.Name.String, method))
+				return true;
+
+			if (method.ImplMap is ImplMap im) {
+				if (IsMatch(im.Name, im) || IsMatch(im.Module?.Name, null))
+					return true;
+			}
+
+			return false;
+		}
+
 		void Search(IDsDocument ownerModule, TypeDef type, MethodDef method) {
 			var res = options.Filter.GetResult(method);
 			if (res.FilterType == FilterType.Hide)
 				return;
 			CheckCustomAttributes(ownerModule, method, type);
 
-			ImplMap im;
-			if (res.IsMatch && (IsMatch(method.Name, method) || ((im = method.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module?.Name, null))))) {
+			if (res.IsMatch && CheckMatch(method)) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = method,
@@ -593,14 +606,27 @@ namespace dnSpy.Search {
 			}
 		}
 
+		bool CheckMatch(FieldDef field) {
+			if (IsMatch(field.Name, field))
+				return true;
+			if (IsMatch(field.DeclaringType.FullName + "." + field.Name.String, field))
+				return true;
+
+			if (field.ImplMap is ImplMap im) {
+				if (IsMatch(im.Name, im) || IsMatch(im.Module?.Name, null))
+					return true;
+			}
+
+			return false;
+		}
+
 		void Search(IDsDocument ownerModule, TypeDef type, FieldDef field) {
 			var res = options.Filter.GetResult(field);
 			if (res.FilterType == FilterType.Hide)
 				return;
 			CheckCustomAttributes(ownerModule, field, type);
 
-			ImplMap im;
-			if (res.IsMatch && (IsMatch(field.Name, field) || ((im = field.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module?.Name, null))))) {
+			if (res.IsMatch && CheckMatch(field)) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = field,
@@ -613,13 +639,22 @@ namespace dnSpy.Search {
 			}
 		}
 
+		bool CheckMatch(PropertyDef prop) {
+			if (IsMatch(prop.Name, prop))
+				return true;
+			if (IsMatch(prop.DeclaringType.FullName + "." + prop.Name.String, prop))
+				return true;
+
+			return false;
+		}
+
 		void Search(IDsDocument ownerModule, TypeDef type, PropertyDef prop) {
 			var res = options.Filter.GetResult(prop);
 			if (res.FilterType == FilterType.Hide)
 				return;
 			CheckCustomAttributes(ownerModule, prop, type);
 
-			if (res.IsMatch && IsMatch(prop.Name, prop)) {
+			if (res.IsMatch && CheckMatch(prop)) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = prop,
@@ -632,13 +667,22 @@ namespace dnSpy.Search {
 			}
 		}
 
+		bool CheckMatch(EventDef evt) {
+			if (IsMatch(evt.Name, evt))
+				return true;
+			if (IsMatch(evt.DeclaringType.FullName + "." + evt.Name.String, evt))
+				return true;
+
+			return false;
+		}
+
 		void Search(IDsDocument ownerModule, TypeDef type, EventDef evt) {
 			var res = options.Filter.GetResult(evt);
 			if (res.FilterType == FilterType.Hide)
 				return;
 			CheckCustomAttributes(ownerModule, evt, type);
 
-			if (res.IsMatch && IsMatch(evt.Name, evt)) {
+			if (res.IsMatch && CheckMatch(evt)) {
 				options.OnMatch(new SearchResult {
 					Context = options.Context,
 					Object = evt,
