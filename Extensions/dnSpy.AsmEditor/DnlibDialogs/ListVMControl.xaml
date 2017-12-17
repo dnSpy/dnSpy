@@ -20,13 +20,8 @@
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.Logic"
-             xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
-             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
-             mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="500">
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties">
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type mvvm:ViewModelBase}">
             <TextBlock Text="{Binding FullName}" ToolTip="{Binding FullName}" />
