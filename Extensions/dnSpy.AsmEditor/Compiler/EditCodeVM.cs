@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected readonly ModuleDef sourceModule;
 
-		protected EditCodeVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
+		protected EditCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;

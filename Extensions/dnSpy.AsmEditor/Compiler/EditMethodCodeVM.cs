@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public EditMethodCodeVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+		public EditMethodCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
 			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, methodToEdit.Module) {
 			this.methodToEdit = methodToEdit;
 			methodSourceStatement = statementsInMethodToEdit.Count == 0 ? (MethodSourceStatement?)null : statementsInMethodToEdit[0];

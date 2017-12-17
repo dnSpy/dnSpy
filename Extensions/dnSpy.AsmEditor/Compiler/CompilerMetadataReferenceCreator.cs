@@ -22,7 +22,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	static class CompilerMetadataReferenceCreator {
-		public static CompilerMetadataReference? Create(IRawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
+		public static CompilerMetadataReference? Create(RawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
 			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
 			if (moduleData == null)
 				return null;

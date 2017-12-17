@@ -22,12 +22,12 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class AssemblyReferenceResolver : IAssemblyReferenceResolver {
-		readonly IRawModuleBytesProvider rawModuleBytesProvider;
+		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IAssemblyResolver assemblyResolver;
 		readonly ModuleDef defaultSourceModule;
 		readonly bool makeEverythingPublic;
 
-		public AssemblyReferenceResolver(IRawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.defaultSourceModule = defaultSourceModule;

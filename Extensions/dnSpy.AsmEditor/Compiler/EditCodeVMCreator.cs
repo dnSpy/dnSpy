@@ -33,14 +33,14 @@ using dnSpy.Contracts.Images;
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
 	sealed class EditCodeVMCreator {
-		readonly IRawModuleBytesProvider rawModuleBytesProvider;
+		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
 		readonly IDecompilerService decompilerService;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+		EditCodeVMCreator(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.openFromGAC = openFromGAC;
 			openAssembly = new OpenAssembly(documentTreeView.DocumentService);

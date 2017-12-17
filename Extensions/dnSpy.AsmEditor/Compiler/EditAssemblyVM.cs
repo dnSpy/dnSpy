@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public StringBuilderDecompilerOutput MainOutput { get; } = new StringBuilderDecompilerOutput();
 		}
 
-		public EditAssemblyVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef module)
+		public EditAssemblyVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef module)
 			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, module) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>

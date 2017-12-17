@@ -23,13 +23,13 @@ using dnlib.DotNet;
 using dnlib.IO;
 
 namespace dnSpy.AsmEditor.Compiler {
-	interface IRawModuleBytesProvider {
-		byte[] GetRawModuleBytes(ModuleDef module);
+	abstract class RawModuleBytesProvider {
+		public abstract byte[] GetRawModuleBytes(ModuleDef module);
 	}
 
-	[Export(typeof(IRawModuleBytesProvider))]
-	sealed class RawModuleBytesProvider : IRawModuleBytesProvider {
-		public byte[] GetRawModuleBytes(ModuleDef module) {
+	[Export(typeof(RawModuleBytesProvider))]
+	sealed class RawModuleBytesProviderImpl : RawModuleBytesProvider {
+		public override byte[] GetRawModuleBytes(ModuleDef module) {
 			// Try to use the latest changes the user has saved to disk.
 
 			// Try the file, if it still exists
