@@ -64,7 +64,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			new VisualBasicTypeFormatter(output, typeOptions, cultureInfo).Format(type, null);
 		}
 
-		public bool TrySimpleFormat(DmdType type, DbgDotNetRawValue rawValue) {
+		public bool TryFormat(DmdType type, DbgDotNetRawValue rawValue) {
 			if (!rawValue.HasRawValue)
 				return false;
 

@@ -204,7 +204,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				return true;
 			}
 
-			return new VisualBasicPrimitiveValueFormatter(output, options, cultureInfo).TrySimpleFormat(value.Type, rawValue);
+			return new VisualBasicPrimitiveValueFormatter(output, options, cultureInfo).TryFormat(value.Type, rawValue);
 		}
 	}
 }

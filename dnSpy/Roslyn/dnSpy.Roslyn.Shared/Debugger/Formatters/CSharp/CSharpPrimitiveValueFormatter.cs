@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			new CSharpTypeFormatter(output, typeOptions, cultureInfo).Format(type, null);
 		}
 
-		public bool TrySimpleFormat(DmdType type, DbgDotNetRawValue rawValue) {
+		public bool TryFormat(DmdType type, DbgDotNetRawValue rawValue) {
 			if (!rawValue.HasRawValue)
 				return false;
 
