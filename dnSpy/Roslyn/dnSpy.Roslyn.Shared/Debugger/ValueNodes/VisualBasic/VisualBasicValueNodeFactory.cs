@@ -28,8 +28,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
 		const Formatters.TypeFormatterOptions typeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
 
+		protected override bool SupportsModuleTypes => true;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
-
 		protected override bool IsIdentifierPartCharacter(char c) => SyntaxFacts.IsIdentifierPartCharacter(c);
 
 		void AddCastBegin(StringBuilder sb, DmdType castType) {

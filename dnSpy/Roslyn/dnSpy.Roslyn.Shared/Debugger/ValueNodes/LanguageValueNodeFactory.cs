@@ -43,6 +43,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract string GetExpression(string baseExpression, int index, DmdType castType, bool addParens);
 		public abstract string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens);
 		public abstract string EscapeIdentifier(string identifier);
+		protected abstract bool SupportsModuleTypes { get; }
 
 		internal DbgDotNetValueNode Create(DbgEvaluationContext context, DbgDotNetText name, DbgDotNetValueNodeProvider provider, DbgValueNodeEvaluationOptions options, string expression, string imageName, DbgDotNetText valueText) =>
 			new DbgDotNetValueNodeImpl(this, provider, name, default, expression, imageName, true, false, null, null, null, valueText);
@@ -91,7 +92,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var expression = ObjectCache.FreeAndToText(ref output).ToString();
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
-			const string imageName = PredefinedDbgValueNodeImageNames.ReturnValue;
+			var property = PropertyState.TryGetProperty(method);
+			var imageName = (object)property != null ? ImageNameUtils.GetImageName(property) : ImageNameUtils.GetImageName(method, SupportsModuleTypes);
 			return CreateValue(context, frame, name, value, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, cancellationToken);
 		}
 

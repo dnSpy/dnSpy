@@ -28,8 +28,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 	sealed class CSharpValueNodeFactory : LanguageValueNodeFactory {
 		const Formatters.TypeFormatterOptions typeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
 
+		protected override bool SupportsModuleTypes => false;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new CSharpValueNodeProviderFactory(this);
-
 		protected override bool IsIdentifierPartCharacter(char c) => UnicodeCharacterUtilities.IsIdentifierPartCharacter(c);
 
 		void AddCastBegin(StringBuilder sb, DmdType castType) {

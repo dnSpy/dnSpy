@@ -59,6 +59,104 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
+		public static string GetImageName(DmdType type, bool canBeModule) {
+			if (canBeModule && (object)type.DeclaringType == null && type.IsSealed && type.IsAbstract) {
+				switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
+				case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.ModuleInternal;
+				case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.ModulePublic;
+				case DmdTypeAttributes.NestedPublic:		return PredefinedDbgValueNodeImageNames.ModulePublic;
+				case DmdTypeAttributes.NestedPrivate:		return PredefinedDbgValueNodeImageNames.ModulePrivate;
+				case DmdTypeAttributes.NestedFamily:		return PredefinedDbgValueNodeImageNames.ModuleProtected;
+				case DmdTypeAttributes.NestedAssembly:		return PredefinedDbgValueNodeImageNames.ModuleInternal;
+				case DmdTypeAttributes.NestedFamANDAssem:	return PredefinedDbgValueNodeImageNames.ModuleInternal;
+				case DmdTypeAttributes.NestedFamORAssem:	return PredefinedDbgValueNodeImageNames.ModuleProtected;
+				default:									return PredefinedDbgValueNodeImageNames.Module;
+				}
+			}
+			if (type.IsInterface) {
+				switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
+				case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.InterfaceInternal;
+				case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.InterfacePublic;
+				case DmdTypeAttributes.NestedPublic:		return PredefinedDbgValueNodeImageNames.InterfacePublic;
+				case DmdTypeAttributes.NestedPrivate:		return PredefinedDbgValueNodeImageNames.InterfacePrivate;
+				case DmdTypeAttributes.NestedFamily:		return PredefinedDbgValueNodeImageNames.InterfaceProtected;
+				case DmdTypeAttributes.NestedAssembly:		return PredefinedDbgValueNodeImageNames.InterfaceInternal;
+				case DmdTypeAttributes.NestedFamANDAssem:	return PredefinedDbgValueNodeImageNames.InterfaceInternal;
+				case DmdTypeAttributes.NestedFamORAssem:	return PredefinedDbgValueNodeImageNames.InterfaceProtected;
+				default:									return PredefinedDbgValueNodeImageNames.Interface;
+				}
+			}
+			if (type.IsEnum) {
+				switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
+				case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.EnumerationInternal;
+				case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.EnumerationPublic;
+				case DmdTypeAttributes.NestedPublic:		return PredefinedDbgValueNodeImageNames.EnumerationPublic;
+				case DmdTypeAttributes.NestedPrivate:		return PredefinedDbgValueNodeImageNames.EnumerationPrivate;
+				case DmdTypeAttributes.NestedFamily:		return PredefinedDbgValueNodeImageNames.EnumerationProtected;
+				case DmdTypeAttributes.NestedAssembly:		return PredefinedDbgValueNodeImageNames.EnumerationInternal;
+				case DmdTypeAttributes.NestedFamANDAssem:	return PredefinedDbgValueNodeImageNames.EnumerationInternal;
+				case DmdTypeAttributes.NestedFamORAssem:	return PredefinedDbgValueNodeImageNames.EnumerationProtected;
+				default:									return PredefinedDbgValueNodeImageNames.Enumeration;
+				}
+			}
+			if (type.IsValueType) {
+				switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
+				case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.StructureInternal;
+				case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.StructurePublic;
+				case DmdTypeAttributes.NestedPublic:		return PredefinedDbgValueNodeImageNames.StructurePublic;
+				case DmdTypeAttributes.NestedPrivate:		return PredefinedDbgValueNodeImageNames.StructurePrivate;
+				case DmdTypeAttributes.NestedFamily:		return PredefinedDbgValueNodeImageNames.StructureProtected;
+				case DmdTypeAttributes.NestedAssembly:		return PredefinedDbgValueNodeImageNames.StructureInternal;
+				case DmdTypeAttributes.NestedFamANDAssem:	return PredefinedDbgValueNodeImageNames.StructureInternal;
+				case DmdTypeAttributes.NestedFamORAssem:	return PredefinedDbgValueNodeImageNames.StructureProtected;
+				default:									return PredefinedDbgValueNodeImageNames.Structure;
+				}
+			}
+			if (type.BaseType == type.AppDomain.System_MulticastDelegate) {
+				switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
+				case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.DelegateInternal;
+				case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.DelegatePublic;
+				case DmdTypeAttributes.NestedPublic:		return PredefinedDbgValueNodeImageNames.DelegatePublic;
+				case DmdTypeAttributes.NestedPrivate:		return PredefinedDbgValueNodeImageNames.DelegatePrivate;
+				case DmdTypeAttributes.NestedFamily:		return PredefinedDbgValueNodeImageNames.DelegateProtected;
+				case DmdTypeAttributes.NestedAssembly:		return PredefinedDbgValueNodeImageNames.DelegateInternal;
+				case DmdTypeAttributes.NestedFamANDAssem:	return PredefinedDbgValueNodeImageNames.DelegateInternal;
+				case DmdTypeAttributes.NestedFamORAssem:	return PredefinedDbgValueNodeImageNames.DelegateProtected;
+				default:									return PredefinedDbgValueNodeImageNames.Delegate;
+				}
+			}
+			switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
+			case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.ClassInternal;
+			case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.ClassPublic;
+			case DmdTypeAttributes.NestedPublic:		return PredefinedDbgValueNodeImageNames.ClassPublic;
+			case DmdTypeAttributes.NestedPrivate:		return PredefinedDbgValueNodeImageNames.ClassPrivate;
+			case DmdTypeAttributes.NestedFamily:		return PredefinedDbgValueNodeImageNames.ClassProtected;
+			case DmdTypeAttributes.NestedAssembly:		return PredefinedDbgValueNodeImageNames.ClassInternal;
+			case DmdTypeAttributes.NestedFamANDAssem:	return PredefinedDbgValueNodeImageNames.ClassInternal;
+			case DmdTypeAttributes.NestedFamORAssem:	return PredefinedDbgValueNodeImageNames.ClassProtected;
+			default:									return PredefinedDbgValueNodeImageNames.Class;
+			}
+		}
+
+		public static string GetImageName(DmdMethodBase method, bool canBeModule) {
+			if (method is DmdConstructorInfo)
+				return GetImageName(method.DeclaringType, canBeModule);
+			if (method.IsStatic) {
+				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
+					return PredefinedDbgValueNodeImageNames.ExtensionMethod;
+			}
+			switch (method.Attributes & DmdMethodAttributes.MemberAccessMask) {
+			case DmdMethodAttributes.PrivateScope:	return PredefinedDbgValueNodeImageNames.MethodCompilerControlled;
+			case DmdMethodAttributes.Private:		return PredefinedDbgValueNodeImageNames.MethodPrivate;
+			case DmdMethodAttributes.FamANDAssem:	return PredefinedDbgValueNodeImageNames.MethodFamilyAndAssembly;
+			case DmdMethodAttributes.Assembly:		return PredefinedDbgValueNodeImageNames.MethodAssembly;
+			case DmdMethodAttributes.Family:		return PredefinedDbgValueNodeImageNames.MethodFamily;
+			case DmdMethodAttributes.FamORAssem:	return PredefinedDbgValueNodeImageNames.MethodFamilyOrAssembly;
+			case DmdMethodAttributes.Public:		return PredefinedDbgValueNodeImageNames.MethodPublic;
+			default:								return PredefinedDbgValueNodeImageNames.Method;
+			}
+		}
+
 		public static string GetImageName(DmdPropertyInfo property) {
 			var method = property.GetGetMethod(DmdGetAccessorOptions.All) ?? property.GetSetMethod(DmdGetAccessorOptions.All);
 			if ((object)method == null)
