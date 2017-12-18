@@ -194,5 +194,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (bpsToRemove.Count > 0)
 				bpsToRemove[0].EngineBoundCodeBreakpoint.Remove(bpsToRemove.Select(a => a.EngineBoundCodeBreakpoint).ToArray());
 		}
+
+		internal DnNativeCodeBreakpoint CreateNativeBreakpointForGetReturnValue(CorCode code, uint offset, Action<CorThread> callback) {
+			debuggerThread.VerifyAccess();
+			return dnDebugger.CreateNativeBreakpoint(code, offset, ctx => { callback(ctx.E.CorThread); return false; });
+		}
+
+		internal void RemoveNativeBreakpointForGetReturnValue(DnNativeCodeBreakpoint breakpoint) {
+			debuggerThread.VerifyAccess();
+			dnDebugger.RemoveBreakpoint(breakpoint);
+		}
 	}
 }

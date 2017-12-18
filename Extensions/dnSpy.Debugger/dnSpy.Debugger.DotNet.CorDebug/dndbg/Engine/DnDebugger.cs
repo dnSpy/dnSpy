@@ -1038,7 +1038,7 @@ namespace dndbg.Engine {
 					if (!bp.IsBreakpoint(bpArgs.Breakpoint))
 						continue;
 
-					if (bp.IsEnabled && bp.Condition(new NativeCodeBreakpointConditionContext(this, bp)))
+					if (bp.IsEnabled && bp.Condition(new NativeCodeBreakpointConditionContext(this, bp, bpArgs)))
 						e.AddPauseState(new NativeCodeBreakpointPauseState(bp, bpArgs.CorAppDomain, bpArgs.CorThread));
 					break;
 				}

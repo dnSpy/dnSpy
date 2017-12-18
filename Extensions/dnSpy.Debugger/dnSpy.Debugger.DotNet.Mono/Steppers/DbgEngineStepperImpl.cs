@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				SaveStepper(null, tag, callRunCore: true);
 			else {
 				uint continueCounter = engine.ContinueCounter;
-				dbgDotNetCodeRangeService.GetCodeRanges(module, (uint)frame.Method.MetadataToken, (uint)offset.Value,
+				dbgDotNetCodeRangeService.GetCodeRanges(module, (uint)frame.Method.MetadataToken, (uint)offset.Value, GetCodeRangesOptions.None,
 					result => engine.MonoDebugThread(() => GotStepRanges(frame, tag, isStepInto, result, continueCounter)));
 			}
 		}

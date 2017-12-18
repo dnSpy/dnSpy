@@ -33,7 +33,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
-		internal DbgDotNetValue CreateDotNetValue_CorDebug(CorValue value, DmdAppDomain reflectionAppDomain, bool tryCreateStrongHandle) {
+		internal DbgDotNetValue CreateDotNetValue_CorDebug(CorValue value, DmdAppDomain reflectionAppDomain, bool tryCreateStrongHandle, bool closeOnContinue = true) {
 			debuggerThread.VerifyAccess();
 			if (value == null)
 				return new SyntheticValue(reflectionAppDomain.System_Void, new DbgDotNetRawValue(DbgSimpleValueType.Void));
@@ -50,8 +50,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 
 				var dnValue = new DbgDotNetValueImpl(this, new DbgCorValueHolder(this, value, type));
-				lock (lockObj)
-					dotNetValuesToCloseOnContinue.Add(dnValue);
+				if (closeOnContinue) {
+					lock (lockObj)
+						dotNetValuesToCloseOnContinue.Add(dnValue);
+				}
 				return dnValue;
 			}
 			catch {
@@ -714,5 +716,63 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			}
 		}
+
+		internal DbgDotNetReturnValueInfo[] GetCurrentReturnValues() {
+			debuggerThread.VerifyAccess();
+			var currentReturnValues = this.currentReturnValues;
+			if (currentReturnValues.Length == 0)
+				return Array.Empty<DbgDotNetReturnValueInfo>();
+			var res = new DbgDotNetReturnValueInfo[currentReturnValues.Length];
+			try {
+				for (int i = 0; i < res.Length; i++) {
+					var info = currentReturnValues[i];
+					var dnValue = ((DbgDotNetValueImpl)info.Value).CorValueHolder.AddRef();
+					try {
+						res[i] = new DbgDotNetReturnValueInfo(info.Id, info.Method, CreateDotNetValue_CorDebug(dnValue));
+					}
+					catch {
+						dnValue.Release();
+						throw;
+					}
+				}
+				return res;
+			}
+			catch {
+				foreach (var info in res)
+					info.Value?.Dispose();
+				throw;
+			}
+		}
+
+		internal DbgDotNetValue GetCurrentReturnValue(uint id) {
+			debuggerThread.VerifyAccess();
+			var currentReturnValues = this.currentReturnValues;
+			if (id == DbgDotNetRuntimeConstants.LastReturnValueId)
+				id = (uint)currentReturnValues.Length;
+			int index = (int)id - 1;
+			if ((uint)index >= (uint)currentReturnValues.Length)
+				return null;
+			var info = currentReturnValues[index];
+			var dnValue = ((DbgDotNetValueImpl)info.Value).CorValueHolder.AddRef();
+			try {
+				return CreateDotNetValue_CorDebug(dnValue);
+			}
+			catch {
+				dnValue.Release();
+				throw;
+			}
+		}
+
+		internal void SetReturnValues(DbgDotNetReturnValueInfo[] returnValues) {
+			debuggerThread.VerifyAccess();
+			for (int i = 0; i < returnValues.Length; i++) {
+				if (returnValues[i].Id != (uint)i + 1)
+					throw new ArgumentException();
+			}
+			foreach (var info in currentReturnValues)
+				info.Value.Dispose();
+			currentReturnValues = returnValues;
+		}
+		DbgDotNetReturnValueInfo[] currentReturnValues;
 	}
 }

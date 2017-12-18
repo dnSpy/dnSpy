@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the method
 		/// </summary>
-		public DmdMethodInfo Method { get; }
+		public DmdMethodBase Method { get; }
 
 		/// <summary>
 		/// Gets the value returned by <see cref="Method"/>
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="id">Return value id</param>
 		/// <param name="method">Method</param>
 		/// <param name="value">Value returned by <paramref name="method"/></param>
-		public DbgDotNetReturnValueInfo(uint id, DmdMethodInfo method, DbgDotNetValue value) {
+		public DbgDotNetReturnValueInfo(uint id, DmdMethodBase method, DbgDotNetValue value) {
 			Id = id;
 			Method = method ?? throw new ArgumentNullException(nameof(method));
 			Value = value ?? throw new ArgumentNullException(nameof(value));

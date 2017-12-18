@@ -110,6 +110,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.CallDispatcherRun();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			valuesToCloseNow = new List<DbgCorValueHolder>();
+			currentReturnValues = Array.Empty<DbgDotNetReturnValueInfo>();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			toDynamicModuleHelper = new Dictionary<CorModule, DmdDynamicModuleHelperImpl>();
 			DmdDispatcher = new DmdDispatcherImpl(this);
@@ -860,8 +861,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			ClrDacRunning?.Invoke(this, EventArgs.Empty);
 			// We could be func evaluating and get a CreateThread event. The DbgManager will call Run()
 			// but we mustn't dispose of the handles that we're still using.
-			if (!dnDebugger.IsEvaluating)
+			if (!dnDebugger.IsEvaluating) {
+				SetReturnValues(Array.Empty<DbgDotNetReturnValueInfo>());
 				CloseDotNetValues_CorDebug();
+			}
 			dnDebugger.Continue();
 		}
 

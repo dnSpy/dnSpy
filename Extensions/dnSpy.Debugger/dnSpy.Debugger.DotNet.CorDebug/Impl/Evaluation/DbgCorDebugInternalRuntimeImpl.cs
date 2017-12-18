@@ -839,7 +839,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		DbgDotNetReturnValueInfo[] GetReturnValuesCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
-			return Array.Empty<DbgDotNetReturnValueInfo>();//TODO:
+			return engine.GetCurrentReturnValues();
 		}
 
 		public DbgDotNetValue GetException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
@@ -907,7 +907,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		DbgDotNetValue GetReturnValueCore(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken) {
 			Dispatcher.VerifyAccess();
 			cancellationToken.ThrowIfCancellationRequested();
-			return null;//TODO: If id==DbgDotNetRuntimeConstants.LastReturnValueId, return the last return value
+			return engine.GetCurrentReturnValue(id);
 		}
 
 		DbgDotNetValueResult CreateValue(CorValue value, ILDbgEngineStackFrame ilFrame) {
