@@ -53,6 +53,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
             <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
@@ -82,9 +83,10 @@
             <CheckBox Grid.Row="16" Margin="0 5 0 0" IsChecked="{Binding Settings.GroupParametersAndLocalsTogether}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_GroupParametersAndLocalsTogether}" />
             <CheckBox Grid.Row="17" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowCompilerGeneratedVariables}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_ShowCompilerGeneratedVariables}" />
             <CheckBox Grid.Row="18" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowDecompilerGeneratedVariables}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_ShowDecompilerGeneratedVariables}" />
-            <CheckBox Grid.Row="19" Margin="0 5 0 0" IsChecked="{Binding Settings.HighlightChangedVariables}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_HighlightChangedVariables}" />
-            <CheckBox Grid.Row="20" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlight}" />
-            <GroupBox Grid.Row="21" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_Language}">
+            <CheckBox Grid.Row="19" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowReturnValues}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_ShowReturnValues}" />
+            <CheckBox Grid.Row="20" Margin="0 5 0 0" IsChecked="{Binding Settings.HighlightChangedVariables}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_HighlightChangedVariables}" />
+            <CheckBox Grid.Row="21" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlight}" />
+            <GroupBox Grid.Row="22" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_Language}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

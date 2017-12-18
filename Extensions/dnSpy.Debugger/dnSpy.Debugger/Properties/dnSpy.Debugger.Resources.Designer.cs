@@ -1285,6 +1285,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show return values.
+        /// </summary>
+        public static string DbgSettings_ShowReturnValues {
+            get {
+                return ResourceManager.GetString("DbgSettings_ShowReturnValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sort locals.
         /// </summary>
         public static string DbgSettings_SortLocals {

@@ -486,6 +486,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool focusActiveProcess = true;
 
+		public override bool ShowReturnValues {
+			get {
+				lock (lockObj)
+					return showReturnValues;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showReturnValues != value;
+					showReturnValues = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowReturnValues));
+					OnModified();
+				}
+			}
+		}
+		bool showReturnValues = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -513,6 +532,7 @@ namespace dnSpy.Debugger.Settings {
 			other.SuppressJITOptimization_SystemModules = SuppressJITOptimization_SystemModules;
 			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
 			other.FocusActiveProcess = FocusActiveProcess;
+			other.ShowReturnValues = ShowReturnValues;
 			return other;
 		}
 	}
@@ -554,6 +574,7 @@ namespace dnSpy.Debugger.Settings {
 			SuppressJITOptimization_SystemModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_SystemModules)) ?? SuppressJITOptimization_SystemModules;
 			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
 			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
+			ShowReturnValues = sect.Attribute<bool?>(nameof(ShowReturnValues)) ?? ShowReturnValues;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -586,6 +607,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(SuppressJITOptimization_SystemModules), SuppressJITOptimization_SystemModules);
 			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
 			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);
+			sect.Attribute(nameof(ShowReturnValues), ShowReturnValues);
 		}
 	}
 }

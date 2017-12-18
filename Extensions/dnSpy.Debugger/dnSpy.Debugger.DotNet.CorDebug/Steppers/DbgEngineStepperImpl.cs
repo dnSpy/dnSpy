@@ -37,8 +37,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 		readonly DbgEngineImpl engine;
 		readonly DbgThread thread;
 		readonly DnThread dnThread;
+		readonly DebuggerSettings debuggerSettings;
 
-		const bool getReturnValues = true;
 		const int maxReturnValues = 100;
 
 		StepDataImpl StepData {
@@ -170,11 +170,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			public void Dispose() => ReturnValueState?.Dispose();
 		}
 
-		public DbgEngineStepperImpl(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DbgEngineImpl engine, DbgThread thread, DnThread dnThread) {
+		public DbgEngineStepperImpl(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DbgEngineImpl engine, DbgThread thread, DnThread dnThread, DebuggerSettings debuggerSettings) {
 			this.dbgDotNetCodeRangeService = dbgDotNetCodeRangeService ?? throw new ArgumentNullException(nameof(dbgDotNetCodeRangeService));
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			this.dnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
+			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
 		}
 
 		void RaiseStepComplete(DbgThread thread, object tag, string error) {
@@ -252,7 +253,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			else {
 				uint continueCounter = dnThread.Debugger.ContinueCounter;
 				// Return values are available since .NET Framework 4.5.1 / .NET Core 1.0
-				var options = isStepInto || !getReturnValues || frame.Code?.SupportsReturnValues != true ?
+				var options = isStepInto || !debuggerSettings.ShowReturnValues || frame.Code?.SupportsReturnValues != true ?
 					GetCodeRangesOptions.None : GetCodeRangesOptions.Instructions;
 				dbgDotNetCodeRangeService.GetCodeRanges(module, frame.Token, offset.Value, options,
 					result => engine.CorDebugThread(() => GotStepRanges(frame, offset.Value, tag, isStepInto, result, continueCounter)));

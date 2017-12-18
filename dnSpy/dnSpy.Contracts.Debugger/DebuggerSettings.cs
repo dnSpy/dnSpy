@@ -161,5 +161,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Give focus to the active process
 		/// </summary>
 		public abstract bool FocusActiveProcess { get; set; }
+
+		/// <summary>
+		/// Show return values in Locals window
+		/// </summary>
+		public abstract bool ShowReturnValues { get; set; }
 	}
 }

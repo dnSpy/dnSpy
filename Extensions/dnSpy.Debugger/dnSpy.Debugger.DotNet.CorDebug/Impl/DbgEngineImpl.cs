@@ -910,7 +910,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
 			var data = thread.GetData<DbgThreadData>();
-			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.DnThread);
+			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.DnThread, debuggerSettings);
 		}
 	}
 }
