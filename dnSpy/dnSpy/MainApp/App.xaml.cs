@@ -100,8 +100,6 @@ namespace dnSpy.MainApp {
 			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
 			args = new AppCommandLineArgs();
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
-			if (args.SingleInstance)
-				SwitchToOtherInstance();
 
 			AddAppContextFixes();
 			InstallExceptionHandlers();
@@ -503,6 +501,9 @@ namespace dnSpy.MainApp {
 			base.OnStartup(e);
 
 			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
+
+			if (args.SingleInstance && !exportProvider.GetExportedValue<IAppSettings>().AllowMoreThanOneInstance)
+				SwitchToOtherInstance();
 
 			var cultureService = exportProvider.GetExportedValue<CultureService>();
 			cultureService.Initialize(args);

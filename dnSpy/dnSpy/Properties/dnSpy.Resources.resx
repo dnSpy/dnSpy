@@ -1920,4 +1920,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="User_Administrator" xml:space="preserve">
     <value>Administrator</value>
   </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>Allow more than one instance (restart required)</value>
+  </data>
 </root>

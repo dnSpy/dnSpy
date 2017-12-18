@@ -160,6 +160,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow more than one instance (restart required).
+        /// </summary>
+        public static string AllowMoreThanOneInstance {
+            get {
+                return ResourceManager.GetString("AllowMoreThanOneInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred:
         ///
         ///{0}.
