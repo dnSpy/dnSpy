@@ -78,6 +78,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string EnumerationItemFamilyAndAssembly = nameof(EnumerationItemFamilyAndAssembly);
 		public const string EnumerationItemFamilyOrAssembly = nameof(EnumerationItemFamilyOrAssembly);
 		public const string EnumerationItemCompilerControlled = nameof(EnumerationItemCompilerControlled);
+		public const string Module = nameof(Module);
+		public const string ModuleInternal = nameof(ModuleInternal);
+		public const string ModulePrivate = nameof(ModulePrivate);
+		public const string ModuleProtected = nameof(ModuleProtected);
+		public const string ModulePublic = nameof(ModulePublic);
+		public const string Delegate = nameof(Delegate);
+		public const string DelegateInternal = nameof(DelegateInternal);
+		public const string DelegatePrivate = nameof(DelegatePrivate);
+		public const string DelegateProtected = nameof(DelegateProtected);
+		public const string DelegatePublic = nameof(DelegatePublic);
 		public const string Constant = nameof(Constant);
 		public const string ConstantPrivate = nameof(ConstantPrivate);
 		public const string ConstantPublic = nameof(ConstantPublic);
@@ -94,6 +104,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string FieldFamilyAndAssembly = nameof(FieldFamilyAndAssembly);
 		public const string FieldFamilyOrAssembly = nameof(FieldFamilyOrAssembly);
 		public const string FieldCompilerControlled = nameof(FieldCompilerControlled);
+		public const string ExtensionMethod = nameof(ExtensionMethod);
 		public const string Method = nameof(Method);
 		public const string MethodPrivate = nameof(MethodPrivate);
 		public const string MethodPublic = nameof(MethodPublic);

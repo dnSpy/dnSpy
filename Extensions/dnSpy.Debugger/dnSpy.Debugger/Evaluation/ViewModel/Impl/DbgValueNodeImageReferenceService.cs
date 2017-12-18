@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		[ImportingConstructor]
 		DbgValueNodeImageReferenceServiceImpl() {
-			const int TOTAL_COUNT = 95;
+			const int TOTAL_COUNT = 106;
 			toImageReference = new Dictionary<string, ImageReference>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedDbgValueNodeImageNames.Edit, DsImages.Edit },
 				{ PredefinedDbgValueNodeImageNames.Information, DsImages.StatusInformation },
@@ -92,6 +92,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				{ PredefinedDbgValueNodeImageNames.EnumerationItemFamilyAndAssembly, DsImages.EnumerationItemInternal },
 				{ PredefinedDbgValueNodeImageNames.EnumerationItemFamilyOrAssembly, DsImages.EnumerationItemShortcut },
 				{ PredefinedDbgValueNodeImageNames.EnumerationItemCompilerControlled, DsImages.EnumerationItemSealed },
+				{ PredefinedDbgValueNodeImageNames.Module, DsImages.ModulePublic },
+				{ PredefinedDbgValueNodeImageNames.ModuleInternal, DsImages.ModuleInternal },
+				{ PredefinedDbgValueNodeImageNames.ModulePrivate, DsImages.ModulePrivate },
+				{ PredefinedDbgValueNodeImageNames.ModuleProtected, DsImages.ModuleProtected },
+				{ PredefinedDbgValueNodeImageNames.ModulePublic, DsImages.ModulePublic },
+				{ PredefinedDbgValueNodeImageNames.Delegate, DsImages.DelegatePublic },
+				{ PredefinedDbgValueNodeImageNames.DelegateInternal, DsImages.DelegateInternal },
+				{ PredefinedDbgValueNodeImageNames.DelegatePrivate, DsImages.DelegatePrivate },
+				{ PredefinedDbgValueNodeImageNames.DelegateProtected, DsImages.DelegateProtected },
+				{ PredefinedDbgValueNodeImageNames.DelegatePublic, DsImages.DelegatePublic },
 				{ PredefinedDbgValueNodeImageNames.Constant, DsImages.ConstantPublic },
 				{ PredefinedDbgValueNodeImageNames.ConstantPrivate, DsImages.ConstantPrivate },
 				{ PredefinedDbgValueNodeImageNames.ConstantPublic, DsImages.ConstantPublic },
@@ -108,6 +118,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				{ PredefinedDbgValueNodeImageNames.FieldFamilyAndAssembly, DsImages.FieldInternal },
 				{ PredefinedDbgValueNodeImageNames.FieldFamilyOrAssembly, DsImages.FieldShortcut },
 				{ PredefinedDbgValueNodeImageNames.FieldCompilerControlled, DsImages.FieldSealed },
+				{ PredefinedDbgValueNodeImageNames.ExtensionMethod, DsImages.ExtensionMethod },
 				{ PredefinedDbgValueNodeImageNames.Method, DsImages.MethodPublic },
 				{ PredefinedDbgValueNodeImageNames.MethodPrivate, DsImages.MethodPrivate },
 				{ PredefinedDbgValueNodeImageNames.MethodPublic, DsImages.MethodPublic },
