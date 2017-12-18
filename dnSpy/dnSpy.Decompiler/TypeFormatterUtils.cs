@@ -135,8 +135,11 @@ namespace dnSpy.Decompiler {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			if (variable.Variable != null)
-				return $"#{variable.Variable.Index}";
+			if (variable.Variable != null) {
+				if (variable.IsLocal)
+					return "V_" + variable.Variable.Index.ToString();
+				return "A_" + variable.Variable.Index.ToString();
+			}
 			Debug.Fail("Decompiler generated variable without a name");
 			return "???";
 		}
