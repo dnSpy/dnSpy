@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	sealed class EnumerableDebugViewHelper {
+	static class EnumerableDebugViewHelper {
 		/// <summary>
 		/// Returns an enumerable debug view. These types are located in System.Core / System.Linq. If <paramref name="enumerableType"/>
 		/// is <see cref="System.Collections.IEnumerable"/>, then <c>System.Linq.SystemCore_EnumerableDebugView</c>'s constructor

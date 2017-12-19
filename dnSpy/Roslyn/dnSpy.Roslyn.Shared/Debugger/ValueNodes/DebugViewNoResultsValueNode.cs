@@ -28,10 +28,9 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
-using dnSpy.Roslyn.Shared.Properties;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	sealed class ResultsViewNoResultsValueNode : DbgDotNetValueNode {
+	sealed class DebugViewNoResultsValueNode : DbgDotNetValueNode {
 		public override DmdType ExpectedType => null;
 		public override DmdType ActualType => null;
 		public override string ErrorMessage => null;
@@ -43,10 +42,39 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => false;
 
-		static readonly DbgDotNetText noResultsName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_ResultsView_NoResults));
-		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_Empty_PropertyName));
+		const string EmptyPropertyName = "Empty";
+		readonly DbgDotNetText noResultsName;
+		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, EmptyPropertyName));
 
-		public ResultsViewNoResultsValueNode(string expression) => Expression = expression;
+		DebugViewNoResultsValueNode(string expression, string emptyMessage) {
+			Expression = expression;
+			noResultsName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, emptyMessage));
+		}
+
+		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgDotNetValueResult valueResult, CancellationToken cancellationToken) {
+			DbgDotNetValueResult getterResult = default;
+			try {
+				if (!valueResult.ValueIsException)
+					return null;
+				var appDomain = valueResult.Value.Type.AppDomain;
+				var emptyProperty = valueResult.Value.Type.GetProperty(EmptyPropertyName, DmdSignatureCallingConvention.HasThis | DmdSignatureCallingConvention.Property, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false);
+				var emptyGetter = emptyProperty?.GetGetMethod(DmdGetAccessorOptions.All);
+				if ((object)emptyGetter == null)
+					return null;
+
+				var runtime = context.Runtime.GetDotNetRuntime();
+				getterResult = runtime.Call(context, frame, valueResult.Value, emptyGetter, Array.Empty<object>(), DbgDotNetInvokeOptions.None, cancellationToken);
+				if (!getterResult.IsNormalResult)
+					return null;
+				var rawValue = getterResult.Value.GetRawValue();
+				if (!rawValue.HasRawValue || rawValue.ValueType != DbgSimpleValueType.StringUtf16 || !(rawValue.RawValue is string emptyMessage))
+					return null;
+				return new DebugViewNoResultsValueNode(expression, emptyMessage);
+			}
+			finally {
+				getterResult.Value?.Dispose();
+			}
+		}
 
 		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			noResultsName.WriteTo(output);

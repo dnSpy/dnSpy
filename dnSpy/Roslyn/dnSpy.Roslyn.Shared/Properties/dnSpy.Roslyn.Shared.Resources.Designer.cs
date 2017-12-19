@@ -106,11 +106,11 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Empty.
+        ///   Looks up a localized string similar to Dynamic View.
         /// </summary>
-        public static string DebuggerVarsWindow_Empty_PropertyName {
+        public static string DebuggerVarsWindow_DynamicView {
             get {
-                return ResourceManager.GetString("DebuggerVarsWindow_Empty_PropertyName", resourceCulture);
+                return ResourceManager.GetString("DebuggerVarsWindow_DynamicView", resourceCulture);
             }
         }
         
@@ -120,6 +120,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         public static string DebuggerVarsWindow_Error_PropertyName {
             get {
                 return ResourceManager.GetString("DebuggerVarsWindow_Error_PropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expanding the Dynamic View will get the dynamic members for the object.
+        /// </summary>
+        public static string DebuggerVarsWindow_ExpandDynamicViewMessage {
+            get {
+                return ResourceManager.GetString("DebuggerVarsWindow_ExpandDynamicViewMessage", resourceCulture);
             }
         }
         
@@ -160,15 +169,6 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enumeration yielded no results.
-        /// </summary>
-        public static string DebuggerVarsWindow_ResultsView_NoResults {
-            get {
-                return ResourceManager.GetString("DebuggerVarsWindow_ResultsView_NoResults", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Shared members.
         /// </summary>
         public static string DebuggerVarsWindow_VisualBasic_SharedMembers {
@@ -183,6 +183,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         public static string DelegatesToolTip {
             get {
                 return ResourceManager.GetString("DelegatesToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dynamic View requires {0} to be referenced.
+        /// </summary>
+        public static string DynamicViewAssemblyNotLoaded {
+            get {
+                return ResourceManager.GetString("DynamicViewAssemblyNotLoaded", resourceCulture);
             }
         }
         

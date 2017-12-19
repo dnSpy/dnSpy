@@ -18,6 +18,7 @@
 */
 
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -48,7 +49,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if ((object)systemAssemblyType == null)
 				return false;
 
-			var loadMethod = systemAssemblyType.GetMethod("Load", DmdSignatureCallingConvention.Default, 0, systemAssemblyType, new[] { appDomain.System_String }, throwOnError: false);
+			var loadMethod = systemAssemblyType.GetMethod(nameof(Assembly.Load), DmdSignatureCallingConvention.Default, 0, systemAssemblyType, new[] { appDomain.System_String }, throwOnError: false);
 			if ((object)loadMethod == null)
 				return false;
 

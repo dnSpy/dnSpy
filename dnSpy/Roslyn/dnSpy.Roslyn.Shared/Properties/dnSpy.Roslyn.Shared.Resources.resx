@@ -132,11 +132,14 @@
   <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
     <value>Static members</value>
   </data>
-  <data name="DebuggerVarsWindow_Empty_PropertyName" xml:space="preserve">
-    <value>Empty</value>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>Dynamic View</value>
   </data>
   <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>Expanding the Dynamic View will get the dynamic members for the object</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
     <value>Expanding the Results View will enumerate the IEnumerable</value>
@@ -150,14 +153,14 @@
   <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
     <value>Results View</value>
   </data>
-  <data name="DebuggerVarsWindow_ResultsView_NoResults" xml:space="preserve">
-    <value>Enumeration yielded no results</value>
-  </data>
   <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
     <value>Shared members</value>
   </data>
   <data name="DelegatesToolTip" xml:space="preserve">
     <value>Delegates</value>
+  </data>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>Dynamic View requires {0} to be referenced</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>Enums</value>

@@ -38,6 +38,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			None = 0,
 			IsNullable = 1,
 			IsTupleType = 2,
+			IsDynamicViewType = 4,
 		}
 
 		sealed class TypeState {
@@ -54,6 +55,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			public bool IsNullable => (Flags & TypeStateFlags.IsNullable) != 0;
 			public bool IsTupleType => (Flags & TypeStateFlags.IsTupleType) != 0;
+			public bool IsDynamicViewType => (Flags & TypeStateFlags.IsDynamicViewType) != 0;
 
 			public DbgValueNodeEvaluationOptions CachedEvalOptions;
 			public MemberValueNodeInfoCollection CachedInstanceMembers;
@@ -129,7 +131,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					res |= TypeStateFlags.IsNullable;
 				if (tupleFields.Length != 0)
 					res |= TypeStateFlags.IsTupleType;
+				if (CheckIsDynamicViewType(type))
+					res |= TypeStateFlags.IsDynamicViewType;
 				return res;
+			}
+
+			static bool CheckIsDynamicViewType(DmdType type) {
+				// Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView supports COM objects
+				if (type.CanCastTo(type.AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject)))
+					return true;
+
+				// Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView supports IDynamicMetaObjectProvider.
+				// This type is defined in Microsoft.CSharp which isn't always loaded. That's the reason we don't
+				// use a DmdWellKnownType, since when searching for one, the code will check every loaded assembly
+				// until the type is found, forcing all lazy-loaded metadata to be loaded. Most of the time it would
+				// fail, and thus load all metadata. It's a problem when debugging programs with 100+ loaded assemblies.
+				foreach (var iface in type.GetInterfaces()) {
+					if ((object)iface.DeclaringType == null && iface.MetadataNamespace == "System.Dynamic" && iface.MetadataName == "IDynamicMetaObjectProvider")
+						return true;
+				}
+
+				return false;
 			}
 		}
 
@@ -522,11 +544,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (staticMembersInfos.Members.Length != 0)
 				providers.Add(new StaticMembersValueNodeProvider(this, valueNodeFactory, StaticMembersName, state.TypeExpression, staticMembersInfos, membersEvalOptions));
 
-			//TODO: dynamic types
 			//TODO: non-void and non-null pointers (derefence and show members)
 
 			if ((object)state.EnumerableType != null && !value.IsNull)
 				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.TypeExpression, expression, evalOptions));
+			if (state.IsDynamicViewType && !value.IsNull)
+				providers.Add(new DynamicViewMembersValueNodeProvider(this, valueNodeFactory, value, expression, state.Type.AppDomain, evalOptions));
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 

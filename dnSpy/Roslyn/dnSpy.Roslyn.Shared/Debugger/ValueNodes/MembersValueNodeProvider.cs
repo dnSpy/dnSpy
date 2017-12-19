@@ -199,7 +199,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				DbgDotNetValueNode newNode;
 				bool canHide = true;
-				var customInfo = TryCreateInstanceValueNode(valueResult);
+				var customInfo = TryCreateInstanceValueNode(context, frame, valueResult, cancellationToken);
 				if (customInfo.node != null)
 					(newNode, canHide) = customInfo;
 				else if (valueResult.HasError) {
@@ -238,7 +238,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgDotNetValueResult valueResult) => (null, false);
+		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValueResult valueResult, CancellationToken cancellationToken) => (null, false);
 
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {

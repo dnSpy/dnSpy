@@ -126,13 +126,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
 			CreateValueNode(context, frame, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, cancellationToken);
 
-		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgDotNetValueResult valueResult) {
-			if (!valueResult.ValueIsException)
-				return (null, false);
-			if (valueResult.Value.Type != valueResult.Value.Type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugViewEmptyException, isOptional: true))
-				return (null, false);
-			valueResult.Value?.Dispose();
-			return (new ResultsViewNoResultsValueNode(Expression), false);
+		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValueResult valueResult, CancellationToken cancellationToken) {
+			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(context, frame, Expression, valueResult, cancellationToken);
+			if (noResultsNode != null) {
+				valueResult.Value?.Dispose();
+				return (noResultsNode, false);
+			}
+			return (null, false);
 		}
 
 		protected override void DisposeCore() => getResultsViewValue?.Dispose();

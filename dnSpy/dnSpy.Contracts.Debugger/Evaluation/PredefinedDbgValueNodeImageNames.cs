@@ -46,6 +46,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string StaticMembers = nameof(StaticMembers);
 		public const string RawView = nameof(RawView);
 		public const string ResultsView = nameof(ResultsView);
+		public const string DynamicView = nameof(DynamicView);
 		public const string ExceptionInternal = nameof(ExceptionInternal);
 		public const string ExceptionPrivate = nameof(ExceptionPrivate);
 		public const string ExceptionProtected = nameof(ExceptionProtected);

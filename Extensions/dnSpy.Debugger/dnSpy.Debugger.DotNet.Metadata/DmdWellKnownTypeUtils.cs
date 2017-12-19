@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the number of well known types
 		/// </summary>
-		public static int WellKnownTypesCount => 287;
+		public static int WellKnownTypesCount => 286;
 
 		static DmdWellKnownTypeUtils() {
 			toWellKnownType = new Dictionary<DmdTypeName, DmdWellKnownType>(WellKnownTypesCount, DmdTypeNameEqualityComparer.Instance);
@@ -342,7 +342,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Add(new DmdTypeName("System.Collections.Generic", "KeyValuePair`2"), DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2);
 			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugView"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView);
 			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugView`1"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView_T);
-			Add(new DmdTypeName("System.Linq", "SystemCore_EnumerableDebugViewEmptyException"), DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugViewEmptyException);
 			Add(new DmdTypeName("System.Text", "Encoding"), DmdWellKnownType.System_Text_Encoding);
 			Add(new DmdTypeName("System.Runtime.CompilerServices", "IsReadOnlyAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_IsReadOnlyAttribute);
 			Add(new DmdTypeName("System.Runtime.CompilerServices", "IsByRefLikeAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_IsByRefLikeAttribute);

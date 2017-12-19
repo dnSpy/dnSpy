@@ -89,6 +89,7 @@
     <Compile Include="Debugger\StateWithKey.cs" />
     <Compile Include="Debugger\ValueNodes\AggregateValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\ArrayValueNodeProvider.cs" />
+    <Compile Include="Debugger\ValueNodes\CSharpDynamicPropertyHelper.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeFactory.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\CSharpValueNodeProviderFactory.cs" />
     <Compile Include="Debugger\ValueNodes\CSharp\UnicodeCharacterUtilities.cs" />
@@ -98,6 +99,9 @@
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\DbgDotNetValueNodeProviderFactory.cs" />
     <Compile Include="Debugger\ValueNodes\DebuggerTypeProxyFinder.cs" />
+    <Compile Include="Debugger\ValueNodes\DebugViewNoResultsValueNode.cs" />
+    <Compile Include="Debugger\ValueNodes\DynamicMetaObjectProviderDebugViewHelper.cs" />
+    <Compile Include="Debugger\ValueNodes\DynamicViewMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\EnumerableDebugViewHelper.cs" />
     <Compile Include="Debugger\ValueNodes\ImageNameUtils.cs" />
     <Compile Include="Debugger\ValueNodes\InstanceMembersValueNodeProvider.cs" />
@@ -107,7 +111,6 @@
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
     <Compile Include="Debugger\ValueNodes\ReflectionAssemblyLoader.cs" />
     <Compile Include="Debugger\ValueNodes\ResultsViewMembersValueNodeProvider.cs" />
-    <Compile Include="Debugger\ValueNodes\ResultsViewNoResultsValueNode.cs" />
     <Compile Include="Debugger\ValueNodes\RoslynHelpers.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\SyntheticNullValue.cs" />

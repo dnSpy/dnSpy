@@ -27,6 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
@@ -92,12 +93,24 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					}
 
 					var name = output.CreateAndReset();
-					const bool isReadOnly = false;
 					DbgDotNetValueNode newNode;
 					if (newValue == null)
 						newNode = valueNodeFactory.CreateError(context, frame, name, PredefinedEvaluationErrorMessages.InternalDebuggerError, expression, false, cancellationToken);
-					else
-						newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, false, cancellationToken);
+					else {
+						newNode = null;
+						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Type)) {
+							var info = CSharpDynamicPropertyHelper.GetRealValue(context, frame, newValue, cancellationToken);
+							if (info.name != null) {
+								newValue.Dispose();
+								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, info.name));
+								newNode = valueNodeFactory.Create(context, frame, name, info.value, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, true, false, info.value.Type, false, cancellationToken);
+							}
+						}
+						if (newNode == null) {
+							const bool isReadOnly = false;
+							newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, false, cancellationToken);
+						}
+					}
 					newValue = null;
 					res[i] = newNode;
 				}
