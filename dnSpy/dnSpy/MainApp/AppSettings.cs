@@ -73,7 +73,7 @@ namespace dnSpy.MainApp {
 				}
 			}
 		}
-		bool allowMoreThanOneInstance = false;
+		bool allowMoreThanOneInstance = true;
 	}
 
 	[Export, Export(typeof(IAppSettings))]
