@@ -210,8 +210,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
 			Debug.Assert((object)ddaType != null);
 
+			// We have special support for formatting KeyValuePair<K, V>, so ignore all DebuggerDisplayAttributes.
+			// (Only Unity and older Mono versions have a DebuggerDisplayAttribute on it)
+			bool forceNoAttr = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2);
 			string nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
-			if ((object)ddaType != null) {
+			if (!forceNoAttr && (object)ddaType != null) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);
 				if (attr == null) {
 					if (type.CanCastTo(type.AppDomain.System_Type)) {
