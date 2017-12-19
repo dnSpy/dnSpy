@@ -102,7 +102,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 							var info = CSharpDynamicPropertyHelper.GetRealValue(context, frame, newValue, cancellationToken);
 							if (info.name != null) {
 								newValue.Dispose();
-								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, info.name));
+								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.DebugViewPropertyName, info.name));
 								newNode = valueNodeFactory.Create(context, frame, name, info.value, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, true, false, info.value.Type, false, cancellationToken);
 							}
 						}

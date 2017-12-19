@@ -1526,5 +1526,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.DebuggerNoStringQuotesEval"/>
 		/// </summary>
 		public const string DebuggerNoStringQuotesEval = "Theme-" + nameof(DebuggerNoStringQuotesEval);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugViewPropertyName"/>
+		/// </summary>
+		public const string DebugViewPropertyName = "Theme-" + nameof(DebugViewPropertyName);
 	}
 }

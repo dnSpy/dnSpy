@@ -331,6 +331,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugObjectIdName),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerDisplayAttributeEval),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerNoStringQuotesEval),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugViewPropertyName),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

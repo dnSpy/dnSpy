@@ -1550,6 +1550,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.DebuggerNoStringQuotesEval)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition DebuggerNoStringQuotesEvalClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugViewPropertyName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugViewPropertyNameClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -4245,6 +4250,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class DebuggerNoStringQuotesEval : ThemeClassificationFormatDefinition {
 			DebuggerNoStringQuotesEval() : base(TextColor.DebuggerNoStringQuotesEval) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugViewPropertyName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugViewPropertyName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugViewPropertyName : ThemeClassificationFormatDefinition {
+			DebugViewPropertyName() : base(TextColor.DebugViewPropertyName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

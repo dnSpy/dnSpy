@@ -324,6 +324,7 @@ namespace dnSpy.Contracts.Themes {
 		DebugObjectIdName,
 		DebuggerDisplayAttributeEval,
 		DebuggerNoStringQuotesEval,
+		DebugViewPropertyName,
 
 		// Must be last in this group
 		LastNR,
