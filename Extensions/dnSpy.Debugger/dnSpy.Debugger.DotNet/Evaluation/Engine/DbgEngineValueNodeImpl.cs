@@ -115,12 +115,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
-			if (options.NameOutput != null)
-				dnValueNode.Name.WriteTo(options.NameOutput);
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
+			if (options.NameOutput != null) {
+				if (dnValueNode.FormatName(context, frame, options.NameOutput, formatter, options.NameFormatterOptions, cultureInfo, cancellationToken)) {
+					// Nothing
+				}
+				else
+					dnValueNode.Name.WriteTo(options.NameOutput);
+				cancellationToken.ThrowIfCancellationRequested();
+			}
 			if (options.ExpectedTypeOutput != null) {
-				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, cultureInfo, cancellationToken)) {
+				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, formatter, options.ExpectedTypeFormatterOptions, options.TypeFormatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ExpectedType is DmdType expectedType)
@@ -128,7 +134,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ActualTypeOutput != null) {
-				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, cultureInfo, cancellationToken)) {
+				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, formatter, options.ActualTypeFormatterOptions, options.TypeFormatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ActualType is DmdType actualType)
@@ -136,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ValueOutput != null) {
-				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, cultureInfo, cancellationToken)) {
+				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, formatter, options.ValueFormatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValue != null)

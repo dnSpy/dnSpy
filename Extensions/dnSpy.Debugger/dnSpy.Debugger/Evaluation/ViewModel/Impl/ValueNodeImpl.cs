@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (text != null)
 				return new EditableValueTextInfo(text, EditValueFlags.None);
 			var output = new StringBuilderTextColorOutput();
-			RawNode.FormatName(Context.EvaluationContext, Context.StackFrame, output, Context.FormatCulture);
+			RawNode.FormatName(Context.EvaluationContext, Context.StackFrame, output, Context.ValueNodeFormatParameters.NameFormatterOptions, Context.FormatCulture);
 			return new EditableValueTextInfo(output.ToString());
 		}
 

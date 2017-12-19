@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			return (language, frame);
 		}
 
-		public override GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
+		public override GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions) {
 			uiDispatcher.VerifyAccess();
 			var info = TryGetLanguage();
 			if (info.frame == null)
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var evalContextInfo = TryGetEvaluationContextInfo();
 			if (evalContextInfo.context == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
-			var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalContextInfo.context, info.language, info.frame, evalOptions, nodeEvalOptions);
+			var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalContextInfo.context, info.language, info.frame, evalOptions, nodeEvalOptions, nameFormatterOptions);
 			return new GetNodesResult(nodesInfo.Nodes, info.frame.IsClosed, nodesInfo.RecreateAllNodes);
 		}
 

@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			DbgLanguage language;
 			bool forceRecreateAllNodes;
 			if (isOpen) {
-				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
+				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions);
 				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
 				runtimeKindGuid = valueNodesProvider.Language?.RuntimeKindGuid ?? lastRuntimeKindGuid;
 				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
@@ -515,6 +515,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			case nameof(DebuggerSettings.UseStringConversionFunction):
 				UpdateFormatterOptions();
 				const RefreshNodeOptions options =
+					RefreshNodeOptions.RefreshName |
+					RefreshNodeOptions.RefreshNameControl |
 					RefreshNodeOptions.RefreshValue |
 					RefreshNodeOptions.RefreshValueControl;
 				RefreshNodes(options);
@@ -540,6 +542,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			case nameof(DbgEvalFormatterSettings.ShowTokens):
 				UpdateFormatterOptions();
 				const RefreshNodeOptions options =
+					RefreshNodeOptions.RefreshName |
+					RefreshNodeOptions.RefreshNameControl |
 					RefreshNodeOptions.RefreshValue |
 					RefreshNodeOptions.RefreshValueControl |
 					RefreshNodeOptions.RefreshType |
@@ -568,6 +572,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			UpdateFormatterOptions();
 			const RefreshNodeOptions options =
+				RefreshNodeOptions.RefreshName |
+				RefreshNodeOptions.RefreshNameControl |
 				RefreshNodeOptions.RefreshValue |
 				RefreshNodeOptions.RefreshValueControl;
 			RefreshNodes(options);
@@ -583,8 +589,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void UpdateFormatterOptions() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			valueNodesContext.ValueNodeFormatParameters.ValueFormatterOptions = GetValueFormatterOptions(isDisplay: true);
-			valueNodesContext.ValueNodeFormatParameters.TypeFormatterOptions = GetTypeFormatterOptions();
+			var valueFormatterOptions = GetValueFormatterOptions(isDisplay: true);
+			valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions = valueFormatterOptions;
+			valueNodesContext.ValueNodeFormatParameters.ValueFormatterOptions = valueFormatterOptions;
+			valueNodesContext.ValueNodeFormatParameters.TypeFormatterOptions = valueFormatterOptions;
+			valueNodesContext.ValueNodeFormatParameters.ValueFormatterTypeOptions = GetTypeFormatterOptions();
 		}
 
 		// UI thread

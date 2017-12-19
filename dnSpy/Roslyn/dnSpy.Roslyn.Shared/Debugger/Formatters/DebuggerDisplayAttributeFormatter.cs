@@ -90,12 +90,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		}
 
 		sealed class TypeState : IDisposable {
-			public static readonly TypeState Empty = new TypeState(null, Array.Empty<DisplayPart>());
+			public static readonly TypeState Empty = new TypeState(null, Array.Empty<DisplayPart>(), Array.Empty<DisplayPart>(), Array.Empty<DisplayPart>());
 			public readonly DbgEvaluationContext TypeContext;
-			public readonly DisplayPart[] DisplayParts;
-			public TypeState(DbgEvaluationContext typeContext, DisplayPart[] displayParts) {
+			public readonly DisplayPart[] NameParts;
+			public readonly DisplayPart[] ValueParts;
+			public readonly DisplayPart[] TypeParts;
+			public TypeState(DbgEvaluationContext typeContext, DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) {
 				TypeContext = typeContext;
-				DisplayParts = displayParts ?? throw new ArgumentNullException(nameof(displayParts));
+				NameParts = nameParts ?? throw new ArgumentNullException(nameof(nameParts));
+				ValueParts = valueParts ?? throw new ArgumentNullException(nameof(valueParts));
+				TypeParts = typeParts ?? throw new ArgumentNullException(nameof(typeParts));
 				if (typeContext != null) {
 					lockObj = new object();
 					eeStates = new Dictionary<string, object>(StringComparer.Ordinal);
@@ -121,13 +125,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			}
 		}
 
-		public bool Format(DbgDotNetValue value) {
+		public bool FormatName(DbgDotNetValue value) {
 			var typeState = GetOrCreateTypeState(value.Type, context.Language);
-			if (typeState.DisplayParts.Length == 0)
+			return Format(value, typeState, typeState.NameParts);
+		}
+
+		public bool FormatValue(DbgDotNetValue value) {
+			var typeState = GetOrCreateTypeState(value.Type, context.Language);
+			return Format(value, typeState, typeState.ValueParts);
+		}
+
+		public bool FormatType(DbgDotNetValue value) {
+			var typeState = GetOrCreateTypeState(value.Type, context.Language);
+			return Format(value, typeState, typeState.TypeParts);
+		}
+
+		bool Format(DbgDotNetValue value, TypeState typeState, DisplayPart[] displayParts) {
+			if (displayParts.Length == 0)
 				return false;
 
 			var evaluator = context.GetDebuggerDisplayAttributeEvaluator();
-			foreach (var part in typeState.DisplayParts) {
+			foreach (var part in displayParts) {
 				if ((part.Flags & DisplayPartFlags.EvaluateText) == 0)
 					output.Write(BoxedTextColor.DebuggerDisplayAttributeEval, part.Text);
 				else {
@@ -178,45 +196,64 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		}
 
 		TypeState CreateTypeState(DmdType type, DbgLanguage language) {
-			var parts = GetDisplayParts(type) ?? Array.Empty<DisplayPart>();
-			if (parts.Length == 0)
+			var info = GetDisplayParts(type);
+			if (info.nameParts.Length == 0 && info.valueParts.Length == 0 && info.typeParts.Length == 0)
 				return TypeState.Empty;
 
 			var context = language.CreateContext(frame.Runtime, null, cancellationToken: cancellationToken);
-			var state = new TypeState(context, parts);
+			var state = new TypeState(context, info.nameParts, info.valueParts, info.typeParts);
 			context.Runtime.CloseOnExit(state);
 			return state;
 		}
 
-		DisplayPart[] GetDisplayParts(DmdType type) {
+		(DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) GetDisplayParts(DmdType type) {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
 			Debug.Assert((object)ddaType != null);
-			if ((object)ddaType == null)
-				return null;
 
-			string debuggerDisplayString;
-			var attr = type.FindCustomAttribute(ddaType, inherit: true);
-			if (attr == null) {
-				if (type.CanCastTo(type.AppDomain.System_Type)) {
-					// Show the same thing VS shows
-					debuggerDisplayString = @"\{Name = {Name} FullName = {FullName}\}";
+			string nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
+			if ((object)ddaType != null) {
+				var attr = type.FindCustomAttribute(ddaType, inherit: true);
+				if (attr == null) {
+					if (type.CanCastTo(type.AppDomain.System_Type)) {
+						// Show the same thing VS shows
+						valueDisplayString = @"\{Name = {Name} FullName = {FullName}\}";
+					}
 				}
-				else
-					return null;
+				else {
+					if (attr.ConstructorArguments.Count == 1)
+						valueDisplayString = attr.ConstructorArguments[0].Value as string;
+					nameDisplayString = GetString(attr, nameof(DebuggerDisplayAttribute.Name));
+					typeDisplayString = GetString(attr, nameof(DebuggerDisplayAttribute.Type));
+				}
 			}
-			else {
-				if (attr.ConstructorArguments.Count == 1)
-					debuggerDisplayString = attr.ConstructorArguments[0].Value as string;
-				else
-					debuggerDisplayString = null;
-			}
-			if (string.IsNullOrEmpty(debuggerDisplayString))
-				return null;
 
-			return CreateDisplayParts(debuggerDisplayString);
+			var nameParts = CreateDisplayParts(nameDisplayString);
+			var valueParts = CreateDisplayParts(valueDisplayString);
+			var typeParts = CreateDisplayParts(typeDisplayString);
+			return (nameParts, valueParts, typeParts);
+		}
+
+		static string GetString(DmdCustomAttributeData ca, string propertyName) {
+			if (ca == null)
+				return null;
+			foreach (var arg in ca.NamedArguments) {
+				if (arg.IsField)
+					continue;
+				if (arg.MemberName != propertyName)
+					continue;
+				if (arg.TypedValue.ArgumentType != arg.TypedValue.ArgumentType.AppDomain.System_String)
+					continue;
+				return arg.TypedValue.Value as string;
+			}
+			return null;
 		}
 
 		static DisplayPart[] CreateDisplayParts(string debuggerDisplayString) {
+			if (debuggerDisplayString == null)
+				return Array.Empty<DisplayPart>();
+			if (debuggerDisplayString.Length == 0)
+				return new[] { DisplayPart.CreateText(string.Empty) };
+
 			var list = ListCache<DisplayPart>.AllocList();
 
 			var sb = ObjectCache.AllocStringBuilder();

@@ -183,7 +183,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool TryFormatWithDebuggerAttributes(DbgDotNetValue value) {
 			if (!FuncEval || NoDebuggerDisplay)
 				return false;
-			return new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options.ToDbgValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
+			return new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options.ToDbgValueFormatterOptions(), cultureInfo, cancellationToken).FormatValue(value);
 		}
 
 		bool TryFormatToString(DbgDotNetValue value) {

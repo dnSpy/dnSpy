@@ -124,10 +124,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
+		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CultureInfo cultureInfo = null, CancellationToken cancellationToken = default) =>
-			Format(context, frame, new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) }, cultureInfo, cancellationToken);
+		public void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo = null, CancellationToken cancellationToken = default) =>
+			Format(context, frame, new DbgValueNodeFormatParameters {
+				NameOutput = output ?? throw new ArgumentNullException(nameof(output)),
+				NameFormatterOptions = options,
+			}, cultureInfo, cancellationToken);
 
 		/// <summary>
 		/// Formats the value. This method blocks the current thread until all requested values have been formatted
@@ -151,12 +155,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
+		public void FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
 			Format(context, frame, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
+				TypeFormatterOptions = valueOptions,
 			}, cultureInfo, cancellationToken);
 
 		/// <summary>
@@ -166,12 +172,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="frame">Frame</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
+		public void FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
 			Format(context, frame, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
+				TypeFormatterOptions = valueOptions,
 			}, cultureInfo, cancellationToken);
 
 		/// <summary>
@@ -246,9 +254,19 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		ITextColorWriter ActualTypeOutput { get; }
 
 		/// <summary>
+		/// Name formatter options
+		/// </summary>
+		DbgValueFormatterOptions NameFormatterOptions { get; }
+
+		/// <summary>
 		/// Value formatter options
 		/// </summary>
 		DbgValueFormatterOptions ValueFormatterOptions { get; }
+
+		/// <summary>
+		/// Type formatter options
+		/// </summary>
+		DbgValueFormatterOptions TypeFormatterOptions { get; }
 
 		/// <summary>
 		/// Expected type formatter options
@@ -266,7 +284,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public ITextColorWriter ValueOutput { get; set; }
 		public ITextColorWriter ExpectedTypeOutput { get; set; }
 		public ITextColorWriter ActualTypeOutput { get; set; }
+		public DbgValueFormatterOptions NameFormatterOptions { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
+		public DbgValueFormatterOptions TypeFormatterOptions { get; set; }
 		public DbgValueFormatterTypeOptions ExpectedTypeFormatterOptions { get; set; }
 		public DbgValueFormatterTypeOptions ActualTypeFormatterOptions { get; set; }
 	}

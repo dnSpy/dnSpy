@@ -18,16 +18,19 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Roslyn.Shared.Debugger.Formatters;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class DbgDotNetValueNodeImpl : DbgDotNetValueNode {
@@ -65,12 +68,44 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.valueText = valueText;
 		}
 
-		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public override bool FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			if (Value == null)
+				return false;
+			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
+				return false;
+			var languageFormatter = formatter as LanguageFormatter;
+			Debug.Assert(languageFormatter != null);
+			if (languageFormatter == null)
+				return false;
+			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options, cultureInfo, cancellationToken);
+			return displayAttrFormatter.FormatName(Value);
+		}
+
+		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			if (valueText.Parts != null) {
 				valueText.WriteTo(output);
 				return true;
 			}
 			return false;
+		}
+
+		public override bool FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			FormatDebuggerDisplayAttributeType(context, frame, output, formatter, valueOptions, cultureInfo, cancellationToken);
+
+		public override bool FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
+			FormatDebuggerDisplayAttributeType(context, frame, output, formatter, valueOptions, cultureInfo, cancellationToken);
+
+		bool FormatDebuggerDisplayAttributeType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+			if (Value == null)
+				return false;
+			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
+				return false;
+			var languageFormatter = formatter as LanguageFormatter;
+			Debug.Assert(languageFormatter != null);
+			if (languageFormatter == null)
+				return false;
+			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options, cultureInfo, cancellationToken);
+			return displayAttrFormatter.FormatType(Value);
 		}
 
 		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>

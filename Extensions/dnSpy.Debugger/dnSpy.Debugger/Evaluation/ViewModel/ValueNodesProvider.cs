@@ -53,10 +53,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// <param name="evalOptions">Evaluation options</param>
 		/// <param name="nodeEvalOptions">Value node evaluation options</param>
 		/// <returns></returns>
-		public abstract GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions);
+		public abstract GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
 
 		/// <summary>
-		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions)"/> must be called again, eg. the debugged program is paused
+		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions, DbgValueFormatterOptions)"/> must be called again, eg. the debugged program is paused
 		/// </summary>
 		public abstract event EventHandler NodesChanged;
 
