@@ -31,6 +31,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		None						= 0,
 
 		/// <summary>
+		/// Set if integers are shown in decimal, clear if integers are shown in hexadecimal
+		/// </summary>
+		Decimal						= 0x00000001,
+
+		/// <summary>
+		/// Use digit separators
+		/// </summary>
+		DigitSeparators				= 0x00000002,
+
+		/// <summary>
 		/// Show namespaces
 		/// </summary>
 		Namespaces					= 0x20000000,

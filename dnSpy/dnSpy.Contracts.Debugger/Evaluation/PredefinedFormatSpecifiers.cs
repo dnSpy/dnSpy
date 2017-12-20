@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -239,6 +238,18 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			if (formatSpecifiers != null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {
+					case Decimal:
+						options |= DbgValueFormatterTypeOptions.Decimal;
+						break;
+					case Hexadecimal:
+						options &= ~DbgValueFormatterTypeOptions.Decimal;
+						break;
+					case DigitSeparators:
+						options |= DbgValueFormatterTypeOptions.DigitSeparators;
+						break;
+					case NoDigitSeparators:
+						options &= ~DbgValueFormatterTypeOptions.DigitSeparators;
+						break;
 					case Namespaces:
 						options |= DbgValueFormatterTypeOptions.Namespaces;
 						break;

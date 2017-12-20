@@ -627,6 +627,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		DbgValueFormatterTypeOptions GetTypeFormatterOptions() {
 			var options = DbgValueFormatterTypeOptions.None;
+			if (!debuggerSettings.UseHexadecimal)
+				options |= DbgValueFormatterTypeOptions.Decimal;
+			if (debuggerSettings.UseDigitSeparators)
+				options |= DbgValueFormatterTypeOptions.DigitSeparators;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterTypeOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
