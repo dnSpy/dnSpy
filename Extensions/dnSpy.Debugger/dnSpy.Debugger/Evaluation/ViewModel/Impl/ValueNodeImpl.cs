@@ -226,9 +226,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			Context.ExpressionToEdit = null;
 			if (text != null)
 				return new EditableValueTextInfo(text, EditValueFlags.None);
-			var output = new StringBuilderTextColorOutput();
-			RawNode.FormatName(Context.EvaluationContext, Context.StackFrame, output, Context.ValueNodeFormatParameters.NameFormatterOptions, Context.FormatCulture);
-			return new EditableValueTextInfo(output.ToString());
+			// Always use the expression since the Name column could've been replaced with any random
+			// text if DebuggerDisplayAttribute.Name property isn't null.
+			return new EditableValueTextInfo(RawNode.Expression, EditValueFlags.None);
 		}
 
 		void SaveNameExpression(string expression) {
