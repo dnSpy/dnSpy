@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -41,6 +42,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Property;
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
+		public override ReadOnlyCollection<string> FormatSpecifiers => null;
 		public override bool? HasChildren => false;
 
 		const string EmptyPropertyName = "Empty";

@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				for (int i = (int)(index - childCount) + 1; i < providers.Length && w < count; i++) {
 					cancellationToken.ThrowIfCancellationRequested();
 					var provider = providers[i];
-					res[w++] = valueNodeFactory.Create(context, provider.Name, provider, options, provider.Expression, provider.ImageName, provider.ValueText);
+					res[w++] = valueNodeFactory.Create(context, provider.Name, provider, null, options, provider.Expression, provider.ImageName, provider.ValueText);
 				}
 				if (w != res.Length)
 					throw new InvalidOperationException();

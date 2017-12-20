@@ -162,6 +162,9 @@
   <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
     <value>Dynamic View requires {0} to be referenced</value>
   </data>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>Only COM or Dynamic objects can have Dynamic View</value>
+  </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>Enums</value>
   </data>
@@ -206,6 +209,9 @@
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>Properties</value>
+  </data>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>Only Enumerable types can have Results View</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
     <value>Snippets</value>

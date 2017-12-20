@@ -32,10 +32,11 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class ArrayValueNodeProvider : DbgDotNetValueNodeProvider {
-		public override DbgDotNetText Name => throw new NotSupportedException();
+		public override DbgDotNetText Name => arrayName;
 		public override string Expression => valueInfo.Expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Array;
 		public override bool? HasChildren => arrayCount > 0;
+		static readonly DbgDotNetText arrayName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Punctuation, "[]"));
 
 		readonly DbgDotNetValueNodeProviderFactory owner;
 		readonly bool addParens;

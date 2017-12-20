@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -43,6 +44,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ImageName { get; }
 		public override bool IsReadOnly { get; }
 		public override bool CausesSideEffects { get; }
+		public override ReadOnlyCollection<string> FormatSpecifiers { get; }
 		public override bool? HasChildren => childNodeProvider?.HasChildren ?? false;
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
@@ -50,7 +52,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly DbgDotNetValueNodeInfo nodeInfo;
 		/*readonly*/ DbgDotNetText valueText;
 
-		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, DbgDotNetText valueText) {
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, DbgDotNetText valueText, ReadOnlyCollection<string> formatSpecifiers) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
@@ -66,6 +68,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			ActualType = actualType;
 			ErrorMessage = errorMessage;
 			this.valueText = valueText;
+			FormatSpecifiers = formatSpecifiers;
 		}
 
 		public override bool FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {

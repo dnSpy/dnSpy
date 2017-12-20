@@ -99,6 +99,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 		}
 
 		public override string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression) {
+			argumentExpression = LanguageValueNodeFactory.RemoveFormatSpecifiers(argumentExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
 			output.Write(BoxedTextColor.Keyword, "New");

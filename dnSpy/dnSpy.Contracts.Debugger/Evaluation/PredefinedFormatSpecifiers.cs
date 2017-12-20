@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -145,6 +146,26 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string NoTokens = "notokens";
 
 		/// <summary>
+		/// Show compiler generated members
+		/// </summary>
+		public const string ShowCompilerGeneratedMembers = "cgm";
+
+		/// <summary>
+		/// Don't show compiler generated members
+		/// </summary>
+		public const string NoShowCompilerGeneratedMembers = "ncgm";
+
+		/// <summary>
+		/// Respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
+		/// </summary>
+		public const string RespectHideMemberAttributes = "hma";
+
+		/// <summary>
+		/// Don't respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
+		/// </summary>
+		public const string NoRespectHideMemberAttributes = "nhma";
+
+		/// <summary>
 		/// Gets value formatter options
 		/// </summary>
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
@@ -201,6 +222,80 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 						break;
 					case NoTokens:
 						options &= ~DbgValueFormatterOptions.Tokens;
+						break;
+					}
+				}
+			}
+			return options;
+		}
+
+		/// <summary>
+		/// Gets value formatter type options
+		/// </summary>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
+		/// <param name="options">Default options</param>
+		/// <returns></returns>
+		public static DbgValueFormatterTypeOptions GetValueFormatterTypeOptions(ReadOnlyCollection<string> formatSpecifiers, DbgValueFormatterTypeOptions options) {
+			if (formatSpecifiers != null) {
+				for (int i = 0; i < formatSpecifiers.Count; i++) {
+					switch (formatSpecifiers[i]) {
+					case Namespaces:
+						options |= DbgValueFormatterTypeOptions.Namespaces;
+						break;
+					case NoNamespaces:
+						options &= ~DbgValueFormatterTypeOptions.Namespaces;
+						break;
+					case Intrinsics:
+						options |= DbgValueFormatterTypeOptions.IntrinsicTypeKeywords;
+						break;
+					case NoIntrinsics:
+						options &= ~DbgValueFormatterTypeOptions.IntrinsicTypeKeywords;
+						break;
+					case Tokens:
+						options |= DbgValueFormatterTypeOptions.Tokens;
+						break;
+					case NoTokens:
+						options &= ~DbgValueFormatterTypeOptions.Tokens;
+						break;
+					}
+				}
+			}
+			return options;
+		}
+
+		/// <summary>
+		/// Gets value node evaluation options
+		/// </summary>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
+		/// <param name="options">Default options</param>
+		/// <returns></returns>
+		public static DbgValueNodeEvaluationOptions GetValueNodeEvaluationOptions(ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options) {
+			if (formatSpecifiers != null) {
+				for (int i = 0; i < formatSpecifiers.Count; i++) {
+					switch (formatSpecifiers[i]) {
+					case DynamicView:
+						options |= DbgValueNodeEvaluationOptions.DynamicView;
+						break;
+					case ResultsView:
+						options |= DbgValueNodeEvaluationOptions.ResultsView;
+						break;
+					case RawView:
+						options |= DbgValueNodeEvaluationOptions.RawView;
+						break;
+					case ShowAllMembers:
+						options &= ~DbgValueNodeEvaluationOptions.PublicMembers;
+						break;
+					case ShowCompilerGeneratedMembers:
+						options &= ~DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers;
+						break;
+					case NoShowCompilerGeneratedMembers:
+						options |= DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers;
+						break;
+					case RespectHideMemberAttributes:
+						options |= DbgValueNodeEvaluationOptions.RespectHideMemberAttributes;
+						break;
+					case NoRespectHideMemberAttributes:
+						options &= ~DbgValueNodeEvaluationOptions.RespectHideMemberAttributes;
 						break;
 					}
 				}

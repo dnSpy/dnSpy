@@ -47,6 +47,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string GetFieldExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
@@ -57,6 +58,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
@@ -67,6 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string GetExpression(string baseExpression, int index, DmdType castType, bool addParens) {
+			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);
@@ -78,6 +81,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 		}
 
 		public override string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens) {
+			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
 			AddParens(sb, baseExpression, addParens);

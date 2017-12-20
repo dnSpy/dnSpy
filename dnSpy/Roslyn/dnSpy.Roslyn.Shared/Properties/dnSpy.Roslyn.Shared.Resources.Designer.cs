@@ -187,6 +187,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only COM or Dynamic objects can have Dynamic View.
+        /// </summary>
+        public static string DynamicView_MustBeDynamicOrComType {
+            get {
+                return ResourceManager.GetString("DynamicView_MustBeDynamicOrComType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dynamic View requires {0} to be referenced.
         /// </summary>
         public static string DynamicViewAssemblyNotLoaded {
@@ -327,6 +336,15 @@ namespace dnSpy.Roslyn.Shared.Properties {
         public static string PropertiesToolTip {
             get {
                 return ResourceManager.GetString("PropertiesToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only Enumerable types can have Results View.
+        /// </summary>
+        public static string ResultsView_MustBeEnumerableType {
+            get {
+                return ResourceManager.GetString("ResultsView_MustBeEnumerableType", resourceCulture);
             }
         }
         

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -40,6 +41,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string Expression => "<type variables>";
 		public override string ImageName => PredefinedDbgValueNodeImageNames.TypeVariables;
 		public override bool IsReadOnly => true;
+		public override ReadOnlyCollection<string> FormatSpecifiers => null;
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => typeVariableInfos.Length > 0;
 
@@ -81,6 +83,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override string ImageName { get; }
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
+		public override ReadOnlyCollection<string> FormatSpecifiers => null;
 		public override bool? HasChildren => false;
 
 		public TypeVariableValueNode(LanguageValueNodeFactory valueNodeFactory, DbgDotNetTypeVariableInfo info) {

@@ -115,10 +115,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
 			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
+			DbgValueFormatterOptions formatterOptions;
+			DbgValueFormatterTypeOptions typeFormatterOptions;
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
 			if (options.NameOutput != null) {
-				if (dnValueNode.FormatName(context, frame, options.NameOutput, formatter, options.NameFormatterOptions, cultureInfo, cancellationToken)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.NameFormatterOptions);
+				if (dnValueNode.FormatName(context, frame, options.NameOutput, formatter, formatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else
@@ -126,27 +129,32 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ExpectedTypeOutput != null) {
-				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, formatter, options.ExpectedTypeFormatterOptions, options.TypeFormatterOptions, cultureInfo, cancellationToken)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.TypeFormatterOptions);
+				typeFormatterOptions = PredefinedFormatSpecifiers.GetValueFormatterTypeOptions(dnValueNode.FormatSpecifiers, options.ExpectedTypeFormatterOptions);
+				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, formatter, typeFormatterOptions, formatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ExpectedType is DmdType expectedType)
-					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions, cultureInfo);
+					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, typeFormatterOptions, cultureInfo);
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ActualTypeOutput != null) {
-				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, formatter, options.ActualTypeFormatterOptions, options.TypeFormatterOptions, cultureInfo, cancellationToken)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.TypeFormatterOptions);
+				typeFormatterOptions = PredefinedFormatSpecifiers.GetValueFormatterTypeOptions(dnValueNode.FormatSpecifiers, options.ActualTypeFormatterOptions);
+				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, formatter, typeFormatterOptions, formatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValueNode.ActualType is DmdType actualType)
-					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions, cultureInfo);
+					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, typeFormatterOptions, cultureInfo);
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 			if (options.ValueOutput != null) {
-				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, formatter, options.ValueFormatterOptions, cultureInfo, cancellationToken)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.ValueFormatterOptions);
+				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, formatter, formatterOptions, cultureInfo, cancellationToken)) {
 					// Nothing
 				}
 				else if (dnValue != null)
-					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cultureInfo, cancellationToken);
+					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, formatterOptions, cultureInfo, cancellationToken);
 				else if (ErrorMessage is string errorMessage)
 					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
 				cancellationToken.ThrowIfCancellationRequested();

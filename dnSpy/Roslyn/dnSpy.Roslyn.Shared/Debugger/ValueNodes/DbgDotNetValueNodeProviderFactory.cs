@@ -189,19 +189,37 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			NoProxy = 2,
 		}
 
-		public DbgDotNetValueNodeProvider Create(DbgEvaluationContext context, DbgStackFrame frame, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public DbgDotNetValueNodeProviderResult Create(DbgEvaluationContext context, DbgStackFrame frame, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var providers = new List<DbgDotNetValueNodeProvider>(2);
 			Create(context, frame, providers, addParens, slotType, nodeInfo, options, CreateFlags.None, cancellationToken);
-			return DbgDotNetValueNodeProvider.Create(providers);
+			return new DbgDotNetValueNodeProviderResult(DbgDotNetValueNodeProvider.Create(providers));
 		}
 
-		void Create(DbgEvaluationContext context, DbgStackFrame frame, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CreateFlags createFlags, CancellationToken cancellationToken) {
+		public DbgDotNetValueNodeProviderResult CreateDynamicView(DbgEvaluationContext context, DbgStackFrame frame, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var state = GetTypeState(nodeInfo);
+			var provider = TryCreateDynamicView(state, nodeInfo.Expression, nodeInfo.Value, options);
+			if (provider != null)
+				return new DbgDotNetValueNodeProviderResult(provider);
+			return new DbgDotNetValueNodeProviderResult(dnSpy_Roslyn_Shared_Resources.DynamicView_MustBeDynamicOrComType);
+		}
+
+		public DbgDotNetValueNodeProviderResult CreateResultsView(DbgEvaluationContext context, DbgStackFrame frame, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+			var state = GetTypeState(nodeInfo);
+			var provider = TryCreateResultsView(state, nodeInfo.Expression, nodeInfo.Value, options);
+			if (provider != null)
+				return new DbgDotNetValueNodeProviderResult(provider);
+			return new DbgDotNetValueNodeProviderResult(dnSpy_Roslyn_Shared_Resources.ResultsView_MustBeEnumerableType);
+		}
+
+		TypeState GetTypeState(DbgDotNetValueNodeInfo nodeInfo) {
 			var type = nodeInfo.Value.Type;
 			if (type.IsByRef)
 				type = type.GetElementType();
-			var state = GetOrCreateTypeState(type);
-			CreateCore(context, frame, providers, addParens, slotType, nodeInfo, state, options, createFlags, cancellationToken);
+			return GetOrCreateTypeState(type);
 		}
+
+		void Create(DbgEvaluationContext context, DbgStackFrame frame, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CreateFlags createFlags, CancellationToken cancellationToken) =>
+			CreateCore(context, frame, providers, addParens, slotType, nodeInfo, GetTypeState(nodeInfo), options, createFlags, cancellationToken);
 
 		TypeState GetOrCreateTypeState(DmdType type) {
 			var state = StateWithKey<TypeState>.TryGet(type, this);
@@ -507,6 +525,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			AddProviders(providers, state, nodeInfo.Expression, addParens, slotType, nodeInfo.Value, evalOptions, forceRawView);
 		}
 
+		DbgDotNetValueNodeProvider TryCreateDynamicView(TypeState state, string expression, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions) {
+			if (state.IsDynamicViewType && !value.IsNull)
+				return new DynamicViewMembersValueNodeProvider(this, valueNodeFactory, value, expression, state.Type.AppDomain, evalOptions);
+			return null;
+		}
+
+		DbgDotNetValueNodeProvider TryCreateResultsView(TypeState state, string expression, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions) {
+			if ((object)state.EnumerableType != null && !value.IsNull)
+				return new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, expression, evalOptions);
+			return null;
+		}
+
 		void AddProvidersOneChildNode(List<DbgDotNetValueNodeProvider> providers, TypeState state, string expression, bool addParens, DmdType slotType, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions, bool isRawView) {
 			var tmpProviders = new List<DbgDotNetValueNodeProvider>(2);
 			AddProviders(tmpProviders, state, expression, addParens, slotType, value, evalOptions, isRawView);
@@ -546,10 +576,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			//TODO: non-void and non-null pointers (derefence and show members)
 
-			if ((object)state.EnumerableType != null && !value.IsNull)
-				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, expression, evalOptions));
-			if (state.IsDynamicViewType && !value.IsNull)
-				providers.Add(new DynamicViewMembersValueNodeProvider(this, valueNodeFactory, value, expression, state.Type.AppDomain, evalOptions));
+			var provider = TryCreateResultsView(state, expression, value, evalOptions);
+			if (provider != null)
+				providers.Add(provider);
+			provider = TryCreateDynamicView(state, expression, value, evalOptions);
+			if (provider != null)
+				providers.Add(provider);
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 
@@ -575,6 +607,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return true;
 			}).ToArray();
 			return new MemberValueNodeInfoCollection(members, hasHideRoot);
+		}
+	}
+
+	struct DbgDotNetValueNodeProviderResult {
+		public string ErrorMessage { get; }
+		public DbgDotNetValueNodeProvider Provider { get; }
+		public DbgDotNetValueNodeProviderResult(DbgDotNetValueNodeProvider provider) {
+			ErrorMessage = null;
+			Provider = provider;
+		}
+		public DbgDotNetValueNodeProviderResult(string errorMessage) {
+			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
+			Provider = null;
 		}
 	}
 }

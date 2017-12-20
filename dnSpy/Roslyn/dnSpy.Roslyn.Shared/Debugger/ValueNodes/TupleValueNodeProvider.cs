@@ -32,10 +32,11 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class TupleValueNodeProvider : DbgDotNetValueNodeProvider {
-		public override DbgDotNetText Name => throw new NotSupportedException();
-		public override string Expression => throw new NotSupportedException();
-		public override string ImageName => throw new NotSupportedException();
+		public override DbgDotNetText Name => tupleName;
+		public override string Expression => nodeInfo.Expression;
+		public override string ImageName => PredefinedDbgValueNodeImageNames.Structure;
 		public override bool? HasChildren => tupleFields.Length > 0;
+		static readonly DbgDotNetText tupleName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Punctuation, "()"));
 
 		readonly bool addParens;
 		readonly DmdType slotType;

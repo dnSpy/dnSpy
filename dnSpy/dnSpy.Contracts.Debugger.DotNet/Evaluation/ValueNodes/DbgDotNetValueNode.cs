@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -75,6 +76,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// true if the expression causes side effects
 		/// </summary>
 		public abstract bool CausesSideEffects { get; }
+
+		/// <summary>
+		/// Gets the format specifiers or null
+		/// </summary>
+		public abstract ReadOnlyCollection<string> FormatSpecifiers { get; }
 
 		/// <summary>
 		/// Returns true if it has children, false if it has no children and null if it's unknown (eg. it's too expensive to calculate it now).
