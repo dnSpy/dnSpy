@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -106,7 +107,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		public string MethodName;
 
 		/// <summary>
-		/// Gets the expression that was evaluated. This is eg. a C# or Visual Basic expression.
+		/// Gets the expression that was compiled. This is eg. a C# or Visual Basic expression.
 		/// </summary>
 		public string Expression;
 
@@ -131,6 +132,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		public DbgDotNetCustomTypeInfo CustomTypeInfo;
 
 		/// <summary>
+		/// Gets the format specifiers or null
+		/// </summary>
+		public ReadOnlyCollection<string> FormatSpecifiers;
+
+		/// <summary>
 		/// Parameter/local index or -1 if unknown
 		/// </summary>
 		public int Index;
@@ -150,10 +156,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="flags">Evaluation result flags</param>
 		/// <param name="imageName">Image, see <see cref="PredefinedDbgValueNodeImageNames"/></param>
 		/// <param name="customTypeInfo">Optional custom type info known by the language expression compiler and the language value formatter</param>
+		/// <param name="formatSpecifiers">Format specifiers</param>
 		/// <param name="resultFlags">Result flags</param>
 		/// <param name="index">Parameter/local index or -1 if unknown</param>
 		/// <returns></returns>
-		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo customTypeInfo = null, DbgDotNetCompiledExpressionResultFlags resultFlags = DbgDotNetCompiledExpressionResultFlags.None, int index = -1) {
+		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo customTypeInfo = null, ReadOnlyCollection<string> formatSpecifiers = null, DbgDotNetCompiledExpressionResultFlags resultFlags = DbgDotNetCompiledExpressionResultFlags.None, int index = -1) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			return new DbgDotNetCompiledExpressionResult {
@@ -164,6 +171,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 				Flags = flags,
 				ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName)),
 				CustomTypeInfo = customTypeInfo,
+				FormatSpecifiers = formatSpecifiers,
 				Index = index,
 				ResultFlags = resultFlags,
 			};

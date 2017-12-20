@@ -313,7 +313,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			var compExprs = new[] {
 				DbgDotNetCompiledExpressionResult.Create(compileResult.TypeName, compileResult.MethodName,
 						expression, name, ToEvaluationResultFlags(resultProperties.Flags),
-						resultProperties.GetImageName(), customTypeInfo),
+						resultProperties.GetImageName(), customTypeInfo, compileResult.FormatSpecifiers),
 			};
 			return new DbgDotNetCompilationResult(compileResult.Assembly, compExprs);
 		}
@@ -413,7 +413,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				var resultFlags = DbgDotNetCompiledExpressionResultFlags.None;
 				if (info.Kind == LocalAndMethodKind.Local && (uint)info.Index < (uint)state.NotCompilerGenerated.Length && !state.NotCompilerGenerated[info.Index])
 					resultFlags |= DbgDotNetCompiledExpressionResultFlags.CompilerGenerated;
-				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, resultFlags, info.Index);
+				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, null, resultFlags, info.Index);
 			}
 			if (compiledExpressions.Length != w)
 				Array.Resize(ref compiledExpressions, w);

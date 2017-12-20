@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -38,6 +39,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="frame">Frame</param>
 		/// <param name="name">Name</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="imageName">Image name, see <see cref="PredefinedDbgValueNodeImageNames"/></param>
@@ -46,7 +48,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="expectedType">Expected type</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -55,10 +57,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="frame">Frame</param>
 		/// <param name="id">Exception id</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -67,10 +70,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="frame">Frame</param>
 		/// <param name="id">Stowed exception id</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a return value node
@@ -79,11 +83,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="frame">Frame</param>
 		/// <param name="id">Return value id</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="method">Method</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an error value node

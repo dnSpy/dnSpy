@@ -94,9 +94,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					if (errorMessage != null)
 						newNode = valueNodeFactory.CreateError(context, frame, name, errorMessage, expression, false, cancellationToken);
 					else if (valueIsException)
-						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, name, objValue, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
 					else
-						newNode = valueNodeFactory.Create(context, frame, name, objValue, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, name, objValue, null, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
 
 					foreach (var vr in valueResults)
 						vr.Value?.Dispose();

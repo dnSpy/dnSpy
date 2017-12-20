@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
@@ -195,7 +196,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
 						var eeState = state.GetExpressionEvaluatorState(part.String);
 						var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, part.String, DbgEvaluationOptions.Expression, eeState, cancellationToken);
-						Write(state.Context, frame, language, evalRes, part.Flags, cancellationToken);
+						Write(state.Context, frame, language, evalRes, cancellationToken);
 					}
 					break;
 
@@ -420,30 +421,42 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return state;
 		}
 
-		void Write(DbgEvaluationContext context, DbgStackFrame frame, DbgLanguage language, DbgEvaluationResult evalRes, TracepointMessageFlags flags, CancellationToken cancellationToken) {
+		void Write(DbgEvaluationContext context, DbgStackFrame frame, DbgLanguage language, DbgEvaluationResult evalRes, CancellationToken cancellationToken) {
 			if (evalRes.Error != null) {
 				Write("<<<");
 				Write(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(evalRes.Error));
 				Write(">>>");
 			}
 			else {
-				var options = GetValueFormatterOptions(flags, isDisplay: true);
+				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isDisplay: true);
 				const CultureInfo cultureInfo = null;
 				language.Formatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
 				evalRes.Value.Close();
 			}
 		}
 
-		DbgValueFormatterOptions GetValueFormatterOptions(TracepointMessageFlags flags, bool isDisplay) {
+		DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string> formatSpecifiers, bool isDisplay) {
 			var options = DbgValueFormatterOptions.FuncEval | DbgValueFormatterOptions.ToString;
 			if (isDisplay)
 				options |= DbgValueFormatterOptions.Display;
-			if ((flags & TracepointMessageFlags.Decimal) != 0 || ((flags & TracepointMessageFlags.Hexadecimal) == 0 && !debuggerSettings.UseHexadecimal))
+			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
+			// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
+			for (int i = 0; i < formatSpecifiers.Count; i++) {
+				switch (formatSpecifiers[i]) {
+				case "d":
+					options |= DbgValueFormatterOptions.Decimal;
+					break;
+				case "h":
+					options &= ~DbgValueFormatterOptions.Decimal;
+					break;
+				case "nq":
+					options |= DbgValueFormatterOptions.NoStringQuotes;
+					break;
+				}
+			}
 			if (debuggerSettings.UseDigitSeparators)
 				options |= DbgValueFormatterOptions.DigitSeparators;
-			if ((flags & TracepointMessageFlags.NoQuotes) != 0)
-				options |= DbgValueFormatterOptions.NoStringQuotes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)

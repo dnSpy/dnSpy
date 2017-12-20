@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						newNode = valueNodeFactory.CreateError(context, frame, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects, cancellationToken);
 					else {
 						bool isReadOnly = (evalRes.Flags & DbgEvaluationResultFlags.ReadOnly) != 0;
-						newNode = valueNodeFactory.Create(context, frame, evalRes.Name, evalRes.Value, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type, cancellationToken);
+						newNode = valueNodeFactory.Create(context, frame, evalRes.Name, evalRes.Value, evalRes.FormatSpecifiers, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type, cancellationToken);
 					}
 					res[i] = newNode;
 				}
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					var name = output.CreateAndReset();
 					var expression = name.ToString();
 
-					res[i] = valueNodeFactory.Create(context, frame, name, objectIdValue, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type, cancellationToken);
+					res[i] = valueNodeFactory.Create(context, frame, name, objectIdValue, null, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type, cancellationToken);
 				}
 				ObjectCache.Free(ref output);
 				return res;

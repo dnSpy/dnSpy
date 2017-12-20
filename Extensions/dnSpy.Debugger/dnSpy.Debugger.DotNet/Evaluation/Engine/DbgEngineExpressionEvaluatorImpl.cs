@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (res.Error != null)
 				return new DbgEngineEvaluationResult(res.Error, res.Flags);
 			try {
-				return new DbgEngineEvaluationResult(new DbgEngineValueImpl(res.Value), res.Flags);
+				return new DbgEngineEvaluationResult(new DbgEngineValueImpl(res.Value), res.FormatSpecifiers, res.Flags);
 			}
 			catch {
 				res.Value.Dispose();
@@ -202,7 +202,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var languageDebugInfo = context.TryGetLanguageDebugInfo();
 			if (languageDebugInfo == null) {
 				evalExprState = null;
-				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			}
 			var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
 			var module = frame.Module ?? throw new InvalidOperationException();
@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		EvaluateImplResult? GetTypeInterpreterState(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken, out EvaluateImplExpressionState evalExprState) {
 			if (type.TypeSignatureKind != DmdTypeSignatureKind.Type) {
 				evalExprState = null;
-				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			}
 
 			// This is for evaluating DebuggerDisplayAttribute expressions only, so don't use any aliases
@@ -238,7 +238,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, reflectionModuleOrNull) :
 				dbgModuleReferenceProvider.GetModuleReferences(context.Runtime, frame);
 			if (refsResult.ErrorMessage != null)
-				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
 			var key = new EvaluateImplExpressionState.Key(this, decompilerOptionsVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, keyOptions, expression);
@@ -260,13 +260,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		static EvaluateImplResult? GetEvaluateImplResult(ref DbgDotNetCompilationResult compRes, string expression) {
 			if (compRes.IsError)
-				return new EvaluateImplResult(compRes.ErrorMessage, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(compRes.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			Debug.Assert(compRes.CompiledExpressions.Length == 1);
 			if (compRes.CompiledExpressions.Length != 1)
-				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, 0, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			var exprInfo = compRes.CompiledExpressions[0];
 			if (exprInfo.ErrorMessage != null)
-				return new EvaluateImplResult(exprInfo.ErrorMessage, exprInfo.Name, null, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, null);
+				return new EvaluateImplResult(exprInfo.ErrorMessage, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, null);
 
 			return null;
 		}
@@ -281,17 +281,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
 
 				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0)
-					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.Flags, exprInfo.ImageName, null);
+					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);
 
 				var res = dnILInterpreter.Execute(context, frame, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType, cancellationToken);
 				if (res.HasError)
-					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
+					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
 				if (res.ValueIsException)
-					return new EvaluateImplResult(null, exprInfo.Name, res.Value, (exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects) | DbgEvaluationResultFlags.ThrownException, PredefinedDbgValueNodeImageNames.Error, expectedType);
-				return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags, exprInfo.ImageName, expectedType);
+					return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.FormatSpecifiers, (exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects) | DbgEvaluationResultFlags.ThrownException, PredefinedDbgValueNodeImageNames.Error, expectedType);
+				return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, expectedType);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, DbgDotNetEngineValueNodeFactoryExtensions.errorName, null, DbgEvaluationResultFlags.None, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, DbgDotNetEngineValueNodeFactoryExtensions.errorName, null, null, DbgEvaluationResultFlags.None, PredefinedDbgValueNodeImageNames.Error, null);
 			}
 		}
 
@@ -310,8 +310,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgDotNetEvalResult EvaluateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) {
 			var res = EvaluateImpl(context, frame, obj, expression, options, state, cancellationToken);
 			if (res.Error != null)
-				return new DbgDotNetEvalResult(predefinedEvaluationErrorMessagesHelper.GetErrorMessage(res.Error), res.Flags);
-			return new DbgDotNetEvalResult(res.Value, res.Flags);
+				return new DbgDotNetEvalResult(predefinedEvaluationErrorMessagesHelper.GetErrorMessage(res.Error), res.FormatSpecifiers, res.Flags);
+			return new DbgDotNetEvalResult(res.Value, res.FormatSpecifiers, res.Flags);
 		}
 
 		EvaluateImplResult EvaluateImpl(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken) {
@@ -330,18 +330,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
 
 				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0)
-					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.Flags, exprInfo.ImageName, null);
+					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);
 
 				var argumentsProvider = new TypeArgumentsProvider(obj);
 				var res = dnILInterpreter.Execute(context, frame, genericTypeArguments, genericMethodArguments, argumentsProvider, null, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType, cancellationToken);
 				if (res.HasError)
-					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
+					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
 				if (res.ValueIsException)
-					return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, PredefinedDbgValueNodeImageNames.Error, expectedType);
-				return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.Flags, exprInfo.ImageName, expectedType);
+					return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.FormatSpecifiers, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, PredefinedDbgValueNodeImageNames.Error, expectedType);
+				return new EvaluateImplResult(null, exprInfo.Name, res.Value, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, expectedType);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, DbgDotNetEngineValueNodeFactoryExtensions.errorName, null, DbgEvaluationResultFlags.None, PredefinedDbgValueNodeImageNames.Error, null);
+				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, DbgDotNetEngineValueNodeFactoryExtensions.errorName, null, null, DbgEvaluationResultFlags.None, PredefinedDbgValueNodeImageNames.Error, null);
 			}
 		}
 
@@ -422,14 +422,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public string Error;
 		public DbgDotNetText Name;
 		public DbgDotNetValue Value;
+		public ReadOnlyCollection<string> FormatSpecifiers;
 		public DbgEvaluationResultFlags Flags;
 		public string ImageName;
 		public DmdType Type;
 
-		public EvaluateImplResult(string error, DbgDotNetText name, DbgDotNetValue value, DbgEvaluationResultFlags flags, string imageName, DmdType type) {
+		public EvaluateImplResult(string error, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags, string imageName, DmdType type) {
 			Error = error;
 			Name = name;
 			Value = value;
+			FormatSpecifiers = formatSpecifiers;
 			Flags = flags;
 			ImageName = imageName;
 			Type = type;

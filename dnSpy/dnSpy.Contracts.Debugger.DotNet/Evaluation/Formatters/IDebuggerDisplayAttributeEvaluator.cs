@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -45,16 +46,20 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 
 	public struct DbgDotNetEvalResult {
 		public DbgDotNetValue Value { get; }
+		public ReadOnlyCollection<string> FormatSpecifiers { get; }
 		public DbgEvaluationResultFlags Flags { get; }
 		public bool IsThrownException => (Flags & DbgEvaluationResultFlags.ThrownException) != 0;
 		public string Error { get; }
-		public DbgDotNetEvalResult(string error, DbgEvaluationResultFlags flags = 0) {
+		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
+		public DbgDotNetEvalResult(string error, ReadOnlyCollection<string> formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
-		public DbgDotNetEvalResult(DbgDotNetValue value, DbgEvaluationResultFlags flags) {
+		public DbgDotNetEvalResult(DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = null;
 		}

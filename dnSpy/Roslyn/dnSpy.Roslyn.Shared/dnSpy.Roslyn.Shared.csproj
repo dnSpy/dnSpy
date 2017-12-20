@@ -65,7 +65,6 @@
     <Compile Include="Debugger\Formatters\DbgValueFormatterTypeOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\DebuggerDisplayAttributeFormatter.cs" />
     <Compile Include="Debugger\Formatters\EnumInfo.cs" />
-    <Compile Include="Debugger\Formatters\FormatSpecifiersUtils.cs" />
     <Compile Include="Debugger\Formatters\KeyValuePairTypeUtils.cs" />
     <Compile Include="Debugger\Formatters\LanguageFormatter.cs" />
     <Compile Include="Debugger\Formatters\ListCache.cs" />

@@ -188,9 +188,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case '{':
 					int pos = textPos + 1;
-					var evalInfo = ReadEvalText(text, ref pos);
+					var expression = ReadEvalText(text, ref pos);
 					FlushPendingText();
-					partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, evalInfo.expression, pos - textPos, evalInfo.flags));
+					partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, expression, pos - textPos));
 					textPos = pos;
 					break;
 
@@ -215,10 +215,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return true;
 		}
 
-		(string expression, TracepointMessageFlags flags) ReadEvalText(string s, ref int pos) {
+		string ReadEvalText(string s, ref int pos) {
 			var sb = tempStringBuilder;
 			sb.Clear();
-			bool seenComma = false;
 			while (pos < s.Length) {
 				var c = s[pos++];
 				if (c == '}')
@@ -236,29 +235,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 						break;
 					}
 				}
-				seenComma |= c == ',';
 				sb.Append(c);
 			}
-			if (!seenComma)
-				return (sb.ToString(), 0);
-
-			var info = FormatSpecifiersUtils.GetFormatSpecifiers(sb);
-			var flags = TracepointMessageFlags.None;
-			// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
-			foreach (var fs in info.formatSpecifiers) {
-				switch (fs) {
-				case "d":
-					flags = (flags & ~TracepointMessageFlags.Hexadecimal) | TracepointMessageFlags.Decimal;
-					break;
-				case "h":
-					flags = (flags & ~TracepointMessageFlags.Decimal) | TracepointMessageFlags.Hexadecimal;
-					break;
-				case "nq":
-					flags |= TracepointMessageFlags.NoQuotes;
-					break;
-				}
-			}
-			return (info.expression, flags);
+			return sb.ToString();
 		}
 
 		void AddText(string text, int startIndex, int count) {

@@ -55,9 +55,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		enum DisplayPartFlags : byte {
 			None					= 0,
 			EvaluateText			= 0x01,
-			Decimal					= 0x02,
-			Hexadecimal				= 0x04,
-			NoQuotes				= 0x08,
 		}
 
 		struct DisplayPart {
@@ -68,24 +65,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 				Text = text ?? throw new ArgumentNullException(nameof(text));
 			}
 			public static DisplayPart CreateText(string text) => new DisplayPart(DisplayPartFlags.None, text);
-			public static DisplayPart CreateEvaluate(string text, string[] formatSpecifiers) {
-				var flags = DisplayPartFlags.EvaluateText;
-				// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
-				foreach (var fs in formatSpecifiers) {
-					switch (fs) {
-					case "d":
-						flags = (flags & ~DisplayPartFlags.Hexadecimal) | DisplayPartFlags.Decimal;
-						break;
-					case "h":
-						flags = (flags & ~DisplayPartFlags.Decimal) | DisplayPartFlags.Hexadecimal;
-						break;
-					case "nq":
-						flags |= DisplayPartFlags.NoQuotes;
-						break;
-					}
-				}
-				return new DisplayPart(flags, text);
-			}
+			public static DisplayPart CreateEvaluate(string text) => new DisplayPart(DisplayPartFlags.EvaluateText, text);
 			public override string ToString() => $"{Flags}: '{Text}'";
 		}
 
@@ -161,15 +141,21 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 						else {
 							// Prevent recursive calls
 							var options = this.options | DbgValueFormatterOptions.NoDebuggerDisplay;
-							if ((part.Flags & DisplayPartFlags.Decimal) != 0)
-								options |= DbgValueFormatterOptions.Decimal;
-							else if ((part.Flags & DisplayPartFlags.Hexadecimal) != 0)
-								options &= ~DbgValueFormatterOptions.Decimal;
-							if ((part.Flags & DisplayPartFlags.NoQuotes) != 0)
-								options |= DbgValueFormatterOptions.NoStringQuotes;
-							else
-								options &= ~DbgValueFormatterOptions.NoStringQuotes;
-
+							options &= ~DbgValueFormatterOptions.NoStringQuotes;
+							// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
+							for (int i = 0; i < evalRes.FormatSpecifiers.Count; i++) {
+								switch (evalRes.FormatSpecifiers[i]) {
+								case "d":
+									options |= DbgValueFormatterOptions.Decimal;
+									break;
+								case "h":
+									options &= ~DbgValueFormatterOptions.Decimal;
+									break;
+								case "nq":
+									options |= DbgValueFormatterOptions.NoStringQuotes;
+									break;
+								}
+							}
 							languageFormatter.FormatValue(context, output, frame, evalRes.Value, options, cultureInfo, cancellationToken);
 						}
 					}
@@ -268,9 +254,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 					list.Add(DisplayPart.CreateText(text));
 
 				sb.Clear();
-				var evalInfo = ReadEvalText(debuggerDisplayString, ref pos, sb);
-				if (evalInfo.expression.Length != 0)
-					list.Add(DisplayPart.CreateEvaluate(evalInfo.expression, evalInfo.formatSpecifiers));
+				var expression = ReadEvalText(debuggerDisplayString, ref pos, sb);
+				if (expression.Length != 0)
+					list.Add(DisplayPart.CreateEvaluate(expression));
 
 				if (pos >= debuggerDisplayString.Length)
 					break;
@@ -303,8 +289,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			return sb.ToString();
 		}
 
-		static (string expression, string[] formatSpecifiers) ReadEvalText(string s, ref int pos, StringBuilder sb) {
-			bool seenComma = false;
+		static string ReadEvalText(string s, ref int pos, StringBuilder sb) {
 			while (pos < s.Length) {
 				var c = s[pos++];
 				if (c == '}')
@@ -322,12 +307,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 						break;
 					}
 				}
-				seenComma |= c == ',';
 				sb.Append(c);
 			}
-			if (!seenComma)
-				return (sb.ToString(), Array.Empty<string>());
-			return FormatSpecifiersUtils.GetFormatSpecifiers(sb);
+			return sb.ToString();
 		}
 	}
 }

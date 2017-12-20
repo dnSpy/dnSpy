@@ -55,9 +55,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					cancellationToken.ThrowIfCancellationRequested();
 					var info = exceptions[i];
 					if (info.IsStowedException)
-						res[i] = valueNodeFactory.CreateStowedException(context, frame, info.Id, info.Value, options, cancellationToken);
+						res[i] = valueNodeFactory.CreateStowedException(context, frame, info.Id, info.Value, null, options, cancellationToken);
 					else
-						res[i] = valueNodeFactory.CreateException(context, frame, info.Id, info.Value, options, cancellationToken);
+						res[i] = valueNodeFactory.CreateException(context, frame, info.Id, info.Value, null, options, cancellationToken);
 				}
 			}
 			catch (Exception ex) {

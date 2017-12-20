@@ -103,12 +103,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 							if (info.name != null) {
 								newValue.Dispose();
 								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.DebugViewPropertyName, info.name));
-								newNode = valueNodeFactory.Create(context, frame, name, info.value, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.value.Type, false, cancellationToken);
+								newNode = valueNodeFactory.Create(context, frame, name, info.value, null, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.value.Type, false, cancellationToken);
 							}
 						}
 						if (newNode == null) {
 							const bool isReadOnly = false;
-							newNode = valueNodeFactory.Create(context, frame, name, newValue, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, false, cancellationToken);
+							newNode = valueNodeFactory.Create(context, frame, name, newValue, null, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, isReadOnly, false, elementType, false, cancellationToken);
 						}
 					}
 					newValue = null;

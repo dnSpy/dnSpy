@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -68,6 +69,11 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public DbgEngineValue Value { get; }
 
 		/// <summary>
+		/// Gets the format specifiers, if any
+		/// </summary>
+		public ReadOnlyCollection<string> FormatSpecifiers { get; }
+
+		/// <summary>
 		/// Gets the flags
 		/// </summary>
 		public DbgEvaluationResultFlags Flags { get; }
@@ -77,13 +83,17 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		public string Error { get; }
 
+		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="flags">Flags</param>
-		public DbgEngineEvaluationResult(DbgEngineValue value, DbgEvaluationResultFlags flags) {
+		public DbgEngineEvaluationResult(DbgEngineValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = null;
 		}
@@ -95,6 +105,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="flags">Flags</param>
 		public DbgEngineEvaluationResult(string error, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
+			FormatSpecifiers = emptyFormatSpecifiers;
 			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}

@@ -40,11 +40,11 @@ namespace dnSpy.Debugger.Evaluation {
 
 		DbgEvaluationResult CreateResult(DbgRuntime runtime, DbgEngineEvaluationResult result) {
 			if (result.Error != null)
-				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.Flags);
+				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.FormatSpecifiers, result.Flags);
 			try {
 				var value = new DbgValueImpl(runtime, result.Value);
 				runtime.CloseOnContinue(value);
-				return new DbgEvaluationResult(value, result.Flags);
+				return new DbgEvaluationResult(value, result.FormatSpecifiers, result.Flags);
 			}
 			catch {
 				runtime.Process.DbgManager.Close(result.Value);

@@ -207,9 +207,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					canHide = false;
 				}
 				else if (valueResult.ValueIsException)
-					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
+					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
 				else
-					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
+					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, null, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
 
 				valueResult = default;
 				return (newNode, canHide);
