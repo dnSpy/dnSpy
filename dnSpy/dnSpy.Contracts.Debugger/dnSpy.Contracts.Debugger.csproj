@@ -141,6 +141,7 @@
     <Compile Include="Evaluation\DbgValueNodeProvider.cs" />
     <Compile Include="Evaluation\PredefinedDbgLanguageNames.cs" />
     <Compile Include="Evaluation\PredefinedDbgValueNodeImageNames.cs" />
+    <Compile Include="Evaluation\PredefinedFormatSpecifiers.cs" />
     <Compile Include="Exceptions\DbgException.cs" />
     <Compile Include="Exceptions\DbgExceptionCategoryDefinition.cs" />
     <Compile Include="Exceptions\DbgExceptionCategoryDefinitionFlags.cs" />

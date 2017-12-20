@@ -142,20 +142,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 							// Prevent recursive calls
 							var options = this.options | DbgValueFormatterOptions.NoDebuggerDisplay;
 							options &= ~DbgValueFormatterOptions.NoStringQuotes;
-							// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
-							for (int i = 0; i < evalRes.FormatSpecifiers.Count; i++) {
-								switch (evalRes.FormatSpecifiers[i]) {
-								case "d":
-									options |= DbgValueFormatterOptions.Decimal;
-									break;
-								case "h":
-									options &= ~DbgValueFormatterOptions.Decimal;
-									break;
-								case "nq":
-									options |= DbgValueFormatterOptions.NoStringQuotes;
-									break;
-								}
-							}
+							options = PredefinedFormatSpecifiers.GetValueFormatterOptions(evalRes.FormatSpecifiers, options);
 							languageFormatter.FormatValue(context, output, frame, evalRes.Value, options, cultureInfo, cancellationToken);
 						}
 					}

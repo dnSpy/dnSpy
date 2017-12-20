@@ -441,20 +441,6 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				options |= DbgValueFormatterOptions.Display;
 			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
-			// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
-			for (int i = 0; i < formatSpecifiers.Count; i++) {
-				switch (formatSpecifiers[i]) {
-				case "d":
-					options |= DbgValueFormatterOptions.Decimal;
-					break;
-				case "h":
-					options &= ~DbgValueFormatterOptions.Decimal;
-					break;
-				case "nq":
-					options |= DbgValueFormatterOptions.NoStringQuotes;
-					break;
-				}
-			}
 			if (debuggerSettings.UseDigitSeparators)
 				options |= DbgValueFormatterOptions.DigitSeparators;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
@@ -463,7 +449,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				options |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
 			if (dbgEvalFormatterSettings.ShowTokens)
 				options |= DbgValueFormatterOptions.Tokens;
-			return options;
+			return PredefinedFormatSpecifiers.GetValueFormatterOptions(formatSpecifiers, options);
 		}
 	}
 }
