@@ -277,23 +277,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		}
 
 		static string ReadEvalText(string s, ref int pos, StringBuilder sb) {
+			int braceCount = 1;
 			while (pos < s.Length) {
 				var c = s[pos++];
-				if (c == '}')
-					break;
-				if (c == '\\' && pos < s.Length) {
-					c = s[pos++];
-					switch (c) {
-					case '{':
-					case '}':
-					case '\\':
+				if (c == '}') {
+					if (braceCount <= 1)
 						break;
-
-					default:
-						sb.Append('\\');
-						break;
-					}
+					braceCount--;
 				}
+				else if (c == '{')
+					braceCount++;
 				sb.Append(c);
 			}
 			return sb.ToString();
