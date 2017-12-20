@@ -47,6 +47,12 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				sb.Append(string.Format(dnSpy_Contracts_DnSpy_Resources.Search_SearchColumnHelpText, def.LocalizedName));
 				sb.AppendLine();
 			}
+			Debug.Assert(definitions.Length > 0);
+			if (definitions.Length > 0) {
+				sb.AppendLine();
+				var def = definitions[0];
+				sb.AppendLine(string.Format(dnSpy_Contracts_DnSpy_Resources.Search_SearchColumnInvertMatchHelpText, "-option!", "-" + def.ShortOptionName + "! <text>"));
+			}
 			return sb.ToString();
 		}
 
@@ -59,7 +65,10 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				if (cmd.ColumnId == null) {
 					bool match = false;
 					foreach (var text in columnText) {
-						if (text.IndexOf(cmd.SearchText, stringComparison) >= 0) {
+						bool b = text.IndexOf(cmd.SearchText, stringComparison) >= 0;
+						if (cmd.Negate)
+							b = !b;
+						if (b) {
 							match = true;
 							break;
 						}
@@ -70,7 +79,12 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				else {
 					int index = GetColumnIndex(cmd.ColumnId);
 					Debug.Assert(index >= 0);
-					if (index < 0 || columnText[index].IndexOf(cmd.SearchText, stringComparison) < 0)
+					if (index < 0)
+						return false;
+					bool b = columnText[index].IndexOf(cmd.SearchText, stringComparison) >= 0;
+					if (cmd.Negate)
+						b = !b;
+					if (!b)
 						return false;
 				}
 			}
@@ -92,6 +106,8 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 
 			foreach (var cmd in searchCommands) {
 				if (cmd.ColumnId != null && cmd.ColumnId != columnId)
+					continue;
+				if (cmd.Negate)
 					continue;
 				int searchLength = cmd.SearchText.Length;
 				if (searchLength == 0)
