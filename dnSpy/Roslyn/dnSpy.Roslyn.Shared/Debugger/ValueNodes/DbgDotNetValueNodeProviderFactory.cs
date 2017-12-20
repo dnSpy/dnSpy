@@ -547,7 +547,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			//TODO: non-void and non-null pointers (derefence and show members)
 
 			if ((object)state.EnumerableType != null && !value.IsNull)
-				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, state.TypeExpression, expression, evalOptions));
+				providers.Add(new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, expression, evalOptions));
 			if (state.IsDynamicViewType && !value.IsNull)
 				providers.Add(new DynamicViewMembersValueNodeProvider(this, valueNodeFactory, value, expression, state.Type.AppDomain, evalOptions));
 		}

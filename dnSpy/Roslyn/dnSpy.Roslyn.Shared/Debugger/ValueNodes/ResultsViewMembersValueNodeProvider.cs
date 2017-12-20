@@ -46,8 +46,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		string resultsViewProxyExpression;
 		DbgDotNetValue getResultsViewValue;
 
-		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, string typeExpression, string valueExpression, DbgValueNodeEvaluationOptions evalOptions)
-			: base(valueNodeFactory, resultsViewName, typeExpression + ", results", default, evalOptions) {
+		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, string valueExpression, DbgValueNodeEvaluationOptions evalOptions)
+			: base(valueNodeFactory, resultsViewName, valueExpression + ", results", default, evalOptions) {
 			this.valueNodeProviderFactory = valueNodeProviderFactory;
 			this.enumerableType = enumerableType;
 			this.instanceValue = instanceValue;
