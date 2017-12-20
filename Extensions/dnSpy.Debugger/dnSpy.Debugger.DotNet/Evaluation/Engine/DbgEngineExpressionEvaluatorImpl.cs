@@ -271,6 +271,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return null;
 		}
 
+		static bool HasAllowFuncEval(ReadOnlyCollection<string> formatSpecifiers) =>
+			formatSpecifiers?.Contains(PredefinedFormatSpecifiers.AllowFuncEval) == true;
+
 		internal EvaluateImplResult EvaluateImpl(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object stateObj, CancellationToken cancellationToken) {
 			try {
 				var errorRes = GetMethodInterpreterState(context, frame, expression, options, stateObj, cancellationToken, out var state);
@@ -280,7 +283,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				Debug.Assert(state.CompilationResult.CompiledExpressions.Length == 1);
 				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
 
-				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0)
+				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0 && !HasAllowFuncEval(exprInfo.FormatSpecifiers))
 					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);
 
 				var res = dnILInterpreter.Execute(context, frame, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType, cancellationToken);
@@ -329,7 +332,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				Debug.Assert(state.CompilationResult.CompiledExpressions.Length == 1);
 				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
 
-				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0)
+				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0 && !HasAllowFuncEval(exprInfo.FormatSpecifiers))
 					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);
 
 				var argumentsProvider = new TypeArgumentsProvider(obj);
