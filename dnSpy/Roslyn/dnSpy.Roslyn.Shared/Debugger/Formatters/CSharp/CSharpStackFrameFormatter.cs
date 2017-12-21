@@ -47,6 +47,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		const string Keyword_remove = "remove";
 		const string Keyword_out = "out";
 		const string Keyword_ref = "ref";
+		const string Keyword_in = "in";
+		const string Keyword_readonly = "readonly";
 		const string GenericsParenOpen = "<";
 		const string GenericsParenClose = ">";
 		const string IndexerParenOpen = "[";
@@ -137,6 +139,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			if (DigitSeparators)
 				res |= ValueFormatterOptions.DigitSeparators;
 			return res;
+		}
+
+		void FormatReturnType(DmdType type, bool isReadOnly) {
+			if (type.IsByRef && isReadOnly) {
+				type = type.GetElementType();
+				OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
+				WriteSpace();
+				OutputWrite(Keyword_readonly, BoxedTextColor.Keyword);
+				WriteSpace();
+			}
+			FormatType(type);
 		}
 
 		void FormatType(DmdType type) {
@@ -275,6 +288,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				OutputWrite(Keyword_out, BoxedTextColor.Keyword);
 				WriteSpace();
 			}
+			else if (!param.IsIn && !param.IsOut && TypeFormatterUtils.IsReadOnlyParameter(param)) {
+				OutputWrite(Keyword_in, BoxedTextColor.Keyword);
+				WriteSpace();
+			}
 			else {
 				OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
 				WriteSpace();
@@ -386,7 +403,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		void Format(DbgStackFrame frame, DmdMethodBase method, DmdPropertyInfo property, AccessorKind accessorKind) {
 			if (ReturnTypes) {
-				FormatType(property.PropertyType);
+				FormatReturnType(property.PropertyType, TypeFormatterUtils.IsReadOnlyProperty(property));
 				WriteSpace();
 			}
 			if (DeclaringTypes) {
@@ -438,7 +455,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 			if (!isExplicitOrImplicit) {
 				if (ReturnTypes && !(method is DmdConstructorInfo)) {
-					FormatType(sig.ReturnType);
+					FormatReturnType(sig.ReturnType, TypeFormatterUtils.IsReadOnlyMethod(method));
 					WriteSpace();
 				}
 			}

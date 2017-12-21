@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -227,6 +229,25 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			if (index >= s.Length)
 				return (char)0;
 			return s[index++];
+		}
+
+		public static bool IsReadOnlyProperty(DmdPropertyInfo property) => HasIsReadOnlyAttribute(property.CustomAttributes);
+
+		public static bool IsReadOnlyMethod(DmdMethodBase method) {
+			if (!(method is DmdMethodInfo m))
+				return false;
+			return HasIsReadOnlyAttribute(m.ReturnParameter.CustomAttributes);
+		}
+
+		public static bool IsReadOnlyParameter(DmdParameterInfo parameter) => HasIsReadOnlyAttribute(parameter.CustomAttributes);
+
+		static bool HasIsReadOnlyAttribute(ReadOnlyCollection<DmdCustomAttributeData> customAttributes) {
+			for (int i = 0; i < customAttributes.Count; i++) {
+				var ca = customAttributes[i];
+				if (ca.AttributeType.MetadataName == "IsReadOnlyAttribute" && ca.AttributeType.MetadataNamespace == "System.Runtime.CompilerServices" && (object)ca.AttributeType.DeclaringType == null)
+					return true;
+			}
+			return false;
 		}
 	}
 

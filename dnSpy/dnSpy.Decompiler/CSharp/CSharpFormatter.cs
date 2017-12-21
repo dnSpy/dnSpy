@@ -36,6 +36,7 @@ namespace dnSpy.Decompiler.CSharp {
 		const string Keyword_out = "out";
 		const string Keyword_in = "in";
 		const string Keyword_ref = "ref";
+		const string Keyword_readonly = "readonly";
 		const string Keyword_this = "this";
 		const string Keyword_get = "get";
 		const string Keyword_set = "set";
@@ -380,6 +381,10 @@ namespace dnSpy.Decompiler.CSharp {
 					OutputWrite(Keyword_out, BoxedTextColor.Keyword);
 					WriteSpace();
 				}
+				else if (pd != null && (!pd.IsIn && !pd.IsOut && TypeFormatterUtils.IsReadOnlyParameter(pd))) {
+					OutputWrite(Keyword_in, BoxedTextColor.Keyword);
+					WriteSpace();
+				}
 				else {
 					OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
 					WriteSpace();
@@ -447,7 +452,7 @@ namespace dnSpy.Decompiler.CSharp {
 			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit)
-				WriteReturnType(ref info, writeSpace: true);
+				WriteReturnType(ref info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
 
 			if (ShowDeclaringTypes) {
 				Write(method.DeclaringType);
@@ -464,7 +469,7 @@ namespace dnSpy.Decompiler.CSharp {
 			if (isExplicitOrImplicit) {
 				WriteToken(method);
 				WriteSpace();
-				ForceWriteReturnType(ref info, writeSpace: false);
+				ForceWriteReturnType(ref info, writeSpace: false, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
 			}
 			else
 				WriteToken(method);
@@ -626,7 +631,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 			var info = new FormatterMethodInfo(md, md == setMethod);
 			WriteModuleName(ref info);
-			WriteReturnType(ref info, writeSpace: true);
+			WriteReturnType(ref info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyProperty(prop));
 			if (ShowDeclaringTypes) {
 				Write(prop.DeclaringType);
 				WritePeriod();
@@ -724,7 +729,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 				var info = new FormatterMethodInfo(invoke);
 				WriteModuleName(ref info);
-				WriteReturnType(ref info, writeSpace: true);
+				WriteReturnType(ref info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
 
 				// Always print the namespace here because that's what VS does
 				WriteType(td, true, ShowIntrinsicTypeKeywords);
@@ -1111,15 +1116,15 @@ namespace dnSpy.Decompiler.CSharp {
 			return;
 		}
 
-		void WriteReturnType(ref FormatterMethodInfo info, bool writeSpace) {
+		void WriteReturnType(ref FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
 			if (!ShowReturnTypes)
 				return;
 			if (info.MethodDef?.IsConstructor == true)
 				return;
-			ForceWriteReturnType(ref info, writeSpace);
+			ForceWriteReturnType(ref info, writeSpace, isReadOnly);
 		}
 
-		void ForceWriteReturnType(ref FormatterMethodInfo info, bool writeSpace) {
+		void ForceWriteReturnType(ref FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
 			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
 				TypeSig retType;
 				ParamDef retParamDef;
@@ -1135,6 +1140,13 @@ namespace dnSpy.Decompiler.CSharp {
 				else {
 					retType = info.MethodSig.RetType;
 					retParamDef = info.MethodDef == null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef;
+				}
+				if (retType.RemovePinnedAndModifiers() is ByRefSig && isReadOnly) {
+					retType = retType.RemovePinnedAndModifiers().Next;
+					OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
+					WriteSpace();
+					OutputWrite(Keyword_readonly, BoxedTextColor.Keyword);
+					WriteSpace();
 				}
 				Write(retType, retParamDef, info.TypeGenericParams, info.MethodGenericParams);
 				if (writeSpace)

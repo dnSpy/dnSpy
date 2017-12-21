@@ -326,6 +326,27 @@ namespace dnSpy.Decompiler {
 			}
 			return false;
 		}
+
+		public static bool IsReadOnlyProperty(PropertyDef property) => HasIsReadOnlyAttribute(property.CustomAttributes);
+
+		public static bool IsReadOnlyMethod(MethodDef method) {
+			if (method == null || method.IsConstructor)
+				return false;
+			return HasIsReadOnlyAttribute(method.Parameters.ReturnParameter.ParamDef?.CustomAttributes);
+		}
+
+		public static bool IsReadOnlyParameter(ParamDef pd) => HasIsReadOnlyAttribute(pd?.CustomAttributes);
+
+		static bool HasIsReadOnlyAttribute(CustomAttributeCollection customAttributes) {
+			if (customAttributes == null)
+				return false;
+			for (int i = 0; i < customAttributes.Count; i++) {
+				var ca = customAttributes[i];
+				if (ca.AttributeType?.FullName == "System.Runtime.CompilerServices.IsReadOnlyAttribute" && ca.AttributeType.DeclaringType == null)
+					return true;
+			}
+			return false;
+		}
 	}
 
 	enum AccessorKind {
