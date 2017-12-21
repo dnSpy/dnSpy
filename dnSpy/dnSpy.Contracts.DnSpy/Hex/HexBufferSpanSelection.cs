@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Buffer span and selection flags
 	/// </summary>
-	public struct HexBufferSpanSelection : IEquatable<HexBufferSpanSelection> {
+	public readonly struct HexBufferSpanSelection : IEquatable<HexBufferSpanSelection> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

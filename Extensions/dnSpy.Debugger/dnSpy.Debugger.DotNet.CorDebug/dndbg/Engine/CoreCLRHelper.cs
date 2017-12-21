@@ -27,7 +27,7 @@ using dndbg.COM.CorDebug;
 using Microsoft.Win32;
 
 namespace dndbg.Engine {
-	struct CoreCLRInfo {
+	readonly struct CoreCLRInfo {
 		public int ProcessId { get; }
 		public CoreCLRTypeAttachInfo CoreCLRTypeInfo { get; }
 

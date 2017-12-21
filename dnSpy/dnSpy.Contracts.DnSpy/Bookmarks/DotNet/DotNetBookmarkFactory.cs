@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 		/// <param name="token">Token of a method within the module</param>
 		/// <param name="offset">IL offset of the bookmark within the method body</param>
 		/// <returns></returns>
-		public Bookmark Create(ModuleId module, uint token, uint offset) =>
+		public Bookmark Create(in ModuleId module, uint token, uint offset) =>
 			Create(module, token, offset, new BookmarkSettings { IsEnabled = true });
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 		/// <param name="offset">IL offset of the bookmark within the method body</param>
 		/// <param name="settings">Bookmark settings</param>
 		/// <returns></returns>
-		public Bookmark Create(ModuleId module, uint token, uint offset, BookmarkSettings settings) =>
+		public Bookmark Create(in ModuleId module, uint token, uint offset, BookmarkSettings settings) =>
 			Create(new[] { new DotNetMethodBodyBookmarkInfo(module, token, offset, settings) }).FirstOrDefault();
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of a definition (type, method, field, property, event)</param>
 		/// <returns></returns>
-		public Bookmark Create(ModuleId module, uint token) =>
+		public Bookmark Create(in ModuleId module, uint token) =>
 			Create(module, token, new BookmarkSettings { IsEnabled = true });
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 		/// <param name="token">Token of a definition (type, method, field, property, event)</param>
 		/// <param name="settings">Bookmark settings</param>
 		/// <returns></returns>
-		public Bookmark Create(ModuleId module, uint token, BookmarkSettings settings) =>
+		public Bookmark Create(in ModuleId module, uint token, BookmarkSettings settings) =>
 			Create(new[] { new DotNetTokenBookmarkInfo(module, token, settings) }).FirstOrDefault();
 
 		/// <summary>
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 	/// <summary>
 	/// Contains all required data to create a bookmark in a .NET method body
 	/// </summary>
-	public struct DotNetMethodBodyBookmarkInfo {
+	public readonly struct DotNetMethodBodyBookmarkInfo {
 		/// <summary>
 		/// Module
 		/// </summary>
@@ -111,7 +111,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 		/// <param name="token">Token of a method within the module</param>
 		/// <param name="offset">IL offset of the bookmark within the method body</param>
 		/// <param name="settings">Bookmark settings</param>
-		public DotNetMethodBodyBookmarkInfo(ModuleId module, uint token, uint offset, BookmarkSettings settings) {
+		public DotNetMethodBodyBookmarkInfo(in ModuleId module, uint token, uint offset, BookmarkSettings settings) {
 			Module = module;
 			Token = token;
 			Offset = offset;
@@ -122,7 +122,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 	/// <summary>
 	/// Contains all required data to create a bookmark that references a definition (type, method, field, property, event)
 	/// </summary>
-	public struct DotNetTokenBookmarkInfo {
+	public readonly struct DotNetTokenBookmarkInfo {
 		/// <summary>
 		/// Module
 		/// </summary>
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of a definition (type, method, field, property, event)</param>
 		/// <param name="settings">Bookmark settings</param>
-		public DotNetTokenBookmarkInfo(ModuleId module, uint token, BookmarkSettings settings) {
+		public DotNetTokenBookmarkInfo(in ModuleId module, uint token, BookmarkSettings settings) {
 			Module = module;
 			Token = token;
 			Settings = settings;

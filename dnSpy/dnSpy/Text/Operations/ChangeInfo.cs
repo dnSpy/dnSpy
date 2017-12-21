@@ -20,7 +20,7 @@
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text.Operations {
-	struct ChangeInfo {
+	readonly struct ChangeInfo {
 		public INormalizedTextChangeCollection Collection { get; }
 		public int BeforeVersionNumber { get; }
 		public int AfterVersionNumber { get; }

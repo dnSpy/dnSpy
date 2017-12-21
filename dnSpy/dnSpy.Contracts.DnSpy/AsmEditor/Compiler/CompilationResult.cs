@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Compilation result
 	/// </summary>
-	public struct CompilationResult {
+	public readonly struct CompilationResult {
 		/// <summary>
 		/// true if the compilation succeeded
 		/// </summary>

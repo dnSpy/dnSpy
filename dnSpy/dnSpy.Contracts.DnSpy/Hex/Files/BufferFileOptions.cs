@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// <see cref="HexBufferFile"/> options
 	/// </summary>
-	public struct BufferFileOptions {
+	public readonly struct BufferFileOptions {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

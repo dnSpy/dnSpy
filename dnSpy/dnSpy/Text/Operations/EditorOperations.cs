@@ -109,7 +109,7 @@ namespace dnSpy.Text.Operations {
 			EditorOperationsFactoryService.RemoveFromProperties(this);
 		}
 
-		struct SavedCaretSelection {
+		readonly struct SavedCaretSelection {
 			readonly EditorOperations editorOperations;
 			public VirtualSnapshotPoint AnchorPoint { get; }
 			public VirtualSnapshotPoint ActivePoint { get; }
@@ -428,7 +428,7 @@ namespace dnSpy.Text.Operations {
 			return Span.FromBounds(start, end);
 		}
 
-		struct DeleteHorizontalWhitespaceInfo {
+		readonly struct DeleteHorizontalWhitespaceInfo {
 			public Span Span { get; }
 			public bool AddSpace { get; }
 			public DeleteHorizontalWhitespaceInfo(Span span, bool addSpace) {

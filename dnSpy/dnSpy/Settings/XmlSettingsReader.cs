@@ -24,7 +24,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
-	struct XmlSettingsReader {
+	readonly struct XmlSettingsReader {
 		readonly ISettingsService mgr;
 		readonly string filename;
 

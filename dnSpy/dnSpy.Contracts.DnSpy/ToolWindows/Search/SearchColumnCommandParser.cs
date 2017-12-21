@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 			NegatedCommand,
 		}
 
-		struct Token {
+		readonly struct Token {
 			public TokenKind Kind { get; }
 			public string Text { get; }
 			public Token(TokenKind kind, string text) {
@@ -184,7 +184,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 		}
 	}
 
-	struct SearchCommand {
+	readonly struct SearchCommand {
 		/// <summary>
 		/// Column id (<see cref="SearchColumnDefinition.Id"/>) or null if it can match any column.
 		/// </summary>

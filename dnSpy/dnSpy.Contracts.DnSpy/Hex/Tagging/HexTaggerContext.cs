@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 	/// <summary>
 	/// Hex tagger context
 	/// </summary>
-	public struct HexTaggerContext {
+	public readonly struct HexTaggerContext {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

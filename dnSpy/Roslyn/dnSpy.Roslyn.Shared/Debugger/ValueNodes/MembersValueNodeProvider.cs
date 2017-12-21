@@ -47,7 +47,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		DbgManager dbgManager;
 		string errorMessage;
 
-		protected struct ChildNodeProviderInfo {
+		protected readonly struct ChildNodeProviderInfo {
 			public readonly ulong StartIndex;
 			// Not inclusive
 			public readonly ulong EndIndex;
@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		protected MembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions) {
+		protected MembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, in DbgDotNetText name, string expression, in MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions) {
 			this.valueNodeFactory = valueNodeFactory;
 			Name = name;
 			Expression = expression;
@@ -238,7 +238,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValueResult valueResult, CancellationToken cancellationToken) => (null, false);
+		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationContext context, DbgStackFrame frame, in DbgDotNetValueResult valueResult, CancellationToken cancellationToken) => (null, false);
 
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {

@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Commands {
 			get { yield return ownerNode; }
 		}
 
-		struct MethodState {
+		readonly struct MethodState {
 			readonly Emit.MethodBody body;
 			readonly MethodDefOptions methodDefOptions;
 			readonly bool isBodyModified;

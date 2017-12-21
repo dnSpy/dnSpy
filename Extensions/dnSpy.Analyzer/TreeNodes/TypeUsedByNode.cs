@@ -61,7 +61,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
+		EntityNode HandleSpecialMethodNode(MethodDef method, in SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
 			if (property != null)
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };
@@ -105,8 +105,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method)
-	   || IsUsedInMethodBody(method, ref sourceRef);
+		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method) || IsUsedInMethodBody(method, ref sourceRef);
 
 		bool IsUsedInMethodBody(MethodDef method, ref SourceRef? sourceRef) {
 			if (method == null)

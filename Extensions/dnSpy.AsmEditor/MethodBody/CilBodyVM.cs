@@ -435,7 +435,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetInstructionPops(a) != null);
 
-		struct InstructionPushPopInfo {
+		readonly struct InstructionPushPopInfo {
 			public readonly int PopCount;
 			public readonly bool Pushes;// Needed in case there's an invalid method sig with a null type
 			public readonly TypeSig PushType;

@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// <see cref="DbgModuleMemoryRefreshedNotifier.ModulesRefreshed"/> event args
 	/// </summary>
-	public struct ModulesRefreshedEventArgs {
+	public readonly struct ModulesRefreshedEventArgs {
 		/// <summary>
 		/// Gets the modules
 		/// </summary>

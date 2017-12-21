@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 	/// <summary>
 	/// Result of evaluating a filter expression
 	/// </summary>
-	public struct DbgFilterExpressionEvaluatorResult {
+	public readonly struct DbgFilterExpressionEvaluatorResult {
 		/// <summary>
 		/// Result if <see cref="HasError"/> is false
 		/// </summary>

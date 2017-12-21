@@ -75,8 +75,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		struct LocationsResult : IDisposable {
-			public DbgTextViewBreakpointLocationResult? locRes;
+		readonly struct LocationsResult : IDisposable {
+			public readonly DbgTextViewBreakpointLocationResult? locRes;
 			readonly Lazy<DbgManager> dbgManager;
 			readonly List<DbgCodeLocation> allLocations;
 
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				res = result;
 		}
 
-		DbgCodeBreakpoint[] GetBreakpoints(DbgTextViewBreakpointLocationResult locations) {
+		DbgCodeBreakpoint[] GetBreakpoints(in DbgTextViewBreakpointLocationResult locations) {
 			var list = new List<DbgCodeBreakpoint>();
 			foreach (var loc in locations.Locations) {
 				var bp = dbgCodeBreakpointsService.Value.TryGetBreakpoint(loc);
@@ -176,11 +176,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public override bool CanToggleCreateBreakpoint => GetToggleCreateBreakpointKind() != ToggleCreateBreakpointKind.None;
 		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
 
-		struct ToggleCreateBreakpointInfoResult : IDisposable {
+		readonly struct ToggleCreateBreakpointInfoResult : IDisposable {
 			readonly Lazy<DbgManager> dbgManager;
-			public ToggleCreateBreakpointKind kind;
-			public DbgCodeBreakpoint[] breakpoints;
-			public DbgCodeLocation[] locations;
+			public readonly ToggleCreateBreakpointKind kind;
+			public readonly DbgCodeBreakpoint[] breakpoints;
+			public readonly DbgCodeLocation[] locations;
 			public ToggleCreateBreakpointInfoResult(Lazy<DbgManager> dbgManager, ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) {
 				this.dbgManager = dbgManager;
 				this.kind = kind;
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		void ToggleCreateBreakpoint(ToggleCreateBreakpointInfoResult info) {
+		void ToggleCreateBreakpoint(in ToggleCreateBreakpointInfoResult info) {
 			using (info) {
 				switch (info.kind) {
 				case ToggleCreateBreakpointKind.Add:

@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <c>System.Runtime.InteropServices.TypeIdentifierAttribute</c> helper code used by <see cref="DmdSigComparer"/>
 	/// </summary>
 	static class TIAHelper {
-		struct Info : IEquatable<Info> {
+		readonly struct Info {
 			public readonly string Scope;
 			public readonly string Identifier;
 
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				Identifier = identifier;
 			}
 
-			public bool Equals(Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
+			public bool Equals(in Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
 		}
 
 		static Info? GetInfo(DmdType td) {

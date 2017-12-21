@@ -88,7 +88,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		struct Key : IEquatable<Key> {
+		readonly struct Key : IEquatable<Key> {
 			public readonly IDecompiler Decompiler;
 			public readonly DocumentTreeNodeData[] Nodes;
 			public readonly DecompilerSettingsBase Settings;

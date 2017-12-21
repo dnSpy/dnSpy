@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception definition
 	/// </summary>
-	public struct DbgExceptionDefinition {
+	public readonly struct DbgExceptionDefinition {
 		/// <summary>
 		/// Exception ID
 		/// </summary>
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="id">Exception id</param>
 		/// <param name="flags">Flags</param>
-		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags)
+		public DbgExceptionDefinition(in DbgExceptionId id, DbgExceptionDefinitionFlags flags)
 			: this(id, flags, null) {
 		}
 
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Exception id</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="description">Description shown in the UI or null</param>
-		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string description) {
+		public DbgExceptionDefinition(in DbgExceptionId id, DbgExceptionDefinitionFlags flags, string description) {
 			if (id.Category == null)
 				throw new ArgumentException();
 			Id = id;

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Contains added or removed objects
 	/// </summary>
-	public struct DbgCollectionChangedEventArgs<T> {
+	public readonly struct DbgCollectionChangedEventArgs<T> {
 		/// <summary>
 		/// The objects that got added or removed (see <see cref="Added"/>)
 		/// </summary>

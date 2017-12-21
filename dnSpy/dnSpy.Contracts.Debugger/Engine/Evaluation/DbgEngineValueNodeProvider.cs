@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Contains a value node and its kind
 	/// </summary>
-	public struct DbgEngineLocalsValueNodeInfo {
+	public readonly struct DbgEngineLocalsValueNodeInfo {
 		/// <summary>
 		/// What kind of value this is (local or parameter)
 		/// </summary>

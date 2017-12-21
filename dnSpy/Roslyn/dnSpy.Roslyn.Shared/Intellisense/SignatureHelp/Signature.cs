@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
 
 		readonly SignatureHelpItem item;
 
-		struct Builder {
+		readonly struct Builder {
 			public string Content { get; }
 			public string PrettyPrintedContent { get; }
 			public IList<TaggedText> ContentTaggedText { get; }

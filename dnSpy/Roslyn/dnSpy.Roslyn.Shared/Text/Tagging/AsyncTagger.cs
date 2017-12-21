@@ -86,7 +86,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 			}
 		}
 
-		protected struct TagsResult {
+		protected readonly struct TagsResult {
 			public SnapshotSpan Span { get; }
 			public ITagSpan<TTagType>[] Tags { get; }
 
@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 
 		protected abstract class GetTagsState {
 			public CancellationToken CancellationToken { get; }
-			public abstract void AddResult(TagsResult result);
+			public abstract void AddResult(in TagsResult result);
 			public TUserAsyncState UserAsyncState { get; }
 
 			protected GetTagsState(CancellationToken cancellationToken) {
@@ -122,7 +122,7 @@ namespace dnSpy.Roslyn.Shared.Text.Tagging {
 				currentResult = new List<TagsResult>();
 			}
 
-			public override void AddResult(TagsResult result) {
+			public override void AddResult(in TagsResult result) {
 				CancellationToken.ThrowIfCancellationRequested();
 				currentResult.Add(result);
 			}

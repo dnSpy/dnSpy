@@ -25,7 +25,7 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.SignatureHelp {
-	struct SignatureHelpInfo {
+	readonly struct SignatureHelpInfo {
 		public SignatureHelpService SignatureHelpService { get; }
 		public Document Document { get; }
 		public SourceText SourceText { get; }

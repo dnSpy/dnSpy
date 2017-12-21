@@ -25,21 +25,21 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// TData = <see cref="MethodDebugInfo"/>
 		/// </summary>
-		public const string DebugInfo = "DebugInfo";
+		public const string DebugInfo = nameof(DebugInfo);
 
 		/// <summary>
 		/// TData = <see cref="Decompiler.SpanReference"/>
 		/// </summary>
-		public const string SpanReference = "SpanReference";
+		public const string SpanReference = nameof(SpanReference);
 
 		/// <summary>
 		/// TData = <see cref="Decompiler.CodeBracesRange"/>
 		/// </summary>
-		public const string CodeBracesRange = "CodeBracesRange";
+		public const string CodeBracesRange = nameof(CodeBracesRange);
 
 		/// <summary>
 		/// TData = <see cref="Decompiler.LineSeparator"/>
 		/// </summary>
-		public const string LineSeparator = "LineSeparator";
+		public const string LineSeparator = nameof(LineSeparator);
 	}
 }

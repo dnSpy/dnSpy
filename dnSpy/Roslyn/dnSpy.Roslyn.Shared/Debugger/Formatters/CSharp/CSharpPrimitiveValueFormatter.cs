@@ -26,7 +26,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
-	struct CSharpPrimitiveValueFormatter {
+	readonly struct CSharpPrimitiveValueFormatter {
 		readonly ITextColorWriter output;
 		readonly ValueFormatterOptions options;
 		readonly CultureInfo cultureInfo;
@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			new CSharpTypeFormatter(output, typeOptions, cultureInfo).Format(type, null);
 		}
 
-		public bool TryFormat(DmdType type, DbgDotNetRawValue rawValue) {
+		public bool TryFormat(DmdType type, in DbgDotNetRawValue rawValue) {
 			if (!rawValue.HasRawValue)
 				return false;
 

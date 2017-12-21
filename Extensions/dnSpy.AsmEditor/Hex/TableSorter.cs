@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		struct Record {
+		readonly struct Record {
 			public readonly int OrigIndex;
 			public readonly byte[] Data;
 

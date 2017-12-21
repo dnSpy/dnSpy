@@ -39,12 +39,12 @@ namespace dnSpy.Hex.Files {
 	sealed class HexFieldFormatterImpl : HexFieldFormatter {
 		readonly HexTextWriter writer;
 		readonly HexFieldFormatterOptions options;
-		/*readonly*/ NumberFormatter arrayIndexFormatter;
-		/*readonly*/ NumberFormatter numberFormatter;
-		/*readonly*/ NumberFormatter numberFormatterShort;
-		/*readonly*/ NumberFormatter tokenFormatter;
+		readonly NumberFormatter arrayIndexFormatter;
+		readonly NumberFormatter numberFormatter;
+		readonly NumberFormatter numberFormatterShort;
+		readonly NumberFormatter tokenFormatter;
 
-		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, NumberFormatter arrayIndexFormatter, NumberFormatter numberFormatter) {
+		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, in NumberFormatter arrayIndexFormatter, in NumberFormatter numberFormatter) {
 			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
 			this.options = options;
 			this.arrayIndexFormatter = arrayIndexFormatter;

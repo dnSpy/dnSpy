@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			noResultsName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, emptyMessage));
 		}
 
-		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgDotNetValueResult valueResult, CancellationToken cancellationToken) {
+		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationContext context, DbgStackFrame frame, string expression, in DbgDotNetValueResult valueResult, CancellationToken cancellationToken) {
 			DbgDotNetValueResult getterResult = default;
 			try {
 				if (!valueResult.ValueIsException)

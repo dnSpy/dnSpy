@@ -50,7 +50,7 @@ namespace dnSpy.Text.Editor {
 		ReplSubBufferInfo FindBuffer(int offset);
 	}
 
-	struct ReplSubBufferInfo {
+	readonly struct ReplSubBufferInfo {
 		public ReplSubBuffer Buffer { get; }
 		public int CodeBufferIndex { get; }
 		public ReplSubBufferInfo(ReplSubBuffer buffer, int codeBufferIndex) {

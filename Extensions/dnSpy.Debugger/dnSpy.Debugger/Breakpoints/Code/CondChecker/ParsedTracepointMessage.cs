@@ -71,13 +71,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 	}
 
-	struct TracepointMessagePart {
+	readonly struct TracepointMessagePart {
 		public TracepointMessageKind Kind => (TracepointMessageKind)(val1 & 0xFF);
 		public int Number => (int)(val1 >> 8);
 		public string String { get; }
 		public int Length => (int)val2;
-		uint val1;
-		uint val2;
+		readonly uint val1;
+		readonly uint val2;
 
 		public TracepointMessagePart(TracepointMessageKind kind, string @string, int length) {
 			val1 = (uint)kind;

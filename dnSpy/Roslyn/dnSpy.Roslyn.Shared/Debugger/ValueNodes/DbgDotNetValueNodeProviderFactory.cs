@@ -71,7 +71,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				TupleFields = Array.Empty<TupleField>();
 			}
 
-			public TypeState(DmdType type, string typeExpression, MemberValueNodeInfoCollection instanceMembers, MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
+			public TypeState(DmdType type, string typeExpression, in MemberValueNodeInfoCollection instanceMembers, in MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
 				Type = type;
 				EnumerableType = GetEnumerableType(type);
 				Flags = GetFlags(type, tupleFields);
@@ -585,7 +585,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Shared_Resources.DebuggerVarsWindow_RawView));
 
-		static MemberValueNodeInfoCollection Filter(MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
+		static MemberValueNodeInfoCollection Filter(in MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
 			bool hideCompilerGeneratedMembers = (evalOptions & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0;
 			bool respectHideMemberAttributes = (evalOptions & DbgValueNodeEvaluationOptions.RespectHideMemberAttributes) != 0;
 			bool publicMembers = (evalOptions & DbgValueNodeEvaluationOptions.PublicMembers) != 0;
@@ -610,7 +610,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 	}
 
-	struct DbgDotNetValueNodeProviderResult {
+	readonly struct DbgDotNetValueNodeProviderResult {
 		public string ErrorMessage { get; }
 		public DbgDotNetValueNodeProvider Provider { get; }
 		public DbgDotNetValueNodeProviderResult(DbgDotNetValueNodeProvider provider) {

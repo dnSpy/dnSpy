@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Text span
 	/// </summary>
-	public struct TextSpan : IEquatable<TextSpan> {
+	public readonly struct TextSpan : IEquatable<TextSpan> {
 		readonly int start, end;
 
 		/// <summary>

@@ -21,7 +21,7 @@ using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text.Operations {
-	struct WordParser {
+	readonly struct WordParser {
 		public enum WordKind {
 			Word,
 			Whitespace,

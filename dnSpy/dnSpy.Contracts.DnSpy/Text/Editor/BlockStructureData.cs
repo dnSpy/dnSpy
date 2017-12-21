@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>
 	/// Data consumed by <see cref="IBlockStructureService"/>
 	/// </summary>
-	struct BlockStructureData {
+	readonly struct BlockStructureData {
 		/// <summary>
 		/// Span of start block
 		/// </summary>

@@ -45,7 +45,7 @@ namespace dnSpy.Settings.Fonts {
 		readonly Dictionary<string, ISettingsSection> toThemeFontSettingsSection;
 		readonly Dictionary<FontSettingsKey, ISettingsSection> toFontSettingsSection;
 
-		struct FontSettingsKey : IEquatable<FontSettingsKey> {
+		readonly struct FontSettingsKey : IEquatable<FontSettingsKey> {
 			readonly string name;
 			readonly Guid themeGuid;
 			public FontSettingsKey(string name, Guid themeGuid) {

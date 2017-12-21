@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 	/// <summary>
 	/// Contains the text to edit
 	/// </summary>
-	public struct EditableValueTextInfo {
+	public readonly struct EditableValueTextInfo {
 		/// <summary>
 		/// Gets the text
 		/// </summary>

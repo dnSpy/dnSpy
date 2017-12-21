@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Custom attribute typed argument
 	/// </summary>
-	public struct DmdCustomAttributeTypedArgument : IEquatable<DmdCustomAttributeTypedArgument> {
+	public readonly struct DmdCustomAttributeTypedArgument : IEquatable<DmdCustomAttributeTypedArgument> {
 		/// <summary>
 		/// Gets the argument type
 		/// </summary>
@@ -206,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Custom attribute named argument
 	/// </summary>
-	public struct DmdCustomAttributeNamedArgument : IEquatable<DmdCustomAttributeNamedArgument> {
+	public readonly struct DmdCustomAttributeNamedArgument : IEquatable<DmdCustomAttributeNamedArgument> {
 		/// <summary>
 		/// Gets the member (a property or a field)
 		/// </summary>

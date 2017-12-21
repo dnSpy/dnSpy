@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel {
-	struct GetNodesResult {
+	readonly struct GetNodesResult {
 		/// <summary>
 		/// Gets all nodes
 		/// </summary>
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void RefreshAllNodes();
 	}
 
-	struct DbgValueNodeInfo {
+	readonly struct DbgValueNodeInfo {
 		/// <summary>
 		/// null or the id of the value. Should be used if <see cref="DbgValueNode.Expression"/> isn't unique
 		/// or when <see cref="ValueNodesProvider.CanAddRemoveExpressions"/> is true

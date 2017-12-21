@@ -552,7 +552,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	enum IntegerHexBitFieldEnum : ulong {
 	}
 
-	struct IntegerHexBitFieldEnumInfo {
+	readonly struct IntegerHexBitFieldEnumInfo {
 		public readonly ulong Value;
 		public readonly string Name;
 

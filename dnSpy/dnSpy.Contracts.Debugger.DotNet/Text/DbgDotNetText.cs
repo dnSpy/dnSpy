@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// <summary>
 	/// Contains text and color
 	/// </summary>
-	public struct DbgDotNetText {
+	public readonly struct DbgDotNetText {
 		/// <summary>
 		/// Gets the empty instance
 		/// </summary>
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// Constructor
 		/// </summary>
 		/// <param name="text">Text</param>
-		public DbgDotNetText(DbgDotNetTextPart text) => Parts = new[] { text };
+		public DbgDotNetText(in DbgDotNetTextPart text) => Parts = new[] { text };
 
 		/// <summary>
 		/// Constructor
@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// <summary>
 	/// Color and text
 	/// </summary>
-	public struct DbgDotNetTextPart {
+	public readonly struct DbgDotNetTextPart {
 		/// <summary>
 		/// Gets the color
 		/// </summary>

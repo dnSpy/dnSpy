@@ -167,7 +167,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
-		public override DbgModuleBreakpoint[] Find(DbgModuleBreakpointInfo module) {
+		public override DbgModuleBreakpoint[] Find(in DbgModuleBreakpointInfo module) {
 			List<DbgModuleBreakpoint> foundBps = null;
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			return foundBps == null ? Array.Empty<DbgModuleBreakpoint>() : foundBps.ToArray();
 		}
 
-		public override bool IsMatch(DbgModuleBreakpointInfo module) {
+		public override bool IsMatch(in DbgModuleBreakpointInfo module) {
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
 					if (bp.IsMatch(module))

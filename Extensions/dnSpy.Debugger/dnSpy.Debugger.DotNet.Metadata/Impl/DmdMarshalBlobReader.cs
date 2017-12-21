@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	struct DmdMarshalBlobReader : IDisposable {
+	readonly struct DmdMarshalBlobReader : IDisposable {
 		readonly DmdModule module;
 		readonly DmdDataStream reader;
 		readonly IList<DmdType> genericTypeArguments;

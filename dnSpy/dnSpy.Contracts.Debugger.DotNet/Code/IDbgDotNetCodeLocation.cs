@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// Native address info
 	/// </summary>
-	public struct DbgDotNetNativeFunctionAddress {
+	public readonly struct DbgDotNetNativeFunctionAddress {
 		/// <summary>
 		/// No address
 		/// </summary>

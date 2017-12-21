@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint condition
 	/// </summary>
-	public struct DbgCodeBreakpointCondition : IEquatable<DbgCodeBreakpointCondition> {
+	public readonly struct DbgCodeBreakpointCondition : IEquatable<DbgCodeBreakpointCondition> {
 		/// <summary>
 		/// Condition kind
 		/// </summary>
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Hit count
 	/// </summary>
-	public struct DbgCodeBreakpointHitCount : IEquatable<DbgCodeBreakpointHitCount> {
+	public readonly struct DbgCodeBreakpointHitCount : IEquatable<DbgCodeBreakpointHitCount> {
 		/// <summary>
 		/// Hit count kind
 		/// </summary>
@@ -267,7 +267,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint filter
 	/// </summary>
-	public struct DbgCodeBreakpointFilter : IEquatable<DbgCodeBreakpointFilter> {
+	public readonly struct DbgCodeBreakpointFilter : IEquatable<DbgCodeBreakpointFilter> {
 		/// <summary>
 		/// Filter
 		/// </summary>
@@ -314,7 +314,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint trace message
 	/// </summary>
-	public struct DbgCodeBreakpointTrace : IEquatable<DbgCodeBreakpointTrace> {
+	public readonly struct DbgCodeBreakpointTrace : IEquatable<DbgCodeBreakpointTrace> {
 		/// <summary>
 		/// Message
 		/// </summary>

@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly PeHeaders peHeaders;
 		readonly ResourceInfo[] resourceInfos;
 
-		struct ResourceInfo {
+		readonly struct ResourceInfo {
 			public uint Token { get; }
 			public HexSpan Span { get; }
 			public string FilteredName { get; }

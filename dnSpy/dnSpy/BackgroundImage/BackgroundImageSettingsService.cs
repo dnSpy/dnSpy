@@ -25,7 +25,7 @@ using dnSpy.Contracts.BackgroundImage;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.BackgroundImage {
-	struct ImageSettingsInfo {
+	readonly struct ImageSettingsInfo {
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> Lazy { get; }
 		public RawSettings RawSettings { get; }
 		public ImageSettingsInfo(Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> lazy, RawSettings rawSettings) {

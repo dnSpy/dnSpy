@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Contains state and localized state that can be shown in the UI
 	/// </summary>
-	public struct DbgStateInfo : IEquatable<DbgStateInfo> {
+	public readonly struct DbgStateInfo : IEquatable<DbgStateInfo> {
 		/// <summary>
 		/// Non-localized string
 		/// </summary>

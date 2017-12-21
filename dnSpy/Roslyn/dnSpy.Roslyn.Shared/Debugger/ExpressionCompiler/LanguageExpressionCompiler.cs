@@ -42,7 +42,7 @@ using Microsoft.VisualStudio.Debugger.Clr;
 using Microsoft.VisualStudio.Debugger.Evaluation.ClrCompilation;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
-	struct CompilerGeneratedVariableInfo {
+	readonly struct CompilerGeneratedVariableInfo {
 		public int Index { get; }
 		public string Name { get; }
 		public CompilerGeneratedVariableInfo(int index, string name) {
@@ -296,7 +296,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return builder.ToImmutableArray();
 		}
 
-		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, DbgDotNetText name) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, in DbgDotNetText name) {
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);
 			Debug.Assert(compileResult != null);

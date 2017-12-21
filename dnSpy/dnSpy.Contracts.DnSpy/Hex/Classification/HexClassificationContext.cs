@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 	/// <summary>
 	/// Hex classification context
 	/// </summary>
-	public struct HexClassificationContext {
+	public readonly struct HexClassificationContext {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

@@ -855,7 +855,7 @@ namespace dnSpy.Text.Editor {
 		}
 	}
 
-	struct CachedTextColorsCollectionBuilder {
+	readonly struct CachedTextColorsCollectionBuilder {
 		readonly ReplEditor owner;
 		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly int totalLength;
@@ -959,7 +959,7 @@ namespace dnSpy.Text.Editor {
 #endif
 	}
 
-	struct SpanAndClassificationType {
+	readonly struct SpanAndClassificationType {
 		public int Offset { get; }
 		public int Length { get; }
 		public IClassificationType ClassificationType { get; }

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 	/// <summary>
 	/// Classification type and span
 	/// </summary>
-	public struct HexClassificationSpan {
+	public readonly struct HexClassificationSpan {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

@@ -205,8 +205,8 @@ namespace dnSpy.Hex.Editor {
 		void RemoveAdornment() => layer.RemoveAllAdornments();
 		void AddAdornment() => layer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, this, null);
 
-		struct SelectionState {
-			byte state;
+		readonly struct SelectionState {
+			readonly byte state;
 
 			public SelectionState(HexSelection selection) => state = (byte)(selection.IsEmpty ? 1 : 0);
 

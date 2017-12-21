@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Modules {
-	struct BreakpointsSerializer {
+	readonly struct BreakpointsSerializer {
 		static readonly Guid SETTINGS_GUID = new Guid("A7C5956E-593B-4B04-A237-F837CF17E44E");
 
 		readonly ISettingsService settingsService;

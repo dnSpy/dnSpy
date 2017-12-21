@@ -90,7 +90,7 @@ namespace dnSpy.Text.Editor {
 		Canvas iconCanvas;
 		Canvas[] childCanvases;
 
-		struct GlyphFactoryInfo {
+		readonly struct GlyphFactoryInfo {
 			public int Order { get; }
 			public IGlyphFactory Factory { get; }
 			public IGlyphFactoryProvider FactoryProvider { get; }
@@ -103,7 +103,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		struct LineInfo {
+		readonly struct LineInfo {
 			public ITextViewLine Line { get; }
 			public List<IconInfo> Icons { get; }
 
@@ -113,7 +113,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		struct IconInfo {
+		readonly struct IconInfo {
 			public UIElement Element { get; }
 			public double BaseTopValue { get; }
 			public int Order { get; }

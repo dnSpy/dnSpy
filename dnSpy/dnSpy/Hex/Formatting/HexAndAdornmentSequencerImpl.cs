@@ -119,7 +119,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		struct AdornmentElementAndSpan {
+		readonly struct AdornmentElementAndSpan {
 			public VST.Span Span { get; }
 			public HexAdornmentElementImpl AdornmentElement { get; }
 			public AdornmentElementAndSpan(HexAdornmentElementImpl adornmentElement, VST.Span span) {

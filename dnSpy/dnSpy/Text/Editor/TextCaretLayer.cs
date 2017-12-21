@@ -128,8 +128,8 @@ namespace dnSpy.Text.Editor {
 		void RemoveAdornment() => layer.RemoveAllAdornments();
 		void AddAdornment() => layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
 
-		struct SelectionState {
-			byte state;
+		readonly struct SelectionState {
+			readonly byte state;
 
 			public SelectionState(ITextSelection selection) => state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
 

@@ -23,7 +23,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.Documents.Tabs {
-	struct TabContentState {
+	readonly struct TabContentState {
 		public DocumentTabContent DocumentTabContent { get; }
 		public object UIState { get; }
 

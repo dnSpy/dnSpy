@@ -28,14 +28,14 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
-	struct TreeViewUpdater {
+	readonly struct TreeViewUpdater {
 		readonly IDocumentTabService documentTabService;
 		readonly DynamicModuleDefDocument Document;
 		readonly ModuleDocumentNode ModuleNode;
 		readonly HashSet<uint> modifiedTypes;
 		readonly HashSet<uint> loadedClassTokens;
 		readonly HashSet<TypeDef> checkedTypes;
-		ModuleDocumentNode modNode;
+		readonly ModuleDocumentNode modNode;
 
 		public TreeViewUpdater(IDocumentTabService documentTabService, DynamicModuleDefDocument document, ModuleDocumentNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
 			Debug.Assert(node.Document == document);

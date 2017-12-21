@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex line span
 	/// </summary>
-	public struct HexLineSpan {
+	public readonly struct HexLineSpan {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

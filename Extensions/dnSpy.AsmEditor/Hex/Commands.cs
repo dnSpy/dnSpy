@@ -784,10 +784,10 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	struct LengthAndOffset {
-		public string Filename;
-		public ulong Offset;
-		public ulong Size;
+	readonly struct LengthAndOffset {
+		public readonly string Filename;
+		public readonly ulong Offset;
+		public readonly ulong Size;
 
 		public LengthAndOffset(string filename, ulong offs, ulong size) {
 			Filename = filename;

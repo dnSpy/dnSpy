@@ -21,11 +21,11 @@ using System;
 using dnlib.DotNet;
 
 namespace dnSpy.Documents {
-	struct TargetFrameworkAttributeInfo {
+	readonly struct TargetFrameworkAttributeInfo {
 		public bool IsDotNetCore => Framework == ".NETCoreApp";
-		public string Framework;
-		public Version Version;
-		public string Profile;
+		public readonly string Framework;
+		public readonly Version Version;
+		public readonly string Profile;
 		public TargetFrameworkAttributeInfo(string framework, Version version, string profile) {
 			Framework = framework ?? throw new ArgumentNullException(nameof(framework));
 			Version = version ?? throw new ArgumentNullException(nameof(version));

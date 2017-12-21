@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public NewImportedType(TypeDef targetType) => TargetType = targetType;
 	}
 
-	struct EditedProperty {
+	readonly struct EditedProperty {
 		public PropertyDef OriginalProperty { get; }
 		public PropertyDefOptions PropertyDefOptions { get; }
 		public EditedProperty(PropertyDef originalProperty, PropertyDefOptions propertyDefOptions) {
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	struct EditedEvent {
+	readonly struct EditedEvent {
 		public EventDef OriginalEvent { get; }
 		public EventDefOptions EventDefOptions { get; }
 		public EditedEvent(EventDef originalEvent, EventDefOptions eventDefOptions) {
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	struct EditedMethod {
+	readonly struct EditedMethod {
 		public MethodDef OriginalMethod { get; }
 		public Emit.MethodBody NewBody { get; }
 		public MethodDefOptions MethodDefOptions { get; }
@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	struct EditedField {
+	readonly struct EditedField {
 		public FieldDef OriginalField { get; }
 		public FieldDefOptions FieldDefOptions { get; }
 		public EditedField(FieldDef originalField, FieldDefOptions fieldDefOptions) {

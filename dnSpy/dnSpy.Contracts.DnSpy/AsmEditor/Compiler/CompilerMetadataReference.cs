@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Metadata reference
 	/// </summary>
-	public unsafe struct CompilerMetadataReference {
+	public unsafe readonly struct CompilerMetadataReference {
 		/// <summary>
 		/// Raw bytes
 		/// </summary>

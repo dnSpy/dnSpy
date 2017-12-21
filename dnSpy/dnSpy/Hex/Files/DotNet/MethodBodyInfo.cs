@@ -29,7 +29,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		Invalid							= 0x00000002,
 	}
 
-	struct MethodBodyInfo {
+	readonly struct MethodBodyInfo {
 		public IList<uint> Tokens { get; }
 		public HexSpan HeaderSpan { get; }
 		public HexSpan InstructionsSpan { get; }

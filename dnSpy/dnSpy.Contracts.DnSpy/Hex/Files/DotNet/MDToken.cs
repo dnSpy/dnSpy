@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// MetaData token
 	/// </summary>
-	public struct MDToken : IEquatable<MDToken>, IComparable<MDToken> {
+	public readonly struct MDToken : IEquatable<MDToken>, IComparable<MDToken> {
 		/// <summary>
 		/// Mask to get the rid from a raw metadata token
 		/// </summary>

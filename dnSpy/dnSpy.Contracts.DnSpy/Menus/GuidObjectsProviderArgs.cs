@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// Data passed to <see cref="IGuidObjectsProvider.GetGuidObjects(GuidObjectsProviderArgs)"/>
 	/// </summary>
-	public struct GuidObjectsProviderArgs {
+	public readonly struct GuidObjectsProviderArgs {
 		/// <summary>
 		/// The owner object (<see cref="IMenuItemContext.CreatorObject"/>)
 		/// </summary>

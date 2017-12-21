@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains a method and its return value
 	/// </summary>
-	public struct DbgDotNetReturnValueInfo {
+	public readonly struct DbgDotNetReturnValueInfo {
 		/// <summary>
 		/// Gets the return value id
 		/// </summary>

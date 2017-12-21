@@ -33,7 +33,7 @@ namespace dnSpy.Hex.HexGroups {
 		const string OptionNameAttr = "name";
 		const string OptionValueAttr = "value";
 
-		struct SubGroupKey : IEquatable<SubGroupKey> {
+		readonly struct SubGroupKey : IEquatable<SubGroupKey> {
 			readonly string groupName, subGroup;
 			public SubGroupKey(string groupName, string subGroup) {
 				this.groupName = groupName;
@@ -45,10 +45,10 @@ namespace dnSpy.Hex.HexGroups {
 			public override string ToString() => $"({groupName},{subGroup})";
 		}
 
-		struct OptionKey : IEquatable<OptionKey> {
-			/*readonly*/ SubGroupKey subGroupKey;
+		readonly struct OptionKey : IEquatable<OptionKey> {
+			readonly SubGroupKey subGroupKey;
 			readonly string name;
-			public OptionKey(SubGroupKey subGroupKey, string name) {
+			public OptionKey(in SubGroupKey subGroupKey, string name) {
 				this.subGroupKey = subGroupKey;
 				this.name = name;
 			}

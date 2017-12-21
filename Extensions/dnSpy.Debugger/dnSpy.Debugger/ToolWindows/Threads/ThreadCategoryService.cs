@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
-	struct CategoryInfo {
+	readonly struct CategoryInfo {
 		public ImageReference Image { get; }
 		public string Category { get; }
 		public CategoryInfo(ImageReference image, string category) {

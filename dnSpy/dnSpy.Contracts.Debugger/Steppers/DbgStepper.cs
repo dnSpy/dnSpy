@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 	/// <summary>
 	/// Step complete event args
 	/// </summary>
-	public struct DbgStepCompleteEventArgs {
+	public readonly struct DbgStepCompleteEventArgs {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>

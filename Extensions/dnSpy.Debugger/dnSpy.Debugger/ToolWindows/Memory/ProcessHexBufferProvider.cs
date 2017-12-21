@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		event EventHandler UnderlyingProcessChanged;
 	}
 
-	struct HexBufferInfoCreatedEventArgs {
+	readonly struct HexBufferInfoCreatedEventArgs {
 		public IHexBufferInfo HexBufferInfo { get; }
 		public HexBufferInfoCreatedEventArgs(IHexBufferInfo hexBufferInfo) =>
 			HexBufferInfo = hexBufferInfo ?? throw new ArgumentNullException(nameof(hexBufferInfo));

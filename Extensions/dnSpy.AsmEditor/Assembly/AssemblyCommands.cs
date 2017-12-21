@@ -185,10 +185,10 @@ namespace dnSpy.AsmEditor.Assembly {
 			nodes[0].Context.DocumentTreeView.Remove(nodes);
 		}
 
-		struct UndoRedoInfo {
-			public bool IsInUndo;
-			public bool IsInRedo;
-			public DsDocumentNode Node;
+		readonly struct UndoRedoInfo {
+			public readonly bool IsInUndo;
+			public readonly bool IsInRedo;
+			public readonly DsDocumentNode Node;
 
 			public UndoRedoInfo(DsDocumentNode node, bool isInUndo, bool isInRedo) {
 				IsInUndo = isInUndo;
@@ -298,7 +298,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		readonly AssemblyOptions origOptions;
 		readonly AssemblyRefInfo[] assemblyRefInfos;
 
-		struct AssemblyRefInfo {
+		readonly struct AssemblyRefInfo {
 			public readonly AssemblyRef AssemblyRef;
 			public readonly UTF8String OrigName;
 			public readonly PublicKeyBase OrigPublicKeyOrToken;

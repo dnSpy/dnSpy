@@ -34,7 +34,7 @@ namespace dnSpy.Commands {
 		WeakReference weakSourceElement;
 		WeakReference weakTarget;
 
-		struct CommandTargetFilterInfo {
+		readonly struct CommandTargetFilterInfo {
 			public ICommandTargetFilter Filter { get; }
 			public double Order { get; }
 
@@ -172,7 +172,7 @@ namespace dnSpy.Commands {
 			ExecuteCommand(cmd, e);
 		}
 
-		void ExecuteCommand(CommandInfo cmd, RoutedEventArgs e) {
+		void ExecuteCommand(in CommandInfo cmd, RoutedEventArgs e) {
 			if (CommandTarget.CanExecute(cmd.Group, cmd.ID) != CommandTargetStatus.Handled)
 				return;
 

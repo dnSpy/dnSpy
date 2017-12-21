@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// File and structure
 	/// </summary>
-	public struct FileAndStructure {
+	public readonly struct FileAndStructure {
 		/// <summary>
 		/// Gets the file
 		/// </summary>

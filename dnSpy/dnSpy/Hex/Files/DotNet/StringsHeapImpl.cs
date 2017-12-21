@@ -30,7 +30,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		DotNetMetadataHeaders metadata;
 		KnownStringInfo[] knownStringInfos;
 
-		struct KnownStringInfo {
+		readonly struct KnownStringInfo {
 			public HexSpan Span { get; }
 			public uint[] Tokens { get; }
 
@@ -44,16 +44,16 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(span) {
 		}
 
-		struct StringInfo {
+		readonly struct StringInfo {
 			public StringZ String { get; }
 			public uint[] Tokens { get; }
-			public StringInfo(StringZ span, uint[] tokens) {
+			public StringInfo(in StringZ span, uint[] tokens) {
 				String = span;
 				Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 			}
 		}
 
-		struct StringZ {
+		readonly struct StringZ {
 			public bool HasTerminator => StringSpan.End < FullSpan.End;
 			public HexSpan StringSpan { get; }
 			public HexSpan FullSpan { get; }
@@ -173,7 +173,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new TableInitInfo(Table.LocalConstant, 0),// Name
 		};
 
-		struct TableInitInfo {
+		readonly struct TableInitInfo {
 			public Table Table { get; }
 			public byte Column1 { get; }
 			public sbyte Column2 { get; }

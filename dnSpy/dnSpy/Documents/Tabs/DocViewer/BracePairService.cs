@@ -326,7 +326,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		void RefreshTags(BracePairResult? a) {
+		void RefreshTags(in BracePairResult? a) {
 			if (a != null) {
 				RefreshTags(a.Value.Left);
 				RefreshTags(a.Value.Right);

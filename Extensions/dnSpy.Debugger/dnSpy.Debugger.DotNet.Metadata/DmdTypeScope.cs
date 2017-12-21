@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A <see cref="DmdType"/> scope
 	/// </summary>
-	public struct DmdTypeScope {
+	public readonly struct DmdTypeScope {
 		/// <summary>
 		/// An instance whose <see cref="Kind"/> equals <see cref="DmdTypeScopeKind.Invalid"/>
 		/// </summary>

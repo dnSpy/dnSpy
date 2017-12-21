@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Utilities {
 	/// <summary>
 	/// GAC file info
 	/// </summary>
-	public struct GacFileInfo {
+	public readonly struct GacFileInfo {
 		/// <summary>
 		/// Assembly
 		/// </summary>

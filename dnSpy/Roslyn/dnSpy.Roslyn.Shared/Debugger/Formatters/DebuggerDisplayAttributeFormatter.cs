@@ -31,7 +31,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	struct DebuggerDisplayAttributeFormatter {
+	readonly struct DebuggerDisplayAttributeFormatter {
 		readonly DbgEvaluationContext context;
 		readonly DbgStackFrame frame;
 		readonly LanguageFormatter languageFormatter;
@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			EvaluateText			= 0x01,
 		}
 
-		struct DisplayPart {
+		readonly struct DisplayPart {
 			public readonly DisplayPartFlags Flags;
 			public readonly string Text;
 			DisplayPart(DisplayPartFlags flags, string text) {

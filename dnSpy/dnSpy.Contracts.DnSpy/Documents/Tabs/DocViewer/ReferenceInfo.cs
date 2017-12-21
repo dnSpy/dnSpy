@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
 	/// Reference info
 	/// </summary>
-	public struct ReferenceInfo : IEquatable<ReferenceInfo> {
+	public readonly struct ReferenceInfo : IEquatable<ReferenceInfo> {
 		/// <summary>
 		/// Gets the reference or null
 		/// </summary>

@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Method and statement
 	/// </summary>
-	public struct MethodSourceStatement : IEquatable<MethodSourceStatement> {
+	public readonly struct MethodSourceStatement : IEquatable<MethodSourceStatement> {
 		/// <summary>
 		/// Gets the method
 		/// </summary>

@@ -129,7 +129,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				textEditorHelper.SetFocus();
 		}
 
-		struct CurrentContent : IEquatable<CurrentContent> {
+		readonly struct CurrentContent : IEquatable<CurrentContent> {
 			public DocumentViewerContent Content { get; }
 			readonly IContentType contentType;
 

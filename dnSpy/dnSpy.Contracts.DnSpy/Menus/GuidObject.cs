@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// Object with a <see cref="System.Guid"/>
 	/// </summary>
-	public struct GuidObject {
+	public readonly struct GuidObject {
 		/// <summary>Object</summary>
 		public object Object { get; }
 

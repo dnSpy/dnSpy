@@ -196,7 +196,7 @@ namespace dnSpy.Contracts.Text {
 	/// Span and data
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
-	public struct SpanData<TData> {
+	public readonly struct SpanData<TData> {
 		/// <summary>
 		/// Gets the span
 		/// </summary>
@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Text {
 	/// Builds a <see cref="SpanDataCollection{TData}"/>
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
-	public struct SpanDataCollectionBuilder<TData> {
+	public readonly struct SpanDataCollectionBuilder<TData> {
 		readonly List<SpanData<TData>> list;
 
 		/// <summary>

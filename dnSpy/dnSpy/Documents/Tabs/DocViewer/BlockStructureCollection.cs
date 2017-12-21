@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		readonly SpanDataCollection<CodeBracesRange[]> coll;
 
-		struct Builder {
+		readonly struct Builder {
 			readonly List<SpanData<CodeBracesRange[]>> infos;
 			readonly List<CodeBracesRange> list;
 			readonly Stack<CodeBracesRange[]> listStack;

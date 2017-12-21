@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Alias
 	/// </summary>
-	public struct DbgDotNetAliasInfo {
+	public readonly struct DbgDotNetAliasInfo {
 		/// <summary>
 		/// Alias kind
 		/// </summary>
@@ -44,12 +44,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Custom type info understood by the EE or null
 		/// </summary>
-		public ReadOnlyCollection<byte> CustomTypeInfo;
+		public readonly ReadOnlyCollection<byte> CustomTypeInfo;
 
 		/// <summary>
 		/// Custom type info ID
 		/// </summary>
-		public Guid CustomTypeInfoId;
+		public readonly Guid CustomTypeInfoId;
 
 		/// <summary>
 		/// Constructor

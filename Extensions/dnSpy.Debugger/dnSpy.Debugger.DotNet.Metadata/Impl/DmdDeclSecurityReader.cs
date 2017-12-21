@@ -26,7 +26,7 @@ using System.Security.Permissions;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	struct DmdDeclSecurityReader : IDisposable {
+	readonly struct DmdDeclSecurityReader : IDisposable {
 		readonly DmdDataStream reader;
 		readonly DmdModule module;
 		readonly IList<DmdType> genericTypeArguments;

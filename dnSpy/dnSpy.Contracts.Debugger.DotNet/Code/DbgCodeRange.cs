@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// Code range
 	/// </summary>
-	public struct DbgCodeRange {
+	public readonly struct DbgCodeRange {
 		/// <summary>
 		/// Gets the start offset relative to the start of the method
 		/// </summary>

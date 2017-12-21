@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Hex.Editor {
-	struct MetadataAndOrder<TMetadata> {
+	readonly struct MetadataAndOrder<TMetadata> {
 		public TMetadata Metadata { get; }
 		public int Order { get; }
 		public MetadataAndOrder(TMetadata metadata, int order) {

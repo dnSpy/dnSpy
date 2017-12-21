@@ -38,7 +38,7 @@ namespace dnSpy.Documents {
 		readonly IDsDocumentProvider[] documentProviders;
 
 		// PERF: Must be a struct; class is 9% slower (decompile mscorlib+dnSpy = 83 files)
-		struct DocumentInfo {
+		readonly struct DocumentInfo {
 			readonly List<AssemblyRef> alternativeAssemblyNames;
 			public readonly IDsDocument Document;
 

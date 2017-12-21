@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		(DmdType type, bool isPinned)[] ReadLocals(int localSignatureMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
 	}
 
-	struct DmdMethodBodyReader {
+	readonly struct DmdMethodBodyReader {
 		public static DmdMethodBody Create(IMethodBodyResolver methodBodyResolver, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			try {
 				return new DmdMethodBodyReader(methodBodyResolver, reader, genericTypeArguments, genericMethodArguments).Read();

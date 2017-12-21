@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Span and data
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
-	public struct TextSpanData<TData> {
+	public readonly struct TextSpanData<TData> {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

@@ -410,7 +410,7 @@ namespace dnSpy.Settings.Dialog {
 			readonly Guid parentGuid;
 			readonly ImageReference icon;
 
-			public AppSettingsPageContainer(string title, double order, Guid guid, Guid parentGuid, ImageReference icon) {
+			public AppSettingsPageContainer(string title, double order, Guid guid, Guid parentGuid, in ImageReference icon) {
 				this.title = title;
 				this.order = order;
 				this.guid = guid;

@@ -157,11 +157,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			return false;
 		}
 
-		struct ModuleResult {
+		readonly struct ModuleResult {
 			public IAssembly Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
-			public ModuleResult(IAssembly assembly, byte[] bytes, DebugFileResult debugFile) {
+			public ModuleResult(IAssembly assembly, byte[] bytes, in DebugFileResult debugFile) {
 				Assembly = assembly;
 				RawBytes = bytes;
 				DebugFile = debugFile;

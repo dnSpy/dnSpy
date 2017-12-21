@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Language changed event args
 	/// </summary>
-	public struct DbgLanguageChangedEventArgs {
+	public readonly struct DbgLanguageChangedEventArgs {
 		/// <summary>
 		/// Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
 		/// </summary>

@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains base index and length of an array dimension
 	/// </summary>
-	public struct DbgDotNetArrayDimensionInfo {
+	public readonly struct DbgDotNetArrayDimensionInfo {
 		/// <summary>
 		/// Base index
 		/// </summary>
@@ -176,7 +176,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Raw value
 	/// </summary>
-	public struct DbgDotNetRawValue {
+	public readonly struct DbgDotNetRawValue {
 		/// <summary>
 		/// Type of the value
 		/// </summary>

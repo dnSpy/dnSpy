@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public IFormattedLine Line { get; }
 				public double Y { get; }
 				public LineInfo(IFormattedLine line, double y) {

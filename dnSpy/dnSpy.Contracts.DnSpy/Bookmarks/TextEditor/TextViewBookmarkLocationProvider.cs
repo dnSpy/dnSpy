@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 	/// <summary>
 	/// Text view location
 	/// </summary>
-	public struct TextViewBookmarkLocationResult {
+	public readonly struct TextViewBookmarkLocationResult {
 		/// <summary>
 		/// Gets the bookmark location
 		/// </summary>

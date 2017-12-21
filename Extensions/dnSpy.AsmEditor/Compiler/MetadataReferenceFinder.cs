@@ -23,7 +23,7 @@ using System.Threading;
 using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.Compiler {
-	struct MetadataReferenceFinder {
+	readonly struct MetadataReferenceFinder {
 		readonly ModuleDef module;
 		readonly CancellationToken cancellationToken;
 		readonly Dictionary<IAssembly, AssemblyDef> assemblies;

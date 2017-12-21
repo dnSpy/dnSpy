@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
 		}
 
-		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo) {
+		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, in DmdCreateAssemblyInfo assemblyInfo) {
 			if (getMetadata == null)
 				throw new ArgumentNullException(nameof(getMetadata));
 			if (assemblyInfo.FullyQualifiedName == null || assemblyInfo.AssemblyLocation == null)

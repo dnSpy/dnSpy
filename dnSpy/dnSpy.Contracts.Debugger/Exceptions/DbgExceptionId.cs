@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception ID
 	/// </summary>
-	public struct DbgExceptionId : IEquatable<DbgExceptionId> {
+	public readonly struct DbgExceptionId : IEquatable<DbgExceptionId> {
 		readonly string category;
 		readonly string name;
 		readonly int code;

@@ -26,7 +26,7 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
-		struct StepperInfo {
+		readonly struct StepperInfo {
 			public Func<StepCompleteEventArgs, bool> OnStep { get; }
 			public StepperInfo(Func<StepCompleteEventArgs, bool> onStep) => OnStep = onStep;
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 	}
 
-	struct StepCompleteEventArgs {
+	readonly struct StepCompleteEventArgs {
 		public StepEventRequest StepEventRequest { get; }
 		public bool ForciblyCanceled { get; }
 		public StepCompleteEventArgs(StepEventRequest stepEventRequest, bool forciblyCanceled) {

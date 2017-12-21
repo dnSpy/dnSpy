@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
-	struct DbgCodeBreakpointCheckResult {
+	readonly struct DbgCodeBreakpointCheckResult {
 		public string ErrorMessage { get; }
 		public bool ShouldBreak { get; }
 

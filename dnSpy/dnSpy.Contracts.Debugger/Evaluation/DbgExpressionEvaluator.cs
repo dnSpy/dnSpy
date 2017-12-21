@@ -129,7 +129,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Evaluation result
 	/// </summary>
-	public struct DbgEvaluationResult {
+	public readonly struct DbgEvaluationResult {
 		/// <summary>
 		/// Gets the value or null if there was an error
 		/// </summary>
@@ -207,7 +207,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Expression evaluator assignment result
 	/// </summary>
-	public struct DbgEEAssignmentResult {
+	public readonly struct DbgEEAssignmentResult {
 		/// <summary>
 		/// Error message or null
 		/// </summary>

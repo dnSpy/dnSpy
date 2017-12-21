@@ -21,7 +21,7 @@ using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
-	struct ClassHookInfo {
+	readonly struct ClassHookInfo {
 		public ClassHook Hook { get; }
 		public DmdWellKnownType WellKnownType { get; }
 

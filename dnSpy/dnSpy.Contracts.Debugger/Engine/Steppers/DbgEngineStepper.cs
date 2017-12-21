@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 	/// <summary>
 	/// Step complete event args
 	/// </summary>
-	public struct DbgEngineStepCompleteEventArgs {
+	public readonly struct DbgEngineStepCompleteEventArgs {
 		/// <summary>
 		/// Gets the thread or null to use the default thread that was used to create the stepper
 		/// </summary>

@@ -100,36 +100,36 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		struct SelectionInfo {
+		readonly struct SelectionInfo {
 			public HexBufferPoint AnchorPoint { get; }
 			public HexBufferPoint ActivePoint { get; }
 			public HexBufferPoint CaretPosition { get; }
 
-			public SelectionInfo(HexBufferPoint anchorPoint, HexBufferPoint activePoint, HexBufferPoint caretPosition) {
+			public SelectionInfo(in HexBufferPoint anchorPoint, in HexBufferPoint activePoint, in HexBufferPoint caretPosition) {
 				AnchorPoint = anchorPoint;
 				ActivePoint = activePoint;
 				CaretPosition = caretPosition;
 			}
 		}
 
-		SelectionInfo GetSelectionInfoToCaret(HexBufferPoint anchorPoint, HexBufferPoint caretPosition) {
+		SelectionInfo GetSelectionInfoToCaret(in HexBufferPoint anchorPoint, in HexBufferPoint caretPosition) {
 			if (caretPosition < anchorPoint)
 				return new SelectionInfo(TryInc(anchorPoint), caretPosition, caretPosition);
 			return new SelectionInfo(anchorPoint, TryInc(caretPosition), caretPosition);
 		}
 
-		HexBufferPoint TryInc(HexBufferPoint anchorPoint) {
+		HexBufferPoint TryInc(in HexBufferPoint anchorPoint) {
 			if (anchorPoint == BufferLines.BufferEnd)
 				return anchorPoint;
 			return anchorPoint + 1;
 		}
 
-		void SelectToCaret(HexBufferPoint anchorPoint) {
+		void SelectToCaret(in HexBufferPoint anchorPoint) {
 			var info = GetSelectionInfoToCaret(anchorPoint, ActiveCaretBufferPosition);
 			Selection.Select(info.AnchorPoint, info.ActivePoint, alignPoints: true);
 		}
 
-		void MoveCaretToSelection(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
+		void MoveCaretToSelection(in HexBufferPoint anchorPoint, in HexBufferPoint activePoint) {
 			if (activePoint <= anchorPoint)
 				Caret.MoveTo(activePoint);
 			else
@@ -471,7 +471,7 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		bool InsertTextValues(HexCellPosition cellPosition, string text) {
+		bool InsertTextValues(in HexCellPosition cellPosition, string text) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (text.Length == 0)
@@ -503,7 +503,7 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		bool InsertTextAscii(HexCellPosition cellPosition, string text) {
+		bool InsertTextAscii(in HexCellPosition cellPosition, string text) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (text.Length == 0)
@@ -856,14 +856,14 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		bool PasteValues(HexCellPosition cellPosition) {
+		bool PasteValues(in HexCellPosition cellPosition) {
 			var data = ClipboardUtils.GetData(canBeEmpty: false);
 			if (data == null)
 				return false;
 			return PasteData(cellPosition, data);
 		}
 
-		bool PasteData(HexCellPosition cellPosition, byte[] data) {
+		bool PasteData(in HexCellPosition cellPosition, byte[] data) {
 			var line = BufferLines.GetLineFromPosition(cellPosition.BufferPosition);
 			var cells = cellPosition.Column == HexColumnType.Values ? line.ValueCells : line.AsciiCells;
 			var cell = cells.GetCell(cellPosition.BufferPosition);
@@ -886,7 +886,7 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		bool PasteAscii(HexCellPosition cellPosition) {
+		bool PasteAscii(in HexCellPosition cellPosition) {
 			var text = ClipboardUtils.GetText(canBeEmpty: false);
 			if (text == null)
 				return false;

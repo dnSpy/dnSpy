@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
 	/// Contains added or removed objects
 	/// </summary>
-	public struct CollectionChangedEventArgs<T> {
+	public readonly struct CollectionChangedEventArgs<T> {
 		/// <summary>
 		/// The objects that got added or removed (see <see cref="Added"/>)
 		/// </summary>

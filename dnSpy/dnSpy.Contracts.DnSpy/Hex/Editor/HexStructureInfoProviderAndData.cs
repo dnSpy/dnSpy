@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Contains a <see cref="HexStructureInfoProvider"/> and data
 	/// </summary>
 	/// <typeparam name="TValue">Type of value</typeparam>
-	public struct HexStructureInfoProviderAndData<TValue> {
+	public readonly struct HexStructureInfoProviderAndData<TValue> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

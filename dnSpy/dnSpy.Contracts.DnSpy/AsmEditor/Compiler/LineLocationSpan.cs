@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Line location span
 	/// </summary>
-	public struct LineLocationSpan {
+	public readonly struct LineLocationSpan {
 		/// <summary>
 		/// Start line position
 		/// </summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="startLinePosition">Start line position</param>
 		/// <param name="endLinePosition">End line position</param>
-		public LineLocationSpan(LineLocation startLinePosition, LineLocation endLinePosition) {
+		public LineLocationSpan(in LineLocation startLinePosition, in LineLocation endLinePosition) {
 			StartLinePosition = startLinePosition;
 			EndLinePosition = endLinePosition;
 		}

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Line location
 	/// </summary>
-	public struct LineLocation {
+	public readonly struct LineLocation {
 		/// <summary>
 		/// Line, 0-based
 		/// </summary>

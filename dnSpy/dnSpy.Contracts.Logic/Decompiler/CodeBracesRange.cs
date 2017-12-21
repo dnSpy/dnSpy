@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Brace pair
 	/// </summary>
-	public struct CodeBracesRange {
+	public readonly struct CodeBracesRange {
 		/// <summary>
 		/// Span of start brace
 		/// </summary>

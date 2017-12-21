@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
-		struct ProcessKey : IEquatable<ProcessKey> {
+		readonly struct ProcessKey : IEquatable<ProcessKey> {
 			readonly ulong pid;
 			readonly RuntimeId rid;
 

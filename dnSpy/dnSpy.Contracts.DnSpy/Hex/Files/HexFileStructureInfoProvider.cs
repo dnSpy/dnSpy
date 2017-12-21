@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// Indexes
 	/// </summary>
-	public struct HexIndexes {
+	public readonly struct HexIndexes {
 		/// <summary>
 		/// Gets the start index
 		/// </summary>

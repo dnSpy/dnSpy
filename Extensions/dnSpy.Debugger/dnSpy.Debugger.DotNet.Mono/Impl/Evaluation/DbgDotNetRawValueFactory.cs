@@ -28,7 +28,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	struct DbgDotNetRawValueFactory {
+	readonly struct DbgDotNetRawValueFactory {
 		readonly DbgEngineImpl engine;
 
 		public DbgDotNetRawValueFactory(DbgEngineImpl engine) => this.engine = engine;

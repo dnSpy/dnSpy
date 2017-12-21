@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
-	struct ClrDacThreadInfo {
+	readonly struct ClrDacThreadInfo {
 		public int ManagedThreadId { get; }
 		public ClrDacThreadFlags Flags { get; }
 		public bool IsFinalizer => (Flags & ClrDacThreadFlags.IsFinalizer) != 0;

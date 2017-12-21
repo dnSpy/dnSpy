@@ -26,8 +26,8 @@ namespace dnSpy.Documents {
 	sealed class FrameworkPath : IComparable<FrameworkPath> {
 		public readonly string Path;
 		public readonly int Bitness;
-		public /*readonly*/ FrameworkVersion Version;
-		public FrameworkPath(string path, int bitness, FrameworkVersion version) {
+		public readonly FrameworkVersion Version;
+		public FrameworkPath(string path, int bitness, in FrameworkVersion version) {
 			Path = path ?? throw new ArgumentNullException(nameof(path));
 			Bitness = bitness;
 			Version = version;
@@ -44,11 +44,11 @@ namespace dnSpy.Documents {
 		}
 	}
 
-	struct FrameworkVersion : IComparable<FrameworkVersion> {
-		public int Major;
-		public int Minor;
-		public int Patch;
-		public string Extra;
+	readonly struct FrameworkVersion : IComparable<FrameworkVersion> {
+		public readonly int Major;
+		public readonly int Minor;
+		public readonly int Patch;
+		public readonly string Extra;
 		public FrameworkVersion(int major, int minor, int patch, string extra) {
 			Major = major;
 			Minor = minor;

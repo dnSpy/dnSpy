@@ -21,7 +21,7 @@ using System;
 using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
-	struct CurrentObject<T> : IEquatable<CurrentObject<T>> where T : DbgObject {
+	readonly struct CurrentObject<T> : IEquatable<CurrentObject<T>> where T : DbgObject {
 		public readonly T Current;
 		public readonly T Break;
 		public CurrentObject(T current, T @break) {

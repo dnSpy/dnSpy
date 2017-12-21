@@ -1388,7 +1388,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			hProcess_debuggee?.Close();
 		}
 
-		struct TempBreakHelper : IDisposable {
+		readonly struct TempBreakHelper : IDisposable {
 			readonly DbgEngineImpl engine;
 			readonly bool pausedIt;
 

@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly HashSet<object> isStub;
 		ImportSigComparerOptions importSigComparerOptions;
 
-		struct MemberInfo<T> where T : IMemberDef {
+		readonly struct MemberInfo<T> where T : IMemberDef {
 			public T TargetMember { get; }
 			public T EditedMember { get; }
 			public MemberInfo(T targetMember, T editedMember) {
@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		struct ExtraImportedTypeData {
+		readonly struct ExtraImportedTypeData {
 			/// <summary>
 			/// New type in temporary module created by the compiler
 			/// </summary>
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new ModuleImporterAbortedException();
 		}
 
-		ModuleDefMD LoadModule(byte[] rawGeneratedModule, DebugFileResult debugFile) {
+		ModuleDefMD LoadModule(byte[] rawGeneratedModule, in DebugFileResult debugFile) {
 			var opts = new ModuleCreationOptions();
 
 			switch (debugFile.Format) {
@@ -293,7 +293,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="options">Options</param>
-		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, ModuleImporterOptions options) {
+		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			AddGlobalTypeMembers(sourceModule.GlobalType);
@@ -341,7 +341,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
+		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
@@ -377,7 +377,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new InvalidOperationException();
 		}
 
-		struct ExistingMember<T> where T : IMemberDef {
+		readonly struct ExistingMember<T> where T : IMemberDef {
 			/// <summary>Compiled member</summary>
 			public T CompiledMember { get; }
 			/// <summary>Original member that exists in the target module</summary>
@@ -551,7 +551,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetMethod">Original method that was edited</param>
-		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, MethodDef targetMethod) {
+		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
@@ -849,7 +849,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		struct TypeName : IEquatable<TypeName> {
+		readonly struct TypeName : IEquatable<TypeName> {
 			readonly UTF8String ns;
 			readonly UTF8String name;
 

@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	struct EvalArgumentResult {
+	readonly struct EvalArgumentResult {
 		public string ErrorMessage { get; }
 		public Value Value { get; }
 		public EvalArgumentResult(string errorMessage) {
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 	}
 
-	struct EvalArgumentConverter {
+	readonly struct EvalArgumentConverter {
 		readonly DbgEngineImpl engine;
 		readonly FuncEval funcEval;
 		readonly AppDomainMirror appDomain;

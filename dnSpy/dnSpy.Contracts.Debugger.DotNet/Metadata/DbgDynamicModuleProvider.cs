@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Class loaded event args
 	/// </summary>
-	public struct ClassLoadedEventArgs {
+	public readonly struct ClassLoadedEventArgs {
 		/// <summary>
 		/// Module
 		/// </summary>

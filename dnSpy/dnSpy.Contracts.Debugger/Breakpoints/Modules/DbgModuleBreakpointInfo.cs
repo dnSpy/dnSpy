@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Module info
 	/// </summary>
-	public struct DbgModuleBreakpointInfo {
+	public readonly struct DbgModuleBreakpointInfo {
 		/// <summary>
 		/// Name of module
 		/// </summary>

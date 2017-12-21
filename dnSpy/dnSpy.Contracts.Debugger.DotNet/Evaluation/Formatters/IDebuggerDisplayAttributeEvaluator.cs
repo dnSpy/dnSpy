@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 			context.GetData<IDebuggerDisplayAttributeEvaluator>();
 	}
 
-	public struct DbgDotNetEvalResult {
+	public readonly struct DbgDotNetEvalResult {
 		public DbgDotNetValue Value { get; }
 		public ReadOnlyCollection<string> FormatSpecifiers { get; }
 		public DbgEvaluationResultFlags Flags { get; }

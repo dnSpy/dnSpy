@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Cursor info
 	/// </summary>
-	public struct HexCursorInfo : IEquatable<HexCursorInfo> {
+	public readonly struct HexCursorInfo : IEquatable<HexCursorInfo> {
 		/// <summary>
 		/// Gets the cursor or null
 		/// </summary>

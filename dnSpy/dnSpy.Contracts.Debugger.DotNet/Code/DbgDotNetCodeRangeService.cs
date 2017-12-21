@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// Contains the code ranges of the requested statement
 	/// </summary>
-	public struct GetCodeRangeResult {
+	public readonly struct GetCodeRangeResult {
 		/// <summary>
 		/// Code ranges of the statement if <see cref="Success"/> is true
 		/// </summary>
@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// IL instruction
 	/// </summary>
-	public struct DbgILInstruction {
+	public readonly struct DbgILInstruction {
 		/// <summary>
 		/// Gets the offset
 		/// </summary>

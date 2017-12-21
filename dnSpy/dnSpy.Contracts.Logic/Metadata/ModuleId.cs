@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Metadata {
 	/// <summary>
 	/// Module ID
 	/// </summary>
-	public struct ModuleId : IEquatable<ModuleId> {
+	public readonly struct ModuleId : IEquatable<ModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,

@@ -23,7 +23,7 @@ using System.Diagnostics;
 using dnlib.DotNet;
 
 namespace dnSpy.Decompiler {
-	struct TargetFrameworkInfo {
+	readonly struct TargetFrameworkInfo {
 		/// <summary>
 		/// true if <see cref="Framework"/> is .NET Framework
 		/// </summary>

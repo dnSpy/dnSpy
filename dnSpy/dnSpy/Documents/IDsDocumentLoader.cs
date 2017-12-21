@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Documents {
-	struct DocumentToLoad {
+	readonly struct DocumentToLoad {
 		public readonly DsDocumentInfo Info;
 		public readonly bool IsAutoLoaded;
 		public DocumentToLoad(DsDocumentInfo info, bool isAutoLoaded = false) {

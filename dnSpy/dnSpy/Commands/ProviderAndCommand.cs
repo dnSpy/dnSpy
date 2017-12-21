@@ -21,12 +21,12 @@ using System;
 using dnSpy.Contracts.Command;
 
 namespace dnSpy.Commands {
-	struct ProviderAndCommand {
+	readonly struct ProviderAndCommand {
 		public bool IsDefault => Provider == null;
 		public ICommandInfoProvider Provider { get; }
 		public CommandInfo Command { get; }
 
-		public ProviderAndCommand(ICommandInfoProvider provider, CommandInfo cmd) {
+		public ProviderAndCommand(ICommandInfoProvider provider, in CommandInfo cmd) {
 			Provider = provider ?? throw new ArgumentNullException(nameof(provider));
 			Command = cmd;
 		}

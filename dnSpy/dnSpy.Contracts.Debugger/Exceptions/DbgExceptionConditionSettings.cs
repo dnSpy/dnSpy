@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception condition settings
 	/// </summary>
-	public struct DbgExceptionConditionSettings {
+	public readonly struct DbgExceptionConditionSettings {
 		/// <summary>
 		/// Exception condition type
 		/// </summary>

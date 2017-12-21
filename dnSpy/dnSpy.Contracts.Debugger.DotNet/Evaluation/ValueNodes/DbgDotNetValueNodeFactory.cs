@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="expectedType">Expected type</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, in DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates type variables value node
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 	/// <summary>
 	/// Contains the generic parameter and type
 	/// </summary>
-	public struct DbgDotNetTypeVariableInfo {
+	public readonly struct DbgDotNetTypeVariableInfo {
 		/// <summary>
 		/// Gets the generic parameter type
 		/// </summary>

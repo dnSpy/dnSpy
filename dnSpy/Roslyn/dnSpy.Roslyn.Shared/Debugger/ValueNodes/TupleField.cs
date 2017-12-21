@@ -20,7 +20,7 @@
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	struct TupleField {
+	readonly struct TupleField {
 		/// <summary>
 		/// Item1, Item2, etc
 		/// </summary>

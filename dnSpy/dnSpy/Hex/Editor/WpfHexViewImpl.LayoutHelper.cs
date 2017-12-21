@@ -60,7 +60,7 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public HexFormattedLine Line { get; }
 				public double Y { get; }
 				public LineInfo(HexFormattedLine line, double y) {

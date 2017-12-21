@@ -239,7 +239,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			Debug.Assert(ex == null);
 		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
-		protected struct SimpleDocument {
+		protected readonly struct SimpleDocument {
 			public string NameNoExtension { get; }
 			public string Text { get; }
 			public Span? CaretSpan { get; }
@@ -429,7 +429,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			CommandManager.InvalidateRequerySuggested();
 		}
 
-		protected abstract void Import(ModuleImporter importer, CompilationResult result);
+		protected abstract void Import(ModuleImporter importer, in CompilationResult result);
 
 		static CompilerDiagnostic ToCompilerDiagnostic(Exception ex) =>
 			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null);

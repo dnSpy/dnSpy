@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		}
 	}
 
-	struct EnumFieldInfo {
+	readonly struct EnumFieldInfo {
 		public DmdFieldInfo Field { get; }
 		public ulong Value { get; }
 		public EnumFieldInfo(DmdFieldInfo field, ulong value) {

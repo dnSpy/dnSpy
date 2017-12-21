@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// Flag info
 	/// </summary>
-	public struct FlagInfo {
+	public readonly struct FlagInfo {
 		const ulong EnumNameValue = ulong.MaxValue;
 
 		/// <summary>

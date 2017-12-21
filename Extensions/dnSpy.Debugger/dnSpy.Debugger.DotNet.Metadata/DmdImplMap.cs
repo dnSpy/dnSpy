@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		CallConvFastcall	= 0x0500,
 	}
 
-	struct DmdImplMap {
+	readonly struct DmdImplMap {
 		public DmdPInvokeAttributes Attributes { get; }
 		public string Name { get; }
 		public string Module { get; }

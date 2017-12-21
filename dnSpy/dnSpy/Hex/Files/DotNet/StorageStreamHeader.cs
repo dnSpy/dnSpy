@@ -21,7 +21,7 @@ using System;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex.Files.DotNet {
-	struct StorageStreamHeader {
+	readonly struct StorageStreamHeader {
 		public string Name { get; }
 		public HexSpan Span { get; }
 		public HexSpan DataSpan { get; }

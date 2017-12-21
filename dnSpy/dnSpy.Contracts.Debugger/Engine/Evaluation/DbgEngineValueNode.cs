@@ -111,7 +111,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Assignment result
 	/// </summary>
-	public struct DbgEngineValueNodeAssignmentResult {
+	public readonly struct DbgEngineValueNodeAssignmentResult {
 		/// <summary>
 		/// Gets the error message (also see <see cref="PredefinedEvaluationErrorMessages"/>) or null if none
 		/// </summary>

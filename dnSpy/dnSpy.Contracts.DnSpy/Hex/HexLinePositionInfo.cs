@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Line position info
 	/// </summary>
-	public struct HexLinePositionInfo {
+	public readonly struct HexLinePositionInfo {
 		/// <summary>
 		/// Gets the type
 		/// </summary>

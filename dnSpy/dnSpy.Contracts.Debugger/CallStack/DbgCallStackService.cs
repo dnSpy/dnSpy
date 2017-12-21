@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// Frames changed event args
 	/// </summary>
-	public struct FramesChangedEventArgs {
+	public readonly struct FramesChangedEventArgs {
 		/// <summary>
 		/// true if there are new frames available
 		/// </summary>
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// Contains the stack frames and related info
 	/// </summary>
-	public struct DbgCallStackFramesInfo {
+	public readonly struct DbgCallStackFramesInfo {
 		/// <summary>
 		/// Gets all frames
 		/// </summary>

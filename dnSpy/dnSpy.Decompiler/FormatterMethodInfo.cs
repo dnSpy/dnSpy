@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace dnSpy.Decompiler {
-	struct FormatterMethodInfo {
+	readonly struct FormatterMethodInfo {
 		public readonly ModuleDef ModuleDef;
 		public readonly IList<TypeSig> TypeGenericParams;
 		public readonly IList<TypeSig> MethodGenericParams;

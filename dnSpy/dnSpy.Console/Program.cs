@@ -67,7 +67,7 @@ namespace dnSpy_Console {
 		}
 	}
 
-	struct ConsoleColorPair {
+	readonly struct ConsoleColorPair {
 		public ConsoleColor? Foreground { get; }
 		public ConsoleColor? Background { get; }
 		public ConsoleColorPair(ConsoleColor? foreground, ConsoleColor? background) {
@@ -313,7 +313,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		struct UsageInfo {
+		readonly struct UsageInfo {
 			public string Option { get; }
 			public string OptionArgument { get; }
 			public string Description { get; }
@@ -347,7 +347,7 @@ namespace dnSpy_Console {
 			new UsageInfo("-l", dnSpy_Console_Resources.CmdLineLanguage, dnSpy_Console_Resources.CmdLineDescription_Language),
 		};
 
-		struct HelpInfo {
+		readonly struct HelpInfo {
 			public string CommandLine { get; }
 			public string Description { get; }
 			public HelpInfo(string description, string commandLine) {

@@ -259,7 +259,7 @@ namespace dnSpy.Hex.Commands {
 			return true;
 		}
 
-		struct SelectionInfo {
+		readonly struct SelectionInfo {
 			public HexPosition Anchor { get; }
 			public HexPosition Active { get; }
 			public HexPosition Caret { get; }

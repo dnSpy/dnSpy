@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Command {
 	/// <summary>
 	/// Command data
 	/// </summary>
-	public struct CommandInfo {
+	public readonly struct CommandInfo {
 		/// <summary>
 		/// Gets the group
 		/// </summary>

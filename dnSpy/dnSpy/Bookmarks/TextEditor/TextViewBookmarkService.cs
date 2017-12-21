@@ -91,12 +91,12 @@ namespace dnSpy.Bookmarks.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		struct LocationsResult : IDisposable {
-			public TextViewBookmarkLocationResult? locRes;
+		readonly struct LocationsResult : IDisposable {
+			public readonly TextViewBookmarkLocationResult? locRes;
 			readonly Lazy<BookmarksService> bookmarksService;
 			readonly List<BookmarkLocation> allLocations;
 
-			public LocationsResult(Lazy<BookmarksService> bookmarksService, TextViewBookmarkLocationResult? locRes, List<BookmarkLocation> allLocations) {
+			public LocationsResult(Lazy<BookmarksService> bookmarksService, in TextViewBookmarkLocationResult? locRes, List<BookmarkLocation> allLocations) {
 				this.bookmarksService = bookmarksService;
 				this.locRes = locRes;
 				this.allLocations = allLocations;
@@ -136,7 +136,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			return new LocationsResult(bookmarksService, res, allLocations);
 		}
 
-		Bookmark[] GetBookmarks(TextViewBookmarkLocationResult locations) {
+		Bookmark[] GetBookmarks(in TextViewBookmarkLocationResult locations) {
 			var list = new List<Bookmark>();
 			foreach (var bm in bookmarksService.Value.Bookmarks) {
 				var loc = locations.Location;
@@ -180,8 +180,8 @@ namespace dnSpy.Bookmarks.TextEditor {
 
 		struct ToggleCreateBreakpointInfoResult : IDisposable {
 			readonly Lazy<BookmarksService> bookmarksService;
-			public ToggleCreateBookmarkKind kind;
-			public Bookmark[] bookmarks;
+			public readonly ToggleCreateBookmarkKind kind;
+			public readonly Bookmark[] bookmarks;
 			public BookmarkLocation location;
 			public ToggleCreateBreakpointInfoResult(Lazy<BookmarksService> bookmarksService, ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) {
 				this.bookmarksService = bookmarksService;

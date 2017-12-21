@@ -61,15 +61,6 @@ namespace dnSpy.Text.Editor {
 		bool useReducedOpacityForHighContrast;
 		IGlyphTextMarkerListener glyphTextMarkerListener;
 
-		struct MarkerAndNullableSpan {
-			public Span? Span { get; }
-			public IGlyphTextMarkerImpl Marker { get; }
-			public MarkerAndNullableSpan(Span? span, IGlyphTextMarkerImpl marker) {
-				Span = span;
-				Marker = marker;
-			}
-		}
-
 		sealed class MarkerAndSpanCollection {
 			readonly List<IGlyphTextMarkerImpl> allMarkers;
 			readonly Dictionary<IGlyphTextMarkerImpl, Span> inDocMarkers;

@@ -33,7 +33,7 @@ namespace dnSpy.Text.Groups {
 		const string OptionNameAttr = "name";
 		const string OptionValueAttr = "value";
 
-		struct ContentTypeKey : IEquatable<ContentTypeKey> {
+		readonly struct ContentTypeKey : IEquatable<ContentTypeKey> {
 			readonly string groupName, contentType;
 			public ContentTypeKey(string groupName, string contentType) {
 				this.groupName = groupName;
@@ -45,10 +45,10 @@ namespace dnSpy.Text.Groups {
 			public override string ToString() => $"({groupName},{contentType})";
 		}
 
-		struct OptionKey : IEquatable<OptionKey> {
-			/*readonly*/ ContentTypeKey contentTypeKey;
+		readonly struct OptionKey : IEquatable<OptionKey> {
+			readonly ContentTypeKey contentTypeKey;
 			readonly string name;
-			public OptionKey(ContentTypeKey contentTypeKey, string name) {
+			public OptionKey(in ContentTypeKey contentTypeKey, string name) {
 				this.contentTypeKey = contentTypeKey;
 				this.name = name;
 			}

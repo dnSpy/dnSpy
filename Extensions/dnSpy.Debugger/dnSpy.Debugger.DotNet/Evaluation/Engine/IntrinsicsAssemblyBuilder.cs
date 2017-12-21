@@ -24,7 +24,7 @@ using dnlib.DotNet.Emit;
 using dnlib.DotNet.Writer;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	struct IntrinsicsAssemblyBuilder {
+	readonly struct IntrinsicsAssemblyBuilder {
 		readonly ModuleDef module;
 		readonly TypeDef intrinsicsType;
 		readonly ICorLibTypes corlibTypes;

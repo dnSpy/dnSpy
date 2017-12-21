@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Contains the created <see cref="DbgValueNode"/> or an error message
 	/// </summary>
-	public struct DbgCreateValueNodeResult {
+	public readonly struct DbgCreateValueNodeResult {
 		/// <summary>
 		/// Gets the created node or null if there was an error
 		/// </summary>

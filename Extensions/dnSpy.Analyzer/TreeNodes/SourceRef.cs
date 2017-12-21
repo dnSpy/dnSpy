@@ -20,7 +20,7 @@
 using dnlib.DotNet;
 
 namespace dnSpy.Analyzer.TreeNodes {
-	struct SourceRef {
+	readonly struct SourceRef {
 		public MethodDef Method { get; }
 		public uint ILOffset { get; }
 		public IMDTokenProvider Reference { get; }

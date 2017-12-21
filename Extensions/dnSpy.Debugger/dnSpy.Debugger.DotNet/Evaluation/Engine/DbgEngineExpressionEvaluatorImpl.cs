@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		sealed class EvaluateImplExpressionState {
-			public struct Key : IEquatable<Key> {
+			public readonly struct Key {
 				readonly DbgEngineExpressionEvaluatorImpl ee;
 				readonly int decompilerOptionsVersion;
 				readonly object memberModule;
@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					this.expression = expression;
 				}
 
-				public bool Equals(Key other) =>
+				public bool Equals(in Key other) =>
 					scope == other.scope &&
 					moduleReferences == other.moduleReferences &&
 					ee == other.ee &&
@@ -247,7 +247,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					expressionCompiler.CompileTypeExpression(context, frame, type, refsResult.ModuleReferences, aliases, expression, keyOptions, cancellationToken) :
 					expressionCompiler.CompileExpression(context, frame, refsResult.ModuleReferences, aliases, expression, keyOptions, cancellationToken);
 				evalState.CachedKey = key;
-				evalState.EvaluateImplResult = GetEvaluateImplResult(ref evalState.CompilationResult, expression);
+				evalState.EvaluateImplResult = GetEvaluateImplResult(evalState.CompilationResult, expression);
 				if (evalState.EvaluateImplResult == null)
 					evalState.ILInterpreterState = dnILInterpreter.CreateState(evalState.CompilationResult.Assembly);
 				else
@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return evalState.EvaluateImplResult;
 		}
 
-		static EvaluateImplResult? GetEvaluateImplResult(ref DbgDotNetCompilationResult compRes, string expression) {
+		static EvaluateImplResult? GetEvaluateImplResult(in DbgDotNetCompilationResult compRes, string expression) {
 			if (compRes.IsError)
 				return new EvaluateImplResult(compRes.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			Debug.Assert(compRes.CompiledExpressions.Length == 1);
@@ -421,16 +421,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 	}
 
-	struct EvaluateImplResult {
-		public string Error;
-		public DbgDotNetText Name;
-		public DbgDotNetValue Value;
-		public ReadOnlyCollection<string> FormatSpecifiers;
-		public DbgEvaluationResultFlags Flags;
-		public string ImageName;
-		public DmdType Type;
+	readonly struct EvaluateImplResult {
+		public readonly string Error;
+		public readonly DbgDotNetText Name;
+		public readonly DbgDotNetValue Value;
+		public readonly ReadOnlyCollection<string> FormatSpecifiers;
+		public readonly DbgEvaluationResultFlags Flags;
+		public readonly string ImageName;
+		public readonly DmdType Type;
 
-		public EvaluateImplResult(string error, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags, string imageName, DmdType type) {
+		public EvaluateImplResult(string error, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags, string imageName, DmdType type) {
 			Error = error;
 			Name = name;
 			Value = value;

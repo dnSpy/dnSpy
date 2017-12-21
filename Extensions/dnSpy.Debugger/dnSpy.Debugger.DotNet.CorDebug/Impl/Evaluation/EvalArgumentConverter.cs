@@ -28,7 +28,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	struct EvalArgumentResult {
+	readonly struct EvalArgumentResult {
 		public string ErrorMessage { get; }
 		public CorValue CorValue { get; }
 		public EvalArgumentResult(string errorMessage) {
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 	}
 
-	struct EvalArgumentConverter {
+	readonly struct EvalArgumentConverter {
 		readonly DbgEngineImpl engine;
 		readonly DnEval dnEval;
 		readonly CorAppDomain appDomain;

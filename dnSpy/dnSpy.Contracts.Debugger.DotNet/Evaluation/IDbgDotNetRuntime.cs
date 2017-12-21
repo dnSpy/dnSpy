@@ -421,7 +421,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains the created value or an error message
 	/// </summary>
-	public struct DbgDotNetCreateValueResult {
+	public readonly struct DbgDotNetCreateValueResult {
 		/// <summary>
 		/// Gets the value or null if there was an error
 		/// </summary>
@@ -454,7 +454,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains .NET module data information
 	/// </summary>
-	public struct DbgDotNetRawModuleBytes {
+	public readonly struct DbgDotNetRawModuleBytes {
 		/// <summary>
 		/// No .NET module data is available
 		/// </summary>

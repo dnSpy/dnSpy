@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="token">Token</param>
 		/// <param name="codeOffset">Code offset</param>
 		/// <returns></returns>
-		MethodSourceStatement? FindByCodeOffset(ModuleTokenId token, uint codeOffset);
+		MethodSourceStatement? FindByCodeOffset(in ModuleTokenId token, uint codeOffset);
 
 		/// <summary>
 		/// Gets a <see cref="MethodDebugInfo"/> or null if it doesn't exist
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="token">Token</param>
 		/// <returns></returns>
-		MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token);
+		MethodDebugInfo TryGetMethodDebugInfo(in ModuleTokenId token);
 
 		/// <summary>
 		/// Gets all <see cref="MethodSourceStatement"/>s that intersect a span
@@ -117,9 +117,9 @@ namespace dnSpy.Contracts.Decompiler {
 
 			int IMethodDebugService.Count => 0;
 			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition, bool sameMethod) => Array.Empty<MethodSourceStatement>();
-			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(ModuleTokenId token, uint codeOffset) => null;
+			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(in ModuleTokenId token, uint codeOffset) => null;
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint codeOffset) => null;
-			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(ModuleTokenId token) => null;
+			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(in ModuleTokenId token) => null;
 			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(MethodDef method) => null;
 			IEnumerable<MethodSourceStatement> IMethodDebugService.GetStatementsByTextSpan(Span span) => Array.Empty<MethodSourceStatement>();
 		}

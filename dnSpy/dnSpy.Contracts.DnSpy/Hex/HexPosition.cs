@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex {
 	/// A position in a <see cref="HexBufferStream"/>
 	/// </summary>
 	[TypeConverter(typeof(HexPositionConverter))]
-	public struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
+	public readonly struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
 		/// <summary>
 		/// Gets the value 0
 		/// </summary>

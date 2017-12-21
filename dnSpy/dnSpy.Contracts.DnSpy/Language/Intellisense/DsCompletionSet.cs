@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public override void SelectBestMatch() =>
 			SelectionStatus = GetBestMatch() ?? new CompletionSelectionStatus(null, false, false);
 
-		struct MruSelection {
+		readonly struct MruSelection {
 			public Completion Completion { get; }
 			public int Index { get; }
 			public MruSelection(Completion completion, int index) {

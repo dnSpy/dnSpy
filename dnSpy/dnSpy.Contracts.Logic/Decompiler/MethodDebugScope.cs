@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Import info
 	/// </summary>
-	public struct ImportInfo {
+	public readonly struct ImportInfo {
 		/// <summary>
 		/// Target kind
 		/// </summary>
@@ -199,7 +199,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// A constant value
 	/// </summary>
-	public struct MethodDebugConstant {
+	public readonly struct MethodDebugConstant {
 		/// <summary>
 		/// Gets the name of the constant
 		/// </summary>

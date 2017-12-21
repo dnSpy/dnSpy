@@ -31,7 +31,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.FilterExpressionEvaluator {
 	[Serializable]
 	sealed class EvalDelegateCreatorException : Exception { }
 
-	struct EvalDelegateCreator : IDisposable {
+	readonly struct EvalDelegateCreator : IDisposable {
 		readonly ModuleDefMD module;
 		readonly string evalClassName;
 		readonly string evalMethodName;

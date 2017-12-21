@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Evaluation result
 	/// </summary>
-	public struct DbgEngineEvaluationResult {
+	public readonly struct DbgEngineEvaluationResult {
 		/// <summary>
 		/// Gets the value or null if there was an error
 		/// </summary>
@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Expression evaluator assignment result
 	/// </summary>
-	public struct DbgEngineEEAssignmentResult {
+	public readonly struct DbgEngineEEAssignmentResult {
 		/// <summary>
 		/// Error message or null
 		/// </summary>

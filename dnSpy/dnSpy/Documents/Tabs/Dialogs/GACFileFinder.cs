@@ -52,7 +52,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			}
 		}
 
-		void Add(GacFileInfo info) {
+		void Add(in GacFileInfo info) {
 			bool start;
 			lock (lockObj) {
 				infos.Add(info);

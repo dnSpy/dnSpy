@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Bound breakpoint message
 	/// </summary>
-	public struct DbgBoundCodeBreakpointMessage : IEquatable<DbgBoundCodeBreakpointMessage> {
+	public readonly struct DbgBoundCodeBreakpointMessage : IEquatable<DbgBoundCodeBreakpointMessage> {
 		/// <summary>
 		/// No error/warning message
 		/// </summary>

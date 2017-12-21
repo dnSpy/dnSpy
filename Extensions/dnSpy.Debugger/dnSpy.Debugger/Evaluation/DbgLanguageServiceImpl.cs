@@ -28,7 +28,7 @@ using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
-	struct LanguageInfo {
+	readonly struct LanguageInfo {
 		public string LanguageName { get; }
 		public string LanguageDisplayName { get; }
 		public LanguageInfo(string languageName, string languageDisplayName) {
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 	}
 
-	struct RuntimeLanguageInfo {
+	readonly struct RuntimeLanguageInfo {
 		public string RuntimeDisplayName { get; }
 		public Guid RuntimeKindGuid { get; }
 		public LanguageInfo[] Languages { get; }

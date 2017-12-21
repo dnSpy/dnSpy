@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointFilterChecker {
-		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter);
+		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointFilter filter);
 	}
 
 	[Export(typeof(DbgCodeBreakpointFilterChecker))]
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointFilter filter) {
+		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointFilter filter) {
 			if (!dbgFilterExpressionEvaluatorService.HasExpressionEvaluator) {
 				// There's no need to localize it, the FEE is exported by the Roslyn code
 				return new DbgCodeBreakpointCheckResult("There's no filter expression evaluator");

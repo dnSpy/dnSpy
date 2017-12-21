@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			ShortDisplayName = DisplayName;
 		}
 
-		public ExceptionCategoryVM(DbgExceptionCategoryDefinition definition) {
+		public ExceptionCategoryVM(in DbgExceptionCategoryDefinition definition) {
 			Definition = definition;
 			DisplayName = definition.DisplayName;
 			ShortDisplayName = definition.ShortDisplayName;

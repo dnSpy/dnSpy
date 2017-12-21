@@ -325,7 +325,7 @@ namespace dnSpy.Text.Editor {
 		sealed class LineCollection : UIElement {
 			readonly List<LineInfo> lines;
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public Line Line { get; }
 				public Visual Visual { get; }
 				public LineInfo(Line line) {

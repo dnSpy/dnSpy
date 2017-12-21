@@ -40,7 +40,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			FillRule
 		}
 
-		struct Point {
+		readonly struct Point {
 			public readonly double X;
 			public readonly double Y;
 

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	struct MemberValueNodeInfoCollection {
+	readonly struct MemberValueNodeInfoCollection {
 		public static readonly MemberValueNodeInfoCollection Empty = new MemberValueNodeInfoCollection(Array.Empty<MemberValueNodeInfo>(), false);
 		public readonly MemberValueNodeInfo[] Members;
 		public readonly bool HasHideRoot;

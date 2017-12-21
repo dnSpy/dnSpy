@@ -20,7 +20,7 @@
 using System.Windows.Media;
 
 namespace dnSpy.Settings.Fonts {
-	struct DefaultFontInfo {
+	readonly struct DefaultFontInfo {
 		public FontFamily FontFamily { get; }
 		public double FontSize { get; }
 		public DefaultFontInfo(FontFamily fontFamily, double fontSize) {

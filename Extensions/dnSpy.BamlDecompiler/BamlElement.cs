@@ -25,7 +25,7 @@ using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler {
-	internal struct XamlNode {
+	internal readonly struct XamlNode {
 		XamlNode(XElement value) {
 			Element = value;
 			String = null;

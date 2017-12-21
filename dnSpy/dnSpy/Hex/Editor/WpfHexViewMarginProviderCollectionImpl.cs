@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Editor {
 		public abstract void Dispose();
 	}
 
-	struct WpfHexViewMarginInfo {
+	readonly struct WpfHexViewMarginInfo {
 		public WpfHexViewMarginProvider Provider { get; }
 		public IWpfHexViewMarginMetadata Metadata { get; }
 		public WpfHexViewMargin Margin { get; }

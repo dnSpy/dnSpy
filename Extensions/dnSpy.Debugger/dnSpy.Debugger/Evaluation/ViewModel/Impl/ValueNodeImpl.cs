@@ -60,44 +60,44 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override FormatterObject<ValueNode> ValueObject => new FormatterObject<ValueNode>(this, Context.ValueColumnName);
 		public override FormatterObject<ValueNode> TypeObject => new FormatterObject<ValueNode>(this, Context.TypeColumnName);
 
-		public override ClassifiedTextCollection CachedName {
+		public override ref readonly ClassifiedTextCollection CachedName {
 			get {
 				if (cachedName.IsDefault)
 					InitializeCachedText();
-				return cachedName;
+				return ref cachedName;
 			}
 		}
 
-		public override ClassifiedTextCollection CachedValue {
+		public override ref readonly ClassifiedTextCollection CachedValue {
 			get {
 				if (cachedValue.IsDefault)
 					InitializeCachedText();
-				return cachedValue;
+				return ref cachedValue;
 			}
 		}
 
-		public override ClassifiedTextCollection CachedExpectedType {
+		public override ref readonly ClassifiedTextCollection CachedExpectedType {
 			get {
 				if (cachedExpectedType.IsDefault)
 					InitializeCachedText();
-				return cachedExpectedType;
+				return ref cachedExpectedType;
 			}
 		}
 
 		/// <summary>
 		/// It's default if it's identical to <see cref="CachedExpectedType"/>
 		/// </summary>
-		public override ClassifiedTextCollection CachedActualType_OrDefaultInstance {
+		public override ref readonly ClassifiedTextCollection CachedActualType_OrDefaultInstance {
 			get {
 				// Check cachedExpectedType and not cachedActualType since cachedActualType
 				// is default if it equals cachedExpectedType
 				if (cachedExpectedType.IsDefault)
 					InitializeCachedText();
-				return cachedActualType;
+				return ref cachedActualType;
 			}
 		}
 
-		public override ClassifiedTextCollection OldCachedValue => oldCachedValue;
+		public override ref readonly ClassifiedTextCollection OldCachedValue => ref oldCachedValue;
 
 		void InitializeCachedText() {
 			var p = Context.ValueNodeFormatParameters;
@@ -356,14 +356,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		// If it's a new value, then reset everything, else try to re-use it so eg. expanded arrays
 		// or classes don't get collapsed again.
-		internal void SetDebuggerValueNodeForRoot(DbgValueNodeInfo info) {
+		internal void SetDebuggerValueNodeForRoot(in DbgValueNodeInfo info) {
 			if (!IsRoot)
 				throw new InvalidOperationException();
 			rootId = info.Id;
 			SetDebuggerValueNode(info);
 		}
 
-		internal void SetDebuggerValueNode(DbgValueNodeInfo info) {
+		internal void SetDebuggerValueNode(in DbgValueNodeInfo info) {
 			if (info.Node == null) {
 				var newNode = info.CausesSideEffects ? null : new ErrorRawNode(info.Expression, info.ErrorMessage);
 				InvalidateNodes(newNode, recursionCounter: 0);

@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
-	struct ObjectConstantsFactory {
+	readonly struct ObjectConstantsFactory {
 		const int FuncEvalTimeoutMilliseconds = 5000;
 		readonly DbgProcess process;
 		readonly ThreadMirror thread;

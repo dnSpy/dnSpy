@@ -25,7 +25,7 @@ using System.IO;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	struct DnModuleId : IEquatable<DnModuleId> {
+	readonly struct DnModuleId : IEquatable<DnModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,

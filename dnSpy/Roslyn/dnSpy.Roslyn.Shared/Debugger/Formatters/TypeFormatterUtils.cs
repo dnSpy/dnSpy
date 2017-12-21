@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.ObjectModel;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;

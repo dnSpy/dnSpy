@@ -30,7 +30,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 	/// <summary>
 	/// Classifier result
 	/// </summary>
-	public struct ClassifierResult {
+	public readonly struct ClassifierResult {
 		/// <summary>
 		/// Span
 		/// </summary>
@@ -55,13 +55,13 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 	/// <summary>
 	/// Roslyn classifier
 	/// </summary>
-	public struct RoslynClassifier {
+	public readonly struct RoslynClassifier {
 		readonly SyntaxNode syntaxRoot;
 		readonly SemanticModel semanticModel;
 		readonly Workspace workspace;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly object defaultColor;
-		/*readonly*/ CancellationToken cancellationToken;
+		readonly CancellationToken cancellationToken;
 
 		/// <summary>
 		/// Constructor
@@ -94,7 +94,7 @@ namespace dnSpy.Roslyn.Shared.Text.Classification {
 			}
 		}
 
-		struct SymbolResult {
+		readonly struct SymbolResult {
 			public readonly ISymbol Symbol;
 			public readonly object Color;
 

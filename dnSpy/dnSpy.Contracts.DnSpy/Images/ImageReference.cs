@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Images {
 	/// Image reference
 	/// </summary>
 	[TypeConverter(typeof(ImageReferenceConverter))]
-	public struct ImageReference {
+	public readonly struct ImageReference {
 		/// <summary>
 		/// Gets an <see cref="ImageReference"/> which isn't referencing any image
 		/// </summary>

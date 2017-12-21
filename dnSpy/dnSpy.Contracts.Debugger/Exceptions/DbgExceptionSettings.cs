@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception settings
 	/// </summary>
-	public struct DbgExceptionSettings : IEquatable<DbgExceptionSettings> {
+	public readonly struct DbgExceptionSettings : IEquatable<DbgExceptionSettings> {
 		/// <summary>
 		/// Flags
 		/// </summary>

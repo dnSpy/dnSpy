@@ -40,7 +40,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			}
 		}
 
-		public unsafe static MetadataReference CreateMetadataReference(this CompilerMetadataReference mdRef, IRoslynDocumentationProviderFactory docFactory) {
+		public unsafe static MetadataReference CreateMetadataReference(in this CompilerMetadataReference mdRef, IRoslynDocumentationProviderFactory docFactory) {
 			var docProvider = docFactory.TryCreate(mdRef.Filename);
 			var moduleMetadata = ModuleMetadata.CreateFromImage((IntPtr)mdRef.Data, mdRef.Size);
 			if (mdRef.IsAssemblyReference) {

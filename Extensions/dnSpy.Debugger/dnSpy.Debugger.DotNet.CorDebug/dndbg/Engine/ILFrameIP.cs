@@ -20,7 +20,7 @@
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	struct ILFrameIP {
+	readonly struct ILFrameIP {
 		public uint Offset { get; }
 		public CorDebugMappingResult Mapping { get; }
 

@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	struct DbgDotNetValueCreator {
+	readonly struct DbgDotNetValueCreator {
 		readonly DbgDotNetEngineValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetILInterpreter dnILInterpreter;
 		readonly DbgEvaluationContext context;
@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgValueNodeEvaluationOptions nodeOptions;
 		readonly DbgEvaluationOptions options;
 		readonly byte[] assemblyBytes;
-		/*readonly*/ CancellationToken cancellationToken;
+		readonly CancellationToken cancellationToken;
 
 		public DbgDotNetValueCreator(DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, byte[] assemblyBytes, CancellationToken cancellationToken) {
 			this.valueNodeFactory = valueNodeFactory;

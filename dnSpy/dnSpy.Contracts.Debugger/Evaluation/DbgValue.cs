@@ -178,7 +178,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Contains the address and length of a value
 	/// </summary>
-	public struct DbgRawAddressValue {
+	public readonly struct DbgRawAddressValue {
 		/// <summary>
 		/// Gets the address
 		/// </summary>

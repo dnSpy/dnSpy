@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Updates <see cref="DbgBoundCodeBreakpoint.Message"/>
 		/// </summary>
 		/// <param name="message">New value</param>
-		public void UpdateMessage(DbgEngineBoundCodeBreakpointMessage message) => Update(UpdateOptions.Message, message: message);
+		public void UpdateMessage(in DbgEngineBoundCodeBreakpointMessage message) => Update(UpdateOptions.Message, message: message);
 
 		/// <summary>
 		/// Updates <see cref="DbgBoundCodeBreakpoint"/> properties
@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
 	/// Bound breakpoint message
 	/// </summary>
-	public struct DbgEngineBoundCodeBreakpointMessage {
+	public readonly struct DbgEngineBoundCodeBreakpointMessage {
 		/// <summary>
 		/// Message kind
 		/// </summary>

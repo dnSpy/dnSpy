@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A position in a hex column
 	/// </summary>
-	public struct HexColumnPosition : IEquatable<HexColumnPosition> {
+	public readonly struct HexColumnPosition : IEquatable<HexColumnPosition> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="activeColumn">Active column</param>
 		/// <param name="valuePosition">Position in the values column</param>
 		/// <param name="asciiPosition">Position in the ASCII column</param>
-		public HexColumnPosition(HexColumnType activeColumn, HexCellPosition valuePosition, HexCellPosition asciiPosition) {
+		public HexColumnPosition(HexColumnType activeColumn, in HexCellPosition valuePosition, in HexCellPosition asciiPosition) {
 			if (activeColumn != HexColumnType.Values && activeColumn != HexColumnType.Ascii)
 				throw new ArgumentOutOfRangeException(nameof(activeColumn));
 			if (valuePosition.IsDefault || valuePosition.Column != HexColumnType.Values)

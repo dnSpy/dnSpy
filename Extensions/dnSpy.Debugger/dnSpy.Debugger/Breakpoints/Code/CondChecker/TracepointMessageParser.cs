@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		// Max methods to show when $CALLSTACK is used (no argument)
 		const int defaultCallStackCount = 50;
 
-		struct KeywordInfo {
+		readonly struct KeywordInfo {
 			public string Name { get; }
 			public TracepointMessageKind Kind { get; }
 			public int Number { get; }

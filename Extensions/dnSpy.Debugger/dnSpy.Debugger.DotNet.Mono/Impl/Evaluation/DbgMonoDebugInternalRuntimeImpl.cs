@@ -1052,7 +1052,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				Dispatcher.InvokeRethrow(() => EqualsCore(objectId2, value2));
 		}
 
-		struct EquatableValue {
+		readonly struct EquatableValue {
 			public readonly ulong Address;
 
 			public EquatableValue(ObjectMirror value) {
@@ -1062,8 +1062,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					Address = (ulong)value.Address;
 			}
 
-			public bool Equals2(EquatableValue other) => Address != 0 && Address == other.Address;
-			public bool? Equals3(EquatableValue other) => Address == 0 && other.Address == 0 ? (bool?)null : Address == other.Address;
+			public bool Equals2(in EquatableValue other) => Address != 0 && Address == other.Address;
+			public bool? Equals3(in EquatableValue other) => Address == 0 && other.Address == 0 ? (bool?)null : Address == other.Address;
 			public new int GetHashCode() => Address == 0 ? 0 : Address.GetHashCode();
 		}
 

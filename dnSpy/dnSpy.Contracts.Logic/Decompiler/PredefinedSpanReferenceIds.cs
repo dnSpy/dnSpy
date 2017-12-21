@@ -26,6 +26,6 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Highlighted keyword reference, eg. related keywords are highlighted by default in Visual Basic,
 		/// eg. 'If' and 'End If'.
 		/// </summary>
-		public const string HighlightRelatedKeywords = "HighlightRelatedKeywords";
+		public const string HighlightRelatedKeywords = nameof(HighlightRelatedKeywords);
 	}
 }

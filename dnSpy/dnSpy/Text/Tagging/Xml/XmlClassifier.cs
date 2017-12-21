@@ -81,7 +81,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		AttributeValueXaml,
 	}
 
-	struct XmlSpanKind {
+	readonly struct XmlSpanKind {
 		public Span Span { get; }
 		public XmlKind Kind { get; }
 

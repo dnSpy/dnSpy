@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly MethodBodyRvaAndRid[] methodBodyRvas;
 		readonly HexSpan methodBodiesSpan;
 
-		struct MethodBodyRvaAndRid {
+		readonly struct MethodBodyRvaAndRid {
 			// This is an RVA instead of a HexPosition so it's not needed to translate all method
 			// bodies' RVAs to HexPositions.
 			public uint Rva { get; }
@@ -158,7 +158,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				var info = array[index];
+				ref readonly var info = ref array[index];
 				if (rva < info.Rva)
 					hi = index - 1;
 				else if (rva > info.Rva)

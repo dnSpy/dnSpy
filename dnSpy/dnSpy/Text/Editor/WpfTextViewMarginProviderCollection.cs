@@ -32,7 +32,7 @@ namespace dnSpy.Text.Editor {
 		void Dispose();
 	}
 
-	struct WpfTextViewMarginInfo {
+	readonly struct WpfTextViewMarginInfo {
 		public IWpfTextViewMarginProvider Provider { get; }
 		public IWpfTextViewMarginMetadata Metadata { get; }
 		public IWpfTextViewMargin Margin { get; }

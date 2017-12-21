@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
 	/// Bookmark and old settings
 	/// </summary>
-	public struct BookmarkAndOldSettings {
+	public readonly struct BookmarkAndOldSettings {
 		/// <summary>
 		/// Gets the bookmark
 		/// </summary>
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
 	/// Bookmarks modified event args
 	/// </summary>
-	public struct BookmarksModifiedEventArgs {
+	public readonly struct BookmarksModifiedEventArgs {
 		/// <summary>
 		/// Gets the bookmarks
 		/// </summary>
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
 	/// Bookmark and settings
 	/// </summary>
-	public struct BookmarkAndSettings {
+	public readonly struct BookmarkAndSettings {
 		/// <summary>
 		/// Gets the bookmark
 		/// </summary>
@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// <summary>
 	/// Info needed to add a bookmark
 	/// </summary>
-	public struct BookmarkInfo {
+	public readonly struct BookmarkInfo {
 		/// <summary>
 		/// Bookmark location
 		/// </summary>

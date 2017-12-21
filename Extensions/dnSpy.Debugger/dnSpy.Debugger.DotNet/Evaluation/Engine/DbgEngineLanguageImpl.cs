@@ -95,10 +95,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		struct DbgLanguageDebugInfoKey {
+		readonly struct DbgLanguageDebugInfoKey {
 			readonly uint token;
 			readonly DbgModule module;
-			/*readonly*/ ModuleId moduleId;
+			readonly ModuleId moduleId;
 			readonly int refreshedVersion;
 
 			public DbgLanguageDebugInfoKey(DbgModule module, uint token) {
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				refreshedVersion = module.RefreshedVersion;
 			}
 
-			public DbgLanguageDebugInfoKey(ModuleId moduleId, uint token) {
+			public DbgLanguageDebugInfoKey(in ModuleId moduleId, uint token) {
 				this.token = token;
 				this.moduleId = moduleId;
 				module = null;

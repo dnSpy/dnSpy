@@ -132,7 +132,7 @@ namespace dnSpy.AsmEditor.Resources {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly ModuleDef OwnerModule;
 				public readonly int Index;
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerModule.Resources.Insert(info.Index, node.Resource);
 				}
 

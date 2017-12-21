@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Exception info
 	/// </summary>
-	public struct DbgDotNetExceptionInfo {
+	public readonly struct DbgDotNetExceptionInfo {
 		/// <summary>
 		/// Gets the flags
 		/// </summary>

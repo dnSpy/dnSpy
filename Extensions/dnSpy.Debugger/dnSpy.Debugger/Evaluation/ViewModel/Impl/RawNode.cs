@@ -98,10 +98,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public sealed override bool IsReadOnly => true;
 		public sealed override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options) => throw new NotImplementedException();
 
-		protected abstract ClassifiedTextCollection CachedName { get; }
-		protected abstract ClassifiedTextCollection CachedValue { get; }
-		protected abstract ClassifiedTextCollection CachedExpectedType { get; }
-		protected abstract ClassifiedTextCollection CachedActualType { get; }
+		protected abstract ref readonly ClassifiedTextCollection CachedName { get; }
+		protected abstract ref readonly ClassifiedTextCollection CachedValue { get; }
+		protected abstract ref readonly ClassifiedTextCollection CachedExpectedType { get; }
+		protected abstract ref readonly ClassifiedTextCollection CachedActualType { get; }
 
 		public sealed override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
 			if (options.NameOutput != null)
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public sealed override void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => WriteTo(output, CachedValue);
 
 		const string UNKNOWN = "???";
-		static void WriteTo(ITextColorWriter output, ClassifiedTextCollection coll, string unknownText = UNKNOWN) {
+		static void WriteTo(ITextColorWriter output, in ClassifiedTextCollection coll, string unknownText = UNKNOWN) {
 			if (coll.IsDefault) {
 				output.Write(BoxedTextColor.Error, unknownText);
 				return;
@@ -138,10 +138,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool? HasChildren => false;
 		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
 
-		protected override ClassifiedTextCollection CachedName => default;
-		protected override ClassifiedTextCollection CachedValue => default;
-		protected override ClassifiedTextCollection CachedExpectedType => default;
-		protected override ClassifiedTextCollection CachedActualType => default;
+		protected override ref readonly ClassifiedTextCollection CachedName => ref ClassifiedTextCollection.Empty;
+		protected override ref readonly ClassifiedTextCollection CachedValue => ref ClassifiedTextCollection.Empty;
+		protected override ref readonly ClassifiedTextCollection CachedExpectedType => ref ClassifiedTextCollection.Empty;
+		protected override ref readonly ClassifiedTextCollection CachedActualType => ref ClassifiedTextCollection.Empty;
 	}
 
 	sealed class CachedRawNode : CachedRawNodeBase {
@@ -152,21 +152,26 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => childCount;
 		readonly ulong? childCount;
 
-		protected override ClassifiedTextCollection CachedName { get; }
-		protected override ClassifiedTextCollection CachedValue { get; }
-		protected override ClassifiedTextCollection CachedExpectedType { get; }
-		protected override ClassifiedTextCollection CachedActualType { get; }
+		protected override ref readonly ClassifiedTextCollection CachedName => ref cachedName;
+		protected override ref readonly ClassifiedTextCollection CachedValue => ref cachedValue;
+		protected override ref readonly ClassifiedTextCollection CachedExpectedType => ref cachedExpectedType;
+		protected override ref readonly ClassifiedTextCollection CachedActualType => ref cachedActualType;
 
-		public CachedRawNode(bool canEvaluateExpression, string expression, string imageName, bool? hasChildren, ulong? childCount, ClassifiedTextCollection cachedName, ClassifiedTextCollection cachedValue, ClassifiedTextCollection cachedExpectedType, ClassifiedTextCollection cachedActualType) {
+		readonly ClassifiedTextCollection cachedName;
+		readonly ClassifiedTextCollection cachedValue;
+		readonly ClassifiedTextCollection cachedExpectedType;
+		readonly ClassifiedTextCollection cachedActualType;
+
+		public CachedRawNode(bool canEvaluateExpression, string expression, string imageName, bool? hasChildren, ulong? childCount, in ClassifiedTextCollection cachedName, in ClassifiedTextCollection cachedValue, in ClassifiedTextCollection cachedExpectedType, in ClassifiedTextCollection cachedActualType) {
 			CanEvaluateExpression = canEvaluateExpression;
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			ImageName = imageName ?? throw new ArgumentNullException(nameof(imageName));
 			HasChildren = hasChildren;
 			this.childCount = childCount;
-			CachedName = cachedName;
-			CachedValue = cachedValue;
-			CachedExpectedType = cachedExpectedType;
-			CachedActualType = cachedActualType.IsDefault ? cachedExpectedType : cachedActualType;
+			this.cachedName = cachedName;
+			this.cachedValue = cachedValue;
+			this.cachedExpectedType = cachedExpectedType;
+			this.cachedActualType = cachedActualType.IsDefault ? ref cachedExpectedType : ref cachedActualType;
 		}
 	}
 

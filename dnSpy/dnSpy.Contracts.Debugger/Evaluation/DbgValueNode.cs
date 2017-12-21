@@ -207,7 +207,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Assignment result
 	/// </summary>
-	public struct DbgValueNodeAssignmentResult {
+	public readonly struct DbgValueNodeAssignmentResult {
 		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>

@@ -548,7 +548,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 	}
 
-	struct DbgCreateMonoValueResult {
+	readonly struct DbgCreateMonoValueResult {
 		public Value Value { get; }
 		public string ErrorMessage { get; }
 		public DbgCreateMonoValueResult(Value value) {

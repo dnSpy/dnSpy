@@ -335,7 +335,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public string Name { get; }
 		public string Images { get; set; }
 
-		public Settings(ImageSettingsInfo info) {
+		public Settings(in ImageSettingsInfo info) {
 			RawSettings = info.RawSettings;
 			Id = info.Lazy.Value.Id;
 			Name = info.Lazy.Value.DisplayName;

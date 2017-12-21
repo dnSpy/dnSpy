@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Documents {
 	/// <summary>
 	/// Document info
 	/// </summary>
-	public struct DsDocumentInfo {
+	public readonly struct DsDocumentInfo {
 		/// <summary>
 		/// Name, eg. filename if <see cref="Type"/> is <see cref="DocumentConstants.DOCUMENTTYPE_FILE"/>
 		/// </summary>

@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Information about a span in a <see cref="HexBuffer"/>
 	/// </summary>
-	public struct HexSpanInfo {
+	public readonly struct HexSpanInfo {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

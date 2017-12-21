@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Use <see cref="DecompilerOutputExtensions.AddSpanReference(IDecompilerOutput, SpanReference)"/>
 	/// to add an instance.
 	/// </summary>
-	public struct SpanReference {
+	public readonly struct SpanReference {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>

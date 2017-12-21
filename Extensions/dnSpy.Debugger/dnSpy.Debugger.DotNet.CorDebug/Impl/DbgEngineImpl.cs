@@ -458,13 +458,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public bool HasUpdatedModuleId { get; private set; }
 			public int LoadClassVersion => loadClassVersion;
 			volatile int loadClassVersion;
-			public DbgModuleData(DbgEngineImpl engine, DnModule dnModule, ModuleId moduleId) {
+			public DbgModuleData(DbgEngineImpl engine, DnModule dnModule, in ModuleId moduleId) {
 				Engine = engine;
 				DnModule = dnModule;
 				ModuleId = moduleId;
 			}
 			public void OnLoadClass() => Interlocked.Increment(ref loadClassVersion);
-			public void UpdateModuleId(ModuleId moduleId) {
+			public void UpdateModuleId(in ModuleId moduleId) {
 				if (!moduleId.IsDynamic)
 					throw new InvalidOperationException();
 				ModuleId = moduleId;

@@ -107,7 +107,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
 	}
 
-	struct USString {
+	readonly struct USString {
 		public HexSpan FullSpan => HexSpan.FromBounds(LengthSpan.Start, TerminalByteSpan.End);
 		public HexSpan LengthSpan { get; }
 		public HexSpan StringSpan { get; }

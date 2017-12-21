@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// <summary>
 	/// Contains the options and an optional filename
 	/// </summary>
-	public struct StartDebuggingOptionsInfo {
+	public readonly struct StartDebuggingOptionsInfo {
 		/// <summary>
 		/// Gets the options
 		/// </summary>

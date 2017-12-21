@@ -21,7 +21,7 @@ using System.Text;
 using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.Hex.Files {
-	struct NumberFormatter {
+	readonly struct NumberFormatter {
 		public HexNumberOptions Options => options;
 		readonly HexNumberOptions options;
 

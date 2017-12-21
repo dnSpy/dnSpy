@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	sealed class DebuggerTypeProxyFinder {
 		sealed class AssemblyState {
-			struct TypeKey : IEquatable<TypeKey> {
+			readonly struct TypeKey : IEquatable<TypeKey> {
 				readonly DmdModule module;
 				readonly int metadataToken;
 				public TypeKey(DmdType type) {

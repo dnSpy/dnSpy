@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		struct FieldAndStructure {
+		readonly struct FieldAndStructure {
 			public HexVM Structure { get; }
 			public HexField Field { get; }
 			public FieldAndStructure(HexVM structure, HexField field) {

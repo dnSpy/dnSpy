@@ -24,21 +24,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Type name
 	/// </summary>
-	public struct DmdTypeName {
+	public readonly struct DmdTypeName {
 		/// <summary>
 		/// Namespace or null
 		/// </summary>
-		public string Namespace;
+		public readonly string Namespace;
 
 		/// <summary>
 		/// Name
 		/// </summary>
-		public string Name;
+		public readonly string Name;
 
 		/// <summary>
 		/// Nested type names, separated with '+'
 		/// </summary>
-		public string Extra;
+		public readonly string Extra;
 
 		/// <summary>
 		/// Constructor

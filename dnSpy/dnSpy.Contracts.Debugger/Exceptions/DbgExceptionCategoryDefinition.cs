@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception category definition
 	/// </summary>
-	public struct DbgExceptionCategoryDefinition {
+	public readonly struct DbgExceptionCategoryDefinition {
 		/// <summary>
 		/// Gets the flags
 		/// </summary>

@@ -31,7 +31,7 @@ namespace dnSpy.Documents {
 		readonly object lockObj = new object();
 		readonly Dictionary<Key, bool> infos = new Dictionary<Key, bool>();
 
-		struct Key : IEquatable<Key> {
+		readonly struct Key : IEquatable<Key> {
 			public readonly WeakReference method;
 			readonly int hc;
 

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Binary span
 	/// </summary>
-	public struct BinSpan : IEquatable<BinSpan> {
+	public readonly struct BinSpan : IEquatable<BinSpan> {
 		readonly uint start, end;
 
 		/// <summary>

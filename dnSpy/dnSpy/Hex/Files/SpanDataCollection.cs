@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files {
 			return lo < list.Count ? lo : -1;
 		}
 
-		public void Add(SpanData<TData> data) {
+		public void Add(in SpanData<TData> data) {
 			spanDataList.Add(data);
 			SortList();
 		}
@@ -106,7 +106,7 @@ namespace dnSpy.Hex.Files {
 		void SortList() => spanDataList.Sort(SpanDataComparer.Instance);
 	}
 
-	public struct SpanData<TData> {
+	readonly struct SpanData<TData> {
 		public HexSpan Span { get; }
 		public TData Data { get; }
 		public SpanData(HexSpan span, TData data) {

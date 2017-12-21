@@ -38,7 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsesTreeNode);
 
-		struct DefRef<T> where T : IDnlibDef {
+		readonly struct DefRef<T> where T : IDnlibDef {
 			public readonly T Def;
 			public readonly SourceRef SourceRef;
 			public DefRef(T def, SourceRef sourceRef) {

@@ -31,7 +31,7 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointConditionChecker {
-		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition);
+		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointCondition condition);
 	}
 
 	[Export(typeof(DbgCodeBreakpointConditionChecker))]
@@ -137,11 +137,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 
 			sealed class AddressSavedValue : SavedValue {
-				/*readonly*/ DbgRawAddressValue address;
+				readonly DbgRawAddressValue address;
 				readonly string valueType;
 
 				//TODO: An object id (that's not shown in the locals window) should be used instead since the GC can move the value in memory
-				public AddressSavedValue(DbgRawAddressValue address, string valueType) {
+				public AddressSavedValue(in DbgRawAddressValue address, string valueType) {
 					this.address = address;
 					this.valueType = valueType;
 				}
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition) {
+		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointCondition condition) {
 			var expression = condition.Condition;
 			Debug.Assert(expression != null);
 			if (expression == null)
@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		BreakpointState GetState(DbgBoundCodeBreakpoint boundBreakpoint, DbgLanguage language, DbgStackFrame frame, DbgCodeBreakpointCondition condition, CancellationToken cancellationToken) {
+		BreakpointState GetState(DbgBoundCodeBreakpoint boundBreakpoint, DbgLanguage language, DbgStackFrame frame, in DbgCodeBreakpointCondition condition, CancellationToken cancellationToken) {
 			var state = boundBreakpoint.GetOrCreateData<BreakpointState>();
 			if (state.Language != language || state.Condition != condition) {
 				state.Language = language;

@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Code.TextEditor {
 	/// <summary>
 	/// Text view locations
 	/// </summary>
-	public struct DbgTextViewBreakpointLocationResult {
+	public readonly struct DbgTextViewBreakpointLocationResult {
 		/// <summary>
 		/// Gets all locations
 		/// </summary>

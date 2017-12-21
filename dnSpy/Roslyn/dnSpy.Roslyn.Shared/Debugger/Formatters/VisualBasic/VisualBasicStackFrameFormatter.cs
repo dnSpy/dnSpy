@@ -30,14 +30,14 @@ using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
-	struct VisualBasicStackFrameFormatter {
+	readonly struct VisualBasicStackFrameFormatter {
 		readonly ITextColorWriter output;
 		readonly DbgEvaluationContext context;
 		readonly LanguageFormatter languageFormatter;
 		readonly DbgStackFrameFormatterOptions options;
 		readonly ValueFormatterOptions valueOptions;
 		readonly CultureInfo cultureInfo;
-		/*readonly*/ CancellationToken cancellationToken;
+		readonly CancellationToken cancellationToken;
 
 		const string Keyword_As = "As";
 		const string Keyword_get = "Get";

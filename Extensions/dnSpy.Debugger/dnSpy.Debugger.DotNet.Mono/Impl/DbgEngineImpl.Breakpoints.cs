@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public ModuleId Module { get; }
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
-			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module, BreakpointEventRequest breakpoint) {
+			public BoundBreakpointData(DbgEngineImpl engine, in ModuleId module, BreakpointEventRequest breakpoint) {
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Module = module;
 				Breakpoint = breakpoint;
@@ -201,7 +201,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			readonly HashSet<int> loadedTypes = new HashSet<int>();
 			readonly Dictionary<int, List<PendingBreakpoint>> pendingBreakpoints = new Dictionary<int, List<PendingBreakpoint>>();
 
-			struct PendingBreakpoint {
+			readonly struct PendingBreakpoint {
 				public DbgEngineBoundCodeBreakpoint BoundBreakpoint { get; }
 				public Action OnTypeLoaded { get; }
 				public PendingBreakpoint(DbgEngineBoundCodeBreakpoint boundBreakpoint, Action onTypeLoaded) {
@@ -240,7 +240,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 			}
 
-			void NotifyLoaded(PendingBreakpoint pendingBreakpoint) {
+			void NotifyLoaded(in PendingBreakpoint pendingBreakpoint) {
 				if (!pendingBreakpoint.BoundBreakpoint.BoundCodeBreakpoint.IsClosed)
 					pendingBreakpoint.OnTypeLoaded();
 			}

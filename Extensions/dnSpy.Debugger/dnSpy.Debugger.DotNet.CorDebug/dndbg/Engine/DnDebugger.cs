@@ -1360,7 +1360,7 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		public DnILCodeBreakpoint CreateBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
+		public DnILCodeBreakpoint CreateBreakpoint(in DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnILCodeBreakpoint(module, token, offset, cond);
 			ilCodeBreakpointList.Add(module, bp);
@@ -1369,7 +1369,7 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		public DnNativeCodeBreakpoint CreateNativeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
+		public DnNativeCodeBreakpoint CreateNativeBreakpoint(in DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnNativeCodeBreakpoint(module, token, offset, cond);
 			nativeCodeBreakpointList.Add(module, bp);

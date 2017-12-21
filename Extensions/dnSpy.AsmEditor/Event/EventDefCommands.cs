@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.Event {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly TypeDef OwnerType;
 				public readonly int EventIndex;
 				public readonly int[] MethodIndexes;
@@ -165,7 +165,7 @@ namespace dnSpy.AsmEditor.Event {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerType.Events.Insert(info.EventIndex, node.EventDef);
 
 					for (int j = info.Methods.Length - 1; j >= 0; j--)

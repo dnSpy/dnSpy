@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// Enum field info
 	/// </summary>
-	public struct EnumFieldInfo {
+	public readonly struct EnumFieldInfo {
 		/// <summary>
 		/// Gets the enum field value
 		/// </summary>

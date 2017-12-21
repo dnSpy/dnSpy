@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Line separator
 	/// </summary>
-	public struct LineSeparator {
+	public readonly struct LineSeparator {
 		/// <summary>
 		/// Gets the position of the line that gets a line separator
 		/// </summary>

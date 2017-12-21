@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated;
 	}
 
-	struct DmdTypesUpdatedEventArgs {
+	readonly struct DmdTypesUpdatedEventArgs {
 		/// <summary>
 		/// Tokens of updated types
 		/// </summary>

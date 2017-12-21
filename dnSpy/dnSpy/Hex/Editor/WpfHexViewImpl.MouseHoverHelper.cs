@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Editor {
 			readonly DispatcherTimer timer;
 			LinePosition? position;
 
-			struct LinePosition : IEquatable<LinePosition> {
+			readonly struct LinePosition : IEquatable<LinePosition> {
 				public HexBufferLine Line { get; }
 				public int Column { get; }
 				public LinePosition(HexBufferLine line, int column) {

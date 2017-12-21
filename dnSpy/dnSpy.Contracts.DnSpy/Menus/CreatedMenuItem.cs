@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// <see cref="MenuItem"/> info
 	/// </summary>
-	public struct CreatedMenuItem {
+	public readonly struct CreatedMenuItem {
 		/// <summary>
 		/// Metadata, eg. an <see cref="ExportMenuItemAttribute"/> instance
 		/// </summary>

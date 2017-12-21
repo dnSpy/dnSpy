@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		sealed class GetNodesState {
-			public struct Key {
+			public readonly struct Key {
 				readonly int decompilerOptionsVersion;
 				// NOTE: DbgModule isn't part of this struct because the state is attached to the module.
 				readonly int methodToken;
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					this.valueNodeEvaluationOptions = valueNodeEvaluationOptions;
 					this.localsValueNodeEvaluationOptions = localsValueNodeEvaluationOptions;
 				}
-				public bool Equals(Key other) =>
+				public bool Equals(in Key other) =>
 					scope == other.scope &&
 					moduleReferences == other.moduleReferences &&
 					methodToken == other.methodToken &&

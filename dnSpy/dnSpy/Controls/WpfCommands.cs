@@ -33,7 +33,7 @@ namespace dnSpy.Controls {
 		public Guid Guid => guid;
 		readonly Guid guid;
 
-		struct CMKKey : IEquatable<CMKKey> {
+		readonly struct CMKKey : IEquatable<CMKKey> {
 			readonly ICommand command;
 			readonly ModifierKeys modifiers;
 			readonly Key key;

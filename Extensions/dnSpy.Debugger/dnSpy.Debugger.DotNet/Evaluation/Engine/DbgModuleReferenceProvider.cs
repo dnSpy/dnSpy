@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public abstract GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DmdModule module);
 	}
 
-	struct GetModuleReferencesResult {
+	readonly struct GetModuleReferencesResult {
 		public DbgModuleReference[] ModuleReferences { get; }
 		public string ErrorMessage { get; }
 
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		DbgModuleReferenceProviderImpl(DbgRawMetadataService dbgRawMetadataService) => this.dbgRawMetadataService = dbgRawMetadataService;
 
 		sealed class RuntimeState : IDisposable {
-			public struct Key : IEquatable<Key> {
+			public readonly struct Key : IEquatable<Key> {
 				public readonly bool IsFileLayout;
 				public readonly ulong Address;
 				public readonly uint Size;
@@ -126,9 +126,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public readonly HashSet<IDmdAssemblyName> NonLoadedAssemblies = new HashSet<IDmdAssemblyName>(DmdMemberInfoEqualityComparer.DefaultMember);
 		}
 
-		struct AssemblyInfo {
-			public DmdAssembly Assembly;
-			public ModuleInfo[] Modules;
+		readonly struct AssemblyInfo {
+			public readonly DmdAssembly Assembly;
+			public readonly ModuleInfo[] Modules;
 			public AssemblyInfo(DmdAssembly assembly) {
 				Assembly = assembly;
 				var modules = assembly.GetModules();
@@ -139,11 +139,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		struct ModuleInfo {
-			public DmdModule Module;
-			public DbgModule DebuggerModuleOrNull;
-			public int DynamicModuleVersion;
-			public int DebuggerModuleVersion;
+		readonly struct ModuleInfo {
+			public readonly DmdModule Module;
+			public readonly DbgModule DebuggerModuleOrNull;
+			public readonly int DynamicModuleVersion;
+			public readonly int DebuggerModuleVersion;
 			public ModuleInfo(DmdModule module) {
 				Module = module;
 				DebuggerModuleOrNull = module.GetDebuggerModule();
@@ -304,7 +304,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			state.ModuleReferences = modRefs.ToArray();
 		}
 
-		DbgModuleReference GetOrCreateModuleReference(RuntimeState rtState, DbgRuntime runtime, ModuleInfo modInfo) {
+		DbgModuleReference GetOrCreateModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo) {
 			DbgModuleReferenceImpl modRef;
 			var module = modInfo.DebuggerModuleOrNull ?? modInfo.Module.GetDebuggerModule();
 			if (module?.HasAddress == true) {
@@ -370,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public DbgDotNetRawModuleBytes RawModuleBytes;
 			public DbgModuleReferenceImpl ModuleReference;
 
-			public bool Equals(DbgDotNetRawModuleBytes other) =>
+			public bool Equals(in DbgDotNetRawModuleBytes other) =>
 				RawModuleBytes.RawBytes == other.RawBytes &&
 				RawModuleBytes.IsFileLayout == other.IsFileLayout;
 		}
@@ -381,7 +381,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				ModuleReference = moduleReference ?? throw new ArgumentNullException(nameof(moduleReference));
 		}
 
-		DbgModuleReferenceImpl GetOrCreateFileModuleReference(RuntimeState rtState, DbgRuntime runtime, ModuleInfo modInfo, DbgModule module) {
+		DbgModuleReferenceImpl GetOrCreateFileModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo, DbgModule module) {
 			Debug.Assert(!module.IsInMemory && File.Exists(module.Filename));
 			if (module.TryGetData<FileModuleReferenceState>(out var state))
 				return state.ModuleReference;
@@ -432,10 +432,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		static bool Equals(DmdModule[] a, ModuleInfo[] b) {
 			if (a.Length != b.Length)
 				return false;
+
 			for (int i = 0; i < a.Length; i++) {
-				var info = b[i];
+				ref readonly var info = ref b[i];
 				var am = a[i];
-				if (am != info.Module || a[i].DynamicModuleVersion != info.DynamicModuleVersion)
+				if (am != info.Module || am.DynamicModuleVersion != info.DynamicModuleVersion)
 					return false;
 				var dm = info.DebuggerModuleOrNull ?? am.GetDebuggerModule();
 				if (dm != null && dm.RefreshedVersion != info.DebuggerModuleVersion)

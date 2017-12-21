@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Contains the expression to evaluate and options
 	/// </summary>
-	public struct DbgExpressionEvaluationInfo {
+	public readonly struct DbgExpressionEvaluationInfo {
 		/// <summary>
 		/// Gets the expression to evaluate
 		/// </summary>

@@ -28,7 +28,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	struct DbgDotNetRawValueFactory {
+	readonly struct DbgDotNetRawValueFactory {
 		readonly DbgEngineImpl engine;
 
 		public DbgDotNetRawValueFactory(DbgEngineImpl engine) => this.engine = engine;

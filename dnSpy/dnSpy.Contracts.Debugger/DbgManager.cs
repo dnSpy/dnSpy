@@ -255,7 +255,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Message event args
 	/// </summary>
-	public struct DbgManagerMessageEventArgs {
+	public readonly struct DbgManagerMessageEventArgs {
 		/// <summary>
 		/// Gets the message kind, see <see cref="PredefinedDbgManagerMessageKinds"/>
 		/// </summary>
@@ -297,7 +297,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <see cref="DbgCurrentObject{T}"/> changed event args
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public struct DbgCurrentObjectChangedEventArgs<T> where T : DbgObject {
+	public readonly struct DbgCurrentObjectChangedEventArgs<T> where T : DbgObject {
 		/// <summary>
 		/// true if <see cref="DbgCurrentObject{T}.Current"/> changed
 		/// </summary>
@@ -322,7 +322,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Process paused event args
 	/// </summary>
-	public struct ProcessPausedEventArgs {
+	public readonly struct ProcessPausedEventArgs {
 		/// <summary>
 		/// Gets the process
 		/// </summary>

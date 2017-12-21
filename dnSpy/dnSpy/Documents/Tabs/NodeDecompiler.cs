@@ -54,7 +54,7 @@ namespace dnSpy.Documents.Tabs {
 		Message,
 	}
 
-	struct NodeDecompiler {
+	readonly struct NodeDecompiler {
 		readonly Func<Func<object>, object> execInThread;
 		readonly IDecompilerOutput output;
 		readonly IDecompiler decompiler;

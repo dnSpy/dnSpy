@@ -74,7 +74,7 @@ namespace dnSpy.Text.Formatting {
 			public override TextRunProperties Properties { get; }
 			readonly IAdornmentElement adornmentElement;
 
-			public AdornmentTextRun(LinePart linePart) {
+			public AdornmentTextRun(in LinePart linePart) {
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;

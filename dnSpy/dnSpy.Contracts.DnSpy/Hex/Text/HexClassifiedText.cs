@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Text {
 	/// <summary>
 	/// Classified text
 	/// </summary>
-	public struct HexClassifiedText {
+	public readonly struct HexClassifiedText {
 		/// <summary>
 		/// Text
 		/// </summary>

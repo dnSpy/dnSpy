@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Group information
 	/// </summary>
-	public struct HexGroupInformation {
+	public readonly struct HexGroupInformation {
 		/// <summary>
 		/// Group index
 		/// </summary>

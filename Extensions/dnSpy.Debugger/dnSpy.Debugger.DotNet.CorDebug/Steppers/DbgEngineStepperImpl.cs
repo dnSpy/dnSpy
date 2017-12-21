@@ -260,7 +260,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			}
 		}
 
-		void GotStepRanges(CorFrame frame, uint offset, object tag, bool isStepInto, GetCodeRangeResult result, uint continueCounter) {
+		void GotStepRanges(CorFrame frame, uint offset, object tag, bool isStepInto, in GetCodeRangeResult result, uint continueCounter) {
 			engine.VerifyCorDebugThread();
 			if (IsClosed)
 				return;
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			SaveStepper(newCorStepper, returnValueState, tag);
 		}
 
-		ReturnValueState CreateReturnValueState(CorFrame frame, uint offset, GetCodeRangeResult result) {
+		ReturnValueState CreateReturnValueState(CorFrame frame, uint offset, in GetCodeRangeResult result) {
 			var stmtInstrs = result.StatementInstructions;
 			if (stmtInstrs.Length == 0)
 				return null;

@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
 		}
 
-		struct ArrayObjectValue : IDisposable {
+		readonly struct ArrayObjectValue : IDisposable {
 			readonly DbgEngineImpl engine;
 			public readonly CorValue Value;
 			readonly bool ownsValue;

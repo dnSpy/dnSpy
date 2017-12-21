@@ -217,7 +217,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Text properties and span
 	/// </summary>
-	internal struct TextRunPropertiesAndSpan {
+	internal readonly struct TextRunPropertiesAndSpan {
 		/// <summary>
 		/// Span
 		/// </summary>

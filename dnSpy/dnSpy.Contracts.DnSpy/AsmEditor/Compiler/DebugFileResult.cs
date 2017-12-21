@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// PDB file
 	/// </summary>
-	public struct DebugFileResult {
+	public readonly struct DebugFileResult {
 		/// <summary>
 		/// PDB file or null if none
 		/// </summary>

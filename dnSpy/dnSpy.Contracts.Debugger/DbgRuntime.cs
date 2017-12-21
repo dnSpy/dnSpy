@@ -156,7 +156,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Break info
 	/// </summary>
-	public struct DbgBreakInfo {
+	public readonly struct DbgBreakInfo {
 		/// <summary>
 		/// Gets the kind
 		/// </summary>

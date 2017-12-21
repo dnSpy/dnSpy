@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Breakpoint and hit count
 	/// </summary>
-	public struct DbgCodeBreakpointAndHitCount {
+	public readonly struct DbgCodeBreakpointAndHitCount {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// <see cref="DbgCodeBreakpointHitCountService.HitCountChanged"/> event args
 	/// </summary>
-	public struct DbgHitCountChangedEventArgs {
+	public readonly struct DbgHitCountChangedEventArgs {
 		/// <summary>
 		/// Gets breakpoints and hit counts
 		/// </summary>

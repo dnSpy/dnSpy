@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.Evaluation.UI {
-	struct ValueNodesProviderResult {
+	readonly struct ValueNodesProviderResult {
 		public DbgValueNodeInfo[] Nodes { get; }
 		public bool RecreateAllNodes { get; }
 

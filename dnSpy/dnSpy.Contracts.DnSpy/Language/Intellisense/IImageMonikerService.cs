@@ -30,13 +30,13 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="imageReference">Image reference</param>
 		/// <returns></returns>
-		ImageMoniker ToImageMoniker(ImageReference imageReference);
+		ImageMoniker ToImageMoniker(in ImageReference imageReference);
 
 		/// <summary>
 		/// Converts <paramref name="imageMoniker"/> to an <see cref="ImageReference"/>
 		/// </summary>
 		/// <param name="imageMoniker">Image moniker</param>
 		/// <returns></returns>
-		ImageReference ToImageReference(ImageMoniker imageMoniker);
+		ImageReference ToImageReference(in ImageMoniker imageMoniker);
 	}
 }

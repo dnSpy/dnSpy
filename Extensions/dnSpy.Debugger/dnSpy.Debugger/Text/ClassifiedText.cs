@@ -21,7 +21,8 @@ using System;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Text {
-	struct ClassifiedTextCollection : IEquatable<ClassifiedTextCollection> {
+	readonly struct ClassifiedTextCollection : IEquatable<ClassifiedTextCollection> {
+		public static readonly ClassifiedTextCollection Empty = default;
 		public bool IsDefault => Result == null;
 		public ClassifiedText[] Result { get; }
 
@@ -49,7 +50,7 @@ namespace dnSpy.Debugger.Text {
 		}
 	}
 
-	struct ClassifiedText : IEquatable<ClassifiedText> {
+	readonly struct ClassifiedText : IEquatable<ClassifiedText> {
 		public object Color { get; }
 		public string Text { get; }
 

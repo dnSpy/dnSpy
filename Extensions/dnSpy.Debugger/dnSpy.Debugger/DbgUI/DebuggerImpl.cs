@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		struct TextViewStatementLocationResult : IDisposable {
+		readonly struct TextViewStatementLocationResult : IDisposable {
 			readonly Lazy<DbgManager> dbgManager;
 			readonly List<DbgCodeLocation> allLocations;
 
@@ -477,7 +477,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return result;
 		}
 
-		static int GetPriority(DbgBreakInfo info) {
+		static int GetPriority(in DbgBreakInfo info) {
 			const int defaultPrio = int.MaxValue - 1;
 			if (info.Kind == DbgBreakInfoKind.Message) {
 				var e = (DbgMessageEventArgs)info.Data;

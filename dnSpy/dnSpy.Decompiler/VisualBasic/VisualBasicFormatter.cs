@@ -433,7 +433,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			}
 
 			var info = new FormatterMethodInfo(method);
-			WriteModuleName(ref info);
+			WriteModuleName(info);
 
 			string[] operatorInfo;
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
@@ -452,7 +452,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				}
 			}
 			else {
-				bool isSub = IsSub(ref info);
+				bool isSub = IsSub(info);
 				OutputWrite(isSub ? Keyword_Sub : Keyword_Function, BoxedTextColor.Keyword);
 				WriteSpace();
 			}
@@ -471,9 +471,9 @@ namespace dnSpy.Decompiler.VisualBasic {
 				WriteMethodName(method, method.Name, operatorInfo);
 			WriteToken(method);
 
-			WriteGenericArguments(ref info);
-			WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
-			WriteReturnType(ref info);
+			WriteGenericArguments(info);
+			WriteMethodParameterList(info, MethodParenOpen, MethodParenClose);
+			WriteReturnType(info);
 		}
 
 		static string[] TryGetOperatorInfo(string name) {
@@ -644,7 +644,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			}
 
 			var info = new FormatterMethodInfo(sigMethod, sigMethod == setMethod, accessorKind == AccessorKind.Setter);
-			WriteModuleName(ref info);
+			WriteModuleName(info);
 			if (ShowDeclaringTypes) {
 				Write(prop.DeclaringType);
 				WritePeriod();
@@ -655,11 +655,11 @@ namespace dnSpy.Decompiler.VisualBasic {
 			else
 				WriteIdentifier(prop.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
 			WriteToken(prop);
-			WriteGenericArguments(ref info);
+			WriteGenericArguments(info);
 			if (accessorKind != AccessorKind.None || prop.PropertySig.GetParamCount() != 0)
-				WriteMethodParameterList(ref info, PropertyParenOpen, PropertyParenClose);
+				WriteMethodParameterList(info, PropertyParenOpen, PropertyParenClose);
 
-			WriteReturnType(ref info);
+			WriteReturnType(info);
 		}
 
 		void WriteToolTip(EventDef evt) {
@@ -732,18 +732,18 @@ namespace dnSpy.Decompiler.VisualBasic {
 				WriteSpace();
 
 				var info = new FormatterMethodInfo(invoke);
-				WriteModuleName(ref info);
+				WriteModuleName(info);
 
-				bool isSub = IsSub(ref info);
+				bool isSub = IsSub(info);
 				OutputWrite(isSub ? Keyword_Sub : Keyword_Function, BoxedTextColor.Keyword);
 				WriteSpace();
 
 				// Always print the namespace here because that's what VS does
 				WriteType(td, true, ShowIntrinsicTypeKeywords);
 
-				WriteGenericArguments(ref info);
-				WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
-				WriteReturnType(ref info);
+				WriteGenericArguments(info);
+				WriteMethodParameterList(info, MethodParenOpen, MethodParenClose);
+				WriteReturnType(info);
 				return;
 			}
 			else
@@ -1117,7 +1117,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			}
 		}
 
-		void WriteModuleName(ref FormatterMethodInfo info) {
+		void WriteModuleName(in FormatterMethodInfo info) {
 			if (!ShowModuleNames)
 				return;
 
@@ -1137,13 +1137,13 @@ namespace dnSpy.Decompiler.VisualBasic {
 			return;
 		}
 
-		void WriteReturnType(ref FormatterMethodInfo info) {
+		void WriteReturnType(in FormatterMethodInfo info) {
 			if (!ShowReturnTypes)
 				return;
-			if (IsSub(ref info))
+			if (IsSub(info))
 				return;
 			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
-				var retInfo = GetReturnTypeInfo(ref info);
+				var retInfo = GetReturnTypeInfo(info);
 				WriteSpace();
 				OutputWrite(Keyword_As, BoxedTextColor.Keyword);
 				WriteSpace();
@@ -1151,9 +1151,9 @@ namespace dnSpy.Decompiler.VisualBasic {
 			}
 		}
 
-		static bool IsSub(ref FormatterMethodInfo info) => GetReturnTypeInfo(ref info).returnType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void;
+		static bool IsSub(in FormatterMethodInfo info) => GetReturnTypeInfo(info).returnType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void;
 
-		static (TypeSig returnType, ParamDef paramDef) GetReturnTypeInfo(ref FormatterMethodInfo info) {
+		static (TypeSig returnType, ParamDef paramDef) GetReturnTypeInfo(in FormatterMethodInfo info) {
 			TypeSig retType;
 			ParamDef retParamDef;
 			if (info.RetTypeIsLastArgType) {
@@ -1172,7 +1172,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			return (retType, retParamDef);
 		}
 
-		void WriteGenericArguments(ref FormatterMethodInfo info) {
+		void WriteGenericArguments(in FormatterMethodInfo info) {
 			if (info.MethodSig.GenParamCount > 0) {
 				if (info.MethodGenericParams != null)
 					WriteGenerics(info.MethodGenericParams, BoxedTextColor.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
@@ -1181,7 +1181,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			}
 		}
 
-		void WriteMethodParameterList(ref FormatterMethodInfo info, string lparen, string rparen) {
+		void WriteMethodParameterList(in FormatterMethodInfo info, string lparen, string rparen) {
 			if (!ShowParameterTypes && !ShowParameterNames)
 				return;
 

@@ -174,7 +174,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		public IEnumerable<object> ModifiedObjects => nodes.Nodes;
 	}
 
-	struct TypeRefInfo {
+	readonly struct TypeRefInfo {
 		public readonly TypeRef TypeRef;
 		public readonly UTF8String OrigNamespace;
 

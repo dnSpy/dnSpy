@@ -220,7 +220,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			return runtime.Name + ": " + appDomain.Name;
 		}
 
-		string GetExceptionName(DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
+		string GetExceptionName(in DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
 
 		string GetProcessName(DbgProcess process) {
 			if (process == null)

@@ -45,10 +45,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract IEditValueProvider ValueEditValueProvider { get; }
 
 		// Used by formatter
-		public abstract ClassifiedTextCollection CachedName { get; }
-		public abstract ClassifiedTextCollection CachedValue { get; }
-		public abstract ClassifiedTextCollection CachedExpectedType { get; }
-		public abstract ClassifiedTextCollection CachedActualType_OrDefaultInstance { get; }
-		public abstract ClassifiedTextCollection OldCachedValue { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedName { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedValue { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedExpectedType { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedActualType_OrDefaultInstance { get; }
+		public abstract ref readonly ClassifiedTextCollection OldCachedValue { get; }
 	}
 }

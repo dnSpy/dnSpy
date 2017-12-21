@@ -141,7 +141,7 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		struct AdornmentElementAndSpan {
+		readonly struct AdornmentElementAndSpan {
 			public Span Span { get; }
 			public AdornmentElement AdornmentElement { get; }
 			public AdornmentElementAndSpan(AdornmentElement adornmentElement, Span span) {

@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
-	struct ReflectionAssemblyLoader {
+	readonly struct ReflectionAssemblyLoader {
 		readonly DbgEvaluationContext context;
 		readonly DbgStackFrame frame;
 		readonly DmdAppDomain appDomain;

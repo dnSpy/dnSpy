@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="wellKnownType">Updated with well known type if successful</param>
 		/// <returns></returns>
-		public static bool TryGetWellKnownType(DmdTypeName name, out DmdWellKnownType wellKnownType) =>
+		public static bool TryGetWellKnownType(in DmdTypeName name, out DmdWellKnownType wellKnownType) =>
 			toWellKnownType.TryGetValue(name, out wellKnownType);
 
 		/// <summary>

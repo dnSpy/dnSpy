@@ -21,7 +21,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Text {
-	struct OffsetAndCachedColors {
+	readonly struct OffsetAndCachedColors {
 		public int Offset { get; }
 		public CachedTextColorsCollection CachedColors { get; }
 		public static readonly OffsetAndCachedColors Default = new OffsetAndCachedColors(0, CachedTextColorsCollection.Empty);

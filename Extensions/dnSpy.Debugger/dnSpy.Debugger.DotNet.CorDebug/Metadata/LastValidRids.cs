@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
-	struct LastValidRids : IEquatable<LastValidRids> {
+	struct LastValidRids {
 		public uint TypeDefRid;
 		public uint FieldRid;
 		public uint MethodRid;
@@ -30,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 		public uint GenericParamRid;
 		public uint GenericParamConstraintRid;
 
-		public bool Equals(LastValidRids other) =>
+		public bool Equals(in LastValidRids other) =>
 			TypeDefRid == other.TypeDefRid &&
 			FieldRid == other.FieldRid &&
 			MethodRid == other.MethodRid &&

@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Structure field
 	/// </summary>
-	public struct HexStructureField {
+	public readonly struct HexStructureField {
 		/// <summary>
 		/// Span of field
 		/// </summary>

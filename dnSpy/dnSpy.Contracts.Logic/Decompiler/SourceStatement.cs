@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Source statement
 	/// </summary>
-	public struct SourceStatement : IEquatable<SourceStatement> {
+	public readonly struct SourceStatement : IEquatable<SourceStatement> {
 		internal static readonly IComparer<SourceStatement> SpanStartComparer = new SpanStartComparerImpl();
 		readonly BinSpan binSpan;
 		readonly TextSpan textSpan;

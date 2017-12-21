@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Class loaded event args
 	/// </summary>
-	public struct DmdTypeLoadedEventArgs {
+	public readonly struct DmdTypeLoadedEventArgs {
 		/// <summary>
 		/// Gets the metadata token of the type that got loaded
 		/// </summary>

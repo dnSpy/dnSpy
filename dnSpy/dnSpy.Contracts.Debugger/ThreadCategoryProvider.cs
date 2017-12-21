@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Thread category info
 	/// </summary>
-	public struct ThreadCategoryInfo {
+	public readonly struct ThreadCategoryInfo {
 		/// <summary>
 		/// Image (an ImageReference struct)
 		/// </summary>

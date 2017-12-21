@@ -438,7 +438,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 
 			var info = new FormatterMethodInfo(method);
-			WriteModuleName(ref info);
+			WriteModuleName(info);
 
 			string[] operatorInfo;
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
@@ -452,7 +452,7 @@ namespace dnSpy.Decompiler.CSharp {
 			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit)
-				WriteReturnType(ref info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
+				WriteReturnType(info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
 
 			if (ShowDeclaringTypes) {
 				Write(method.DeclaringType);
@@ -469,13 +469,13 @@ namespace dnSpy.Decompiler.CSharp {
 			if (isExplicitOrImplicit) {
 				WriteToken(method);
 				WriteSpace();
-				ForceWriteReturnType(ref info, writeSpace: false, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
+				ForceWriteReturnType(info, writeSpace: false, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
 			}
 			else
 				WriteToken(method);
 
-			WriteGenericArguments(ref info);
-			WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
+			WriteGenericArguments(info);
+			WriteMethodParameterList(info, MethodParenOpen, MethodParenClose);
 		}
 
 		static string[] TryGetOperatorInfo(string name) {
@@ -630,8 +630,8 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 
 			var info = new FormatterMethodInfo(md, md == setMethod);
-			WriteModuleName(ref info);
-			WriteReturnType(ref info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyProperty(prop));
+			WriteModuleName(info);
+			WriteReturnType(info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyProperty(prop));
 			if (ShowDeclaringTypes) {
 				Write(prop.DeclaringType);
 				WritePeriod();
@@ -639,8 +639,8 @@ namespace dnSpy.Decompiler.CSharp {
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
 			if (prop.IsIndexer()) {
 				OutputWrite(Keyword_this, BoxedTextColor.Keyword);
-				WriteGenericArguments(ref info);
-				WriteMethodParameterList(ref info, IndexerParenOpen, IndexerParenClose);
+				WriteGenericArguments(info);
+				WriteMethodParameterList(info, IndexerParenOpen, IndexerParenClose);
 			}
 			else if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) != null)
 				WriteIdentifier(TypeFormatterUtils.GetPropertyName(ovrMeth), CSharpMetadataTextColorProvider.Instance.GetColor(prop));
@@ -728,14 +728,14 @@ namespace dnSpy.Decompiler.CSharp {
 				WriteSpace();
 
 				var info = new FormatterMethodInfo(invoke);
-				WriteModuleName(ref info);
-				WriteReturnType(ref info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
+				WriteModuleName(info);
+				WriteReturnType(info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
 
 				// Always print the namespace here because that's what VS does
 				WriteType(td, true, ShowIntrinsicTypeKeywords);
 
-				WriteGenericArguments(ref info);
-				WriteMethodParameterList(ref info, MethodParenOpen, MethodParenClose);
+				WriteGenericArguments(info);
+				WriteMethodParameterList(info, MethodParenOpen, MethodParenClose);
 				return;
 			}
 			else
@@ -1096,7 +1096,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 		}
 
-		void WriteModuleName(ref FormatterMethodInfo info) {
+		void WriteModuleName(in FormatterMethodInfo info) {
 			if (!ShowModuleNames)
 				return;
 
@@ -1116,15 +1116,15 @@ namespace dnSpy.Decompiler.CSharp {
 			return;
 		}
 
-		void WriteReturnType(ref FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
+		void WriteReturnType(in FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
 			if (!ShowReturnTypes)
 				return;
 			if (info.MethodDef?.IsConstructor == true)
 				return;
-			ForceWriteReturnType(ref info, writeSpace, isReadOnly);
+			ForceWriteReturnType(info, writeSpace, isReadOnly);
 		}
 
-		void ForceWriteReturnType(ref FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
+		void ForceWriteReturnType(in FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
 			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
 				TypeSig retType;
 				ParamDef retParamDef;
@@ -1154,7 +1154,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 		}
 
-		void WriteGenericArguments(ref FormatterMethodInfo info) {
+		void WriteGenericArguments(in FormatterMethodInfo info) {
 			if (info.MethodSig.GenParamCount > 0) {
 				if (info.MethodGenericParams != null)
 					WriteGenerics(info.MethodGenericParams, BoxedTextColor.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
@@ -1163,7 +1163,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 		}
 
-		void WriteMethodParameterList(ref FormatterMethodInfo info, string lparen, string rparen) {
+		void WriteMethodParameterList(in FormatterMethodInfo info, string lparen, string rparen) {
 			if (!ShowParameterTypes && !ShowParameterNames)
 				return;
 

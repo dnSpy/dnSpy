@@ -92,7 +92,7 @@ namespace dnSpy.Hex.Editor {
 		Canvas iconCanvas;
 		Canvas[] childCanvases;
 
-		struct GlyphFactoryInfo {
+		readonly struct GlyphFactoryInfo {
 			public int Order { get; }
 			public HexGlyphFactory Factory { get; }
 			public HexGlyphFactoryProvider FactoryProvider { get; }
@@ -105,7 +105,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		struct LineInfo {
+		readonly struct LineInfo {
 			public HexViewLine Line { get; }
 			public List<IconInfo> Icons { get; }
 
@@ -115,7 +115,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		struct IconInfo {
+		readonly struct IconInfo {
 			public UIElement Element { get; }
 			public double BaseTopValue { get; }
 			public int Order { get; }

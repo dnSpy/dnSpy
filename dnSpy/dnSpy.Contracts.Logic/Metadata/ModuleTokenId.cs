@@ -24,12 +24,12 @@ namespace dnSpy.Contracts.Metadata {
 	/// <summary>
 	/// <see cref="ModuleId"/> and token
 	/// </summary>
-	public struct ModuleTokenId : IEquatable<ModuleTokenId> {
+	public readonly struct ModuleTokenId : IEquatable<ModuleTokenId> {
 		/// <summary>
 		/// Gets the module id
 		/// </summary>
 		public ModuleId Module => module;
-		/*readonly*/ ModuleId module;
+		readonly ModuleId module;
 
 		/// <summary>
 		/// Gets the token in the module
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module id</param>
 		/// <param name="mdToken">Token</param>
-		public ModuleTokenId(ModuleId module, MDToken mdToken)
+		public ModuleTokenId(in ModuleId module, MDToken mdToken)
 			: this(module, mdToken.Raw) {
 		}
 
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module id</param>
 		/// <param name="token">Token</param>
-		public ModuleTokenId(ModuleId module, uint token) {
+		public ModuleTokenId(in ModuleId module, uint token) {
 			this.module = module;
 			this.token = token;
 		}
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module id</param>
 		/// <param name="token">Token</param>
-		public ModuleTokenId(ModuleId module, int token) {
+		public ModuleTokenId(in ModuleId module, int token) {
 			this.module = module;
 			this.token = (uint)token;
 		}

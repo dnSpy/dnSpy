@@ -22,7 +22,7 @@ using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-	public struct KeyInput : IEquatable<KeyInput> {
+	public readonly struct KeyInput : IEquatable<KeyInput> {
 		public static readonly KeyInput Default = new KeyInput(Key.None, ModifierKeys.None);
 
 		public Key Key { get; }

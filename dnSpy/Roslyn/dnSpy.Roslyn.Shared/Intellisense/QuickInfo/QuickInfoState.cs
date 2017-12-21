@@ -25,7 +25,7 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
-	struct QuickInfoState {
+	readonly struct QuickInfoState {
 		public QuickInfoService QuickInfoService { get; }
 		public Document Document { get; }
 		public SourceText SourceText { get; }

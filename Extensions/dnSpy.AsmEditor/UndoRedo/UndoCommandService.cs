@@ -110,7 +110,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			}
 		}
 
-		struct BeginEndAdder : IDisposable {
+		readonly struct BeginEndAdder : IDisposable {
 			readonly UndoCommandService mgr;
 
 			public BeginEndAdder(UndoCommandService mgr) {

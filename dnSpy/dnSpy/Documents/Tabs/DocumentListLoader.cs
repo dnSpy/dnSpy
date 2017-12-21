@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs {
 
 		void AppWindow_MainWindowClosed(object sender, EventArgs e) => SaveCurrentDocumentsToList();
 
-		struct Disable_SaveCurrentDocumentsToList : IDisposable {
+		readonly struct Disable_SaveCurrentDocumentsToList : IDisposable {
 			readonly DocumentListLoader documentListLoader;
 			readonly bool oldValue;
 

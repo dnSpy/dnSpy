@@ -184,7 +184,7 @@ namespace dnSpy.Decompiler {
 		public MethodSourceStatement? FindByCodeOffset(MethodDef method, uint codeOffset) =>
 			FindByCodeOffset(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken), codeOffset);
 
-		public MethodSourceStatement? FindByCodeOffset(ModuleTokenId token, uint codeOffset) {
+		public MethodSourceStatement? FindByCodeOffset(in ModuleTokenId token, uint codeOffset) {
 			if (!dict.TryGetValue(token, out var info))
 				return null;
 			foreach (var sourceStatement in info.Statements) {
@@ -197,7 +197,7 @@ namespace dnSpy.Decompiler {
 		public MethodDebugInfo TryGetMethodDebugInfo(MethodDef method) =>
 			TryGetMethodDebugInfo(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken));
 
-		public MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token) {
+		public MethodDebugInfo TryGetMethodDebugInfo(in ModuleTokenId token) {
 			dict.TryGetValue(token, out var info);
 			return info;
 		}

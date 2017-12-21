@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Hex.Files.PE {
-	struct ImageSectionHeader {
+	readonly struct ImageSectionHeader {
 		public uint VirtualSize { get; }
 		public uint VirtualAddress { get; }
 		public uint SizeOfRawData { get; }

@@ -23,7 +23,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A required or optional custom modifier
 	/// </summary>
-	public struct DmdCustomModifier : IEquatable<DmdCustomModifier> {
+	public readonly struct DmdCustomModifier : IEquatable<DmdCustomModifier> {
 		/// <summary>
 		/// true if it's a required C modifier
 		/// </summary>

@@ -707,7 +707,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				public bool Equals(Key x, Key y) => x.Equals(y);
 				public int GetHashCode(Key obj) => obj.GetHashCode();
 			}
-			struct Key : IEquatable<Key> {
+			readonly struct Key : IEquatable<Key> {
 				public string Name { get; }
 				public DmdMethodSignature Signature { get; }
 				public Key(string name, DmdMethodSignature signature) {
@@ -793,7 +793,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				public bool Equals(Key x, Key y) => x.Equals(y);
 				public int GetHashCode(Key obj) => obj.GetHashCode();
 			}
-			struct Key : IEquatable<Key> {
+			readonly struct Key : IEquatable<Key> {
 				public string Name { get; }
 				public DmdMethodSignature Signature { get; }
 				public Key(string name, DmdMethodSignature signature) {

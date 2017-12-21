@@ -294,7 +294,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new InvalidOperationException();
 		}
 
-		ILValue CreateILValue(DbgDotNetValueResult result) {
+		ILValue CreateILValue(in DbgDotNetValueResult result) {
 			if (result.HasError)
 				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException)
@@ -307,7 +307,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return CreateILValue(dnValue);
 		}
 
-		DbgDotNetValue RecordValue(DbgDotNetValueResult result) {
+		DbgDotNetValue RecordValue(in DbgDotNetValueResult result) {
 			if (result.HasError)
 				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException)
@@ -320,7 +320,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return RecordValue(dnValue);
 		}
 
-		DbgDotNetValue RecordValue(DbgDotNetCreateValueResult result) {
+		DbgDotNetValue RecordValue(in DbgDotNetCreateValueResult result) {
 			if (result.Error != null)
 				throw new InterpreterMessageException(result.Error);
 			if (result.Value == null)

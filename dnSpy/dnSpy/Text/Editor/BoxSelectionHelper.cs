@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
-	struct BoxSelectionHelper {
+	readonly struct BoxSelectionHelper {
 		readonly ITextSelection textSelection;
 		readonly ITextSnapshot textSnapshot;
 		readonly double xLeft, xRight;

@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class TextLayer : UIElement {
 		readonly List<LineInfo> lines;
 
-		struct LineInfo {
+		readonly struct LineInfo {
 			public HexFormattedLine Line { get; }
 			public Visual Visual { get; }
 			public LineInfo(HexFormattedLine line) {

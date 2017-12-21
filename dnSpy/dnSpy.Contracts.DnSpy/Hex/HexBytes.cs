@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Contains bytes and information about whether a byte exists in the stream
 	/// </summary>
-	public struct HexBytes {
+	public readonly struct HexBytes {
 		/// <summary>
 		/// Gets the empty instance
 		/// </summary>

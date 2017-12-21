@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="assemblyInfo">Assembly info</param>
 		/// <returns></returns>
-		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo);
+		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, in DmdCreateAssemblyInfo assemblyInfo);
 
 		/// <summary>
 		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Adds and removes an assembly
 		/// </summary>
-		public struct TemporaryAssemblyDisposable : IDisposable {
+		public readonly struct TemporaryAssemblyDisposable : IDisposable {
 			readonly DmdAssembly assembly;
 			internal TemporaryAssemblyDisposable(DmdAssembly assembly) {
 				this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
@@ -703,7 +703,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Info needed when creating an assembly
 	/// </summary>
-	public struct DmdCreateAssemblyInfo {
+	public readonly struct DmdCreateAssemblyInfo {
 		/// <summary>
 		/// Gets the options
 		/// </summary>

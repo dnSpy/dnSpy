@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Text span and hex span
 	/// </summary>
-	public struct TextAndHexSpan {
+	public readonly struct TextAndHexSpan {
 		/// <summary>
 		/// Gets the text span
 		/// </summary>

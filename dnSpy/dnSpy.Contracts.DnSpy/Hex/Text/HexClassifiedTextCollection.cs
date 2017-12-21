@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex.Text {
 		/// </summary>
 		/// <param name="index">Index</param>
 		/// <returns></returns>
-		public HexClassifiedText this[int index] => text[index];
+		public ref readonly HexClassifiedText this[int index] => ref text[index];
 
 		/// <summary>
 		/// Constructor

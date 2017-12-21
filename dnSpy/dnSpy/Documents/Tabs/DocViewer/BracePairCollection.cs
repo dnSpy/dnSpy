@@ -93,10 +93,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 	}
 
-	struct BracePairResultCollection : IEquatable<BracePairResultCollection> {
-		public BracePairResult First;
-		public BracePairResult? Second;
-		public BracePairResultCollection(BracePairResult first, BracePairResult? second) {
+	readonly struct BracePairResultCollection : IEquatable<BracePairResultCollection> {
+		public readonly BracePairResult First;
+		public readonly BracePairResult? Second;
+		public BracePairResultCollection(in BracePairResult first, in BracePairResult? second) {
 			First = first;
 			Second = second;
 		}
@@ -107,7 +107,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override string ToString() => Second == null ? First.ToString() : "{" + First.ToString() + "," + Second.Value.ToString() + "}";
 	}
 
-	struct BracePairResult : IEquatable<BracePairResult> {
+	readonly struct BracePairResult : IEquatable<BracePairResult> {
 		public Span Left { get; }
 		public Span Right { get; }
 		public BracePairResult(Span left, Span right) {

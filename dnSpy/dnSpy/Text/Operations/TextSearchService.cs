@@ -36,7 +36,7 @@ namespace dnSpy.Text.Operations {
 		readonly object cachedRegexDictLock;
 		const int MAX_CACHED_REGEXES = 4;
 
-		struct CachedRegex {
+		readonly struct CachedRegex {
 			readonly string pattern;
 			readonly FindOptions findOptions;
 			readonly CultureInfo culture;
@@ -70,7 +70,7 @@ namespace dnSpy.Text.Operations {
 			cachedRegexDictLock = new object();
 		}
 
-		struct FindResult {
+		readonly struct FindResult {
 			public int Position { get; }
 			public int Length { get; }
 			public string ExpandedReplacePattern { get; }

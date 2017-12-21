@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
 	/// Runtime version
 	/// </summary>
-	public struct CorDebugRuntimeVersion : IEquatable<CorDebugRuntimeVersion> {
+	public readonly struct CorDebugRuntimeVersion : IEquatable<CorDebugRuntimeVersion> {
 		/// <summary>
 		/// Gets the kind
 		/// </summary>

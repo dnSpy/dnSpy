@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		static StepFilter GetStepFilterFlags() => StepFilter.StaticCtor;
 
-		static string GetErrorMessage(StepCompleteEventArgs e) => e.ForciblyCanceled ? "Only one stepper can be active at a time" : null;
+		static string GetErrorMessage(in StepCompleteEventArgs e) => e.ForciblyCanceled ? "Only one stepper can be active at a time" : null;
 
 		void SaveStepper(StepEventRequest newMonoStepper, object tag, bool callRunCore) {
 			engine.VerifyMonoDebugThread();
@@ -155,7 +155,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			}
 		}
 
-		bool OnStepOutCompleted(StepCompleteEventArgs e, object tag) {
+		bool OnStepOutCompleted(in StepCompleteEventArgs e, object tag) {
 			engine.VerifyMonoDebugThread();
 			if (stepData == null || stepData.MonoStepper != e.StepEventRequest || stepData.Tag != tag)
 				return false;
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			}
 		}
 
-		void GotStepRanges(MDS.StackFrame frame, object tag, bool isStepInto, GetCodeRangeResult result, uint continueCounter) {
+		void GotStepRanges(MDS.StackFrame frame, object tag, bool isStepInto, in GetCodeRangeResult result, uint continueCounter) {
 			engine.VerifyMonoDebugThread();
 			if (IsClosed)
 				return;
@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			}
 		}
 
-		bool OnStepIntoOverCompleted(StepCompleteEventArgs e, object tag, StepIntoOverData stepIntoOverData) {
+		bool OnStepIntoOverCompleted(in StepCompleteEventArgs e, object tag, StepIntoOverData stepIntoOverData) {
 			engine.VerifyMonoDebugThread();
 			if (stepData == null || stepData.MonoStepper != e.StepEventRequest || stepData.Tag != tag)
 				return false;

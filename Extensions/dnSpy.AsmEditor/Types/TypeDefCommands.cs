@@ -118,7 +118,7 @@ namespace dnSpy.AsmEditor.Types {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly IList<TypeDef> OwnerList;
 				public readonly int Index;
 
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Types {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerList.Insert(info.Index, node.TypeDef);
 				}
 
@@ -487,7 +487,7 @@ namespace dnSpy.AsmEditor.Types {
 		readonly bool nameChanged;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		struct TypeRefInfo {
+		readonly struct TypeRefInfo {
 			public readonly TypeRef TypeRef;
 			public readonly UTF8String OrigNamespace;
 			public readonly UTF8String OrigName;

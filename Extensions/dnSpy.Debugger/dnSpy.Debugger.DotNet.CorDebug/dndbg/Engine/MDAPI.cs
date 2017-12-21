@@ -1678,7 +1678,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	struct MethodOverrideInfo {
+	readonly struct MethodOverrideInfo {
 		public uint BodyToken { get; }
 		public uint DeclToken { get; }
 		public MethodOverrideInfo(uint b, uint d) {

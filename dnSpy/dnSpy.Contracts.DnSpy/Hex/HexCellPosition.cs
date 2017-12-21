@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A position within a cell
 	/// </summary>
-	public struct HexCellPosition : IEquatable<HexCellPosition> {
+	public readonly struct HexCellPosition : IEquatable<HexCellPosition> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

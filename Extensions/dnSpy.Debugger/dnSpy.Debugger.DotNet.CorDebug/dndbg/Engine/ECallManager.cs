@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 	}
 
 	[DebuggerDisplay("{FullName}")]
-	struct ECClass {
+	readonly struct ECClass {
 		public readonly string Namespace;
 		public readonly string Name;
 		public readonly ECFunc[] Functions;
@@ -126,7 +126,7 @@ namespace dndbg.Engine {
 	}
 
 	[DebuggerDisplay("{FunctionRVA} {Name}")]
-	struct ECFunc {
+	readonly struct ECFunc {
 		public readonly uint RecordRVA;
 		public readonly uint Flags;
 		public readonly uint FunctionRVA;

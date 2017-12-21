@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
-	struct ToStringFormatter {
+	readonly struct ToStringFormatter {
 		readonly DbgEvaluationContext context;
 		readonly DbgStackFrame frame;
 		readonly CancellationToken cancellationToken;

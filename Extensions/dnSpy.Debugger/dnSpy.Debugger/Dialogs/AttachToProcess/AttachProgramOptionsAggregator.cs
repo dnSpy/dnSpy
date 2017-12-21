@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public abstract void Dispose();
 	}
 
-	struct AttachProgramOptionsAddedEventArgs {
+	readonly struct AttachProgramOptionsAddedEventArgs {
 		public AttachProgramOptions[] AttachProgramOptions { get; }
 		public AttachProgramOptionsAddedEventArgs(AttachProgramOptions[] attachProgramOptions) =>
 			AttachProgramOptions = attachProgramOptions ?? throw new ArgumentNullException(nameof(attachProgramOptions));
