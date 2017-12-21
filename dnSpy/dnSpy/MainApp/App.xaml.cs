@@ -502,7 +502,7 @@ namespace dnSpy.MainApp {
 
 			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
 
-			if (args.SingleInstance && !exportProvider.GetExportedValue<IAppSettings>().AllowMoreThanOneInstance)
+			if (args.SingleInstance && !exportProvider.GetExportedValue<AppSettingsImpl>().AllowMoreThanOneInstance)
 				SwitchToOtherInstance();
 
 			var cultureService = exportProvider.GetExportedValue<CultureService>();
