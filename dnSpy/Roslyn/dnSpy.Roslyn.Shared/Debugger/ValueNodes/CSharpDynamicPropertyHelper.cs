@@ -41,7 +41,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public DmdFieldInfo ValueField;
 		}
 
-		public static (string name, DbgDotNetValue value) GetRealValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue propValue, CancellationToken cancellationToken) {
+		public static (string name, DbgDotNetValue value, DmdFieldInfo valueField) GetRealValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue propValue, CancellationToken cancellationToken) {
 			var type = propValue.Type;
 			Debug.Assert(IsCSharpDynamicProperty(type));
 			var state = type.GetOrCreateData<CSharpDynamicPropertyState>();
@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					return default;
 
 				error = false;
-				return (realName, valueValue.Value);
+				return (realName, valueValue.Value, state.ValueField);
 			}
 			finally {
 				nameValue.Value?.Dispose();
