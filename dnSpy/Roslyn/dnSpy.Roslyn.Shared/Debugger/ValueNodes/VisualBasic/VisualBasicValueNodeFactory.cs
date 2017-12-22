@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
-		const Formatters.TypeFormatterOptions typeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+		internal const Formatters.TypeFormatterOptions TypeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
 
 		protected override bool SupportsModuleTypes => true;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			if ((object)castType == null)
 				return;
 			sb.Append(", ");
-			new Formatters.VisualBasic.VisualBasicTypeFormatter(new StringBuilderTextColorOutput(sb), typeFormatterOptions, null).Format(castType, null);
+			new Formatters.VisualBasic.VisualBasicTypeFormatter(new StringBuilderTextColorOutput(sb), TypeFormatterOptions, null).Format(castType, null);
 			sb.Append(')');
 		}
 

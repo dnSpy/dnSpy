@@ -98,7 +98,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			output.Write(BoxedTextColor.Punctuation, ARRAY_PAREN_CLOSE);
 		}
 
-		public override string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression) {
+		public override string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression, DmdType expectedType) {
 			argumentExpression = LanguageValueNodeFactory.RemoveFormatSpecifiers(argumentExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
@@ -106,7 +106,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			output.Write(BoxedTextColor.Text, " ");
 			FormatTypeName(output, ctor.DeclaringType);
 			output.Write(BoxedTextColor.Punctuation, "(");
+			var castType = ctor.GetMethodSignature().GetParameterTypes()[0];
+			bool needCast = !expectedType.CanCastTo(castType);
+			if (needCast) {
+				output.Write(BoxedTextColor.Keyword, "CType");
+				output.Write(BoxedTextColor.Punctuation, "(");
+			}
 			output.Write(BoxedTextColor.Text, argumentExpression);
+			if (needCast) {
+				output.Write(BoxedTextColor.Punctuation, ",");
+				output.WriteSpace();
+				new Formatters.VisualBasic.VisualBasicTypeFormatter(new StringBuilderTextColorOutput(sb), VisualBasicValueNodeFactory.TypeFormatterOptions, null).Format(castType, null);
+				output.Write(BoxedTextColor.Punctuation, ")");
+			}
 			output.Write(BoxedTextColor.Punctuation, ")");
 			return ObjectCache.FreeAndToString(ref sb);
 		}

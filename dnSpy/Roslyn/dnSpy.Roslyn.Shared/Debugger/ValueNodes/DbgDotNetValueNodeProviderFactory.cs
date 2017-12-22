@@ -178,7 +178,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		protected abstract void FormatPropertyName(ITextColorWriter output, DmdPropertyInfo property);
 		public abstract void FormatArrayName(ITextColorWriter output, int index);
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
-		public abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression);
+		public abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression, DmdType expectedType);
 
 		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
 
@@ -197,7 +197,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public DbgDotNetValueNodeProviderResult CreateDynamicView(DbgEvaluationContext context, DbgStackFrame frame, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var state = GetTypeState(nodeInfo);
-			var provider = TryCreateDynamicView(state, nodeInfo.Expression, nodeInfo.Value, options);
+			var provider = TryCreateDynamicView(state, nodeInfo.Expression, nodeInfo.Value, slotType, options);
 			if (provider != null)
 				return new DbgDotNetValueNodeProviderResult(provider);
 			return new DbgDotNetValueNodeProviderResult(dnSpy_Roslyn_Shared_Resources.DynamicView_MustBeDynamicOrComType);
@@ -205,7 +205,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public DbgDotNetValueNodeProviderResult CreateResultsView(DbgEvaluationContext context, DbgStackFrame frame, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
 			var state = GetTypeState(nodeInfo);
-			var provider = TryCreateResultsView(state, nodeInfo.Expression, nodeInfo.Value, options);
+			var provider = TryCreateResultsView(state, nodeInfo.Expression, nodeInfo.Value, slotType, options);
 			if (provider != null)
 				return new DbgDotNetValueNodeProviderResult(provider);
 			return new DbgDotNetValueNodeProviderResult(dnSpy_Roslyn_Shared_Resources.ResultsView_MustBeEnumerableType);
@@ -513,7 +513,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					if (!proxyTypeResult.HasError) {
 						var value = nodeInfo.Value;
 						var origExpression = nodeInfo.Expression;
-						nodeInfo.Expression = GetNewObjectExpression(proxyCtor, nodeInfo.Expression);
+						nodeInfo.Expression = GetNewObjectExpression(proxyCtor, nodeInfo.Expression, slotType);
 						nodeInfo.SetProxyValue(proxyTypeResult.Value);
 						Create(context, frame, providers, false, slotType, nodeInfo, evalOptions | DbgValueNodeEvaluationOptions.PublicMembers, createFlags | CreateFlags.NoProxy, cancellationToken);
 						AddProvidersOneChildNode(providers, state, origExpression, addParens, slotType, value, evalOptions, isRawView: true);
@@ -525,15 +525,15 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			AddProviders(providers, state, nodeInfo.Expression, addParens, slotType, nodeInfo.Value, evalOptions, forceRawView);
 		}
 
-		DbgDotNetValueNodeProvider TryCreateDynamicView(TypeState state, string expression, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions) {
+		DbgDotNetValueNodeProvider TryCreateDynamicView(TypeState state, string expression, DbgDotNetValue value, DmdType expectedType, DbgValueNodeEvaluationOptions evalOptions) {
 			if (state.IsDynamicViewType && !value.IsNull)
-				return new DynamicViewMembersValueNodeProvider(this, valueNodeFactory, value, expression, state.Type.AppDomain, evalOptions);
+				return new DynamicViewMembersValueNodeProvider(this, valueNodeFactory, value, expectedType, expression, state.Type.AppDomain, evalOptions);
 			return null;
 		}
 
-		DbgDotNetValueNodeProvider TryCreateResultsView(TypeState state, string expression, DbgDotNetValue value, DbgValueNodeEvaluationOptions evalOptions) {
+		DbgDotNetValueNodeProvider TryCreateResultsView(TypeState state, string expression, DbgDotNetValue value, DmdType expectedType, DbgValueNodeEvaluationOptions evalOptions) {
 			if ((object)state.EnumerableType != null && !value.IsNull)
-				return new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, expression, evalOptions);
+				return new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, expectedType, expression, evalOptions);
 			return null;
 		}
 
@@ -576,10 +576,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 			//TODO: non-void and non-null pointers (derefence and show members)
 
-			var provider = TryCreateResultsView(state, expression, value, evalOptions);
+			var provider = TryCreateResultsView(state, expression, value, slotType, evalOptions);
 			if (provider != null)
 				providers.Add(provider);
-			provider = TryCreateDynamicView(state, expression, value, evalOptions);
+			provider = TryCreateDynamicView(state, expression, value, slotType, evalOptions);
 			if (provider != null)
 				providers.Add(provider);
 		}

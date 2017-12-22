@@ -40,15 +40,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DbgDotNetValue instanceValue;
+		readonly DmdType expectedType;
 		readonly string valueExpression;
 		readonly DmdAppDomain appDomain;
 		string dynamicViewProxyExpression;
 		DbgDotNetValue getDynamicViewValue;
 
-		public DynamicViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DbgDotNetValue instanceValue, string valueExpression, DmdAppDomain appDomain, DbgValueNodeEvaluationOptions evalOptions)
-			: base(valueNodeFactory, dynamicViewName, valueExpression + ", dynamic", default, evalOptions) {
+		public DynamicViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DbgDotNetValue instanceValue, DmdType expectedType, string valueExpression, DmdAppDomain appDomain, DbgValueNodeEvaluationOptions evalOptions)
+			: base(valueNodeFactory, dynamicViewName, valueExpression + ", " + PredefinedFormatSpecifiers.DynamicView, default, evalOptions) {
 			this.valueNodeProviderFactory = valueNodeProviderFactory;
 			this.instanceValue = instanceValue;
+			this.expectedType = expectedType;
 			this.valueExpression = valueExpression;
 			this.appDomain = appDomain;
 			dynamicViewProxyExpression = string.Empty;
@@ -84,7 +86,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (proxyTypeResult.HasError)
 				return proxyTypeResult.ErrorMessage;
 
-			dynamicViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression);
+			dynamicViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression, expectedType);
 			getDynamicViewValue = proxyTypeResult.Value;
 			valueNodeProviderFactory.GetMemberCollections(getDynamicViewValue.Type, evalOptions, out membersCollection, out _);
 			return null;

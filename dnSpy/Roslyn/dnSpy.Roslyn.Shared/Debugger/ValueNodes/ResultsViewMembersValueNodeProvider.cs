@@ -42,15 +42,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DmdType enumerableType;
 		readonly DbgDotNetValue instanceValue;
+		readonly DmdType expectedType;
 		readonly string valueExpression;
 		string resultsViewProxyExpression;
 		DbgDotNetValue getResultsViewValue;
 
-		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, string valueExpression, DbgValueNodeEvaluationOptions evalOptions)
-			: base(valueNodeFactory, resultsViewName, valueExpression + ", results", default, evalOptions) {
+		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, DmdType expectedType, string valueExpression, DbgValueNodeEvaluationOptions evalOptions)
+			: base(valueNodeFactory, resultsViewName, valueExpression + ", " + PredefinedFormatSpecifiers.ResultsView, default, evalOptions) {
 			this.valueNodeProviderFactory = valueNodeProviderFactory;
 			this.enumerableType = enumerableType;
 			this.instanceValue = instanceValue;
+			this.expectedType = expectedType;
 			this.valueExpression = valueExpression;
 			resultsViewProxyExpression = string.Empty;
 		}
@@ -85,7 +87,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (proxyTypeResult.HasError)
 				return proxyTypeResult.ErrorMessage;
 
-			resultsViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression);
+			resultsViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression, expectedType);
 			getResultsViewValue = proxyTypeResult.Value;
 			valueNodeProviderFactory.GetMemberCollections(getResultsViewValue.Type, evalOptions, out membersCollection, out _);
 			return null;

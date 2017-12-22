@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.CSharp)]
 	sealed class CSharpValueNodeFactory : LanguageValueNodeFactory {
-		const Formatters.TypeFormatterOptions typeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+		internal const Formatters.TypeFormatterOptions TypeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
 
 		protected override bool SupportsModuleTypes => false;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new CSharpValueNodeProviderFactory(this);
@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 			if ((object)castType == null)
 				return;
 			sb.Append("((");
-			new Formatters.CSharp.CSharpTypeFormatter(new StringBuilderTextColorOutput(sb), typeFormatterOptions, null).Format(castType, null);
+			new Formatters.CSharp.CSharpTypeFormatter(new StringBuilderTextColorOutput(sb), TypeFormatterOptions, null).Format(castType, null);
 			sb.Append(')');
 		}
 
