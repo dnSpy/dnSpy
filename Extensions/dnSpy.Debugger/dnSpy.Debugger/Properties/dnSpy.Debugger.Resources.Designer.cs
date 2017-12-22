@@ -1249,6 +1249,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redirect GUI applications&apos; console text to the Output window.
+        /// </summary>
+        public static string DbgSettings_RedirectGuiConsoleOutput {
+            get {
+                return ResourceManager.GetString("DbgSettings_RedirectGuiConsoleOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Respect attributes that hide members.
         /// </summary>
         public static string DbgSettings_RespectHideMemberAttributes {

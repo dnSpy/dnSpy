@@ -206,6 +206,7 @@
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdExtensions.cs" />
     <Compile Include="Impl\PathUtils.cs" />
+    <Compile Include="Impl\PortableExecutableFileHelpers.cs" />
     <Compile Include="Impl\ReflectionTypeCreator.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />

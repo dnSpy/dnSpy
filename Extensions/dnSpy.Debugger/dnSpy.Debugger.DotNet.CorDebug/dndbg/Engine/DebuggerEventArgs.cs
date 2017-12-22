@@ -88,4 +88,13 @@ namespace dndbg.Engine {
 			CorModuleDef = corModuleDef;
 		}
 	}
+
+	readonly struct RedirectedOutputEventArgs {
+		public string Text { get; }
+		public bool IsStandardOutput { get; }
+		public RedirectedOutputEventArgs(string text, bool isStandardOutput) {
+			Text = text ?? throw new ArgumentNullException(nameof(text));
+			IsStandardOutput = isStandardOutput;
+		}
+	}
 }

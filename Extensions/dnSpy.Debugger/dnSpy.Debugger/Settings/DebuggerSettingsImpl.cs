@@ -505,6 +505,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool showReturnValues = true;
 
+		public override bool RedirectGuiConsoleOutput {
+			get {
+				lock (lockObj)
+					return redirectGuiConsoleOutput;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = redirectGuiConsoleOutput != value;
+					redirectGuiConsoleOutput = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(RedirectGuiConsoleOutput));
+					OnModified();
+				}
+			}
+		}
+		bool redirectGuiConsoleOutput = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -533,6 +552,7 @@ namespace dnSpy.Debugger.Settings {
 			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
 			other.FocusActiveProcess = FocusActiveProcess;
 			other.ShowReturnValues = ShowReturnValues;
+			other.RedirectGuiConsoleOutput = RedirectGuiConsoleOutput;
 			return other;
 		}
 	}
@@ -575,6 +595,7 @@ namespace dnSpy.Debugger.Settings {
 			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
 			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
 			ShowReturnValues = sect.Attribute<bool?>(nameof(ShowReturnValues)) ?? ShowReturnValues;
+			RedirectGuiConsoleOutput = sect.Attribute<bool?>(nameof(RedirectGuiConsoleOutput)) ?? RedirectGuiConsoleOutput;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -608,6 +629,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
 			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);
 			sect.Attribute(nameof(ShowReturnValues), ShowReturnValues);
+			sect.Attribute(nameof(RedirectGuiConsoleOutput), RedirectGuiConsoleOutput);
 		}
 	}
 }

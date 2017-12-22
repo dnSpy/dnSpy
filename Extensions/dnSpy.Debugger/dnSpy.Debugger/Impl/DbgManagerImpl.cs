@@ -319,6 +319,10 @@ namespace dnSpy.Debugger.Impl {
 				OnSetIPComplete_DbgThread(engine, (DbgMessageSetIPComplete)e);
 				break;
 
+			case DbgEngineMessageKind.AsyncProgramMessage:
+				OnAsyncProgramMessage_DbgThread(engine, (DbgMessageAsyncProgramMessage)e);
+				break;
+
 			default:
 				Debug.Fail($"Unknown message: {e.MessageKind}");
 				break;
@@ -674,6 +678,12 @@ namespace dnSpy.Debugger.Impl {
 			Dispatcher.VerifyAccess();
 			var ep = new DbgMessageProgramMessageEventArgs(e.Message, GetRuntime(engine), e.Thread);
 			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, e.MessageFlags);
+		}
+
+		void OnAsyncProgramMessage_DbgThread(DbgEngine engine, DbgMessageAsyncProgramMessage e) {
+			Dispatcher.VerifyAccess();
+			var ep = new DbgMessageAsyncProgramMessageEventArgs(e.Source, e.Message, GetRuntime(engine));
+			OnConditionalBreak_DbgThread(engine, ep, null, e.MessageFlags | DbgEngineMessageFlags.Running);
 		}
 
 		void OnBreakpoint_DbgThread(DbgEngine engine, DbgMessageBreakpoint e) {

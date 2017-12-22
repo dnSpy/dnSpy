@@ -166,5 +166,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Show return values in Locals window
 		/// </summary>
 		public abstract bool ShowReturnValues { get; set; }
+
+		/// <summary>
+		/// Redirect GUI applications' console output to the Output window
+		/// </summary>
+		public abstract bool RedirectGuiConsoleOutput { get; set; }
 	}
 }

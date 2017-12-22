@@ -322,6 +322,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
 				dnDebugger.OnCorModuleDefCreated -= DnDebugger_OnCorModuleDefCreated;
 				dnDebugger.OnAttachComplete -= DnDebugger_OnAttachComplete;
+				dnDebugger.OnRedirectedOutput -= DnDebugger_OnRedirectedOutput;
 			}
 			hProcess_debuggee?.Close();
 		}
@@ -396,6 +397,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					}
 				}
 			}
+		}
+
+		void DnDebugger_OnRedirectedOutput(object sender, RedirectedOutputEventArgs e) {
+			var source = e.IsStandardOutput ? AsyncProgramMessageSource.StandardOutput : AsyncProgramMessageSource.StandardError;
+			SendMessage(new DbgMessageAsyncProgramMessage(source, e.Text));
 		}
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
@@ -649,8 +655,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				};
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 				dbgOptions.DebugOptions.DebugOptionsProvider = new DebugOptionsProviderImpl(debuggerSettings);
+				if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(options.Filename))
+					dbgOptions.RedirectConsoleOutput = true;
 
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
+				if (dbgOptions.RedirectConsoleOutput)
+					dnDebugger.OnRedirectedOutput += DnDebugger_OnRedirectedOutput;
 				OnDebugProcess(dnDebugger);
 				if (debuggerSettings.DisableManagedDebuggerDetection)
 					DisableSystemDebuggerDetection.Initialize(dnDebugger);

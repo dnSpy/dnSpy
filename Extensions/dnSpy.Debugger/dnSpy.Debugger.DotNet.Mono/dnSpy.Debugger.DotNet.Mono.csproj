@@ -105,6 +105,7 @@
     <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\NetUtils.cs" />
     <Compile Include="Impl\ObjectConstants.cs" />
+    <Compile Include="Impl\PortableExecutableFileHelpers.cs" />
     <Compile Include="Impl\PortableExecutableHelper.cs" />
     <Compile Include="Impl\ReflectionTypeCreator.cs" />
     <Compile Include="Impl\ThreadMirrorUtils.cs" />

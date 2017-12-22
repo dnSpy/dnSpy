@@ -21,10 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaHost;
 
@@ -42,6 +44,8 @@ namespace dndbg.Engine {
 		readonly Dictionary<CorStepper, StepInfo> stepInfos = new Dictionary<CorStepper, StepInfo>();
 		readonly Dictionary<CorModule, DnModule> toDnModule = new Dictionary<CorModule, DnModule>();
 		readonly List<(DnModule module, CorClass cls)> customNotificationList;
+		PipeReaderInfo outputPipe;
+		PipeReaderInfo errorPipe;
 		DebugOptions debugOptions;
 
 		sealed class StepInfo {
@@ -1057,9 +1061,13 @@ namespace dndbg.Engine {
 				ResetDebuggerStates();
 				CallOnProcessStateChanged();
 				stepInfos.Clear();
+				outputPipe?.Dispose();
+				errorPipe?.Dispose();
+				outputPipe = null;
+				errorPipe = null;
 			}
 		}
-		bool hasTerminated = false;
+		volatile bool hasTerminated = false;
 
 		public static DnDebugger DebugProcess(DebugProcessOptions options) {
 			if (options.DebugMessageDispatcher == null)
@@ -1093,45 +1101,143 @@ namespace dndbg.Engine {
 			return dbg;
 		}
 
+		static (PipeReaderInfo outputPipe, PipeReaderInfo errorPipe) CreatePipes(DebugProcessOptions options) {
+			if (!options.RedirectConsoleOutput)
+				return default;
+			// It's very likely that the encodings will match but there's no guarantee, eg. it writes to the property
+			var encoding = Console.OutputEncoding;
+			var outputPipe = new PipeReaderInfo(encoding);
+			var errorPipe = new PipeReaderInfo(encoding);
+			return (outputPipe, errorPipe);
+		}
+
 		static DnDebugger CreateDnDebuggerCoreCLR(DebugProcessOptions options) {
 			var clrType = (CoreCLRTypeDebugInfo)options.CLRTypeDebugInfo;
-			var dbg2 = CoreCLRHelper.CreateDnDebugger(options, clrType, () => false, (cd, coreclrFilename, pid, version) => {
-				var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null, version, isAttach: false);
-				if (options.BreakProcessKind != BreakProcessKind.None)
-					new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
-				cd.DebugActiveProcess((int)pid, 0, out var comProcess);
-				var dnProcess = dbg.TryAdd(comProcess);
-				if (dnProcess != null)
-					dnProcess.Initialize(options.Filename, options.CurrentDirectory, options.CommandLine);
-				return dbg;
-			});
-			if (dbg2 == null)
-				throw new Exception("Could not create a debugger instance");
-			return dbg2;
+			var pipeInfo = CreatePipes(options);
+			try {
+				var dbg2 = CoreCLRHelper.CreateDnDebugger(options, clrType, pipeInfo.outputPipe?.DangerousGetClientHandle() ?? default,
+					pipeInfo.errorPipe?.DangerousGetClientHandle() ?? default, () => false, (cd, coreclrFilename, pid, version) => {
+					var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null, version, isAttach: false);
+					(dbg.outputPipe, dbg.errorPipe) = pipeInfo;
+					if (options.BreakProcessKind != BreakProcessKind.None)
+						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
+					cd.DebugActiveProcess((int)pid, 0, out var comProcess);
+					var dnProcess = dbg.TryAdd(comProcess);
+					if (dnProcess != null)
+						dnProcess.Initialize(options.Filename, options.CurrentDirectory, options.CommandLine);
+					if (options.RedirectConsoleOutput)
+						dbg.ReadPipesAsync();
+					return dbg;
+				});
+				if (dbg2 == null)
+					throw new Exception("Could not create a debugger instance");
+				return dbg2;
+			}
+			catch {
+				pipeInfo.outputPipe?.Dispose();
+				pipeInfo.errorPipe?.Dispose();
+				throw;
+			}
+		}
+
+		sealed class PipeReaderInfo {
+			readonly AnonymousPipeServerStream pipe;
+			readonly StreamReader streamReader;
+			readonly char[] buffer;
+			Task<int> task;
+			const int bufferSize = 0x200;
+
+			public PipeReaderInfo(Encoding encoding) {
+				pipe = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable);
+				streamReader = new StreamReader(pipe, encoding, detectEncodingFromByteOrderMarks: true);
+				buffer = new char[bufferSize];
+			}
+
+			public IntPtr DangerousGetClientHandle() => pipe.ClientSafePipeHandle.DangerousGetHandle();
+
+			public Task<int> Read() {
+				if (task == null)
+					task = streamReader.ReadAsync(buffer, 0, buffer.Length);
+				return task;
+			}
+
+			public string TryGetString() {
+				var t = task;
+				task = null;
+				int length = t.GetAwaiter().GetResult();
+				return length == 0 ? null : new string(buffer, 0, length);
+			}
+
+			public void Dispose() {
+				pipe.DisposeLocalCopyOfClientHandle();
+				pipe.Dispose();
+			}
+		}
+
+		public event EventHandler<RedirectedOutputEventArgs> OnRedirectedOutput;
+		async void ReadPipesAsync() {
+			var waitTasks = new Task[2];
+			var outputPipe = this.outputPipe;
+			var errorPipe = this.errorPipe;
+			for (;;) {
+				if (hasTerminated)
+					return;
+				var outputTask = outputPipe.Read();
+				var errorTask = errorPipe.Read();
+				waitTasks[0] = outputTask;
+				waitTasks[1] = errorTask;
+				Debug.Assert(waitTasks.Length == 2);
+				var task = await Task.WhenAny(waitTasks);
+				if (hasTerminated)
+					return;
+				PipeReaderInfo pipe;
+				if (task == outputTask)
+					pipe = outputPipe;
+				else if (task == errorTask)
+					pipe = errorPipe;
+				else
+					throw new InvalidOperationException();
+				var text = pipe.TryGetString();
+				if (text == null)
+					return;
+				OnRedirectedOutput?.Invoke(this, new RedirectedOutputEventArgs(text, isStandardOutput: task == outputTask));
+			}
 		}
 
 		void CreateProcess(DebugProcessOptions options) {
 			ICorDebugProcess comProcess;
+			PROCESS_INFORMATION pi = default;
 			try {
+				(outputPipe, errorPipe) = CreatePipes(options);
 				var dwCreationFlags = options.ProcessCreationFlags ?? DebugProcessOptions.DefaultProcessCreationFlags;
 				var si = new STARTUPINFO();
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
-				var pi = new PROCESS_INFORMATION();
+				if (options.RedirectConsoleOutput) {
+					si.hStdOutput = outputPipe.DangerousGetClientHandle();
+					si.hStdError = errorPipe.DangerousGetClientHandle();
+					si.dwFlags |= STARTUPINFO.STARTF_USESTDHANDLES;
+				}
 				var cmdline = "\"" + options.Filename + "\"";
 				if (!string.IsNullOrEmpty(options.CommandLine))
 					cmdline = cmdline + " " + options.CommandLine;
 				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment);
 				dwCreationFlags |= ProcessCreationFlags.CREATE_UNICODE_ENVIRONMENT;
+				bool inheritHandles = options.InheritHandles || options.RedirectConsoleOutput;
 				corDebug.CreateProcess(options.Filename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
-							options.InheritHandles ? 1 : 0, dwCreationFlags, env, options.CurrentDirectory,
+							inheritHandles ? 1 : 0, dwCreationFlags, env, options.CurrentDirectory,
 							ref si, ref pi, CorDebugCreateProcessFlags.DEBUG_NO_SPECIAL_OPTIONS, out comProcess);
-				// We don't need these
-				NativeMethods.CloseHandle(pi.hProcess);
-				NativeMethods.CloseHandle(pi.hThread);
+				if (options.RedirectConsoleOutput)
+					ReadPipesAsync();
 			}
 			catch {
 				ProcessesTerminated();
 				throw;
+			}
+			finally {
+				if (pi.hProcess != IntPtr.Zero)
+					NativeMethods.CloseHandle(pi.hProcess);
+				if (pi.hThread != IntPtr.Zero)
+					NativeMethods.CloseHandle(pi.hThread);
 			}
 
 			var process = TryAdd(comProcess);

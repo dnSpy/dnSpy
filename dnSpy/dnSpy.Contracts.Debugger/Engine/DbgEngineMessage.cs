@@ -282,4 +282,35 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Error = error;
 		}
 	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.AsyncProgramMessage"/> event
+	/// </summary>
+	public sealed class DbgMessageAsyncProgramMessage : DbgEngineMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.AsyncProgramMessage"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.AsyncProgramMessage;
+
+		/// <summary>
+		/// Gets the kind
+		/// </summary>
+		public AsyncProgramMessageSource Source { get; }
+
+		/// <summary>
+		/// Gets the message
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="source">Source</param>
+		/// <param name="message">Message</param>
+		public DbgMessageAsyncProgramMessage(AsyncProgramMessageSource source, string message)
+			: base(DbgEngineMessageFlags.None) {
+			Source = source;
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+		}
+	}
 }

@@ -201,12 +201,14 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				}
 				break;
 
-			case DbgMessageKind.ProcessCreated:
-			case DbgMessageKind.RuntimeCreated:
-			case DbgMessageKind.RuntimeExited:
-			case DbgMessageKind.AppDomainLoaded:
-			case DbgMessageKind.AppDomainUnloaded:
-			case DbgMessageKind.ThreadCreated:
+			case DbgMessageKind.AsyncProgramMessage:
+				if (outputLoggerSettings.ShowProgramOutputMessages) {
+					var ep = (DbgMessageAsyncProgramMessageEventArgs)e;
+					var msg = FilterUserMessage(ep.Message);
+					UI(() => Write_UI(BoxedTextColor.DebugLogProgramOutput, msg));
+				}
+				break;
+
 			default:
 				break;
 			}

@@ -28,6 +28,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -96,6 +97,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		// but Unity uses a buggy debugger agent that doesn't keep it alive so it could get GC'd.
 		ObjectMirror thrownException;
 		BreakOnEntryPointData breakOnEntryPointData;
+		ConsoleOutputReaderInfo consoleStdOut;
+		ConsoleOutputReaderInfo consoleStdErr;
 
 		sealed class BreakOnEntryPointData {
 			public BreakpointEventRequest Breakpoint;
@@ -298,11 +301,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						WorkingDirectory = startMonoOptions.WorkingDirectory,
 						UseShellExecute = false,
 					};
+					if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(startMonoOptions.Filename)) {
+						psi.RedirectStandardOutput = true;
+						psi.RedirectStandardError = true;
+					}
 					var env = new Dictionary<string, string>();
 					foreach (var kv in startMonoOptions.Environment.Environment)
 						psi.Environment[kv.Key] = kv.Value;
-					using (var process = Process.Start(psi))
+					using (var process = Process.Start(psi)) {
 						expectedPid = process.Id;
+						ReadConsoleOutput(psi, process);
+					}
 
 					if (startMonoOptions.BreakKind == PredefinedBreakKinds.EntryPoint)
 						breakOnEntryPointData = new BreakOnEntryPointData { Filename = Path.GetFullPath(startMonoOptions.Filename) };
@@ -336,12 +345,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						WorkingDirectory = startUnityOptions.WorkingDirectory,
 						UseShellExecute = false,
 					};
+					if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(startUnityOptions.Filename)) {
+						psi.RedirectStandardOutput = true;
+						psi.RedirectStandardError = true;
+					}
 					var env = new Dictionary<string, string>();
 					foreach (var kv in startUnityOptions.Environment.Environment)
 						psi.Environment[kv.Key] = kv.Value;
 					psi.Environment[dnSpyUnityDebugEnvVarName] = envVarValue;
-					using (var process = Process.Start(psi))
+					using (var process = Process.Start(psi)) {
 						expectedPid = process.Id;
+						ReadConsoleOutput(psi, process);
+					}
 
 					defaultCouldNotConnectMessage = GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename) + "\r\n\r\n" +
 						dnSpy_Debugger_DotNet_Mono_Resources.CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched;
@@ -446,6 +461,71 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		ExceptionEventRequest uncaughtRequest;
 		ExceptionEventRequest caughtRequest;
 		MethodEntryEventRequest methodEntryEventRequest;
+
+		sealed class ConsoleOutputReaderInfo {
+			readonly StreamReader streamReader;
+			readonly char[] buffer;
+			Task<int> task;
+			const int bufferSize = 0x200;
+
+			public ConsoleOutputReaderInfo(StreamReader streamReader) {
+				this.streamReader = streamReader;
+				buffer = new char[bufferSize];
+			}
+
+			public Task<int> Read() {
+				if (task == null)
+					task = streamReader.ReadAsync(buffer, 0, buffer.Length);
+				return task;
+			}
+
+			public string TryGetString() {
+				var t = task;
+				task = null;
+				int length = t.GetAwaiter().GetResult();
+				return length == 0 ? null : new string(buffer, 0, length);
+			}
+
+			public void Dispose() => streamReader.Dispose();
+		}
+
+		void ReadConsoleOutput(ProcessStartInfo psi, Process process) {
+			if (!psi.RedirectStandardOutput && !psi.RedirectStandardError)
+				return;
+			consoleStdOut = new ConsoleOutputReaderInfo(process.StandardOutput);
+			consoleStdErr = new ConsoleOutputReaderInfo(process.StandardError);
+		}
+
+		async void ReadConsoleOutputAsync() {
+			var waitTasks = new Task[2];
+			var consoleStdOut = this.consoleStdOut;
+			var consoleStdErr = this.consoleStdErr;
+			for (;;) {
+				if (gotVMDisconnect)
+					return;
+				var outputTask = consoleStdOut.Read();
+				var errorTask = consoleStdErr.Read();
+				waitTasks[0] = outputTask;
+				waitTasks[1] = errorTask;
+				Debug.Assert(waitTasks.Length == 2);
+				var task = await Task.WhenAny(waitTasks);
+				if (gotVMDisconnect)
+					return;
+				ConsoleOutputReaderInfo pipe;
+				if (task == outputTask)
+					pipe = consoleStdOut;
+				else if (task == errorTask)
+					pipe = consoleStdErr;
+				else
+					throw new InvalidOperationException();
+				var text = pipe.TryGetString();
+				if (text == null)
+					return;
+
+				var source = task == outputTask ? AsyncProgramMessageSource.StandardOutput : AsyncProgramMessageSource.StandardError;
+				SendMessage(new DbgMessageAsyncProgramMessage(source, text));
+			}
+		}
 
 		void MonoEventThread() {
 			var vm = this.vm;
@@ -842,6 +922,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 					Message?.Invoke(this, new DbgMessageDisconnected(vmDeathExitCode.Value, GetMessageFlags()));
 					gotVMDisconnect = true;
+					consoleStdOut?.Dispose();
+					consoleStdErr?.Dispose();
+					consoleStdOut = null;
+					consoleStdErr = null;
 					break;
 
 				default:
@@ -1245,6 +1329,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				if (gotVMDisconnect)
 					return;
+				if (consoleStdOut != null)
+					ReadConsoleOutputAsync();
 				Debug.Assert(vm != null);
 				if (vm != null) {
 					InitializeVirtualMachine();

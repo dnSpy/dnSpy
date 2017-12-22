@@ -190,6 +190,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	struct STARTUPINFO {
+		public const uint STARTF_USESTDHANDLES = 0x00000100;
 		public uint cb;
 		public string lpReserved;
 		public string lpDesktop;
