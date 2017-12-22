@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 
 		/// <summary>
 		/// Message written by the debugged program. The program is still running.
-		/// This message is sent if a GUI app writes to the console.
+		/// This message is sent when a GUI app writes to the console.
 		/// </summary>
 		AsyncProgramMessage,
 	}

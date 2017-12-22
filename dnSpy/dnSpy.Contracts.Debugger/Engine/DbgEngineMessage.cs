@@ -293,7 +293,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.AsyncProgramMessage;
 
 		/// <summary>
-		/// Gets the kind
+		/// Gets the message source
 		/// </summary>
 		public AsyncProgramMessageSource Source { get; }
 

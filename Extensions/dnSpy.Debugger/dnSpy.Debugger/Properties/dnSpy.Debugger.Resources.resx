@@ -1477,6 +1477,6 @@ Are you sure you want to expand it?</value>
     <value>Show return values</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>Redirect GUI applications' console text to the Output window</value>
+    <value>Redirect GUI applications' console output to the Output window</value>
   </data>
 </root>

@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		VirtualMachine vm;
 		int vmPid;
 		int? vmDeathExitCode;
-		bool gotVMDisconnect;
+		volatile bool gotVMDisconnect;
 		bool isUnhandledException;
 		DbgObjectFactory objectFactory;
 		SafeHandle hProcess_debuggee;

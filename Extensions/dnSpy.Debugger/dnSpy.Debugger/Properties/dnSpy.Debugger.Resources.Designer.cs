@@ -1249,7 +1249,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redirect GUI applications&apos; console text to the Output window.
+        ///   Looks up a localized string similar to Redirect GUI applications&apos; console output to the Output window.
         /// </summary>
         public static string DbgSettings_RedirectGuiConsoleOutput {
             get {

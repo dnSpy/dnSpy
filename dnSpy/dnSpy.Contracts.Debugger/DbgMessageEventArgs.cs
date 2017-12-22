@@ -737,7 +737,7 @@ namespace dnSpy.Contracts.Debugger {
 	}
 
 	/// <summary>
-	/// Message kind
+	/// Message source kind
 	/// </summary>
 	public enum AsyncProgramMessageSource {
 		/// <summary>
@@ -766,7 +766,7 @@ namespace dnSpy.Contracts.Debugger {
 		public override DbgMessageKind Kind => DbgMessageKind.AsyncProgramMessage;
 
 		/// <summary>
-		/// Gets the message kind
+		/// Gets the message source kind
 		/// </summary>
 		public AsyncProgramMessageSource Source { get; }
 
