@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -38,22 +39,20 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		readonly EvalContextInfo evalContextInfo;
 
 		sealed class EvalContextInfo {
-			public DbgEvaluationContext Context {
-				get => __context_DONT_USE;
+			public DbgEvaluationInfo EvalInfo {
+				get => __evalInfo_DONT_USE;
 				set {
-					__context_DONT_USE?.Close();
-					__context_DONT_USE = value;
+					__evalInfo_DONT_USE?.Context.Close();
+					__evalInfo_DONT_USE = value;
 				}
 			}
-			DbgEvaluationContext __context_DONT_USE;
+			DbgEvaluationInfo __evalInfo_DONT_USE;
 
 			public DbgLanguage Language;
-			public DbgStackFrame Frame;
 
 			public void Clear() {
-				Context = null;
+				EvalInfo = null;
 				Language = null;
-				Frame = null;
 			}
 		}
 
@@ -149,10 +148,11 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var info = TryGetLanguage();
 			if (info.frame == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false, recreateAllNodes: false);
-			var evalContextInfo = TryGetEvaluationContextInfo();
-			if (evalContextInfo.context == null)
+			var evalInfo = TryGetEvaluationInfo(info);
+			if (evalInfo == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
-			var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalContextInfo.context, info.language, info.frame, evalOptions, nodeEvalOptions, nameFormatterOptions);
+			Debug.Assert(evalInfo.Frame == info.frame);
+			var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalInfo, info.language, evalOptions, nodeEvalOptions, nameFormatterOptions);
 			return new GetNodesResult(nodesInfo.Nodes, info.frame.IsClosed, nodesInfo.RecreateAllNodes);
 		}
 
@@ -190,21 +190,22 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowValueNodesProvider.AddExpressions(expressions);
 		}
 
-		public override (DbgEvaluationContext context, DbgStackFrame frame) TryGetEvaluationContextInfo() {
-			var info = TryGetLanguage();
-			if (evalContextInfo.Context != null && evalContextInfo.Language == info.language && evalContextInfo.Frame == info.frame)
-				return (evalContextInfo.Context, evalContextInfo.Frame);
+		public override DbgEvaluationInfo TryGetEvaluationInfo() => TryGetEvaluationInfo(TryGetLanguage());
+
+		DbgEvaluationInfo TryGetEvaluationInfo((DbgLanguage language, DbgStackFrame frame) info) {
+			if (evalContextInfo.EvalInfo != null && evalContextInfo.Language == info.language && evalContextInfo.EvalInfo.Frame == info.frame)
+				return evalContextInfo.EvalInfo;
 
 			evalContextInfo.Language = info.language;
-			evalContextInfo.Frame = info.frame;
 			if (info.frame != null) {
 				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
 				var cancellationToken = CancellationToken.None;
-				evalContextInfo.Context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);
+				var context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);
+				evalContextInfo.EvalInfo = new DbgEvaluationInfo(context, info.frame, cancellationToken);
 			}
 			else
-				evalContextInfo.Context = null;
-			return (evalContextInfo.Context, evalContextInfo.Frame);
+				evalContextInfo.EvalInfo = null;
+			return evalContextInfo.EvalInfo;
 		}
 
 		public override DbgStackFrame TryGetFrame() => TryGetLanguage().frame;

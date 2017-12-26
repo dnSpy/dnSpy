@@ -19,8 +19,6 @@
 
 using System;
 using System.Globalization;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Text;
@@ -42,12 +40,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public abstract string ImageName { get; }
 		public abstract bool IsReadOnly { get; }
 		public abstract bool? HasChildren { get; }
-		public abstract ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		public abstract ulong? GetChildCount(DbgEvaluationInfo evalInfo);
 		public virtual RawNode CreateChild(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, uint index) => throw new NotSupportedException();
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo);
-		public abstract void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo);
-		public abstract void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo);
-		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options);
+		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo);
+		public abstract void FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo);
+		public abstract void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo);
+		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options);
 	}
 
 	sealed class EditRawNode : RawNode {
@@ -56,11 +54,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Edit;
 		public override bool IsReadOnly => true;
 		public override bool? HasChildren => false;
-		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) { }
-		public override void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
-		public override void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
-		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options) => throw new NotSupportedException();
+		public override ulong? GetChildCount(DbgEvaluationInfo evalInfo) => 0;
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) { }
+		public override void FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
+		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) => throw new NotSupportedException();
 	}
 
 	sealed class ErrorRawNode : RawNode {
@@ -70,7 +68,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool IsReadOnly => true;
 		public override bool? HasChildren => false;
-		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
+		public override ulong? GetChildCount(DbgEvaluationInfo evalInfo) => 0;
 
 		readonly string expression;
 		string errorMessage;
@@ -82,40 +80,40 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		internal void SetErrorMessage(string errorMessage) => this.errorMessage = errorMessage;
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
 			if (options.NameOutput != null)
-				FormatName(context, frame, options.NameOutput, options.NameFormatterOptions, cultureInfo);
+				FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
 			if (options.ValueOutput != null)
-				FormatValue(context, frame, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
+				FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
 		}
 
-		public override void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => output.Write(BoxedTextColor.Text, expression);
-		public override void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => output.Write(BoxedTextColor.Error, errorMessage);
-		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options) => throw new NotSupportedException();
+		public override void FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => output.Write(BoxedTextColor.Text, expression);
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => output.Write(BoxedTextColor.Error, errorMessage);
+		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) => throw new NotSupportedException();
 	}
 
 	abstract class CachedRawNodeBase : RawNode {
 		public sealed override bool IsReadOnly => true;
-		public sealed override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options) => throw new NotImplementedException();
+		public sealed override DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) => throw new NotImplementedException();
 
 		protected abstract ref readonly ClassifiedTextCollection CachedName { get; }
 		protected abstract ref readonly ClassifiedTextCollection CachedValue { get; }
 		protected abstract ref readonly ClassifiedTextCollection CachedExpectedType { get; }
 		protected abstract ref readonly ClassifiedTextCollection CachedActualType { get; }
 
-		public sealed override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
+		public sealed override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
 			if (options.NameOutput != null)
-				FormatName(context, frame, options.NameOutput, options.NameFormatterOptions, cultureInfo);
+				FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
 			if (options.ValueOutput != null)
-				FormatValue(context, frame, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
+				FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
 			if (options.ExpectedTypeOutput != null)
 				WriteTo(options.ExpectedTypeOutput, CachedExpectedType);
 			if (options.ActualTypeOutput != null)
 				WriteTo(options.ActualTypeOutput, CachedActualType);
 		}
 
-		public sealed override void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => WriteTo(output, CachedName, string.IsNullOrEmpty(Expression) ? UNKNOWN : Expression);
-		public sealed override void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => WriteTo(output, CachedValue);
+		public sealed override void FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => WriteTo(output, CachedName, string.IsNullOrEmpty(Expression) ? UNKNOWN : Expression);
+		public sealed override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => WriteTo(output, CachedValue);
 
 		const string UNKNOWN = "???";
 		static void WriteTo(ITextColorWriter output, in ClassifiedTextCollection coll, string unknownText = UNKNOWN) {
@@ -136,7 +134,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string Expression => string.Empty;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool? HasChildren => false;
-		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
+		public override ulong? GetChildCount(DbgEvaluationInfo evalInfo) => 0;
 
 		protected override ref readonly ClassifiedTextCollection CachedName => ref ClassifiedTextCollection.Empty;
 		protected override ref readonly ClassifiedTextCollection CachedValue => ref ClassifiedTextCollection.Empty;
@@ -149,7 +147,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string Expression { get; }
 		public override string ImageName { get; }
 		public override bool? HasChildren { get; }
-		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => childCount;
+		public override ulong? GetChildCount(DbgEvaluationInfo evalInfo) => childCount;
 		readonly ulong? childCount;
 
 		protected override ref readonly ClassifiedTextCollection CachedName => ref cachedName;
@@ -184,7 +182,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override string ImageName => DebuggerValueNode.ImageName;
 		public override bool IsReadOnly => DebuggerValueNode.IsReadOnly;
 		public override bool? HasChildren => DebuggerValueNode.HasChildren;
-		public override ulong? GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => DebuggerValueNode.GetChildCount(context, frame, cancellationToken);
+		public override ulong? GetChildCount(DbgEvaluationInfo evalInfo) => DebuggerValueNode.GetChildCount(evalInfo);
 
 		internal abstract DbgValueNode DebuggerValueNode { get; }
 
@@ -194,10 +192,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public override RawNode CreateChild(Action<ChildDbgValueRawNode, object> debuggerValueNodeChanged, object debuggerValueNodeChangedData, uint index) =>
 			new ChildDbgValueRawNode(debuggerValueNodeChanged, debuggerValueNodeChangedData, this, index, reader);
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) => DebuggerValueNode.Format(context, frame, options, cultureInfo);
-		public override void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => DebuggerValueNode.FormatName(context, frame, output, options, cultureInfo);
-		public override void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => DebuggerValueNode.FormatValue(context, frame, output, options, cultureInfo);
-		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options) => DebuggerValueNode.Assign(context, frame, expression, options);
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) => DebuggerValueNode.Format(evalInfo, options, cultureInfo);
+		public override void FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => DebuggerValueNode.FormatName(evalInfo, output, options, cultureInfo);
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) => DebuggerValueNode.FormatValue(evalInfo, output, options, cultureInfo);
+		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) => DebuggerValueNode.Assign(evalInfo, expression, options);
 	}
 
 	/// <summary>

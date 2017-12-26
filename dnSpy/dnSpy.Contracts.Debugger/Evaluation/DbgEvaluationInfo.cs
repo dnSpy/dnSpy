@@ -17,54 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Debugger.Evaluation;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
+namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
-	/// Context that can be passed into reflection methods that need an evaluator context
+	/// Contains the classes needed to func-eval
 	/// </summary>
-	public interface IDmdEvaluatorContext {
+	public sealed class DbgEvaluationInfo {
 		/// <summary>
-		/// Evaluation context
+		/// Gets the evaluation context
 		/// </summary>
-		DbgEvaluationContext EvaluationContext { get; }
+		public DbgEvaluationContext Context { get; }
 
 		/// <summary>
-		/// Stack frame
+		/// Gets the stack frame
 		/// </summary>
-		DbgStackFrame Frame { get; }
+		public DbgStackFrame Frame { get; }
 
 		/// <summary>
-		/// Cancellation token
+		/// Gets the cancellation token
 		/// </summary>
-		CancellationToken CancellationToken { get; }
-	}
-
-	/// <summary>
-	/// Context that can be passed into reflection methods that need an evaluator context
-	/// </summary>
-	public sealed class DmdEvaluatorContext : IDmdEvaluatorContext {
-		/// <summary>
-		/// Evaluation context
-		/// </summary>
-		public DbgEvaluationContext EvaluationContext { get; set; }
+		public CancellationToken CancellationToken { get; }
 
 		/// <summary>
-		/// Stack frame
+		/// Gets the runtime
 		/// </summary>
-		public DbgStackFrame Frame { get; set; }
-
-		/// <summary>
-		/// Cancellation token
-		/// </summary>
-		public CancellationToken CancellationToken { get; set; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public DmdEvaluatorContext() { }
+		public DbgRuntime Runtime => Context.Runtime;
 
 		/// <summary>
 		/// Constructor
@@ -72,10 +52,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="frame">Stack frame</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public DmdEvaluatorContext(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken = default) {
-			EvaluationContext = context;
-			Frame = frame;
+		public DbgEvaluationInfo(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken = default) {
+			Context = context ?? throw new ArgumentNullException(nameof(context));
+			Frame = frame ?? throw new ArgumentNullException(nameof(frame));
 			CancellationToken = cancellationToken;
+			if (context.Runtime != frame.Runtime)
+				throw new ArgumentException();
 		}
 	}
 }

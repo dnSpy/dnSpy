@@ -164,7 +164,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 				if (evaluationContext == null)
 					evaluationContext = language.CreateContext(frame, options: DbgEvaluationContextOptions.NoMethodBody, cancellationToken: cancellationToken);
-				language.Formatter.Format(evaluationContext, frame, Context.ClassifiedTextWriter, Context.StackFrameFormatterOptions, Context.ValueFormatterOptions, cultureInfo, cancellationToken);
+				var evalInfo = new DbgEvaluationInfo(evaluationContext, frame, cancellationToken);
+				language.Formatter.Format(evalInfo, Context.ClassifiedTextWriter, Context.StackFrameFormatterOptions, Context.ValueFormatterOptions, cultureInfo);
 			}
 			return Context.ClassifiedTextWriter.GetClassifiedText();
 		}

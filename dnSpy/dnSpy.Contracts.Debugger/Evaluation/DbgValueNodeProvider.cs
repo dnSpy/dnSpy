@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -35,12 +33,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Gets all values. It blocks the current thread until the method is complete.
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgValueNode[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options);
 	}
 
 	/// <summary>
@@ -77,13 +73,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Gets all values. It blocks the current thread until the method is complete.
 		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
 		/// <param name="localsOptions">Locals value node provider options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken = default);
+		public abstract DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions);
 	}
 
 	/// <summary>

@@ -20,8 +20,6 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -35,54 +33,46 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <summary>
 		/// Compiles an expression
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileExpression(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileExpression(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options);
 
 		/// <summary>
 		/// Compiles a type expression (compiles <see cref="DebuggerDisplayAttribute"/> expressions)
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="type">Type</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationInfo evalInfo, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options);
 
 		/// <summary>
 		/// Creates an assembly that is used to get all the locals
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, DbgEvaluationOptions options);
 
 		/// <summary>
 		/// Compiles an assignment
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="references">.NET module references</param>
 		/// <param name="aliases">Aliases</param>
 		/// <param name="target">Target expression (lhs)</param>
 		/// <param name="expression">Expression (rhs)</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetCompilationResult CompileAssignment(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options);
 
 		/// <summary>
 		/// Gets alias info

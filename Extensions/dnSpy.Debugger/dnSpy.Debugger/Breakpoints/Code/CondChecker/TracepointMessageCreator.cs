@@ -195,8 +195,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 						var cancellationToken = CancellationToken.None;
 						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
 						var eeState = state.GetExpressionEvaluatorState(part.String);
-						var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, part.String, DbgEvaluationOptions.Expression, eeState, cancellationToken);
-						Write(state.Context, frame, language, evalRes, cancellationToken);
+						var evalInfo = new DbgEvaluationInfo(state.Context, frame, cancellationToken);
+						var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, part.String, DbgEvaluationOptions.Expression, eeState);
+						Write(evalInfo, language, evalRes);
 					}
 					break;
 
@@ -324,7 +325,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				try {
 					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
 					context = language.CreateContext(frame, options: ctxOptions, cancellationToken: cancellationToken);
-					language.Formatter.Format(context, frame, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo, cancellationToken);
+					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
+					language.Formatter.Format(evalInfo, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo);
 				}
 				finally {
 					context?.Close();
@@ -421,7 +423,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return state;
 		}
 
-		void Write(DbgEvaluationContext context, DbgStackFrame frame, DbgLanguage language, in DbgEvaluationResult evalRes, CancellationToken cancellationToken) {
+		void Write(DbgEvaluationInfo evalInfo, DbgLanguage language, in DbgEvaluationResult evalRes) {
 			if (evalRes.Error != null) {
 				Write("<<<");
 				Write(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(evalRes.Error));
@@ -430,7 +432,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			else {
 				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isDisplay: true);
 				const CultureInfo cultureInfo = null;
-				language.Formatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
+				language.Formatter.Format(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}
 		}

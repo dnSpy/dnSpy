@@ -18,24 +18,16 @@
 */
 
 using System;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	readonly struct ToStringFormatter {
-		readonly DbgEvaluationContext context;
-		readonly DbgStackFrame frame;
-		readonly CancellationToken cancellationToken;
+		readonly DbgEvaluationInfo evalInfo;
 
-		public ToStringFormatter(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
-			this.context = context ?? throw new ArgumentNullException(nameof(context));
-			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
-			this.cancellationToken = cancellationToken;
-		}
+		public ToStringFormatter(DbgEvaluationInfo evalInfo) => this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 
 		sealed class ToStringState {
 			public readonly DmdMethodInfo ToStringMethod;
@@ -66,8 +58,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			if ((object)state.ToStringMethod == null)
 				return null;
 
-			var runtime = context.Runtime.GetDotNetRuntime();
-			var res = runtime.Call(context, frame, value, state.ToStringMethod, Array.Empty<object>(), DbgDotNetInvokeOptions.None, cancellationToken);
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
+			var res = runtime.Call(evalInfo, value, state.ToStringMethod, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
 			if (res.HasError || res.ValueIsException)
 				return null;
 

@@ -19,9 +19,7 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -33,35 +31,35 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineReturnValuesProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return GetNodesCore(context, frame, options, cancellationToken);
-			return GetNodes(dispatcher, context, frame, options, cancellationToken);
+				return GetNodesCore(evalInfo, options);
+			return GetNodes(dispatcher, evalInfo, options);
 
-			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => GetNodesCore(context2, frame2, options2, cancellationToken2));
+			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2) =>
+				dispatcher2.InvokeRethrow(() => GetNodesCore(evalInfo2, options2));
 		}
 
-		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
-			var returnValues = runtime.GetReturnValues(context, frame, cancellationToken);
+		DbgEngineValueNode[] GetNodesCore(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
+			var returnValues = runtime.GetReturnValues(evalInfo);
 			if (returnValues.Length == 0)
 				return Array.Empty<DbgEngineValueNode>();
 
 			var res = new DbgEngineValueNode[returnValues.Length];
 			try {
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					var info = returnValues[i];
-					res[i] = valueNodeFactory.CreateReturnValue(context, frame, info.Id, info.Value, null, options, info.Method, cancellationToken);
+					res[i] = valueNodeFactory.CreateReturnValue(evalInfo, info.Id, info.Value, null, options, info.Method);
 				}
 			}
 			catch (Exception ex) {
-				context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
-				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
+				return valueNodeFactory.CreateInternalErrorResult(evalInfo);
 			}
 			return res;
 		}

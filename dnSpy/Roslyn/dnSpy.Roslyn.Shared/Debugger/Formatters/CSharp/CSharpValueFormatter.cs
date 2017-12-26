@@ -20,9 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
@@ -31,12 +29,10 @@ using dnSpy.Roslyn.Shared.Properties;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 	struct CSharpValueFormatter {
 		readonly ITextColorWriter output;
-		readonly DbgEvaluationContext context;
-		readonly DbgStackFrame frame;
+		readonly DbgEvaluationInfo evalInfo;
 		readonly LanguageFormatter languageFormatter;
 		readonly ValueFormatterOptions options;
 		readonly CultureInfo cultureInfo;
-		/*readonly*/ CancellationToken cancellationToken;
 		const int MAX_RECURSION = 200;
 		int recursionCounter;
 
@@ -51,14 +47,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool NoDebuggerDisplay => (options & ValueFormatterOptions.NoDebuggerDisplay) != 0;
 
-		public CSharpValueFormatter(ITextColorWriter output, DbgEvaluationContext context, DbgStackFrame frame, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public CSharpValueFormatter(ITextColorWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
-			this.context = context ?? throw new ArgumentNullException(nameof(context));
-			this.frame = frame ?? throw new ArgumentNullException(nameof(frame));
+			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
 			this.options = options;
 			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
-			this.cancellationToken = cancellationToken;
 			recursionCounter = 0;
 		}
 
@@ -69,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		public void Format(DbgDotNetValue value) {
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			try {
 				if (recursionCounter++ >= MAX_RECURSION) {
 					OutputWrite("???", BoxedTextColor.Error);
@@ -106,7 +100,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			OutputWrite(TupleTypeOpenParen, BoxedTextColor.Punctuation);
 
 			var values = ObjectCache.AllocDotNetValueList();
-			var runtime = context.Runtime.GetDotNetRuntime();
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			int index = 0;
 			foreach (var info in TupleTypeUtils.GetTupleFields(value.Type, tupleArity)) {
 				if (index++ > 0) {
@@ -122,7 +116,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 					DbgDotNetValueResult valueResult = default;
 					try {
 						foreach (var field in info.fields) {
-							valueResult = runtime.LoadField(context, frame, objValue, field, cancellationToken);
+							valueResult = runtime.LoadField(evalInfo, objValue, field);
 							if (valueResult.Value != null)
 								values.Add(valueResult.Value);
 							if (valueResult.HasError || valueResult.ValueIsException) {
@@ -156,13 +150,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			var info = KeyValuePairTypeUtils.TryGetFields(value.Type);
 			if ((object)info.keyField == null)
 				return false;
-			var runtime = context.Runtime.GetDotNetRuntime();
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult keyResult = default, valueResult = default;
 			try {
-				keyResult = runtime.LoadField(context, frame, value, info.keyField, cancellationToken);
+				keyResult = runtime.LoadField(evalInfo, value, info.keyField);
 				if (keyResult.ErrorMessage != null || keyResult.ValueIsException)
 					return false;
-				valueResult = runtime.LoadField(context, frame, value, info.valueField, cancellationToken);
+				valueResult = runtime.LoadField(evalInfo, value, info.valueField);
 				if (valueResult.ErrorMessage != null || valueResult.ValueIsException)
 					return false;
 
@@ -183,13 +177,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		bool TryFormatWithDebuggerAttributes(DbgDotNetValue value) {
 			if (!FuncEval || NoDebuggerDisplay)
 				return false;
-			return new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options.ToDbgValueFormatterOptions(), cultureInfo, cancellationToken).FormatValue(value);
+			return new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options.ToDbgValueFormatterOptions(), cultureInfo).FormatValue(value);
 		}
 
 		bool TryFormatToString(DbgDotNetValue value) {
 			if (!FuncEval || !UseToString)
 				return false;
-			var s = new ToStringFormatter(context, frame, cancellationToken).GetToStringValue(value);
+			var s = new ToStringFormatter(evalInfo).GetToStringValue(value);
 			if (s == null)
 				return false;
 			OutputWrite(TypeNameOpenParen + s + TypeNameCloseParen, BoxedTextColor.ToStringEval);

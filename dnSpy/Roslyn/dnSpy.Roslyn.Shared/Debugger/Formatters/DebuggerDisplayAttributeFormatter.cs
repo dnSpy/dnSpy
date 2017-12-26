@@ -22,8 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -32,23 +30,19 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	readonly struct DebuggerDisplayAttributeFormatter {
-		readonly DbgEvaluationContext context;
-		readonly DbgStackFrame frame;
+		readonly DbgEvaluationInfo evalInfo;
 		readonly LanguageFormatter languageFormatter;
 		readonly ITextColorWriter output;
 		readonly DbgValueFormatterOptions options;
 		readonly CultureInfo cultureInfo;
-		readonly CancellationToken cancellationToken;
 
-		public DebuggerDisplayAttributeFormatter(DbgEvaluationContext context, DbgStackFrame frame, LanguageFormatter languageFormatter, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public DebuggerDisplayAttributeFormatter(DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			Debug.Assert((options & DbgValueFormatterOptions.NoDebuggerDisplay) == 0);
-			this.context = context;
-			this.frame = frame;
+			this.evalInfo = evalInfo;
 			this.languageFormatter = languageFormatter;
 			this.output = output;
 			this.options = options;
 			this.cultureInfo = cultureInfo;
-			this.cancellationToken = cancellationToken;
 		}
 
 		[Flags]
@@ -106,17 +100,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		}
 
 		public bool FormatName(DbgDotNetValue value) {
-			var typeState = GetOrCreateTypeState(value.Type, context.Language);
+			var typeState = GetOrCreateTypeState(value.Type, evalInfo.Context.Language);
 			return Format(value, typeState, typeState.NameParts);
 		}
 
 		public bool FormatValue(DbgDotNetValue value) {
-			var typeState = GetOrCreateTypeState(value.Type, context.Language);
+			var typeState = GetOrCreateTypeState(value.Type, evalInfo.Context.Language);
 			return Format(value, typeState, typeState.ValueParts);
 		}
 
 		public bool FormatType(DbgDotNetValue value) {
-			var typeState = GetOrCreateTypeState(value.Type, context.Language);
+			var typeState = GetOrCreateTypeState(value.Type, evalInfo.Context.Language);
 			return Format(value, typeState, typeState.TypeParts);
 		}
 
@@ -124,15 +118,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			if (displayParts.Length == 0)
 				return false;
 
-			var evaluator = context.GetDebuggerDisplayAttributeEvaluator();
+			var evaluator = evalInfo.Context.GetDebuggerDisplayAttributeEvaluator();
 			foreach (var part in displayParts) {
 				if ((part.Flags & DisplayPartFlags.EvaluateText) == 0)
 					output.Write(BoxedTextColor.DebuggerDisplayAttributeEval, part.Text);
 				else {
-					object eeState = typeState.GetExpressionEvaluatorState(context.Language.ExpressionEvaluator, part.Text);
+					object eeState = typeState.GetExpressionEvaluatorState(evalInfo.Context.Language.ExpressionEvaluator, part.Text);
 					DbgDotNetEvalResult evalRes = default;
 					try {
-						evalRes = evaluator.Evaluate(typeState.TypeContext, frame, value, part.Text, DbgEvaluationOptions.Expression, eeState, cancellationToken);
+						var evalInfo2 = new DbgEvaluationInfo(typeState.TypeContext, evalInfo.Frame, evalInfo.CancellationToken);
+						evalRes = evaluator.Evaluate(evalInfo2, value, part.Text, DbgEvaluationOptions.Expression, eeState);
 						if (evalRes.Error != null) {
 							output.Write(BoxedTextColor.Error, "<<<");
 							output.Write(BoxedTextColor.Error, evalRes.Error);
@@ -143,7 +138,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 							var options = this.options | DbgValueFormatterOptions.NoDebuggerDisplay;
 							options &= ~DbgValueFormatterOptions.NoStringQuotes;
 							options = PredefinedFormatSpecifiers.GetValueFormatterOptions(evalRes.FormatSpecifiers, options);
-							languageFormatter.FormatValue(context, output, frame, evalRes.Value, options, cultureInfo, cancellationToken);
+							languageFormatter.FormatValue(evalInfo, output, evalRes.Value, options, cultureInfo);
 						}
 					}
 					finally {
@@ -173,7 +168,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 			if (info.nameParts.Length == 0 && info.valueParts.Length == 0 && info.typeParts.Length == 0)
 				return TypeState.Empty;
 
-			var context = language.CreateContext(frame.Runtime, null, cancellationToken: cancellationToken);
+			var context = language.CreateContext(evalInfo.Runtime, null);
 			var state = new TypeState(context, info.nameParts, info.valueParts, info.typeParts);
 			context.Runtime.CloseOnExit(state);
 			return state;

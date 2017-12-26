@@ -74,7 +74,6 @@
     <Compile Include="Evaluation\Formatters\DbgDotNetFormatter.cs" />
     <Compile Include="Evaluation\Formatters\IDebuggerDisplayAttributeEvaluator.cs" />
     <Compile Include="Evaluation\IDbgDotNetRuntime.cs" />
-    <Compile Include="Evaluation\IDmdEvaluatorContext.cs" />
     <Compile Include="Evaluation\ValueNodes\DbgDotNetValueNode.cs" />
     <Compile Include="Evaluation\ValueNodes\DbgDotNetValueNodeFactory.cs" />
     <Compile Include="Extensions\DbgAppDomainExtensions.cs" />

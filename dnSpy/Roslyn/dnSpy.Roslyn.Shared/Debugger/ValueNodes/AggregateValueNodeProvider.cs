@@ -20,8 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -40,37 +38,37 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.providers = providers;
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
-			providers[0].GetChildCount(context, frame, cancellationToken) + (uint)(providers.Length - 1);
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) =>
+			providers[0].GetChildCount(evalInfo) + (uint)(providers.Length - 1);
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			if (count == 0)
 				return Array.Empty<DbgDotNetValueNode>();
 
 			var first = providers[0];
-			ulong childCount = first.GetChildCount(context, frame, cancellationToken);
+			ulong childCount = first.GetChildCount(evalInfo);
 			if (index + (uint)count <= childCount)
-				return first.GetChildren(valueNodeFactory, context, frame, index, count, options, cancellationToken);
+				return first.GetChildren(valueNodeFactory, evalInfo, index, count, options);
 
 			var res = new DbgDotNetValueNode[count];
 			try {
 				int w = 0;
 				if (index < childCount) {
-					var tmp = first.GetChildren(valueNodeFactory, context, frame, index, (int)(childCount - index), options, cancellationToken);
+					var tmp = first.GetChildren(valueNodeFactory, evalInfo, index, (int)(childCount - index), options);
 					Array.Copy(tmp, res, tmp.Length);
 					w += tmp.Length;
 				}
 				for (int i = (int)(index - childCount) + 1; i < providers.Length && w < count; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					var provider = providers[i];
-					res[w++] = valueNodeFactory.Create(context, provider.Name, provider, null, options, provider.Expression, provider.ImageName, provider.ValueText);
+					res[w++] = valueNodeFactory.Create(evalInfo, provider.Name, provider, null, options, provider.Expression, provider.ImageName, provider.ValueText);
 				}
 				if (w != res.Length)
 					throw new InvalidOperationException();
 				return res;
 			}
 			catch {
-				context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				throw;
 			}
 		}

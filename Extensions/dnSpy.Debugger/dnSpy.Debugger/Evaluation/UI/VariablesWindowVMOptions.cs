@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
@@ -35,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 	abstract class VariablesWindowValueNodesProvider {
 		public virtual event EventHandler NodesChanged { add { } remove { } }
-		public abstract ValueNodesProviderResult GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
+		public abstract ValueNodesProviderResult GetNodes(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgEvaluationOptions options, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
 		public virtual DbgValueNodeInfo[] GetDefaultNodes() => Array.Empty<DbgValueNodeInfo>();
 
 		/// <summary>

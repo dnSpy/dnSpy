@@ -19,25 +19,19 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	readonly struct ReflectionAssemblyLoader {
-		readonly DbgEvaluationContext context;
-		readonly DbgStackFrame frame;
+		readonly DbgEvaluationInfo evalInfo;
 		readonly DmdAppDomain appDomain;
-		readonly CancellationToken cancellationToken;
 
-		public ReflectionAssemblyLoader(DbgEvaluationContext context, DbgStackFrame frame, DmdAppDomain appDomain, CancellationToken cancellationToken) {
-			this.context = context;
-			this.frame = frame;
+		public ReflectionAssemblyLoader(DbgEvaluationInfo evalInfo, DmdAppDomain appDomain) {
+			this.evalInfo = evalInfo;
 			this.appDomain = appDomain;
-			this.cancellationToken = cancellationToken;
 		}
 
 		public bool TryLoadAssembly(string assemblyFullName) => Try_Assembly_Load_String(assemblyFullName);
@@ -53,8 +47,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if ((object)loadMethod == null)
 				return false;
 
-			var runtime = context.Runtime.GetDotNetRuntime();
-			var res = runtime.Call(context, frame, null, loadMethod, new object[] { assemblyFullName }, DbgDotNetInvokeOptions.None, cancellationToken);
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
+			var res = runtime.Call(evalInfo, null, loadMethod, new object[] { assemblyFullName }, DbgDotNetInvokeOptions.None);
 			res.Value?.Dispose();
 			return res.IsNormalResult;
 		}

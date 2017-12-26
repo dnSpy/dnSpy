@@ -20,8 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -61,9 +59,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				indexes = new int[dimensionInfos.Length];
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => arrayCount;
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => arrayCount;
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			DbgDotNetValue newValue = null;
 			try {
@@ -71,7 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var elementType = valueInfo.Value.Type.GetElementType();
 				var castType = NeedCast(slotType, valueInfo.Value.Type) ? valueInfo.Value.Type : null;
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 
 					string expression;
 					uint arrayIndex = (uint)index + (uint)i;
@@ -96,20 +94,20 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					var name = output.CreateAndReset();
 					DbgDotNetValueNode newNode;
 					if (newValue == null)
-						newNode = valueNodeFactory.CreateError(context, frame, name, PredefinedEvaluationErrorMessages.InternalDebuggerError, expression, false, cancellationToken);
+						newNode = valueNodeFactory.CreateError(evalInfo, name, PredefinedEvaluationErrorMessages.InternalDebuggerError, expression, false);
 					else {
 						newNode = null;
 						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Type)) {
-							var info = CSharpDynamicPropertyHelper.GetRealValue(context, frame, newValue, cancellationToken);
+							var info = CSharpDynamicPropertyHelper.GetRealValue(evalInfo, newValue);
 							if (info.name != null) {
 								newValue.Dispose();
 								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.DebugViewPropertyName, info.name));
 								expression = valueNodeFactory.GetFieldExpression(expression, info.valueField.Name, null, false);
-								newNode = valueNodeFactory.Create(context, frame, name, info.value, null, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false, cancellationToken);
+								newNode = valueNodeFactory.Create(evalInfo, name, info.value, null, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false);
 							}
 						}
 						if (newNode == null)
-							newNode = valueNodeFactory.Create(context, frame, name, newValue, null, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false, cancellationToken);
+							newNode = valueNodeFactory.Create(evalInfo, name, newValue, null, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false);
 					}
 					newValue = null;
 					res[i] = newNode;
@@ -117,7 +115,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				ObjectCache.Free(ref output);
 			}
 			catch {
-				context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a != null));
 				newValue?.Dispose();
 				throw;
 			}

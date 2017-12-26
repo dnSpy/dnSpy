@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -28,31 +26,21 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		readonly IDbgDotNetRuntime runtime;
 		public DefaultArgumentsProviderImpl(IDbgDotNetRuntime runtime) => this.runtime = runtime;
 
-		DbgEvaluationContext context;
-		DbgStackFrame frame;
-		CancellationToken cancellationToken;
+		DbgEvaluationInfo evalInfo;
 
-		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken) {
-			this.context = context;
-			this.frame = frame;
-			this.cancellationToken = cancellationToken;
-		}
+		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body) => this.evalInfo = evalInfo;
 
 		public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) =>
-			runtime.GetParameterValueAddress(context, frame, (uint)index, targetType, cancellationToken);
+			runtime.GetParameterValueAddress(evalInfo, (uint)index, targetType);
 
 		public override DbgDotNetValueResult GetVariable(int index) =>
-			runtime.GetParameterValue(context, frame, (uint)index, cancellationToken);
+			runtime.GetParameterValue(evalInfo, (uint)index);
 
 		public override string SetVariable(int index, DmdType targetType, object value) =>
-			runtime.SetParameterValue(context, frame, (uint)index, targetType, value, cancellationToken);
+			runtime.SetParameterValue(evalInfo, (uint)index, targetType, value);
 
 		public override bool CanDispose(DbgDotNetValue value) => true;
 
-		public override void Clear() {
-			context = null;
-			frame = null;
-			cancellationToken = default;
-		}
+		public override void Clear() => evalInfo = null;
 	}
 }

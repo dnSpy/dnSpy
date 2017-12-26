@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -28,9 +26,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	static class DbgDotNetEngineValueNodeFactoryExtensions {
 		internal static readonly DbgDotNetText errorName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, "<error>"));
 
-		public static DbgEngineValueNode[] CreateInternalErrorResult(this DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public static DbgEngineValueNode[] CreateInternalErrorResult(this DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo) {
 			return new DbgEngineValueNode[] {
-				valueNodeFactory.CreateError(context, frame, errorName, PredefinedEvaluationErrorMessages.InternalDebuggerError, "<expression>", false, cancellationToken),
+				valueNodeFactory.CreateError(evalInfo, errorName, PredefinedEvaluationErrorMessages.InternalDebuggerError, "<expression>", false),
 			};
 		}
 	}

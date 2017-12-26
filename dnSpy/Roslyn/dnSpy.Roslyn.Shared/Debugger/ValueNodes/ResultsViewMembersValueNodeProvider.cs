@@ -21,7 +21,6 @@ using System;
 using System.IO;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -61,7 +60,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public volatile int Counter;
 		}
 
-		protected override string InitializeCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		protected override string InitializeCore(DbgEvaluationInfo evalInfo) {
 			if ((evalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
 				return PredefinedEvaluationErrorMessages.FuncEvalDisabled;
 
@@ -69,12 +68,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if ((object)proxyCtor == null) {
 				var loadState = enumerableType.AppDomain.GetOrCreateData<ForceLoadAssemblyState>();
 				if (Interlocked.Exchange(ref loadState.Counter, 1) == 0) {
-					var loader = new ReflectionAssemblyLoader(context, frame, enumerableType.AppDomain, cancellationToken);
-					if (loader.TryLoadAssembly(GetRequiredAssemblyFullName(context.Runtime)))
+					var loader = new ReflectionAssemblyLoader(evalInfo, enumerableType.AppDomain);
+					if (loader.TryLoadAssembly(GetRequiredAssemblyFullName(evalInfo.Runtime)))
 						proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);
 				}
 				if ((object)proxyCtor == null) {
-					var asmFilename = GetRequiredAssemblyFilename(context.Runtime);
+					var asmFilename = GetRequiredAssemblyFilename(evalInfo.Runtime);
 					var asm = enumerableType.AppDomain.GetAssembly(Path.GetFileNameWithoutExtension(asmFilename));
 					if (asm == null)
 						return string.Format(dnSpy_Roslyn_Shared_Resources.SystemCoreDllNotLoaded, asmFilename);
@@ -82,8 +81,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				}
 			}
 
-			var runtime = context.Runtime.GetDotNetRuntime();
-			var proxyTypeResult = runtime.CreateInstance(context, frame, proxyCtor, new[] { instanceValue }, DbgDotNetInvokeOptions.None, cancellationToken);
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
+			var proxyTypeResult = runtime.CreateInstance(evalInfo, proxyCtor, new[] { instanceValue }, DbgDotNetInvokeOptions.None);
 			if (proxyTypeResult.HasError)
 				return proxyTypeResult.ErrorMessage;
 
@@ -125,11 +124,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) =>
-			CreateValueNode(context, frame, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, cancellationToken);
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options) =>
+			CreateValueNode(evalInfo, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression);
 
-		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationContext context, DbgStackFrame frame, in DbgDotNetValueResult valueResult, CancellationToken cancellationToken) {
-			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(context, frame, Expression, valueResult, cancellationToken);
+		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, in DbgDotNetValueResult valueResult) {
+			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);
 			if (noResultsNode != null) {
 				valueResult.Value?.Dispose();
 				return (noResultsNode, false);

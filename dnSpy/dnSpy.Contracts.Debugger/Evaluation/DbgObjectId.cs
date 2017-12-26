@@ -17,9 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
-
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// References a value in the debugged process
@@ -43,11 +40,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Creates a new value. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		public abstract DbgValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken = default);
+		public abstract DbgValue GetValue(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
 		/// Removes and closes the object id

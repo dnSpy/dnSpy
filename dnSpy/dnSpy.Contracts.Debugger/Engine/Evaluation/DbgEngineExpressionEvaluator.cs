@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
@@ -37,26 +35,22 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Evaluates an expression. It blocks the current thread until the evaluation is complete.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Expression to evaluate</param>
 		/// <param name="options">Options</param>
-		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="context"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="evalInfo"/>'s context</param>
 		/// <returns></returns>
-		public abstract DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken);
+		public abstract DbgEngineEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state);
 
 		/// <summary>
 		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Target expression (lhs)</param>
 		/// <param name="valueExpression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineEEAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options);
 	}
 
 	/// <summary>

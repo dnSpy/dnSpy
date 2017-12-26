@@ -19,9 +19,7 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -39,79 +37,79 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 		}
 
-		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNode[] Create(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return CreateCore(context, frame, expressions, cancellationToken);
-			return Create(dispatcher, context, frame, expressions, cancellationToken);
+				return CreateCore(evalInfo, expressions);
+			return Create(dispatcher, evalInfo, expressions);
 
-			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgExpressionEvaluationInfo[] expressions2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => CreateCore(context2, frame2, expressions2, cancellationToken2));
+			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgExpressionEvaluationInfo[] expressions2) =>
+				dispatcher2.InvokeRethrow(() => CreateCore(evalInfo2, expressions2));
 		}
 
-		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] CreateCore(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions) {
 			var res = expressions.Length == 0 ? Array.Empty<DbgEngineValueNode>() : new DbgEngineValueNode[expressions.Length];
 			try {
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					ref var info = ref expressions[i];
-					var evalRes = expressionEvaluator.EvaluateImpl(context, frame, info.Expression, info.Options, info.ExpressionEvaluatorState, cancellationToken);
+					var evalRes = expressionEvaluator.EvaluateImpl(evalInfo, info.Expression, info.Options, info.ExpressionEvaluatorState);
 					bool causesSideEffects = (evalRes.Flags & DbgEvaluationResultFlags.SideEffects) != 0;
 					DbgEngineValueNode newNode;
 					if (evalRes.Error != null)
-						newNode = valueNodeFactory.CreateError(context, frame, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects, cancellationToken);
+						newNode = valueNodeFactory.CreateError(evalInfo, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects);
 					else {
 						bool isReadOnly = (evalRes.Flags & DbgEvaluationResultFlags.ReadOnly) != 0;
-						newNode = valueNodeFactory.Create(context, frame, evalRes.Name, evalRes.Value, evalRes.FormatSpecifiers, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type, cancellationToken);
+						newNode = valueNodeFactory.Create(evalInfo, evalRes.Name, evalRes.Value, evalRes.FormatSpecifiers, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type);
 					}
 					res[i] = newNode;
 				}
 			}
 			catch (Exception ex) {
-				context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
-				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
+				return valueNodeFactory.CreateInternalErrorResult(evalInfo);
 			}
 			return res;
 		}
 
-		public override DbgEngineValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNode[] Create(DbgEvaluationInfo evalInfo, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return CreateCore(context, frame, objectIds, options, cancellationToken);
-			return Create(dispatcher, context, frame, objectIds, options, cancellationToken);
+				return CreateCore(evalInfo, objectIds, options);
+			return Create(dispatcher, evalInfo, objectIds, options);
 
-			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgEngineObjectId[] objectIds2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => CreateCore(context2, frame2, objectIds2, options2, cancellationToken2));
+			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgEngineObjectId[] objectIds2, DbgValueNodeEvaluationOptions options2) =>
+				dispatcher2.InvokeRethrow(() => CreateCore(evalInfo2, objectIds2, options2));
 		}
 
-		DbgEngineValueNode[] CreateCore(DbgEvaluationContext context, DbgStackFrame frame, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] CreateCore(DbgEvaluationInfo evalInfo, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options) {
 			DbgDotNetValue objectIdValue = null;
 			var res = new DbgEngineValueNode[objectIds.Length];
 			try {
 				var output = ObjectCache.AllocDotNetTextOutput();
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					var objectId = (DbgEngineObjectIdImpl)objectIds[i];
 					var dnObjectId = objectId.DotNetObjectId;
-					objectIdValue = objectId.Runtime.GetValue(context, frame, dnObjectId, cancellationToken);
+					objectIdValue = objectId.Runtime.GetValue(evalInfo, dnObjectId);
 
-					formatter.FormatObjectIdName(context, output, dnObjectId.Id);
+					formatter.FormatObjectIdName(evalInfo.Context, output, dnObjectId.Id);
 					var name = output.CreateAndReset();
 					var expression = name.ToString();
 
-					res[i] = valueNodeFactory.Create(context, frame, name, objectIdValue, null, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type, cancellationToken);
+					res[i] = valueNodeFactory.Create(evalInfo, name, objectIdValue, null, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type);
 				}
 				ObjectCache.Free(ref output);
 				return res;
 			}
 			catch (Exception ex) {
-				context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				objectIdValue?.Dispose();
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
-				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
+				return valueNodeFactory.CreateInternalErrorResult(evalInfo);
 			}
 		}
 	}

@@ -20,9 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -32,12 +30,11 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 	readonly struct CSharpStackFrameFormatter {
 		readonly ITextColorWriter output;
-		readonly DbgEvaluationContext context;
+		readonly DbgEvaluationInfo evalInfo;
 		readonly LanguageFormatter languageFormatter;
 		readonly DbgStackFrameFormatterOptions options;
 		readonly ValueFormatterOptions valueOptions;
 		readonly CultureInfo cultureInfo;
-		readonly CancellationToken cancellationToken;
 
 		const string Keyword_this = "this";
 		const string Keyword_params = "params";
@@ -100,14 +97,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			{ "op_UnaryPlus", "operator +".Split(' ') },
 		};
 
-		public CSharpStackFrameFormatter(ITextColorWriter output, DbgEvaluationContext context, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public CSharpStackFrameFormatter(ITextColorWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
-			this.context = context ?? throw new ArgumentNullException(nameof(context));
+			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
 			this.options = options;
 			this.valueOptions = valueOptions;
 			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
-			this.cancellationToken = cancellationToken;
 		}
 
 		void OutputWrite(string s, object color) => output.Write(color, s);
@@ -165,55 +161,55 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			OutputWrite(CommentBegin + tokenString + CommentEnd, BoxedTextColor.Comment);
 		}
 
-		bool NeedThreadSwitch(DbgStackFrame frame) {
+		bool NeedThreadSwitch() {
 			if (!ParameterValues)
 				return false;
-			if (frame.IsClosed)
+			if (evalInfo.Frame.IsClosed)
 				return false;
-			var runtime = frame.Runtime.GetDotNetRuntime();
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			if (runtime.Dispatcher.CheckAccess())
 				return false;
-			var sig = runtime.GetFrameMethod(context, frame, cancellationToken)?.GetMethodSignature();
+			var sig = runtime.GetFrameMethod(evalInfo)?.GetMethodSignature();
 			return sig != null && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
 		}
 
-		public void Format(DbgStackFrame frame) {
+		public void Format() {
 			// Minimize thread switches by switching to the debug engine thread
-			if (NeedThreadSwitch(frame))
-				FormatInvoke(frame);
+			if (NeedThreadSwitch())
+				FormatInvoke();
 			else
-				FormatCore(frame);
+				FormatCore();
 		}
 
-		void FormatInvoke(DbgStackFrame frame2) {
+		void FormatInvoke() {
 			var @this = this;
-			context.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => @this.FormatCore(frame2));
+			evalInfo.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => @this.FormatCore());
 		}
 
-		void FormatCore(DbgStackFrame frame) {
+		void FormatCore() {
 			if (ModuleNames) {
-				OutputWrite(frame.Module?.Name ?? "???", BoxedTextColor.AssemblyModule);
+				OutputWrite(evalInfo.Frame.Module?.Name ?? "???", BoxedTextColor.AssemblyModule);
 				OutputWrite("!", BoxedTextColor.Operator);
 			}
 
-			var runtime = context.Runtime.GetDotNetRuntime();
-			var method = runtime.GetFrameMethod(context, frame, cancellationToken);
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
+			var method = runtime.GetFrameMethod(evalInfo);
 			if ((object)method == null)
 				OutputWrite("???", BoxedTextColor.Error);
 			else {
 				var propInfo = TypeFormatterUtils.TryGetProperty(method);
 				if (propInfo.kind != AccessorKind.None) {
-					Format(frame, method, propInfo.property, propInfo.kind);
+					Format(method, propInfo.property, propInfo.kind);
 					return;
 				}
 
 				var eventInfo = TypeFormatterUtils.TryGetEvent(method);
 				if (eventInfo.kind != AccessorKind.None) {
-					Format(frame, method, eventInfo.@event, eventInfo.kind);
+					Format(method, eventInfo.@event, eventInfo.kind);
 					return;
 				}
 
-				Format(frame, method);
+				Format(method);
 			}
 		}
 
@@ -230,10 +226,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			OutputWrite(GenericsParenClose, BoxedTextColor.Punctuation);
 		}
 
-		void WriteMethodParameterList(DbgStackFrame frame, DmdMethodBase method, string openParen, string closeParen) =>
-			WriteMethodParameterListCore(frame, method, GetAllMethodParameterTypes(method.GetMethodSignature()), openParen, closeParen, ParameterTypes, ParameterNames, ParameterValues);
+		void WriteMethodParameterList(DmdMethodBase method, string openParen, string closeParen) =>
+			WriteMethodParameterListCore(method, GetAllMethodParameterTypes(method.GetMethodSignature()), openParen, closeParen, ParameterTypes, ParameterNames, ParameterValues);
 
-		void WriteMethodParameterListCore(DbgStackFrame frame, DmdMethodBase method, IList<DmdType> parameterTypes, string openParen, string closeParen, bool showParameterTypes, bool showParameterNames, bool showParameterValues) {
+		void WriteMethodParameterListCore(DmdMethodBase method, IList<DmdType> parameterTypes, string openParen, string closeParen, bool showParameterTypes, bool showParameterNames, bool showParameterValues) {
 			if (!showParameterTypes && !showParameterNames && !showParameterValues)
 				return;
 
@@ -272,7 +268,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);
 				}
 				if (showParameterValues)
-					needSpace = FormatValue(frame, (uint)(baseIndex + i), needSpace);
+					needSpace = FormatValue((uint)(baseIndex + i), needSpace);
 			}
 
 			OutputWrite(closeParen, BoxedTextColor.Punctuation);
@@ -298,12 +294,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			}
 		}
 
-		bool FormatValue(DbgStackFrame frame, uint index, bool needSpace) {
-			var runtime = context.Runtime.GetDotNetRuntime();
+		bool FormatValue(uint index, bool needSpace) {
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult parameterValue = default;
 			DbgDotNetValue dereferencedValue = null;
 			try {
-				parameterValue = runtime.GetParameterValue(context, frame, index, cancellationToken);
+				parameterValue = runtime.GetParameterValue(evalInfo, index);
 				if (parameterValue.IsNormalResult) {
 					if (needSpace) {
 						WriteSpace();
@@ -312,7 +308,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 					}
 					needSpace = true;
 
-					var valueFormatter = new CSharpValueFormatter(output, context, frame, languageFormatter, valueOptions, cultureInfo, cancellationToken);
+					var valueFormatter = new CSharpValueFormatter(output, evalInfo, languageFormatter, valueOptions, cultureInfo);
 					var value = parameterValue.Value;
 					if (value.Type.IsByRef)
 						value = dereferencedValue = value.LoadIndirect();
@@ -338,7 +334,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			return list;
 		}
 
-		void WriteOffset(DbgStackFrame frame) {
+		void WriteOffset() {
 			if (!ShowIP)
 				return;
 			WriteSpace();
@@ -346,18 +342,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			OutputWrite("IL", BoxedTextColor.Text);
 			OutputWrite("=", BoxedTextColor.Operator);
 			var primitiveFormatter = new CSharpPrimitiveValueFormatter(output, GetValueFormatterOptions() & ~ValueFormatterOptions.Decimal, cultureInfo);
-			if (frame.FunctionOffset <= ushort.MaxValue)
-				primitiveFormatter.FormatUInt16((ushort)frame.FunctionOffset);
+			if (evalInfo.Frame.FunctionOffset <= ushort.MaxValue)
+				primitiveFormatter.FormatUInt16((ushort)evalInfo.Frame.FunctionOffset);
 			else
-				primitiveFormatter.FormatUInt32(frame.FunctionOffset);
+				primitiveFormatter.FormatUInt32(evalInfo.Frame.FunctionOffset);
 
-			if (frame.Location is IDbgDotNetCodeLocation loc) {
+			if (evalInfo.Frame.Location is IDbgDotNetCodeLocation loc) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
 					OutputWrite("Native", BoxedTextColor.Text);
 					OutputWrite("=", BoxedTextColor.Operator);
-					if (frame.Runtime.Process.PointerSize == 4)
+					if (evalInfo.Runtime.Process.PointerSize == 4)
 						primitiveFormatter.FormatUInt32((uint)addr.Address);
 					else
 						primitiveFormatter.FormatUInt64(addr.Address);
@@ -401,7 +397,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			OutputWrite(keyword, BoxedTextColor.Keyword);
 		}
 
-		void Format(DbgStackFrame frame, DmdMethodBase method, DmdPropertyInfo property, AccessorKind accessorKind) {
+		void Format(DmdMethodBase method, DmdPropertyInfo property, AccessorKind accessorKind) {
 			if (ReturnTypes) {
 				FormatReturnType(property.PropertyType, TypeFormatterUtils.IsReadOnlyProperty(property));
 				WriteSpace();
@@ -413,7 +409,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			if (property.GetIndexParameters().Count != 0) {
 				OutputWrite(Keyword_this, BoxedTextColor.Keyword);
 				WriteToken(property);
-				WriteMethodParameterListCore(frame, method, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose, showParameterTypes: true, showParameterNames: false, showParameterValues: false);
+				WriteMethodParameterListCore(method, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose, showParameterTypes: true, showParameterNames: false, showParameterValues: false);
 			}
 			else {
 				WriteIdentifier(property.Name, TypeFormatterUtils.GetColor(property));
@@ -422,11 +418,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			WriteAccessor(accessorKind);
 			WriteToken(method);
 			WriteGenericArguments(method);
-			WriteMethodParameterList(frame, method, MethodParenOpen, MethodParenClose);
-			WriteOffset(frame);
+			WriteMethodParameterList(method, MethodParenOpen, MethodParenClose);
+			WriteOffset();
 		}
 
-		void Format(DbgStackFrame frame, DmdMethodBase method, DmdEventInfo @event, AccessorKind accessorKind) {
+		void Format(DmdMethodBase method, DmdEventInfo @event, AccessorKind accessorKind) {
 			if (DeclaringTypes) {
 				FormatType(@event.DeclaringType);
 				WritePeriod();
@@ -436,11 +432,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			WriteAccessor(accessorKind);
 			WriteToken(method);
 			WriteGenericArguments(method);
-			WriteMethodParameterList(frame, method, MethodParenOpen, MethodParenClose);
-			WriteOffset(frame);
+			WriteMethodParameterList(method, MethodParenOpen, MethodParenClose);
+			WriteOffset();
 		}
 
-		void Format(DbgStackFrame frame, DmdMethodBase method) {
+		void Format(DmdMethodBase method) {
 			if (StateMachineUtils.TryGetKickoffMethod(method, out var kickoffMethod))
 				method = kickoffMethod;
 
@@ -485,8 +481,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				WriteToken(method);
 
 			WriteGenericArguments(method);
-			WriteMethodParameterList(frame, method, MethodParenOpen, MethodParenClose);
-			WriteOffset(frame);
+			WriteMethodParameterList(method, MethodParenOpen, MethodParenClose);
+			WriteOffset();
 		}
 
 		static string[] TryGetOperatorInfo(string name) {

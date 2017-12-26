@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -36,20 +34,16 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineLocalsValueNodeProvider = engineLocalsValueNodeProvider ?? throw new ArgumentNullException(nameof(engineLocalsValueNodeProvider));
 		}
 
-		public override DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions) {
+			if (evalInfo == null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
+			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			return DbgValueNodeUtils.ToLocalsValueNodeInfoArray(Language, frame.Runtime, engineLocalsValueNodeProvider.GetNodes(context, frame, options, localsOptions, cancellationToken));
+			return DbgValueNodeUtils.ToLocalsValueNodeInfoArray(Language, evalInfo.Frame.Runtime, engineLocalsValueNodeProvider.GetNodes(evalInfo, options, localsOptions));
 		}
 	}
 }

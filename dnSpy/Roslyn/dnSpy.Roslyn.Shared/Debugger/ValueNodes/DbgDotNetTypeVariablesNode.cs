@@ -20,9 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -55,16 +53,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.typeVariableInfos = typeVariableInfos ?? throw new ArgumentNullException(nameof(typeVariableInfos));
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => (uint)typeVariableInfos.Length;
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => (uint)typeVariableInfos.Length;
 
-		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			var res = new DbgDotNetValueNode[count];
 			try {
 				for (int i = 0, j = (int)index; i < count; i++, j++)
 					res[i] = new TypeVariableValueNode(valueNodeFactory, typeVariableInfos[j]);
 			}
 			catch {
-				context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a != null));
 				throw;
 			}
 			return res;
@@ -95,8 +93,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Name = new DbgDotNetText(new DbgDotNetTextPart(isMethodParam ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter, valueNodeFactory.EscapeIdentifier(paramType.Name ?? string.Empty)));
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
-		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgDotNetValueNode>();
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => 0;
+		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) => Array.Empty<DbgDotNetValueNode>();
 		protected override void CloseCore(DbgDispatcher dispatcher) => Value.Dispose();
 	}
 

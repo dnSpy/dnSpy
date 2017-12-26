@@ -20,9 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -50,16 +48,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			this.tupleFields = tupleFields;
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => (uint)tupleFields.Length;
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => (uint)tupleFields.Length;
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			var valueResults = new List<DbgDotNetValueResult>();
 			DbgDotNetValueResult valueResult = default;
 			try {
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					ref var info = ref tupleFields[(int)index + i];
 					var castType = NeedCast(slotType, nodeInfo.Value.Type) ? nodeInfo.Value.Type : null;
 					var expression = valueNodeFactory.GetFieldExpression(nodeInfo.Expression, info.DefaultName, castType, addParens);
@@ -71,8 +69,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					string errorMessage = null;
 					bool valueIsException = false;
 					for (int j = 0; j < info.Fields.Length; j++) {
-						cancellationToken.ThrowIfCancellationRequested();
-						valueResult = runtime.LoadField(context, frame, objValue, info.Fields[j], cancellationToken);
+						evalInfo.CancellationToken.ThrowIfCancellationRequested();
+						valueResult = runtime.LoadField(evalInfo, objValue, info.Fields[j]);
 						objValue = valueResult.Value;
 						if (valueResult.HasError) {
 							valueResults.Add(valueResult);
@@ -93,11 +91,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceField, info.DefaultName));
 					DbgDotNetValueNode newNode;
 					if (errorMessage != null)
-						newNode = valueNodeFactory.CreateError(context, frame, name, errorMessage, expression, false, cancellationToken);
+						newNode = valueNodeFactory.CreateError(evalInfo, name, errorMessage, expression, false);
 					else if (valueIsException)
-						newNode = valueNodeFactory.Create(context, frame, name, objValue, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
+						newNode = valueNodeFactory.Create(evalInfo, name, objValue, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
 					else
-						newNode = valueNodeFactory.Create(context, frame, name, objValue, null, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
+						newNode = valueNodeFactory.Create(evalInfo, name, objValue, null, options, expression, imageName, isReadOnly, false, expectedType, false);
 
 					foreach (var vr in valueResults)
 						vr.Value?.Dispose();
@@ -106,7 +104,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				}
 			}
 			catch {
-				context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				foreach (var vr in valueResults)
 					vr.Value?.Dispose();
 				valueResult.Value?.Dispose();

@@ -18,8 +18,6 @@
 */
 
 using System.Globalization;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 
@@ -63,36 +61,31 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Formats a stack frame
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Stack frame options</param>
 		/// <param name="valueOptions">Value option</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken);
+		public abstract void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo);
 
 		/// <summary>
 		/// Formats a value
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken);
+		public abstract void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo);
 
 		/// <summary>
 		/// Formats a value's type
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void FormatType(DbgEvaluationContext context, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken);
+		public abstract void FormatType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo);
 	}
 }

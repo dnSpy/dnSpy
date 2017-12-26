@@ -352,7 +352,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					CancellationToken cancellationToken = default;
 					const CultureInfo cultureInfo = null;
 					context = language.CreateContext(frame, ctxOptions);
-					language.Formatter.Format(context, frame, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo, cancellationToken);
+					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
+					language.Formatter.Format(evalInfo, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo);
 					return Context.ClassifiedTextWriter.GetClassifiedText();
 				}
 			}

@@ -20,9 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -36,15 +34,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 	sealed class MonoTypeLoaderImpl : MonoTypeLoader {
 		readonly DbgEngineImpl engine;
-		readonly DbgEvaluationContext context;
-		readonly DbgStackFrame frame;
-		readonly CancellationToken cancellationToken;
+		readonly DbgEvaluationInfo evalInfo;
 
-		public MonoTypeLoaderImpl(DbgEngineImpl engine, DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public MonoTypeLoaderImpl(DbgEngineImpl engine, DbgEvaluationInfo evalInfo) {
 			this.engine = engine;
-			this.context = context;
-			this.frame = frame;
-			this.cancellationToken = cancellationToken;
+			this.evalInfo = evalInfo;
 		}
 
 		sealed class LoaderState {
@@ -54,10 +48,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public override TypeMirror Load(AssemblyMirror assembly, string typeFullName) {
-			var res = engine.CheckFuncEval(context);
+			var res = engine.CheckFuncEval(evalInfo.Context);
 			if (res != null)
 				return null;
-			var appDomain = frame.AppDomain;
+			var appDomain = evalInfo.Frame.AppDomain;
 			if (appDomain == null)
 				return null;
 			var state = appDomain.GetOrCreateData<LoaderState>();
@@ -92,11 +86,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return null;
 
 				asmTypeValue = engine.CreateDotNetValue_MonoDebug(reflectionAppDomain, assembly.GetAssemblyObject(), null);
-				result1 = runtime.Call(context, frame, asmTypeValue, state.Method_System_Reflection_Assembly_GetType_String,
-					new[] { typeFullName }, DbgDotNetInvokeOptions.None, cancellationToken);
+				result1 = runtime.Call(evalInfo, asmTypeValue, state.Method_System_Reflection_Assembly_GetType_String,
+					new[] { typeFullName }, DbgDotNetInvokeOptions.None);
 				if (result1.IsNormalResult) {
-					result2 = runtime.Call(context, frame, null, state.Method_System_Array_CreateInstance_Type_Int32,
-						new object[2] { result1.Value, 0 }, DbgDotNetInvokeOptions.None, cancellationToken);
+					result2 = runtime.Call(evalInfo, null, state.Method_System_Array_CreateInstance_Type_Int32,
+						new object[2] { result1.Value, 0 }, DbgDotNetInvokeOptions.None);
 					if (result2.IsNormalResult) {
 						var arrayType = result2.Value.Type;
 						Debug.Assert(arrayType.IsSZArray);

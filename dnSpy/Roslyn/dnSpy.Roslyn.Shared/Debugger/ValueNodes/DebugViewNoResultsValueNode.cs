@@ -20,9 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
@@ -54,7 +52,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			noResultsName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, emptyMessage));
 		}
 
-		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationContext context, DbgStackFrame frame, string expression, in DbgDotNetValueResult valueResult, CancellationToken cancellationToken) {
+		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationInfo evalInfo, string expression, in DbgDotNetValueResult valueResult) {
 			DbgDotNetValueResult getterResult = default;
 			try {
 				if (!valueResult.ValueIsException)
@@ -65,8 +63,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				if ((object)emptyGetter == null)
 					return null;
 
-				var runtime = context.Runtime.GetDotNetRuntime();
-				getterResult = runtime.Call(context, frame, valueResult.Value, emptyGetter, Array.Empty<object>(), DbgDotNetInvokeOptions.None, cancellationToken);
+				var runtime = evalInfo.Runtime.GetDotNetRuntime();
+				getterResult = runtime.Call(evalInfo, valueResult.Value, emptyGetter, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
 				if (!getterResult.IsNormalResult)
 					return null;
 				var rawValue = getterResult.Value.GetRawValue();
@@ -79,13 +77,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public override bool FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			noResultsName.WriteTo(output);
 			return true;
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => 0;
-		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) => Array.Empty<DbgDotNetValueNode>();
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => 0;
+		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) => Array.Empty<DbgDotNetValueNode>();
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}
 }

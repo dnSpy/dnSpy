@@ -174,7 +174,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
 				var cancellationToken = CancellationToken.None;
 				var state = GetState(boundBreakpoint, language, frame, condition, cancellationToken);
-				var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState, cancellationToken);
+				var evalInfo = new DbgEvaluationInfo(state.Context, frame, cancellationToken);
+				var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState);
 				if (evalRes.Error != null)
 					return new DbgCodeBreakpointCheckResult(evalRes.Error);
 				value = evalRes.Value;
@@ -209,7 +210,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return new DbgCodeBreakpointCheckResult(dnSpy_Debugger_Resources.BreakpointExpressionMustBeABooleanExpression);
 
 				case DbgCodeBreakpointConditionKind.WhenChanged:
-					var newValue = SavedValue.TryCreateValue(value, GetType(state.Context, language, value, cancellationToken));
+					var newValue = SavedValue.TryCreateValue(value, GetType(evalInfo, language, value));
 					if (newValue == null)
 						return new DbgCodeBreakpointCheckResult(true);
 					bool shouldBreak = !(state.SavedValue?.Equals(newValue) ?? true);
@@ -228,12 +229,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		string GetType(DbgEvaluationContext context, DbgLanguage language, DbgValue value, CancellationToken cancellationToken) {
+		string GetType(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgValue value) {
 			const DbgValueFormatterTypeOptions options = DbgValueFormatterTypeOptions.IntrinsicTypeKeywords | DbgValueFormatterTypeOptions.Namespaces | DbgValueFormatterTypeOptions.Tokens;
 			const CultureInfo cultureInfo = null;
 			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
-			language.Formatter.FormatType(context, output, value, options, cultureInfo, cancellationToken);
+			language.Formatter.FormatType(evalInfo, output, value, options, cultureInfo);
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 

@@ -18,8 +18,6 @@
 */
 
 using System.Globalization;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -29,13 +27,13 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicFormatter : LanguageFormatter {
-		public override void FormatType(DbgEvaluationContext context, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) =>
+		public override void FormatType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) =>
 			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions(), cultureInfo).Format(type, value);
 
-		public override void FormatValue(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrame frame, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
-			new VisualBasicValueFormatter(output, context, frame, this, options.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(value);
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) =>
+			new VisualBasicValueFormatter(output, evalInfo, this, options.ToValueFormatterOptions(), cultureInfo).Format(value);
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
-			new VisualBasicStackFrameFormatter(output, context, this, options, valueOptions.ToValueFormatterOptions(), cultureInfo, cancellationToken).Format(frame);
+		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+			new VisualBasicStackFrameFormatter(output, evalInfo, this, options, valueOptions.ToValueFormatterOptions(), cultureInfo).Format();
 	}
 }

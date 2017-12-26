@@ -25,7 +25,6 @@ using System.Globalization;
 using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -161,12 +160,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		DbgValueNodeInfo EvaluateExpression(DbgEvaluationContext context, string expression) {
+		DbgValueNodeInfo EvaluateExpression(DbgEvaluationInfo evalInfo, string expression) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
 				return new DbgValueNodeInfo(expression, expression, dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
-			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.EvaluationOptions, context.Language.ExpressionEvaluator.CreateExpressionEvaluatorState());
+			var res = evalInfo.Context.Language.ValueNodeFactory.Create(evalInfo, expression, valueNodesContext.ValueNodeEvaluationOptions,
+				valueNodesContext.EvaluationOptions, evalInfo.Context.Language.ExpressionEvaluator.CreateExpressionEvaluatorState());
 			return new DbgValueNodeInfo(res.ValueNode, res.CausesSideEffects);
 		}
 
@@ -189,13 +189,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			refreshNameFields = false;
 			Guid? runtimeKindGuid;
 			DbgValueNodeInfo[] nodes;
-			DbgEvaluationContext evalContext;
-			DbgStackFrame frame;
+			DbgEvaluationInfo evalInfo;
 			DbgLanguage language;
 			bool forceRecreateAllNodes;
 			if (isOpen) {
 				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions);
-				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
+				evalInfo = valueNodesProvider.TryGetEvaluationInfo();
 				runtimeKindGuid = valueNodesProvider.Language?.RuntimeKindGuid ?? lastRuntimeKindGuid;
 				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
 				if (nodeInfo.FrameClosed)
@@ -205,16 +204,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				forceRecreateAllNodes = nodeInfo.RecreateAllNodes;
 			}
 			else {
-				evalContext = null;
-				frame = null;
+				evalInfo = null;
 				nodes = Array.Empty<DbgValueNodeInfo>();
 				runtimeKindGuid = null;
 				language = null;
 				forceRecreateAllNodes = false;
 			}
-			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext, frame);
-			valueNodesContext.EvaluationContext = evalContext;
-			valueNodesContext.StackFrame = frame;
+			valueNodesContext.ValueNodeReader.SetEvaluationInfo(evalInfo);
+			valueNodesContext.EvaluationInfo = evalInfo;
 
 #if DEBUG
 			var origEditNode = TryGetEditNode();

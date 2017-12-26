@@ -18,9 +18,7 @@
 */
 
 using System.Diagnostics;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -41,7 +39,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			public DmdFieldInfo ValueField;
 		}
 
-		public static (string name, DbgDotNetValue value, DmdFieldInfo valueField) GetRealValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue propValue, CancellationToken cancellationToken) {
+		public static (string name, DbgDotNetValue value, DmdFieldInfo valueField) GetRealValue(DbgEvaluationInfo evalInfo, DbgDotNetValue propValue) {
 			var type = propValue.Type;
 			Debug.Assert(IsCSharpDynamicProperty(type));
 			var state = type.GetOrCreateData<CSharpDynamicPropertyState>();
@@ -57,11 +55,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			DbgDotNetValueResult valueValue = default;
 			bool error = true;
 			try {
-				var runtime = context.Runtime.GetDotNetRuntime();
-				nameValue = runtime.LoadField(context, frame, propValue, state.NameField, cancellationToken);
+				var runtime = evalInfo.Runtime.GetDotNetRuntime();
+				nameValue = runtime.LoadField(evalInfo, propValue, state.NameField);
 				if (!nameValue.IsNormalResult)
 					return default;
-				valueValue = runtime.LoadField(context, frame, propValue, state.ValueField, cancellationToken);
+				valueValue = runtime.LoadField(evalInfo, propValue, state.ValueField);
 				if (!valueValue.IsNormalResult)
 					return default;
 				var rawValue = nameValue.Value.GetRawValue();

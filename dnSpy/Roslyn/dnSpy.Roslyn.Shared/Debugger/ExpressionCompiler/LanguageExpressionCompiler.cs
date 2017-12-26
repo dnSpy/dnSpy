@@ -73,13 +73,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			return module.GetOrCreateData<T>();
 		}
 
-		protected void GetCompilationState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int methodToken, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
-			langDebugInfo = context.GetLanguageDebugInfo();
+		protected void GetCompilationState<T>(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, out DbgLanguageDebugInfo langDebugInfo, out MethodDef method, out int methodToken, out int localVarSigTok, out T state, out ImmutableArray<MetadataBlock> metadataBlocks, out int methodVersion) where T : EvalContextState, new() {
+			langDebugInfo = evalInfo.Context.GetLanguageDebugInfo();
 			method = langDebugInfo.MethodDebugInfo.Method;
 			methodToken = langDebugInfo.MethodToken;
 			localVarSigTok = langDebugInfo.LocalVarSigTok;
 
-			state = GetEvalContextState<T>(frame);
+			state = GetEvalContextState<T>(evalInfo.Frame);
 
 			if (state.LastModuleReferences == references && !state.LastMetadataBlocks.IsDefault)
 				metadataBlocks = state.LastMetadataBlocks;
@@ -92,8 +92,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			methodVersion = langDebugInfo.MethodVersion;
 		}
 
-		protected void GetTypeCompilationState<T>(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, out T state, out ImmutableArray<MetadataBlock> metadataBlocks) where T : EvalContextState, new() {
-			state = GetEvalContextState<T>(frame);
+		protected void GetTypeCompilationState<T>(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, out T state, out ImmutableArray<MetadataBlock> metadataBlocks) where T : EvalContextState, new() {
+			state = GetEvalContextState<T>(evalInfo.Frame);
 
 			if (state.LastModuleReferences == references && !state.LastMetadataBlocks.IsDefault)
 				metadataBlocks = state.LastMetadataBlocks;

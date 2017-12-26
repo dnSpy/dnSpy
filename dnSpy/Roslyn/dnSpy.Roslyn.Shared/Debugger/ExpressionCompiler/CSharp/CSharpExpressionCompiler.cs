@@ -21,7 +21,6 @@ using System;
 using System.Collections.Immutable;
 using System.Threading;
 using dnlib.DotNet;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -70,8 +69,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			return importRecordGroupBuilder.ToImmutable();
 		}
 
-		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			GetCompilationState<CSharpEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var methodToken, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
+		public override DbgDotNetCompilationResult CompileAssignment(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string target, string expression, DbgEvaluationOptions options) {
+			GetCompilationState<CSharpEvalContextState>(evalInfo, references, out var langDebugInfo, out var method, out var methodToken, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
 
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
@@ -81,8 +80,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			return CreateCompilationResult(target, compileResult, resultProperties, errorMessage, DbgDotNetText.Empty);
 		}
 
-		public override DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			GetCompilationState<CSharpEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var methodToken, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
+		public override DbgDotNetCompilationResult CompileGetLocals(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, DbgEvaluationOptions options) {
+			GetCompilationState<CSharpEvalContextState>(evalInfo, references, out var langDebugInfo, out var method, out var methodToken, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
 
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
@@ -95,13 +94,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			return CompileGetLocals(state, method);
 		}
 
-		public override DbgDotNetCompilationResult CompileExpression(DbgEvaluationContext context, DbgStackFrame frame, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			GetCompilationState<CSharpEvalContextState>(context, frame, references, out var langDebugInfo, out var method, out var methodToken, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
+		public override DbgDotNetCompilationResult CompileExpression(DbgEvaluationInfo evalInfo, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options) {
+			GetCompilationState<CSharpEvalContextState>(evalInfo, references, out var langDebugInfo, out var method, out var methodToken, out var localVarSigTok, out var state, out var metadataBlocks, out var methodVersion);
 
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 
-			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, cancellationToken);
+			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, evalInfo.CancellationToken);
 		}
 
 		DbgDotNetCompilationResult CompileExpressionCore(DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CSharpEvalContextState state, ImmutableArray<MetadataBlock> metadataBlocks, EvaluationContext evalCtx, CancellationToken cancellationToken) {
@@ -148,10 +147,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			return (exprSource, exprOffset);
 		}
 
-		public override DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			GetTypeCompilationState<CSharpEvalContextState>(context, frame, references, out var state, out var metadataBlocks);
+		public override DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationInfo evalInfo, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options) {
+			GetTypeCompilationState<CSharpEvalContextState>(evalInfo, references, out var state, out var metadataBlocks);
 			var evalCtx = EvaluationContext.CreateTypeContext(state.MetadataContext, metadataBlocks, type.Module.ModuleVersionId, type.MetadataToken);
-			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, cancellationToken);
+			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, evalInfo.CancellationToken);
 		}
 
 		internal override string GetVariableName(string metadataName, bool isThis) {

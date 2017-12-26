@@ -19,8 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -50,12 +48,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Writes to the referenced valued. The return value is null or an error message.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) =>
+		public virtual string StoreIndirect(DbgEvaluationInfo evalInfo, object value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
@@ -101,23 +97,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// a multi-dimensional array.
 		/// The return value is null or an error message.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) =>
+		public virtual string SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
 		/// Boxes the value type, returns null on failure
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => null;
+		public virtual DbgDotNetValue Box(DbgEvaluationInfo evalInfo) => null;
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.

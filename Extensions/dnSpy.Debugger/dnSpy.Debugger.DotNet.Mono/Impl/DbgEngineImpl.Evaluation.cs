@@ -207,19 +207,22 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
-		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationInfo evalInfo, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo.Context);
 			if (tmp != null)
 				return tmp.Value;
-			return FuncEvalCallCore_MonoDebug(context, frame, frame.Thread, method, obj, arguments, invokeOptions, newObj, cancellationToken);
+			return FuncEvalCallCore_MonoDebug(evalInfo.Context, evalInfo.Frame, evalInfo.Frame.Thread, method, obj, arguments, invokeOptions, newObj, evalInfo.CancellationToken);
 		}
+
+		internal MonoTypeLoader CreateMonoTypeLoader(DbgEvaluationInfo evalInfo) =>
+			new MonoTypeLoaderImpl(this, evalInfo);
 
 		internal MonoTypeLoader TryCreateMonoTypeLoader(DbgEvaluationContext contextOpt, DbgStackFrame frameOpt, CancellationToken cancellationToken) {
 			if (contextOpt == null || frameOpt == null)
 				return null;
-			return new MonoTypeLoaderImpl(this, contextOpt, frameOpt, cancellationToken);
+			return CreateMonoTypeLoader(new DbgEvaluationInfo(contextOpt, frameOpt, cancellationToken));
 		}
 
 		DbgDotNetValueResult FuncEvalCallCore_MonoDebug(DbgEvaluationContext contextOpt, DbgStackFrame frameOpt, DbgThread thread, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj, CancellationToken cancellationToken) {
@@ -307,7 +310,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					else if (newObj && method.ReflectedType.IsValueType) {
 						if (contextOpt != null && frameOpt != null) {
 							//TODO: The Mono fork Unity uses doesn't support this, it returns nothing
-							hiddenThisValue = CreateValueType(contextOpt, frameOpt, method.ReflectedType, 0, cancellationToken);
+							var evalInfo = new DbgEvaluationInfo(contextOpt, frameOpt, cancellationToken);
+							hiddenThisValue = CreateValueType(evalInfo, method.ReflectedType, 0);
 							createdResultValue = hiddenThisValue;
 							newObj = false;
 							if (hiddenThisValue is StructMirror && vm.Version.AtLeast(2, 35))
@@ -369,16 +373,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return list;
 		}
 
-		internal DbgDotNetValueResult Box_MonoDebug(DbgEvaluationContext context, DbgThread thread, Value value, DmdType type, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult Box_MonoDebug(DbgEvaluationInfo evalInfo, Value value, DmdType type) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo.Context);
 			if (tmp != null)
 				return tmp.Value;
 
-			var monoThread = GetThread(thread);
+			var monoThread = GetThread(evalInfo.Frame.Thread);
 			try {
-				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
+				using (var funcEval = CreateFuncEval(evalInfo.Context, monoThread, evalInfo.CancellationToken)) {
 					value = ValueUtils.MakePrimitiveValueIfPossible(value, type);
 					var boxedValue = BoxIfNeeded(monoThread.Domain, value, type.AppDomain.System_Object, type);
 					if (boxedValue == null)
@@ -397,19 +401,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationInfo evalInfo, object value) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
 				return new DbgDotNetCreateValueResult((DbgDotNetValueImpl)value);
-			var tmp = CheckFuncEval(context);
+			var tmp = CheckFuncEval(evalInfo.Context);
 			if (tmp != null)
 				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
 
-			var monoThread = GetThread(frame.Thread);
+			var monoThread = GetThread(evalInfo.Frame.Thread);
 			try {
-				var reflectionAppDomain = frame.AppDomain.GetReflectionAppDomain();
-				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
+				var reflectionAppDomain = evalInfo.Frame.AppDomain.GetReflectionAppDomain();
+				using (var funcEval = CreateFuncEval(evalInfo.Context, monoThread, evalInfo.CancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
 					if (evalRes.ErrorMessage != null)
@@ -430,26 +434,26 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgCreateMonoValueResult CreateMonoValue_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, DmdType targetType, CancellationToken cancellationToken) {
+		internal DbgCreateMonoValueResult CreateMonoValue_MonoDebug(DbgEvaluationInfo evalInfo, object value, DmdType targetType) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
 				return new DbgCreateMonoValueResult(((DbgDotNetValueImpl)value).Value);
-			var tmp = CheckFuncEval(context);
+			var tmp = CheckFuncEval(evalInfo.Context);
 			if (tmp != null)
 				return new DbgCreateMonoValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
 
-			var monoThread = GetThread(frame.Thread);
+			var monoThread = GetThread(evalInfo.Frame.Thread);
 			try {
-				var reflectionAppDomain = frame.AppDomain.GetReflectionAppDomain();
-				using (var funcEval = CreateFuncEval(context, monoThread, cancellationToken)) {
+				var reflectionAppDomain = evalInfo.Frame.AppDomain.GetReflectionAppDomain();
+				using (var funcEval = CreateFuncEval(evalInfo.Context, monoThread, evalInfo.CancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, targetType, out var newValueType);
 					if (evalRes.ErrorMessage != null)
 						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
 					var newValue = evalRes.Value;
 					if (targetType.IsEnum && !(newValue is EnumMirror))
-						newValue = MonoVirtualMachine.CreateEnumMirror(MonoDebugTypeCreator.GetType(this, targetType, TryCreateMonoTypeLoader(context, frame, cancellationToken)), (PrimitiveValue)newValue);
+						newValue = MonoVirtualMachine.CreateEnumMirror(MonoDebugTypeCreator.GetType(this, targetType, CreateMonoTypeLoader(evalInfo)), (PrimitiveValue)newValue);
 					newValue = BoxIfNeeded(monoThread.Domain, newValue, targetType, newValueType);
 					return new DbgCreateMonoValueResult(newValue);
 				}
@@ -496,15 +500,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return method;
 		}
 
-		TypeMirror GetType(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken) =>
-			MonoDebugTypeCreator.GetType(this, type, TryCreateMonoTypeLoader(context, frame, cancellationToken));
+		TypeMirror GetType(DbgEvaluationInfo evalInfo, DmdType type) =>
+			MonoDebugTypeCreator.GetType(this, type, CreateMonoTypeLoader(evalInfo));
 
-		internal Value CreateValueType(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, int recursionCounter, CancellationToken cancellationToken) {
+		internal Value CreateValueType(DbgEvaluationInfo evalInfo, DmdType type, int recursionCounter) {
 			if (recursionCounter > 100)
 				throw new InvalidOperationException();
 			if (!type.IsValueType)
 				throw new InvalidOperationException();
-			var monoType = GetType(context, frame, type, cancellationToken);
+			var monoType = GetType(evalInfo, type);
 			var fields = type.DeclaredFields;
 			var monoFields = monoType.GetFields();
 			if (fields.Count != monoFields.Length)
@@ -515,14 +519,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				var field = fields[i];
 				if (field.IsStatic || field.IsLiteral)
 					continue;
-				fieldValues.Add(CreateDefaultValue(context, frame, field, 0, cancellationToken));
+				fieldValues.Add(CreateDefaultValue(evalInfo, field, 0));
 			}
 			if (type.IsEnum)
 				return monoType.VirtualMachine.CreateEnumMirror(monoType, (PrimitiveValue)fieldValues[0]);
 			return monoType.VirtualMachine.CreateStructMirror(monoType, fieldValues.ToArray());
 		}
 
-		Value CreateDefaultValue(DbgEvaluationContext context, DbgStackFrame frame, DmdFieldInfo field, int recursionCounter, CancellationToken cancellationToken) {
+		Value CreateDefaultValue(DbgEvaluationInfo evalInfo, DmdFieldInfo field, int recursionCounter) {
 			var type = field.FieldType;
 			if (!type.IsValueType)
 				return new PrimitiveValue(vm, ElementType.Object, null);
@@ -544,7 +548,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case TypeCode.Double:		return new PrimitiveValue(vm, ElementType.R8, 0d);
 				}
 			}
-			return CreateValueType(context, frame, type, recursionCounter + 1, cancellationToken);
+			return CreateValueType(evalInfo, type, recursionCounter + 1);
 		}
 	}
 

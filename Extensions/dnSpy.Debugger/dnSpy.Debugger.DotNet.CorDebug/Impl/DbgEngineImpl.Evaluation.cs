@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -163,23 +162,23 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		sealed class EvalTimedOut { }
 
-		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationContext context) {
+		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationInfo evalInfo) {
 			debuggerThread.VerifyAccess();
 			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
 			if (isUnhandledException)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
-			if (context.ContinueContext.HasData<EvalTimedOut>())
+			if (evalInfo.Context.ContinueContext.HasData<EvalTimedOut>())
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
 			if (dnDebugger.IsEvaluating)
 				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
 			return null;
 		}
 
-		internal DbgDotNetValueResult FuncEvalCall_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, bool newObj, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult FuncEvalCall_CorDebug(DbgEvaluationInfo evalInfo, CorAppDomain appDomain, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, bool newObj) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return tmp.Value;
 			Debug.Assert(!newObj || method.IsConstructor);
@@ -194,13 +193,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			var func = methodModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken) ?? throw new InvalidOperationException();
 
-			var dnThread = GetThread(thread);
+			var dnThread = GetThread(evalInfo.Frame.Thread);
 			var createdValues = new List<CorValue>();
 			try {
-				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(evalInfo.CancellationToken, suspendOtherThreads: (evalInfo.Context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
-					dnEval.SetTimeout(context.FuncEvalTimeout);
-					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+					dnEval.SetTimeout(evalInfo.Context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, evalInfo);
 
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 
@@ -311,21 +310,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return list;
 		}
 
-		internal DbgDotNetValueResult Box_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, CorValue value, DmdType type, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult Box_CorDebug(DbgEvaluationInfo evalInfo, CorAppDomain appDomain, CorValue value, DmdType type) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return tmp.Value;
 
-			var dnThread = GetThread(thread);
+			var dnThread = GetThread(evalInfo.Frame.Thread);
 			var createdValues = new List<CorValue>();
 			CorValue boxedValue = null;
 			try {
-				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(evalInfo.CancellationToken, suspendOtherThreads: (evalInfo.Context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
-					dnEval.SetTimeout(context.FuncEvalTimeout);
-					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+					dnEval.SetTimeout(evalInfo.Context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, evalInfo);
 
 					boxedValue = BoxIfNeeded(dnEval, appDomain, createdValues, value, type.AppDomain.System_Object, type);
 					if (boxedValue == null)
@@ -347,19 +346,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		internal DbgDotNetValueResult FuncEvalCreateInstanceNoCtor_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdType typeToCreate, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult FuncEvalCreateInstanceNoCtor_CorDebug(DbgEvaluationInfo evalInfo, CorAppDomain appDomain, DmdType typeToCreate) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return tmp.Value;
 
-			var dnThread = GetThread(thread);
+			var dnThread = GetThread(evalInfo.Frame.Thread);
 			try {
-				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(evalInfo.CancellationToken, suspendOtherThreads: (evalInfo.Context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
-					dnEval.SetTimeout(context.FuncEvalTimeout);
-					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+					dnEval.SetTimeout(evalInfo.Context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, evalInfo);
 
 					var corType = GetType(appDomain, typeToCreate);
 					var res = dnEval.CreateDontCallConstructor(corType, out int hr);
@@ -380,31 +379,31 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		void DnEval_EvalEvent(DnEval dnEval, DbgEvaluationContext context) {
+		void DnEval_EvalEvent(DnEval dnEval, DbgEvaluationInfo evalInfo) {
 			if (dnEval.EvalTimedOut)
-				context.ContinueContext.GetOrCreateData<EvalTimedOut>();
+				evalInfo.Context.ContinueContext.GetOrCreateData<EvalTimedOut>();
 			dnDebugger.SignalEvalComplete();
 		}
 
-		internal DbgDotNetCreateValueResult CreateValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, object value, CancellationToken cancellationToken) {
+		internal DbgDotNetCreateValueResult CreateValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, object value) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
 				return new DbgDotNetCreateValueResult((DbgDotNetValueImpl)value);
-			var tmp = CheckFuncEval(context);
+			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
 
-			var dnThread = GetThread(thread);
+			var dnThread = GetThread(evalInfo.Frame.Thread);
 			var createdValues = new List<CorValue>();
 			CorValue createdCorValue = null;
 			try {
 				var appDomain = ilFrame.GetCorAppDomain();
 				var reflectionAppDomain = ilFrame.GetReflectionModule().AppDomain;
-				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(evalInfo.CancellationToken, suspendOtherThreads: (evalInfo.Context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
-					dnEval.SetTimeout(context.FuncEvalTimeout);
-					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+					dnEval.SetTimeout(evalInfo.Context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, evalInfo);
 
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
@@ -430,43 +429,43 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		internal string SetLocalValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
+		internal string SetLocalValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value) {
 			Func<CreateCorValueResult> createTargetValue = () => {
 				var corValue = ilFrame.CorFrame.GetILLocal(index, out int hr);
 				return new CreateCorValueResult(corValue, hr);
 			};
-			return StoreValue_CorDebug(context, thread, ilFrame, createTargetValue, targetType, value, cancellationToken);
+			return StoreValue_CorDebug(evalInfo, ilFrame, createTargetValue, targetType, value);
 		}
 
-		internal string SetParameterValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value, CancellationToken cancellationToken) {
+		internal string SetParameterValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, uint index, DmdType targetType, object value) {
 			Func<CreateCorValueResult> createTargetValue = () => {
 				var corValue = ilFrame.CorFrame.GetILArgument(index, out int hr);
 				return new CreateCorValueResult(corValue, hr);
 			};
-			return StoreValue_CorDebug(context, thread, ilFrame, createTargetValue, targetType, value, cancellationToken);
+			return StoreValue_CorDebug(evalInfo, ilFrame, createTargetValue, targetType, value);
 		}
 
-		internal string StoreValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, Func<CreateCorValueResult> createTargetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
+		internal string StoreValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, Func<CreateCorValueResult> createTargetValue, DmdType targetType, object sourceValue) {
 			debuggerThread.VerifyAccess();
 
 			if (RequiresNoFuncEvalToStoreValue(targetType, sourceValue))
-				return StoreSimpleValue_CorDebug(context, thread, ilFrame, createTargetValue, targetType, sourceValue, cancellationToken);
+				return StoreSimpleValue_CorDebug(evalInfo, ilFrame, createTargetValue, targetType, sourceValue);
 
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return tmp.Value.ErrorMessage ?? throw new InvalidOperationException();
 
-			var dnThread = GetThread(thread);
+			var dnThread = GetThread(evalInfo.Frame.Thread);
 			var createdValues = new List<CorValue>();
 			CreateCorValueResult createResult = default;
 			try {
 				var appDomain = ilFrame.GetCorAppDomain();
 				var reflectionAppDomain = targetType.AppDomain;
-				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(evalInfo.CancellationToken, suspendOtherThreads: (evalInfo.Context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
-					dnEval.SetTimeout(context.FuncEvalTimeout);
-					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+					dnEval.SetTimeout(evalInfo.Context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, evalInfo);
 
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 
@@ -555,12 +554,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		string StoreSimpleValue_CorDebug(DbgEvaluationContext context, DbgThread thread, ILDbgEngineStackFrame ilFrame, Func<CreateCorValueResult> createTargetValue, DmdType targetType, object sourceValue, CancellationToken cancellationToken) {
+		string StoreSimpleValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, Func<CreateCorValueResult> createTargetValue, DmdType targetType, object sourceValue) {
 			Debug.Assert(RequiresNoFuncEvalToStoreValue(targetType, sourceValue));
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			CreateCorValueResult createResult = default;
 			try {
-				var dnThread = GetThread(thread);
+				var dnThread = GetThread(evalInfo.Frame.Thread);
 				createResult = createTargetValue();
 				if (createResult.Value == null)
 					return CordbgErrorHelper.GetErrorMessage(createResult.HResult);
@@ -683,19 +682,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		// This method calls ICorDebugEval2.NewParameterizedArray() which doesn't support creating SZ arrays
 		// with any element type. See the caller of this method (CreateSZArrayCore) for more info.
-		internal DbgDotNetValueResult CreateSZArray_CorDebug(DbgEvaluationContext context, DbgThread thread, CorAppDomain appDomain, DmdType elementType, int length, CancellationToken cancellationToken) {
+		internal DbgDotNetValueResult CreateSZArray_CorDebug(DbgEvaluationInfo evalInfo, CorAppDomain appDomain, DmdType elementType, int length) {
 			debuggerThread.VerifyAccess();
-			cancellationToken.ThrowIfCancellationRequested();
-			var tmp = CheckFuncEval(context);
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return tmp.Value;
 
-			var dnThread = GetThread(thread);
+			var dnThread = GetThread(evalInfo.Frame.Thread);
 			try {
-				using (var dnEval = dnDebugger.CreateEval(cancellationToken, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
+				using (var dnEval = dnDebugger.CreateEval(evalInfo.CancellationToken, suspendOtherThreads: (evalInfo.Context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0)) {
 					dnEval.SetThread(dnThread);
-					dnEval.SetTimeout(context.FuncEvalTimeout);
-					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, context);
+					dnEval.SetTimeout(evalInfo.Context.FuncEvalTimeout);
+					dnEval.EvalEvent += (s, e) => DnEval_EvalEvent(dnEval, evalInfo);
 
 					var corType = GetType(appDomain, elementType);
 					var res = dnEval.CreateSZArray(corType, length, out int hr);

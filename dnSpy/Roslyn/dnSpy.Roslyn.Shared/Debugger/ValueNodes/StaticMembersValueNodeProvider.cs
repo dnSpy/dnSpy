@@ -18,9 +18,7 @@
 */
 
 using System;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -47,8 +45,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationContext context, DbgStackFrame frame, int index, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var runtime = context.Runtime.GetDotNetRuntime();
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options) {
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult valueResult = default;
 			try {
 				ref var info = ref membersCollection.Members[index];
@@ -62,7 +60,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					expression = valueNodeFactory.GetFieldExpression(typeExpression, field.Name, null, addParens: false);
 					expectedType = field.FieldType;
 					imageName = ImageNameUtils.GetImageName(field);
-					valueResult = runtime.LoadField(context, frame, null, field, cancellationToken);
+					valueResult = runtime.LoadField(evalInfo, null, field);
 					// We should be able to change read only fields (we're a debugger), but since the
 					// compiler will complain, we have to prevent the user from editing the value.
 					isReadOnly = field.IsLiteral || field.IsInitOnly;
@@ -79,7 +77,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					}
 					else {
 						var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
-						valueResult = runtime.Call(context, frame, null, getter, Array.Empty<object>(), DbgDotNetInvokeOptions.None, cancellationToken);
+						valueResult = runtime.Call(evalInfo, null, getter, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
 						isReadOnly = (object)property.GetSetMethod(DmdGetAccessorOptions.All) == null;
 					}
 					break;
@@ -90,11 +88,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 				DbgDotNetValueNode newNode;
 				if (valueResult.HasError)
-					newNode = valueNodeFactory.CreateError(context, frame, info.Name, valueResult.ErrorMessage, expression, false, cancellationToken);
+					newNode = valueNodeFactory.CreateError(evalInfo, info.Name, valueResult.ErrorMessage, expression, false);
 				else if (valueResult.ValueIsException)
-					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false, cancellationToken);
+					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
 				else
-					newNode = valueNodeFactory.Create(context, frame, info.Name, valueResult.Value, null, options, expression, imageName, isReadOnly, false, expectedType, false, cancellationToken);
+					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, null, options, expression, imageName, isReadOnly, false, expectedType, false);
 
 				valueResult = default;
 				return (newNode, true);

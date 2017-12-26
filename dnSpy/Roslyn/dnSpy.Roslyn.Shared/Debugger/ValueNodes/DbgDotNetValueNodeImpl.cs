@@ -21,9 +21,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
@@ -71,7 +69,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			FormatSpecifiers = formatSpecifiers;
 		}
 
-		public override bool FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public override bool FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			if (Value == null)
 				return false;
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
@@ -80,11 +78,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Debug.Assert(languageFormatter != null);
 			if (languageFormatter == null)
 				return false;
-			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options, cultureInfo, cancellationToken);
+			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options, cultureInfo);
 			return displayAttrFormatter.FormatName(Value);
 		}
 
-		public override bool FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		public override bool FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			if (valueText.Parts != null) {
 				valueText.WriteTo(output);
 				return true;
@@ -92,13 +90,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return false;
 		}
 
-		public override bool FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
-			FormatDebuggerDisplayAttributeType(context, frame, output, formatter, valueOptions, cultureInfo, cancellationToken);
+		public override bool FormatActualType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+			FormatDebuggerDisplayAttributeType(evalInfo, output, formatter, valueOptions, cultureInfo);
 
-		public override bool FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) =>
-			FormatDebuggerDisplayAttributeType(context, frame, output, formatter, valueOptions, cultureInfo, cancellationToken);
+		public override bool FormatExpectedType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+			FormatDebuggerDisplayAttributeType(evalInfo, output, formatter, valueOptions, cultureInfo);
 
-		bool FormatDebuggerDisplayAttributeType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
+		bool FormatDebuggerDisplayAttributeType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			if (Value == null)
 				return false;
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
@@ -107,17 +105,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Debug.Assert(languageFormatter != null);
 			if (languageFormatter == null)
 				return false;
-			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(context, frame, languageFormatter, output, options, cultureInfo, cancellationToken);
+			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options, cultureInfo);
 			return displayAttrFormatter.FormatType(Value);
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
-			childNodeProvider?.GetChildCount(context, frame, cancellationToken) ?? 0;
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) =>
+			childNodeProvider?.GetChildCount(evalInfo) ?? 0;
 
-		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			if (childNodeProvider == null)
 				return Array.Empty<DbgDotNetValueNode>();
-			return childNodeProvider.GetChildren(valueNodeFactory, context, frame, index, count, options, cancellationToken);
+			return childNodeProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

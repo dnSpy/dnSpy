@@ -19,12 +19,11 @@
 
 using System;
 using System.Diagnostics;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	abstract class DbgValueNodeReader {
-		public abstract void SetEvaluationContext(DbgEvaluationContext context, DbgStackFrame frame);
+		public abstract void SetEvaluationInfo(DbgEvaluationInfo evalInfo);
 		public abstract void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options);
 		public abstract DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode);
 		public abstract DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex);
@@ -32,44 +31,37 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class DbgValueNodeReaderImpl : DbgValueNodeReader {
-		readonly Func<DbgEvaluationContext, string, DbgValueNodeInfo> evaluate;
-		DbgEvaluationContext dbgEvaluationContext;
-		DbgStackFrame frame;
+		readonly Func<DbgEvaluationInfo, string, DbgValueNodeInfo> evaluate;
+		DbgEvaluationInfo evalInfo;
 		DbgValueNodeEvaluationOptions dbgValueNodeEvaluationOptions;
 
-		public DbgValueNodeReaderImpl(Func<DbgEvaluationContext, string, DbgValueNodeInfo> evaluate) =>
+		public DbgValueNodeReaderImpl(Func<DbgEvaluationInfo, string, DbgValueNodeInfo> evaluate) =>
 			this.evaluate = evaluate ?? throw new ArgumentNullException(nameof(evaluate));
 
-		public override void SetEvaluationContext(DbgEvaluationContext context, DbgStackFrame frame) {
-			dbgEvaluationContext = context;
-			this.frame = frame;
-		}
-
+		public override void SetEvaluationInfo(DbgEvaluationInfo evalInfo) => this.evalInfo = evalInfo;
 		public override void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options) => dbgValueNodeEvaluationOptions = options;
 
 		public override DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode) {
-			Debug.Assert(dbgEvaluationContext != null);
-			Debug.Assert(frame != null);
+			Debug.Assert(evalInfo != null);
 			var parent = valueNode.Parent;
 			uint startIndex = valueNode.DbgValueNodeChildIndex;
 			const int count = 1;
-			var newNodes = parent.DebuggerValueNode.GetChildren(dbgEvaluationContext, frame, startIndex, count, dbgValueNodeEvaluationOptions);
+			var newNodes = parent.DebuggerValueNode.GetChildren(evalInfo, startIndex, count, dbgValueNodeEvaluationOptions);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}
 
 		public override DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex) {
-			Debug.Assert(dbgEvaluationContext != null);
-			Debug.Assert(frame != null);
+			Debug.Assert(evalInfo != null);
 			const int count = 1;
-			var newNodes = parent.DebuggerValueNode.GetChildren(dbgEvaluationContext, frame, startIndex, count, dbgValueNodeEvaluationOptions);
+			var newNodes = parent.DebuggerValueNode.GetChildren(evalInfo, startIndex, count, dbgValueNodeEvaluationOptions);
 			Debug.Assert(count == 1);
 			return newNodes[0];
 		}
 
 		public override DbgValueNodeInfo Evaluate(string expression) {
-			Debug.Assert(dbgEvaluationContext != null);
-			return evaluate(dbgEvaluationContext, expression);
+			Debug.Assert(evalInfo != null);
+			return evaluate(evalInfo, expression);
 		}
 	}
 }

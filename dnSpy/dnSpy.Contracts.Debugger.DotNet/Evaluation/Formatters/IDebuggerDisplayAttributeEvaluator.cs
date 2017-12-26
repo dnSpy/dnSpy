@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
@@ -33,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 	// interface by using the extension method below.
 
 	public interface IDebuggerDisplayAttributeEvaluator {
-		DbgDotNetEvalResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken);
+		DbgDotNetEvalResult Evaluate(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state);
 	}
 
 	public static class IDebuggerDisplayAttributeEvaluatorUtils {
