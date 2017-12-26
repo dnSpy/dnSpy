@@ -226,6 +226,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		internal void RefreshLanguageFields_UI() {
 			locationCachedOutput = default;
+			OnPropertyChanged(nameof(LocationObject));
 		}
 
 		// UI thread
