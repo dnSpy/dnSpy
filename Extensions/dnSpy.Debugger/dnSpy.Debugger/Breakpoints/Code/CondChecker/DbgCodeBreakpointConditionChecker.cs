@@ -37,9 +37,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	[Export(typeof(DbgCodeBreakpointConditionChecker))]
 	sealed class DbgCodeBreakpointConditionCheckerImpl : DbgCodeBreakpointConditionChecker {
 		readonly DbgLanguageService dbgLanguageService;
+		readonly DbgObjectIdService dbgObjectIdService;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointConditionCheckerImpl(DbgLanguageService dbgLanguageService) => this.dbgLanguageService = dbgLanguageService;
+		DbgCodeBreakpointConditionCheckerImpl(DbgLanguageService dbgLanguageService, DbgObjectIdService dbgObjectIdService) {
+			this.dbgLanguageService = dbgLanguageService;
+			this.dbgObjectIdService = dbgObjectIdService;
+		}
 
 		sealed class BreakpointState : IDisposable {
 			public DbgLanguage Language;
@@ -75,12 +79,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		abstract class SavedValue {
-			public abstract bool Equals(SavedValue other);
+			public abstract bool Equals(DbgEvaluationInfo evalInfo, SavedValue other);
 			public abstract void Dispose();
 
-			public static SavedValue TryCreateValue(DbgValue value, string valueType) {
+			public static SavedValue TryCreateValue(DbgObjectIdService dbgObjectIdService, DbgValue value, string valueType) {
 				switch (value.ValueType) {
 				case DbgSimpleValueType.Other:
+					var objectId = dbgObjectIdService.CreateObjectId(value, CreateObjectIdOptions.Hidden);
+					if (objectId != null)
+						return new ObjectIdSavedValue(dbgObjectIdService, objectId);
 					var addr = value.GetRawAddressValue(onlyDataAddress: false);
 					if (addr != null)
 						return new AddressSavedValue(addr.Value, valueType);
@@ -125,7 +132,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					this.valueType = valueType;
 				}
 
-				public override bool Equals(SavedValue other) {
+				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
 					var obj = other as SimpleSavedValue;
 					return obj != null &&
 						obj.type == type &&
@@ -140,21 +147,43 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				readonly DbgRawAddressValue address;
 				readonly string valueType;
 
-				//TODO: An object id (that's not shown in the locals window) should be used instead since the GC can move the value in memory
 				public AddressSavedValue(in DbgRawAddressValue address, string valueType) {
 					this.address = address;
 					this.valueType = valueType;
 				}
 
-				public override bool Equals(SavedValue other) {
-					var obj = other as AddressSavedValue;
-					return obj != null &&
-						obj.address.Address == address.Address &&
-						obj.address.Length == address.Length &&
-						obj.valueType == valueType;
-				}
+				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) =>
+					other is AddressSavedValue obj &&
+					obj.address.Address == address.Address &&
+					obj.address.Length == address.Length &&
+					obj.valueType == valueType;
 
 				public override void Dispose() { }
+			}
+
+			sealed class ObjectIdSavedValue : SavedValue {
+				readonly DbgObjectIdService dbgObjectIdService;
+				readonly DbgObjectId objectId;
+
+				public ObjectIdSavedValue(DbgObjectIdService dbgObjectIdService, DbgObjectId objectId) {
+					this.dbgObjectIdService = dbgObjectIdService;
+					this.objectId = objectId;
+				}
+
+				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
+					var obj = other as ObjectIdSavedValue;
+					if (obj == null)
+						return false;
+					var value = obj.objectId.GetValue(evalInfo);
+					try {
+						return dbgObjectIdService.Equals(objectId, value);
+					}
+					finally {
+						value.Close();
+					}
+				}
+
+				public override void Dispose() => objectId.Remove();
 			}
 		}
 
@@ -210,10 +239,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return new DbgCodeBreakpointCheckResult(dnSpy_Debugger_Resources.BreakpointExpressionMustBeABooleanExpression);
 
 				case DbgCodeBreakpointConditionKind.WhenChanged:
-					var newValue = SavedValue.TryCreateValue(value, GetType(evalInfo, language, value));
+					var newValue = SavedValue.TryCreateValue(dbgObjectIdService, value, GetType(evalInfo, language, value));
 					if (newValue == null)
 						return new DbgCodeBreakpointCheckResult(true);
-					bool shouldBreak = !(state.SavedValue?.Equals(newValue) ?? true);
+					bool shouldBreak = !(state.SavedValue?.Equals(evalInfo, newValue) ?? true);
 					state.SavedValue = newValue;
 					return new DbgCodeBreakpointCheckResult(shouldBreak);
 
