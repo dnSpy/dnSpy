@@ -152,8 +152,17 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			if (evalInfo == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
 			Debug.Assert(evalInfo.Frame == info.frame);
-			var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalInfo, info.language, evalOptions, nodeEvalOptions, nameFormatterOptions);
-			return new GetNodesResult(nodesInfo.Nodes, info.frame.IsClosed, nodesInfo.RecreateAllNodes);
+			try {
+				var nodesInfo = variablesWindowValueNodesProvider.GetNodes(evalInfo, info.language, evalOptions, nodeEvalOptions, nameFormatterOptions);
+				return new GetNodesResult(nodesInfo.Nodes, info.frame.IsClosed, nodesInfo.RecreateAllNodes);
+			}
+			catch {
+				// A TaskCanceledException gets thrown if the runtime's Dispatcher has shut down.
+				// If the runtime is closed, ignore the exception, we're not debugging it anymore.
+				if (evalInfo.Runtime.IsClosed)
+					return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
+				throw;
+			}
 		}
 
 		void SetIsReadOnly_UI(bool newIsReadOnly) {
