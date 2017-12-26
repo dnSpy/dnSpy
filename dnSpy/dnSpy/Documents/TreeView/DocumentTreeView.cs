@@ -174,9 +174,9 @@ namespace dnSpy.Documents.TreeView {
 			decompilerService.DecompilerChanged -= DecompilerService_DecompilerChanged;
 			documentTreeViewSettings.PropertyChanged -= DocumentTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
+			TreeView.SelectItems(Array.Empty<TreeNodeData>());
 			DocumentService.Clear();
 			TreeView.Root.Children.Clear();
-			TreeView.SelectItems(Array.Empty<TreeNodeData>());
 			TreeView.Dispose();
 			context.Clear();
 		}

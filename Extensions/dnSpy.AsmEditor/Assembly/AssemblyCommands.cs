@@ -182,7 +182,17 @@ namespace dnSpy.AsmEditor.Assembly {
 		static void FreeAssemblies(IList<DsDocumentNode> nodes) {
 			if (nodes.Count == 0)
 				return;
-			nodes[0].Context.DocumentTreeView.Remove(nodes);
+			var docTreeView = nodes[0].Context.DocumentTreeView;
+			if (nodes.Count == docTreeView.TreeView.Root.Children.Count) {
+				var hash1 = new HashSet<DsDocumentNode>(docTreeView.TreeView.Root.Children.Select(a => (DsDocumentNode)a.Data));
+				var hash2 = new HashSet<DsDocumentNode>(nodes);
+				if (hash1.Count == hash2.Count && hash1.Count == nodes.Count) {
+					docTreeView.TreeView.SelectItems(Array.Empty<TreeNodeData>());
+					docTreeView.DocumentService.Clear();
+					return;
+				}
+			}
+			docTreeView.Remove(nodes);
 		}
 
 		readonly struct UndoRedoInfo {
