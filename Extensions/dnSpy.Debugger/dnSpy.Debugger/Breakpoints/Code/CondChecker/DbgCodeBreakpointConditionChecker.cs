@@ -85,6 +85,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			public static SavedValue TryCreateValue(DbgObjectIdService dbgObjectIdService, DbgValue value, string valueType) {
 				switch (value.ValueType) {
 				case DbgSimpleValueType.Other:
+					if (value.HasRawValue && value.RawValue == null)
+						return new SimpleSavedValue(value.ValueType, value.RawValue, valueType);
 					var objectId = dbgObjectIdService.CreateObjectId(value, CreateObjectIdOptions.Hidden);
 					if (objectId != null)
 						return new ObjectIdSavedValue(dbgObjectIdService, objectId);
@@ -137,7 +139,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return obj != null &&
 						obj.type == type &&
 						Equals(obj.value, value) &&
-						obj.valueType == valueType;
+						(value == null || obj.valueType == valueType);
 				}
 
 				public override void Dispose() { }
