@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public abstract class DbgObjectIdService {
 		/// <summary>
-		/// Raised when one or more <see cref="DbgObjectId"/>s are created or removed
+		/// Raised when one or more non-hidden <see cref="DbgObjectId"/>s are created or removed
 		/// </summary>
 		public abstract event EventHandler ObjectIdsChanged;
 
@@ -56,14 +56,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options = CreateObjectIdOptions.None);
 
 		/// <summary>
-		/// Returns an object id or null if there's none that references <paramref name="value"/>
+		/// Returns an non-hidden object id or null if there's none that references <paramref name="value"/>
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
 		public abstract DbgObjectId GetObjectId(DbgValue value);
 
 		/// <summary>
-		/// Returns an object id or null if there's none
+		/// Returns a non-hidden object id or null if there's none
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="id">Object id</param>
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgObjectId GetObjectId(DbgRuntime runtime, uint id);
 
 		/// <summary>
-		/// Gets all object ids
+		/// Gets all non-hidden object ids
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <returns></returns>

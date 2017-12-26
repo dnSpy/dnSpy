@@ -108,12 +108,12 @@ namespace dnSpy.Debugger.Evaluation {
 			if (values.Length == 0)
 				return Array.Empty<DbgObjectId>();
 			var res = new DbgObjectId[values.Length];
+			bool isHidden = (options & CreateObjectIdOptions.Hidden) != 0;
 			lock (lockObj) {
 				for (int i = 0; i < values.Length; i++) {
 					var value = values[i] as DbgValueImpl;
 					if (value?.Runtime != Runtime)
 						throw new ArgumentException();
-					bool isHidden = (options & CreateObjectIdOptions.Hidden) != 0;
 					DbgObjectId objectId;
 					if (Runtime.IsClosed || value.IsClosed || (!isHidden && objectIds.ContainsKey(value)))
 						objectId = null;
@@ -142,7 +142,8 @@ namespace dnSpy.Debugger.Evaluation {
 					res[i] = objectId;
 				}
 			}
-			ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
+			if (!isHidden)
+				ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
 			return res;
 		}
 
