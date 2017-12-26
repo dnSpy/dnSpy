@@ -592,7 +592,7 @@ namespace dnSpy.AsmEditor.Types {
 			InvalidateBaseTypeFolderNode(typeNode);
 		}
 
-		void InvalidateBaseTypeFolderNode(TypeNode typeNode) {
+		internal static void InvalidateBaseTypeFolderNode(TypeNode typeNode) {
 			var btNode = (BaseTypeFolderNode)typeNode.TreeNode.DataChildren.FirstOrDefault(a => a is BaseTypeFolderNode);
 			Debug.Assert(btNode != null || typeNode.TreeNode.Children.Count == 0);
 			if (btNode != null)
