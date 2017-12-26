@@ -48,6 +48,17 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null, null, valueText, formatSpecifiers);
 
 		DbgDotNetValueNode CreateValue(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression) {
+			// Could be a by-ref property
+			Debug.Assert(value.Type.IsByRef == expectedType.IsByRef);
+			if (value.Type.IsByRef && expectedType.IsByRef) {
+				var newValue = value.LoadIndirect();
+				if (newValue != null) {
+					value.Dispose();
+					value = newValue;
+					expectedType = expectedType.GetElementType();
+				}
+			}
+
 			options = PredefinedFormatSpecifiers.GetValueNodeEvaluationOptions(formatSpecifiers, options);
 			var nodeInfo = new DbgDotNetValueNodeInfo(value, expression);
 			bool addParens = isRootExpression && NeedsParentheses(expression);
