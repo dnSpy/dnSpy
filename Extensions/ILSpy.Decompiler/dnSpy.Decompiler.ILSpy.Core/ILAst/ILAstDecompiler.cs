@@ -99,8 +99,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			};
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
+			MethodDef inlinedMethod = null;
 			if (abortBeforeStep != null) {
-				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
+				new ILAstOptimizer().Optimize(context, ilMethod, out inlinedMethod, abortBeforeStep.Value);
 			}
 
 			if (context.CurrentMethodIsYieldReturn) {
@@ -141,7 +142,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
-			var builder = new MethodDebugInfoBuilder(settingsVersion, method, CreateSourceLocals(localVariables));
+			var builder = new MethodDebugInfoBuilder(settingsVersion, inlinedMethod ?? method, CreateSourceLocals(localVariables));
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);
 				if (!node.WritesNewLine)

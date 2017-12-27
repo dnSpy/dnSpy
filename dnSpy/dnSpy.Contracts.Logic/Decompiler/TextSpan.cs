@@ -85,6 +85,20 @@ namespace dnSpy.Contracts.Decompiler {
 		public static bool operator !=(TextSpan left, TextSpan right) => !left.Equals(right);
 
 		/// <summary>
+		/// Checks if <paramref name="position"/> is inside this span
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public bool Contains(int position) => start <= position && position < end;
+
+		/// <summary>
+		/// Checks if <paramref name="position"/> is inside this span
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public bool Intersects(int position) => start <= position && position <= end;
+
+		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>

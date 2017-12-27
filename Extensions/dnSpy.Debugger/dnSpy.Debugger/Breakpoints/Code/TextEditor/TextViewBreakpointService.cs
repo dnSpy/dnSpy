@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (res == null)
 				res = result;
 			else if (useIfSameSpan) {
-				if (result.Value.Span.Start <= res.Value.Span.Start)
+				if (result.Value.Span.Start == res.Value.Span.Start)
 					res = result;
 			}
 			else if (result.Value.Span.Start < res.Value.Span.Start)
