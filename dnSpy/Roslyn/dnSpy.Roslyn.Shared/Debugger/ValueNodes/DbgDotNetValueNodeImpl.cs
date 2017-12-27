@@ -49,9 +49,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
 		readonly DbgDotNetValueNodeInfo nodeInfo;
 		readonly DbgDotNetText valueText;
+		readonly ColumnFormatter columnFormatter;
 
-		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, in DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, in DbgDotNetText valueText, ReadOnlyCollection<string> formatSpecifiers) {
-			if (name.Parts == null)
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, in DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, in DbgDotNetText valueText, ReadOnlyCollection<string> formatSpecifiers, ColumnFormatter columnFormatter) {
+			if (name.Parts == null && columnFormatter == null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.childNodeProvider = childNodeProvider;
@@ -67,9 +68,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			ErrorMessage = errorMessage;
 			this.valueText = valueText;
 			FormatSpecifiers = formatSpecifiers;
+			this.columnFormatter = columnFormatter;
 		}
 
 		public override bool FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+			if (columnFormatter?.FormatName(evalInfo, output, formatter, options, cultureInfo) == true)
+				return true;
 			if (Value == null)
 				return false;
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
@@ -83,6 +87,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		public override bool FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+			if (columnFormatter?.FormatValue(evalInfo, output, formatter, options, cultureInfo) == true)
+				return true;
+
 			if (valueText.Parts != null) {
 				valueText.WriteTo(output);
 				return true;
@@ -91,9 +98,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		}
 
 		public override bool FormatActualType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+			columnFormatter?.FormatActualType(evalInfo, output, formatter, options, valueOptions, cultureInfo) ??
 			FormatDebuggerDisplayAttributeType(evalInfo, output, formatter, valueOptions, cultureInfo);
 
 		public override bool FormatExpectedType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+			columnFormatter?.FormatExpectedType(evalInfo, output, formatter, options, valueOptions, cultureInfo) ??
 			FormatDebuggerDisplayAttributeType(evalInfo, output, formatter, valueOptions, cultureInfo);
 
 		bool FormatDebuggerDisplayAttributeType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {

@@ -30,4 +30,21 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 		UseDecimal					= 0x00000010,
 		DigitSeparators				= 0x00000020,
 	}
+
+	static class TypeFormatterOptionsExtensions {
+		public static ValueFormatterOptions ToValueFormatterOptions(this TypeFormatterOptions options) {
+			var res = ValueFormatterOptions.None;
+			if ((options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0)
+				res |= ValueFormatterOptions.IntrinsicTypeKeywords;
+			if ((options & TypeFormatterOptions.Tokens) != 0)
+				res |= ValueFormatterOptions.Tokens;
+			if ((options & TypeFormatterOptions.Namespaces) != 0)
+				res |= ValueFormatterOptions.Namespaces;
+			if ((options & TypeFormatterOptions.UseDecimal) != 0)
+				res |= ValueFormatterOptions.Decimal;
+			if ((options & TypeFormatterOptions.DigitSeparators) != 0)
+				res |= ValueFormatterOptions.DigitSeparators;
+			return res;
+		}
+	}
 }

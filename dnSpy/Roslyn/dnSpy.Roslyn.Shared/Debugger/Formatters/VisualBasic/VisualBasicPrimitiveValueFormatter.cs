@@ -39,11 +39,14 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		const string HexPrefix = "&H";
 		const string DecimalSuffix = "D";
 		const string EnumFlagsOrSeparatorKeyword = "Or";
+		const string CommentBegin = "/*";
+		const string CommentEnd = "*/";
 
 		bool Display => (options & ValueFormatterOptions.Display) != 0;
 		bool Decimal => (options & ValueFormatterOptions.Decimal) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
+		bool ShowTokens => (options & ValueFormatterOptions.Tokens) != 0;
 
 		public VisualBasicPrimitiveValueFormatter(ITextColorWriter output, ValueFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output;
@@ -62,6 +65,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				typeOptions &= ~TypeFormatterOptions.Tokens;
 			}
 			new VisualBasicTypeFormatter(output, typeOptions, cultureInfo).Format(type, null);
+		}
+
+		string FormatHexInt32(int value) => ToFormattedHexNumber(value.ToString("X8"));
+		public void WriteTokenComment(int metadataToken) {
+			if (!ShowTokens)
+				return;
+			OutputWrite(CommentBegin + FormatHexInt32(metadataToken) + CommentEnd, BoxedTextColor.Comment);
 		}
 
 		public bool TryFormat(DmdType type, in DbgDotNetRawValue rawValue) {

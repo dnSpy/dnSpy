@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
@@ -27,7 +28,6 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
-using dnSpy.Roslyn.Shared.Properties;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class LanguageValueNodeFactory : DbgDotNetValueNodeFactory {
@@ -45,9 +45,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		protected abstract bool SupportsModuleTypes { get; }
 
 		internal DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValueNodeProvider provider, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, in DbgDotNetText valueText) =>
-			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null, null, valueText, formatSpecifiers);
+			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null, null, valueText, formatSpecifiers, null);
 
-		DbgDotNetValueNode CreateValue(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression) {
+		DbgDotNetValueNode CreateValue(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression, ColumnFormatter columnFormatter) {
 			// Could be a by-ref property
 			Debug.Assert(value.Type.IsByRef == expectedType.IsByRef);
 			if (value.Type.IsByRef && expectedType.IsByRef) {
@@ -77,18 +77,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				info = valueNodeProviderFactory.Create(evalInfo, addParens, expectedType, nodeInfo, options);
 			if (useProvider) {
 				if (info.ErrorMessage != null)
-					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, info.ErrorMessage)), formatSpecifiers);
+					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, info.ErrorMessage)), formatSpecifiers, columnFormatter);
 				Debug.Assert(info.Provider != null);
-				return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, info.Provider?.ImageName ?? imageName, true, false, null, null, info.ErrorMessage, info.Provider?.ValueText ?? default, formatSpecifiers);
+				return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, info.Provider?.ImageName ?? imageName, true, false, null, null, info.ErrorMessage, info.Provider?.ValueText ?? default, formatSpecifiers, columnFormatter);
 			}
-			return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, info.ErrorMessage, default, formatSpecifiers);
+			return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, info.ErrorMessage, default, formatSpecifiers, columnFormatter);
 		}
 
 		public sealed override DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
 			Create(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, expectedType, true);
 
 		internal DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression) =>
-			CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, expectedType, isRootExpression);
+			CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, expectedType, isRootExpression, null);
 
 		public sealed override DbgDotNetValueNode CreateException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options) {
 			var output = ObjectCache.AllocDotNetTextOutput();
@@ -98,7 +98,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.Exception;
-			return CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false);
+			return CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, null);
 		}
 
 		public sealed override DbgDotNetValueNode CreateStowedException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options) {
@@ -109,13 +109,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			const string imageName = PredefinedDbgValueNodeImageNames.StowedException;
-			return CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false);
+			return CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, null);
 		}
 
 		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method) {
+			var columnFormatter = new ReturnValueColumnFormatter(this, method);
 			var output = ObjectCache.AllocDotNetTextOutput();
-			FormatReturnValueName(evalInfo.Context, output, method);
-			var name = ObjectCache.FreeAndToText(ref output);
 			output = ObjectCache.AllocDotNetTextOutput();
 			evalInfo.Context.Language.Formatter.FormatReturnValueName(evalInfo.Context, output, id);
 			var expression = ObjectCache.FreeAndToText(ref output).ToString();
@@ -123,30 +122,31 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			const bool causesSideEffects = false;
 			var property = PropertyState.TryGetProperty(method);
 			var imageName = (object)property != null ? ImageNameUtils.GetImageName(property) : ImageNameUtils.GetImageName(method, SupportsModuleTypes);
-			return CreateValue(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false);
+			return CreateValue(evalInfo, default, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, columnFormatter);
 		}
 
-		void FormatReturnValueName(DbgEvaluationContext context, DbgDotNetTextOutput output, DmdMethodBase method) {
-			var formatString = dnSpy_Roslyn_Shared_Resources.LocalsWindow_MethodOrProperty_Returned;
-			const string pattern = "{0}";
-			int index = formatString.IndexOf(pattern);
-			Debug.Assert(index >= 0);
-			if (index < 0) {
-				formatString = "{0} returned";
-				index = formatString.IndexOf(pattern);
-			}
+		internal void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, DmdMethodBase method) =>
+			FormatReturnValueMethodName(evalInfo, output, ToDbgValueFormatterTypeOptions(options), options, cultureInfo, method, PropertyState.TryGetProperty(method));
 
-			if (index != 0)
-				output.Write(BoxedTextColor.Text, formatString.Substring(0, index));
-			FormatReturnValueMethodName(output, method, PropertyState.TryGetProperty(method));
-			if (index + pattern.Length != formatString.Length)
-				output.Write(BoxedTextColor.Text, formatString.Substring(index + pattern.Length));
+		static DbgValueFormatterTypeOptions ToDbgValueFormatterTypeOptions(DbgValueFormatterOptions options) {
+			var res = DbgValueFormatterTypeOptions.None;
+			if ((options & DbgValueFormatterOptions.Decimal) != 0)
+				res |= DbgValueFormatterTypeOptions.Decimal;
+			if ((options & DbgValueFormatterOptions.DigitSeparators) != 0)
+				res |= DbgValueFormatterTypeOptions.DigitSeparators;
+			if ((options & DbgValueFormatterOptions.Namespaces) != 0)
+				res |= DbgValueFormatterTypeOptions.Namespaces;
+			if ((options & DbgValueFormatterOptions.IntrinsicTypeKeywords) != 0)
+				res |= DbgValueFormatterTypeOptions.IntrinsicTypeKeywords;
+			if ((options & DbgValueFormatterOptions.Tokens) != 0)
+				res |= DbgValueFormatterTypeOptions.Tokens;
+			return res;
 		}
 
-		protected abstract void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property);
+		protected abstract void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property);
 
 		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationInfo evalInfo, in DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects) =>
-			new DbgDotNetValueNodeImpl(this, null, name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, causesSideEffects, null, null, errorMessage, default, null);
+			new DbgDotNetValueNodeImpl(this, null, name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, causesSideEffects, null, null, errorMessage, default, null, null);
 
 		public sealed override DbgDotNetValueNode CreateTypeVariables(DbgEvaluationInfo evalInfo, DbgDotNetTypeVariableInfo[] typeVariableInfos) =>
 			new DbgDotNetTypeVariablesNode(this, typeVariableInfos);

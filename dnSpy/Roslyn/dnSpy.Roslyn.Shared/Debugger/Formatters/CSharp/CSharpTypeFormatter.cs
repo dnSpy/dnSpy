@@ -43,8 +43,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		const string METHOD_OPEN_PAREN = "(";
 		const string METHOD_CLOSE_PAREN = ")";
 		const string HEX_PREFIX = "0x";
-		const string COMMENT_BEGIN = "/*";
-		const string COMMENT_END = "*/";
 		const string IDENTIFIER_ESCAPE = "@";
 		const string BYREF_KEYWORD = "ref";
 		const int MAX_ARRAY_RANK = 100;
@@ -90,16 +88,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
-		string FormatHexInt32(int value) => ToFormattedHexNumber(value.ToString("X8"));
-
 		void WriteUInt32(uint value) => OutputWrite(FormatUInt32(value), BoxedTextColor.Number);
 		void WriteInt32(int value) => OutputWrite(FormatInt32(value), BoxedTextColor.Number);
-
-		void WriteTokenComment(int metadataToken) {
-			if (!ShowTokens)
-				return;
-			OutputWrite(COMMENT_BEGIN + FormatHexInt32(metadataToken) + COMMENT_END, BoxedTextColor.Comment);
-		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {
 			"abstract", "as", "base", "bool", "break", "byte", "case", "catch",
@@ -375,7 +365,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			}
 
 			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetColor(type, canBeModule: false));
-			WriteTokenComment(type.MetadataToken);
+			new CSharpPrimitiveValueFormatter(output, options.ToValueFormatterOptions(), cultureInfo).WriteTokenComment(type.MetadataToken);
 		}
 
 		enum KeywordType {

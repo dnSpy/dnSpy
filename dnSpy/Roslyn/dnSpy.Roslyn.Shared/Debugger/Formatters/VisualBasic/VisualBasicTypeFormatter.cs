@@ -44,8 +44,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		const string METHOD_OPEN_PAREN = "(";
 		const string METHOD_CLOSE_PAREN = ")";
 		const string HEX_PREFIX = "&H";
-		const string COMMENT_BEGIN = "/*";
-		const string COMMENT_END = "*/";
 		const string IDENTIFIER_ESCAPE_BEGIN = "[";
 		const string IDENTIFIER_ESCAPE_END = "]";
 		const string BYREF_KEYWORD = "ByRef";
@@ -55,7 +53,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool UseDecimal => (options & TypeFormatterOptions.UseDecimal) != 0;
 		bool DigitSeparators => (options & TypeFormatterOptions.DigitSeparators) != 0;
 		bool ShowIntrinsicTypeKeywords => (options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0;
-		bool ShowTokens => (options & TypeFormatterOptions.Tokens) != 0;
 		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
 
 		public VisualBasicTypeFormatter(ITextColorWriter output, TypeFormatterOptions options, CultureInfo cultureInfo) {
@@ -92,16 +89,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
-		string FormatHexInt32(int value) => ToFormattedHexNumber(value.ToString("X8"));
-
 		void WriteUInt32(uint value) => OutputWrite(FormatUInt32(value), BoxedTextColor.Number);
 		void WriteInt32(int value) => OutputWrite(FormatInt32(value), BoxedTextColor.Number);
-
-		void WriteTokenComment(int metadataToken) {
-			if (!ShowTokens)
-				return;
-			OutputWrite(COMMENT_BEGIN + FormatHexInt32(metadataToken) + COMMENT_END, BoxedTextColor.Comment);
-		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
 			"#Const", "#Else", "#ElseIf", "#End", "#If", "AddHandler", "AddressOf",
@@ -392,7 +381,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			}
 
 			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetColor(type, canBeModule: true));
-			WriteTokenComment(type.MetadataToken);
+			new VisualBasicPrimitiveValueFormatter(output, options.ToValueFormatterOptions(), cultureInfo).WriteTokenComment(type.MetadataToken);
 		}
 
 		enum KeywordType {

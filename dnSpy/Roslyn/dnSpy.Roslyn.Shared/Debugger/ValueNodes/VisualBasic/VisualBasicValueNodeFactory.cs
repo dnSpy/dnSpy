@@ -17,16 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Globalization;
 using System.Text;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
+using dnSpy.Roslyn.Shared.Debugger.Formatters;
 
 namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
-		internal const Formatters.TypeFormatterOptions TypeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+		internal const TypeFormatterOptions TypeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
 
 		protected override bool SupportsModuleTypes => true;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
@@ -98,18 +101,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 
 		public override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
 
-		protected override void FormatReturnValueMethodName(ITextColorWriter output, DmdMethodBase method, DmdPropertyInfo property) {
-			const Formatters.TypeFormatterOptions options = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
-			var formatter = new Formatters.VisualBasic.VisualBasicTypeFormatter(output, options, null);
-			formatter.Format(method.DeclaringType, null);
+		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property) {
+			var typeFormatter = new Formatters.VisualBasic.VisualBasicTypeFormatter(output, typeOptions.ToTypeFormatterOptions(), null);
+			typeFormatter.Format(method.DeclaringType, null);
+			var valueFormatter = new Formatters.VisualBasic.VisualBasicPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(BoxedTextColor.Operator, ".");
 			if ((object)property != null) {
 				output.Write(MemberUtils.GetColor(property), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(property.Name));
+				valueFormatter.WriteTokenComment(property.MetadataToken);
 				output.Write(BoxedTextColor.Operator, ".");
 				output.Write(BoxedTextColor.Keyword, "Get");
+				valueFormatter.WriteTokenComment(method.MetadataToken);
 			}
-			else
-				output.Write(Formatters.TypeFormatterUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
+			else {
+				output.Write(TypeFormatterUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
+				valueFormatter.WriteTokenComment(method.MetadataToken);
+			}
 		}
 	}
 }
