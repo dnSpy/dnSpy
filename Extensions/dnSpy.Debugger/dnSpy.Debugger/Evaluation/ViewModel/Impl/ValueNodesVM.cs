@@ -491,7 +491,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
 			case nameof(DebuggerSettings.UseDigitSeparators):
-				RefreshHexFields_UI();
+			case nameof(DebuggerSettings.UseStringConversionFunction):
+				RefreshAllColumns_UI();
 				break;
 
 			case nameof(DebuggerSettings.SyntaxHighlight):
@@ -507,16 +508,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				UpdateFormatterOptions();
 				UpdateEvaluationOptions();
 				RecreateRootChildren_UI();
-				break;
-
-			case nameof(DebuggerSettings.UseStringConversionFunction):
-				UpdateFormatterOptions();
-				const RefreshNodeOptions options =
-					RefreshNodeOptions.RefreshName |
-					RefreshNodeOptions.RefreshNameControl |
-					RefreshNodeOptions.RefreshValue |
-					RefreshNodeOptions.RefreshValueControl;
-				RefreshNodes(options);
 				break;
 
 			case nameof(DebuggerSettings.HighlightChangedVariables):
@@ -537,15 +528,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			case nameof(DbgEvalFormatterSettings.ShowNamespaces):
 			case nameof(DbgEvalFormatterSettings.ShowIntrinsicTypeKeywords):
 			case nameof(DbgEvalFormatterSettings.ShowTokens):
-				UpdateFormatterOptions();
-				const RefreshNodeOptions options =
-					RefreshNodeOptions.RefreshName |
-					RefreshNodeOptions.RefreshNameControl |
-					RefreshNodeOptions.RefreshValue |
-					RefreshNodeOptions.RefreshValueControl |
-					RefreshNodeOptions.RefreshType |
-					RefreshNodeOptions.RefreshTypeControl;
-				RefreshNodes(options);
+				RefreshAllColumns_UI();
 				break;
 
 			default:
@@ -565,14 +548,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RefreshHexFields_UI() {
+		void RefreshAllColumns_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			UpdateFormatterOptions();
 			const RefreshNodeOptions options =
 				RefreshNodeOptions.RefreshName |
 				RefreshNodeOptions.RefreshNameControl |
 				RefreshNodeOptions.RefreshValue |
-				RefreshNodeOptions.RefreshValueControl;
+				RefreshNodeOptions.RefreshValueControl |
+				RefreshNodeOptions.RefreshType |
+				RefreshNodeOptions.RefreshTypeControl;
 			RefreshNodes(options);
 		}
 
