@@ -42,6 +42,8 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string ObjectId = nameof(ObjectId);
 		public const string ObjectAddress = nameof(ObjectAddress);
 		public const string EEVariable = nameof(EEVariable);
+		public const string Pointer = nameof(Pointer);
+		public const string DereferencedPointer = nameof(DereferencedPointer);
 		public const string InstanceMembers = nameof(InstanceMembers);
 		public const string StaticMembers = nameof(StaticMembers);
 		public const string RawView = nameof(RawView);

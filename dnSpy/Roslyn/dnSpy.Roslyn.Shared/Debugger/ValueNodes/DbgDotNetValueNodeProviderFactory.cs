@@ -178,6 +178,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
 		public abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression, DmdType expectedType);
 		public abstract string GetCallExpression(DmdMethodBase method, string instanceExpression);
+		public abstract string GetDereferenceExpression(string instanceExpression);
+		public abstract ref readonly DbgDotNetText GetDereferencedName();
 
 		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
 
@@ -568,12 +570,16 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				membersEvalOptions |= DbgValueNodeEvaluationOptions.RawView;
 			if (value.IsNull)
 				instanceMembersInfos = MemberValueNodeInfoCollection.Empty;
-			providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName, expression, addParens, slotType, value, instanceMembersInfos, membersEvalOptions, isRawView ? PredefinedDbgValueNodeImageNames.RawView : PredefinedDbgValueNodeImageNames.InstanceMembers));
+			if (PointerValueNodeProvider.IsSupported(value))
+				providers.Add(new PointerValueNodeProvider(this, expression, value));
+			else {
+				providers.Add(new InstanceMembersValueNodeProvider(valueNodeFactory, isRawView ? rawViewName : InstanceMembersName,
+					expression, addParens, slotType, value, instanceMembersInfos, membersEvalOptions,
+					isRawView ? PredefinedDbgValueNodeImageNames.RawView : PredefinedDbgValueNodeImageNames.InstanceMembers));
+			}
 
 			if (staticMembersInfos.Members.Length != 0)
 				providers.Add(new StaticMembersValueNodeProvider(this, valueNodeFactory, StaticMembersName, state.TypeExpression, staticMembersInfos, membersEvalOptions));
-
-			//TODO: non-void and non-null pointers (derefence and show members)
 
 			var provider = TryCreateResultsView(state, expression, value, slotType, evalOptions);
 			if (provider != null)

@@ -127,5 +127,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			instanceExpression = LanguageValueNodeFactory.RemoveFormatSpecifiers(instanceExpression);
 			return instanceExpression + "." + method.Name + "()";
 		}
+
+		public override string GetDereferenceExpression(string instanceExpression) {
+			instanceExpression = LanguageValueNodeFactory.RemoveFormatSpecifiers(instanceExpression);
+			return "*" + instanceExpression;
+		}
+
+		public override ref readonly DbgDotNetText GetDereferencedName() => ref dereferencedName;
+		static readonly DbgDotNetText dereferencedName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Punctuation, "*"));
 	}
 }

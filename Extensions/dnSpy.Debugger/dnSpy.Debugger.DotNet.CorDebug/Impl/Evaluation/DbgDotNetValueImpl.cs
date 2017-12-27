@@ -78,9 +78,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override DbgDotNetValue LoadIndirect() {
-			if (!Type.IsByRef)
+			if (!Type.IsByRef && !Type.IsPointer)
 				return null;
-			if (IsNullByRef)
+			if (IsNullByRef || IsNull)
 				return new SyntheticNullValue(Type.GetElementType());
 			if (engine.CheckCorDebugThread())
 				return Dereference_CorDebug();
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		DbgDotNetValue Dereference_CorDebug() {
-			Debug.Assert(Type.IsByRef && !IsNullByRef);
+			Debug.Assert((Type.IsByRef && !IsNullByRef) || (Type.IsPointer && !IsNull));
 			engine.VerifyCorDebugThread();
 			var dereferencedValue = TryGetCorValue()?.DereferencedValue;
 			// We sometimes get 0x80131c49 = CORDBG_E_READVIRTUAL_FAILURE
@@ -98,7 +98,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public override string StoreIndirect(DbgEvaluationInfo evalInfo, object value) {
-			if (!Type.IsByRef)
+			if (!Type.IsByRef && !Type.IsPointer)
+				return CordbgErrorHelper.InternalError;
+			if (IsNull)
 				return CordbgErrorHelper.InternalError;
 			if (engine.CheckCorDebugThread())
 				return StoreIndirect_CorDebug(evalInfo, value);

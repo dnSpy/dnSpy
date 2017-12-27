@@ -109,6 +109,7 @@
     <Compile Include="Debugger\ValueNodes\MembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\MemberUtils.cs" />
     <Compile Include="Debugger\ValueNodes\MemberValueNodeInfo.cs" />
+    <Compile Include="Debugger\ValueNodes\PointerValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\ReflectionAssemblyLoader.cs" />
     <Compile Include="Debugger\ValueNodes\ResultsViewMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\ReturnValueColumnFormatter.cs" />
