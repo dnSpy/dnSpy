@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the module data or <see cref="DbgDotNetRawModuleBytes.None"/>
 		/// </summary>
-		/// <param name="module"></param>
+		/// <param name="module">Module</param>
 		/// <returns></returns>
 		DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module);
 
@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Calls an instance or a static method
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
-		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="obj">Instance object or null if it's a static method</param>
 		/// <param name="method">Method</param>
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="invokeOptions">Invoke options</param>

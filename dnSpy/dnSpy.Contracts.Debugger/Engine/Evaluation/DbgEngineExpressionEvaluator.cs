@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract object CreateExpressionEvaluatorState();
 
 		/// <summary>
-		/// Evaluates an expression. It blocks the current thread until the evaluation is complete.
+		/// Evaluates an expression
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Expression to evaluate</param>
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract DbgEngineEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state);
 
 		/// <summary>
-		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.
+		/// Assigns the value of an expression to another expression
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Target expression (lhs)</param>

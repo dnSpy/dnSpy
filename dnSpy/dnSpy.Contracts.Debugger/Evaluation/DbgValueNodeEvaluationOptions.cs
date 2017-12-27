@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		DynamicView					= 0x00000004,
 
 		/// <summary>
-		/// Show the raw view (don't use debugger type proxies). It's enabled if <see cref="DebuggerSettings.ShowRawStructureOfObjects"/> is true
+		/// Show the raw view (don't use debugger type proxies)
 		/// </summary>
 		RawView						= 0x00000008,
 

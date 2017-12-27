@@ -102,8 +102,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract ulong GetChildCount(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
-		/// Creates new children. This method blocks the current thread until the children have been created.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
+		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Index of first child</param>
@@ -113,7 +112,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
-		/// Formats the name. This method blocks the current thread until all requested values have been formatted
+		/// Formats the name
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
@@ -126,7 +125,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the value. This method blocks the current thread until all requested values have been formatted
+		/// Formats the value
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
@@ -139,7 +138,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the expected type ("field" type). This method blocks the current thread until all requested values have been formatted
+		/// Formats the expected type ("field" type)
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
@@ -154,7 +153,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the actual type (value type). This method blocks the current thread until all requested values have been formatted
+		/// Formats the actual type (value type)
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
@@ -169,7 +168,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
+		/// Formats the name, value, and type
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
@@ -177,7 +176,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo);
 
 		/// <summary>
-		/// Writes a new value. It blocks the current thread until the assignment is complete.
+		/// Writes a new value
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Source expression (rhs)</param>

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// </summary>
 	public abstract class DbgEngineValueNodeFactory {
 		/// <summary>
-		/// Creates a <see cref="DbgEngineValueNode"/>. It blocks the current thread until the evaluation is complete.
+		/// Creates <see cref="DbgEngineValueNode"/>s
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expressions">Expressions to evaluate</param>
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract DbgEngineValueNode[] Create(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions);
 
 		/// <summary>
-		/// Creates <see cref="DbgEngineValueNode"/>s. It blocks the current thread.
+		/// Creates <see cref="DbgEngineValueNode"/>s
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectIds">Object ids</param>

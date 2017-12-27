@@ -23,7 +23,7 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
-	/// Formats names
+	/// Formats names, types, values, stack frames
 	/// </summary>
 	public abstract class DbgEngineFormatter {
 		/// <summary>

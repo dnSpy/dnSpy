@@ -30,8 +30,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Gets all values. It blocks the current thread until the method is complete.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
@@ -70,8 +69,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Gets all values. It blocks the current thread until the method is complete.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>

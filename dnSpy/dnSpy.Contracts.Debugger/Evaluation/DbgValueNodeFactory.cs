@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
+		/// Creates <see cref="DbgValueNode"/>s
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Expression</param>
@@ -42,8 +42,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			Create(evalInfo, new[] { new DbgExpressionEvaluationInfo(expression, nodeOptions, options, expressionEvaluatorState) })[0];
 
 		/// <summary>
-		/// Creates a <see cref="DbgValueNode"/>. It blocks the current thread until the evaluation is complete.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expressions">Expressions to evaluate</param>
@@ -51,8 +50,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgCreateValueNodeResult[] Create(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions);
 
 		/// <summary>
-		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Creates <see cref="DbgValueNode"/>s. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectIds">Object ids</param>
