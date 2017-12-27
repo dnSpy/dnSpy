@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (documentViewer == null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
-			var methodStatements = methodDebugService.FindByTextPosition(textPosition, FindByTextPositionOptions.SameMethod);
+			var methodStatements = methodDebugService.FindByTextPosition(textPosition, options | FindByTextPositionOptions.SameMethod);
 			return methodStatements.Count == 0 ? null : methodStatements;
 		}
 

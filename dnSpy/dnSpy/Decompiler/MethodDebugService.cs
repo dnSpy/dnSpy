@@ -99,6 +99,9 @@ namespace dnSpy.Decompiler {
 
 			if (textPosition > snapshot.Length)
 				return Array.Empty<MethodSourceStatement>();
+
+			if ((options & FindByTextPositionOptions.OuterMostStatement) != 0 && TryGetOuterMostSpan(textPosition, out var outermostSpan))
+				textPosition = outermostSpan.Start;
 			var line = snapshot.GetLineFromPosition(textPosition);
 
 			var scopeSpan = GetScopeSpan(textPosition);
@@ -281,6 +284,21 @@ namespace dnSpy.Decompiler {
 			if (sortedStatements == null)
 				InitializeSortedStatements();
 			return GetStartIndexCore(position);
+		}
+
+		bool TryGetOuterMostSpan(int position, out TextSpan outermostSpan) {
+			outermostSpan = default;
+
+			TextSpan span = default;
+			foreach (var kv in dict) {
+				foreach (var s in kv.Value.Statements) {
+					if (s.TextSpan.Contains(position) && s.TextSpan.Length > span.Length)
+						span = s.TextSpan;
+				}
+			}
+
+			outermostSpan = span;
+			return span.Length > 0;
 		}
 
 		int GetScopeSpanStartIndex(int position) {

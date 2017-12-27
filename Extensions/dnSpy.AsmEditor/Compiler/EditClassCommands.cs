@@ -182,7 +182,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override string GetHeader(IMenuItemContext context) => editCodeVMCreator.GetHeader(CompilationKind.EditClass);
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
-		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
+		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) =>
 			editCodeVMCreator.CanCreate(CompilationKind.EditClass) &&
 			list != null &&
@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			list[0].Method.Body != null &&
 			list[0].Method.Body.Instructions.Count > 0;
 
-		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
+		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 
 		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
@@ -213,7 +213,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition.Position, FindByTextPositionOptions.None);
+			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition.Position, FindByTextPositionOptions.OuterMostStatement);
 		}
 	}
 }

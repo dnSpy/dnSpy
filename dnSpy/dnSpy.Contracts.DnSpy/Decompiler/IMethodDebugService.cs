@@ -93,6 +93,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// If set, only return statements within the method that contains the text position
 		/// </summary>
 		SameMethod				= 0x00000001,
+
+		/// <summary>
+		/// If there are nested methods or delegates in the method, return the outer most statement.
+		/// If it's not set, the statement inside the nested method / delegate is returned.
+		/// </summary>
+		OuterMostStatement		= 0x00000002,
 	}
 
 	/// <summary>
