@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -42,6 +44,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView;
 			var debugViewType = appDomain.GetWellKnownType(wellKnownType, isOptional: true);
 			// If this fails, System.Core (.NET Framework) / System.Linq (.NET Core) hasn't been loaded yet
+			// or the type doesn't exist in the assembly (Unity)
 			if ((object)debugViewType == null)
 				return null;
 
@@ -59,5 +62,48 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public static string GetDebugViewTypeDisplayName(DmdType enumerableType) =>
 			enumerableType.IsConstructedGenericType ? "System.Linq.SystemCore_EnumerableDebugView<T>" : "System.Linq.SystemCore_EnumerableDebugView";
+
+		public static (DmdConstructorInfo ctor, DmdMethodInfo toArrayMethod) GetListEnumerableMethods(DmdType objType, DmdType enumerableType) {
+			Debug.Assert(enumerableType == enumerableType.AppDomain.System_Collections_IEnumerable ||
+				(enumerableType.IsConstructedGenericType && enumerableType.GetGenericTypeDefinition() == enumerableType.AppDomain.System_Collections_Generic_IEnumerable_T));
+
+			var appDomain = enumerableType.AppDomain;
+			if (enumerableType.IsConstructedGenericType) {
+				var genArgs = enumerableType.GetGenericArguments();
+				Debug.Assert(genArgs.Count == 1);
+				if (genArgs.Count != 1)
+					return default;
+				var type = appDomain.CorLib.GetType("System.Collections.Generic.List`1");
+				Debug.Assert(type?.IsGenericTypeDefinition == true);
+				if (type?.IsGenericTypeDefinition != true)
+					return default;
+				type = type.MakeGenericType(genArgs);
+				var ctor = type.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis,
+					0, appDomain.System_Void, new[] { enumerableType }, throwOnError: false) as DmdConstructorInfo;
+				var toArrayMethd = type.GetMethod(nameof(List<int>.ToArray), DmdSignatureCallingConvention.HasThis,
+					0, genArgs[0].MakeArrayType(), Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
+
+				Debug.Assert(((object)ctor != null) == ((object)toArrayMethd != null));
+				if ((object)ctor == null || (object)toArrayMethd == null)
+					return default;
+				return (ctor, toArrayMethd);
+			}
+			else {
+				var icollectionType = appDomain.GetWellKnownType(DmdWellKnownType.System_Collections_ICollection, isOptional: true);
+				if (!objType.CanCastTo(icollectionType))
+					return default;
+
+				var type = appDomain.CorLib.GetType("System.Collections." + nameof(ArrayList));
+				var ctor = type?.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis,
+					0, appDomain.System_Void, new[] { icollectionType }, throwOnError: false) as DmdConstructorInfo;
+				var toArrayMethd = type?.GetMethod(nameof(ArrayList.ToArray), DmdSignatureCallingConvention.HasThis,
+					0, appDomain.System_Object.MakeArrayType(), Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
+
+				Debug.Assert(((object)ctor != null) == ((object)toArrayMethd != null));
+				if ((object)ctor == null || (object)toArrayMethd == null)
+					return default;
+				return (ctor, toArrayMethd);
+			}
+		}
 	}
 }

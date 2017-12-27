@@ -177,6 +177,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract void FormatArrayName(ITextColorWriter output, int index);
 		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
 		public abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression, DmdType expectedType);
+		public abstract string GetCallExpression(DmdMethodBase method, string instanceExpression);
 
 		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
 

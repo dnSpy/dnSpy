@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class MembersValueNodeProvider : DbgDotNetValueNodeProvider {
 		public sealed override DbgDotNetText Name { get; }
 		public sealed override string Expression { get; }
-		public sealed override bool? HasChildren => (membersCollection.Members?.Length ?? 1) > 0;
+		public sealed override bool? HasChildren => realProvider?.HasChildren ?? ((membersCollection.Members?.Length ?? 1) > 0);
 
 		protected readonly LanguageValueNodeFactory valueNodeFactory;
 		protected MemberValueNodeInfoCollection membersCollection;
@@ -45,6 +45,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		bool hasInitialized;
 		DbgManager dbgManager;
 		string errorMessage;
+		protected DbgDotNetValueNodeProvider realProvider;
 
 		protected readonly struct ChildNodeProviderInfo {
 			public readonly ulong StartIndex;
@@ -91,6 +92,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public sealed override ulong GetChildCount(DbgEvaluationInfo evalInfo) {
 			if (!hasInitialized)
 				Initialize(evalInfo);
+			if (realProvider != null)
+				return realProvider.GetChildCount(evalInfo);
 			return childNodeProviderInfos[childNodeProviderInfos.Length - 1].EndIndex;
 		}
 
@@ -100,6 +103,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if (hasInitialized)
 				return;
 			errorMessage = InitializeCore(evalInfo);
+			if (realProvider != null)
+				return;
 			Debug.Assert(errorMessage != null || membersCollection.Members != null);
 			if (errorMessage == null && membersCollection.Members == null)
 				errorMessage = PredefinedEvaluationErrorMessages.InternalDebuggerError;
@@ -265,6 +270,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			Debug.Assert(this.valueNodeFactory == valueNodeFactory);
 			if (!hasInitialized)
 				Initialize(evalInfo);
+			if (realProvider != null)
+				return realProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options);
 			DbgDotNetValueNode[] children = null;
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			try {
@@ -311,6 +318,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public sealed override void Dispose() {
 			Debug.Assert(childNodeProviderInfos == null || dbgManager != null);
 			DisposeCore();
+			realProvider?.Dispose();
 			if (childNodeProviderInfos != null) {
 				Debug.Assert(childNodeProviderInfos.Length >= 1);
 				if (childNodeProviderInfos.Length > 1 || childNodeProviderInfos[0].ValueNode != null)

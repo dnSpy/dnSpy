@@ -64,6 +64,51 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			if ((evalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
 				return PredefinedEvaluationErrorMessages.FuncEvalDisabled;
 
+			var errorMessage = InitializeEnumerableDebugView(evalInfo);
+			if (errorMessage != null) {
+				if (InitializeListDebugView(evalInfo))
+					errorMessage = null;
+			}
+
+			return errorMessage;
+		}
+
+		bool InitializeListDebugView(DbgEvaluationInfo evalInfo) {
+			var info = EnumerableDebugViewHelper.GetListEnumerableMethods(instanceValue.Type, enumerableType);
+			if ((object)info.ctor == null)
+				return false;
+
+			DbgDotNetValueResult collTypeResult = default;
+			DbgDotNetValueResult toArrayResult = default;
+			bool error = true;
+			try {
+				var runtime = evalInfo.Runtime.GetDotNetRuntime();
+
+				collTypeResult = runtime.CreateInstance(evalInfo, info.ctor, new[] { instanceValue }, DbgDotNetInvokeOptions.None);
+				if (!collTypeResult.IsNormalResult)
+					return false;
+				var expr = valueNodeProviderFactory.GetNewObjectExpression(info.ctor, valueExpression, expectedType);
+
+				toArrayResult = runtime.Call(evalInfo, collTypeResult.Value, info.toArrayMethod, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
+				if (toArrayResult.HasError)
+					return false;
+				expr = valueNodeProviderFactory.GetCallExpression(info.toArrayMethod, expr);
+
+				var result = valueNodeProviderFactory.Create(evalInfo, false, toArrayResult.Value.Type, new DbgDotNetValueNodeInfo(toArrayResult.Value, expr), evalOptions);
+				if (result.Provider == null)
+					return false;
+				realProvider = result.Provider;
+				error = false;
+				return true;
+			}
+			finally {
+				collTypeResult.Value?.Dispose();
+				if (error)
+					toArrayResult.Value?.Dispose();
+			}
+		}
+
+		string InitializeEnumerableDebugView(DbgEvaluationInfo evalInfo) {
 			var proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);
 			if ((object)proxyCtor == null) {
 				var loadState = enumerableType.AppDomain.GetOrCreateData<ForceLoadAssemblyState>();

@@ -122,5 +122,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			output.Write(BoxedTextColor.Punctuation, ")");
 			return ObjectCache.FreeAndToString(ref sb);
 		}
+
+		public override string GetCallExpression(DmdMethodBase method, string instanceExpression) {
+			instanceExpression = LanguageValueNodeFactory.RemoveFormatSpecifiers(instanceExpression);
+			return instanceExpression + "." + method.Name + "()";
+		}
 	}
 }
