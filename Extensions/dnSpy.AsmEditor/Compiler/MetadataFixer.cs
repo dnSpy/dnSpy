@@ -77,8 +77,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			var table = md.TablesStream.FieldTable;
 			int offset = (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
-			for (uint row = 0; row < table.Rows; row++, offset += rowSize)
-				data[offset] = (byte)((data[offset] & ~7) | 6);	// Public
+			for (uint row = 0; row < table.Rows; row++, offset += rowSize) {
+				var b = data[offset];
+				// Don't change private/compilercontrolled to public
+				if ((b & 7) >= 2)
+					data[offset] = (byte)((b & ~7) | 6); // Public
+			}
 		}
 
 		void UpdateMethodTable() {
@@ -86,8 +90,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			int offset = (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
 			offset += table.Columns[2].Offset;
-			for (uint row = 0; row < table.Rows; row++, offset += rowSize)
-				data[offset] = (byte)((data[offset] & ~7) | 6);	// Public
+			for (uint row = 0; row < table.Rows; row++, offset += rowSize) {
+				var b = data[offset];
+				// Don't change private/compilercontrolled to public
+				if ((b & 7) >= 2)
+					data[offset] = (byte)((b & ~7) | 6); // Public
+			}
 		}
 
 		void UpdateExportedTypeTable() {
