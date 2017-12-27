@@ -83,15 +83,15 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		public IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod) {
+		public IList<MethodSourceStatement> FindByTextPosition(int textPosition, FindByTextPositionOptions options) {
 			// We're called by the bookmark and BP code, and they pass in the same input
-			if (resultFindByTextPosition.result == null || resultFindByTextPosition.textPosition != textPosition || resultFindByTextPosition.sameMethod != sameMethod)
-				resultFindByTextPosition = (FindByTextPositionCore(textPosition, sameMethod), textPosition, sameMethod);
+			if (resultFindByTextPosition.result == null || resultFindByTextPosition.textPosition != textPosition || resultFindByTextPosition.options != options)
+				resultFindByTextPosition = (FindByTextPositionCore(textPosition, options), textPosition, options);
 			return resultFindByTextPosition.result;
 		}
-		(IList<MethodSourceStatement> result, int textPosition, bool sameMethod) resultFindByTextPosition;
+		(IList<MethodSourceStatement> result, int textPosition, FindByTextPositionOptions options) resultFindByTextPosition;
 
-		IList<MethodSourceStatement> FindByTextPositionCore(int textPosition, bool sameMethod) {
+		IList<MethodSourceStatement> FindByTextPositionCore(int textPosition, FindByTextPositionOptions options) {
 			if (textPosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(textPosition));
 			if (dict.Count == 0)
@@ -124,7 +124,7 @@ namespace dnSpy.Decompiler {
 			methodStatements = Filter(methodStatements, textPosition);
 
 			if (methodStatements != null) {
-				if (!sameMethod || IsSameMethod(methodStatements, textPosition))
+				if ((options & FindByTextPositionOptions.SameMethod) == 0 || IsSameMethod(methodStatements, textPosition))
 					return methodStatements;
 			}
 			return Array.Empty<MethodSourceStatement>();

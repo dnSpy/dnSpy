@@ -38,9 +38,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Gets <see cref="MethodSourceStatement"/>s
 		/// </summary>
 		/// <param name="textPosition">Text position</param>
-		/// <param name="sameMethod">true to only return statements within the method that contains <paramref name="textPosition"/></param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod = false);
+		IList<MethodSourceStatement> FindByTextPosition(int textPosition, FindByTextPositionOptions options = FindByTextPositionOptions.None);
 
 		/// <summary>
 		/// Gets a code <see cref="MethodSourceStatement"/>
@@ -81,6 +81,21 @@ namespace dnSpy.Contracts.Decompiler {
 	}
 
 	/// <summary>
+	/// Find options
+	/// </summary>
+	public enum FindByTextPositionOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// If set, only return statements within the method that contains the text position
+		/// </summary>
+		SameMethod				= 0x00000001,
+	}
+
+	/// <summary>
 	/// Constants
 	/// </summary>
 	internal static class MethodDebugServiceConstants {
@@ -116,7 +131,7 @@ namespace dnSpy.Contracts.Decompiler {
 			public static readonly EmptyMethodDebugService Instance = new EmptyMethodDebugService();
 
 			int IMethodDebugService.Count => 0;
-			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition, bool sameMethod) => Array.Empty<MethodSourceStatement>();
+			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition, FindByTextPositionOptions options) => Array.Empty<MethodSourceStatement>();
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(in ModuleTokenId token, uint codeOffset) => null;
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint codeOffset) => null;
 			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(in ModuleTokenId token) => null;

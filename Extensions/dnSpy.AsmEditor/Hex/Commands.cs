@@ -447,7 +447,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static IList<MethodSourceStatement> GetStatements(HexContext context) {
 			if (context.TextPosition == null)
 				return null;
-			return MethodBody.BodyCommandUtils.GetStatements(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value);
+			return MethodBody.BodyCommandUtils.GetStatements(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value, FindByTextPositionOptions.None);
 		}
 	}
 
