@@ -84,6 +84,14 @@ namespace dnSpy.Decompiler {
 		}
 
 		public IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod) {
+			// We're called by the bookmark and BP code, and they pass in the same input
+			if (resultFindByTextPosition.result == null || resultFindByTextPosition.textPosition != textPosition || resultFindByTextPosition.sameMethod != sameMethod)
+				resultFindByTextPosition = (FindByTextPositionCore(textPosition, sameMethod), textPosition, sameMethod);
+			return resultFindByTextPosition.result;
+		}
+		(IList<MethodSourceStatement> result, int textPosition, bool sameMethod) resultFindByTextPosition;
+
+		IList<MethodSourceStatement> FindByTextPositionCore(int textPosition, bool sameMethod) {
 			if (textPosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(textPosition));
 			if (dict.Count == 0)
