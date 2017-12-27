@@ -26,7 +26,7 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdTypeBase : DmdType {
-		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
 		readonly ReadOnlyCollection<DmdCustomModifier> customModifiers;
 		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => customModifiers;

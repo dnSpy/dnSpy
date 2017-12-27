@@ -21,6 +21,6 @@ using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdParameterInfoBase : DmdParameterInfo {
-		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 	}
 }

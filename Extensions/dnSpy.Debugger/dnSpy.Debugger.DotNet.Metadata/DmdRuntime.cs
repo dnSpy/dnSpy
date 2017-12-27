@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdRuntime"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Gets the size of a pointer in bytes

@@ -25,7 +25,7 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdAppDomainImpl : DmdAppDomain {
-		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 		public override DmdRuntime Runtime => runtime;
 		public override int Id { get; }
 

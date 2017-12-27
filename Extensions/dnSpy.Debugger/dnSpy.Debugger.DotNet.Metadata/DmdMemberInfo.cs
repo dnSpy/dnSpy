@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdMemberInfo"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Resolves a member reference and throws if it doesn't exist

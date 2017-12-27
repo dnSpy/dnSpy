@@ -25,7 +25,7 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdEventDef : DmdEventInfo {
-		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
 		public sealed override DmdModule Module => DeclaringType.Module;
 		public sealed override DmdType DeclaringType { get; }

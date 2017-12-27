@@ -23,7 +23,7 @@ using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdRuntimeImpl : DmdRuntime {
-		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 		public override int PointerSize { get; }
 		public override DmdImageFileMachine Machine { get; }
 

@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			this.signature = signature;
 		}
 
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) =>
+		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) =>
 			reader.ReadMethodSignature(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
 	}
 }

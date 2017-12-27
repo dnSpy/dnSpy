@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdMethodInfoBase : DmdMethodInfo {
-		internal sealed override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
+		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
 		public sealed override DmdModule Module => DeclaringType.Module;
 		public sealed override DmdType ReturnType => GetMethodSignature().ReturnType;
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		// Only overridden by DmdMethodDef and DmdMethodRef
-		internal virtual DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => throw new InvalidOperationException();
+		private protected virtual DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => throw new InvalidOperationException();
 
 		public sealed override object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters) =>
 			AppDomain.Invoke(context, this, obj, parameters);
