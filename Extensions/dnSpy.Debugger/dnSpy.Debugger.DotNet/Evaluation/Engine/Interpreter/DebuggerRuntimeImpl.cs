@@ -348,6 +348,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		ILValue CreateILValueCore(DbgDotNetValue value) {
 			if (value.Type.IsByRef)
 				return new ByRefILValueImpl(this, value);
+			if (value.Type.IsPointer)
+				return new PointerILValue(this, value);
 			if (value.IsNull)
 				return new NullObjectRefILValueImpl(value);
 
@@ -725,9 +727,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return new ReferenceTypeFieldAddress(this, objValue, field);
 		}
 
-		internal bool StoreIndirect(DbgDotNetValue byRefValue, object value) {
-			Debug.Assert(byRefValue.Type.IsByRef);
-			var error = byRefValue.StoreIndirect(evalInfo, value);
+		internal bool StoreIndirect(DbgDotNetValue refValue, object value) {
+			Debug.Assert(refValue.Type.IsByRef || refValue.Type.IsPointer);
+			var error = refValue.StoreIndirect(evalInfo, value);
 			if (error != null)
 				throw new InterpreterMessageException(error);
 			return true;

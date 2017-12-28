@@ -112,14 +112,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
-			if (!Type.IsByRef)
+			if (!Type.IsByRef && !Type.IsPointer)
 				return CordbgErrorHelper.InternalError;
 			Func<CreateCorValueResult> createTargetValue = () => {
 				var objValue = TryGetCorValue();
 				if (objValue == null)
 					return new CreateCorValueResult(null, -1);
-				Debug.Assert(objValue.ElementType == CorElementType.ByRef);
-				if (objValue.ElementType == CorElementType.ByRef) {
+				Debug.Assert(objValue.ElementType == CorElementType.ByRef || objValue.ElementType == CorElementType.Ptr);
+				if (objValue.ElementType == CorElementType.ByRef || objValue.ElementType == CorElementType.Ptr) {
 					var derefencedValue = objValue.DereferencedValue;
 					if (derefencedValue == null)
 						return new CreateCorValueResult(null, -1);

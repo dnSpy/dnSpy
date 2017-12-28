@@ -45,4 +45,29 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			other is ByRefILValueImpl addr &&
 			runtime.Equals(byRefValue, addr.byRefValue);
 	}
+
+	sealed class PointerILValue : AddressILValue, IDebuggerRuntimeILValue {
+		public override DmdType Type => pointerValue.Type;
+		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => pointerValue;
+
+		readonly DbgDotNetValue pointerValue;
+
+		public PointerILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue pointerValue)
+			: base(runtime, pointerValue.Type.GetElementType()) {
+			this.pointerValue = pointerValue;
+		}
+
+		protected override DbgDotNetValue ReadValue() {
+			var value = pointerValue.LoadIndirect();
+			if (value != null)
+				return runtime.RecordValue(value);
+			return null;
+		}
+
+		protected override void WriteValue(object value) => runtime.StoreIndirect(pointerValue, value);
+
+		public override bool Equals(AddressILValue other) =>
+			other is PointerILValue addr &&
+			runtime.Equals(pointerValue, addr.pointerValue);
+	}
 }

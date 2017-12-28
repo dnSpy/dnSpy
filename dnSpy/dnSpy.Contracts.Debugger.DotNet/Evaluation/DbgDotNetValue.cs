@@ -40,13 +40,13 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public virtual bool IsNull => false;
 
 		/// <summary>
-		/// Gets the referenced value if it's a by-ref
+		/// Gets the referenced value if it's a by-ref or a pointer
 		/// </summary>
 		/// <returns></returns>
 		public virtual DbgDotNetValue LoadIndirect() => null;
 
 		/// <summary>
-		/// Writes to the referenced valued. The return value is null or an error message.
+		/// Writes to the referenced value (by-ref or pointer). The return value is null or an error message.
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
