@@ -44,6 +44,9 @@ dotnet_style_explicit_tuple_names = true:suggestion
 dotnet_separate_import_directive_groups = false
 dotnet_style_prefer_is_null_check_over_reference_equality_method = false:suggestion
 dotnet_style_require_accessibility_modifiers = never:info
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_auto_properties = true:suggestion
 
 [*.cs]
 csharp_style_throw_expression = true:suggestion
@@ -98,13 +101,10 @@ csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_between_query_expression_clauses = true
 csharp_indent_case_contents_when_block = false
-csharp_prefer_inferred_anonymous_type_member_names = true:suggestion
-csharp_prefer_inferred_tuple_names = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
 #csharp_preferred_modifier_order =
 csharp_style_pattern_local_over_anonymous_function = true:suggestion
+csharp_style_deconstructed_variable_declaration = false:none
 
 [*.vb]
-visual_basic_prefer_inferred_anonymous_type_member_names = true:suggestion
-visual_basic_prefer_inferred_tuple_names = true:suggestion
 #visual_basic_preferred_modifier_order =
