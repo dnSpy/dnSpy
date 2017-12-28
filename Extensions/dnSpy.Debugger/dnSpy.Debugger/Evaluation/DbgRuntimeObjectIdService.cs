@@ -204,8 +204,17 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 			if (objectIds.Count > 0) {
 				Runtime.Process.DbgManager.Close(objectIds);
-				ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
+				if (!HasHidden(objectIds))
+					ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
 			}
+		}
+
+		static bool HasHidden(IList<DbgObjectId> objectIds) {
+			for (int i = 0; i < objectIds.Count; i++) {
+				if (objectIds[i].Id == HiddenObjectId)
+					return true;
+			}
+			return false;
 		}
 
 		public override bool Equals(DbgObjectId objectId, DbgValue value) {
