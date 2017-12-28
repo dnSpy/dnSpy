@@ -185,9 +185,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		[Flags]
 		enum CreateFlags {
-			None = 0,
-			NoNullable = 1,
-			NoProxy = 2,
+			None			= 0,
+			NoNullable		= 1,
+			NoProxy			= 2,
 		}
 
 		public DbgDotNetValueNodeProviderResult Create(DbgEvaluationInfo evalInfo, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options) {

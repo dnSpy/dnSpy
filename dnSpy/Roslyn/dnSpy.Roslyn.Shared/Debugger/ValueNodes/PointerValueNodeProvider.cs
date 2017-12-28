@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -49,8 +50,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) {
 			if (!initialized) {
 				initialized = true;
+				// Fails if it's not supported by the runtime
 				derefValue = value.LoadIndirect();
-				Debug.Assert(derefValue != null);
+				Debug.Assert((derefValue == null) == ((evalInfo.Runtime.GetDotNetRuntime().Features & DbgDotNetRuntimeFeatures.NoDereferencePointers) != 0));
 			}
 			return derefValue != null ? 1UL : 0;
 		}

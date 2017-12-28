@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		static DbgDotNetRuntimeFeatures CalculateFeatures(VirtualMachine vm) {
-			var res = DbgDotNetRuntimeFeatures.None;
+			var res = DbgDotNetRuntimeFeatures.NoDereferencePointers;
 			if (!vm.Version.AtLeast(2, 24))
 				res |= DbgDotNetRuntimeFeatures.NoGenericMethods;
 			return res;

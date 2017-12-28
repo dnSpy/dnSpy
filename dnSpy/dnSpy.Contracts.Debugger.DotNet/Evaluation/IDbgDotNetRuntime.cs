@@ -325,27 +325,34 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// No bit is set
 		/// </summary>
-		None				= 0,
+		None					= 0,
 
 		/// <summary>
 		/// Non-virtual call
 		/// </summary>
-		NonVirtual			= 0x00000001,
+		NonVirtual				= 0x00000001,
 	}
 
 	/// <summary>
 	/// .NET runtime features
 	/// </summary>
+	[Flags]
 	public enum DbgDotNetRuntimeFeatures {
 		/// <summary>
 		/// No bit is set
 		/// </summary>
-		None				= 0,
+		None					= 0,
 
 		/// <summary>
 		/// Calling generic methods isn't supported
 		/// </summary>
-		NoGenericMethods	= 0x00000001,
+		NoGenericMethods		= 0x00000001,
+
+		/// <summary>
+		/// <see cref="DbgDotNetValue.LoadIndirect"/> and <see cref="DbgDotNetValue.StoreIndirect(DbgEvaluationInfo, object)"/>
+		/// isn't supported for pointers.
+		/// </summary>
+		NoDereferencePointers	= 0x00000002,
 	}
 
 	/// <summary>
