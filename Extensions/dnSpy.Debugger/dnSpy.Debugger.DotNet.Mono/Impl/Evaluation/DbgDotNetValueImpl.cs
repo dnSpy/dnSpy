@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			rawValue = new DbgDotNetRawValueFactory(engine).Create(value, Type);
 
 			var flags = ValueFlags.None;
-			if (value is PrimitiveValue pv && pv.Value == null) {
+			if (value is PrimitiveValue pv && (pv.Value == null || ((Type.IsPointer || Type.IsFunctionPointer) && boxed0L.Equals(pv.Value)))) {
 				if (Type.IsByRef)
 					flags |= ValueFlags.IsNullByRef;
 				else
@@ -63,6 +63,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 			this.flags = flags;
 		}
+		static readonly object boxed0L = 0L;
 
 		public override IDbgDotNetRuntime TryGetDotNetRuntime() => engine.DotNetRuntime;
 

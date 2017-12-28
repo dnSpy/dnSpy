@@ -77,10 +77,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 				case ElementType.I:
 				case ElementType.U:
-				case ElementType.Ptr:
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)(long)pv.Value);
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)(long)pv.Value);
+
+				case ElementType.Ptr:
+					ulong pval = (ulong)(long)pv.Value;
+					if (pval == 0)
+						return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
+					if (type.AppDomain.Runtime.PointerSize == 4)
+						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)pval);
+					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, pval);
 
 				case ElementType.Object:
 					// This is a null value
