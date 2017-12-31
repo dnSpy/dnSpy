@@ -94,6 +94,7 @@
     <Compile Include="TargetFrameworkInfo.cs" />
     <Compile Include="TargetFrameworkUtils.cs" />
     <Compile Include="TypeFormatterUtils.cs" />
+    <Compile Include="Utils\StateMachineHelpers.cs" />
     <Compile Include="VisualBasic\VisualBasicFormatter.cs" />
   </ItemGroup>
   <ItemGroup>

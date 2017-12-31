@@ -48,6 +48,8 @@ namespace dnSpy.Documents.Tabs {
 					return null;
 				var @ref = context.Find<TextReference>();
 				var realRef = @ref?.Reference;
+				if (realRef is ISourceVariable sv)
+					realRef = sv.Variable;
 				if (realRef is Parameter)
 					realRef = ((Parameter)realRef).ParamDef;
 				if (realRef is IMDTokenProvider)

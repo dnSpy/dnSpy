@@ -207,7 +207,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			if (reference is ParamDef pd) {
-				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && (a.Data.Reference as Parameter)?.ParamDef == pd);
+				var spanData = currentContent.Content.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && ((a.Data.Reference as Parameter)?.ParamDef ?? (a.Data.Reference as SourceParameter)?.Parameter.ParamDef) == pd);
 				return GoToTarget(spanData, false, false, options);
 			}
 

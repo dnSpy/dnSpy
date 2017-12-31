@@ -50,9 +50,12 @@
     <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
     <Compile Include="Debugger\AliasConstants.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharp\CSharpExpressionCompiler.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\CSharp\GeneratedNames.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\CSharp\MonoGeneratedNames.cs" />
     <Compile Include="Debugger\ExpressionCompiler\ImageNameUtils.cs" />
     <Compile Include="Debugger\ExpressionCompiler\LanguageExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\RoslynExpressionCompilerMethods.cs" />
+    <Compile Include="Debugger\ExpressionCompiler\VisualBasic\GeneratedNames.cs" />
     <Compile Include="Debugger\ExpressionCompiler\VisualBasic\VisualBasicExpressionCompiler.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\DbgFilterExpressionEvaluatorImpl.cs" />
     <Compile Include="Debugger\FilterExpressionEvaluator\EvalDelegateCreator.cs" />

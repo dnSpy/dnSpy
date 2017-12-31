@@ -40,6 +40,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Decompiler\AddressReference.cs" />
+    <Compile Include="Decompiler\AsyncMethodDebugInfo.cs" />
+    <Compile Include="Decompiler\AsyncStepInfo.cs" />
     <Compile Include="Decompiler\BamlDecompilerOptions.cs" />
     <Compile Include="Decompiler\BinSpan.cs" />
     <Compile Include="Decompiler\CodeBracesRange.cs" />

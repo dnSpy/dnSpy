@@ -38,8 +38,10 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				return Create(context, gp);
 			if (@ref is IMemberRef mr)
 				return Create(context, mr);
-			if (@ref is Parameter p)
-				return Create(context, new SourceParameter(p, p.Name, p.Type));
+			if (@ref is Parameter pd)
+				return Create(context, new SourceParameter(pd, pd.Name, pd.Type));
+			if (@ref is SourceParameter p)
+				return Create(context, p);
 			if (@ref is SourceLocal l)
 				return Create(context, l);
 			if (@ref is OpCode opc)

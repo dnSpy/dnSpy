@@ -35,6 +35,16 @@ namespace dnSpy.Contracts.Decompiler {
 		public MethodDebugScopeBuilder Scope { get; }
 
 		/// <summary>
+		/// Gets/sets the parameters
+		/// </summary>
+		public SourceParameter[] Parameters { get; set; }
+
+		/// <summary>
+		/// Async method debug info or null
+		/// </summary>
+		public AsyncMethodDebugInfo AsyncInfo { get; set; }
+
+		/// <summary>
 		/// Start of method (eg. position of the first character of the modifier or return type)
 		/// </summary>
 		public int? StartPosition { get; set; }
@@ -65,8 +75,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
 		/// <param name="locals">Locals</param>
-		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method, SourceLocal[] locals)
-			: this(decompilerOptionsVersion, method) => Scope.Locals.AddRange(locals);
+		/// <param name="parameters">Parameters or null</param>
+		/// <param name="asyncInfo">Async method info or null</param>
+		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method, SourceLocal[] locals, SourceParameter[] parameters, AsyncMethodDebugInfo asyncInfo)
+			: this(decompilerOptionsVersion, method) {
+			Scope.Locals.AddRange(locals);
+			Parameters = parameters;
+			AsyncInfo = asyncInfo;
+		}
 
 		/// <summary>
 		/// Adds a <see cref="SourceStatement"/>
@@ -84,7 +100,7 @@ namespace dnSpy.Contracts.Decompiler {
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;
-			return new MethodDebugInfo(decompilerOptionsVersion, method, statements.ToArray(), Scope.ToScope(), methodSpan);
+			return new MethodDebugInfo(decompilerOptionsVersion, method, Parameters, statements.ToArray(), Scope.ToScope(), methodSpan, AsyncInfo);
 		}
 	}
 }

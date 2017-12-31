@@ -36,6 +36,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						continue;
+					if (local.Local == null)
+						continue;
 
 					res[local.Local.Index] = local.Name;
 				}

@@ -32,6 +32,7 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.Property;
 using dnSpy.AsmEditor.Types;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Decompiler.Utils;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[Serializable]

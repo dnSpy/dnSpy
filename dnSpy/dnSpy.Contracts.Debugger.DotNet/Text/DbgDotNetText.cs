@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// Constructor
 		/// </summary>
 		/// <param name="text">Text</param>
-		public DbgDotNetText(in DbgDotNetTextPart text) => Parts = new[] { text };
+		public DbgDotNetText(DbgDotNetTextPart text) => Parts = new[] { text };
 
 		/// <summary>
 		/// Constructor

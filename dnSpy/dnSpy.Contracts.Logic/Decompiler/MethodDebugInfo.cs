@@ -38,9 +38,19 @@ namespace dnSpy.Contracts.Decompiler {
 		public MethodDef Method { get; }
 
 		/// <summary>
+		/// Gets the parameters. There could be missing parameters, in which case use <see cref="Method"/>. This array isn't sorted.
+		/// </summary>
+		public SourceParameter[] Parameters { get; }
+
+		/// <summary>
 		/// Gets all statements, sorted by <see cref="BinSpan.Start"/>
 		/// </summary>
 		public SourceStatement[] Statements { get; }
+
+		/// <summary>
+		/// Gets async info or null if none
+		/// </summary>
+		public AsyncMethodDebugInfo AsyncInfo { get; }
 
 		/// <summary>
 		/// Gets the root scope
@@ -62,19 +72,23 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
+		/// <param name="parameters">Parameters or null</param>
 		/// <param name="statements">Statements</param>
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
-		public MethodDebugInfo(int decompilerOptionsVersion, MethodDef method, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan) {
+		/// <param name="asyncMethodDebugInfo">Async info or null</param>
+		public MethodDebugInfo(int decompilerOptionsVersion, MethodDef method, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
 			Method = method ?? throw new ArgumentNullException(nameof(method));
+			Parameters = parameters ?? Array.Empty<SourceParameter>();
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
 			DecompilerOptionsVersion = decompilerOptionsVersion;
 			Statements = statements;
 			Scope = scope ?? throw new ArgumentNullException(nameof(scope));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);
+			AsyncInfo = asyncMethodDebugInfo;
 		}
 
 		static TextSpan? CalculateMethodSpan(SourceStatement[] statements) {

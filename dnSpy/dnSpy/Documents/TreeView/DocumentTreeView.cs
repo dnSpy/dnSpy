@@ -436,6 +436,8 @@ namespace dnSpy.Documents.TreeView {
 				return FindNode((PropertyDef)@ref);
 			if (@ref is EventDef)
 				return FindNode((EventDef)@ref);
+			if (@ref is ISourceVariable sv && sv.Variable is Parameter p && p.ParamDef is ParamDef pd)
+				return FindNode(pd.DeclaringMethod);
 			if (@ref is ParamDef)
 				return FindNode(((ParamDef)@ref).DeclaringMethod);
 			if (@ref is NamespaceRef nsRef) {

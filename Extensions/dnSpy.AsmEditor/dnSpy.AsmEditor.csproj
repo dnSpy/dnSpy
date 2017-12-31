@@ -150,7 +150,6 @@
     <Compile Include="Compiler\RawModuleBytes.cs" />
     <Compile Include="Compiler\RawModuleBytesProvider.cs" />
     <Compile Include="Compiler\ResourceNodeCreator.cs" />
-    <Compile Include="Compiler\StateMachineHelpers.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="DnlibDialogs\CAArgumentVM.cs" />

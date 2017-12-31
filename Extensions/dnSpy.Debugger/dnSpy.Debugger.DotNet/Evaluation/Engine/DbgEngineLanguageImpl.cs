@@ -35,6 +35,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
+using dnSpy.Decompiler.Utils;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineLanguageImpl : DbgEngineLanguage {
@@ -194,10 +195,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (method == null)
 				return null;
 
+			if (!StateMachineHelpers.TryGetKickoffMethod(method, out var containingMethod))
+				containingMethod = method;
+
 			var runtime = context.Runtime.GetDotNetRuntime();
 			int methodToken, localVarSigTok;
-			if (dbgModule == null || !runtime.TryGetMethodToken(dbgModule, method.MDToken.ToInt32(), out methodToken, out localVarSigTok)) {
-				methodToken = method.MDToken.ToInt32();
+			if (dbgModule == null || !runtime.TryGetMethodToken(dbgModule, (int)location.Token, out methodToken, out localVarSigTok)) {
+				methodToken = (int)location.Token;
 				localVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
 			}
 
@@ -205,17 +209,15 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				CancellationToken = cancellationToken,
 				CalculateBinSpans = true,
 			};
-			var output = DecompilerOutputImplCache.Alloc();
-			output.Initialize(method.MDToken.Raw);
-			//TODO: Whenever the decompiler options change, we need to invalidate our cache and every
-			//		single DbgLanguageDebugInfo instance.
-			decompiler.Decompile(method, output, decContext);
-			var methodDebugInfo = output.TryGetMethodDebugInfo();
-			DecompilerOutputImplCache.Free(ref output);
-			cancellationToken.ThrowIfCancellationRequested();
+			var methodDebugInfo = TryCompileAndGetDebugInfo(containingMethod, location.Token, decContext, cancellationToken);
+			if (methodDebugInfo == null && containingMethod != method) {
+				// The decompiler can't decompile the iterator / async method, try again,
+				// but only decompile the MoveNext method
+				methodDebugInfo = TryCompileAndGetDebugInfo(method, location.Token, decContext, cancellationToken);
+			}
 			if (methodDebugInfo == null && method.Body == null) {
 				var scope = new MethodDebugScope(new BinSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
-				methodDebugInfo = new MethodDebugInfo(-1, method, Array.Empty<SourceStatement>(), scope, null);
+				methodDebugInfo = new MethodDebugInfo(-1, method, null, Array.Empty<SourceStatement>(), scope, null, null);
 			}
 			if (methodDebugInfo == null)
 				return null;
@@ -223,6 +225,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			// We don't support EnC so the version is always 1
 			const int methodVersion = 1;
 			return new DbgLanguageDebugInfo(methodDebugInfo, methodToken, localVarSigTok, methodVersion, location.Offset);
+		}
+
+		MethodDebugInfo TryCompileAndGetDebugInfo(MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
+			var output = DecompilerOutputImplCache.Alloc();
+			output.Initialize(methodToken);
+			//TODO: Whenever the decompiler options change, we need to invalidate our cache and every
+			//		single DbgLanguageDebugInfo instance.
+			decompiler.Decompile(method, output, decContext);
+			var methodDebugInfo = output.TryGetMethodDebugInfo();
+			DecompilerOutputImplCache.Free(ref output);
+			cancellationToken.ThrowIfCancellationRequested();
+			return methodDebugInfo;
 		}
 	}
 }

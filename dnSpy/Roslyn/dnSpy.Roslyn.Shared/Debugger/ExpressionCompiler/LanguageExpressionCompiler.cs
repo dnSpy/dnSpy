@@ -133,6 +133,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						continue;
+					if (local.Local == null)
+						continue;
 					if ((local.Local.Attributes & PdbLocalAttributes.DebuggerHidden) == 0)
 						notCompilerGenerated[local.Local.Index] = true;
 				}
@@ -166,21 +168,63 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			if (compilerGeneratedVariableInfos == null)
 				(compilerGeneratedVariableInfos, notCompilerGenerated) = CreateCompilerGeneratedVariableInfos(allScopes, methodDebugInfo);
 
-			info.HoistedLocalScopeRecords = default;
+			(info.HoistedLocalScopeRecords, info.HoistedVarFieldTokenToNamesMap) = GetHoistedVariablesInfo(allScopes);
 			info.ImportRecordGroups = GetImports(methodDebugInfo.Method.DeclaringType, methodDebugInfo.Scope, out var defaultNamespaceName);
 			info.ExternAliasRecords = default;
 			info.DynamicLocalMap = default;
 			info.TupleLocalMap = default;
 			info.DefaultNamespaceName = defaultNamespaceName ?? string.Empty;
 			info.LocalVariableNames = RoslynExpressionCompilerMethods.GetLocalNames(methodDebugInfo.Method.Body?.Variables.Count ?? 0, containingScopes, compilerGeneratedVariableInfos);
-			info.ParameterNames = GetParameterNames(langDebugInfo.MethodDebugInfo.Method);
+			info.ParameterNames = GetParameterNames(langDebugInfo.MethodDebugInfo.Method, methodDebugInfo.Parameters);
 			info.LocalConstants = default;
 			info.ReuseSpan = RoslynExpressionCompilerMethods.GetReuseSpan(allScopes, langDebugInfo.ILOffset);
 
 			return info;
 		}
 
-		ImmutableArray<string> GetParameterNames(MethodDef method) {
+		(ImmutableArray<HoistedLocalScopeRecord> hoistedLocalScopeRecords, ImmutableDictionary<int, string> hoistedVarFieldTokenToNamesMap) GetHoistedVariablesInfo(List<MethodDebugScope> scopes) {
+			int maxSlotIndex = -1;
+			foreach (var scope in scopes) {
+				foreach (var local in scope.Locals) {
+					if (local.HoistedField == null)
+						continue;
+					if (TryGetHoistedLocalSlotIndex(local.HoistedField, out var slotIndex))
+						maxSlotIndex = Math.Max(maxSlotIndex, slotIndex);
+				}
+			}
+			if (maxSlotIndex < 0)
+				return default;
+			int maxSlots = maxSlotIndex + 1;
+			if (maxSlots >= 4 * 1024)
+				return default;
+
+			var scopeBuilder = ImmutableArray.CreateBuilder<HoistedLocalScopeRecord>(maxSlots);
+			var namesBuilder = ImmutableDictionary.CreateBuilder<int, string>();
+			scopeBuilder.Count = maxSlots;
+			foreach (var scope in scopes) {
+				foreach (var local in scope.Locals) {
+					if (local.HoistedField == null)
+						continue;
+					if (TryGetHoistedLocalSlotIndex(local.HoistedField, out var slotIndex)) {
+						Debug.Assert((uint)slotIndex < (uint)scopeBuilder.Count);
+						scopeBuilder[slotIndex] = new HoistedLocalScopeRecord((int)scope.Span.Start, (int)scope.Span.Length);
+						namesBuilder[local.HoistedField.MDToken.ToInt32()] = local.Name;
+					}
+				}
+			}
+			return (scopeBuilder.ToImmutable(), namesBuilder.ToImmutable());
+		}
+
+		static bool TryGetHoistedLocalSlotIndex(FieldDef field, out int slotIndex) {
+			string name = field.Name;
+			if (CSharp.GeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex))
+				return true;
+			if (VisualBasic.GeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex))
+				return true;
+			return CSharp.MonoGeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex);
+		}
+
+		ImmutableArray<string> GetParameterNames(MethodDef method, SourceParameter[] parameters) {
 			var ps = method.Parameters;
 			if (method.MethodSig.Params.Count == 0)
 				return default;
@@ -190,7 +234,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 				var p = ps[i];
 				if (!p.IsNormalMethodParameter)
 					continue;
-				if (GetParameterName(i, p.Name) != p.Name) {
+				var name = TryGetSourceParameter(parameters, i)?.Name ?? p.Name;
+				if (GetParameterName(i, name) != name) {
 					valid = false;
 					break;
 				}
@@ -201,12 +246,22 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			var builder = ImmutableArray.CreateBuilder<string>(method.Parameters.Count);
 			for (int i = 0; i < ps.Count; i++) {
 				var p = ps[i];
-				if (p.IsNormalMethodParameter)
-					builder.Add(GetParameterName(i, p.Name));
+				if (p.IsNormalMethodParameter) {
+					var name = TryGetSourceParameter(parameters, i)?.Name ?? p.Name;
+					builder.Add(GetParameterName(i, name));
+				}
 				else
 					builder.Add(null);
 			}
 			return builder.ToImmutable();
+		}
+
+		SourceParameter TryGetSourceParameter(SourceParameter[] parameters, int index) {
+			foreach (var p in parameters) {
+				if (p.Parameter?.Index == index)
+					return p;
+			}
+			return null;
 		}
 
 		protected virtual string GetParameterName(int index, string name) => GetParameterNameCore(index, name);

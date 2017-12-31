@@ -17,46 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
+using System;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// A local or parameter present in decompiled code
+	/// Async method debug info
 	/// </summary>
-	public interface ISourceVariable {
+	public sealed class AsyncMethodDebugInfo {
 		/// <summary>
-		/// Gets the real local or parameter or null if it's a decompiler generated variable
+		/// Async step infos
 		/// </summary>
-		IVariable Variable { get; }
+		public AsyncStepInfo[] StepInfos { get; }
 
 		/// <summary>
-		/// true if this is a local
+		/// Catch handler offset or <see cref="uint.MaxValue"/>. Only used if it's an async void method
 		/// </summary>
-		bool IsLocal { get; }
+		public uint CatchHandlerOffset { get; }
 
 		/// <summary>
-		/// true if this is a parameter
+		/// Constructor
 		/// </summary>
-		bool IsParameter { get; }
-
-		/// <summary>
-		/// Gets the name of the variable the decompiler used. It could be different from the real name if the decompiler renamed it.
-		/// </summary>
-		string Name { get; }
-
-		/// <summary>
-		/// Gets the type of the variable
-		/// </summary>
-		TypeSig Type { get; }
-
-		/// <summary>
-		/// Gets the hoisted field or null if it's not a hoisted local/parameter
-		/// </summary>
-		FieldDef HoistedField { get; }
-
-		/// <summary>
-		/// true if this is a decompiler generated variable
-		/// </summary>
-		bool IsDecompilerGenerated { get; }
+		/// <param name="stepInfos">Async step infos</param>
+		/// <param name="catchHandlerOffset">Catch handler offset or <see cref="uint.MaxValue"/>. Only used if it's a async void method</param>
+		public AsyncMethodDebugInfo(AsyncStepInfo[] stepInfos, uint catchHandlerOffset = uint.MaxValue) {
+			StepInfos = stepInfos ?? throw new ArgumentNullException(nameof(stepInfos));
+			CatchHandlerOffset = catchHandlerOffset;
+		}
 	}
 }

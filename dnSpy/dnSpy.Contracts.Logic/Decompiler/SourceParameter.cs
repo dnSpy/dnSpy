@@ -46,6 +46,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public TypeSig Type { get; }
 
 		/// <summary>
+		/// Gets the hoisted field or null if it's not a hoisted local/parameter
+		/// </summary>
+		public FieldDef HoistedField { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="parameter">Parameter</param>
@@ -55,6 +60,19 @@ namespace dnSpy.Contracts.Decompiler {
 			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="parameter">Parameter</param>
+		/// <param name="name">Name used by the decompiler</param>
+		/// <param name="hoistedField">Hoisted field</param>
+		public SourceParameter(Parameter parameter, string name, FieldDef hoistedField) {
+			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			HoistedField = hoistedField ?? throw new ArgumentNullException(nameof(hoistedField));
+			Type = hoistedField.FieldType;
 		}
 	}
 }

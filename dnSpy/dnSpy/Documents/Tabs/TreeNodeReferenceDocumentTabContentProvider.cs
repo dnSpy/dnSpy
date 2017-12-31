@@ -25,6 +25,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Decompiler.Utils;
 using dnSpy.Documents.Tabs.DocViewer;
 
 namespace dnSpy.Documents.Tabs {
@@ -119,6 +120,10 @@ namespace dnSpy.Documents.Tabs {
 			var resolvedRef = ResolveMemberDef(@ref);
 			if (!IsSupportedReference(resolvedRef))
 				return null;
+			if (resolvedRef is MethodDef method && StateMachineHelpers.TryGetKickoffMethod(method, out var kickoffMethod)) {
+				@ref = kickoffMethod;
+				resolvedRef = kickoffMethod;
+			}
 			var newRef = GetReference(@ref);
 			var node = documentTabService.DocumentTreeView.FindNode(newRef);
 			if (node == null) {

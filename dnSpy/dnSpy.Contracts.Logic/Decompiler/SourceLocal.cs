@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class SourceLocal : ISourceVariable {
 		/// <summary>
-		/// The local or null if it's a decompiler generated local (see <see cref="IsDecompilerGenerated"/>)
+		/// The local or null
 		/// </summary>
 		public Local Local { get; }
 
@@ -46,20 +46,38 @@ namespace dnSpy.Contracts.Decompiler {
 		public TypeSig Type { get; }
 
 		/// <summary>
+		/// Gets the hoisted field or null if it's not a hoisted local/parameter
+		/// </summary>
+		public FieldDef HoistedField { get; }
+
+		/// <summary>
 		/// true if this is a decompiler generated local
 		/// </summary>
-		public bool IsDecompilerGenerated => Local == null;
+		public bool IsDecompilerGenerated => Local == null && HoistedField == null;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="local">Local or null if it's a decompiler generated local</param>
+		/// <param name="local">Local or null</param>
 		/// <param name="name">Name used by the decompiler</param>
 		/// <param name="type">Type of local</param>
 		public SourceLocal(Local local, string name, TypeSig type) {
 			Local = local;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="local">Local or null</param>
+		/// <param name="name">Name used by the decompiler</param>
+		/// <param name="hoistedField">Hoisted field</param>
+		public SourceLocal(Local local, string name, FieldDef hoistedField) {
+			Local = local;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			HoistedField = hoistedField ?? throw new ArgumentNullException(nameof(hoistedField));
+			Type = hoistedField.FieldType;
 		}
 	}
 }

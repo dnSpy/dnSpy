@@ -17,46 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// A local or parameter present in decompiled code
+	/// Async method step info
 	/// </summary>
-	public interface ISourceVariable {
+	public readonly struct AsyncStepInfo {
 		/// <summary>
-		/// Gets the real local or parameter or null if it's a decompiler generated variable
+		/// Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it starts waiting for the result
 		/// </summary>
-		IVariable Variable { get; }
+		public uint YieldOffset { get; }
 
 		/// <summary>
-		/// true if this is a local
+		/// Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it resumes after the result is available
 		/// </summary>
-		bool IsLocal { get; }
+		public uint ResumeOffset { get; }
 
 		/// <summary>
-		/// true if this is a parameter
+		/// Constructor
 		/// </summary>
-		bool IsParameter { get; }
-
-		/// <summary>
-		/// Gets the name of the variable the decompiler used. It could be different from the real name if the decompiler renamed it.
-		/// </summary>
-		string Name { get; }
-
-		/// <summary>
-		/// Gets the type of the variable
-		/// </summary>
-		TypeSig Type { get; }
-
-		/// <summary>
-		/// Gets the hoisted field or null if it's not a hoisted local/parameter
-		/// </summary>
-		FieldDef HoistedField { get; }
-
-		/// <summary>
-		/// true if this is a decompiler generated variable
-		/// </summary>
-		bool IsDecompilerGenerated { get; }
+		/// <param name="yieldOffset">Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it starts waiting for the result</param>
+		/// <param name="resumeOffset">Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it resumes after the result is available</param>
+		public AsyncStepInfo(uint yieldOffset, uint resumeOffset) {
+			YieldOffset = yieldOffset;
+			ResumeOffset = resumeOffset;
+		}
 	}
 }
