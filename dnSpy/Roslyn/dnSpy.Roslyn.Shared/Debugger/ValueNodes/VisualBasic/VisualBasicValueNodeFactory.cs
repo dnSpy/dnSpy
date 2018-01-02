@@ -30,6 +30,9 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicValueNodeFactory : LanguageValueNodeFactory {
 		internal const TypeFormatterOptions TypeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+		const string GenericsParenOpen = "(";
+		const string GenericsParenClose = ")";
+		const string Keyword_Of = "Of";
 
 		protected override bool SupportsModuleTypes => true;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
@@ -122,12 +125,31 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 						var s = operatorInfo[i];
 						output.Write('A' <= s[0] && s[0] <= 'Z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator, s);
 					}
+					WriteGenericMethodArguments(output, method, typeFormatter);
 				}
 				else {
 					output.Write(TypeFormatterUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
 					valueFormatter.WriteTokenComment(method.MetadataToken);
+					WriteGenericMethodArguments(output, method, typeFormatter);
 				}
 			}
+		}
+
+		void WriteGenericMethodArguments(ITextColorWriter output, DmdMethodBase method, Formatters.VisualBasic.VisualBasicTypeFormatter typeFormatter) {
+			var genArgs = method.GetGenericArguments();
+			if (genArgs.Count == 0)
+				return;
+			output.Write(BoxedTextColor.Punctuation, GenericsParenOpen);
+			output.Write(BoxedTextColor.Keyword, Keyword_Of);
+			output.WriteSpace();
+			for (int i = 0; i < genArgs.Count; i++) {
+				if (i > 0) {
+					output.Write(BoxedTextColor.Punctuation, ",");
+					output.WriteSpace();
+				}
+				typeFormatter.Format(genArgs[i], null);
+			}
+			output.Write(BoxedTextColor.Punctuation, GenericsParenClose);
 		}
 	}
 }

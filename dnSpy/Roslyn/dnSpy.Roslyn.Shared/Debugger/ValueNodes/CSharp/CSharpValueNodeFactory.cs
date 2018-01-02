@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -30,6 +31,15 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 	[ExportDbgDotNetValueNodeFactory(DbgDotNetLanguageGuids.CSharp)]
 	sealed class CSharpValueNodeFactory : LanguageValueNodeFactory {
 		internal const TypeFormatterOptions TypeFormatterOptions = Formatters.TypeFormatterOptions.IntrinsicTypeKeywords | Formatters.TypeFormatterOptions.Namespaces;
+		const string Keyword_this = "this";
+		const string Keyword_params = "params";
+		const string Keyword_out = "out";
+		const string Keyword_ref = "ref";
+		const string Keyword_in = "in";
+		const string GenericsParenOpen = "<";
+		const string GenericsParenClose = ">";
+		const string IndexerParenOpen = "[";
+		const string IndexerParenClose = "]";
 
 		protected override bool SupportsModuleTypes => false;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new CSharpValueNodeProviderFactory(this);
@@ -107,7 +117,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 			var valueFormatter = new Formatters.CSharp.CSharpPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(BoxedTextColor.Operator, ".");
 			if ((object)property != null) {
-				output.Write(MemberUtils.GetColor(property), Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(property.Name));
+				if (property.GetIndexParameters().Count != 0) {
+					output.Write(BoxedTextColor.Keyword, Keyword_this);
+					WriteMethodParameterList(output, method, typeFormatter, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose);
+				}
+				else
+					output.Write(MemberUtils.GetColor(property), Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(property.Name));
 				valueFormatter.WriteTokenComment(property.MetadataToken);
 				output.Write(BoxedTextColor.Operator, ".");
 				output.Write(BoxedTextColor.Keyword, "get");
@@ -120,6 +135,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 					output.Write(BoxedTextColor.Operator, ".");
 					output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(localFunctionName));
 					valueFormatter.WriteTokenComment(method.MetadataToken);
+					WriteGenericMethodArguments(output, method, typeFormatter);
 				}
 				else {
 					var operatorInfo = Formatters.CSharp.Operators.TryGetOperatorInfo(method.Name);
@@ -134,6 +150,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 						}
 
 						valueFormatter.WriteTokenComment(method.MetadataToken);
+						WriteGenericMethodArguments(output, method, typeFormatter);
 						if (isExplicitOrImplicit) {
 							output.WriteSpace();
 							typeFormatter.Format(methodInfo.ReturnType, null);
@@ -142,9 +159,80 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 					else {
 						output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(method.Name));
 						valueFormatter.WriteTokenComment(method.MetadataToken);
+						WriteGenericMethodArguments(output, method, typeFormatter);
 					}
 				}
 			}
+		}
+
+		static IList<DmdType> GetAllMethodParameterTypes(DmdMethodSignature sig) {
+			if (sig.GetVarArgsParameterTypes().Count == 0)
+				return sig.GetParameterTypes();
+			var list = new List<DmdType>(sig.GetParameterTypes().Count + sig.GetVarArgsParameterTypes().Count);
+			list.AddRange(sig.GetParameterTypes());
+			list.AddRange(sig.GetVarArgsParameterTypes());
+			return list;
+		}
+
+		void WriteMethodParameterList(ITextColorWriter output, DmdMethodBase method, Formatters.CSharp.CSharpTypeFormatter typeFormatter, IList<DmdType> parameterTypes, string openParen, string closeParen) {
+			output.Write(BoxedTextColor.Punctuation, openParen);
+
+			int baseIndex = method.IsStatic ? 0 : 1;
+			var parameters = method.GetParameters();
+			for (int i = 0; i < parameterTypes.Count; i++) {
+				if (i > 0) {
+					output.Write(BoxedTextColor.Punctuation, ",");
+					output.WriteSpace();
+				}
+
+				var param = i < parameters.Count ? parameters[i] : null;
+				if (param?.IsDefined("System.ParamArrayAttribute", false) == true) {
+					output.Write(BoxedTextColor.Keyword, Keyword_params);
+					output.WriteSpace();
+				}
+				var parameterType = parameterTypes[i];
+				WriteRefIfByRef(output, param);
+				if (parameterType.IsByRef)
+					parameterType = parameterType.GetElementType();
+				typeFormatter.Format(parameterType, null);
+			}
+
+			output.Write(BoxedTextColor.Punctuation, closeParen);
+		}
+
+		void WriteRefIfByRef(ITextColorWriter output, DmdParameterInfo param) {
+			if ((object)param == null)
+				return;
+			var type = param.ParameterType;
+			if (!type.IsByRef)
+				return;
+			if (!param.IsIn && param.IsOut) {
+				output.Write(BoxedTextColor.Keyword, Keyword_out);
+				output.WriteSpace();
+			}
+			else if (!param.IsIn && !param.IsOut && TypeFormatterUtils.IsReadOnlyParameter(param)) {
+				output.Write(BoxedTextColor.Keyword, Keyword_in);
+				output.WriteSpace();
+			}
+			else {
+				output.Write(BoxedTextColor.Keyword, Keyword_ref);
+				output.WriteSpace();
+			}
+		}
+
+		void WriteGenericMethodArguments(ITextColorWriter output, DmdMethodBase method, Formatters.CSharp.CSharpTypeFormatter typeFormatter) {
+			var genArgs = method.GetGenericArguments();
+			if (genArgs.Count == 0)
+				return;
+			output.Write(BoxedTextColor.Punctuation, GenericsParenOpen);
+			for (int i = 0; i < genArgs.Count; i++) {
+				if (i > 0) {
+					output.Write(BoxedTextColor.Punctuation, ",");
+					output.WriteSpace();
+				}
+				typeFormatter.Format(genArgs[i], null);
+			}
+			output.Write(BoxedTextColor.Punctuation, GenericsParenClose);
 		}
 	}
 }
