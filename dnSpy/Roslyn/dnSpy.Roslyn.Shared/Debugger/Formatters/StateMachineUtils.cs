@@ -18,6 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
@@ -37,13 +40,21 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 					else
 						attrName = null;
 					if (attrName != null) {
+						var declTypeDef = method.DeclaringType;
+						if (declTypeDef.IsConstructedGenericType)
+							declTypeDef = declTypeDef.GetGenericTypeDefinition();
 						foreach (var m in type.DeclaredMethods) {
 							var ca = m.FindCustomAttribute(attrName, false);
 							if (ca == null || ca.ConstructorArguments.Count != 1)
 								continue;
 							var smType = ca.ConstructorArguments[0].Value as DmdType;
-							if (smType == method.DeclaringType) {
-								kickoffMethod = m;
+							if (smType == declTypeDef) {
+								var smGenArgs = method.ReflectedType.GetGenericArguments();
+								Debug.Assert(method.GetGenericArguments().Count == 0, "Generic method args should be part of the state machine type");
+								kickoffMethod = AddTypeArguments(m, smGenArgs);
+								Debug.Assert((object)kickoffMethod != null);
+								if ((object)kickoffMethod == null)
+									kickoffMethod = m;
 								return true;
 							}
 						}
@@ -53,6 +64,25 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 
 			kickoffMethod = null;
 			return false;
+		}
+
+		static DmdMethodBase AddTypeArguments(DmdMethodBase method, IList<DmdType> typeAndMethodGenArgs) {
+			var declType = method.ReflectedType;
+			if (declType.IsConstructedGenericType)
+				return null;
+			int typeGenArgs = declType.GetGenericArguments().Count;
+			int methodGenArgs = method.GetGenericArguments().Count;
+			if (typeGenArgs + methodGenArgs != typeAndMethodGenArgs.Count)
+				return null;
+
+			if (typeGenArgs != 0) {
+				var type = declType.MakeGenericType(typeAndMethodGenArgs.Take(typeGenArgs).ToArray());
+				method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+			}
+			if (methodGenArgs != 0)
+				method = ((DmdMethodInfo)method).MakeGenericMethod(typeAndMethodGenArgs.Skip(typeGenArgs).ToArray());
+
+			return method;
 		}
 	}
 }
