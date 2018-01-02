@@ -90,7 +90,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var paramType = info.GenericParameterType;
 			bool isMethodParam = (object)paramType.DeclaringMethod != null;
 			ImageName = isMethodParam ? PredefinedDbgValueNodeImageNames.GenericMethodParameter : PredefinedDbgValueNodeImageNames.GenericTypeParameter;
-			Name = new DbgDotNetText(new DbgDotNetTextPart(isMethodParam ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter, valueNodeFactory.EscapeIdentifier(paramType.Name ?? string.Empty)));
+			Name = valueNodeFactory.GetTypeParameterName(paramType);
 		}
 
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => 0;

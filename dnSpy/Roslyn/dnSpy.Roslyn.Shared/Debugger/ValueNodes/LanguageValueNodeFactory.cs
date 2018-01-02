@@ -41,8 +41,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		public abstract string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens);
 		public abstract string GetExpression(string baseExpression, int index, DmdType castType, bool addParens);
 		public abstract string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens);
-		public abstract string EscapeIdentifier(string identifier);
+		protected abstract string EscapeIdentifier(string identifier);
 		protected abstract bool SupportsModuleTypes { get; }
+
+		public DbgDotNetText GetTypeParameterName(DmdType typeParameter) {
+			bool isMethodParam = (object)typeParameter.DeclaringMethod != null;
+			var name = typeParameter.MetadataName ?? string.Empty;
+			// Added by vbc
+			const string StateMachineTypeParameterPrefix = "SM$";
+			if (name.StartsWith(StateMachineTypeParameterPrefix))
+				name = name.Substring(StateMachineTypeParameterPrefix.Length);
+			return new DbgDotNetText(new DbgDotNetTextPart(isMethodParam ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter, EscapeIdentifier(name)));
+		}
 
 		internal DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValueNodeProvider provider, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, in DbgDotNetText valueText) =>
 			new DbgDotNetValueNodeImpl(this, provider, name, null, expression, imageName, true, false, null, null, null, valueText, formatSpecifiers, null);

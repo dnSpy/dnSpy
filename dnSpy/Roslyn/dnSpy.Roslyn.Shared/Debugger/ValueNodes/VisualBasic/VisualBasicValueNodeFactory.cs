@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
+		protected override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
 
 		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property) {
 			var typeFormatter = new Formatters.VisualBasic.VisualBasicTypeFormatter(output, typeOptions.ToTypeFormatterOptions(), null);
