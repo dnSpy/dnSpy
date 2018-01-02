@@ -368,7 +368,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					Write(declType, flags | (IsGenericTypeDefinition(type) ? TypeFlags.NoGenericDefParams : 0));
 					writer.Append('+');
 				}
-				if (!type.IsNested && type.Namespace is string ns && ns.Length > 0) {
+				if (!type.IsNested && type.MetadataNamespace is string ns && ns.Length > 0) {
 					if ((globalFlags & GlobalFlags.Serializable) != 0 ||
 						((flags & TypeFlags.MethodGenericArgumentType) == 0 && ((flags & TypeFlags.ShortSpecialNames) == 0 || !IsShortNameType(type)))) {
 						WriteIdentifier(ns);

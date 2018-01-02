@@ -461,7 +461,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				WritePeriod();
 			}
 			if (method is DmdConstructorInfo)
-				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType.Name), TypeFormatterUtils.GetColor(method, canBeModule: false));
+				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType.MetadataName), TypeFormatterUtils.GetColor(method, canBeModule: false));
 			else {
 				if (TypeFormatterUtils.TryGetMethodName(method.Name, out var containingMethodName, out var localFunctionName)) {
 					var methodColor = TypeFormatterUtils.GetColor(method, canBeModule: false);
