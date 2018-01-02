@@ -178,8 +178,18 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			info.ParameterNames = GetParameterNames(langDebugInfo.MethodDebugInfo.Method, methodDebugInfo.Parameters);
 			info.LocalConstants = default;
 			info.ReuseSpan = RoslynExpressionCompilerMethods.GetReuseSpan(allScopes, langDebugInfo.ILOffset);
+			info.Compiler = GetCompiler(methodDebugInfo.CompilerName);
 
 			return info;
+		}
+
+		static CompilerKind GetCompiler(string compilerName) {
+			switch (compilerName) {
+			case PredefinedCompilerNames.MicrosoftCSharp:		return CompilerKind.MicrosoftCSharp;
+			case PredefinedCompilerNames.MicrosoftVisualBasic:	return CompilerKind.MicrosoftVisualBasic;
+			case PredefinedCompilerNames.MonoCSharp:			return CompilerKind.MonoCSharp;
+			default:											return CompilerKind.Unknown;
+			}
 		}
 
 		(ImmutableArray<HoistedLocalScopeRecord> hoistedLocalScopeRecords, ImmutableDictionary<int, string> hoistedVarFieldTokenToNamesMap) GetHoistedVariablesInfo(List<MethodDebugScope> scopes) {

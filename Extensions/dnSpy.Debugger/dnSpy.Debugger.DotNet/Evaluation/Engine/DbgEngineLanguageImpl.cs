@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 			if (methodDebugInfo == null && method.Body == null) {
 				var scope = new MethodDebugScope(new BinSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
-				methodDebugInfo = new MethodDebugInfo(-1, method, null, Array.Empty<SourceStatement>(), scope, null, null);
+				methodDebugInfo = new MethodDebugInfo(null, -1, method, null, Array.Empty<SourceStatement>(), scope, null, null);
 			}
 			if (methodDebugInfo == null)
 				return null;

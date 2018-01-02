@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Decompiler {
 		readonly List<SourceStatement> statements;
 
 		/// <summary>
+		/// Compiler name (<see cref="PredefinedCompilerNames"/>) or null
+		/// </summary>
+		public string CompilerName { get; set; }
+
+		/// <summary>
 		/// Gets the scope builder
 		/// </summary>
 		public MethodDebugScopeBuilder Scope { get; }
@@ -100,7 +105,7 @@ namespace dnSpy.Contracts.Decompiler {
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;
-			return new MethodDebugInfo(decompilerOptionsVersion, method, Parameters, statements.ToArray(), Scope.ToScope(), methodSpan, AsyncInfo);
+			return new MethodDebugInfo(CompilerName, decompilerOptionsVersion, method, Parameters, statements.ToArray(), Scope.ToScope(), methodSpan, AsyncInfo);
 		}
 	}
 }

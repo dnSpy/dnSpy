@@ -80,6 +80,7 @@
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
     <Compile Include="Decompiler\MethodStatementReference.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
+    <Compile Include="Decompiler\PredefinedCompilerNames.cs" />
     <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
     <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />

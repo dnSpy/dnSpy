@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class MethodDebugInfo {
 		/// <summary>
+		/// Compiler name (<see cref="PredefinedCompilerNames"/>) or null
+		/// </summary>
+		public string CompilerName { get; }
+
+		/// <summary>
 		/// Decompiler options version number
 		/// </summary>
 		public int DecompilerOptionsVersion { get; }
@@ -70,6 +75,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="compilerName">Compiler name (<see cref="PredefinedCompilerNames"/>) or null</param>
 		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
 		/// <param name="parameters">Parameters or null</param>
@@ -77,9 +83,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
 		/// <param name="asyncMethodDebugInfo">Async info or null</param>
-		public MethodDebugInfo(int decompilerOptionsVersion, MethodDef method, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
+		public MethodDebugInfo(string compilerName, int decompilerOptionsVersion, MethodDef method, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
+			CompilerName = compilerName;
 			Method = method ?? throw new ArgumentNullException(nameof(method));
 			Parameters = parameters ?? Array.Empty<SourceParameter>();
 			if (statements.Length > 1)
