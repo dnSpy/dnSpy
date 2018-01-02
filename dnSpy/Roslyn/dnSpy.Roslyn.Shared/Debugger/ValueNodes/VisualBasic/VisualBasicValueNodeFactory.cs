@@ -114,8 +114,19 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.VisualBasic {
 				valueFormatter.WriteTokenComment(method.MetadataToken);
 			}
 			else {
-				output.Write(TypeFormatterUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
-				valueFormatter.WriteTokenComment(method.MetadataToken);
+				var operatorInfo = Formatters.VisualBasic.Operators.TryGetOperatorInfo(method.Name);
+				if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
+					for (int i = 0; i < operatorInfo.Length; i++) {
+						if (i > 0)
+							output.WriteSpace();
+						var s = operatorInfo[i];
+						output.Write('A' <= s[0] && s[0] <= 'Z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator, s);
+					}
+				}
+				else {
+					output.Write(TypeFormatterUtils.GetColor(method, canBeModule: true), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(method.Name));
+					valueFormatter.WriteTokenComment(method.MetadataToken);
+				}
 			}
 		}
 	}

@@ -122,8 +122,27 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 					valueFormatter.WriteTokenComment(method.MetadataToken);
 				}
 				else {
-					output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(method.Name));
-					valueFormatter.WriteTokenComment(method.MetadataToken);
+					var operatorInfo = Formatters.CSharp.Operators.TryGetOperatorInfo(method.Name);
+					if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
+						bool isExplicitOrImplicit = operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit";
+
+						for (int i = 0; i < operatorInfo.Length; i++) {
+							if (i > 0)
+								output.WriteSpace();
+							var s = operatorInfo[i];
+							output.Write('a' <= s[0] && s[0] <= 'z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator, s);
+						}
+
+						valueFormatter.WriteTokenComment(method.MetadataToken);
+						if (isExplicitOrImplicit) {
+							output.WriteSpace();
+							typeFormatter.Format(methodInfo.ReturnType, null);
+						}
+					}
+					else {
+						output.Write(methodColor, Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(method.Name));
+						valueFormatter.WriteTokenComment(method.MetadataToken);
+					}
 				}
 			}
 		}

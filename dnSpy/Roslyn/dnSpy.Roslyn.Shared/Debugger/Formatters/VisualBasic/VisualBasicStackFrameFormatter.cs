@@ -70,36 +70,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		bool ShowIP => (options & DbgStackFrameFormatterOptions.IP) != 0;
 		bool DigitSeparators => (options & DbgStackFrameFormatterOptions.DigitSeparators) != 0;
 
-		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]>(StringComparer.Ordinal) {
-			{ "op_UnaryPlus", "Operator +".Split(' ') },
-			{ "op_UnaryNegation", "Operator -".Split(' ') },
-			{ "op_False", "Operator IsFalse".Split(' ') },
-			{ "op_True", "Operator IsTrue".Split(' ') },
-			{ "op_OnesComplement", "Operator Not".Split(' ') },
-			{ "op_Addition", "Operator +".Split(' ') },
-			{ "op_Subtraction", "Operator -".Split(' ') },
-			{ "op_Multiply", "Operator *".Split(' ') },
-			{ "op_Division", "Operator /".Split(' ') },
-			{ "op_IntegerDivision", @"Operator \".Split(' ') },
-			{ "op_Concatenate", "Operator &".Split(' ') },
-			{ "op_Exponent", "Operator ^".Split(' ') },
-			{ "op_RightShift", "Operator >>".Split(' ') },
-			{ "op_LeftShift", "Operator <<".Split(' ') },
-			{ "op_Equality", "Operator =".Split(' ') },
-			{ "op_Inequality", "Operator <>".Split(' ') },
-			{ "op_GreaterThan", "Operator >".Split(' ') },
-			{ "op_GreaterThanOrEqual", "Operator >=".Split(' ') },
-			{ "op_LessThan", "Operator <".Split(' ') },
-			{ "op_LessThanOrEqual", "Operator <=".Split(' ') },
-			{ "op_BitwiseAnd", "Operator And".Split(' ') },
-			{ "op_Like", "Operator Like".Split(' ') },
-			{ "op_Modulus", "Operator Mod".Split(' ') },
-			{ "op_BitwiseOr", "Operator Or".Split(' ') },
-			{ "op_ExclusiveOr", "Operator Xor".Split(' ') },
-			{ "op_Implicit", "Widening Operator CType".Split(' ') },
-			{ "op_Explicit", "Narrowing Operator CType".Split(' ') },
-		};
-
 		public VisualBasicStackFrameFormatter(ITextColorWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
@@ -437,7 +407,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			if (method is DmdConstructorInfo)
 				operatorInfo = null;
 			else
-				operatorInfo = TryGetOperatorInfo(method.Name);
+				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
 
 			if (operatorInfo != null) {
 				for (int i = 0; i < operatorInfo.Length - 1; i++) {
@@ -473,11 +443,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 			WriteMethodParameterList(method, MethodParenOpen, MethodParenClose);
 			WriteReturnType(method);
 			WriteOffset();
-		}
-
-		static string[] TryGetOperatorInfo(string name) {
-			nameToOperatorName.TryGetValue(name, out var list);
-			return list;
 		}
 
 		void WriteReturnType(DmdMethodBase method) {

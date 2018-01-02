@@ -64,6 +64,7 @@
     <Compile Include="Debugger\Formatters\CSharp\CSharpStackFrameFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpTypeFormatter.cs" />
     <Compile Include="Debugger\Formatters\CSharp\CSharpValueFormatter.cs" />
+    <Compile Include="Debugger\Formatters\CSharp\Operators.cs" />
     <Compile Include="Debugger\Formatters\DbgValueFormatterOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\DbgValueFormatterTypeOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\DebuggerDisplayAttributeFormatter.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Debugger\Formatters\ValueFormatterOptions.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterOptionsExtensions.cs" />
     <Compile Include="Debugger\Formatters\ValueFormatterUtils.cs" />
+    <Compile Include="Debugger\Formatters\VisualBasic\Operators.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicPrimitiveValueFormatter.cs" />
     <Compile Include="Debugger\Formatters\VisualBasic\VisualBasicStackFrameFormatter.cs" />

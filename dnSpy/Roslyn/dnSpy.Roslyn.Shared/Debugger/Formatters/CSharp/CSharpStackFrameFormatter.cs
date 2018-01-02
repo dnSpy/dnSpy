@@ -68,35 +68,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		bool ShowIP => (options & DbgStackFrameFormatterOptions.IP) != 0;
 		bool DigitSeparators => (options & DbgStackFrameFormatterOptions.DigitSeparators) != 0;
 
-		static readonly Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]>(StringComparer.Ordinal) {
-			{ "op_Addition", "operator +".Split(' ') },
-			{ "op_BitwiseAnd", "operator &".Split(' ') },
-			{ "op_BitwiseOr", "operator |".Split(' ') },
-			{ "op_Decrement", "operator --".Split(' ') },
-			{ "op_Division", "operator /".Split(' ') },
-			{ "op_Equality", "operator ==".Split(' ') },
-			{ "op_ExclusiveOr", "operator ^".Split(' ') },
-			{ "op_Explicit", "explicit operator".Split(' ') },
-			{ "op_False", "operator false".Split(' ') },
-			{ "op_GreaterThan", "operator >".Split(' ') },
-			{ "op_GreaterThanOrEqual", "operator >=".Split(' ') },
-			{ "op_Implicit", "implicit operator".Split(' ') },
-			{ "op_Increment", "operator ++".Split(' ') },
-			{ "op_Inequality", "operator !=".Split(' ') },
-			{ "op_LeftShift", "operator <<".Split(' ') },
-			{ "op_LessThan", "operator <".Split(' ') },
-			{ "op_LessThanOrEqual", "operator <=".Split(' ') },
-			{ "op_LogicalNot", "operator !".Split(' ') },
-			{ "op_Modulus", "operator %".Split(' ') },
-			{ "op_Multiply", "operator *".Split(' ') },
-			{ "op_OnesComplement", "operator ~".Split(' ') },
-			{ "op_RightShift", "operator >>".Split(' ') },
-			{ "op_Subtraction", "operator -".Split(' ') },
-			{ "op_True", "operator true".Split(' ') },
-			{ "op_UnaryNegation", "operator -".Split(' ') },
-			{ "op_UnaryPlus", "operator +".Split(' ') },
-		};
-
 		public CSharpStackFrameFormatter(ITextColorWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
@@ -446,7 +417,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			if (method is DmdConstructorInfo)
 				operatorInfo = null;
 			else
-				operatorInfo = TryGetOperatorInfo(method.Name);
+				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
 			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit) {
@@ -483,11 +454,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			WriteGenericArguments(method);
 			WriteMethodParameterList(method, MethodParenOpen, MethodParenClose);
 			WriteOffset();
-		}
-
-		static string[] TryGetOperatorInfo(string name) {
-			nameToOperatorName.TryGetValue(name, out var list);
-			return list;
 		}
 
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
