@@ -25,10 +25,12 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	static class StateMachineUtils {
+		const string StateMachineTypeNamePrefix = "VB$StateMachine_";
+
 		public static bool TryGetKickoffMethod(DmdMethodBase method, out DmdMethodBase kickoffMethod) {
-			var name = method.DeclaringType.Name;
+			var name = method.DeclaringType.MetadataName;
 			char c;
-			if (!string.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith("VB$StateMachine_", StringComparison.Ordinal)))) {
+			if (!string.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith(StateMachineTypeNamePrefix, StringComparison.Ordinal)))) {
 				var type = method.DeclaringType.DeclaringType;
 				if ((object)type != null) {
 					string attrName;
@@ -49,21 +51,84 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 								continue;
 							var smType = ca.ConstructorArguments[0].Value as DmdType;
 							if (smType == declTypeDef) {
-								var smGenArgs = method.ReflectedType.GetGenericArguments();
-								Debug.Assert(method.GetGenericArguments().Count == 0, "Generic method args should be part of the state machine type");
-								kickoffMethod = AddTypeArguments(m, smGenArgs);
-								Debug.Assert((object)kickoffMethod != null);
-								if ((object)kickoffMethod == null)
-									kickoffMethod = m;
+								CreateMethod(method, m, out kickoffMethod);
 								return true;
 							}
 						}
+					}
+				}
+				var kickoffMethodName = GetKickoffMethodName(method.DeclaringType);
+				if (!string.IsNullOrEmpty(kickoffMethodName)) {
+					DmdMethodBase possibleKickoffMethod = null;
+					int methodGenArgs = method.ReflectedType.GetGenericArguments().Count - type.GetGenericArguments().Count;
+					foreach (var m in method.DeclaringType.DeclaringType.DeclaredMethods) {
+						if (m.Name != kickoffMethodName)
+							continue;
+						var sig = m.GetMethodSignature();
+						if (sig.GenericParameterCount != methodGenArgs)
+							continue;
+
+						if ((object)possibleKickoffMethod != null) {
+							// More than one method with the same name and partial signature
+							possibleKickoffMethod = null;
+							break;
+						}
+						possibleKickoffMethod = m;
+					}
+					if ((object)possibleKickoffMethod != null) {
+						CreateMethod(method, possibleKickoffMethod, out kickoffMethod);
+						return true;
 					}
 				}
 			}
 
 			kickoffMethod = null;
 			return false;
+		}
+
+		static void CreateMethod(DmdMethodBase method, DmdMethodBase newMethod, out DmdMethodBase createdMethod) {
+			var smGenArgs = method.ReflectedType.GetGenericArguments();
+			Debug.Assert(method.GetGenericArguments().Count == 0, "Generic method args should be part of the state machine type");
+			createdMethod = AddTypeArguments(newMethod, smGenArgs);
+			Debug.Assert((object)createdMethod != null);
+			if ((object)createdMethod == null)
+				createdMethod = newMethod;
+		}
+
+		static string GetKickoffMethodName(DmdType type) {
+			var name = type.MetadataName;
+
+			if (name.StartsWith(StateMachineTypeNamePrefix)) {
+				int i = StateMachineTypeNamePrefix.Length;
+				while (i < name.Length && char.IsDigit(name[i]))
+					i++;
+				if (i >= name.Length || name[i++] != '_')
+					return null;
+				return RemoveGenericTick(name.Substring(i));
+			}
+
+			if (name.StartsWith("<")) {
+				const int start = 1;
+				int i = 1;
+				int level = 1;
+				while (i < name.Length) {
+					char c = name[i++];
+					if (c == '<')
+						level++;
+					else if (c == '>') {
+						level--;
+						if (level == 0)
+							return RemoveGenericTick(name.Substring(start, i - start - 1));
+					}
+				}
+			}
+
+			return null;
+		}
+
+		static string RemoveGenericTick(string name) {
+			int index = name.LastIndexOf('`');
+			return index < 0 ? name : name.Substring(0, index);
 		}
 
 		static DmdMethodBase AddTypeArguments(DmdMethodBase method, IList<DmdType> typeAndMethodGenArgs) {
