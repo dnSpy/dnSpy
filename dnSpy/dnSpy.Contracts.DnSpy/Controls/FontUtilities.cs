@@ -114,13 +114,26 @@ namespace dnSpy.Contracts.Controls {
 			return DefaultFontIfNoOtherFound;
 		}
 
+		static ICollection<FontFamily> SystemFontFamilies {
+			get {
+				try {
+					// This can throw if an update was installed that removed support for the current
+					// OS, see https://github.com/0xd4d/dnSpy/issues/692
+					return Fonts.SystemFontFamilies;
+				}
+				catch {
+					return Array.Empty<FontFamily>();
+				}
+			}
+		}
+
 		/// <summary>
 		/// Checks whether a font exists
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
 		public static bool Exists(string name) {
-			foreach (var ff in Fonts.SystemFontFamilies) {
+			foreach (var ff in SystemFontFamilies) {
 				if (ff.Source.Equals(name, StringComparison.OrdinalIgnoreCase))
 					return true;
 			}
@@ -159,7 +172,7 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets all monospaced fonts
 		/// </summary>
 		/// <returns></returns>
-		public static FontFamily[] GetMonospacedFonts() => Fonts.SystemFontFamilies.Where(a => IsMonospacedFont(a)).OrderBy(a => a.Source.ToUpperInvariant()).ToArray();
+		public static FontFamily[] GetMonospacedFonts() => SystemFontFamilies.Where(a => IsMonospacedFont(a)).OrderBy(a => a.Source.ToUpperInvariant()).ToArray();
 
 		/// <summary>
 		/// Checks whether <paramref name="ff"/> is a monospaced font. It currently only checks

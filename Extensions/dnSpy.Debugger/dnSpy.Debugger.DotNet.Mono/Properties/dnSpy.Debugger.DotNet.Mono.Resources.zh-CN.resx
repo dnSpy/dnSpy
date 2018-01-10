@@ -238,15 +238,15 @@
     <value>进程暂停时无法设置断点。</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
-    <value>E_xecutable</value>
+    <value>可执行程序(_X)</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
     <value>确保您已经修补了游戏的 mono.dll 文件</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
-    <value>_Timeout (s)</value>
+    <value>超时（秒）(_T)</value>
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
-    <value>This is for Unity Debug builds only</value>
+    <value>仅可用于Debug编译的Unity进程</value>
   </data>
 </root>

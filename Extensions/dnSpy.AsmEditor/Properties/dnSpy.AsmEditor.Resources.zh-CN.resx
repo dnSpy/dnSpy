@@ -2156,7 +2156,7 @@
     <value>Interna_lCall</value>
   </data>
   <data name="Method_ImplFlags_NoInlining" xml:space="preserve">
-    <value>不在该行(_I)</value>
+    <value>不可内联(_I)</value>
   </data>
   <data name="Method_ImplFlags_NoOptimization" xml:space="preserve">
     <value>未优化(_z)</value>

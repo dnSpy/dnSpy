@@ -238,7 +238,7 @@
     <value>Es kann kein Haltepunkt gesetzt werden, solange der Prozess angehalten ist.</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
-    <value>Ausführbare _Dateien</value>
+    <value>Ausführbare _Datei</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
     <value>Stellen Sie sicher, dass die mono.dll-Datei des Spiels angepasst wurde</value>
