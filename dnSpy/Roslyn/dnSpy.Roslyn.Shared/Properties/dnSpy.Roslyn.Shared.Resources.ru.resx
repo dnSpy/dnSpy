@@ -214,6 +214,6 @@
     <value>Результатам необходимо ссылка на {0}</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
-    <value>Type '{0}' doesn't exist in assembly '{1}'</value>
+    <value>Тип «{0}» не существует в сборке «{1}»</value>
   </data>
 </root>

@@ -208,40 +208,40 @@
     <value>This runtime doesn't support calling generic methods</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>It's not possible to write to 'this'</value>
+    <value>Невозможно записать в 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Member can't be accessed due to runtime limitations</value>
+    <value>Пользователь не может быть доступен из-за ограничения времени выполнения</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Не могу установить следующую инструкцию.</value>
   </data>
   <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>The type has not been loaded yet.</value>
+    <value>Тип еще не был загружен.</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Process is paused and _waiting for the debugger</value>
+    <value>Процесс приостановлен и в ожидании отладчика</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>The runtime doesn't support setting a new statement</value>
+    <value>Среда выполнения не поддерживает установку нового оператора</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>Присоединение к процессу ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
-    <value>Editor</value>
+    <value>Редактор</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
     <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
   </data>
   <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
-    <value>Can't set a breakpoint when the process is paused.</value>
+    <value>Невозможно установить точку останова при приостановке процесса.</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
     <value>E_xecutable</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
-    <value>Make sure you have patched the game's mono.dll file</value>
+    <value>Удостоверьтесь, что у вас пропатченная библиотека mono.dll</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
     <value>_Timeout (s)</value>

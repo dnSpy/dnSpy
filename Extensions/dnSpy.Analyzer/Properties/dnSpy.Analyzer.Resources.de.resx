@@ -172,7 +172,7 @@
     <value>Überschrieben von</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibungen</value>
+    <value>Überschreibt</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analysiert Assemblys</value>

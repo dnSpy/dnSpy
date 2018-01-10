@@ -1405,7 +1405,7 @@
     <value>隐藏编译器生成的成员</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
-    <value>隐式函数评估被用户关闭</value>
+    <value>隐式函数求值被用户关闭</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
     <value>遵守隐藏成员的属性</value>
@@ -1465,7 +1465,7 @@
     <value>要停止调试吗？</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>把焦点放到调试的进程</value>
+    <value>使被调试进程获得焦点</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
     <value>打开所有模块</value>
