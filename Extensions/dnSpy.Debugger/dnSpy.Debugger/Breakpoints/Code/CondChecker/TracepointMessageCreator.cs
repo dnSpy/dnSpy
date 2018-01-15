@@ -326,7 +326,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
 					context = language.CreateContext(frame, options: ctxOptions, cancellationToken: cancellationToken);
 					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
-					language.Formatter.Format(evalInfo, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo);
+					language.Formatter.FormatFrame(evalInfo, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo);
 				}
 				finally {
 					context?.Close();
@@ -432,7 +432,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			else {
 				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isDisplay: true);
 				const CultureInfo cultureInfo = null;
-				language.Formatter.Format(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
+				language.Formatter.FormatValue(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}
 		}

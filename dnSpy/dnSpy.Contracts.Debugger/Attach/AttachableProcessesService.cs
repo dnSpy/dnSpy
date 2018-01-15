@@ -30,8 +30,8 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// </summary>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<AttachableProcess[]> GetAttachableProcesses(CancellationToken cancellationToken = default) =>
-			GetAttachableProcesses(null, null, cancellationToken);
+		public Task<AttachableProcess[]> GetAttachableProcessesAsync(CancellationToken cancellationToken = default) =>
+			GetAttachableProcessesAsync(null, null, cancellationToken);
 
 		/// <summary>
 		/// Gets all programs that can be attached to
@@ -39,8 +39,8 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="processName">Process name. If it's empty or null, it matches any string. This can include wildcards (* and ?).</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<AttachableProcess[]> GetAttachableProcesses(string processName, CancellationToken cancellationToken = default) =>
-			GetAttachableProcesses(string.IsNullOrEmpty(processName) ? null : new[] { processName }, null, cancellationToken);
+		public Task<AttachableProcess[]> GetAttachableProcessesAsync(string processName, CancellationToken cancellationToken = default) =>
+			GetAttachableProcessesAsync(string.IsNullOrEmpty(processName) ? null : new[] { processName }, null, cancellationToken);
 
 		/// <summary>
 		/// Gets all programs that can be attached to
@@ -50,6 +50,6 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="providerNames"><see cref="AttachProgramOptionsProviderFactory"/> names, see <see cref="PredefinedAttachProgramOptionsProviderNames"/></param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract Task<AttachableProcess[]> GetAttachableProcesses(string[] processNames, string[] providerNames, CancellationToken cancellationToken);
+		public abstract Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, string[] providerNames, CancellationToken cancellationToken = default);
 	}
 }

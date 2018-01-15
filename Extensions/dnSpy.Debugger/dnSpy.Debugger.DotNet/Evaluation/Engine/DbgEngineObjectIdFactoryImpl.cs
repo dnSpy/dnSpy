@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
@@ -31,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var runtime = dnValue.TryGetDotNetRuntime();
 			if (runtime == null)
 				return false;
-			if (!runtime.SupportsObjectIds)
+			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return false;
 			return runtime.CanCreateObjectId(dnValue);
 		}
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var runtime = dnValue.TryGetDotNetRuntime();
 			if (runtime == null)
 				return null;
-			if (!runtime.SupportsObjectIds)
+			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return null;
 			var objectId = runtime.CreateObjectId(dnValue, id);
 			if (objectId == null)
@@ -61,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var runtime = dnValue.TryGetDotNetRuntime();
 			if (runtime == null)
 				return false;
-			if (!runtime.SupportsObjectIds)
+			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return false;
 			return runtime.Equals(dnObjectId, dnValue);
 		}
@@ -69,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override int GetHashCode(DbgEngineObjectId objectId) {
 			var impl = (DbgEngineObjectIdImpl)objectId;
 			var dnObjectId = impl.DotNetObjectId;
-			if (!impl.Runtime.SupportsObjectIds)
+			if ((impl.Runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return 0;
 			return impl.Runtime.GetHashCode(dnObjectId);
 		}
@@ -79,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var runtime = dnValue.TryGetDotNetRuntime();
 			if (runtime == null)
 				return 0;
-			if (!runtime.SupportsObjectIds)
+			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return 0;
 			return runtime.GetHashCode(dnValue);
 		}

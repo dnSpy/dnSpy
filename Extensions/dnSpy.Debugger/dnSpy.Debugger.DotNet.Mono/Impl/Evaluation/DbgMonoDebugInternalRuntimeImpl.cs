@@ -42,7 +42,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		public override DbgRuntime Runtime { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
 		public DbgDotNetRuntimeFeatures Features { get; }
-		public bool SupportsObjectIds => true;
 
 		IMonoDebugValueConverter IMonoDebugRuntime.ValueConverter => monoDebugValueConverter;
 
@@ -69,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		static DbgDotNetRuntimeFeatures CalculateFeatures(VirtualMachine vm) {
-			var res = DbgDotNetRuntimeFeatures.NoDereferencePointers;
+			var res = DbgDotNetRuntimeFeatures.ObjectIds | DbgDotNetRuntimeFeatures.NoDereferencePointers;
 			if (!vm.Version.AtLeast(2, 24))
 				res |= DbgDotNetRuntimeFeatures.NoGenericMethods;
 			return res;

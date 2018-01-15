@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Attach {
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories.ToArray();
 		}
 
-		public override Task<AttachableProcess[]> GetAttachableProcesses(string[] processNames, string[] providerNames, CancellationToken cancellationToken) {
+		public override Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, string[] providerNames, CancellationToken cancellationToken) {
 			var helper = new Helper(dbgManager, attachProgramOptionsProviderFactories, processNames, providerNames, cancellationToken);
 			return helper.Task;
 		}

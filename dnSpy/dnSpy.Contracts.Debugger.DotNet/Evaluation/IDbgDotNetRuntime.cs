@@ -259,11 +259,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetCreateValueResult Box(DbgEvaluationInfo evalInfo, object value);
 
 		/// <summary>
-		/// Returns true if object IDs are supported by this runtime
-		/// </summary>
-		bool SupportsObjectIds { get; }
-
-		/// <summary>
 		/// Returns true if it's possible to create an object id
 		/// </summary>
 		/// <param name="value">Value created by this runtime</param>
@@ -344,15 +339,20 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		None					= 0,
 
 		/// <summary>
+		/// Object IDs are supported
+		/// </summary>
+		ObjectIds				= 0x00000001,
+
+		/// <summary>
 		/// Calling generic methods isn't supported
 		/// </summary>
-		NoGenericMethods		= 0x00000001,
+		NoGenericMethods		= 0x00000002,
 
 		/// <summary>
 		/// <see cref="DbgDotNetValue.LoadIndirect"/> and <see cref="DbgDotNetValue.StoreIndirect(DbgEvaluationInfo, object)"/>
 		/// isn't supported for pointers.
 		/// </summary>
-		NoDereferencePointers	= 0x00000002,
+		NoDereferencePointers	= 0x00000004,
 	}
 
 	/// <summary>

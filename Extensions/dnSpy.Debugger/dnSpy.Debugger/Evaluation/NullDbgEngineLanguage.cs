@@ -69,8 +69,8 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) { }
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) { }
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) { }
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
 		public override void FormatType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) { }
 	}
 

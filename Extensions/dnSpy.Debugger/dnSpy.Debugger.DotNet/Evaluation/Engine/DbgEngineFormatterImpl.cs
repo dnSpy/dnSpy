@@ -43,10 +43,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
 			formatter.FormatObjectIdName(context, output, id);
 
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
-			formatter.Format(evalInfo, output, options, valueOptions, cultureInfo);
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+			formatter.FormatFrame(evalInfo, output, options, valueOptions, cultureInfo);
 
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			var valueImpl = value as DbgEngineValueImpl;
 			if (valueImpl == null)
 				throw new ArgumentException();

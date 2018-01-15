@@ -33,7 +33,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) =>
 			new VisualBasicValueFormatter(output, evalInfo, this, options.ToValueFormatterOptions(), cultureInfo).Format(value);
 
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
 			new VisualBasicStackFrameFormatter(output, evalInfo, this, options, valueOptions.ToValueFormatterOptions(), cultureInfo).Format();
 	}
 }

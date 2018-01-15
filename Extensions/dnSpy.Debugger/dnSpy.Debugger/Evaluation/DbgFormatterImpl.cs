@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatObjectIdName(context, output, id);
 		}
 
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
@@ -108,10 +108,10 @@ namespace dnSpy.Debugger.Evaluation {
 			if (frameImpl == null)
 				throw new ArgumentException();
 			if (!frameImpl.TryFormat(evalInfo.Context, output, options, valueOptions, cultureInfo, evalInfo.CancellationToken))
-				engineFormatter.Format(evalInfo, output, options, valueOptions, cultureInfo);
+				engineFormatter.FormatFrame(evalInfo, output, options, valueOptions, cultureInfo);
 		}
 
-		public override void Format(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (value.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			engineFormatter.Format(evalInfo, output, valueImpl.EngineValue, options, cultureInfo);
+			engineFormatter.FormatValue(evalInfo, output, valueImpl.EngineValue, options, cultureInfo);
 		}
 
 		public override void FormatType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) {

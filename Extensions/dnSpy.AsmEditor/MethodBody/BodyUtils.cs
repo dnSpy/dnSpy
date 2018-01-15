@@ -649,7 +649,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			output.Write(BoxedTextColor.Number, instr.Index.ToString());
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Number, string.Format("{0:X4}", instr.Offset));
+			output.Write(BoxedTextColor.Label, string.Format("{0:X4}", instr.Offset));
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 

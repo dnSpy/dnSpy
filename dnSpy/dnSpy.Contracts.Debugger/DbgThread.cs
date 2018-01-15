@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract ulong Id { get; }
 
 		/// <summary>
-		/// Gets the managed id of this thread or null if it's not a managed thread
+		/// Gets the managed id of this thread or null if it's unknown or if it's not a managed thread
 		/// </summary>
 		public abstract ulong? ManagedId { get; }
 
