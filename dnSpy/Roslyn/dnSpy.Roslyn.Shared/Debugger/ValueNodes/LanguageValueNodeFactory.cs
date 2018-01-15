@@ -61,9 +61,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			new DbgDotNetValueNodeImpl(this, provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, actualType, errorMessage, valueText, formatSpecifiers, null);
 
 		DbgDotNetValueNode CreateValue(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, bool isRootExpression, ColumnFormatter columnFormatter) {
-			// Could be a by-ref property
-			Debug.Assert(value.Type.IsByRef == expectedType.IsByRef);
-			if (value.Type.IsByRef && expectedType.IsByRef) {
+			// Could be a by-ref property.
+			// If it's a local, the expression compiler creates a method with a pointer return type
+			// instead of a byref return type, so expectedType will be a pointer instead of a byref.
+			if (value.Type.IsByRef && (expectedType.IsByRef || expectedType.IsPointer) && expectedType.GetElementType() != expectedType.AppDomain.System_Void) {
 				var newValue = value.LoadIndirect();
 				if (newValue != null) {
 					value.Dispose();
