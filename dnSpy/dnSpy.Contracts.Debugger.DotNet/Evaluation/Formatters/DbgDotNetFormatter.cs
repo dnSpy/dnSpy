@@ -20,7 +20,6 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Globalization;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;

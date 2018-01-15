@@ -95,6 +95,10 @@
     <Compile Include="PredefinedDotNetDbgRuntimeTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtimes\DbgRuntimeDotNetExtensions.cs" />
+    <Compile Include="Steppers\Engine\DbgDotNetEngineStepper.cs" />
+    <Compile Include="Steppers\Engine\DbgDotNetEngineStepperFrameInfo.cs" />
+    <Compile Include="Steppers\Engine\DbgEngineStepperFactory.cs" />
+    <Compile Include="Steppers\Engine\Exceptions.cs" />
     <Compile Include="Text\DbgDotNetText.cs" />
     <Compile Include="Text\DbgDotNetTextOutput.cs" />
   </ItemGroup>

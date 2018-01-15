@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
 			var data = thread.GetData<DbgThreadData>();
-			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.MonoThread);
+			return dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this, thread, data.MonoThread), thread);
 		}
 
 		internal StepEventRequest CreateStepRequest(ThreadMirror monoThread, Func<StepCompleteEventArgs, bool> onStep) {

@@ -33,6 +33,7 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
+using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -59,10 +60,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal DbgObjectFactory ObjectFactory => objectFactory;
 
-		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
+		readonly DbgEngineStepperFactory dbgEngineStepperFactory;
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
 		readonly ClrDacProvider clrDacProvider;
@@ -99,9 +100,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			stackFrameData = new StackFrameData();
 			objectHolders = new HashSet<DnDebuggerObjectHolder>();
 			debuggerSettings = deps.DebuggerSettings;
-			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetNativeCodeLocationFactory = deps.DbgDotNetNativeCodeLocationFactory;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
+			dbgEngineStepperFactory = deps.EngineStepperFactory;
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			dbgModuleMemoryRefreshedNotifier = deps.DbgModuleMemoryRefreshedNotifier;
 			clrDacProvider = deps.ClrDacProvider;
@@ -920,7 +921,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
 			var data = thread.GetData<DbgThreadData>();
-			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.DnThread, debuggerSettings);
+			return dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this, thread, data.DnThread), thread);
 		}
 	}
 }

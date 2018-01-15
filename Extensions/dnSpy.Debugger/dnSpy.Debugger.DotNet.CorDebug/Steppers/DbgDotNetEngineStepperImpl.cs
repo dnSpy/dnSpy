@@ -25,37 +25,58 @@ using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.Engine.Steppers;
+using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 using dnSpy.Debugger.DotNet.Metadata;
 using DNE = dnlib.DotNet.Emit;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
-	sealed class DbgEngineStepperImpl : DbgEngineStepper {
-		public override event EventHandler<DbgEngineStepCompleteEventArgs> StepComplete;
-
-		sealed class StepErrorException : Exception {
-			public StepErrorException(string message) : base(message) { }
-		}
-
-		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
-		readonly DbgEngineImpl engine;
-		readonly DbgThread thread;
-		readonly DnThread dnThread;
-		readonly DebuggerSettings debuggerSettings;
-
-		const int maxReturnValues = 100;
-
-		StepDataImpl StepData {
-			get => __DONT_USE_stepData;
+	sealed class DbgDotNetEngineStepperImpl : DbgDotNetEngineStepper {
+		public override SessionBase Session {
+			get => session;
 			set {
-				if (__DONT_USE_stepData != value) {
-					__DONT_USE_stepData?.Dispose();
-					__DONT_USE_stepData = value;
+				if (session != value) {
+					session?.Dispose();
+					session = (SessionImpl)value;
 				}
 			}
 		}
-		StepDataImpl __DONT_USE_stepData;
+		SessionImpl session;
+
+		sealed class DbgDotNetEngineStepperFrameInfoImpl : DbgDotNetEngineStepperFrameInfo {
+			// Return values are available since .NET Framework 4.5.1 / .NET Core 1.0
+			public override bool SupportsReturnValues => CorFrame.Code?.SupportsReturnValues == true;
+
+			internal CorFrame CorFrame { get; }
+
+			readonly DbgEngineImpl engine;
+
+			public DbgDotNetEngineStepperFrameInfoImpl(DbgEngineImpl engine, CorFrame frame) {
+				this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
+				CorFrame = frame ?? throw new ArgumentNullException(nameof(frame));
+			}
+
+			public override bool TryGetLocation(out DbgModule module, out uint token, out uint offset) {
+				engine.VerifyCorDebugThread();
+				var func = CorFrame.Function;
+				module = engine.TryGetModule(func?.Module);
+				token = func?.Token ?? 0;
+				var offs = GetILOffset(CorFrame);
+				offset = offs ?? 0;
+				return module != null && token != 0 && offs != null;
+			}
+
+			static uint? GetILOffset(CorFrame frame) {
+				var ip = frame.ILFrameIP;
+				if (ip.IsExact || ip.IsApproximate)
+					return ip.Offset;
+				if (ip.IsProlog)
+					return DbgDotNetCodeRangeService.PROLOG;
+				if (ip.IsEpilog)
+					return DbgDotNetCodeRangeService.EPILOG;
+				return null;
+			}
+		}
 
 		sealed class CallSiteInfo {
 			public DmdMethodBase Method { get; }
@@ -179,247 +200,125 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			}
 		}
 
-		sealed class StepDataImpl {
-			public object Tag { get; }
+		sealed class SessionImpl : SessionBase {
 			public CorStepper CorStepper { get; set; }
 			ReturnValuesCollection returnValuesCollection;
 
-			public StepDataImpl(object tag) => Tag = tag;
+			public SessionImpl(object tag) : base(tag) { }
 			public ReturnValuesCollection GetOrCreateReturnValuesCollection(DbgEngineImpl engine, int maxReturnValues) =>
 				returnValuesCollection ?? (returnValuesCollection = new ReturnValuesCollection(engine, maxReturnValues));
 			public DbgDotNetReturnValueInfo[] TakeOwnershipOfReturnValues() => returnValuesCollection?.TakeOwnershipOfReturnValues() ?? Array.Empty<DbgDotNetReturnValueInfo>();
 			public void Dispose() => returnValuesCollection?.Dispose();
 		}
 
-		public DbgEngineStepperImpl(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DbgEngineImpl engine, DbgThread thread, DnThread dnThread, DebuggerSettings debuggerSettings) {
-			this.dbgDotNetCodeRangeService = dbgDotNetCodeRangeService ?? throw new ArgumentNullException(nameof(dbgDotNetCodeRangeService));
+		readonly DbgEngineImpl engine;
+		readonly DbgThread thread;
+		readonly DnThread dnThread;
+
+		public DbgDotNetEngineStepperImpl(DbgEngineImpl engine, DbgThread thread, DnThread dnThread) {
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			this.dnThread = dnThread ?? throw new ArgumentNullException(nameof(dnThread));
-			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
 		}
 
-		void RaiseStepComplete(DbgThread thread, object tag, string error) {
-			if (IsClosed)
-				return;
-			Debug.Assert(StepComplete != null);
-			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error, false));
+		public override SessionBase CreateSession(object tag) => new SessionImpl(tag);
+
+		public override bool IsRuntimePaused => dnThread.Debugger.ProcessState == DebuggerProcessState.Paused;
+		public override uint ContinueCounter => dnThread.Debugger.ContinueCounter;
+
+		public override DbgDotNetEngineStepperFrameInfo TryGetFrameInfo() {
+			var frame = GetILFrame();
+			if (frame == null)
+				return null;
+			return new DbgDotNetEngineStepperFrameInfoImpl(engine, frame);
 		}
 
-		public override void Step(object tag, DbgEngineStepKind step) => engine.CorDebugThread(() => Step_CorDebug(tag, step));
-		void Step_CorDebug(object tag, DbgEngineStepKind step) {
+		public override void Continue() => engine.Continue_CorDebug();
+
+		public override Task<DbgThread> StepOutAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			engine.VerifyCorDebugThread();
-
-			if (StepData != null) {
-				Debug.Fail("The previous step hasn't been canceled");
-				// No need to localize it, if we're here it's a bug
-				RaiseStepComplete(thread, tag, "The previous step hasn't been canceled");
-				return;
-			}
-
-			var dbg = dnThread.Debugger;
-			if (dbg.ProcessState != DebuggerProcessState.Paused) {
-				Debug.Fail("Process is not paused");
-				// No need to localize it, if we're here it's a bug
-				RaiseStepComplete(thread, tag, "Process is not paused");
-				return;
-			}
-
-			StepAsync(tag, step).ContinueWith(t => {
-				var ex = t.Exception;
-				Debug.Assert(ex == null);
-			});
-		}
-
-		Task StepAsync(object tag, DbgEngineStepKind step) {
-			engine.VerifyCorDebugThread();
-			switch (step) {
-			case DbgEngineStepKind.StepInto:	return StepIntoAsync(tag);
-			case DbgEngineStepKind.StepOver:	return StepOverAsync(tag);
-			case DbgEngineStepKind.StepOut:		return StepOutAsync(tag);
-			default:
-				RaiseStepComplete(thread, tag, $"Unsupported step kind: {step}");
-				return Task.CompletedTask;
-			}
-		}
-
-		async Task StepIntoAsync(object tag) {
-			engine.VerifyCorDebugThread();
-			Debug.Assert(StepData == null);
-			try {
-				var frame = GetILFrame();
-				if (frame == null) {
-					// No frame? Just let the process run.
-					engine.Continue_CorDebug();
-					return;
-				}
-
-				StepData = new StepDataImpl(tag);
-				var result = await GetStepRangesAsync(frame, isStepInto: true);
-				// If we failed to find the statement ranges (result.Success == false), step anyway.
-				// We'll just step until the next sequence point instead of not doing anything.
-				var ranges = result.Result.Success ? result.Result.StatementRanges : new[] { new DbgCodeRange(result.Offset, result.Offset + 1) };
-				var corThread = await StepIntoCoreAsync(result.CorFrame, ranges);
-				StepCompleted(corThread, tag);
-			}
-			catch (StepErrorException see) {
-				StepError(see.Message, tag);
-			}
-			catch (Exception ex) {
-				StepFailed(ex, tag);
-			}
-		}
-
-		async Task StepOverAsync(object tag) {
-			engine.VerifyCorDebugThread();
-			Debug.Assert(StepData == null);
-			try {
-				var frame = GetILFrame();
-				if (frame == null) {
-					// No frame? Just let the process run.
-					engine.Continue_CorDebug();
-					return;
-				}
-
-				StepData = new StepDataImpl(tag);
-				var result = await GetStepRangesAsync(frame, isStepInto: false);
-				// If we failed to find the statement ranges (result.Success == false), step anyway.
-				// We'll just step until the next sequence point instead of not doing anything.
-				var ranges = result.Result.Success ? result.Result.StatementRanges : new[] { new DbgCodeRange(result.Offset, result.Offset + 1) };
-				CollectReturnValues(result.CorFrame, result.Result);
-				var corThread = await StepOverCoreAsync(result.CorFrame, ranges);
-				StepCompleted(corThread, tag);
-			}
-			catch (StepErrorException see) {
-				StepError(see.Message, tag);
-			}
-			catch (Exception ex) {
-				StepFailed(ex, tag);
-			}
-		}
-
-		async Task StepOutAsync(object tag) {
-			engine.VerifyCorDebugThread();
-			Debug.Assert(StepData == null);
-			try {
-				var frame = GetILFrame();
-				if (frame == null) {
-					// No frame? Just let the process run.
-					engine.Continue_CorDebug();
-					return;
-				}
-
-				StepData = new StepDataImpl(tag);
-				var corThread = await StepOutCoreAsync(frame);
-				StepCompleted(corThread, tag);
-			}
-			catch (StepErrorException see) {
-				StepError(see.Message, tag);
-			}
-			catch (Exception ex) {
-				StepFailed(ex, tag);
-			}
-		}
-
-		Task<CorThread> StepOutCoreAsync(CorFrame frame) {
-			engine.VerifyCorDebugThread();
-			Debug.Assert(StepData != null);
+			Debug.Assert(Session != null);
+			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var dbg = dnThread.Debugger;
 			Debug.Assert(dbg.ProcessState == DebuggerProcessState.Paused);
 			CorStepper newCorStepper = null;
-			var tcs = new TaskCompletionSource<CorThread>();
-			newCorStepper = dbg.StepOut(frame, (_, e, canceled) => {
+			var tcs = new TaskCompletionSource<DbgThread>();
+			newCorStepper = dbg.StepOut(frameImpl.CorFrame, (_, e, canceled) => {
 				if (canceled)
 					tcs.SetCanceled();
 				else {
 					e.AddPauseReason(DebuggerPauseReason.Other);
-					tcs.SetResult(e.CorThread);
+					tcs.SetResult(engine.TryGetThread(e.CorThread) ?? thread);
 				}
 			});
-			StepData.CorStepper = newCorStepper;
+			session.CorStepper = newCorStepper;
 			engine.Continue_CorDebug();
 			return tcs.Task;
 		}
 
-		Task<CorThread> StepIntoCoreAsync(CorFrame frame, DbgCodeRange[] ranges) {
+		public override Task<DbgThread> StepIntoAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges) {
 			engine.VerifyCorDebugThread();
-			Debug.Assert(StepData != null);
+			Debug.Assert(Session != null);
+			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var dbg = dnThread.Debugger;
 			Debug.Assert(dbg.ProcessState == DebuggerProcessState.Paused);
 			CorStepper newCorStepper = null;
-			var tcs = new TaskCompletionSource<CorThread>();
+			var tcs = new TaskCompletionSource<DbgThread>();
 			var stepRanges = ToStepRanges(ranges);
-			newCorStepper = dbg.StepInto(frame, stepRanges, (_, e, canceled) => {
+			newCorStepper = dbg.StepInto(frameImpl.CorFrame, stepRanges, (_, e, canceled) => {
 				if (canceled)
 					tcs.SetCanceled();
 				else {
 					e.AddPauseReason(DebuggerPauseReason.Other);
-					tcs.SetResult(e.CorThread);
+					tcs.SetResult(engine.TryGetThread(e.CorThread) ?? thread);
 				}
 			});
-			StepData.CorStepper = newCorStepper;
+			session.CorStepper = newCorStepper;
 			engine.Continue_CorDebug();
 			return tcs.Task;
 		}
 
-		Task<CorThread> StepOverCoreAsync(CorFrame frame, DbgCodeRange[] ranges) {
+		public override Task<DbgThread> StepOverAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges) {
 			engine.VerifyCorDebugThread();
-			Debug.Assert(StepData != null);
+			Debug.Assert(Session != null);
+			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var dbg = dnThread.Debugger;
 			Debug.Assert(dbg.ProcessState == DebuggerProcessState.Paused);
 			CorStepper newCorStepper = null;
-			var tcs = new TaskCompletionSource<CorThread>();
+			var tcs = new TaskCompletionSource<DbgThread>();
 			var stepRanges = ToStepRanges(ranges);
-			newCorStepper = dbg.StepOver(frame, stepRanges, (_, e, canceled) => {
+			newCorStepper = dbg.StepOver(frameImpl.CorFrame, stepRanges, (_, e, canceled) => {
 				if (canceled)
 					tcs.SetCanceled();
 				else {
 					e.AddPauseReason(DebuggerPauseReason.Other);
-					tcs.SetResult(e.CorThread);
+					tcs.SetResult(engine.TryGetThread(e.CorThread) ?? thread);
 				}
 			});
-			StepData.CorStepper = newCorStepper;
+			session.CorStepper = newCorStepper;
 			engine.Continue_CorDebug();
 			return tcs.Task;
 		}
 
-		readonly struct GetStepRangesAsyncResult {
-			public GetCodeRangeResult Result { get; }
-			public CorFrame CorFrame { get; }
-			public uint Offset { get; }
-			public GetStepRangesAsyncResult(in GetCodeRangeResult result, CorFrame corFrame, uint offset) {
-				Result = result;
-				CorFrame = corFrame ?? throw new ArgumentNullException(nameof(corFrame));
-				Offset = offset;
-			}
-		}
-
-		async Task<GetStepRangesAsyncResult> GetStepRangesAsync(CorFrame frame, bool isStepInto) {
+		public override void OnStepComplete() {
 			engine.VerifyCorDebugThread();
-			var module = engine.TryGetModule(frame.Function?.Module);
-			var offset = GetILOffset(frame);
-			if (module == null || offset == null)
-				throw new StepErrorException("Internal error");
-
-			uint continueCounter = dnThread.Debugger.ContinueCounter;
-			// Return values are available since .NET Framework 4.5.1 / .NET Core 1.0
-			var options = isStepInto || !debuggerSettings.ShowReturnValues || frame.Code?.SupportsReturnValues != true ?
-				GetCodeRangesOptions.None : GetCodeRangesOptions.Instructions;
-			var result = await dbgDotNetCodeRangeService.GetCodeRangesAsync(module, frame.Token, offset.Value, options);
-			if (continueCounter != dnThread.Debugger.ContinueCounter || frame.IsNeutered)
-				throw new StepErrorException("Internal error");
-			return new GetStepRangesAsyncResult(result, frame, offset.Value);
+			Debug.Assert(Session != null);
+			var returnValues = session.TakeOwnershipOfReturnValues() ?? Array.Empty<DbgDotNetReturnValueInfo>();
+			engine.SetReturnValues(returnValues);
 		}
 
-		void CollectReturnValues(CorFrame frame, in GetCodeRangeResult result) {
+		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, in GetCodeRangeResult result) {
+			engine.VerifyCorDebugThread();
+			Debug.Assert(Session != null);
+			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var stmtInstrs = result.StatementInstructions;
 			if (stmtInstrs.Length == 0)
 				return;
-			var code = frame.Code;
+			var code = frameImpl.CorFrame.Code;
 			if (code == null)
 				return;
-			var rvColl = StepData.GetOrCreateReturnValuesCollection(engine, maxReturnValues);
-			var rvState = rvColl.CreateReturnValueState(dnThread.CorThread, frame);
+			var rvColl = session.GetOrCreateReturnValuesCollection(engine, maxReturnValues);
+			var rvState = rvColl.CreateReturnValueState(dnThread.CorThread, frameImpl.CorFrame);
 			DmdModule reflectionModule = null;
 			IList<DmdType> genericTypeArguments = null;
 			IList<DmdType> genericMethodArguments = null;
@@ -428,8 +327,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				for (int i = 0; i < instrs.Length; i++) {
 					var instr = instrs[i];
 					uint instrOffs = instr.Offset;
-					if (instr.OpCode == (ushort)DNE.Code.Tailcall)
-						if (i + 1 < instrs.Length) {
+					if (instr.OpCode == (ushort)DNE.Code.Tailcall) {
+						if (i + 1 < instrs.Length)
 							instr = instrs[++i];
 					}
 					// Newobj isn't supported by the CorDebug API
@@ -440,7 +339,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 					var liveOffsets = code.GetReturnValueLiveOffset(instrOffs);
 					if (liveOffsets.Length == 0)
 						continue;
-					var method = GetMethod(frame, (int)instr.Operand, ref reflectionModule, ref genericTypeArguments, ref genericMethodArguments);
+					var method = GetMethod(frameImpl.CorFrame, (int)instr.Operand, ref reflectionModule, ref genericTypeArguments, ref genericMethodArguments);
 					Debug.Assert((object)method != null);
 					if ((object)method == null)
 						continue;
@@ -491,17 +390,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			return result;
 		}
 
-		static uint? GetILOffset(CorFrame frame) {
-			var ip = frame.ILFrameIP;
-			if (ip.IsExact || ip.IsApproximate)
-				return ip.Offset;
-			if (ip.IsProlog)
-				return DbgDotNetCodeRangeService.PROLOG;
-			if (ip.IsEpilog)
-				return DbgDotNetCodeRangeService.EPILOG;
-			return null;
-		}
-
 		CorFrame GetILFrame() {
 			engine.VerifyCorDebugThread();
 			foreach (var frame in dnThread.AllFrames) {
@@ -511,54 +399,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			return null;
 		}
 
-		void StepCompleted(CorThread corThread, object tag) {
+		public override bool IgnoreException(Exception exception) => false;
+
+		public override void OnCanceled(SessionBase session) {
 			engine.VerifyCorDebugThread();
-			if (StepData == null || StepData.Tag != tag)
-				return;
-			var returnValues = StepData?.TakeOwnershipOfReturnValues() ?? Array.Empty<DbgDotNetReturnValueInfo>();
-			engine.SetReturnValues(returnValues);
-			StepData = null;
-			var pausedThread = corThread == dnThread.CorThread ? thread : engine.TryGetThread(corThread);
-			Debug.Assert(engine.TryGetThread(corThread) == pausedThread);
-			RaiseStepComplete(pausedThread, tag, null);
+			var stepper = ((SessionImpl)session).CorStepper;
+			if (stepper != null)
+				dnThread.Debugger.CancelStep(stepper);
 		}
 
-		void StepError(string errorMessage, object tag) {
-			engine.VerifyCorDebugThread();
-			if (StepData == null || StepData.Tag != tag)
-				return;
-			StepData = null;
-			var pausedThread = thread.IsClosed ? null : thread;
-			RaiseStepComplete(pausedThread, tag, errorMessage);
-		}
-
-		void StepFailed(Exception exception, object tag) {
-			engine.VerifyCorDebugThread();
-			StepError("Internal error: " + exception.Message, tag);
-		}
-
-		public override void Cancel(object tag) => engine.CorDebugThread(() => Cancel_CorDebug(tag));
-		void Cancel_CorDebug(object tag) {
-			engine.VerifyCorDebugThread();
-			var oldStepperData = StepData;
-			if (oldStepperData == null)
-				return;
-			if (oldStepperData.Tag != tag)
-				return;
-			ForceCancel_CorDebug();
-		}
-
-		void ForceCancel_CorDebug() {
-			engine.VerifyCorDebugThread();
-			var oldDnStepperData = StepData;
-			StepData = null;
-			if (oldDnStepperData != null)
-				dnThread.Debugger.CancelStep(oldDnStepperData.CorStepper);
-		}
-
-		protected override void CloseCore(DbgDispatcher dispatcher) {
-			if (StepData != null)
-				engine.CorDebugThread(() => ForceCancel_CorDebug());
-		}
+		public override void Close(DbgDispatcher dispatcher) { }
 	}
 }

@@ -35,6 +35,7 @@ using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
+using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Metadata;
@@ -61,9 +62,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		readonly object lockObj;
 		readonly DebuggerThread debuggerThread;
-		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
+		readonly DbgEngineStepperFactory dbgEngineStepperFactory;
 		readonly DbgManager dbgManager;
 		readonly DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier;
 		DmdRuntime dmdRuntime;
@@ -123,8 +124,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			execOnPauseList = new List<Action>();
 			toStepper = new Dictionary<StepEventRequest, StepperInfo>();
 			debuggerSettings = deps.DebuggerSettings;
-			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
+			dbgEngineStepperFactory = deps.EngineStepperFactory;
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			dbgModuleMemoryRefreshedNotifier = deps.DbgModuleMemoryRefreshedNotifier;
 			debuggerThread = new DebuggerThread("MonoDebug");
