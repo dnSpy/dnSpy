@@ -82,8 +82,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			if (options == null) {
 				options = new ShowAttachToProcessDialogOptions();
 				options.InfoLink = new AttachToProcessLinkInfo {
-					ToolTipMessage = "Making an Image Easier to Debug",
-					Url = "https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/making-an-image-easier-to-debug",
+					ToolTipMessage = dnSpy_Debugger_Resources.AttachToProcess_MakingAnImageEasierToDebug,
+					Url = "https://docs.microsoft.com/dotnet/framework/debug-trace-profile/making-an-image-easier-to-debug",
 				};
 			}
 			Title = GetTitle(options);

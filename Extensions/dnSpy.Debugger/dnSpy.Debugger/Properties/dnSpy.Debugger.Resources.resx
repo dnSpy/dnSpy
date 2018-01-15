@@ -1479,4 +1479,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
     <value>Redirect GUI applications' console output to the Output window</value>
   </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Making an Image Easier to Debug</value>
+  </data>
 </root>

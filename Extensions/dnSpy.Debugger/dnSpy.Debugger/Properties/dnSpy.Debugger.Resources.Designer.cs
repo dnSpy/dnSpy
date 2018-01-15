@@ -169,6 +169,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Making an Image Easier to Debug.
+        /// </summary>
+        public static string AttachToProcess_MakingAnImageEasierToDebug {
+            get {
+                return ResourceManager.GetString("AttachToProcess_MakingAnImageEasierToDebug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search for a process.
         /// </summary>
         public static string AttachToProcess_Search_ToolTip {
