@@ -49,9 +49,9 @@ namespace dndbg.Engine {
 		DebugOptions debugOptions;
 
 		sealed class StepInfo {
-			public readonly Action<DnDebugger, StepCompleteDebugCallbackEventArgs> OnCompleted;
+			public readonly Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> OnCompleted;
 
-			public StepInfo(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action) => OnCompleted = action;
+			public StepInfo(Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action) => OnCompleted = action;
 		}
 
 		public DebugOptions Options {
@@ -452,28 +452,28 @@ namespace dndbg.Engine {
 			return stepper;
 		}
 
-		public CorStepper StepOut(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) => StepOut(Current.ILFrame, action);
-		public CorStepper StepOut(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepOut(Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) => StepOut(Current.ILFrame, action);
+		public CorStepper StepOut(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return Step(frame, StepKind.StepOut, action);
 		}
 
-		public CorStepper StepInto(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepInto(Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return StepInto(Current.ILFrame, action);
 		}
 
-		public CorStepper StepInto(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepInto(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return Step(frame, StepKind.StepInto, action);
 		}
 
-		public CorStepper StepOver(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepOver(Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return StepOver(Current.ILFrame, action);
 		}
 
-		public CorStepper StepOver(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepOver(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return Step(frame, StepKind.StepOver, action);
 		}
@@ -484,7 +484,7 @@ namespace dndbg.Engine {
 			StepOut,
 		}
 
-		CorStepper Step(CorFrame frame, StepKind step, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		CorStepper Step(CorFrame frame, StepKind step, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			if (!CanStep(frame))
 				return null;
 
@@ -511,27 +511,27 @@ namespace dndbg.Engine {
 			return stepper;
 		}
 
-		public CorStepper StepInto(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepInto(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return StepInto(Current.ILFrame, ranges, action);
 		}
 
-		public CorStepper StepInto(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepInto(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, ranges, true, action);
 		}
 
-		public CorStepper StepOver(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepOver(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return StepOver(Current.ILFrame, ranges, action);
 		}
 
-		public CorStepper StepOver(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public CorStepper StepOver(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, ranges, false, action);
 		}
 
-		CorStepper StepIntoOver(CorFrame frame, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		CorStepper StepIntoOver(CorFrame frame, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs, bool> action = null) {
 			if (ranges == null)
 				return Step(frame, stepInto ? StepKind.StepInto : StepKind.StepOver, action);
 			if (!CanStep(frame))
@@ -549,8 +549,11 @@ namespace dndbg.Engine {
 
 		internal void CancelStep(CorStepper stepper) {
 			DebugVerifyThread();
-			stepInfos.Remove(stepper);
 			stepper.Deactivate();
+			if (stepInfos.TryGetValue(stepper, out var stepInfo)) {
+				stepInfos.Remove(stepper);
+				stepInfo.OnCompleted?.Invoke(this, null, true);
+			}
 		}
 
 		CorFrame GetRunToCallee(CorFrame frame) {
@@ -684,7 +687,7 @@ namespace dndbg.Engine {
 				var stepperKey = scArgs.CorStepper;
 				if (stepperKey != null && stepInfos.TryGetValue(stepperKey, out stepInfo)) {
 					stepInfos.Remove(stepperKey);
-					stepInfo.OnCompleted?.Invoke(this, scArgs);
+					stepInfo.OnCompleted?.Invoke(this, scArgs, false);
 				}
 				break;
 
@@ -1060,6 +1063,8 @@ namespace dndbg.Engine {
 				corDebug.Terminate();
 				ResetDebuggerStates();
 				CallOnProcessStateChanged();
+				foreach (var kv in stepInfos)
+					kv.Value.OnCompleted?.Invoke(this, null, true);
 				stepInfos.Clear();
 				outputPipe?.Dispose();
 				errorPipe?.Dispose();
@@ -1607,7 +1612,9 @@ namespace dndbg.Engine {
 			foreach (var kv in stepInfos) {
 				if (kv.Key.IsActive)
 					kv.Key.Deactivate();
+				kv.Value.OnCompleted?.Invoke(this, null, true);
 			}
+			stepInfos.Clear();
 
 			foreach (var process in processes.GetAll()) {
 				try {

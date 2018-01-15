@@ -68,6 +68,8 @@ namespace dnSpy.Debugger.Impl {
 		internal void StepComplete_DbgThread(DbgThreadImpl thread, string error, bool forciblyCanceled) {
 			Dispatcher.VerifyAccess();
 			var engine = thread.RuntimeImpl.Engine;
+			if (engine.IsClosed)
+				return;
 			Debug.Assert(IsOurEngine(engine));
 			if (!IsOurEngine(engine))
 				return;

@@ -1258,7 +1258,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return firstThread;
 		}
 
-		DbgThread TryGetThread(ThreadMirror thread) {
+		internal DbgThread TryGetThread(ThreadMirror thread) {
 			if (thread == null)
 				return null;
 			DbgEngineThread engineThread;
@@ -1472,6 +1472,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			catch {
 			}
 			hProcess_debuggee?.Close();
+			foreach (var kv in toStepper)
+				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true));
+			toStepper.Clear();
 		}
 
 		readonly struct TempBreakHelper : IDisposable {

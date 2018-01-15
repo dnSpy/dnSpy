@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -51,21 +52,28 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		void UI(Action callback) => uiDispatcher.UI(callback);
 
-		public override void GetCodeRanges(DbgModule module, uint token, uint offset, GetCodeRangesOptions options, Action<GetCodeRangeResult> callback) {
+		public override Task<GetCodeRangeResult> GetCodeRangesAsync(DbgModule module, uint token, uint offset, GetCodeRangesOptions options) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			if (callback == null)
-				throw new ArgumentNullException(nameof(callback));
-			UI(() => GetCodeRanges_UI(module, token, offset, options, callback));
+			var tcs = new TaskCompletionSource<GetCodeRangeResult>();
+			UI(() => GetCodeRanges_UI(module, token, offset, options, tcs));
+			return tcs.Task;
 		}
 
-		void GetCodeRanges_UI(DbgModule module, uint token, uint offset, GetCodeRangesOptions options, Action<GetCodeRangeResult> callback) {
+		void GetCodeRanges_UI(DbgModule module, uint token, uint offset, GetCodeRangesOptions options, TaskCompletionSource<GetCodeRangeResult> tcs) {
 			uiDispatcher.VerifyAccess();
-			var info = TryGetCodeRanges_UI(module, token, offset, options);
-			if (info.ranges != null)
-				callback(new GetCodeRangeResult(info.ranges, info.instructions));
-			else
-				callback(new GetCodeRangeResult(false, Array.Empty<DbgCodeRange>(), Array.Empty<DbgILInstruction[]>()));
+			try {
+				var info = TryGetCodeRanges_UI(module, token, offset, options);
+				GetCodeRangeResult result;
+				if (info.ranges != null)
+					result = new GetCodeRangeResult(info.ranges, info.instructions);
+				else
+					result = new GetCodeRangeResult(false, Array.Empty<DbgCodeRange>(), Array.Empty<DbgILInstruction[]>());
+				tcs.SetResult(result);
+			}
+			catch (Exception ex) {
+				tcs.SetException(ex);
+			}
 		}
 
 		(DbgCodeRange[] ranges, DbgILInstruction[][] instructions) TryGetCodeRanges_UI(DbgModule module, uint token, uint offset, GetCodeRangesOptions options) {

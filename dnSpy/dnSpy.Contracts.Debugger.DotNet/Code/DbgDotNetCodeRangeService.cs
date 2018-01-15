@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading.Tasks;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
@@ -41,8 +42,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="token">Method token</param>
 		/// <param name="offset">Offset of IL instruction, or one of <see cref="PROLOG"/>, <see cref="EPILOG"/></param>
 		/// <param name="options">Options</param>
-		/// <param name="callback">Gets called when the lookup is complete</param>
-		public abstract void GetCodeRanges(DbgModule module, uint token, uint offset, GetCodeRangesOptions options, Action<GetCodeRangeResult> callback);
+		/// <returns></returns>
+		public abstract Task<GetCodeRangeResult> GetCodeRangesAsync(DbgModule module, uint token, uint offset, GetCodeRangesOptions options);
 	}
 
 	/// <summary>

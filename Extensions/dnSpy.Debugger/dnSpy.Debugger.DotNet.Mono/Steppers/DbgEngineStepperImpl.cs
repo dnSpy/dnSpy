@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
@@ -32,6 +33,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		public override event EventHandler<DbgEngineStepCompleteEventArgs> StepComplete;
 
+		sealed class StepErrorException : Exception {
+			public StepErrorException(string message) : base(message) { }
+		}
+		sealed class ForciblyCanceledException : Exception { }
+
 		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
 		readonly DbgEngineImpl engine;
 		readonly DbgThread thread;
@@ -40,25 +46,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		sealed class StepData {
 			public object Tag { get; }
-			public StepEventRequest MonoStepper { get; }
-			public StepData(object tag, StepEventRequest monoStepper) {
-				Tag = tag;
-				MonoStepper = monoStepper;
-			}
+			public StepEventRequest MonoStepper { get; set; }
+			public StepData(object tag) => Tag = tag;
 		}
-
-		sealed class StepIntoOverData {
-			public bool IsStepInto { get; }
-			public MethodMirror Method { get; }
-			public DbgCodeRange[] StatementRanges { get; }
-			public int StepCounter;
-			public StepIntoOverData(bool isStepInto, MethodMirror method, DbgCodeRange[] statementRanges) {
-				IsStepInto = isStepInto;
-				Method = method;
-				StatementRanges = statementRanges;
-			}
-		}
-
 
 		public DbgEngineStepperImpl(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DbgEngineImpl engine, DbgThread thread, ThreadMirror monoThread) {
 			this.dbgDotNetCodeRangeService = dbgDotNetCodeRangeService ?? throw new ArgumentNullException(nameof(dbgDotNetCodeRangeService));
@@ -74,9 +64,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error, forciblyCanceled));
 		}
 
-		MDS.StackFrame GetFrame() {
+		MDS.StackFrame GetFrame(ThreadMirror thread) {
 			try {
-				var frames = monoThread.GetFrames();
+				var frames = thread.GetFrames();
 				return frames.Length == 0 ? null : frames[0];
 			}
 			catch (VMDisconnectedException) {
@@ -86,18 +76,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		public override void Step(object tag, DbgEngineStepKind step) => engine.MonoDebugThread(() => Step_MonoDebug(tag, step));
 		void Step_MonoDebug(object tag, DbgEngineStepKind step) {
-			engine.VerifyMonoDebugThread();
-			try {
-				StepCore_MonoDebug(tag, step);
-			}
-			catch (VMDisconnectedException) {
-			}
-			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				RaiseStepComplete(thread, tag, $"Exception: {ex.GetType().FullName}: {ex.Message}");
-			}
-		}
-
-		void StepCore_MonoDebug(object tag, DbgEngineStepKind step) {
 			engine.VerifyMonoDebugThread();
 
 			if (stepData != null) {
@@ -114,122 +92,204 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				return;
 			}
 
-			switch (step) {
-			case DbgEngineStepKind.StepInto:
-				GetStepRanges(tag, isStepInto: true);
-				return;
-
-			case DbgEngineStepKind.StepOver:
-				GetStepRanges(tag, isStepInto: false);
-				return;
-
-			case DbgEngineStepKind.StepOut:
-				var stepReq = engine.CreateStepRequest(monoThread, e => OnStepOutCompleted(e, tag));
-				stepReq.Depth = StepDepth.Out;
-				stepReq.Size = StepSize.Min;
-				stepReq.Filter = GetStepFilterFlags();
-				stepReq.Enable();
-				SaveStepper(stepReq, tag, callRunCore: true);
-				return;
-
-			default:
-				RaiseStepComplete(thread, tag, $"Unsupported step kind: {step}");
-				return;
-			}
+			StepAsync(tag, step).ContinueWith(t => {
+				var ex = t.Exception;
+				Debug.Assert(ex == null);
+			});
 		}
 
 		static StepFilter GetStepFilterFlags() => StepFilter.StaticCtor;
 
-		static string GetErrorMessage(in StepCompleteEventArgs e) => e.ForciblyCanceled ? "Only one stepper can be active at a time" : null;
+		static string GetErrorMessage(bool forciblyCanceled) => forciblyCanceled ? "Only one stepper can be active at a time" : null;
 
-		void SaveStepper(StepEventRequest newMonoStepper, object tag, bool callRunCore) {
+		Task StepAsync(object tag, DbgEngineStepKind step) {
 			engine.VerifyMonoDebugThread();
-			if (newMonoStepper != null) {
-				stepData = new StepData(tag, newMonoStepper);
-				if (callRunCore)
-					engine.RunCore();
-			}
-			else {
-				// This should rarely if ever happen so the string doesn't need to be localized
-				RaiseStepComplete(thread, tag, "Could not step");
-			}
-		}
-
-		bool OnStepOutCompleted(in StepCompleteEventArgs e, object tag) {
-			engine.VerifyMonoDebugThread();
-			if (stepData == null || stepData.MonoStepper != e.StepEventRequest || stepData.Tag != tag)
-				return false;
-			stepData = null;
-			RaiseStepComplete(thread, tag, GetErrorMessage(e), e.ForciblyCanceled);
-			return true;
-		}
-
-		void GetStepRanges(object tag, bool isStepInto) {
-			engine.VerifyMonoDebugThread();
-			var frame = GetFrame();
-			var module = engine.TryGetModule(frame?.Method?.DeclaringType.Module);
-			var offset = frame?.ILOffset;
-			if (module == null || offset == null)
-				SaveStepper(null, tag, callRunCore: true);
-			else {
-				uint continueCounter = engine.ContinueCounter;
-				dbgDotNetCodeRangeService.GetCodeRanges(module, (uint)frame.Method.MetadataToken, (uint)offset.Value, GetCodeRangesOptions.None,
-					result => engine.MonoDebugThread(() => GotStepRanges(frame, tag, isStepInto, result, continueCounter)));
+			switch (step) {
+			case DbgEngineStepKind.StepInto:	return StepIntoAsync(tag);
+			case DbgEngineStepKind.StepOver:	return StepOverAsync(tag);
+			case DbgEngineStepKind.StepOut:		return StepOutAsync(tag);
+			default:
+				RaiseStepComplete(thread, tag, $"Unsupported step kind: {step}");
+				return Task.CompletedTask;
 			}
 		}
 
-		void GotStepRanges(MDS.StackFrame frame, object tag, bool isStepInto, in GetCodeRangeResult result, uint continueCounter) {
+		async Task StepIntoAsync(object tag) {
 			engine.VerifyMonoDebugThread();
-			if (IsClosed)
-				return;
-			if (stepData != null)
-				return;
-			if (continueCounter != engine.ContinueCounter) {
-				RaiseStepComplete(thread, tag, "Internal error");
-				return;
-			}
-			// If we failed to find the statement ranges (result.Success == false), step anyway.
-			// We'll just step until the next sequence point instead of not doing anything.
-			var stepIntoOverData = new StepIntoOverData(isStepInto, frame.Method, result.StatementRanges);
-			StartStepIntoOver(tag, stepIntoOverData);
-		}
-
-		void StartStepIntoOver(object tag, StepIntoOverData stepIntoOverData) {
-			engine.VerifyMonoDebugThread();
+			Debug.Assert(stepData == null);
 			try {
-				stepIntoOverData.StepCounter++;
-				var stepReq = engine.CreateStepRequest(monoThread, e => OnStepIntoOverCompleted(e, tag, stepIntoOverData));
-				//TODO: StepOver fails on mono unless there's a portable PDB file available
-				stepReq.Depth = stepIntoOverData.IsStepInto ? StepDepth.Into : StepDepth.Over;
-				stepReq.Size = StepSize.Min;
-				stepReq.Filter = GetStepFilterFlags();
-				stepReq.Enable();
-				SaveStepper(stepReq, tag, callRunCore: stepIntoOverData.StepCounter == 1);
+				stepData = new StepData(tag);
+				var result = await GetStepRangesAsync(monoThread);
+				// If we failed to find the statement ranges (result.Success == false), step anyway.
+				// We'll just step until the next sequence point instead of not doing anything.
+				var ranges = result.Result.Success ? result.Result.StatementRanges : new[] { new DbgCodeRange(result.Offset, result.Offset + 1) };
+				var stepRes = await StepIntoCoreAsync(result.Thread, ranges);
+				StepCompleted(stepRes.Thread, stepRes.ForciblyCanceled, tag);
 			}
 			catch (VMDisconnectedException) {
 			}
-			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				RaiseStepComplete(thread, tag, $"Exception: {ex.GetType().FullName}: {ex.Message}");
+			catch (ForciblyCanceledException) {
+				StepCompleted(monoThread, true, tag);
+			}
+			catch (StepErrorException see) {
+				StepError(see.Message, tag);
+			}
+			catch (Exception ex) {
+				StepFailed(ex, tag);
 			}
 		}
 
-		bool OnStepIntoOverCompleted(in StepCompleteEventArgs e, object tag, StepIntoOverData stepIntoOverData) {
+		async Task StepOverAsync(object tag) {
 			engine.VerifyMonoDebugThread();
-			if (stepData == null || stepData.MonoStepper != e.StepEventRequest || stepData.Tag != tag)
-				return false;
-			stepData = null;
-
-			var frame = GetFrame();
-			uint offset = (uint)(frame?.ILOffset ?? -1);
-
-			if (!e.ForciblyCanceled && stepIntoOverData.StepCounter < MAX_STEPS && frame?.Method == stepIntoOverData.Method && IsInCodeRange(stepIntoOverData.StatementRanges, offset)) {
-				StartStepIntoOver(tag, stepIntoOverData);
-				return false;
+			Debug.Assert(stepData == null);
+			try {
+				stepData = new StepData(tag);
+				var result = await GetStepRangesAsync(monoThread);
+				// If we failed to find the statement ranges (result.Success == false), step anyway.
+				// We'll just step until the next sequence point instead of not doing anything.
+				var ranges = result.Result.Success ? result.Result.StatementRanges : new[] { new DbgCodeRange(result.Offset, result.Offset + 1) };
+				var stepRes = await StepOverCoreAsync(result.Thread, ranges);
+				StepCompleted(stepRes.Thread, stepRes.ForciblyCanceled, tag);
 			}
-			else {
-				RaiseStepComplete(thread, tag, GetErrorMessage(e), e.ForciblyCanceled);
+			catch (VMDisconnectedException) {
+			}
+			catch (ForciblyCanceledException) {
+				StepCompleted(monoThread, true, tag);
+			}
+			catch (StepErrorException see) {
+				StepError(see.Message, tag);
+			}
+			catch (Exception ex) {
+				StepFailed(ex, tag);
+			}
+		}
+
+		async Task StepOutAsync(object tag) {
+			engine.VerifyMonoDebugThread();
+			Debug.Assert(stepData == null);
+			try {
+				stepData = new StepData(tag);
+				var result = await StepOutCoreAsync(monoThread);
+				StepCompleted(result.Thread, result.ForciblyCanceled, tag);
+			}
+			catch (VMDisconnectedException) {
+			}
+			catch (ForciblyCanceledException) {
+				StepCompleted(monoThread, true, tag);
+			}
+			catch (StepErrorException see) {
+				StepError(see.Message, tag);
+			}
+			catch (Exception ex) {
+				StepFailed(ex, tag);
+			}
+		}
+
+		readonly struct StepResult {
+			public ThreadMirror Thread { get; }
+			public bool ForciblyCanceled { get; }
+			public StepResult(ThreadMirror thread, bool forciblyCanceled) {
+				Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+				ForciblyCanceled = forciblyCanceled;
+			}
+		}
+
+		Task<StepResult> StepIntoCoreAsync(ThreadMirror thread, DbgCodeRange[] ranges) {
+			engine.VerifyMonoDebugThread();
+			return StepCoreAsync(thread, ranges, isStepInto: true);
+		}
+
+		Task<StepResult> StepOverCoreAsync(ThreadMirror thread, DbgCodeRange[] ranges) {
+			engine.VerifyMonoDebugThread();
+			return StepCoreAsync(thread, ranges, isStepInto: false);
+		}
+
+		async Task<StepResult> StepCoreAsync(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
+			engine.VerifyMonoDebugThread();
+			Debug.Assert(stepData != null);
+			var method = GetFrame(thread)?.Method;
+			Debug.Assert(method != null);
+			if (method == null)
+				throw new StepErrorException("Internal error");
+
+			for (int i = 0; i < MAX_STEPS; i++) {
+				var result = await StepCore2Async(thread, ranges, isStepInto);
+				thread = result.Thread;
+				if (result.ForciblyCanceled)
+					throw new ForciblyCanceledException();
+				var frame = GetFrame(thread);
+				uint offset = (uint)(frame?.ILOffset ?? -1);
+				if (frame?.Method != method || !IsInCodeRange(ranges, offset))
+					break;
+			}
+			return new StepResult(thread, false);
+		}
+
+		Task<StepResult> StepCore2Async(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
+			engine.VerifyMonoDebugThread();
+			Debug.Assert(stepData != null);
+			var tcs = new TaskCompletionSource<StepResult>();
+			var stepReq = engine.CreateStepRequest(thread, e => {
+				if (engine.IsClosed)
+					tcs.SetCanceled();
+				else
+					tcs.SetResult(new StepResult(thread, e.ForciblyCanceled));
 				return true;
+			});
+			stepData.MonoStepper = stepReq;
+			//TODO: StepOver fails on mono unless there's a portable PDB file available
+			stepReq.Depth = isStepInto ? StepDepth.Into : StepDepth.Over;
+			stepReq.Size = StepSize.Min;
+			stepReq.Filter = GetStepFilterFlags();
+			stepReq.Enable();
+			engine.RunCore();
+			return tcs.Task;
+		}
+
+		Task<StepResult> StepOutCoreAsync(ThreadMirror thread) {
+			engine.VerifyMonoDebugThread();
+			Debug.Assert(stepData != null);
+			var tcs = new TaskCompletionSource<StepResult>();
+			var stepReq = engine.CreateStepRequest(thread, e => {
+				if (engine.IsClosed)
+					tcs.SetCanceled();
+				else
+					tcs.SetResult(new StepResult(thread, e.ForciblyCanceled));
+				return true;
+			});
+			stepData.MonoStepper = stepReq;
+			stepReq.Depth = StepDepth.Out;
+			stepReq.Size = StepSize.Min;
+			stepReq.Filter = GetStepFilterFlags();
+			stepReq.Enable();
+			engine.RunCore();
+			return tcs.Task;
+		}
+
+		readonly struct GetStepRangesAsyncResult {
+			public GetCodeRangeResult Result { get; }
+			public ThreadMirror Thread { get; }
+			public uint Offset { get; }
+			public GetStepRangesAsyncResult(in GetCodeRangeResult result, ThreadMirror thread, uint offset) {
+				Result = result;
+				Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+				Offset = offset;
 			}
+		}
+
+		async Task<GetStepRangesAsyncResult> GetStepRangesAsync(ThreadMirror thread) {
+			engine.VerifyMonoDebugThread();
+			var frame = GetFrame(thread);
+			var module = engine.TryGetModule(frame?.Method?.DeclaringType.Module);
+			var offset = frame?.ILOffset;
+			if (module == null || offset == null)
+				throw new StepErrorException("Internal error");
+
+			uint continueCounter = engine.ContinueCounter;
+			var result = await dbgDotNetCodeRangeService.GetCodeRangesAsync(module, (uint)frame.Method.MetadataToken, (uint)offset.Value, GetCodeRangesOptions.None);
+			if (continueCounter != engine.ContinueCounter)
+				throw new StepErrorException("Internal error");
+			return new GetStepRangesAsyncResult(result, thread, (uint)offset.Value);
 		}
 
 		static bool IsInCodeRange(DbgCodeRange[] ranges, uint offset) {
@@ -238,6 +298,30 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 					return true;
 			}
 			return false;
+		}
+
+		void StepCompleted(ThreadMirror thread, bool forciblyCanceled, object tag) {
+			engine.VerifyMonoDebugThread();
+			if (stepData == null || stepData.Tag != tag)
+				return;
+			stepData = null;
+			var pausedThread = thread == monoThread ? this.thread : engine.TryGetThread(thread);
+			Debug.Assert(engine.TryGetThread(thread) == pausedThread);
+			RaiseStepComplete(pausedThread, tag, GetErrorMessage(forciblyCanceled), forciblyCanceled);
+		}
+
+		void StepError(string errorMessage, object tag) {
+			engine.VerifyMonoDebugThread();
+			if (stepData == null || stepData.Tag != tag)
+				return;
+			stepData = null;
+			var pausedThread = thread.IsClosed ? null : thread;
+			RaiseStepComplete(pausedThread, tag, errorMessage);
+		}
+
+		void StepFailed(Exception exception, object tag) {
+			engine.VerifyMonoDebugThread();
+			StepError("Internal error: " + exception.Message, tag);
 		}
 
 		public override void Cancel(object tag) => engine.MonoDebugThread(() => Cancel_MonoDebug(tag));
