@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -113,11 +114,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets step ranges
 		/// </summary>
-		/// <param name="sourceStatement">Source statement</param>
+		/// <param name="sourceBinSpans">Source statement spans</param>
 		/// <returns></returns>
-		public BinSpan[] GetRanges(SourceStatement sourceStatement) {
-			var list = new List<BinSpan>(GetUnusedBinSpans().Length + 1);
-			list.Add(sourceStatement.BinSpan);
+		public BinSpan[] GetRanges(BinSpan[] sourceBinSpans) {
+			var list = new List<BinSpan>(sourceBinSpans.Length + GetUnusedBinSpans().Length + 1);
+			list.AddRange(sourceBinSpans);
 			list.AddRange(GetUnusedBinSpans());
 			return BinSpan.OrderAndCompactList(list).ToArray();
 		}
@@ -212,6 +213,56 @@ namespace dnSpy.Contracts.Decompiler {
 					return statement;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Gets all binspans of a statement
+		/// </summary>
+		/// <param name="statementSpan">Statement span</param>
+		/// <returns></returns>
+		public BinSpan[] GetBinSpansOfStatement(TextSpan statementSpan) {
+			if (statementsDict == null)
+				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
+			if (statementsDict.TryGetValue(statementSpan, out var list))
+				return list.ToArray();
+			return Array.Empty<BinSpan>();
+		}
+		Dictionary<TextSpan, SmallList<BinSpan>> statementsDict;
+
+		static Dictionary<TextSpan, SmallList<BinSpan>> CreateStatementsDict(SourceStatement[] statements) {
+			var dict = new Dictionary<TextSpan, SmallList<BinSpan>>(statements.Length);
+			foreach (var statement in statements) {
+				dict.TryGetValue(statement.TextSpan, out var list);
+				list.Add(statement.BinSpan);
+				dict[statement.TextSpan] = list;
+			}
+			return dict;
+		}
+	}
+
+	struct SmallList<T> {
+		T firstValue;
+		bool hasFirstValue;
+		List<T> list;
+
+		public void Add(T value) {
+			if (!hasFirstValue) {
+				firstValue = value;
+				hasFirstValue = true;
+			}
+			else {
+				if (list == null)
+					list = new List<T>(2) { firstValue };
+				list.Add(value);
+			}
+		}
+
+		public T[] ToArray() {
+			if (list != null)
+				return list.ToArray();
+			if (hasFirstValue)
+				return new[] { firstValue };
+			return Array.Empty<T>();
 		}
 	}
 }

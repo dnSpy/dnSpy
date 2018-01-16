@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
@@ -182,11 +183,13 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			public MethodDebugInfo DebugInfo { get; }
 			public DbgDotNetEngineStepperFrameInfo Frame { get; }
 			public DbgCodeRange[] StatementRanges { get; }
+			public DbgCodeRange[] ExactStatementRanges { get; }
 			public DbgILInstruction[][] StatementInstructions { get; }
-			public GetStepRangesAsyncResult(MethodDebugInfo debugInfo, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgILInstruction[][] statementInstructions) {
+			public GetStepRangesAsyncResult(MethodDebugInfo debugInfo, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgCodeRange[] exactStatementRanges, DbgILInstruction[][] statementInstructions) {
 				DebugInfo = debugInfo;
 				Frame = frame ?? throw new ArgumentNullException(nameof(frame));
 				StatementRanges = statementRanges ?? throw new ArgumentNullException(nameof(statementRanges));
+				ExactStatementRanges = exactStatementRanges ?? throw new ArgumentNullException(nameof(exactStatementRanges));
 				StatementInstructions = statementInstructions ?? throw new ArgumentNullException(nameof(statementInstructions));
 			}
 		}
@@ -202,25 +205,32 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				throw new StepErrorException("Internal error");
 
 			var codeRanges = Array.Empty<DbgCodeRange>();
+			var exactCodeRanges = Array.Empty<DbgCodeRange>();
 			var instructions = Array.Empty<DbgILInstruction[]>();
 			if (methodDebugInfo != null) {
 				var sourceStatement = methodDebugInfo.GetSourceStatementByCodeOffset(offset);
 				BinSpan[] ranges;
 				if (sourceStatement == null)
 					ranges = methodDebugInfo.GetUnusedRanges();
-				else
-					ranges = methodDebugInfo.GetRanges(sourceStatement.Value);
+				else {
+					var sourceStatements = methodDebugInfo.GetBinSpansOfStatement(sourceStatement.Value.TextSpan);
+					Debug.Assert(sourceStatements.Any(a => a == sourceStatement.Value.BinSpan));
+					exactCodeRanges = CreateStepRanges(sourceStatements);
+					ranges = methodDebugInfo.GetRanges(sourceStatements);
+				}
 
 				codeRanges = CreateStepRanges(ranges);
 				if (!isStepInto && debuggerSettings.ShowReturnValues && frame.SupportsReturnValues)
-					instructions = GetInstructions(methodDebugInfo.Method, ranges) ?? Array.Empty<DbgILInstruction[]>();
+					instructions = GetInstructions(methodDebugInfo.Method, exactCodeRanges) ?? Array.Empty<DbgILInstruction[]>();
 			}
 			if (codeRanges.Length == 0)
 				codeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
-			return new GetStepRangesAsyncResult(methodDebugInfo, frame, codeRanges, instructions);
+			if (exactCodeRanges.Length == 0)
+				exactCodeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
+			return new GetStepRangesAsyncResult(methodDebugInfo, frame, codeRanges, exactCodeRanges, instructions);
 		}
 
-		static DbgILInstruction[][] GetInstructions(MethodDef method, BinSpan[] ranges) {
+		static DbgILInstruction[][] GetInstructions(MethodDef method, DbgCodeRange[] ranges) {
 			var body = method.Body;
 			if (body == null)
 				return null;
