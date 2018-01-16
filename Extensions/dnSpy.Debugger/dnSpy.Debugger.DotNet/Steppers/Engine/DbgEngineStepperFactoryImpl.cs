@@ -20,20 +20,20 @@
 using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
+using dnSpy.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 	[Export(typeof(DbgEngineStepperFactory))]
 	sealed class DbgEngineStepperFactoryImpl : DbgEngineStepperFactory {
-		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
+		readonly DbgDotNetDebugInfoService dbgDotNetDebugInfoService;
 		readonly DebuggerSettings debuggerSettings;
 
 		[ImportingConstructor]
-		DbgEngineStepperFactoryImpl(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings) {
-			this.dbgDotNetCodeRangeService = dbgDotNetCodeRangeService;
+		DbgEngineStepperFactoryImpl(DbgDotNetDebugInfoService dbgDotNetDebugInfoService, DebuggerSettings debuggerSettings) {
+			this.dbgDotNetDebugInfoService = dbgDotNetDebugInfoService;
 			this.debuggerSettings = debuggerSettings;
 		}
 
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				throw new ArgumentNullException(nameof(stepper));
 			if (thread == null)
 				throw new ArgumentNullException(nameof(thread));
-			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, debuggerSettings, runtime, stepper, thread);
+			return new DbgEngineStepperImpl(dbgDotNetDebugInfoService, debuggerSettings, runtime, stepper, thread);
 		}
 	}
 }

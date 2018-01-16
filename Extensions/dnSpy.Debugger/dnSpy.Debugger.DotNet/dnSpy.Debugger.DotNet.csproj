@@ -59,7 +59,8 @@
     <Compile Include="Code\DbgCodeLocationSerializerImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactoryImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationImpl.cs" />
-    <Compile Include="Code\DbgDotNetCodeRangeServiceImpl.cs" />
+    <Compile Include="Code\DbgDotNetDebugInfoService.cs" />
+    <Compile Include="Code\DbgDotNetDebugInfoServiceImpl.cs" />
     <Compile Include="Code\DbgDotNetDecompilerGuidProviderImpl.cs" />
     <Compile Include="Code\DbgDotNetDecompilerServiceImpl.cs" />
     <Compile Include="Code\DotNetReferenceNavigator.cs" />

@@ -71,9 +71,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				if (ip.IsExact || ip.IsApproximate)
 					return ip.Offset;
 				if (ip.IsProlog)
-					return DbgDotNetCodeRangeService.PROLOG;
+					return DbgDotNetInstructionOffsetConstants.PROLOG;
 				if (ip.IsEpilog)
-					return DbgDotNetCodeRangeService.EPILOG;
+					return DbgDotNetInstructionOffsetConstants.EPILOG;
 				return null;
 			}
 		}
@@ -307,12 +307,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			engine.SetReturnValues(returnValues);
 		}
 
-		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, in GetCodeRangeResult result) {
+		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions) {
 			engine.VerifyCorDebugThread();
 			Debug.Assert(Session != null);
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
-			var stmtInstrs = result.StatementInstructions;
-			if (stmtInstrs.Length == 0)
+			if (statementInstructions.Length == 0)
 				return;
 			var code = frameImpl.CorFrame.Code;
 			if (code == null)
@@ -323,7 +322,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			IList<DmdType> genericTypeArguments = null;
 			IList<DmdType> genericMethodArguments = null;
 			var bps = new List<DnNativeCodeBreakpoint>();
-			foreach (var instrs in stmtInstrs) {
+			foreach (var instrs in statementInstructions) {
 				for (int i = 0; i < instrs.Length; i++) {
 					var instr = instrs[i];
 					uint instrOffs = instr.Offset;

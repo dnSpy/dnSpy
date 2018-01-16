@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using dnlib.DotNet;
@@ -33,8 +32,8 @@ using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Code {
-	[Export(typeof(DbgDotNetCodeRangeService))]
-	sealed class DbgDotNetCodeRangeServiceImpl : DbgDotNetCodeRangeService {
+	[Export(typeof(DbgDotNetDebugInfoService))]
+	sealed class DbgDotNetDebugInfoServiceImpl : DbgDotNetDebugInfoService {
 		readonly UIDispatcher uiDispatcher;
 		readonly DbgModuleIdProviderService dbgModuleIdProviderService;
 		readonly DbgMetadataService dbgMetadataService;
@@ -42,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		readonly Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator;
 
 		[ImportingConstructor]
-		DbgDotNetCodeRangeServiceImpl(UIDispatcher uiDispatcher, DbgModuleIdProviderService dbgModuleIdProviderService, DbgMetadataService dbgMetadataService, Lazy<IDocumentTabService> documentTabService, Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator) {
+		DbgDotNetDebugInfoServiceImpl(UIDispatcher uiDispatcher, DbgModuleIdProviderService dbgModuleIdProviderService, DbgMetadataService dbgMetadataService, Lazy<IDocumentTabService> documentTabService, Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator) {
 			this.uiDispatcher = uiDispatcher;
 			this.dbgModuleIdProviderService = dbgModuleIdProviderService;
 			this.dbgMetadataService = dbgMetadataService;
@@ -52,49 +51,44 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		void UI(Action callback) => uiDispatcher.UI(callback);
 
-		public override Task<GetCodeRangeResult> GetCodeRangesAsync(DbgModule module, uint token, uint offset, GetCodeRangesOptions options) {
+		public override Task<MethodDebugInfo> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			var tcs = new TaskCompletionSource<GetCodeRangeResult>();
-			UI(() => GetCodeRanges_UI(module, token, offset, options, tcs));
+			var tcs = new TaskCompletionSource<MethodDebugInfo>();
+			UI(() => GetMethodDebugInfo_UI(module, token, offset, tcs));
 			return tcs.Task;
 		}
 
-		void GetCodeRanges_UI(DbgModule module, uint token, uint offset, GetCodeRangesOptions options, TaskCompletionSource<GetCodeRangeResult> tcs) {
+		void GetMethodDebugInfo_UI(DbgModule module, uint token, uint offset, TaskCompletionSource<MethodDebugInfo> tcs) {
 			uiDispatcher.VerifyAccess();
 			try {
-				var info = TryGetCodeRanges_UI(module, token, offset, options);
-				GetCodeRangeResult result;
-				if (info.ranges != null)
-					result = new GetCodeRangeResult(info.ranges, info.instructions);
-				else
-					result = new GetCodeRangeResult(false, Array.Empty<DbgCodeRange>(), Array.Empty<DbgILInstruction[]>());
-				tcs.SetResult(result);
+				var debugInfo = TryGetMethodDebugInfo_UI(module, token, offset);
+				tcs.SetResult(debugInfo);
 			}
 			catch (Exception ex) {
 				tcs.SetException(ex);
 			}
 		}
 
-		(DbgCodeRange[] ranges, DbgILInstruction[][] instructions) TryGetCodeRanges_UI(DbgModule module, uint token, uint offset, GetCodeRangesOptions options) {
+		MethodDebugInfo TryGetMethodDebugInfo_UI(DbgModule module, uint token, uint offset) {
 			uiDispatcher.VerifyAccess();
 			var tab = documentTabService.Value.GetOrCreateActiveTab();
 			var documentViewer = tab.TryGetDocumentViewer();
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var moduleId = dbgModuleIdProviderService.GetModuleId(module);
 			if (moduleId == null)
-				return default;
+				return null;
 
 			uint refNavOffset;
-			if (offset == EPILOG) {
+			if (offset == DbgDotNetInstructionOffsetConstants.EPILOG) {
 				refNavOffset = DotNetReferenceNavigator.EPILOG;
 				var mod = dbgMetadataService.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
 				if (mod?.ResolveToken(token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
 					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 				else
-					return default;
+					return null;
 			}
-			else if (offset == PROLOG) {
+			else if (offset == DbgDotNetInstructionOffsetConstants.PROLOG) {
 				refNavOffset = DotNetReferenceNavigator.PROLOG;
 				offset = 0;
 			}
@@ -107,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				var md = dbgMetadataService.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
 				var mdMethod = md?.ResolveToken(token) as MethodDef;
 				if (mdMethod == null)
-					return default;
+					return null;
 
 				tab.FollowReference(mdMethod);
 				dotNetReferenceNavigator.Value.GoToLocation(tab, mdMethod, key, refNavOffset);
@@ -115,60 +109,10 @@ namespace dnSpy.Debugger.DotNet.Code {
 				methodDebugService = documentViewer.GetMethodDebugService();
 				info = methodDebugService.TryGetMethodDebugInfo(key);
 				if (info == null)
-					return default;
+					return null;
 			}
 
-			var sourceStatement = info.GetSourceStatementByCodeOffset(offset);
-			uint[] ranges;
-			if (sourceStatement == null)
-				ranges = info.GetUnusedRanges();
-			else
-				ranges = info.GetRanges(sourceStatement.Value);
-
-			if (ranges.Length == 0)
-				return default;
-			var codeRanges = CreateStepRanges(ranges);
-			var instructions = Array.Empty<DbgILInstruction[]>();
-			if ((options & GetCodeRangesOptions.Instructions) != 0)
-				instructions = GetInstructions(info.Method, ranges) ?? Array.Empty<DbgILInstruction[]>();
-			return (codeRanges, instructions);
-		}
-
-		DbgILInstruction[][] GetInstructions(MethodDef method, uint[] ranges) {
-			var body = method.Body;
-			if (body == null)
-				return null;
-			var instrs = body.Instructions;
-			int instrsIndex = 0;
-
-			var res = new DbgILInstruction[ranges.Length / 2][];
-			var list = new List<DbgILInstruction>();
-			for (int i = 0; i < res.Length; i++) {
-				list.Clear();
-
-				uint start = ranges[i * 2];
-				uint end = ranges[i * 2 + 1];
-
-				while (instrsIndex < instrs.Count && instrs[instrsIndex].Offset < start)
-					instrsIndex++;
-				while (instrsIndex < instrs.Count && instrs[instrsIndex].Offset < end) {
-					var instr = instrs[instrsIndex];
-					list.Add(new DbgILInstruction(instr.Offset, (ushort)instr.OpCode.Code, (instr.Operand as IMDTokenProvider)?.MDToken.Raw ?? 0));
-					instrsIndex++;
-				}
-
-				res[i] = list.ToArray();
-			}
-			return res;
-		}
-
-		static DbgCodeRange[] CreateStepRanges(uint[] ilSpans) {
-			if (ilSpans.Length <= 1)
-				return Array.Empty<DbgCodeRange>();
-			var stepRanges = new DbgCodeRange[ilSpans.Length / 2];
-			for (int i = 0; i < stepRanges.Length; i++)
-				stepRanges[i] = new DbgCodeRange(ilSpans[i * 2], ilSpans[i * 2 + 1]);
-			return stepRanges;
+			return info;
 		}
 	}
 }

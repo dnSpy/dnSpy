@@ -46,9 +46,10 @@
     <Compile Include="Code\DbgDotNetCodeLocation.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationOptions.cs" />
-    <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
     <Compile Include="Code\DbgDotNetDecompilerGuidProvider.cs" />
     <Compile Include="Code\DbgDotNetDecompilerService.cs" />
+    <Compile Include="Code\DbgDotNetInstructionOffsetConstants.cs" />
+    <Compile Include="Code\DbgILInstruction.cs" />
     <Compile Include="Code\IDbgDotNetCodeLocation.cs" />
     <Compile Include="DbgDotNetInternalAppDomain.cs" />
     <Compile Include="DbgDotNetInternalModule.cs" />

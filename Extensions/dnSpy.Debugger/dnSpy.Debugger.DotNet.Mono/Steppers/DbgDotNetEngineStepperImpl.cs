@@ -179,7 +179,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			return false;
 		}
 
-		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, in GetCodeRangeResult result) { }
+		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions) { }
 		public override void OnStepComplete() { }
 
 		public override void OnCanceled(SessionBase session) {

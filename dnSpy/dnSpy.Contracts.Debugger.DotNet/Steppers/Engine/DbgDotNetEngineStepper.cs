@@ -107,8 +107,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// Prepares collecting return values
 		/// </summary>
 		/// <param name="frame">Frame info</param>
-		/// <param name="result">Code ranges info</param>
-		public abstract void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, in GetCodeRangeResult result);
+		/// <param name="statementInstructions">Statement instructions</param>
+		public abstract void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions);
 
 		/// <summary>
 		/// Called when the step is complete

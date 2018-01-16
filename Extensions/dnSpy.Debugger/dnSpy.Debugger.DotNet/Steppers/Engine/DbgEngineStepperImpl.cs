@@ -18,26 +18,30 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
+using dnSpy.Contracts.Decompiler;
+using dnSpy.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 	sealed class DbgEngineStepperImpl : DbgEngineStepper {
 		public override event EventHandler<DbgEngineStepCompleteEventArgs> StepComplete;
 
-		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
+		readonly DbgDotNetDebugInfoService dbgDotNetDebugInfoService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly IDbgDotNetRuntime runtime;
 		readonly DbgDotNetEngineStepper stepper;
 		readonly DbgThread thread;
 
-		public DbgEngineStepperImpl(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, IDbgDotNetRuntime runtime, DbgDotNetEngineStepper stepper, DbgThread thread) {
-			this.dbgDotNetCodeRangeService = dbgDotNetCodeRangeService ?? throw new ArgumentNullException(nameof(dbgDotNetCodeRangeService));
+		public DbgEngineStepperImpl(DbgDotNetDebugInfoService dbgDotNetDebugInfoService, DebuggerSettings debuggerSettings, IDbgDotNetRuntime runtime, DbgDotNetEngineStepper stepper, DbgThread thread) {
+			this.dbgDotNetDebugInfoService = dbgDotNetDebugInfoService ?? throw new ArgumentNullException(nameof(dbgDotNetDebugInfoService));
 			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.stepper = stepper ?? throw new ArgumentNullException(nameof(stepper));
@@ -100,10 +104,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 				stepper.Session = stepper.CreateSession(tag);
 				var result = await GetStepRangesAsync(frame, isStepInto: true);
-				// If we failed to find the statement ranges (result.Success == false), step anyway.
-				// We'll just step until the next sequence point instead of not doing anything.
-				var ranges = result.Result.Success ? result.Result.StatementRanges : new[] { new DbgCodeRange(result.Offset, result.Offset + 1) };
-				var thread = await stepper.StepIntoAsync(result.Frame, ranges);
+				var thread = await stepper.StepIntoAsync(result.Frame, result.StatementRanges);
 				StepCompleted(thread, null, tag);
 			}
 			catch (ForciblyCanceledException fce) {
@@ -132,11 +133,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 				stepper.Session = stepper.CreateSession(tag);
 				var result = await GetStepRangesAsync(frame, isStepInto: false);
-				// If we failed to find the statement ranges (result.Success == false), step anyway.
-				// We'll just step until the next sequence point instead of not doing anything.
-				var ranges = result.Result.Success ? result.Result.StatementRanges : new[] { new DbgCodeRange(result.Offset, result.Offset + 1) };
-				stepper.CollectReturnValues(result.Frame, result.Result);
-				var thread = await stepper.StepOverAsync(result.Frame, ranges);
+				stepper.CollectReturnValues(result.Frame, result.StatementInstructions);
+				var thread = await stepper.StepOverAsync(result.Frame, result.StatementRanges);
 				StepCompleted(thread, null, tag);
 			}
 			catch (ForciblyCanceledException fce) {
@@ -181,13 +179,15 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		readonly struct GetStepRangesAsyncResult {
-			public GetCodeRangeResult Result { get; }
+			public MethodDebugInfo DebugInfo { get; }
 			public DbgDotNetEngineStepperFrameInfo Frame { get; }
-			public uint Offset { get; }
-			public GetStepRangesAsyncResult(in GetCodeRangeResult result, DbgDotNetEngineStepperFrameInfo frame, uint offset) {
-				Result = result;
+			public DbgCodeRange[] StatementRanges { get; }
+			public DbgILInstruction[][] StatementInstructions { get; }
+			public GetStepRangesAsyncResult(MethodDebugInfo debugInfo, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgILInstruction[][] statementInstructions) {
+				DebugInfo = debugInfo;
 				Frame = frame ?? throw new ArgumentNullException(nameof(frame));
-				Offset = offset;
+				StatementRanges = statementRanges ?? throw new ArgumentNullException(nameof(statementRanges));
+				StatementInstructions = statementInstructions ?? throw new ArgumentNullException(nameof(statementInstructions));
 			}
 		}
 
@@ -197,12 +197,64 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				throw new StepErrorException("Internal error");
 
 			uint continueCounter = stepper.ContinueCounter;
-			var options = isStepInto || !debuggerSettings.ShowReturnValues || !frame.SupportsReturnValues ?
-				GetCodeRangesOptions.None : GetCodeRangesOptions.Instructions;
-			var result = await dbgDotNetCodeRangeService.GetCodeRangesAsync(module, token, offset, options);
+			var methodDebugInfo = await dbgDotNetDebugInfoService.GetMethodDebugInfoAsync(module, token, offset);
 			if (continueCounter != stepper.ContinueCounter)
 				throw new StepErrorException("Internal error");
-			return new GetStepRangesAsyncResult(result, frame, offset);
+
+			var codeRanges = Array.Empty<DbgCodeRange>();
+			var instructions = Array.Empty<DbgILInstruction[]>();
+			if (methodDebugInfo != null) {
+				var sourceStatement = methodDebugInfo.GetSourceStatementByCodeOffset(offset);
+				uint[] ranges;
+				if (sourceStatement == null)
+					ranges = methodDebugInfo.GetUnusedRanges();
+				else
+					ranges = methodDebugInfo.GetRanges(sourceStatement.Value);
+
+				codeRanges = CreateStepRanges(ranges);
+				if (!isStepInto && debuggerSettings.ShowReturnValues && frame.SupportsReturnValues)
+					instructions = GetInstructions(methodDebugInfo.Method, ranges) ?? Array.Empty<DbgILInstruction[]>();
+			}
+			if (codeRanges.Length == 0)
+				codeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
+			return new GetStepRangesAsyncResult(methodDebugInfo, frame, codeRanges, instructions);
+		}
+
+		static DbgILInstruction[][] GetInstructions(MethodDef method, uint[] ranges) {
+			var body = method.Body;
+			if (body == null)
+				return null;
+			var instrs = body.Instructions;
+			int instrsIndex = 0;
+
+			var res = new DbgILInstruction[ranges.Length / 2][];
+			var list = new List<DbgILInstruction>();
+			for (int i = 0; i < res.Length; i++) {
+				list.Clear();
+
+				uint start = ranges[i * 2];
+				uint end = ranges[i * 2 + 1];
+
+				while (instrsIndex < instrs.Count && instrs[instrsIndex].Offset < start)
+					instrsIndex++;
+				while (instrsIndex < instrs.Count && instrs[instrsIndex].Offset < end) {
+					var instr = instrs[instrsIndex];
+					list.Add(new DbgILInstruction(instr.Offset, (ushort)instr.OpCode.Code, (instr.Operand as IMDTokenProvider)?.MDToken.Raw ?? 0));
+					instrsIndex++;
+				}
+
+				res[i] = list.ToArray();
+			}
+			return res;
+		}
+
+		static DbgCodeRange[] CreateStepRanges(uint[] ilSpans) {
+			if (ilSpans.Length <= 1)
+				return Array.Empty<DbgCodeRange>();
+			var stepRanges = new DbgCodeRange[ilSpans.Length / 2];
+			for (int i = 0; i < stepRanges.Length; i++)
+				stepRanges[i] = new DbgCodeRange(ilSpans[i * 2], ilSpans[i * 2 + 1]);
+			return stepRanges;
 		}
 
 		void StepCompleted(DbgThread thread, string forciblyCanceledErrorMessage, object tag) {
