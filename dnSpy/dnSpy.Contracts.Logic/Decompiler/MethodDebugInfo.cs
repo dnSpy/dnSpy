@@ -115,37 +115,18 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="sourceStatement">Source statement</param>
 		/// <returns></returns>
-		public uint[] GetRanges(SourceStatement sourceStatement) {
+		public BinSpan[] GetRanges(SourceStatement sourceStatement) {
 			var list = new List<BinSpan>(GetUnusedBinSpans().Length + 1);
 			list.Add(sourceStatement.BinSpan);
 			list.AddRange(GetUnusedBinSpans());
-
-			var orderedList = BinSpan.OrderAndCompactList(list);
-			if (orderedList.Count == 0)
-				return Array.Empty<uint>();
-			var binSpanArray = new uint[orderedList.Count * 2];
-			for (int i = 0; i < orderedList.Count; i++) {
-				binSpanArray[i * 2 + 0] = orderedList[i].Start;
-				binSpanArray[i * 2 + 1] = orderedList[i].End;
-			}
-			return binSpanArray;
+			return BinSpan.OrderAndCompactList(list).ToArray();
 		}
 
 		/// <summary>
 		/// Gets unused step ranges
 		/// </summary>
 		/// <returns></returns>
-		public uint[] GetUnusedRanges() {
-			var orderedList = GetUnusedBinSpans();
-			if (orderedList.Length == 0)
-				return Array.Empty<uint>();
-			var binSpanArray = new uint[orderedList.Length * 2];
-			for (int i = 0; i < orderedList.Length; i++) {
-				binSpanArray[i * 2 + 0] = orderedList[i].Start;
-				binSpanArray[i * 2 + 1] = orderedList[i].End;
-			}
-			return binSpanArray;
-		}
+		public BinSpan[] GetUnusedRanges() => GetUnusedBinSpans();
 
 		BinSpan[] GetUnusedBinSpans() {
 			if (cachedUnusedBinSpans != null)

@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			var instructions = Array.Empty<DbgILInstruction[]>();
 			if (methodDebugInfo != null) {
 				var sourceStatement = methodDebugInfo.GetSourceStatementByCodeOffset(offset);
-				uint[] ranges;
+				BinSpan[] ranges;
 				if (sourceStatement == null)
 					ranges = methodDebugInfo.GetUnusedRanges();
 				else
@@ -220,20 +220,21 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return new GetStepRangesAsyncResult(methodDebugInfo, frame, codeRanges, instructions);
 		}
 
-		static DbgILInstruction[][] GetInstructions(MethodDef method, uint[] ranges) {
+		static DbgILInstruction[][] GetInstructions(MethodDef method, BinSpan[] ranges) {
 			var body = method.Body;
 			if (body == null)
 				return null;
 			var instrs = body.Instructions;
 			int instrsIndex = 0;
 
-			var res = new DbgILInstruction[ranges.Length / 2][];
+			var res = new DbgILInstruction[ranges.Length][];
 			var list = new List<DbgILInstruction>();
 			for (int i = 0; i < res.Length; i++) {
 				list.Clear();
 
-				uint start = ranges[i * 2];
-				uint end = ranges[i * 2 + 1];
+				ref readonly var span = ref ranges[i];
+				uint start = span.Start;
+				uint end = span.End;
 
 				while (instrsIndex < instrs.Count && instrs[instrsIndex].Offset < start)
 					instrsIndex++;
@@ -248,12 +249,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return res;
 		}
 
-		static DbgCodeRange[] CreateStepRanges(uint[] ilSpans) {
-			if (ilSpans.Length <= 1)
+		static DbgCodeRange[] CreateStepRanges(BinSpan[] binSpans) {
+			if (binSpans.Length == 0)
 				return Array.Empty<DbgCodeRange>();
-			var stepRanges = new DbgCodeRange[ilSpans.Length / 2];
-			for (int i = 0; i < stepRanges.Length; i++)
-				stepRanges[i] = new DbgCodeRange(ilSpans[i * 2], ilSpans[i * 2 + 1]);
+			var stepRanges = new DbgCodeRange[binSpans.Length];
+			for (int i = 0; i < stepRanges.Length; i++) {
+				ref readonly var span = ref binSpans[i];
+				stepRanges[i] = new DbgCodeRange(span.Start, span.End);
+			}
 			return stepRanges;
 		}
 
