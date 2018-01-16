@@ -23,6 +23,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Internal.QuickInfo;
 using dnSpy.Roslyn.Shared.Glyphs;
@@ -33,7 +34,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Shared.Intellisense.QuickInfo {
-	sealed class InformationQuickInfoContentVM {
+	sealed class InformationQuickInfoContentVM : ViewModelBase {
 		public ImageReference SymbolImageReference { get; }
 		public bool HasSymbolImageReference => !SymbolImageReference.IsDefault;
 		public ImageReference WarningImageReference { get; }

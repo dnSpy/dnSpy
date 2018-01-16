@@ -226,7 +226,7 @@ namespace dnSpy.Hex.Commands {
 		public override bool HasError => offsetTokenVM.HasError;
 	}
 
-	sealed class GoToMetadataKindVM {
+	sealed class GoToMetadataKindVM : ViewModelBase {
 		public GoToMetadataKind Kind { get; }
 		public string Text { get; }
 		public string InputGestureText { get; }

@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
@@ -75,15 +74,12 @@ namespace dnSpy.MainApp.Settings {
 		FontFamilyVM[] fontFamilies;
 	}
 
-	sealed class FontAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class FontAppSettingsPage : AppSettingsPage {
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
 		public override Guid Guid => new Guid("915F7258-1441-4F80-9DB2-6DF6948C2E09");
 		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_FONT;
 		public override string Title => dnSpy_Resources.FontSettings;
 		public override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public ObservableCollection<FontAndColorOptionsVM> FontAndColorOptions { get; }
 		public FontAndColorOptionsVM SelectedFontAndColorOptions {

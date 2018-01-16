@@ -94,7 +94,7 @@ namespace dnSpy.Documents.Tabs {
 			vm.ProjectVersion = exportToProjectSettings.ProjectVersion;
 			vm.CreateResX = documentTreeViewSettings.DeserializeResources;
 			vm.DontReferenceStdLib = modules.Any(a => a.Assembly.IsCorLib());
-			vm.Decompiler = decompiler;
+			vm.Decompiler = vm.AllDecompilers.First(a => a.Decompiler == decompiler);
 			vm.SolutionFilename = GetSolutionFilename(modules);
 			vm.FilesToExportMessage = CreateFilesToExportMessage(modules);
 
@@ -174,7 +174,7 @@ namespace dnSpy.Documents.Tabs {
 						guidFormat = guidStr.Substring(0, 36 - 8) + "{0:X8}";
 					}
 					foreach (var module in modules.OrderBy(a => a.Location, StringComparer.InvariantCultureIgnoreCase)) {
-						var projOpts = new ProjectModuleOptions(module, vm.Decompiler, decompilationContext) {
+						var projOpts = new ProjectModuleOptions(module, vm.Decompiler.Decompiler, decompilationContext) {
 							DontReferenceStdLib = vm.DontReferenceStdLib,
 							UnpackResources = vm.UnpackResources,
 							CreateResX = vm.CreateResX,
@@ -182,7 +182,7 @@ namespace dnSpy.Documents.Tabs {
 							ProjectGuid = hasProjectGuid ? new Guid(string.Format(guidFormat, guidNum++)) : Guid.NewGuid(),
 						};
 						if (bamlDecompiler != null) {
-							var o = BamlDecompilerOptions.Create(vm.Decompiler);
+							var o = BamlDecompilerOptions.Create(vm.Decompiler.Decompiler);
 							var outputOptions = xamlOutputOptionsProvider?.Default ?? new XamlOutputOptions();
 							projOpts.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d, outputOptions);
 						}

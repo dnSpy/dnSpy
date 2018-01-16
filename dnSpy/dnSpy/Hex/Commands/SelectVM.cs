@@ -94,7 +94,7 @@ namespace dnSpy.Hex.Commands {
 		Length,
 	}
 
-	sealed class PositionLengthVM {
+	sealed class PositionLengthVM : ViewModelBase {
 		public SelectPositionLengthKind Kind { get; }
 		public string Text { get; }
 		public string InputGestureText { get; }

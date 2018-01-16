@@ -21,9 +21,10 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Dialogs.DebugProgram {
-	sealed class OptionsPageVM {
+	sealed class OptionsPageVM : ViewModelBase {
 		internal StartDebuggingOptionsPage StartDebuggingOptionsPage { get; }
 		internal Guid PageGuid => StartDebuggingOptionsPage.Guid;
 

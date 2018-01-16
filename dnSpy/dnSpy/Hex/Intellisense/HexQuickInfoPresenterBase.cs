@@ -19,11 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using dnSpy.Contracts.Hex.Intellisense;
 using VSLI = Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Hex.Intellisense {
-	abstract class HexQuickInfoPresenterBase : HexIntellisensePresenter, VSLI.IIntellisenseCommandTarget {
+	abstract class HexQuickInfoPresenterBase : HexIntellisensePresenter, VSLI.IIntellisenseCommandTarget, INotifyPropertyChanged {
+		public event PropertyChangedEventHandler PropertyChanged { add { } remove { } }
 		public override HexIntellisenseSession Session => session;
 		public IList<object> QuickInfoContent => session.QuickInfoContent;
 

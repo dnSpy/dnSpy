@@ -18,18 +18,15 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Decompiler.ILSpy.Core.Settings;
 using dnSpy.Decompiler.ILSpy.Properties;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class ILDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class ILDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2 {
 		readonly ILSettings _global_ilSettings;
 		readonly ILSettings ilSettings;
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_IL;
 		public string Name => dnSpy_Decompiler_ILSpy_Resources.ILDecompilerSettingsTabName;
 		public ILSettings Settings => ilSettings;
