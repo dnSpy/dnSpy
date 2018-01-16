@@ -839,8 +839,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							breakOnEntryPointData = null;
 							SendMessage(new DbgMessageEntryPointBreak(TryGetThread(be.Thread), GetMessageFlags()));
 						}
-						else
-							SendCodeBreakpointHitMessage_MonoDebug(bpReq, TryGetThread(be.Thread));
+						else {
+							if (!SendCodeBreakpointHitMessage_MonoDebug(bpReq, TryGetThread(be.Thread)))
+								expectedSuspendPolicy = SuspendPolicy.None;
+						}
 					}
 					else {
 						// It's a removed BP. Repro: Step and stop on a BP, remove the BP, step again
@@ -1474,7 +1476,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			hProcess_debuggee?.Close();
 			foreach (var kv in toStepper)
-				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true));
+				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true, false));
 			toStepper.Clear();
 		}
 

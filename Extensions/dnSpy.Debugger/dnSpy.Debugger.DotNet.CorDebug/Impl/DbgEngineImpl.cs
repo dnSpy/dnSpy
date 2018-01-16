@@ -357,6 +357,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 							// We use this reason when we pause the process, DbgManager already knows that we're paused
 							continue;
 
+						case DebuggerPauseReason.AsyncStepperBreakpoint:
+							// Used by async stepper code. We shouldn't notify DbgManager. The async stepper code will eventually
+							// create a stepper event.
+							continue;
+
 						case DebuggerPauseReason.UserBreak:
 							// BreakCore() sends the Break message
 							continue;
@@ -919,9 +924,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			obj.Dispose();
 		}
 
-		public override DbgEngineStepper CreateStepper(DbgThread thread) {
-			var data = thread.GetData<DbgThreadData>();
-			return dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this, thread, data.DnThread), thread);
-		}
+		public override DbgEngineStepper CreateStepper(DbgThread thread) =>
+			dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this, dnDebugger), thread);
 	}
 }

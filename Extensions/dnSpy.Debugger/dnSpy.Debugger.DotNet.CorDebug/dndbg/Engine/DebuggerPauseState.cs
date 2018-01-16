@@ -20,6 +20,7 @@
 namespace dndbg.Engine {
 	enum DebuggerPauseReason {
 		Other,
+		AsyncStepperBreakpoint,
 		UnhandledException,
 		Exception,
 		DebugEventBreakpoint,

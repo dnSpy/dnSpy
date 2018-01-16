@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steppers\DbgDotNetEngineStepperImpl.cs" />
+    <Compile Include="Steppers\DbgDotNetStepperBreakpointImpl.cs" />
     <Compile Include="TheExtension.cs" />
   </ItemGroup>
   <ItemGroup>

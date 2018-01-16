@@ -72,11 +72,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// <summary>
 		/// Gets frame info or null if none is available
 		/// </summary>
+		/// <param name="thread">Thread</param>
 		/// <returns></returns>
-		public abstract DbgDotNetEngineStepperFrameInfo TryGetFrameInfo();
+		public abstract DbgDotNetEngineStepperFrameInfo TryGetFrameInfo(DbgThread thread);
 
 		/// <summary>
-		/// Let the process run. It's only called if <see cref="TryGetFrameInfo"/> returns null
+		/// Lets the process run
 		/// </summary>
 		public abstract void Continue();
 
@@ -104,11 +105,32 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		public abstract Task<DbgThread> StepOverAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges);
 
 		/// <summary>
+		/// Cancels last step operation
+		/// </summary>
+		public abstract void CancelLastStep();
+
+		/// <summary>
 		/// Prepares collecting return values
 		/// </summary>
 		/// <param name="frame">Frame info</param>
 		/// <param name="statementInstructions">Statement instructions</param>
 		public abstract void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions);
+
+		/// <summary>
+		/// Creates a breakpoint
+		/// </summary>
+		/// <param name="thread">Thread or null to match any thread</param>
+		/// <param name="module">Module</param>
+		/// <param name="token">Method token</param>
+		/// <param name="offset">IL offset</param>
+		/// <returns></returns>
+		public abstract DbgDotNetStepperBreakpoint CreateBreakpoint(DbgThread thread, DbgModule module, uint token, uint offset);
+
+		/// <summary>
+		/// Removes breakpoints
+		/// </summary>
+		/// <param name="breakpoints">Breakpoints to remove</param>
+		public abstract void RemoveBreakpoints(DbgDotNetStepperBreakpoint[] breakpoints);
 
 		/// <summary>
 		/// Called when the step is complete
@@ -133,5 +155,32 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// </summary>
 		/// <param name="dispatcher">Dispatcher</param>
 		public abstract void Close(DbgDispatcher dispatcher);
+	}
+
+	/// <summary>
+	/// A code breakpoint used by the .NET stepper
+	/// </summary>
+	public abstract class DbgDotNetStepperBreakpoint {
+		/// <summary>
+		/// Raised when the breakpoint is hit
+		/// </summary>
+		public abstract event EventHandler<DbgDotNetStepperBreakpointEventArgs> Hit;
+	}
+
+	/// <summary>
+	/// Stepper breakpoint event args
+	/// </summary>
+	public struct DbgDotNetStepperBreakpointEventArgs {
+		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="thread">Current thread</param>
+		public DbgDotNetStepperBreakpointEventArgs(DbgThread thread) =>
+			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 	}
 }

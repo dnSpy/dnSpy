@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		public abstract bool SupportsReturnValues { get; }
 
 		/// <summary>
+		/// Gets the thread
+		/// </summary>
+		public abstract DbgThread Thread { get; }
+
+		/// <summary>
 		/// Gets the location
 		/// </summary>
 		/// <param name="module">Module</param>

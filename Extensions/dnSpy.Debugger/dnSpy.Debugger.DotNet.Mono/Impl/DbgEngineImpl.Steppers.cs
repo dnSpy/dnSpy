@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
 			var data = thread.GetData<DbgThreadData>();
-			return dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this, thread, data.MonoThread), thread);
+			return dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this), thread);
 		}
 
 		internal StepEventRequest CreateStepRequest(ThreadMirror monoThread, Func<StepCompleteEventArgs, bool> onStep) {
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			// There can be at most one stepper active at a time. This is a limitation of mono.
 			foreach (var kv in toStepper) {
 				kv.Key.Disable();
-				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true));
+				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true, false));
 			}
 			toStepper.Clear();
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return false;
 			toStepper.Remove(stepReq);
 			stepReq.Disable();
-			return info.OnStep(new StepCompleteEventArgs(stepReq, false));
+			return info.OnStep(new StepCompleteEventArgs(stepReq, false, false));
 		}
 
 		internal void CancelStepper(StepEventRequest stepReq) {
@@ -73,6 +73,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				catch {
 				}
+				if (toStepper.TryGetValue(stepReq, out var info)) {
+					toStepper.Remove(stepReq);
+					info.OnStep(new StepCompleteEventArgs(stepReq, false, true));
+				}
 			}
 		}
 	}
@@ -80,9 +84,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	readonly struct StepCompleteEventArgs {
 		public StepEventRequest StepEventRequest { get; }
 		public bool ForciblyCanceled { get; }
-		public StepCompleteEventArgs(StepEventRequest stepEventRequest, bool forciblyCanceled) {
+		public bool Canceled { get; }
+		public StepCompleteEventArgs(StepEventRequest stepEventRequest, bool forciblyCanceled, bool canceled) {
 			StepEventRequest = stepEventRequest;
 			ForciblyCanceled = forciblyCanceled;
+			Canceled = canceled;
 		}
 	}
 }

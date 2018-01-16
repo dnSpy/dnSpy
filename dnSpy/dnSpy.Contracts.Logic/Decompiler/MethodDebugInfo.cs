@@ -223,8 +223,14 @@ namespace dnSpy.Contracts.Decompiler {
 		public BinSpan[] GetBinSpansOfStatement(TextSpan statementSpan) {
 			if (statementsDict == null)
 				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
-			if (statementsDict.TryGetValue(statementSpan, out var list))
-				return list.ToArray();
+			if (statementsDict.TryGetValue(statementSpan, out var list)) {
+				var spans = list.ToArray();
+#if DEBUG
+				for (int i = 1; i < spans.Length; i++)
+					Debug.Assert(spans[i - 1].End <= spans[i].Start);
+#endif
+				return spans;
+			}
 			return Array.Empty<BinSpan>();
 		}
 		Dictionary<TextSpan, SmallList<BinSpan>> statementsDict;

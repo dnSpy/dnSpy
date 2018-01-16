@@ -50,5 +50,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 			Start = start;
 			End = end;
 		}
+
+		/// <summary>
+		/// Checks whether <paramref name="offset"/> is within this range
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public bool Contains(uint offset) => Start <= offset && offset < End;
 	}
 }

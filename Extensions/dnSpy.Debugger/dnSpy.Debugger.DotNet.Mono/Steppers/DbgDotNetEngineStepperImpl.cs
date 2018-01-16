@@ -38,15 +38,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 		}
 
 		readonly DbgEngineImpl engine;
-		readonly DbgThread thread;
-		readonly ThreadMirror monoThread;
 		SessionImpl session;
 
-		public DbgDotNetEngineStepperImpl(DbgEngineImpl engine, DbgThread thread, ThreadMirror monoThread) {
+		public DbgDotNetEngineStepperImpl(DbgEngineImpl engine) =>
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
-			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
-			this.monoThread = monoThread ?? throw new ArgumentNullException(nameof(monoThread));
-		}
 
 		static MDS.StackFrame GetFrame(ThreadMirror thread) {
 			try {
@@ -72,13 +67,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		sealed class DbgDotNetEngineStepperFrameInfoImpl : DbgDotNetEngineStepperFrameInfo {
 			public override bool SupportsReturnValues => false;
+			public override DbgThread Thread { get; }
 			internal ThreadMirror MonoThread { get; }
 
 			readonly DbgEngineImpl engine;
 
-			public DbgDotNetEngineStepperFrameInfoImpl(DbgEngineImpl engine, ThreadMirror thread) {
+			public DbgDotNetEngineStepperFrameInfoImpl(DbgEngineImpl engine, DbgThread thread) {
 				this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
-				MonoThread = thread ?? throw new ArgumentNullException(nameof(thread));
+				Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+				MonoThread = engine.GetThread(thread);
 			}
 
 			public override bool TryGetLocation(out DbgModule module, out uint token, out uint offset) {
@@ -92,8 +89,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			}
 		}
 
-		public override DbgDotNetEngineStepperFrameInfo TryGetFrameInfo() => new DbgDotNetEngineStepperFrameInfoImpl(engine, monoThread);
-		public override void Continue() => throw new InvalidOperationException("Not reachable");
+		public override DbgDotNetEngineStepperFrameInfo TryGetFrameInfo(DbgThread thread) => new DbgDotNetEngineStepperFrameInfoImpl(engine, thread);
+		public override void Continue() => engine.RunCore();
 
 		public override Task<DbgThread> StepIntoAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges) {
 			engine.VerifyMonoDebugThread();
@@ -122,7 +119,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				if (frame?.Method != method || !IsInCodeRange(ranges, offset))
 					break;
 			}
-			return engine.TryGetThread(thread) ?? this.thread;
+			return engine.TryGetThread(thread) ?? throw new InvalidOperationException();
 		}
 
 		Task<ThreadMirror> StepCore2Async(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
@@ -130,7 +127,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			Debug.Assert(session != null);
 			var tcs = new TaskCompletionSource<ThreadMirror>();
 			var stepReq = engine.CreateStepRequest(thread, e => {
-				if (engine.IsClosed)
+				if (engine.IsClosed || e.Canceled)
 					tcs.SetCanceled();
 				else if (e.ForciblyCanceled)
 					tcs.SetException(new ForciblyCanceledException(forciblyCanceledErrorMessage));
@@ -154,12 +151,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var tcs = new TaskCompletionSource<DbgThread>();
 			var stepReq = engine.CreateStepRequest(frameImpl.MonoThread, e => {
-				if (engine.IsClosed)
+				if (engine.IsClosed || e.Canceled)
 					tcs.SetCanceled();
 				else if (e.ForciblyCanceled)
 					tcs.SetException(new ForciblyCanceledException(forciblyCanceledErrorMessage));
-				else
-					tcs.SetResult(engine.TryGetThread(frameImpl.MonoThread) ?? thread);
+				else {
+					var thread = engine.TryGetThread(frameImpl.MonoThread);
+					if (thread != null)
+						tcs.SetResult(thread);
+					else
+						tcs.SetException(new InvalidOperationException());
+				}
 				return true;
 			});
 			session.MonoStepper = stepReq;
@@ -179,12 +181,37 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			return false;
 		}
 
+		public override DbgDotNetStepperBreakpoint CreateBreakpoint(DbgThread thread, DbgModule module, uint token, uint offset) {
+			engine.VerifyMonoDebugThread();
+			return new DbgDotNetStepperBreakpointImpl(engine, thread, module, token, offset);
+		}
+
+		public override void RemoveBreakpoints(DbgDotNetStepperBreakpoint[] breakpoints) {
+			engine.VerifyMonoDebugThread();
+			foreach (DbgDotNetStepperBreakpointImpl bp in breakpoints)
+				bp.Dispose();
+		}
+
 		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions) { }
 		public override void OnStepComplete() { }
 
 		public override void OnCanceled(SessionBase session) {
 			engine.VerifyMonoDebugThread();
-			var stepper = ((SessionImpl)session).MonoStepper;
+			CancelStepper(session);
+		}
+
+		public override void CancelLastStep() {
+			engine.VerifyMonoDebugThread();
+			CancelStepper(Session);
+		}
+
+		void CancelStepper(SessionBase session) {
+			engine.VerifyMonoDebugThread();
+			if (session == null)
+				return;
+			var sessionImpl = (SessionImpl)session;
+			var stepper = sessionImpl.MonoStepper;
+			sessionImpl.MonoStepper = null;
 			if (stepper != null)
 				engine.CancelStepper(stepper);
 		}

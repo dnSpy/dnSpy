@@ -39,19 +39,27 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		readonly DebuggerSettings debuggerSettings;
 		readonly IDbgDotNetRuntime runtime;
 		readonly DbgDotNetEngineStepper stepper;
-		readonly DbgThread thread;
+
+		DbgThread CurrentThread {
+			get => __DONT_USE_currentThread;
+			set => __DONT_USE_currentThread = value ?? throw new InvalidOperationException();
+		}
+		DbgThread __DONT_USE_currentThread;
 
 		public DbgEngineStepperImpl(DbgDotNetDebugInfoService dbgDotNetDebugInfoService, DebuggerSettings debuggerSettings, IDbgDotNetRuntime runtime, DbgDotNetEngineStepper stepper, DbgThread thread) {
 			this.dbgDotNetDebugInfoService = dbgDotNetDebugInfoService ?? throw new ArgumentNullException(nameof(dbgDotNetDebugInfoService));
 			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.stepper = stepper ?? throw new ArgumentNullException(nameof(stepper));
-			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
+			CurrentThread = thread ?? throw new ArgumentNullException(nameof(thread));
 		}
 
-		void RaiseStepComplete(DbgThread thread, object tag, string error, bool forciblyCanceled = false) {
+		void RaiseStepComplete(object tag, string error, bool forciblyCanceled = false) {
+			runtime.Dispatcher.VerifyAccess();
+			SetAsyncStepOverState(null);
 			if (IsClosed)
 				return;
+			var thread = CurrentThread.IsClosed ? null : CurrentThread;
 			Debug.Assert(StepComplete != null);
 			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error, forciblyCanceled));
 		}
@@ -63,14 +71,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (stepper.Session != null) {
 				Debug.Fail("The previous step hasn't been canceled");
 				// No need to localize it, if we're here it's a bug
-				RaiseStepComplete(thread, tag, "The previous step hasn't been canceled");
+				RaiseStepComplete(tag, "The previous step hasn't been canceled");
 				return;
 			}
 
 			if (!stepper.IsRuntimePaused) {
 				Debug.Fail("Process is not paused");
 				// No need to localize it, if we're here it's a bug
-				RaiseStepComplete(thread, tag, "Process is not paused");
+				RaiseStepComplete(tag, "Process is not paused");
 				return;
 			}
 
@@ -87,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			case DbgEngineStepKind.StepOver:	return StepOverAsync(tag);
 			case DbgEngineStepKind.StepOut:		return StepOutAsync(tag);
 			default:
-				RaiseStepComplete(thread, tag, $"Unsupported step kind: {step}");
+				RaiseStepComplete(tag, $"Unsupported step kind: {step}");
 				return Task.CompletedTask;
 			}
 		}
@@ -96,7 +104,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			runtime.Dispatcher.VerifyAccess();
 			Debug.Assert(stepper.Session == null);
 			try {
-				var frame = stepper.TryGetFrameInfo();
+				var frame = stepper.TryGetFrameInfo(CurrentThread);
 				if (frame == null) {
 					// No frame? Just let the process run.
 					stepper.Continue();
@@ -105,11 +113,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 				stepper.Session = stepper.CreateSession(tag);
 				var result = await GetStepRangesAsync(frame, isStepInto: true);
-				var thread = await stepper.StepIntoAsync(result.Frame, result.StatementRanges);
-				StepCompleted(thread, null, tag);
+				CurrentThread = await stepper.StepIntoAsync(result.Frame, result.StatementRanges);
+				StepCompleted(null, tag);
 			}
 			catch (ForciblyCanceledException fce) {
-				StepCompleted(thread, fce.Message, tag);
+				StepCompleted(fce.Message, tag);
 			}
 			catch (StepErrorException see) {
 				StepError(see.Message, tag);
@@ -125,7 +133,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			runtime.Dispatcher.VerifyAccess();
 			Debug.Assert(stepper.Session == null);
 			try {
-				var frame = stepper.TryGetFrameInfo();
+				var frame = stepper.TryGetFrameInfo(CurrentThread);
 				if (frame == null) {
 					// No frame? Just let the process run.
 					stepper.Continue();
@@ -133,13 +141,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				}
 
 				stepper.Session = stepper.CreateSession(tag);
-				var result = await GetStepRangesAsync(frame, isStepInto: false);
-				stepper.CollectReturnValues(result.Frame, result.StatementInstructions);
-				var thread = await stepper.StepOverAsync(result.Frame, result.StatementRanges);
-				StepCompleted(thread, null, tag);
+				CurrentThread = await StepOverCoreAsync(frame);
+				StepCompleted(null, tag);
 			}
 			catch (ForciblyCanceledException fce) {
-				StepCompleted(thread, fce.Message, tag);
+				StepCompleted(fce.Message, tag);
 			}
 			catch (StepErrorException see) {
 				StepError(see.Message, tag);
@@ -151,11 +157,210 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
+		async Task<DbgThread> StepOverCoreAsync(DbgDotNetEngineStepperFrameInfo frame) {
+			runtime.Dispatcher.VerifyAccess();
+			Debug.Assert(stepper.Session != null);
+
+			DbgThread thread;
+			var result = await GetStepRangesAsync(frame, isStepInto: false);
+			var asyncStepInfos = GetAsyncStepInfos(result);
+			Debug.Assert(asyncStepInfos == null || asyncStepInfos.Count != 0);
+			if (asyncStepInfos != null) {
+				if (!frame.TryGetLocation(out var module, out var token, out _))
+					throw new InvalidOperationException();
+
+				try {
+					var asyncState = SetAsyncStepOverState(new AsyncStepOverState(stepper));
+					foreach (var stepInfo in asyncStepInfos)
+						asyncState.AddYieldBreakpoint(frame.Thread, module, token, stepInfo);
+					var yieldBreakpointTask = asyncState.Task;
+
+					stepper.CollectReturnValues(result.Frame, result.StatementInstructions);
+					var stepOverTask = stepper.StepOverAsync(result.Frame, result.StatementRanges);
+					var completedTask = await Task.WhenAny(stepOverTask, yieldBreakpointTask);
+					if (completedTask == stepOverTask) {
+						asyncState.Dispose();
+						thread = stepOverTask.Result;
+					}
+					else {
+						stepper.CancelLastStep();
+						asyncState.ClearYieldBreakpoints();
+						var resumeBpTask = asyncState.SetResumeBreakpoint(module, token);
+						stepper.Continue();
+						thread = await resumeBpTask;
+						asyncState.Dispose();
+
+						var newFrame = stepper.TryGetFrameInfo(thread);
+						Debug.Assert(newFrame != null);
+						if (newFrame != null && newFrame.TryGetLocation(out var newModule, out var newToken, out var newOffset)) {
+							Debug.Assert(newModule == module && token == newToken);
+							if (newModule == module && token == newToken) {
+								var newStatement = result.DebugInfo.GetSourceStatementByCodeOffset(newOffset);
+								// If we're not on an existing statement (very likely), we need to step over the
+								// hidden instructions until we reach the next statement.
+								if (newStatement == null) {
+									var ranges = CreateStepRanges(result.DebugInfo.GetUnusedRanges());
+									if (ranges.Length != 0)
+										thread = await stepper.StepOverAsync(newFrame, ranges);
+								}
+							}
+						}
+					}
+				}
+				finally {
+					SetAsyncStepOverState(null);
+					stepper.CancelLastStep();
+				}
+			}
+			else {
+				stepper.CollectReturnValues(result.Frame, result.StatementInstructions);
+				thread = await stepper.StepOverAsync(result.Frame, result.StatementRanges);
+			}
+
+			return thread;
+		}
+
+		static List<AsyncStepInfo> GetAsyncStepInfos(in GetStepRangesAsyncResult result) {
+			if (result.DebugInfo?.AsyncInfo == null)
+				return null;
+			List<AsyncStepInfo> asyncStepInfos = null;
+			GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfo.AsyncInfo, result.ExactStatementRanges);
+			foreach (var ranges in GetHiddenRanges(result.ExactStatementRanges, result.DebugInfo.GetUnusedRanges()))
+				GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfo.AsyncInfo, ranges);
+			return asyncStepInfos;
+		}
+
+		AsyncStepOverState SetAsyncStepOverState(AsyncStepOverState state) {
+			runtime.Dispatcher.VerifyAccess();
+			__DONT_USE_asyncStepOverState?.Dispose();
+			__DONT_USE_asyncStepOverState = state;
+			return state;
+		}
+		AsyncStepOverState __DONT_USE_asyncStepOverState;
+
+		sealed class AsyncStepOverState {
+			readonly DbgDotNetEngineStepper stepper;
+			readonly List<AsyncBreakpointState> yieldBreakpoints;
+			readonly TaskCompletionSource<AsyncBreakpointState> yieldTaskCompletionSource;
+			DbgDotNetStepperBreakpoint resumeBreakpoint;
+
+			public Task Task => yieldTaskCompletionSource.Task;
+
+			public AsyncStepOverState(DbgDotNetEngineStepper stepper) {
+				this.stepper = stepper;
+				yieldBreakpoints = new List<AsyncBreakpointState>();
+				yieldTaskCompletionSource = new TaskCompletionSource<AsyncBreakpointState>();
+			}
+
+			public void AddYieldBreakpoint(DbgThread thread, DbgModule module, uint token, AsyncStepInfo stepInfo) {
+				var yieldBreakpoint = stepper.CreateBreakpoint(thread, module, token, stepInfo.YieldOffset);
+				try {
+					var bpState = new AsyncBreakpointState(yieldBreakpoint, stepInfo.ResumeOffset);
+					bpState.Hit += AsyncBreakpointState_Hit;
+					yieldBreakpoints.Add(bpState);
+				}
+				catch {
+					stepper.RemoveBreakpoints(new[] { yieldBreakpoint });
+					throw;
+				}
+			}
+
+			void AsyncBreakpointState_Hit(object sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.SetResult(bpState);
+
+			internal Task<DbgThread> SetResumeBreakpoint(DbgModule module, uint token) {
+				Debug.Assert(yieldTaskCompletionSource.Task.IsCompleted);
+				Debug.Assert(resumeBreakpoint == null);
+				if (resumeBreakpoint != null)
+					throw new InvalidOperationException();
+				var bpState = yieldTaskCompletionSource.Task.GetAwaiter().GetResult();
+				// The thread can change so pass in null == any thread
+				resumeBreakpoint = stepper.CreateBreakpoint(null, module, token, bpState.ResumeOffset);
+				var tcs = new TaskCompletionSource<DbgThread>();
+				resumeBreakpoint.Hit += (s, e) => tcs.SetResult(e.Thread);
+				return tcs.Task;
+			}
+
+			internal void ClearYieldBreakpoints() {
+				var bps = yieldBreakpoints.Select(a => a.Breakpoint).ToArray();
+				yieldBreakpoints.Clear();
+				stepper.RemoveBreakpoints(bps);
+			}
+
+			internal void Dispose() {
+				ClearYieldBreakpoints();
+				if (resumeBreakpoint != null) {
+					stepper.RemoveBreakpoints(new[] { resumeBreakpoint });
+					resumeBreakpoint = null;
+				}
+			}
+		}
+
+		sealed class AsyncBreakpointState {
+			internal readonly DbgDotNetStepperBreakpoint Breakpoint;
+			internal readonly uint ResumeOffset;
+
+			public event EventHandler<AsyncBreakpointState> Hit;
+
+			public AsyncBreakpointState(DbgDotNetStepperBreakpoint yieldBreakpoint, uint resumeOffset) {
+				Breakpoint = yieldBreakpoint;
+				ResumeOffset = resumeOffset;
+				yieldBreakpoint.Hit += YieldBreakpoint_Hit;
+			}
+
+			void YieldBreakpoint_Hit(object sender, DbgDotNetStepperBreakpointEventArgs e) {
+				Debug.Assert(Hit != null);
+				Hit?.Invoke(this, this);
+			}
+		}
+
+		static IEnumerable<DbgCodeRange[]> GetHiddenRanges(DbgCodeRange[] statements, BinSpan[] unusedSpans) {
+#if DEBUG
+			for (int i = 1; i < statements.Length; i++)
+				Debug.Assert(statements[i - 1].End <= statements[i].Start);
+			for (int i = 1; i < unusedSpans.Length; i++)
+				Debug.Assert(unusedSpans[i - 1].End <= unusedSpans[i].Start);
+#endif
+			int si = 0;
+			int ui = 0;
+			while (si < statements.Length && ui < unusedSpans.Length) {
+				while (ui < unusedSpans.Length && statements[si].End > unusedSpans[ui].Start)
+					ui++;
+				if (ui >= unusedSpans.Length)
+					break;
+				// If a hidden range immediately follows a normal statement, the hidden part could be the removed
+				// async code and should be part of this statement.
+				if (statements[si].End == unusedSpans[ui].Start)
+					yield return new[] { new DbgCodeRange(unusedSpans[ui].Start, unusedSpans[ui].End) };
+				si++;
+			}
+		}
+
+		static void GetAsyncStepInfos(ref List<AsyncStepInfo> result, AsyncMethodDebugInfo asyncInfo, DbgCodeRange[] ranges) {
+			var stepInfos = asyncInfo.StepInfos;
+			for (int i = 0; i < stepInfos.Length; i++) {
+				ref readonly var stepInfo = ref stepInfos[i];
+				if (Contains(ranges, stepInfo)) {
+					if (result == null)
+						result = new List<AsyncStepInfo>();
+					result.Add(stepInfo);
+				}
+			}
+		}
+
+		static bool Contains(DbgCodeRange[] ranges, in AsyncStepInfo stepInfo) {
+			for (int i = 0; i < ranges.Length; i++) {
+				ref readonly var range = ref ranges[i];
+				if (range.Contains(stepInfo.YieldOffset) || range.Contains(stepInfo.ResumeOffset))
+					return true;
+			}
+			return false;
+		}
+
 		async Task StepOutAsync(object tag) {
 			runtime.Dispatcher.VerifyAccess();
 			Debug.Assert(stepper.Session == null);
 			try {
-				var frame = stepper.TryGetFrameInfo();
+				var frame = stepper.TryGetFrameInfo(CurrentThread);
 				if (frame == null) {
 					// No frame? Just let the process run.
 					stepper.Continue();
@@ -163,11 +368,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				}
 
 				stepper.Session = stepper.CreateSession(tag);
-				var thread = await stepper.StepOutAsync(frame);
-				StepCompleted(thread, null, tag);
+				CurrentThread = await stepper.StepOutAsync(frame);
+				StepCompleted(null, tag);
 			}
 			catch (ForciblyCanceledException fce) {
-				StepCompleted(thread, fce.Message, tag);
+				StepCompleted(fce.Message, tag);
 			}
 			catch (StepErrorException see) {
 				StepError(see.Message, tag);
@@ -270,14 +475,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return stepRanges;
 		}
 
-		void StepCompleted(DbgThread thread, string forciblyCanceledErrorMessage, object tag) {
+		void StepCompleted(string forciblyCanceledErrorMessage, object tag) {
 			runtime.Dispatcher.VerifyAccess();
 			if (stepper.Session == null || stepper.Session.Tag != tag)
 				return;
 			if (forciblyCanceledErrorMessage == null)
 				stepper.OnStepComplete();
 			stepper.Session = null;
-			RaiseStepComplete(thread, tag, forciblyCanceledErrorMessage, forciblyCanceled: forciblyCanceledErrorMessage != null);
+			RaiseStepComplete(tag, forciblyCanceledErrorMessage, forciblyCanceled: forciblyCanceledErrorMessage != null);
 		}
 
 		void StepError(string errorMessage, object tag) {
@@ -285,8 +490,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (stepper.Session == null || stepper.Session.Tag != tag)
 				return;
 			stepper.Session = null;
-			var pausedThread = thread.IsClosed ? null : thread;
-			RaiseStepComplete(pausedThread, tag, errorMessage);
+			RaiseStepComplete(tag, errorMessage);
 		}
 
 		void StepFailed(Exception exception, object tag) {
@@ -307,6 +511,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		void ForceCancel_EngineThread() {
 			runtime.Dispatcher.VerifyAccess();
+			SetAsyncStepOverState(null);
 			var oldSession = stepper.Session;
 			stepper.Session = null;
 			if (oldSession != null)
