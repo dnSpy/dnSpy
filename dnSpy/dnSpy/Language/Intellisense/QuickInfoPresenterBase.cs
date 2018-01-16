@@ -19,10 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	abstract class QuickInfoPresenterBase : IIntellisensePresenter, IIntellisenseCommandTarget {
+	abstract class QuickInfoPresenterBase : IIntellisensePresenter, IIntellisenseCommandTarget, INotifyPropertyChanged {
+		public event PropertyChangedEventHandler PropertyChanged { add { } remove { } }
 		public IIntellisenseSession Session => session;
 		public IList<object> QuickInfoContent => session.QuickInfoContent;
 

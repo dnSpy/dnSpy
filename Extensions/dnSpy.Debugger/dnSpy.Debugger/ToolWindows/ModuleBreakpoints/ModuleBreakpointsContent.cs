@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		readonly ModuleBreakpointsControl moduleBreakpointsControl;
 		readonly IModuleBreakpointsVM moduleBreakpointsVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IModuleBreakpointsVM VM { get; }
 			ModuleBreakpointsOperations Operations { get; }
 

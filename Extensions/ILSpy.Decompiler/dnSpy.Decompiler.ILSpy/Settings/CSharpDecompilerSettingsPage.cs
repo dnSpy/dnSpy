@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.MVVM;
@@ -27,12 +26,9 @@ using dnSpy.Decompiler.ILSpy.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class CSharpDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class CSharpDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2 {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
 		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;

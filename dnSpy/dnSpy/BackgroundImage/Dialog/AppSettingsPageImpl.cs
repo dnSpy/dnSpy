@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -55,14 +54,11 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 	}
 
-	sealed class AppSettingsPageImpl : AppSettingsPage, INotifyPropertyChanged {
+	sealed class AppSettingsPageImpl : AppSettingsPage {
 		public override Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
 		public override double Order => AppSettingsConstants.ORDER_BACKGROUNDIMAGE;
 		public override string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
 		public override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public ICommand ResetCommand => new RelayCommand(a => ResetSettings(), a => CanResetSettings);
 		public ICommand PickFilenamesCommand => new RelayCommand(a => PickFilenames(), a => CanPickFilenames);
@@ -328,7 +324,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 			Concat(Settings.Select(a => a.Name)).ToArray();
 	}
 
-	sealed class Settings {
+	sealed class Settings : ViewModelBase {
 		public RawSettings RawSettings { get; }
 
 		public string Id { get; }

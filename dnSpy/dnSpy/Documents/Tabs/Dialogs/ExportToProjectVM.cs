@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -87,10 +88,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public EnumListVM ProjectVersionVM { get; } = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
-		public IEnumerable<IDecompiler> AllDecompilers => decompilerService.AllDecompilers.Where(a => a.ProjectFileExtension != null);
-		readonly IDecompilerService decompilerService;
+		public ObservableCollection<DecompilerVM> AllDecompilers => allDecompilers;
+		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
-		public IDecompiler Decompiler {
+		public DecompilerVM Decompiler {
 			get { return decompiler; }
 			set {
 				if (decompiler != value) {
@@ -99,7 +100,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		IDecompiler decompiler;
+		DecompilerVM decompiler;
 
 		public NullableGuidVM ProjectGuid { get; }
 
@@ -244,7 +245,6 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public ExportToProjectVM(IPickDirectory pickDirectory, IDecompilerService decompilerService, IExportTask exportTask, bool canDecompileBaml) {
 			this.pickDirectory = pickDirectory;
-			this.decompilerService = decompilerService;
 			this.exportTask = exportTask;
 			this.canDecompileBaml = canDecompileBaml;
 			unpackResources = true;
@@ -252,7 +252,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			decompileXaml = canDecompileBaml;
 			createSolution = true;
 			ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension != null);
+			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => a.ProjectFileExtension != null).Select(a => new DecompilerVM(a)));
+			decompiler = allDecompilers.FirstOrDefault();
 			isIndeterminate = false;
 			ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}
@@ -338,5 +339,11 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			!string.IsNullOrEmpty(Verify(nameof(Directory))) ||
 			!string.IsNullOrEmpty(Verify(nameof(SolutionFilename))) ||
 			ProjectGuid.HasError;
+	}
+
+	sealed class DecompilerVM : ViewModelBase {
+		public IDecompiler Decompiler { get; }
+		public string UniqueNameUI => Decompiler.UniqueNameUI;
+		public DecompilerVM(IDecompiler decompiler) => Decompiler = decompiler;
 	}
 }

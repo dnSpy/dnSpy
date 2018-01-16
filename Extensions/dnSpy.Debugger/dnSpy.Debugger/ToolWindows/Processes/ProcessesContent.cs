@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		readonly ProcessesControl processesControl;
 		readonly IProcessesVM processesVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IProcessesVM VM { get; }
 			ProcessesOperations Operations { get; }
 

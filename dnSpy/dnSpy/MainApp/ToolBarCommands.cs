@@ -30,6 +30,7 @@ using System.Windows.Data;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.ToolBars;
 
 namespace dnSpy.MainApp {
@@ -68,7 +69,7 @@ namespace dnSpy.MainApp {
 		}
 		object selectedItem;
 
-		sealed class LanguageInfo {
+		sealed class LanguageInfo : ViewModelBase {
 			public IDecompiler Decompiler;
 			public string Name => Decompiler.UniqueNameUI;
 			public override string ToString() => Name;

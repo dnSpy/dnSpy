@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		readonly ExceptionsControl exceptionsControl;
 		readonly IExceptionsVM exceptionsVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IExceptionsVM VM { get; }
 			public ExceptionsOperations Operations { get; }
 

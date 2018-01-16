@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.MVVM {
 	/// <summary>
 	/// Enum value
 	/// </summary>
-	public sealed class EnumVM {
+	public sealed class EnumVM : ViewModelBase {
 		readonly object value;
 		readonly string name;
 

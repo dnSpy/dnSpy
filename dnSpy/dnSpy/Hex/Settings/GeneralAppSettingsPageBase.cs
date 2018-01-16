@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using dnSpy.Contracts.Hex;
@@ -27,12 +26,9 @@ using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Hex.Settings {
-	abstract class GeneralAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class GeneralAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.GeneralSettings;
 		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool EnableHighlightCurrentLine {
 			get { return enableHighlightCurrentLine; }

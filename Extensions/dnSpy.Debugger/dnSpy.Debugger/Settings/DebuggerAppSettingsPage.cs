@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.Settings {
 		public (Guid runtimeKindGuid, string languageName) GetSettings() => (runtimeKindGuid, selectedItem.ID);
 	}
 
-	sealed class LanguageVM {
+	sealed class LanguageVM : ViewModelBase {
 		public string Name => info.LanguageDisplayName;
 		public string ID => info.LanguageName;
 		readonly LanguageInfo info;

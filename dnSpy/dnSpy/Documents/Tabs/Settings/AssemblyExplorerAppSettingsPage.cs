@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Documents.TreeView;
 using dnSpy.Properties;
@@ -41,14 +41,11 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 	}
 
-	sealed class AssemblyExplorerAppSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class AssemblyExplorerAppSettingsPage : AppSettingsPage, IAppSettingsPage2 {
 		public override Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
 		public override double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
 		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
 		public override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
@@ -248,7 +245,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public override string[] GetSearchStrings() => MemberKindsArray.Select(a => a.Text).Concat(DocumentFilterTypes.Select(a => a.Text)).ToArray();
 	}
 
-	sealed class MemberKindVM {
+	sealed class MemberKindVM : ViewModelBase {
 		public MemberKind Object { get; }
 		public string Text { get; }
 
@@ -258,7 +255,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 	}
 
-	sealed class DocumentFilterTypeVM {
+	sealed class DocumentFilterTypeVM : ViewModelBase {
 		public DocumentFilterType FilterType { get; }
 		public string Text { get; }
 

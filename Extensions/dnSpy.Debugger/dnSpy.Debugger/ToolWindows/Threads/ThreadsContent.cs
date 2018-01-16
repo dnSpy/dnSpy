@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		readonly ThreadsControl threadsControl;
 		readonly IThreadsVM threadsVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IThreadsVM VM { get; }
 			ThreadsOperations Operations { get; }
 

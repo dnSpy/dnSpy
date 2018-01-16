@@ -18,18 +18,14 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Settings {
-	abstract class GeneralAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class GeneralAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.GeneralSettings;
 		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool UseVirtualSpaceEnabled => UseVirtualSpace || !WordWrap;
 		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;

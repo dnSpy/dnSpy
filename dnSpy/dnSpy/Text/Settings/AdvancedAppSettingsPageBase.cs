@@ -18,19 +18,15 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 
 namespace dnSpy.Text.Settings {
-	abstract class AdvancedAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class AdvancedAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.AdvancedSettings;
 		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool ReferenceHighlighting {
 			get { return referenceHighlighting; }

@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 		bool canCompile;
 
-		public sealed class CodeDocument {
+		public sealed class CodeDocument : ViewModelBase {
 			public string Name => codeDocument.Name;
 			public string NameNoExtension => codeDocument.NameNoExtension;
 			public IDsWpfTextView TextView => codeDocument.TextView;
