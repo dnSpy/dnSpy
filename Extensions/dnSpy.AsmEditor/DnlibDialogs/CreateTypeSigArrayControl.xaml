@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="500">
@@ -50,6 +51,7 @@
             <ListBox Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
                       Margin="0 5 0 0"
                       IsEnabled="{Binding IsEnabled}"
+                      mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                       ItemsSource="{Binding TypeSigCollection}"
                       DisplayMemberPath="FullName"
                       SelectedIndex="{Binding TypeSigCollection.SelectedIndex}" />

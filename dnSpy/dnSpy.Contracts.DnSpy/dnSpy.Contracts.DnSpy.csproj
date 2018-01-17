@@ -619,6 +619,7 @@
     <Compile Include="Metadata\IModuleIdFactoryProvider.cs" />
     <Compile Include="Metadata\IModuleIdProvider.cs" />
     <Compile Include="Metadata\ModuleIdFactoryProviderConstants.cs" />
+    <Compile Include="MVVM\AutomationPeerMemoryLeakWorkaround.cs" />
     <Compile Include="MVVM\Converters\FontSizeConverter.cs" />
     <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
     <Compile Include="MVVM\DataFieldVM.cs" />

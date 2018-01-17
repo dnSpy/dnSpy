@@ -24,6 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:lui="clr-namespace:dnSpy.Debugger.UI"
@@ -46,6 +47,7 @@
         <ScrollViewer Grid.Row="0" Margin="5 5 5 0" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Conditions}"
                           Background="{DynamicResource ListBoxBackground}"
+                          mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                           img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

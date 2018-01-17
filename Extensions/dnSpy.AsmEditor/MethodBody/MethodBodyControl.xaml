@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
@@ -112,6 +113,7 @@
                         Grid.Row="1"
                         VirtualizingStackPanel.IsVirtualizing="True"
                         VirtualizingStackPanel.VirtualizationMode="Recycling"
+                        mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                         BorderThickness="0"
                         Name="instructionsListView"
                         SelectionMode="Extended"
@@ -186,6 +188,7 @@
                 Name="localsListView"
                 BorderThickness="0"
                 SelectionMode="Extended"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 ItemsSource="{Binding CilBodyVM.LocalsListVM}"
                 Style="{StaticResource CilListViewStyle}"
                 ItemContainerStyle="{StaticResource CilListViewItemStyle}">
@@ -239,6 +242,7 @@
                 Name="ehListView"
                 BorderThickness="0"
                 SelectionMode="Extended"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 ItemsSource="{Binding CilBodyVM.ExceptionHandlersListVM}"
                 Style="{StaticResource CilListViewStyle}"
                 ItemContainerStyle="{StaticResource CilListViewItemStyle}">
