@@ -17,10 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 
 namespace dnSpy.Contracts.MVVM {
 	/// <summary>
@@ -35,6 +37,12 @@ namespace dnSpy.Contracts.MVVM {
 		public static void SetInitialize(ItemsControl element, bool value) => element.SetValue(InitializeProperty, value);
 		public static bool GetInitialize(ItemsControl element) => (bool)element.GetValue(InitializeProperty);
 
+		public static readonly DependencyProperty EmptyCountProperty = DependencyProperty.RegisterAttached(
+			"EmptyCount", typeof(int), typeof(AutomationPeerMemoryLeakWorkaround), new UIPropertyMetadata(0));
+
+		public static void SetEmptyCount(ItemsControl element, int value) => element.SetValue(EmptyCountProperty, value);
+		public static int GetEmptyCount(ItemsControl element) => (int)element.GetValue(EmptyCountProperty);
+
 		static void InitializePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			if (!(d is ItemsControl itemsControl))
 				return;
@@ -43,9 +51,11 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		static void ItemContainerGenerator_ItemsChanged(ItemsControl itemsControl) {
-			if (itemsControl.Items.Count == 0) {
+			if (itemsControl.Items.Count <= GetEmptyCount(itemsControl)) {
 				// Some of the cached items contain references to data that should be GC'd
-				((IItemContainerGenerator)itemsControl.ItemContainerGenerator).RemoveAll();
+				var method = itemsControl.ItemContainerGenerator.GetType().GetMethod("ResetRecyclableContainers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null);
+				Debug.Assert(method != null);
+				method?.Invoke(itemsControl.ItemContainerGenerator, Array.Empty<object>());
 
 				// GTFOH!
 				UIElementAutomationPeer.FromElement(itemsControl)?.InvalidatePeer();
