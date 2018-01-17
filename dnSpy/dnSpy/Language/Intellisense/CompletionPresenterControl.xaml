@@ -22,6 +22,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:dnSpy.Language.Intellisense"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              Name="theControl">
     <UserControl.Resources>
         <local:CollectionBooleanToVisibilityConverter x:Key="CollectionBooleanToVisibilityConverter" />
@@ -39,6 +40,7 @@
         <ListBox Grid.Row="1"
                  Name="completionsListBox"
                  SelectionMode="Single"
+                 mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                  img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
                  VirtualizingStackPanel.IsVirtualizing="True"
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -69,7 +71,7 @@
                                 </MultiBinding>
                             </ContentPresenter.Content>
                         </ContentPresenter>
-                        <ItemsControl Grid.Column="3" Margin="3 1 1 1" ItemsSource="{Binding AttributeIcons}" Visibility="{Binding AttributeIcons, Converter={StaticResource CollectionBooleanToVisibilityConverter}}" Background="{DynamicResource ListBoxBackground}" VerticalContentAlignment="Center">
+                        <ItemsControl Grid.Column="3" Margin="3 1 1 1" ItemsSource="{Binding AttributeIcons}" Visibility="{Binding AttributeIcons, Converter={StaticResource CollectionBooleanToVisibilityConverter}}" Background="{DynamicResource ListBoxBackground}" VerticalContentAlignment="Center" mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" />
@@ -91,6 +93,7 @@
             ItemsSource="{Binding Filters}"
             Visibility="{Binding HasFilters, Converter={StaticResource BooleanToVisibilityConverter}}"
             Background="{DynamicResource ListBoxBackground}"
+            mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             BorderBrush="{DynamicResource ListBoxBorder}"
             BorderThickness="1 0 1 1"

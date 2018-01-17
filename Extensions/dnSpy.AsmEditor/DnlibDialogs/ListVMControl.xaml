@@ -20,6 +20,7 @@
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mvvm2="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.Logic"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties">
     <UserControl.Resources>
@@ -40,6 +41,7 @@
                   MouseDoubleClick="listBox_MouseDoubleClick"
                   SelectionMode="Single"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  mvvm2:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                   ItemsSource="{Binding Collection}"
                   HorizontalContentAlignment="Stretch"
                   IsEnabled="{Binding IsEnabled}"

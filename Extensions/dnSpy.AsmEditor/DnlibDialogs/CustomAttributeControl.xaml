@@ -21,6 +21,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties">
     <Grid>
         <Grid.RowDefinitions>
@@ -52,6 +53,7 @@
                   HorizontalContentAlignment="Stretch"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   SelectionMode="Single"
+                  mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                   IsEnabled="{Binding IsNotRawData}"
                   ItemsSource="{Binding ConstructorArguments}"
                   SelectedIndex="{Binding ConstructorArguments.SelectedIndex}">

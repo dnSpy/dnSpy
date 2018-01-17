@@ -2174,6 +2174,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2222,6 +2223,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2277,6 +2279,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2339,6 +2342,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2408,6 +2412,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2484,6 +2489,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2567,6 +2573,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2672,6 +2679,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2728,6 +2736,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2791,6 +2800,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2861,6 +2871,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2938,6 +2949,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -3022,6 +3034,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -3113,6 +3126,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
+                mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">

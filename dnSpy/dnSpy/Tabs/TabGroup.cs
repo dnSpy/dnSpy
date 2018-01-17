@@ -215,6 +215,7 @@ namespace dnSpy.Tabs {
 			this.tabGroupService = tabGroupService;
 			this.wpfFocusService = wpfFocusService;
 			tabControl = new TabControl();
+			AutomationPeerMemoryLeakWorkaround.SetInitialize(tabControl, true);
 			tabControl.DataContext = this;
 			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			tabControl.SelectionChanged += TabControl_SelectionChanged;

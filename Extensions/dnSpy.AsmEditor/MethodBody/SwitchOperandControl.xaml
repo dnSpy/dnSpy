@@ -21,6 +21,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties">
     <UserControl.Resources>
@@ -63,6 +64,7 @@
             Margin="0 5 0 0"
             Name="listBox"
             SelectionMode="Extended"
+            mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             Style="{StaticResource CilListBoxStyle}"
             ItemContainerStyle="{StaticResource CilListBoxItemStyle}"
             ItemTemplate="{StaticResource InstructionTemplate}"

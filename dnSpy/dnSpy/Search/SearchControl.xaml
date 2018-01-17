@@ -22,6 +22,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:p="clr-namespace:dnSpy.Properties"
              xmlns:local="clr-namespace:dnSpy.Search"
+             xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy">
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type local:SearchTypeVM}">
@@ -71,6 +72,7 @@
                  SelectionMode="Single"
                  VirtualizingStackPanel.IsVirtualizing="True"
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                  BorderThickness="{Binding TooManyResults, Converter={StaticResource BooleanToThicknessConverter}, ConverterParameter=1|0}"
                  BorderBrush="{DynamicResource CommonControlsTextBoxBorderError}"
                  img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
