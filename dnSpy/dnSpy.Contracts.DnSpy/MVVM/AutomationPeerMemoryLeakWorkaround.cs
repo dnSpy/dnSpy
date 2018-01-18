@@ -51,15 +51,21 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		static void ItemContainerGenerator_ItemsChanged(ItemsControl itemsControl) {
-			if (itemsControl.Items.Count <= GetEmptyCount(itemsControl)) {
-				// Some of the cached items contain references to data that should be GC'd
-				var method = itemsControl.ItemContainerGenerator.GetType().GetMethod("ResetRecyclableContainers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null);
-				Debug.Assert(method != null);
-				method?.Invoke(itemsControl.ItemContainerGenerator, Array.Empty<object>());
+			if (itemsControl.Items.Count <= GetEmptyCount(itemsControl))
+				ClearAll(itemsControl);
+		}
 
-				// GTFOH!
-				UIElementAutomationPeer.FromElement(itemsControl)?.InvalidatePeer();
-			}
+		public static void ClearAll(ItemsControl itemsControl) {
+			if (itemsControl == null)
+				return;
+
+			// Some of the cached items contain references to data that should be GC'd
+			var method = itemsControl.ItemContainerGenerator.GetType().GetMethod("ResetRecyclableContainers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null);
+			Debug.Assert(method != null);
+			method?.Invoke(itemsControl.ItemContainerGenerator, Array.Empty<object>());
+
+			// GTFOH!
+			UIElementAutomationPeer.FromElement(itemsControl)?.InvalidatePeer();
 		}
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

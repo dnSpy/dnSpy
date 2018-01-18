@@ -24,6 +24,7 @@ using dnSpy.Debugger.Evaluation.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Watch {
 	abstract class WatchContentFactory {
+		public abstract bool TryGetContent(int index, out WatchContent watchContent);
 		public abstract WatchContent GetContent(int index);
 	}
 
@@ -40,6 +41,11 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			this.wpfCommandService = wpfCommandService;
 			this.variablesWindowVMFactory = variablesWindowVMFactory;
 			this.watchVariablesWindowValueNodesProviderService = watchVariablesWindowValueNodesProviderService;
+		}
+
+		public override bool TryGetContent(int index, out WatchContent watchContent) {
+			watchContent = contents[index];
+			return watchContent != null;
 		}
 
 		public override WatchContent GetContent(int index) {

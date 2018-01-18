@@ -38,6 +38,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public FrameworkElement ZoomElement => variablesWindowControl;
 		public IVariablesWindowVM VM => variablesWindowVM;
 
+		internal VariablesWindowControl VariablesWindowControl => variablesWindowControl;
+
 		readonly VariablesWindowControl variablesWindowControl;
 		IVariablesWindowVM variablesWindowVM;
 
