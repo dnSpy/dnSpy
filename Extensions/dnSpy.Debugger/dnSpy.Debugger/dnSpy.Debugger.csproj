@@ -274,6 +274,7 @@
     <Compile Include="ToolWindows\Watch\WatchVariablesWindowValueNodesProvider.cs" />
     <Compile Include="ToolWindows\Watch\WatchWindowExpressionsSettings.cs" />
     <Compile Include="ToolWindows\Watch\WatchWindowsHelper.cs" />
+    <Compile Include="ToolWindows\Watch\WpfMemLeakWorkaround.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
     <Compile Include="UI\Wpf\ITextBlockContentInfoFactory.cs" />
