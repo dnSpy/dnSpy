@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.MVVM {
 						if (coll != null) {
 							var clearMethod = coll.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null);
 							Debug.Assert((object)clearMethod != null);
-							clearMethod.Invoke(coll, Array.Empty<object>());
+							clearMethod?.Invoke(coll, Array.Empty<object>());
 						}
 					}
 

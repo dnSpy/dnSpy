@@ -63,10 +63,14 @@ namespace dnSpy.Menus {
 			return default;
 		}
 
+		public event EventHandler OnDisposed;
+
 		public void Dispose() {
 			if (IsDisposed)
 				return;
 			IsDisposed = true;
+			OnDisposed?.Invoke(this, EventArgs.Empty);
+			OnDisposed = null;
 
 			// Clear everything. We don't want to hold on to objects that could've gotten disposed,
 			// eg. IDocumentViewer. Those instances could throw ObjectDisposedException
