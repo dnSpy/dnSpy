@@ -32,9 +32,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly TypeSig typeTypeSig;
 		readonly TypeSig guidTypeSig;
 
-		public IntrinsicsAssemblyBuilder(string corlibAssemblyFullName) {
+		public IntrinsicsAssemblyBuilder(string corlibAssemblyFullName, string imageRuntimeVersion) {
 			var corlibRef = new AssemblyRefUser(new AssemblyNameInfo(corlibAssemblyFullName));
 			module = new ModuleDefUser(Guid.NewGuid().ToString(), Guid.NewGuid(), corlibRef);
+			module.RuntimeVersion = imageRuntimeVersion;
 			module.Kind = ModuleKind.Dll;
 			var asm = new AssemblyDefUser(Guid.NewGuid().ToString());
 			asm.Modules.Add(module);

@@ -232,7 +232,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		IntrinsicsAssemblyState GetOrCreateIntrinsicsAssemblyState(DbgRuntime runtime, DmdAppDomain appDomain) {
-			var info = new IntrinsicsAssemblyBuilder(appDomain.CorLib.GetName().FullName).Create();
+			var info = new IntrinsicsAssemblyBuilder(appDomain.CorLib.GetName().FullName, appDomain.CorLib.ImageRuntimeVersion).Create();
 			const bool isFileLayout = true;
 			const bool isInMemory = false;
 			const bool isDynamic = false;
