@@ -74,9 +74,9 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool UseStringConversionFunction { get; set; }
 
 		/// <summary>
-		/// true to disable detection of managed debuggers
+		/// true to prevent detection of managed debuggers
 		/// </summary>
-		public abstract bool DisableManagedDebuggerDetection { get; set; }
+		public abstract bool PreventManagedDebuggerDetection { get; set; }
 
 		/// <summary>
 		/// true to ignore break instructions and <see cref="System.Diagnostics.Debugger.Break"/> method calls

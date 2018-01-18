@@ -163,24 +163,24 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool useStringConversionFunction = true;
 
-		public override bool DisableManagedDebuggerDetection {
+		public override bool PreventManagedDebuggerDetection {
 			get {
 				lock (lockObj)
-					return disableManagedDebuggerDetection;
+					return preventManagedDebuggerDetection;
 			}
 			set {
 				bool modified;
 				lock (lockObj) {
-					modified = disableManagedDebuggerDetection != value;
-					disableManagedDebuggerDetection = value;
+					modified = preventManagedDebuggerDetection != value;
+					preventManagedDebuggerDetection = value;
 				}
 				if (modified) {
-					OnPropertyChanged(nameof(DisableManagedDebuggerDetection));
+					OnPropertyChanged(nameof(PreventManagedDebuggerDetection));
 					OnModified();
 				}
 			}
 		}
-		bool disableManagedDebuggerDetection = true;
+		bool preventManagedDebuggerDetection = true;
 
 		public override bool IgnoreBreakInstructions {
 			get {
@@ -534,7 +534,7 @@ namespace dnSpy.Debugger.Settings {
 			other.UseMemoryModules = UseMemoryModules;
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = UseStringConversionFunction;
-			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
+			other.PreventManagedDebuggerDetection = PreventManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.BreakAllProcesses = BreakAllProcesses;
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
@@ -577,7 +577,7 @@ namespace dnSpy.Debugger.Settings {
 			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
 			UseStringConversionFunction = sect.Attribute<bool?>(nameof(UseStringConversionFunction)) ?? UseStringConversionFunction;
-			DisableManagedDebuggerDetection = sect.Attribute<bool?>(nameof(DisableManagedDebuggerDetection)) ?? DisableManagedDebuggerDetection;
+			PreventManagedDebuggerDetection = sect.Attribute<bool?>(nameof(PreventManagedDebuggerDetection)) ?? PreventManagedDebuggerDetection;
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
@@ -611,7 +611,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(UseMemoryModules), UseMemoryModules);
 			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
 			sect.Attribute(nameof(UseStringConversionFunction), UseStringConversionFunction);
-			sect.Attribute(nameof(DisableManagedDebuggerDetection), DisableManagedDebuggerDetection);
+			sect.Attribute(nameof(PreventManagedDebuggerDetection), PreventManagedDebuggerDetection);
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);

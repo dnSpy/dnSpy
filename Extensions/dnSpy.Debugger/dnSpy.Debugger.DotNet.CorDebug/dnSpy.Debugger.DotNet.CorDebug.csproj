@@ -134,7 +134,6 @@
     <Compile Include="dndbg\Engine\DebuggerState.cs" />
     <Compile Include="dndbg\Engine\DebugOptions.cs" />
     <Compile Include="dndbg\Engine\DebugProcessOptions.cs" />
-    <Compile Include="dndbg\Engine\DisableSystemDebuggerDetection.cs" />
     <Compile Include="dndbg\Engine\DnAnyDebugEventBreakpoint.cs" />
     <Compile Include="dndbg\Engine\DnAppDomain.cs" />
     <Compile Include="dndbg\Engine\DnAssembly.cs" />
@@ -155,6 +154,7 @@
     <Compile Include="dndbg\Engine\ILFrameIP.cs" />
     <Compile Include="dndbg\Engine\MDAPI.cs" />
     <Compile Include="dndbg\Engine\NativeMethods.cs" />
+    <Compile Include="dndbg\Engine\PreventManagedDebuggerDetection.cs" />
     <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
     <Compile Include="dndbg\Engine\StepRange.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />

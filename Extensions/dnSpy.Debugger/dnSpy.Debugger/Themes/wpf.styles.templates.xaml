@@ -56,7 +56,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
+            <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.PreventManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
             <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
             <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_UseStringConversionFunction}" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />
             <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding Settings.IgnoreBreakInstructions}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_IgnoreBreakInstructions}" />

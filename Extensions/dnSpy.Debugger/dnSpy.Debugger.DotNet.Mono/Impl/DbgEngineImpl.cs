@@ -336,7 +336,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Assert(!connectionAddress.Contains(" "));
 					var sb = new StringBuilder();
 					sb.Append($"--debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort},defer=y");
-					if (!debuggerSettings.DisableManagedDebuggerDetection)
+					if (!debuggerSettings.PreventManagedDebuggerDetection)
 						sb.Append(",no-hide-debugger");
 					var envVarValue = sb.ToString();
 

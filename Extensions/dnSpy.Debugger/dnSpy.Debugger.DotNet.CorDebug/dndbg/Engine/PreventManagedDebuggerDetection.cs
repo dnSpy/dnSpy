@@ -21,10 +21,10 @@ using System;
 using System.Diagnostics;
 
 namespace dndbg.Engine {
-	sealed class DisableSystemDebuggerDetection {
-		public static void Initialize(DnDebugger debugger) => new DisableSystemDebuggerDetection(debugger);
+	sealed class PreventManagedDebuggerDetection {
+		public static void Initialize(DnDebugger debugger) => new PreventManagedDebuggerDetection(debugger);
 
-		DisableSystemDebuggerDetection(DnDebugger debugger) => debugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+		PreventManagedDebuggerDetection(DnDebugger debugger) => debugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			if (e.Kind == DebugCallbackKind.CreateProcess) {
