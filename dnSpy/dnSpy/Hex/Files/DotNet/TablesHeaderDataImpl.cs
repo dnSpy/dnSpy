@@ -127,11 +127,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			ValidMask = new StructField<UInt64FlagsData>("m_maskvalid", new UInt64FlagsData(buffer, pos + 8, tableFlagInfos));
 			SortedMask = new StructField<UInt64FlagsData>("m_sorted", new UInt64FlagsData(buffer, pos + 0x10, tableFlagInfos));
 			pos += 0x18;
+			Rows = new StructField<ArrayData<UInt32Data>>("m_rows", ArrayData.CreateUInt32Array(buffer, pos, rowsFieldCount));
 			if (hasExtraData) {
 				ExtraData = new StructField<UInt32Data>("m_ulExtra", new UInt32Data(buffer, pos));
 				pos += 4;
 			}
-			Rows = new StructField<ArrayData<UInt32Data>>("m_rows", ArrayData.CreateUInt32Array(buffer, pos, rowsFieldCount));
 			var fields = new List<BufferField>(9) {
 				Reserved,
 				MajorVersion,
@@ -141,9 +141,9 @@ namespace dnSpy.Hex.Files.DotNet {
 				ValidMask,
 				SortedMask,
 			};
+			fields.Add(Rows);
 			if (hasExtraData)
 				fields.Add(ExtraData);
-			fields.Add(Rows);
 			Fields = fields.ToArray();
 		}
 	}
