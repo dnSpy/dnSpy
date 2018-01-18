@@ -195,9 +195,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		ISearchResult searchResult;
 
-		public IEnumerable<IDecompiler> AllLanguages => decompilerService.AllDecompilers;
+		public ObservableCollection<DecompilerVM> AllLanguages => allDecompilers;
+		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
-		public IDecompiler Language {
+		public DecompilerVM Language {
 			get { return decompiler; }
 			set {
 				if (decompiler != value) {
@@ -207,7 +208,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		IDecompiler decompiler;
+		DecompilerVM decompiler;
 		readonly IDecompilerService decompilerService;
 		readonly IDocumentTreeView documentTreeView;
 		readonly IDocumentTreeNodeFilter filter;
@@ -224,7 +225,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.decompilerService = decompilerService;
 			this.documentTreeView = documentTreeView;
-			decompiler = decompilerService.Decompiler;
+			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Select(a => new DecompilerVM(a)));
+			decompiler = allDecompilers.FirstOrDefault(a => a.Decompiler == decompilerService.Decompiler);
 			this.filter = filter;
 			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			SearchResults = new ObservableCollection<ISearchResult>();
@@ -254,7 +256,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void RefreshTreeView() {
-			documentTreeView.SetDecompiler(Language);
+			documentTreeView.SetDecompiler(Language.Decompiler);
 			Restart();
 		}
 
@@ -283,7 +285,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				};
 				fileSearcher = fileSearcherProvider.Create(options, documentTreeView);
 				fileSearcher.SyntaxHighlight = SyntaxHighlight;
-				fileSearcher.Decompiler = Language;
+				fileSearcher.Decompiler = Language.Decompiler;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
 				fileSearcher.Start(documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>());

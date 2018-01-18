@@ -206,6 +206,7 @@
     </Compile>
     <Compile Include="DnlibDialogs\DeclSecurityOptions.cs" />
     <Compile Include="DnlibDialogs\DeclSecurityVM.cs" />
+    <Compile Include="DnlibDialogs\DecompilerVM.cs" />
     <Compile Include="DnlibDialogs\DlgUtils.cs" />
     <Compile Include="DnlibDialogs\EnumDataFieldVM.cs" />
     <Compile Include="DnlibDialogs\GenericParamControl.xaml.cs">

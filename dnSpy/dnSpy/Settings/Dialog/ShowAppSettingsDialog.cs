@@ -154,6 +154,10 @@ namespace dnSpy.Settings.Dialog {
 				foreach (var listener in appSettingsModifiedListeners)
 					listener.Value.OnSettingsModified(appRefreshSettings);
 			}
+
+			// Prevent a memory leak in SharpTreeNodeProxy. This will remove all bindings and
+			// remove the ValueChanged handlers from the instance stored in a static field.
+			pageContext.TreeView.Root.Children.Clear();
 		}
 
 		void InitializeKeyboardBindings() {

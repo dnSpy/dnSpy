@@ -629,7 +629,9 @@
                             <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorderFocused}" />
                         </Trigger>
                         <Trigger Property="Validation.HasError" Value="true">
-                            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                            <!-- OneTime is used to prevent a memory leak since ValidationError doesn't impl INotifyPropertyChanged and gets stored in a static: System.ComponentModel.ReflectTypeDescriptionProvider._propertyCache
+                                 It holds a reference to the DataContext -->
+                            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Mode=OneTime, Path=(Validation.Errors)[0].ErrorContent}"/>
                             <Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxErrorBackground}"/>
                             <Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxErrorForeground}"/>
                             <Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxErrorBackground}" />

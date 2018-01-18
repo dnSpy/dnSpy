@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		bool IsExceptionCode => selectedCategory != null && (selectedCategory.Definition.Flags & DbgExceptionCategoryDefinitionFlags.Code) != 0;
 		public bool HasDescriptionText => IsExceptionCode;
 
-		sealed class ExceptionCategoryVM {
+		sealed class ExceptionCategoryVM : ViewModelBase {
 			public string DisplayName => Definition.ShortDisplayName;
 			public DbgExceptionCategoryDefinition Definition { get; }
 			public ExceptionCategoryVM(in DbgExceptionCategoryDefinition definition) => Definition = definition;
