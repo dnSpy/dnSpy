@@ -553,6 +553,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			set => debuggerSettings.UseDigitSeparators = value;
 		}
 
+		public override bool ShowOnlyPublicMembers {
+			get => debuggerSettings.ShowOnlyPublicMembers;
+			set => debuggerSettings.ShowOnlyPublicMembers = value;
+		}
+
 		public override bool ShowNamespaces {
 			get => dbgEvalFormatterSettings.ShowNamespaces;
 			set => dbgEvalFormatterSettings.ShowNamespaces = value;

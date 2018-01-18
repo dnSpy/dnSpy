@@ -171,5 +171,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Redirect GUI applications' console output to the Output window
 		/// </summary>
 		public abstract bool RedirectGuiConsoleOutput { get; set; }
+
+		/// <summary>
+		/// Show only public members in variables windows
+		/// </summary>
+		public abstract bool ShowOnlyPublicMembers { get; set; }
 	}
 }

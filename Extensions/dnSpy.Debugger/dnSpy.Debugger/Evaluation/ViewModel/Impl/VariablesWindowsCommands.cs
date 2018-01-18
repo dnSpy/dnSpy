@@ -308,7 +308,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanCollapseChildren(context.VM);
 	}
 
-	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 0)]
+	[ExportMenuItem(Header = "res:ShowOnlyPublicMembersCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 0)]
+	sealed class ShowOnlyPublicMembersVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		ShowOnlyPublicMembersVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.ShowOnlyPublicMembers = !context.Operations.ShowOnlyPublicMembers;
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => true;
+		public override bool IsChecked(VariablesWindowCtxMenuContext context) => context.Operations.ShowOnlyPublicMembers;
+	}
+
+	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 10)]
 	sealed class ShowNamespacesVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		ShowNamespacesVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
@@ -317,7 +326,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsChecked(VariablesWindowCtxMenuContext context) => context.Operations.ShowNamespaces;
 	}
 
-	[ExportMenuItem(Header = "res:ShowIntrinsicTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 10)]
+	[ExportMenuItem(Header = "res:ShowIntrinsicTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 20)]
 	sealed class ShowIntrinsicTypeKeywordsVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		ShowIntrinsicTypeKeywordsVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
@@ -326,7 +335,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsChecked(VariablesWindowCtxMenuContext context) => context.Operations.ShowIntrinsicTypeKeywords;
 	}
 
-	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 20)]
+	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS, Order = 30)]
 	sealed class ShowTokensVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		ShowTokensVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }

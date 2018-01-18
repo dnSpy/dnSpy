@@ -505,6 +505,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			case nameof(DebuggerSettings.HideCompilerGeneratedMembers):
 			case nameof(DebuggerSettings.RespectHideMemberAttributes):
 			case nameof(DebuggerSettings.HideDeprecatedError):
+			case nameof(DebuggerSettings.ShowOnlyPublicMembers):
 				UpdateFormatterOptions();
 				UpdateEvaluationOptions();
 				RecreateRootChildren_UI();
@@ -641,6 +642,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				options |= DbgValueNodeEvaluationOptions.RespectHideMemberAttributes;
 			if (debuggerSettings.HideDeprecatedError)
 				options |= DbgValueNodeEvaluationOptions.HideDeprecatedError;
+			if (debuggerSettings.ShowOnlyPublicMembers)
+				options |= DbgValueNodeEvaluationOptions.PublicMembers;
 			return options;
 		}
 

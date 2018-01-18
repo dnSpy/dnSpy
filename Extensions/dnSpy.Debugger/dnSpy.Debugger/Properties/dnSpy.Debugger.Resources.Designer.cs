@@ -3343,6 +3343,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Public Members.
+        /// </summary>
+        public static string ShowOnlyPublicMembersCommand {
+            get {
+                return ResourceManager.GetString("ShowOnlyPublicMembersCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show _Parameter Names.
         /// </summary>
         public static string ShowParameterNamesCommand {

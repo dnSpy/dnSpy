@@ -524,6 +524,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool redirectGuiConsoleOutput = true;
 
+		public override bool ShowOnlyPublicMembers {
+			get {
+				lock (lockObj)
+					return showOnlyPublicMembers;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showOnlyPublicMembers != value;
+					showOnlyPublicMembers = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowOnlyPublicMembers));
+					OnModified();
+				}
+			}
+		}
+		bool showOnlyPublicMembers = false;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -553,6 +572,7 @@ namespace dnSpy.Debugger.Settings {
 			other.FocusActiveProcess = FocusActiveProcess;
 			other.ShowReturnValues = ShowReturnValues;
 			other.RedirectGuiConsoleOutput = RedirectGuiConsoleOutput;
+			other.ShowOnlyPublicMembers = ShowOnlyPublicMembers;
 			return other;
 		}
 	}
@@ -596,6 +616,7 @@ namespace dnSpy.Debugger.Settings {
 			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
 			ShowReturnValues = sect.Attribute<bool?>(nameof(ShowReturnValues)) ?? ShowReturnValues;
 			RedirectGuiConsoleOutput = sect.Attribute<bool?>(nameof(RedirectGuiConsoleOutput)) ?? RedirectGuiConsoleOutput;
+			ShowOnlyPublicMembers = sect.Attribute<bool?>(nameof(ShowOnlyPublicMembers)) ?? ShowOnlyPublicMembers;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -630,6 +651,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);
 			sect.Attribute(nameof(ShowReturnValues), ShowReturnValues);
 			sect.Attribute(nameof(RedirectGuiConsoleOutput), RedirectGuiConsoleOutput);
+			sect.Attribute(nameof(ShowOnlyPublicMembers), ShowOnlyPublicMembers);
 		}
 	}
 }
