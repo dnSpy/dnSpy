@@ -61,11 +61,60 @@ namespace dnSpy.Contracts.MVVM {
 
 			// Some of the cached items contain references to data that should be GC'd
 			var method = itemsControl.ItemContainerGenerator.GetType().GetMethod("ResetRecyclableContainers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null);
-			Debug.Assert(method != null);
+			Debug.Assert((object)method != null);
 			method?.Invoke(itemsControl.ItemContainerGenerator, Array.Empty<object>());
 
-			// GTFOH!
-			UIElementAutomationPeer.FromElement(itemsControl)?.InvalidatePeer();
+			var automationPeer = UIElementAutomationPeer.FromElement(itemsControl);
+			if (automationPeer != null) {
+				PropertyInfo prop;
+				MethodInfo getMethod;
+
+				if (automationPeer is ItemsControlAutomationPeer) {
+					// Clear _dataChildren
+					prop = automationPeer.GetType().GetProperty("ItemPeers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					getMethod = prop?.GetGetMethod(nonPublic: true);
+					Debug.Assert((object)getMethod != null);
+					if ((object)getMethod != null) {
+						var coll = getMethod.Invoke(automationPeer, Array.Empty<object>());
+						Debug.Assert(coll != null);
+						if (coll != null) {
+							var clearMethod = coll.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null);
+							Debug.Assert((object)clearMethod != null);
+							clearMethod.Invoke(coll, Array.Empty<object>());
+						}
+					}
+
+					// Clear _recentlyRealizedPeers
+					prop = automationPeer.GetType().GetProperty("RecentlyRealizedPeers", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					getMethod = prop?.GetGetMethod(nonPublic: true);
+					Debug.Assert((object)getMethod != null);
+					if ((object)getMethod != null) {
+						var coll = getMethod.Invoke(automationPeer, Array.Empty<object>()) as System.Collections.IList;
+						Debug.Assert(coll != null);
+						coll?.Clear();
+					}
+				}
+
+				// Set ChildrenValid = false
+				prop = automationPeer.GetType().GetProperty("ChildrenValid", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				var setMethod = prop?.GetSetMethod(nonPublic: true);
+				Debug.Assert((object)setMethod != null);
+				setMethod?.Invoke(automationPeer, new object[] { false });
+
+				// Clear _children
+				prop = automationPeer.GetType().GetProperty("Children", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				getMethod = prop?.GetGetMethod(nonPublic: true);
+				Debug.Assert((object)getMethod != null);
+				if ((object)getMethod != null) {
+					var coll = getMethod.Invoke(automationPeer, Array.Empty<object>()) as System.Collections.IList;
+					coll?.Clear();
+				}
+
+				// GTFOH!
+				automationPeer.InvalidatePeer();
+
+				// AutomationPeer is one big memory leak
+			}
 		}
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
