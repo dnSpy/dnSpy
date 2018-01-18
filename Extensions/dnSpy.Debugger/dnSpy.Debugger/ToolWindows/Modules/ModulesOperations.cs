@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		void LoadModules(IList<ModuleVM> modules) =>
-			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), useMemory: false);
+			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), DbgLoadModuleReferenceHandlerOptions.None);
 
 		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() != null;
 		public override void ShowInMemoryWindow(int windowIndex) {
