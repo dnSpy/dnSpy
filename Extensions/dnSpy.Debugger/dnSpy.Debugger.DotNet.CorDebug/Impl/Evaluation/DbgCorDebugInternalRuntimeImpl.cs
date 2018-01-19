@@ -1165,6 +1165,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		struct EquatableValue {
 			public readonly ulong Address;
+			readonly DmdType type;
 
 			public EquatableValue(DmdType type, CorValue value) {
 				if (value == null)
@@ -1176,11 +1177,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						value = value.DereferencedValue;
 					Address = value?.Address ?? 0;
 				}
+				this.type = type;
 			}
 
 			public bool Equals2(EquatableValue other) => Address != 0 && Address == other.Address;
 			public bool? Equals3(EquatableValue other) => Address == 0 && other.Address == 0 ? (bool?)null : Address == other.Address;
-			public new int GetHashCode() => Address == 0 ? 0 : Address.GetHashCode();
+			// Value must be stable, so we can't use Address (obj could get moved by the GC). It's used by dictionaries.
+			public new int GetHashCode() => Address == 0 ? 0 : type.AssemblyQualifiedName.GetHashCode();
 		}
 
 		bool EqualsCore(DbgDotNetObjectIdImpl objectId, DbgDotNetValueImpl value) {

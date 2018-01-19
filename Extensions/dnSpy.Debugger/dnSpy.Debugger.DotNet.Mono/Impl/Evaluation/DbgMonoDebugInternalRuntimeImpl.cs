@@ -1054,17 +1054,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		struct EquatableValue {
 			public readonly ulong Address;
+			readonly ObjectMirror value;
 
 			public EquatableValue(ObjectMirror value) {
 				if (value == null)
 					Address = 0;
 				else
 					Address = (ulong)value.Address;
+				this.value = value;
 			}
 
 			public bool Equals2(EquatableValue other) => Address != 0 && Address == other.Address;
 			public bool? Equals3(EquatableValue other) => Address == 0 && other.Address == 0 ? (bool?)null : Address == other.Address;
-			public new int GetHashCode() => Address == 0 ? 0 : Address.GetHashCode();
+			// Value must be stable, so we can't use Address (obj could get moved by the GC). It's used by dictionaries.
+			public new int GetHashCode() => Address == 0 ? 0 : value?.Type.GetHashCode() ?? 0;
 		}
 
 		bool EqualsCore(DbgDotNetObjectIdImpl objectId, DbgDotNetValueImpl value) {
