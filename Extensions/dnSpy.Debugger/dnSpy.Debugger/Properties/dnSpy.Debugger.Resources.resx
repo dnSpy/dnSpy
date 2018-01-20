@@ -1488,4 +1488,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
     <value>Show raw locals</value>
   </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Enable async debugging</value>
+  </data>
 </root>

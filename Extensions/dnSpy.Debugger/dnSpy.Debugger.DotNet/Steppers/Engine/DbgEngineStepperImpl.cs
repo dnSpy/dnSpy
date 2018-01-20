@@ -220,7 +220,9 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return thread;
 		}
 
-		static List<AsyncStepInfo> GetAsyncStepInfos(in GetStepRangesAsyncResult result) {
+		List<AsyncStepInfo> GetAsyncStepInfos(in GetStepRangesAsyncResult result) {
+			if (!debuggerSettings.AsyncDebugging)
+				return null;
 			if (result.DebugInfo?.AsyncInfo == null)
 				return null;
 			List<AsyncStepInfo> asyncStepInfos = null;

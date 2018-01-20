@@ -181,5 +181,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Show all locals. Captured variables aren't shown, their display classes are shown instead.
 		/// </summary>
 		public abstract bool ShowRawLocals { get; set; }
+
+		/// <summary>
+		/// Async debugging (step over await statements, step out of async methods)
+		/// </summary>
+		public abstract bool AsyncDebugging { get; set; }
 	}
 }

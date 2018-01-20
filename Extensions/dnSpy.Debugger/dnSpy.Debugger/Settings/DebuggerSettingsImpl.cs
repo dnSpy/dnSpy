@@ -562,6 +562,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool showRawLocals = false;
 
+		public override bool AsyncDebugging {
+			get {
+				lock (lockObj)
+					return asyncDebugging;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = asyncDebugging != value;
+					asyncDebugging = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(AsyncDebugging));
+					OnModified();
+				}
+			}
+		}
+		bool asyncDebugging = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -593,6 +612,7 @@ namespace dnSpy.Debugger.Settings {
 			other.RedirectGuiConsoleOutput = RedirectGuiConsoleOutput;
 			other.ShowOnlyPublicMembers = ShowOnlyPublicMembers;
 			other.ShowRawLocals = ShowRawLocals;
+			other.AsyncDebugging = AsyncDebugging;
 			return other;
 		}
 	}
@@ -638,6 +658,7 @@ namespace dnSpy.Debugger.Settings {
 			RedirectGuiConsoleOutput = sect.Attribute<bool?>(nameof(RedirectGuiConsoleOutput)) ?? RedirectGuiConsoleOutput;
 			ShowOnlyPublicMembers = sect.Attribute<bool?>(nameof(ShowOnlyPublicMembers)) ?? ShowOnlyPublicMembers;
 			ShowRawLocals = sect.Attribute<bool?>(nameof(ShowRawLocals)) ?? ShowRawLocals;
+			AsyncDebugging = sect.Attribute<bool?>(nameof(AsyncDebugging)) ?? AsyncDebugging;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -674,6 +695,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(RedirectGuiConsoleOutput), RedirectGuiConsoleOutput);
 			sect.Attribute(nameof(ShowOnlyPublicMembers), ShowOnlyPublicMembers);
 			sect.Attribute(nameof(ShowRawLocals), ShowRawLocals);
+			sect.Attribute(nameof(AsyncDebugging), AsyncDebugging);
 		}
 	}
 }

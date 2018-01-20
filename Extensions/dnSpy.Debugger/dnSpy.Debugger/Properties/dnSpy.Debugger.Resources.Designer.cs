@@ -1141,6 +1141,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable async debugging.
+        /// </summary>
+        public static string DbgSettings_AsyncDebugging {
+            get {
+                return ResourceManager.GetString("DbgSettings_AsyncDebugging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show the Locals window when the debugger starts.
         /// </summary>
         public static string DbgSettings_AutoOpenLocalsWindow {
