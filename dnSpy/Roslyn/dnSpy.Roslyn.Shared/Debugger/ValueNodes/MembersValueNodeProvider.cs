@@ -164,7 +164,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				options |= DbgValueNodeEvaluationOptions.RawView;
 			DbgDotNetValueResult valueResult = default;
 			try {
-				ref var info = ref membersCollection.Members[index];
+				ref readonly var info = ref membersCollection.Members[index];
 				string expression, imageName;
 				bool isReadOnly;
 				DmdType expectedType;
@@ -247,7 +247,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {
 			var infos = childNodeProviderInfos;
-			ref var last = ref infos[lastProviderIndex];
+			ref readonly var last = ref infos[lastProviderIndex];
 			if (last.StartIndex <= childIndex && childIndex < last.EndIndex)
 				return lastProviderIndex;
 
@@ -255,7 +255,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				ref var info = ref infos[index];
+				ref readonly var info = ref infos[index];
 				if (childIndex < info.StartIndex)
 					hi = index - 1;
 				else if (childIndex >= info.EndIndex)
@@ -279,7 +279,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				var members = membersCollection.Members;
 				for (int i = 0; i < res.Length && providerIndex < childNodeProviderInfos.Length; providerIndex++) {
 					evalInfo.CancellationToken.ThrowIfCancellationRequested();
-					ref var providerInfo = ref childNodeProviderInfos[providerIndex];
+					ref readonly var providerInfo = ref childNodeProviderInfos[providerIndex];
 					if (providerInfo.ValueNode != null) {
 						if (providerInfo.CanHide) {
 							ulong childCount = providerInfo.EndIndex - providerInfo.StartIndex;

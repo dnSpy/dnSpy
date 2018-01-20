@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			uint result = 0;
 
 			for (int i = 0; i < dimensionInfos.Length; i++) {
-				ref var dim = ref dimensionInfos[i];
+				ref readonly var dim = ref dimensionInfos[i];
 				uint index = (uint)(runtime.ToInt32(indexes[i]) - dim.BaseIndex);
 				if (index >= dim.Length)
 					throw new InvalidOperationException();

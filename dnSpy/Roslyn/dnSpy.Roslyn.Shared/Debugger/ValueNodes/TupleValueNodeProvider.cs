@@ -58,7 +58,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			try {
 				for (int i = 0; i < res.Length; i++) {
 					evalInfo.CancellationToken.ThrowIfCancellationRequested();
-					ref var info = ref tupleFields[(int)index + i];
+					ref readonly var info = ref tupleFields[(int)index + i];
 					var castType = NeedCast(slotType, nodeInfo.Value.Type) ? nodeInfo.Value.Type : null;
 					var expression = valueNodeFactory.GetFieldExpression(nodeInfo.Expression, info.DefaultName, castType, addParens);
 					const string imageName = PredefinedDbgValueNodeImageNames.FieldPublic;

@@ -377,7 +377,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		MemberValueNodeInfo[] InitializeOverloadedMembers(MemberValueNodeInfo[] memberInfos) {
 			var dict = new Dictionary<string, object>(stringComparer);
 			for (int i = 0; i < memberInfos.Length; i++) {
-				ref var info = ref memberInfos[i];
+				ref readonly var info = ref memberInfos[i];
 				if (dict.TryGetValue(info.Member.Name, out object value)) {
 					List<int> list;
 					if (value is int) {
@@ -398,13 +398,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				if (list == null)
 					continue;
 				list.Sort((a, b) => {
-					ref var ai = ref memberInfosTmp[a];
-					ref var bi = ref memberInfosTmp[b];
+					ref readonly var ai = ref memberInfosTmp[a];
+					ref readonly var bi = ref memberInfosTmp[b];
 					return ai.InheritanceLevel - bi.InheritanceLevel;
 				});
 				var firstType = memberInfos[list[0]].Member.DeclaringType;
 				for (int i = 1; i < list.Count; i++) {
-					ref var info = ref memberInfos[list[i]];
+					ref readonly var info = ref memberInfos[list[i]];
 					if (info.Member.DeclaringType != firstType)
 						info.SetNeedCastAndNeedTypeName();
 				}
