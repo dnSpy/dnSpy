@@ -248,7 +248,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		DbgDotNetCreateValueResult CreateValue(DbgEvaluationInfo evalInfo, object value);
+		DbgDotNetValueResult CreateValue(DbgEvaluationInfo evalInfo, object value);
 
 		/// <summary>
 		/// Boxes the value type
@@ -256,7 +256,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to box</param>
 		/// <returns></returns>
-		DbgDotNetCreateValueResult Box(DbgEvaluationInfo evalInfo, object value);
+		DbgDotNetValueResult Box(DbgEvaluationInfo evalInfo, object value);
 
 		/// <summary>
 		/// Returns true if it's possible to create an object id
@@ -373,39 +373,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// ID of last return value
 		/// </summary>
 		public const uint LastReturnValueId = 0;
-	}
-
-	/// <summary>
-	/// Contains the created value or an error message
-	/// </summary>
-	public readonly struct DbgDotNetCreateValueResult {
-		/// <summary>
-		/// Gets the value or null if there was an error
-		/// </summary>
-		public DbgDotNetValue Value { get; }
-
-		/// <summary>
-		/// Gets the error message or null
-		/// </summary>
-		public string Error { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="errorMessage">Error message</param>
-		public DbgDotNetCreateValueResult(string errorMessage) {
-			Value = null;
-			Error = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="value">Value</param>
-		public DbgDotNetCreateValueResult(DbgDotNetValue value) {
-			Value = value ?? throw new ArgumentNullException(nameof(value));
-			Error = null;
-		}
 	}
 
 	/// <summary>

@@ -401,14 +401,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		internal DbgDotNetCreateValueResult CreateValue_MonoDebug(DbgEvaluationInfo evalInfo, object value) {
+		internal DbgDotNetValueResult CreateValue_MonoDebug(DbgEvaluationInfo evalInfo, object value) {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
-				return new DbgDotNetCreateValueResult((DbgDotNetValueImpl)value);
+				return new DbgDotNetValueResult((DbgDotNetValueImpl)value, valueIsException: false);
 			var tmp = CheckFuncEval(evalInfo.Context);
 			if (tmp != null)
-				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
+				return tmp.Value;
 
 			var monoThread = GetThread(evalInfo.Frame.Thread);
 			try {
@@ -417,20 +417,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
 					if (evalRes.ErrorMessage != null)
-						return new DbgDotNetCreateValueResult(evalRes.ErrorMessage);
+						return new DbgDotNetValueResult(evalRes.ErrorMessage);
 
 					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value, newValueType);
-					return new DbgDotNetCreateValueResult(resultValue);
+					return new DbgDotNetValueResult(resultValue, valueIsException: false);
 				}
 			}
 			catch (VMNotSuspendedException) {
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 

@@ -391,14 +391,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.SignalEvalComplete();
 		}
 
-		internal DbgDotNetCreateValueResult CreateValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, object value) {
+		internal DbgDotNetValueResult CreateValue_CorDebug(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, object value) {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
-				return new DbgDotNetCreateValueResult((DbgDotNetValueImpl)value);
+				return new DbgDotNetValueResult((DbgDotNetValueImpl)value, valueIsException: false);
 			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
-				return new DbgDotNetCreateValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
+				return tmp.Value;
 
 			var dnThread = GetThread(evalInfo.Frame.Thread);
 			var createdValues = new List<CorValue>();
@@ -414,18 +414,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
 					if (evalRes.ErrorMessage != null)
-						return new DbgDotNetCreateValueResult(evalRes.ErrorMessage);
+						return new DbgDotNetValueResult(evalRes.ErrorMessage);
 
 					var resultValue = CreateDotNetValue_CorDebug(evalRes.CorValue, reflectionAppDomain, tryCreateStrongHandle: true);
 					createdCorValue = evalRes.CorValue;
-					return new DbgDotNetCreateValueResult(resultValue);
+					return new DbgDotNetValueResult(resultValue, valueIsException: false);
 				}
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetCreateValueResult(CordbgErrorHelper.InternalError);
+				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
 			}
 			finally {
 				foreach (var v in createdValues) {

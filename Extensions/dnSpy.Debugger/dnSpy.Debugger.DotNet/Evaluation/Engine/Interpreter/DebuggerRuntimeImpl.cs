@@ -312,14 +312,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return RecordValue(dnValue);
 		}
 
-		DbgDotNetValue RecordValue(in DbgDotNetCreateValueResult result) {
-			if (result.Error != null)
-				throw new InterpreterMessageException(result.Error);
-			if (result.Value == null)
-				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-			return RecordValue(result.Value);
-		}
-
 		internal DbgDotNetValue RecordValue(DbgDotNetValue value) {
 			try {
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
@@ -533,16 +525,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override ILValue Box(ILValue value, DmdType type) {
 			if (type.IsValueType) {
 				var dnValue = TryGetDotNetValue(value, type, canCreateValue: true) ?? throw new InvalidOperationException();
-				var boxedValue = dnValue.Box(evalInfo);
-				if (boxedValue == null) {
-					var boxedValueRes = runtime.Box(evalInfo, dnValue);
-					if (boxedValueRes.Error != null)
-						boxedValue = new DbgDotNetValueResult(boxedValueRes.Error);
-					else
-						boxedValue = new DbgDotNetValueResult(boxedValueRes.Value, valueIsException: false);
-				}
-				RecordValue(boxedValue.Value);
-				return new BoxedValueTypeILValue(this, value, boxedValue.Value.Value, type);
+				var boxedValue = dnValue.Box(evalInfo) ?? runtime.Box(evalInfo, dnValue);
+				RecordValue(boxedValue);
+				return new BoxedValueTypeILValue(this, value, boxedValue.Value, type);
 			}
 			return value;
 		}

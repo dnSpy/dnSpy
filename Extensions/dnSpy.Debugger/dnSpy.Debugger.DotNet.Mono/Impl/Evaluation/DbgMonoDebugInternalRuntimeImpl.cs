@@ -899,52 +899,49 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		public DbgDotNetValue GetLocalValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType) => null;
 		public DbgDotNetValue GetParameterValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType) => null;
 
-		public DbgDotNetCreateValueResult CreateValue(DbgEvaluationInfo evalInfo, object value) {
+		public DbgDotNetValueResult CreateValue(DbgEvaluationInfo evalInfo, object value) {
 			if (Dispatcher.CheckAccess())
 				return CreateValueCore(evalInfo, value);
 			return CreateValue2(evalInfo, value);
 
-			DbgDotNetCreateValueResult CreateValue2(DbgEvaluationInfo evalInfo2, object value2) =>
+			DbgDotNetValueResult CreateValue2(DbgEvaluationInfo evalInfo2, object value2) =>
 				Dispatcher.InvokeRethrow(() => CreateValueCore(evalInfo2, value2));
 		}
 
-		DbgDotNetCreateValueResult CreateValueCore(DbgEvaluationInfo evalInfo, object value) {
+		DbgDotNetValueResult CreateValueCore(DbgEvaluationInfo evalInfo, object value) {
 			Dispatcher.VerifyAccess();
 			try {
 				return engine.CreateValue_MonoDebug(evalInfo, value);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
-		public DbgDotNetCreateValueResult Box(DbgEvaluationInfo evalInfo, object value) {
+		public DbgDotNetValueResult Box(DbgEvaluationInfo evalInfo, object value) {
 			if (Dispatcher.CheckAccess())
 				return BoxCore(evalInfo, value);
 			return Box2(evalInfo, value);
 
-			DbgDotNetCreateValueResult Box2(DbgEvaluationInfo evalInfo2, object value2) =>
+			DbgDotNetValueResult Box2(DbgEvaluationInfo evalInfo2, object value2) =>
 				Dispatcher.InvokeRethrow(() => BoxCore(evalInfo2, value2));
 		}
 
-		DbgDotNetCreateValueResult BoxCore(DbgEvaluationInfo evalInfo, object value) {
+		DbgDotNetValueResult BoxCore(DbgEvaluationInfo evalInfo, object value) {
 			Dispatcher.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
-			DbgDotNetCreateValueResult res = default;
+			DbgDotNetValueResult res = default;
 			try {
 				res = CreateValueCore(evalInfo, value);
-				if (res.Error != null)
+				if (res.ErrorMessage != null)
 					return res;
 				var boxedValue = res.Value.Box(evalInfo);
-				if (boxedValue != null) {
-					if (boxedValue.Value.ErrorMessage != null)
-						return new DbgDotNetCreateValueResult(boxedValue.Value.ErrorMessage);
-					return new DbgDotNetCreateValueResult(boxedValue.Value.Value);
-				}
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				if (boxedValue != null)
+					return boxedValue.Value;
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			finally {
 				res.Value?.Dispose();
