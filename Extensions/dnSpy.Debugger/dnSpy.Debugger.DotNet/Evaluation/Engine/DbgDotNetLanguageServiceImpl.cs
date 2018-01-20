@@ -28,7 +28,6 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
-using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Resources;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
@@ -45,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider;
 		readonly Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService;
 		readonly Lazy<DbgDotNetILInterpreter> dnILInterpreter;
-		readonly Lazy<DbgObjectIdService> objectIdService;
+		readonly Lazy<DbgAliasProvider> dbgAliasProvider;
 		readonly Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>[] dbgDotNetExpressionCompilers;
 		readonly IDecompilerService decompilerService;
 		readonly IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper;
@@ -55,12 +54,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		static readonly Guid visualBasicDecompilerGuid = new Guid(PredefinedDecompilerGuids.VisualBasic);
 
 		[ImportingConstructor]
-		DbgDotNetLanguageServiceImpl(Lazy<DbgMetadataService> dbgMetadataService, Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider, Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService, Lazy<DbgDotNetILInterpreter> dnILInterpreter, Lazy<DbgObjectIdService> objectIdService, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
+		DbgDotNetLanguageServiceImpl(Lazy<DbgMetadataService> dbgMetadataService, Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider, Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService, Lazy<DbgDotNetILInterpreter> dnILInterpreter, Lazy<DbgAliasProvider> dbgAliasProvider, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
 			this.dbgMetadataService = dbgMetadataService;
 			this.dbgModuleReferenceProvider = dbgModuleReferenceProvider;
 			this.dbgDotNetEngineValueNodeFactoryService = dbgDotNetEngineValueNodeFactoryService;
 			this.dnILInterpreter = dnILInterpreter;
-			this.objectIdService = objectIdService;
+			this.dbgAliasProvider = dbgAliasProvider;
 			this.decompilerService = decompilerService;
 			this.predefinedEvaluationErrorMessagesHelper = predefinedEvaluationErrorMessagesHelper;
 			var eeList = new List<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>>();
@@ -114,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					continue;
 
 				var languageDisplayName = ResourceHelper.GetString(lz.Value, lz.Metadata.LanguageDisplayName);
-				yield return new DbgEngineLanguageImpl(dbgModuleReferenceProvider.Value, lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMetadataService.Value, decompiler, formatter.Value, valueNodeFactory, dnILInterpreter.Value, objectIdService.Value, predefinedEvaluationErrorMessagesHelper);
+				yield return new DbgEngineLanguageImpl(dbgModuleReferenceProvider.Value, lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMetadataService.Value, decompiler, formatter.Value, valueNodeFactory, dnILInterpreter.Value, dbgAliasProvider.Value, predefinedEvaluationErrorMessagesHelper);
 			}
 		}
 

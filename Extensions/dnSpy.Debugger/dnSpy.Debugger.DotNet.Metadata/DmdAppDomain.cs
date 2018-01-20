@@ -685,7 +685,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Synthetic			= 0x00000004,
 
 		/// <summary>
-		/// Don't add the assembly to the app domain
+		/// Don't add the assembly to the AppDomain
 		/// </summary>
 		DontAddAssembly		= 0x00000008,
 

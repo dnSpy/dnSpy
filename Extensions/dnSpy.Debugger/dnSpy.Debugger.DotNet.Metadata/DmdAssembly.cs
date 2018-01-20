@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsSynthetic => ManifestModule.IsSynthetic;
 
 		/// <summary>
-		/// true if the assembly has been added to its app domain
+		/// true if the assembly has been added to its AppDomain
 		/// </summary>
 		public abstract bool IsLoaded { get; }
 

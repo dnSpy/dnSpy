@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly IDecompiler decompiler;
 		readonly IDebuggerDisplayAttributeEvaluator debuggerDisplayAttributeEvaluator;
 
-		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgObjectIdService objectIdService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
+		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgAliasProvider dbgAliasProvider, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
 			if (dbgModuleReferenceProvider == null)
 				throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			if (formatter == null)
@@ -64,8 +64,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new ArgumentNullException(nameof(valueNodeFactory));
 			if (dnILInterpreter == null)
 				throw new ArgumentNullException(nameof(dnILInterpreter));
-			if (objectIdService == null)
-				throw new ArgumentNullException(nameof(objectIdService));
+			if (dbgAliasProvider == null)
+				throw new ArgumentNullException(nameof(dbgAliasProvider));
 			if (predefinedEvaluationErrorMessagesHelper == null)
 				throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -73,10 +73,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
 			this.expressionCompiler = expressionCompiler ?? throw new ArgumentNullException(nameof(expressionCompiler));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
-			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, objectIdService, predefinedEvaluationErrorMessagesHelper);
+			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, dbgAliasProvider, predefinedEvaluationErrorMessagesHelper);
 			ExpressionEvaluator = expressionEvaluator;
 			Formatter = new DbgEngineFormatterImpl(formatter);
-			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter);
+			LocalsProvider = new DbgEngineLocalsProviderImpl(dbgModuleReferenceProvider, expressionCompiler, valueNodeFactory, dnILInterpreter, dbgAliasProvider);
 			AutosProvider = new DbgEngineAutosProviderImpl(valueNodeFactory);
 			ExceptionsProvider = new DbgEngineExceptionsProviderImpl(valueNodeFactory);
 			ReturnValuesProvider = new DbgEngineReturnValuesProviderImpl(valueNodeFactory);

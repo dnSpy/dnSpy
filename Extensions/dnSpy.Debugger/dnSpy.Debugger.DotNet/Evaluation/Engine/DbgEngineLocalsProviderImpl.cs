@@ -36,12 +36,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly DbgDotNetEngineValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetILInterpreter dnILInterpreter;
+		readonly DbgAliasProvider dbgAliasProvider;
 
-		public DbgEngineLocalsProviderImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, DbgDotNetExpressionCompiler expressionCompiler, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter) {
+		public DbgEngineLocalsProviderImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, DbgDotNetExpressionCompiler expressionCompiler, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgAliasProvider dbgAliasProvider) {
 			this.dbgModuleReferenceProvider = dbgModuleReferenceProvider ?? throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			this.expressionCompiler = expressionCompiler ?? throw new ArgumentNullException(nameof(expressionCompiler));
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.dnILInterpreter = dnILInterpreter ?? throw new ArgumentNullException(nameof(dnILInterpreter));
+			this.dbgAliasProvider = dbgAliasProvider ?? throw new ArgumentNullException(nameof(dbgAliasProvider));
 		}
 
 		public override DbgEngineLocalsValueNodeInfo[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions) {
@@ -134,7 +136,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					return Array.Empty<DbgEngineLocalsValueNodeInfo>();
 				var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
 
-				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame);
+				// All the variables windows use the same cached module references so make sure we pass
+				// in the same arguments so it won't get recreated every time the method gets called.
+				var info = dbgAliasProvider.GetAliases(evalInfo);
+				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame, info.typeReferences);
 				if (refsResult.ErrorMessage != null)
 					return new[] { CreateInternalErrorNode(evalInfo, refsResult.ErrorMessage) };
 
