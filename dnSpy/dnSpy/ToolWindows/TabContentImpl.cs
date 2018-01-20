@@ -74,7 +74,6 @@ namespace dnSpy.ToolWindows {
 							e.Handled = true;
 						}
 					};
-					UpdateZoomElement();
 					contentPresenter.InputBindings.Add(new KeyBinding(CloseCommand, Key.Escape, ModifierKeys.Shift));
 					// Needed if the content already has keyboard focus, eg. happens when moving
 					// the tool window from one side to the other.
@@ -183,6 +182,17 @@ namespace dnSpy.ToolWindows {
 			}
 
 			switch (visEvent) {
+			case TabContentVisibilityEvent.Added:
+				installZoom = true;
+				break;
+
+			case TabContentVisibilityEvent.Visible:
+				if (installZoom) {
+					installZoom = false;
+					UpdateZoomElement();
+				}
+				break;
+
 			case TabContentVisibilityEvent.Removed:
 				elementZoomer.Dispose();
 				RemoveEvents();
@@ -205,6 +215,7 @@ namespace dnSpy.ToolWindows {
 #if DEBUG
 		bool _added, _visible;
 #endif
+		bool installZoom;
 
 		static ToolWindowContentVisibilityEvent? Convert(TabContentVisibilityEvent ev) {
 			switch (ev) {
