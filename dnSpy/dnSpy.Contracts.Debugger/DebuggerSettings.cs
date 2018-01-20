@@ -176,5 +176,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Show only public members in variables windows
 		/// </summary>
 		public abstract bool ShowOnlyPublicMembers { get; set; }
+
+		/// <summary>
+		/// Show all locals. Captured variables aren't shown, their display classes are shown instead.
+		/// </summary>
+		public abstract bool ShowRawLocals { get; set; }
 	}
 }

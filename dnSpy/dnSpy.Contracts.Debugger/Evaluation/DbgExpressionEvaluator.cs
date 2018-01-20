@@ -86,6 +86,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Don't create a name/expression (only used by value nodes)
 		/// </summary>
 		NoName						= 0x00000008,
+
+		/// <summary>
+		/// Use only the locals that exist in the metadata. Don't show captured variables, show their display class variables instead
+		/// </summary>
+		RawLocals					= 0x00000010,
 	}
 
 	/// <summary>

@@ -149,6 +149,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var evalOptions = DbgEvaluationOptions.None;
 				if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
 					evalOptions |= DbgEvaluationOptions.NoFuncEval;
+				if ((localsOptions & DbgLocalsValueNodeEvaluationOptions.ShowRawLocals) != 0)
+					evalOptions |= DbgEvaluationOptions.RawLocals;
 
 				ValueInfo[] valueInfos;
 				byte[] assemblyBytes;

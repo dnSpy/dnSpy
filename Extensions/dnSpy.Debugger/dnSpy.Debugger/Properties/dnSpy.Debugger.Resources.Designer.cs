@@ -1294,6 +1294,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show raw locals.
+        /// </summary>
+        public static string DbgSettings_ShowRawLocals {
+            get {
+                return ResourceManager.GetString("DbgSettings_ShowRawLocals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show raw structure of objects in variables windows.
         /// </summary>
         public static string DbgSettings_ShowRawStructureOfObjects {

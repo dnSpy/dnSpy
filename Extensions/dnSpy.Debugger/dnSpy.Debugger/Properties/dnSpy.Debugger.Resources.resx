@@ -1485,4 +1485,7 @@ Are you sure you want to expand it?</value>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
     <value>Public Members</value>
   </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Show raw locals</value>
+  </data>
 </root>

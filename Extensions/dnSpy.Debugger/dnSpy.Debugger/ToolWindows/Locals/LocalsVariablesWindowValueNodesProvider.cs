@@ -60,6 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			case nameof(DebuggerSettings.ShowCompilerGeneratedVariables):
 			case nameof(DebuggerSettings.ShowDecompilerGeneratedVariables):
 			case nameof(DebuggerSettings.ShowReturnValues):
+			case nameof(DebuggerSettings.ShowRawLocals):
 				forceRecreateAllNodes = true;
 				NodesChanged?.Invoke(this, EventArgs.Empty);
 				break;
@@ -88,6 +89,8 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 				res |= DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables;
 			if (debuggerSettings.ShowDecompilerGeneratedVariables)
 				res |= DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables;
+			if (debuggerSettings.ShowRawLocals)
+				res |= DbgLocalsValueNodeEvaluationOptions.ShowRawLocals;
 			return res;
 		}
 

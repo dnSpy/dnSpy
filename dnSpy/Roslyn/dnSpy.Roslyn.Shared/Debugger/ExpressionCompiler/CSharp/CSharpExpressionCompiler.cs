@@ -87,10 +87,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler.CSharp {
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 			state.MetadataContext = new CSharpMetadataContext(metadataBlocks, evalCtx);
 
-			var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName, out var errorMessage);
-			var res = CreateCompilationResult(state, asmBytes, typeName, localsInfo, errorMessage);
-			if (!res.IsError)
-				return res;
+			if ((options & DbgEvaluationOptions.RawLocals) == 0) {
+				var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName, out var errorMessage);
+				var res = CreateCompilationResult(state, asmBytes, typeName, localsInfo, errorMessage);
+				if (!res.IsError)
+					return res;
+			}
 			return CompileGetLocals(state, method);
 		}
 

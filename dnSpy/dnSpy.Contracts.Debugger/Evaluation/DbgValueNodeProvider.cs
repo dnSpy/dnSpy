@@ -57,6 +57,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Show decompiler generated variables (<see cref="DebuggerSettings.ShowDecompilerGeneratedVariables"/>)
 		/// </summary>
 		ShowDecompilerGeneratedVariables	= 0x00000002,
+
+		/// <summary>
+		/// Show raw locals (<see cref="DebuggerSettings.ShowRawLocals"/>)
+		/// </summary>
+		ShowRawLocals						= 0x00000004,
 	}
 
 	/// <summary>
