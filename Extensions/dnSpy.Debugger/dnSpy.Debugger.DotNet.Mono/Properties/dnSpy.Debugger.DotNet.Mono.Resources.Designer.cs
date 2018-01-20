@@ -439,15 +439,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The type has not been loaded yet..
-        /// </summary>
-        public static string TypeHasNotBeenLoadedYet {
-            get {
-                return ResourceManager.GetString("TypeHasNotBeenLoadedYet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Editor.
         /// </summary>
         public static string UnityEditor {

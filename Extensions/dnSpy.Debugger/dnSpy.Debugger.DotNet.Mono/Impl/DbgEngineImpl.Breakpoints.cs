@@ -156,10 +156,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if ((object)method == null)
 					msg = DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(location.Module, location.Token));
 				else {
-					var warning = state.IsTypeLoaded(method.DeclaringType.MetadataToken) ?
-						dnSpy_Debugger_DotNet_Mono_Resources.CanNotSetABreakpointWhenProcessIsPaused :
-						dnSpy_Debugger_DotNet_Mono_Resources.TypeHasNotBeenLoadedYet;
-					msg = DbgEngineBoundCodeBreakpointMessage.CreateCustomWarning(warning);
+					msg = state.IsTypeLoaded(method.DeclaringType.MetadataToken) ?
+						DbgEngineBoundCodeBreakpointMessage.CreateCustomWarning(dnSpy_Debugger_DotNet_Mono_Resources.CanNotSetABreakpointWhenProcessIsPaused) :
+						DbgEngineBoundCodeBreakpointMessage.CreateNoError();
 				}
 				var bpData = new BoundBreakpointData(this, location.Module);
 				createdBreakpoints[i] = new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData);
