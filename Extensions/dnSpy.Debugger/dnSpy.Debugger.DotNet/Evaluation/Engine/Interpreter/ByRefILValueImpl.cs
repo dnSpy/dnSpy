@@ -32,13 +32,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.byRefValue = byRefValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() {
-			var value = byRefValue.LoadIndirect();
-			if (value != null)
-				return runtime.RecordValue(value);
-			return null;
-		}
-
+		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(byRefValue.LoadIndirect());
 		protected override void WriteValue(object value) => runtime.StoreIndirect(byRefValue, value);
 
 		public override bool Equals(AddressILValue other) =>
@@ -57,13 +51,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.pointerValue = pointerValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() {
-			var value = pointerValue.LoadIndirect();
-			if (value != null)
-				return runtime.RecordValue(value);
-			return null;
-		}
-
+		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(pointerValue.LoadIndirect());
 		protected override void WriteValue(object value) => runtime.StoreIndirect(pointerValue, value);
 
 		public override bool Equals(AddressILValue other) =>

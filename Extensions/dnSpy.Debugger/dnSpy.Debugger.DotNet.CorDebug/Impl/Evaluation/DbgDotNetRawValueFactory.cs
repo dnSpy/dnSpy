@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return GetRawValueDefault(value, type);
 
 			if (type.IsByRef) {
-				value = value.DereferencedValue;
+				value = value.GetDereferencedValue(out int hr);
 				if (value == null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 				type = GetType(type.AppDomain, value);
@@ -69,14 +69,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)value.ReferenceAddress);
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, value.ReferenceAddress);
 				}
-				value = value.DereferencedValue;
+				value = value.GetDereferencedValue(out int hr);
 				if (value == null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 				type = GetType(type.AppDomain, value);
 			}
 
 			if (value.IsBox) {
-				value = value.BoxedValue;
+				value = value.GetBoxedValue(out int hr);
 				if (value == null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 				type = GetType(type.AppDomain, value);

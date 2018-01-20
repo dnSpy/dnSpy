@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var threadObj = thread.CorThread.Object;
 			if (threadObj == null || threadObj.IsNull)
 				return null;
-			threadObj = threadObj.DereferencedValue;
+			threadObj = threadObj.GetDereferencedValue(out int hr);
 			if (threadObj == null || threadObj.IsNull)
 				return null;
 			return threadObj;

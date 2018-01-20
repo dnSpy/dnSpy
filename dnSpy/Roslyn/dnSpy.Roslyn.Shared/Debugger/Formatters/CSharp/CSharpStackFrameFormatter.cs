@@ -282,7 +282,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 					var valueFormatter = new CSharpValueFormatter(output, evalInfo, languageFormatter, valueOptions, cultureInfo);
 					var value = parameterValue.Value;
 					if (value.Type.IsByRef)
-						value = dereferencedValue = value.LoadIndirect();
+						value = dereferencedValue = value.LoadIndirect().Value;
 					if (value == null)
 						OutputWrite("???", BoxedTextColor.Error);
 					else

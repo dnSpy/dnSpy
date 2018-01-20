@@ -221,18 +221,23 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
 
-		internal static CorValue TryGetObjectOrPrimitiveValue(CorValue value) {
+		internal static CorValue TryGetObjectOrPrimitiveValue(CorValue value, out int hr) {
+			hr = -1;
 			if (value == null)
 				return null;
 			if (value.IsReference) {
 				if (value.IsNull)
 					throw new InvalidOperationException();
-				value = value.DereferencedValue;
+				value = value.GetDereferencedValue(out hr);
 				if (value == null)
 					return null;
 			}
-			if (value.IsBox)
-				value = value.BoxedValue;
+			if (value.IsBox) {
+				value = value.GetBoxedValue(out hr);
+				if (value == null)
+					return null;
+			}
+			hr = 0;
 			return value;
 		}
 
@@ -285,9 +290,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 					var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 					corFieldDeclType = GetType(appDomain, fieldDeclType);
-					var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
+					var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue(), out hr);
 					if (objValue == null)
-						return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
 					if (objValue.IsObject) {
 						fieldValue = objValue.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr);
 						if (fieldValue == null)
@@ -350,18 +355,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 					var objImp = obj as DbgDotNetValueImpl ?? throw new InvalidOperationException();
 					corFieldDeclType = GetType(appDomain, fieldDeclType);
-					var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
+					var objValue = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue(), out int hr);
 					if (objValue == null)
-						return CordbgErrorHelper.InternalError;
+						return CordbgErrorHelper.GetErrorMessage(hr);
 					if (objValue.IsObject) {
 						Func<CreateCorValueResult> createTargetValue = () => {
 							// Re-read it since it could've gotten neutered
-							var objValue2 = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue());
+							var objValue2 = TryGetObjectOrPrimitiveValue(objImp.TryGetCorValue(), out int hr2);
 							Debug.Assert(objValue2?.IsObject == true);
 							if (objValue2 == null)
-								return new CreateCorValueResult(null, -1);
-							var fieldValue = objValue2.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out var hr);
-							return new CreateCorValueResult(fieldValue, hr);
+								return new CreateCorValueResult(null, hr2);
+							var fieldValue = objValue2.GetFieldValue(corFieldDeclType.Class, (uint)field.MetadataToken, out hr2);
+							return new CreateCorValueResult(fieldValue, hr2);
 						};
 						return engine.StoreValue_CorDebug(evalInfo, ilFrame, createTargetValue, field.FieldType, value);
 					}
@@ -409,7 +414,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						if (fieldValue.IsNull)
 							continue;
 						if (field.FieldType.IsValueType) {
-							var objValue = fieldValue.DereferencedValue?.BoxedValue;
+							var objValue = fieldValue.GetDereferencedValue(out hr)?.GetBoxedValue(out hr);
 							var data = objValue?.ReadGenericValue();
 							if (data != null && !IsZero(data))
 								return;
@@ -1049,8 +1054,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (res.Error != null)
 					return res;
 				var boxedValue = res.Value.Box(evalInfo);
-				if (boxedValue != null)
-					return new DbgDotNetCreateValueResult(boxedValue);
+				if (boxedValue != null) {
+					if (boxedValue.Value.ErrorMessage != null)
+						return new DbgDotNetCreateValueResult(boxedValue.Value.ErrorMessage);
+					return new DbgDotNetCreateValueResult(boxedValue.Value.Value);
+				}
 				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
@@ -1086,7 +1094,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (corValue.IsReference) {
 					if (corValue.IsNull)
 						return false;
-					corValue = corValue.DereferencedValue;
+					corValue = corValue.GetDereferencedValue(out int hr);
 					if (corValue == null)
 						return false;
 				}
@@ -1132,7 +1140,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (corValue.IsReference) {
 					if (corValue.IsNull)
 						return null;
-					corValue = corValue.DereferencedValue;
+					corValue = corValue.GetDereferencedValue(out int hr);
 					if (corValue == null)
 						return null;
 				}
@@ -1173,7 +1181,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					Address = value.ReferenceAddress;
 				else {
 					if (value.IsReference)
-						value = value.DereferencedValue;
+						value = value.GetDereferencedValue(out int hr);
 					Address = value?.Address ?? 0;
 				}
 				this.type = type;

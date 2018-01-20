@@ -102,14 +102,15 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorValue DereferencedValue {
-			get {
-				var r = obj as ICorDebugReferenceValue;
-				if (r == null)
-					return null;
-				int hr = r.Dereference(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+		public CorValue DereferencedValue => GetDereferencedValue(out _);
+		public CorValue GetDereferencedValue(out int hr) {
+			var r = obj as ICorDebugReferenceValue;
+			if (r == null) {
+				hr = -1;
+				return null;
 			}
+			hr = r.Dereference(out var value);
+			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
 		public CorElementType ArrayElementType {
@@ -178,14 +179,15 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorValue BoxedValue {
-			get {
-				var b = obj as ICorDebugBoxValue;
-				if (b == null)
-					return null;
-				int hr = b.GetObject(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+		public CorValue BoxedValue => GetBoxedValue(out _);
+		public CorValue GetBoxedValue(out int hr) {
+			var b = obj as ICorDebugBoxValue;
+			if (b == null) {
+				hr = -1;
+				return null;
 			}
+			hr = b.GetObject(out var value);
+			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
 		public uint StringLength {

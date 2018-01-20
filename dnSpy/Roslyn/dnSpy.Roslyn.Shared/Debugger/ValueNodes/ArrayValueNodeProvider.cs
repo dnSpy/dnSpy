@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
-			DbgDotNetValue newValue = null;
+			DbgDotNetValueResult newValue = default;
 			try {
 				var output = ObjectCache.AllocDotNetTextOutput();
 				var elementType = valueInfo.Value.Type.GetElementType();
@@ -74,7 +74,6 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					string expression;
 					uint arrayIndex = (uint)index + (uint)i;
 					newValue = valueInfo.Value.GetArrayElementAt(arrayIndex);
-					Debug.Assert(newValue != null);
 
 					if (dimensionInfos.Length == 1) {
 						int baseIndex = (int)arrayIndex + dimensionInfos[0].BaseIndex;
@@ -93,30 +92,30 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 					var name = output.CreateAndReset();
 					DbgDotNetValueNode newNode;
-					if (newValue == null)
-						newNode = valueNodeFactory.CreateError(evalInfo, name, PredefinedEvaluationErrorMessages.InternalDebuggerError, expression, false);
+					if (newValue.HasError)
+						newNode = valueNodeFactory.CreateError(evalInfo, name, newValue.ErrorMessage, expression, false);
 					else {
 						newNode = null;
-						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Type)) {
-							var info = CSharpDynamicPropertyHelper.GetRealValue(evalInfo, newValue);
+						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Value.Type)) {
+							var info = CSharpDynamicPropertyHelper.GetRealValue(evalInfo, newValue.Value);
 							if (info.name != null) {
-								newValue.Dispose();
+								newValue.Value.Dispose();
 								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.DebugViewPropertyName, info.name));
 								expression = valueNodeFactory.GetFieldExpression(expression, info.valueField.Name, null, false);
 								newNode = valueNodeFactory.Create(evalInfo, name, info.value, null, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false);
 							}
 						}
 						if (newNode == null)
-							newNode = valueNodeFactory.Create(evalInfo, name, newValue, null, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false);
+							newNode = valueNodeFactory.Create(evalInfo, name, newValue.Value, null, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false);
 					}
-					newValue = null;
+					newValue = default;
 					res[i] = newNode;
 				}
 				ObjectCache.Free(ref output);
 			}
 			catch {
 				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a != null));
-				newValue?.Dispose();
+				newValue.Value?.Dispose();
 				throw;
 			}
 			return res;

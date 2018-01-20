@@ -59,9 +59,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				uint index = GetZeroBasedIndex(arguments, arguments.Length);
 				var addrValue = ObjValue.GetArrayElementAddressAt(index);
 				if (addrValue != null) {
-					Debug.Assert(addrValue.Type.IsByRef);
-					runtime.RecordValue(addrValue);
-					returnValue = new ByRefILValueImpl(runtime, addrValue);
+					runtime.RecordValue(addrValue.Value);
+					Debug.Assert(addrValue.Value.Value.Type.IsByRef);
+					returnValue = new ByRefILValueImpl(runtime, addrValue.Value.Value);
 				}
 				else
 					returnValue = new ArrayElementAddress(runtime, this, index);
@@ -93,21 +93,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal DbgDotNetValue ReadArrayElement(long index) {
 			if ((ulong)index > uint.MaxValue)
 				return null;
-			var elemValue = ObjValue.GetArrayElementAt((uint)index);
-			if (elemValue != null)
-				return runtime.RecordValue(elemValue);
-			return null;
+			return runtime.RecordValue(ObjValue.GetArrayElementAt((uint)index));
 		}
 
 		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(ObjValue, index, value);
 		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(ObjValue, index, value);
-
-		ILValue LoadArrayElement(uint index) {
-			var elemValue = ObjValue.GetArrayElementAt(index);
-			if (elemValue != null)
-				return runtime.CreateILValue(elemValue);
-			return null;
-		}
+		ILValue LoadArrayElement(uint index) => runtime.CreateILValue(ObjValue.GetArrayElementAt(index));
 
 		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
 			if (!ObjValue.Type.IsSZArray)
@@ -133,9 +124,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				return null;
 			var addrValue = ObjValue.GetArrayElementAddressAt((uint)index);
 			if (addrValue != null) {
-				Debug.Assert(addrValue.Type.IsByRef);
-				runtime.RecordValue(addrValue);
-				return new ByRefILValueImpl(runtime, addrValue);
+				runtime.RecordValue(addrValue.Value);
+				Debug.Assert(addrValue.Value.Value.Type.IsByRef);
+				return new ByRefILValueImpl(runtime, addrValue.Value.Value);
 			}
 			return new ArrayElementAddress(runtime, this, (uint)index);
 		}

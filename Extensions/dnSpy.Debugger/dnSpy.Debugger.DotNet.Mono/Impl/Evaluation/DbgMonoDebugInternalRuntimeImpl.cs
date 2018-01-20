@@ -936,8 +936,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (res.Error != null)
 					return res;
 				var boxedValue = res.Value.Box(evalInfo);
-				if (boxedValue != null)
-					return new DbgDotNetCreateValueResult(boxedValue);
+				if (boxedValue != null) {
+					if (boxedValue.Value.ErrorMessage != null)
+						return new DbgDotNetCreateValueResult(boxedValue.Value.ErrorMessage);
+					return new DbgDotNetCreateValueResult(boxedValue.Value.Value);
+				}
 				return new DbgDotNetCreateValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {

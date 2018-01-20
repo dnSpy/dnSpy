@@ -266,7 +266,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 					var valueFormatter = new VisualBasicValueFormatter(output, evalInfo, languageFormatter, valueOptions, cultureInfo);
 					var value = parameterValue.Value;
 					if (value.Type.IsByRef)
-						value = dereferencedValue = value.LoadIndirect();
+						value = dereferencedValue = value.LoadIndirect().Value;
 					if (value == null)
 						OutputWrite("???", BoxedTextColor.Error);
 					else

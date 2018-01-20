@@ -66,11 +66,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			// instead of a byref return type, so expectedType will be a pointer instead of a byref.
 			if (value.Type.IsByRef && (expectedType.IsByRef || expectedType.IsPointer) && expectedType.GetElementType() != expectedType.AppDomain.System_Void) {
 				var newValue = value.LoadIndirect();
-				if (newValue != null) {
-					value.Dispose();
-					value = newValue;
-					expectedType = expectedType.GetElementType();
-				}
+				if (newValue.HasError)
+					return CreateError(evalInfo, name, newValue.ErrorMessage, expression, causesSideEffects);
+				value.Dispose();
+				value = newValue.Value;
+				expectedType = expectedType.GetElementType();
 			}
 
 			options = PredefinedFormatSpecifiers.GetValueNodeEvaluationOptions(formatSpecifiers, options);

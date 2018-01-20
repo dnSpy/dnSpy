@@ -43,7 +43,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Gets the referenced value if it's a by-ref or a pointer
 		/// </summary>
 		/// <returns></returns>
-		public virtual DbgDotNetValue LoadIndirect() => null;
+		public virtual DbgDotNetValueResult LoadIndirect() =>
+			new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
 		/// Writes to the referenced value (by-ref or pointer). The return value is null or an error message.
@@ -82,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue GetArrayElementAddressAt(uint index) => null;
+		public virtual DbgDotNetValueResult? GetArrayElementAddressAt(uint index) => null;
 
 		/// <summary>
 		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
@@ -90,7 +91,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue GetArrayElementAt(uint index) => null;
+		public virtual DbgDotNetValueResult GetArrayElementAt(uint index) =>
+			new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
 		/// Stores a value at <paramref name="index"/> in the array. This method can be called even if it's
@@ -109,7 +111,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue Box(DbgEvaluationInfo evalInfo) => null;
+		public virtual DbgDotNetValueResult? Box(DbgEvaluationInfo evalInfo) => null;
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.

@@ -67,20 +67,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public override IDbgDotNetRuntime TryGetDotNetRuntime() => engine.DotNetRuntime;
 
-		public override DbgDotNetValue LoadIndirect() {
+		public override DbgDotNetValueResult LoadIndirect() {
 			if (!Type.IsByRef)
-				return null;
+				return base.LoadIndirect();
 			if (IsNullByRef)
-				return new SyntheticNullValue(Type.GetElementType());
+				return new DbgDotNetValueResult(new SyntheticNullValue(Type.GetElementType()), valueIsException: false);
 			if (engine.CheckMonoDebugThread())
 				return Dereference_MonoDebug();
 			return engine.InvokeMonoDebugThread(() => Dereference_MonoDebug());
 		}
 
-		DbgDotNetValue Dereference_MonoDebug() {
+		DbgDotNetValueResult Dereference_MonoDebug() {
 			Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyMonoDebugThread();
-			return engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference());
+			return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference()), valueIsException: false);
 		}
 
 		public override string StoreIndirect(DbgEvaluationInfo evalInfo, object value) {
@@ -163,21 +163,21 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return true;
 		}
 
-		public override DbgDotNetValue GetArrayElementAt(uint index) {
+		public override DbgDotNetValueResult GetArrayElementAt(uint index) {
 			if (!Type.IsArray)
-				return null;
+				return base.GetArrayElementAt(index);
 			if (engine.CheckMonoDebugThread())
 				return GetArrayElementAt_MonoDebug(index);
 			return engine.InvokeMonoDebugThread(() => GetArrayElementAt_MonoDebug(index));
 		}
 
-		DbgDotNetValue GetArrayElementAt_MonoDebug(uint index) {
+		DbgDotNetValueResult GetArrayElementAt_MonoDebug(uint index) {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
 			if (info.errorMessage != null)
-				return null;
-			return engine.CreateDotNetValue_MonoDebug(info.valueLocation);
+				return new DbgDotNetValueResult(info.errorMessage);
+			return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
 		}
 
 		(ArrayElementValueLocation valueLocation, string errorMessage) GetArrayElementValueLocation_MonoDebug(uint index) {
@@ -209,27 +209,23 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return info.valueLocation.Store(res.Value);
 		}
 
-		public override DbgDotNetValue Box(DbgEvaluationInfo evalInfo) {
+		public override DbgDotNetValueResult? Box(DbgEvaluationInfo evalInfo) {
 			if (engine.CheckMonoDebugThread())
 				return Box_MonoDebug(evalInfo);
 			return engine.InvokeMonoDebugThread(() => Box_MonoDebug(evalInfo));
 		}
 
-		DbgDotNetValue Box_MonoDebug(DbgEvaluationInfo evalInfo) {
+		DbgDotNetValueResult? Box_MonoDebug(DbgEvaluationInfo evalInfo) {
 			engine.VerifyMonoDebugThread();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (!Type.IsValueType)
-				return null;
+				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			var value = this.value;
 			// Even if it's boxed, box the unboxed value. This code path should only be called if
 			// the compiler thinks it's an unboxed value, so we must make a new boxed value.
 			if (value is ObjectMirror)
 				value = ValueUtils.Unbox((ObjectMirror)value, Type);
-			var res = engine.Box_MonoDebug(evalInfo, value, Type);
-			if (res.IsNormalResult)
-				return res.Value;
-			res.Value?.Dispose();
-			return null;
+			return engine.Box_MonoDebug(evalInfo, value, Type);
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {

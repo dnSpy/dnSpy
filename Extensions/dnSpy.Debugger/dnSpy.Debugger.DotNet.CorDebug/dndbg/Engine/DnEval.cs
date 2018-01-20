@@ -132,13 +132,13 @@ namespace dndbg.Engine {
 				return null;
 			}
 			var newObj = res.Value.ResultOrException;
-			var r = newObj.DereferencedValue;
-			var vb = r?.BoxedValue;
+			var r = newObj.GetDereferencedValue(out int hr);
+			var vb = r?.GetBoxedValue(out hr);
 			if (vb == null) {
 				newObj.DisposeHandle();
 				return null;
 			}
-			int hr = vb.WriteGenericValue(value.ReadGenericValue(), thread.CorThread.Process);
+			hr = vb.WriteGenericValue(value.ReadGenericValue(), thread.CorThread.Process);
 			if (hr < 0)
 				return null;
 			return newObj;

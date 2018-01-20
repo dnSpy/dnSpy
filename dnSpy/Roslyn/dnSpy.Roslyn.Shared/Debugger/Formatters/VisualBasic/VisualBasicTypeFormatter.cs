@@ -129,6 +129,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				throw new ArgumentNullException(nameof(type));
 
 			List<(DmdType type, DbgDotNetValue value)> arrayTypesList = null;
+			DbgDotNetValue disposeThisValue = null;
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
@@ -199,7 +200,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				case DmdTypeSignatureKind.ByRef:
 					OutputWrite(BYREF_KEYWORD, BoxedTextColor.Keyword);
 					WriteSpace();
-					Format(type.GetElementType(), value?.LoadIndirect());
+					Format(type.GetElementType(), disposeThisValue = value?.LoadIndirect().Value);
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:
@@ -296,6 +297,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 							info.value?.Dispose();
 					}
 				}
+				disposeThisValue?.Dispose();
 			}
 		}
 
