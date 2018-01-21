@@ -71,6 +71,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var res = DbgDotNetRuntimeFeatures.ObjectIds | DbgDotNetRuntimeFeatures.NoDereferencePointers;
 			if (!vm.Version.AtLeast(2, 24))
 				res |= DbgDotNetRuntimeFeatures.NoGenericMethods;
+			// We need FuncEvalOptions.ReturnOutThis support so func-eval of Task/ObjectIdForDebugger
+			// prop updates the struct's task field
+			if (!vm.Version.AtLeast(2, 35))
+				res |= DbgDotNetRuntimeFeatures.NoAsyncStepOverId;
 			return res;
 		}
 

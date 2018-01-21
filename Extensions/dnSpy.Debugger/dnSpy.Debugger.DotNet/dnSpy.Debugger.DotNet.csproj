@@ -154,6 +154,7 @@
     </Compile>
     <Compile Include="Steppers\Engine\DbgEngineStepperFactoryImpl.cs" />
     <Compile Include="Steppers\Engine\DbgEngineStepperImpl.cs" />
+    <Compile Include="Steppers\Engine\TaskEvalUtils.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>

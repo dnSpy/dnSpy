@@ -21,13 +21,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Debugger.DotNet.Code;
 
@@ -35,6 +38,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 	sealed class DbgEngineStepperImpl : DbgEngineStepper {
 		public override event EventHandler<DbgEngineStepCompleteEventArgs> StepComplete;
 
+		readonly DbgLanguageService dbgLanguageService;
 		readonly DbgDotNetDebugInfoService dbgDotNetDebugInfoService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly IDbgDotNetRuntime runtime;
@@ -46,7 +50,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 		DbgThread __DONT_USE_currentThread;
 
-		public DbgEngineStepperImpl(DbgDotNetDebugInfoService dbgDotNetDebugInfoService, DebuggerSettings debuggerSettings, IDbgDotNetRuntime runtime, DbgDotNetEngineStepper stepper, DbgThread thread) {
+		public DbgEngineStepperImpl(DbgLanguageService dbgLanguageService, DbgDotNetDebugInfoService dbgDotNetDebugInfoService, DebuggerSettings debuggerSettings, IDbgDotNetRuntime runtime, DbgDotNetEngineStepper stepper, DbgThread thread) {
+			this.dbgLanguageService = dbgLanguageService ?? throw new ArgumentNullException(nameof(dbgLanguageService));
 			this.dbgDotNetDebugInfoService = dbgDotNetDebugInfoService ?? throw new ArgumentNullException(nameof(dbgDotNetDebugInfoService));
 			this.debuggerSettings = debuggerSettings ?? throw new ArgumentNullException(nameof(debuggerSettings));
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -170,7 +175,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					throw new InvalidOperationException();
 
 				try {
-					var asyncState = SetAsyncStepOverState(new AsyncStepOverState(stepper));
+					var asyncState = SetAsyncStepOverState(new AsyncStepOverState(dbgLanguageService, stepper, result.DebugInfo.AsyncInfo.BuilderFieldOrNull));
 					foreach (var stepInfo in asyncStepInfos)
 						asyncState.AddYieldBreakpoint(frame.Thread, module, token, stepInfo);
 					var yieldBreakpointTask = asyncState.Task;
@@ -185,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					else {
 						stepper.CancelLastStep();
 						asyncState.ClearYieldBreakpoints();
-						var resumeBpTask = asyncState.SetResumeBreakpoint(module);
+						var resumeBpTask = asyncState.SetResumeBreakpoint(frame.Thread, module);
 						stepper.Continue();
 						thread = await resumeBpTask;
 						asyncState.Dispose();
@@ -241,6 +246,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		AsyncStepOverState __DONT_USE_asyncStepOverState;
 
 		sealed class AsyncStepOverState {
+			readonly DbgLanguageService dbgLanguageService;
 			readonly DbgDotNetEngineStepper stepper;
 			readonly List<AsyncBreakpointState> yieldBreakpoints;
 			readonly TaskCompletionSource<AsyncBreakpointState> yieldTaskCompletionSource;
@@ -248,11 +254,16 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 			public Task Task => yieldTaskCompletionSource.Task;
 			public uint ResumeToken { get; private set; }
+			DbgModule builderFieldModule;
+			readonly uint builderFieldToken;
+			DbgDotNetObjectId taskObjectId;
 
-			public AsyncStepOverState(DbgDotNetEngineStepper stepper) {
+			public AsyncStepOverState(DbgLanguageService dbgLanguageService, DbgDotNetEngineStepper stepper, FieldDef builderFieldOrNull) {
+				this.dbgLanguageService = dbgLanguageService;
 				this.stepper = stepper;
 				yieldBreakpoints = new List<AsyncBreakpointState>();
 				yieldTaskCompletionSource = new TaskCompletionSource<AsyncBreakpointState>();
+				builderFieldToken = builderFieldOrNull?.MDToken.Raw ?? 0;
 			}
 
 			public void AddYieldBreakpoint(DbgThread thread, DbgModule module, uint token, AsyncStepInfo stepInfo) {
@@ -270,18 +281,83 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 			void AsyncBreakpointState_Hit(object sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.SetResult(bpState);
 
-			internal Task<DbgThread> SetResumeBreakpoint(DbgModule module) {
+			internal Task<DbgThread> SetResumeBreakpoint(DbgThread thread, DbgModule module) {
 				Debug.Assert(yieldTaskCompletionSource.Task.IsCompleted);
 				Debug.Assert(resumeBreakpoint == null);
 				if (resumeBreakpoint != null)
 					throw new InvalidOperationException();
 				var bpState = yieldTaskCompletionSource.Task.GetAwaiter().GetResult();
+				builderFieldModule = module;
 				ResumeToken = bpState.ResumeMethod.MDToken.Raw;
-				// The thread can change so pass in null == any thread
-				resumeBreakpoint = stepper.CreateBreakpoint(null, module, bpState.ResumeMethod.MDToken.Raw, bpState.ResumeOffset);
-				var tcs = new TaskCompletionSource<DbgThread>();
-				resumeBreakpoint.Hit += (s, e) => tcs.SetResult(e.Thread);
-				return tcs.Task;
+
+				DbgDotNetValue taskObjId = null;
+				try {
+					var runtime = module.Runtime.GetDotNetRuntime();
+					if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) != 0 && (runtime.Features & DbgDotNetRuntimeFeatures.NoAsyncStepOverId) == 0) {
+						taskObjId = TryGetTaskObjectId(thread);
+						if (taskObjId != null)
+							taskObjectId = runtime.CreateObjectId(taskObjId, 0);
+					}
+
+					// The thread can change so pass in null == any thread
+					resumeBreakpoint = stepper.CreateBreakpoint(null, module, bpState.ResumeMethod.MDToken.Raw, bpState.ResumeOffset);
+					var tcs = new TaskCompletionSource<DbgThread>();
+					resumeBreakpoint.Hit += (s, e) => {
+						bool hit = false;
+						if (taskObjectId == null)
+							hit = true;
+						else {
+							DbgDotNetValue taskObjId2 = null;
+							try {
+								taskObjId2 = TryGetTaskObjectId(e.Thread);
+								hit = taskObjId2 == null || runtime.Equals(taskObjectId, taskObjId2);
+							}
+							finally {
+								taskObjId2?.Dispose();
+							}
+						}
+						if (hit)
+							tcs.SetResult(e.Thread);
+					};
+					return tcs.Task;
+				}
+				finally {
+					taskObjId?.Dispose();
+				}
+			}
+
+			DbgEvaluationInfo CreateEvaluationInfo(DbgThread thread) {
+				DbgStackFrame frame = null;
+				DbgEvaluationContext ctx = null;
+				try {
+					frame = thread.GetTopStackFrame();
+					var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
+					ctx = language.CreateContext(frame, DbgEvaluationContextOptions.NoMethodBody);
+					var cancellationToken = CancellationToken.None;
+					return new DbgEvaluationInfo(ctx, frame, cancellationToken);
+				}
+				catch {
+					frame?.Close();
+					ctx?.Close();
+					throw;
+				}
+			}
+
+			DbgDotNetValue TryGetTaskObjectId(DbgThread thread) {
+				DbgEvaluationInfo evalInfo = null;
+				DbgDotNetValue builderValue = null;
+				try {
+					evalInfo = CreateEvaluationInfo(thread);
+					builderValue = TaskEvalUtils.TryGetBuilder(evalInfo, builderFieldModule.GetReflectionModule(), builderFieldToken);
+					if (builderValue == null)
+						return null;
+					return TaskEvalUtils.TryGetTaskObjectId(evalInfo, builderValue);
+				}
+				finally {
+					evalInfo?.Frame.Close();
+					evalInfo?.Context.Close();
+					builderValue?.Dispose();
+				}
 			}
 
 			internal void ClearYieldBreakpoints() {
@@ -296,6 +372,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					stepper.RemoveBreakpoints(new[] { resumeBreakpoint });
 					resumeBreakpoint = null;
 				}
+				taskObjectId?.Dispose();
+				taskObjectId = null;
 			}
 		}
 

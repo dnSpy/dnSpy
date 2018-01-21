@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
@@ -30,6 +31,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public AsyncStepInfo[] StepInfos { get; }
 
 		/// <summary>
+		/// Async method builder field or null
+		/// </summary>
+		public FieldDef BuilderFieldOrNull { get; }
+
+		/// <summary>
 		/// Catch handler offset or <see cref="uint.MaxValue"/>. Only used if it's an async void method
 		/// </summary>
 		public uint CatchHandlerOffset { get; }
@@ -38,9 +44,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="stepInfos">Async step infos</param>
+		/// <param name="builderField">Async method builder field or null if it's unknown</param>
 		/// <param name="catchHandlerOffset">Catch handler offset or <see cref="uint.MaxValue"/>. Only used if it's a async void method</param>
-		public AsyncMethodDebugInfo(AsyncStepInfo[] stepInfos, uint catchHandlerOffset = uint.MaxValue) {
+		public AsyncMethodDebugInfo(AsyncStepInfo[] stepInfos, FieldDef builderField, uint catchHandlerOffset) {
 			StepInfos = stepInfos ?? throw new ArgumentNullException(nameof(stepInfos));
+			BuilderFieldOrNull = builderField;
 			CatchHandlerOffset = catchHandlerOffset;
 		}
 	}
