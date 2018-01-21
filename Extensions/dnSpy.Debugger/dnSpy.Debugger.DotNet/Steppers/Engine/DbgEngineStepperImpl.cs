@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					else {
 						stepper.CancelLastStep();
 						asyncState.ClearYieldBreakpoints();
-						var resumeBpTask = asyncState.SetResumeBreakpoint(module, token);
+						var resumeBpTask = asyncState.SetResumeBreakpoint(module);
 						stepper.Continue();
 						thread = await resumeBpTask;
 						asyncState.Dispose();
@@ -193,8 +193,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 						var newFrame = stepper.TryGetFrameInfo(thread);
 						Debug.Assert(newFrame != null);
 						if (newFrame != null && newFrame.TryGetLocation(out var newModule, out var newToken, out var newOffset)) {
-							Debug.Assert(newModule == module && token == newToken);
-							if (newModule == module && token == newToken) {
+							Debug.Assert(newModule == module && asyncState.ResumeToken == newToken);
+							if (newModule == module && asyncState.ResumeToken == newToken) {
 								var newStatement = result.DebugInfo.GetSourceStatementByCodeOffset(newOffset);
 								// If we're not on an existing statement (very likely), we need to step over the
 								// hidden instructions until we reach the next statement.
@@ -226,9 +226,9 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (result.DebugInfo?.AsyncInfo == null)
 				return null;
 			List<AsyncStepInfo> asyncStepInfos = null;
-			GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfo.AsyncInfo, result.ExactStatementRanges);
+			GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfo.Method, result.DebugInfo.AsyncInfo, result.ExactStatementRanges);
 			foreach (var ranges in GetHiddenRanges(result.ExactStatementRanges, result.DebugInfo.GetUnusedRanges()))
-				GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfo.AsyncInfo, ranges);
+				GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfo.Method, result.DebugInfo.AsyncInfo, ranges);
 			return asyncStepInfos;
 		}
 
@@ -247,6 +247,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			DbgDotNetStepperBreakpoint resumeBreakpoint;
 
 			public Task Task => yieldTaskCompletionSource.Task;
+			public uint ResumeToken { get; private set; }
 
 			public AsyncStepOverState(DbgDotNetEngineStepper stepper) {
 				this.stepper = stepper;
@@ -257,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			public void AddYieldBreakpoint(DbgThread thread, DbgModule module, uint token, AsyncStepInfo stepInfo) {
 				var yieldBreakpoint = stepper.CreateBreakpoint(thread, module, token, stepInfo.YieldOffset);
 				try {
-					var bpState = new AsyncBreakpointState(yieldBreakpoint, stepInfo.ResumeOffset);
+					var bpState = new AsyncBreakpointState(yieldBreakpoint, stepInfo.ResumeMethod, stepInfo.ResumeOffset);
 					bpState.Hit += AsyncBreakpointState_Hit;
 					yieldBreakpoints.Add(bpState);
 				}
@@ -269,14 +270,15 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 			void AsyncBreakpointState_Hit(object sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.SetResult(bpState);
 
-			internal Task<DbgThread> SetResumeBreakpoint(DbgModule module, uint token) {
+			internal Task<DbgThread> SetResumeBreakpoint(DbgModule module) {
 				Debug.Assert(yieldTaskCompletionSource.Task.IsCompleted);
 				Debug.Assert(resumeBreakpoint == null);
 				if (resumeBreakpoint != null)
 					throw new InvalidOperationException();
 				var bpState = yieldTaskCompletionSource.Task.GetAwaiter().GetResult();
+				ResumeToken = bpState.ResumeMethod.MDToken.Raw;
 				// The thread can change so pass in null == any thread
-				resumeBreakpoint = stepper.CreateBreakpoint(null, module, token, bpState.ResumeOffset);
+				resumeBreakpoint = stepper.CreateBreakpoint(null, module, bpState.ResumeMethod.MDToken.Raw, bpState.ResumeOffset);
 				var tcs = new TaskCompletionSource<DbgThread>();
 				resumeBreakpoint.Hit += (s, e) => tcs.SetResult(e.Thread);
 				return tcs.Task;
@@ -299,12 +301,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		sealed class AsyncBreakpointState {
 			internal readonly DbgDotNetStepperBreakpoint Breakpoint;
+			internal readonly MethodDef ResumeMethod;
 			internal readonly uint ResumeOffset;
 
 			public event EventHandler<AsyncBreakpointState> Hit;
 
-			public AsyncBreakpointState(DbgDotNetStepperBreakpoint yieldBreakpoint, uint resumeOffset) {
+			public AsyncBreakpointState(DbgDotNetStepperBreakpoint yieldBreakpoint, MethodDef resumeMethod, uint resumeOffset) {
 				Breakpoint = yieldBreakpoint;
+				ResumeMethod = resumeMethod;
 				ResumeOffset = resumeOffset;
 				yieldBreakpoint.Hit += YieldBreakpoint_Hit;
 			}
@@ -337,11 +341,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
-		static void GetAsyncStepInfos(ref List<AsyncStepInfo> result, AsyncMethodDebugInfo asyncInfo, DbgCodeRange[] ranges) {
+		static void GetAsyncStepInfos(ref List<AsyncStepInfo> result, MethodDef currentMethod, AsyncMethodDebugInfo asyncInfo, DbgCodeRange[] ranges) {
 			var stepInfos = asyncInfo.StepInfos;
 			for (int i = 0; i < stepInfos.Length; i++) {
 				ref readonly var stepInfo = ref stepInfos[i];
-				if (Contains(ranges, stepInfo)) {
+				if (Contains(currentMethod, ranges, stepInfo)) {
 					if (result == null)
 						result = new List<AsyncStepInfo>();
 					result.Add(stepInfo);
@@ -349,10 +353,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
-		static bool Contains(DbgCodeRange[] ranges, in AsyncStepInfo stepInfo) {
+		static bool Contains(MethodDef currentMethod, DbgCodeRange[] ranges, in AsyncStepInfo stepInfo) {
 			for (int i = 0; i < ranges.Length; i++) {
 				ref readonly var range = ref ranges[i];
-				if (range.Contains(stepInfo.YieldOffset) || range.Contains(stepInfo.ResumeOffset))
+				if (range.Contains(stepInfo.YieldOffset) || (stepInfo.ResumeMethod == currentMethod && range.Contains(stepInfo.ResumeOffset)))
 					return true;
 			}
 			return false;

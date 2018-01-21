@@ -17,18 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnlib.DotNet;
+
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Async method step info
 	/// </summary>
 	public readonly struct AsyncStepInfo {
 		/// <summary>
-		/// Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it starts waiting for the result
+		/// Offset in method where it starts waiting for the result
 		/// </summary>
 		public uint YieldOffset { get; }
 
 		/// <summary>
-		/// Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it resumes after the result is available
+		/// Resume method
+		/// </summary>
+		public MethodDef ResumeMethod { get; }
+
+		/// <summary>
+		/// Offset in <see cref="ResumeMethod"/> where it resumes after the result is available
 		/// </summary>
 		public uint ResumeOffset { get; }
 
@@ -36,9 +44,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="yieldOffset">Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it starts waiting for the result</param>
-		/// <param name="resumeOffset">Offset in <see cref="System.Runtime.CompilerServices.IAsyncStateMachine.MoveNext"/> where it resumes after the result is available</param>
-		public AsyncStepInfo(uint yieldOffset, uint resumeOffset) {
+		/// <param name="resumeMethod">Resume method</param>
+		/// <param name="resumeOffset">Offset in <paramref name="resumeMethod"/> where it resumes after the result is available</param>
+		public AsyncStepInfo(uint yieldOffset, MethodDef resumeMethod, uint resumeOffset) {
 			YieldOffset = yieldOffset;
+			ResumeMethod = resumeMethod ?? throw new ArgumentNullException(nameof(resumeMethod));
 			ResumeOffset = resumeOffset;
 		}
 	}
