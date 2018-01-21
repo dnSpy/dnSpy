@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <returns></returns>
 		public virtual DbgDotNetValueResult LoadIndirect() =>
-			new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
 		/// Writes to the referenced value (by-ref or pointer). The return value is null or an error message.
@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
 		public virtual DbgDotNetValueResult GetArrayElementAt(uint index) =>
-			new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
 		/// Stores a value at <paramref name="index"/> in the array. This method can be called even if it's

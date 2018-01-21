@@ -123,13 +123,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationContext context) {
 			debuggerThread.VerifyAccess();
 			if (!IsPaused)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
 			if (isUnhandledException)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
 			if (context.ContinueContext.HasData<EvalTimedOut>())
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
 			if (IsEvaluating)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEval);
 			return null;
 		}
 
@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (!res.HasError)
 					return res;
 			}
-			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
 		internal DbgDotNetValueResult FuncEvalCall_MonoDebug(DbgEvaluationInfo evalInfo, DmdMethodBase method, DbgDotNetValue obj, object[] arguments, DbgDotNetInvokeOptions invokeOptions, bool newObj) {
@@ -235,7 +235,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						var error = objImpl.ValueLocation.Store(((DbgDotNetValueImpl)res.Value).Value);
 						if (error != null) {
 							res.Value?.Dispose();
-							return new DbgDotNetValueResult(error);
+							return DbgDotNetValueResult.CreateError(error);
 						}
 					}
 					catch {
@@ -255,10 +255,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			Debug.Assert(method.SpecialMethodKind == DmdSpecialMethodKind.Metadata, "Methods not defined in metadata should be emulated by other code (i.e., the caller)");
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			if (!vm.Version.AtLeast(2, 24) && method is DmdMethodInfo && method.IsConstructedGenericMethod)
-				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportCallingGenericMethods);
+				return DbgDotNetValueResult.CreateError(dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportCallingGenericMethods);
 
 			var funcEvalOptions = FuncEvalOptions.None;
 			if ((invokeOptions & DbgDotNetInvokeOptions.NonVirtual) == 0 && !method.IsStatic && (method.IsVirtual || method.IsAbstract))
@@ -272,7 +272,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				funcEvalOptions &= ~FuncEvalOptions.Virtual;
 			}
 			if (!vm.Version.AtLeast(2, 15) && calledMethod.DeclaringType.ContainsGenericParameters)
-				return new DbgDotNetValueResult(dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
+				return DbgDotNetValueResult.CreateError(dnSpy_Debugger_DotNet_Mono_Resources.Error_CannotAccessMemberRuntimeLimitations);
 
 			var monoThread = GetThread(thread);
 			try {
@@ -294,7 +294,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							declType = m.GetBaseDefinition().DeclaringType;
 						var val = converter.Convert(obj, declType, out origType);
 						if (val.ErrorMessage != null)
-							return new DbgDotNetValueResult(val.ErrorMessage);
+							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						// Don't box it if it's a value type and it implements the method, eg. 1.ToString() fails without this check
 						if (origType.IsValueType && method.DeclaringType == origType) {
 							if (val.Value is ObjectMirror)
@@ -326,7 +326,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						var paramType = paramTypes[i];
 						var val = converter.Convert(arguments[i], paramType, out origType);
 						if (val.ErrorMessage != null)
-							return new DbgDotNetValueResult(val.ErrorMessage);
+							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						var valType = origType ?? MonoValueTypeCreator.CreateType(this, val.Value, paramType);
 						args[i] = BoxIfNeeded(monoThread.Domain, val.Value, paramType, valType);
 					}
@@ -335,26 +335,28 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						funcEval.CreateInstance(func, args, funcEvalOptions) :
 						funcEval.CallMethod(func, hiddenThisValue, args, funcEvalOptions);
 					if (res == null)
-						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+						return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 					if ((funcEvalOptions & FuncEvalOptions.ReturnOutThis) != 0 && res.OutThis is StructMirror outStructMirror) {
 						var error = (obj as DbgDotNetValueImpl)?.ValueLocation.Store(outStructMirror);
 						if (error != null)
-							return new DbgDotNetValueResult(error);
+							return DbgDotNetValueResult.CreateError(error);
 					}
 					var returnType = (method as DmdMethodInfo)?.ReturnType ?? method.ReflectedType;
 					var returnValue = res.Exception ?? res.Result ?? createdResultValue ?? new PrimitiveValue(vm, ElementType.Object, null);
 					var valueLocation = new NoValueLocation(returnType, returnValue);
-					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(valueLocation), valueIsException: res.Exception != null);
+					if (res.Exception != null)
+						return DbgDotNetValueResult.CreateException(CreateDotNetValue_MonoDebug(valueLocation));
+					return DbgDotNetValueResult.Create(CreateDotNetValue_MonoDebug(valueLocation));
 				}
 			}
 			catch (VMNotSuspendedException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -386,18 +388,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					value = ValueUtils.MakePrimitiveValueIfPossible(value, type);
 					var boxedValue = BoxIfNeeded(monoThread.Domain, value, type.AppDomain.System_Object, type);
 					if (boxedValue == null)
-						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-					return new DbgDotNetValueResult(CreateDotNetValue_MonoDebug(type.AppDomain, boxedValue, type), valueIsException: false);
+						return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					return DbgDotNetValueResult.Create(CreateDotNetValue_MonoDebug(type.AppDomain, boxedValue, type));
 				}
 			}
 			catch (VMNotSuspendedException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 
@@ -405,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
-				return new DbgDotNetValueResult((DbgDotNetValueImpl)value, valueIsException: false);
+				return DbgDotNetValueResult.Create((DbgDotNetValueImpl)value);
 			var tmp = CheckFuncEval(evalInfo.Context);
 			if (tmp != null)
 				return tmp.Value;
@@ -417,20 +419,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
 					if (evalRes.ErrorMessage != null)
-						return new DbgDotNetValueResult(evalRes.ErrorMessage);
+						return DbgDotNetValueResult.CreateError(evalRes.ErrorMessage);
 
 					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value, newValueType);
-					return new DbgDotNetValueResult(resultValue, valueIsException: false);
+					return DbgDotNetValueResult.Create(resultValue);
 				}
 			}
 			catch (VMNotSuspendedException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEvaluateWhenThreadIsAtUnsafePoint);
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 		}
 

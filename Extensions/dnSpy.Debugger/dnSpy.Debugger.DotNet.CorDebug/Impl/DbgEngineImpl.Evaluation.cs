@@ -165,13 +165,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DbgDotNetValueResult? CheckFuncEval(DbgEvaluationInfo evalInfo) {
 			debuggerThread.VerifyAccess();
 			if (dnDebugger.ProcessState != DebuggerProcessState.Paused)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CanFuncEvalOnlyWhenPaused);
 			if (isUnhandledException)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEvalWhenUnhandledExceptionHasOccurred);
 			if (evalInfo.Context.ContinueContext.HasData<EvalTimedOut>())
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOutNowDisabled);
 			if (dnDebugger.IsEvaluating)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.CantFuncEval);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.CantFuncEval);
 			return null;
 		}
 
@@ -185,12 +185,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			Debug.Assert(method.SpecialMethodKind == DmdSpecialMethodKind.Metadata, "Methods not defined in metadata should be emulated by other code (i.e., the caller)");
 			if (method.SpecialMethodKind != DmdSpecialMethodKind.Metadata)
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 
 			var reflectionAppDomain = method.AppDomain;
 			var methodDbgModule = method.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
 			if (!TryGetDnModule(methodDbgModule, out var methodModule))
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			var func = methodModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken) ?? throw new InvalidOperationException();
 
 			int hr;
@@ -230,14 +230,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 							declType = m.GetBaseDefinition().DeclaringType;
 						var val = converter.Convert(obj, declType, out origType);
 						if (val.ErrorMessage != null)
-							return new DbgDotNetValueResult(val.ErrorMessage);
+							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue, declType, origType);
 					}
 					for (int i = 0; i < arguments.Length; i++) {
 						var paramType = paramTypes[i];
 						var val = converter.Convert(arguments[i], paramType, out origType);
 						if (val.ErrorMessage != null)
-							return new DbgDotNetValueResult(val.ErrorMessage);
+							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						var valType = origType ?? new ReflectionTypeCreator(this, method.AppDomain).Create(val.CorValue.ExactType);
 						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue, paramType, valType);
 					}
@@ -255,12 +255,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 									throw new InvalidOperationException();
 								arg = arg.GetDereferencedValue(out hr);
 								if (arg == null)
-									return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+									return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 							}
 							if (arg.IsBox) {
 								arg = arg.GetBoxedValue(out hr);
 								if (arg == null)
-									return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+									return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 							}
 							args[w] = arg;
 						}
@@ -273,19 +273,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						dnEval.CallConstructor(func, typeArgs, args, out hr) :
 						dnEval.Call(func, typeArgs, args, out hr);
 					if (res == null)
-						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 					if (res.Value.WasCustomNotification)
-						return new DbgDotNetValueResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
 					if (res.Value.WasCancelled)
-						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
-					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, reflectionAppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
+						return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+					if (res.Value.WasException)
+						return DbgDotNetValueResult.CreateException(CreateDotNetValue_CorDebug(res.Value.ResultOrException, reflectionAppDomain, tryCreateStrongHandle: true));
+					return DbgDotNetValueResult.Create(CreateDotNetValue_CorDebug(res.Value.ResultOrException, reflectionAppDomain, tryCreateStrongHandle: true));
 				}
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			}
 			finally {
 				foreach (var value in createdValues)
@@ -334,15 +336,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 					boxedValue = BoxIfNeeded(dnEval, appDomain, createdValues, value, type.AppDomain.System_Object, type);
 					if (boxedValue == null)
-						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(-1));
-					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(boxedValue, type.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(-1));
+					return DbgDotNetValueResult.Create(CreateDotNetValue_CorDebug(boxedValue, type.AppDomain, tryCreateStrongHandle: true));
 				}
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			}
 			finally {
 				foreach (var v in createdValues) {
@@ -369,19 +371,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var corType = GetType(appDomain, typeToCreate);
 					var res = dnEval.CreateDontCallConstructor(corType, out int hr);
 					if (res == null)
-						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 					if (res.Value.WasCustomNotification)
-						return new DbgDotNetValueResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
 					if (res.Value.WasCancelled)
-						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
-					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, typeToCreate.AppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
+						return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+					if (res.Value.WasException)
+						return DbgDotNetValueResult.CreateException(CreateDotNetValue_CorDebug(res.Value.ResultOrException, typeToCreate.AppDomain, tryCreateStrongHandle: true));
+					return DbgDotNetValueResult.Create(CreateDotNetValue_CorDebug(res.Value.ResultOrException, typeToCreate.AppDomain, tryCreateStrongHandle: true));
 				}
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			}
 		}
 
@@ -395,7 +399,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (value is DbgDotNetValueImpl)
-				return new DbgDotNetValueResult((DbgDotNetValueImpl)value, valueIsException: false);
+				return DbgDotNetValueResult.Create((DbgDotNetValueImpl)value);
 			var tmp = CheckFuncEval(evalInfo);
 			if (tmp != null)
 				return tmp.Value;
@@ -414,18 +418,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
 					if (evalRes.ErrorMessage != null)
-						return new DbgDotNetValueResult(evalRes.ErrorMessage);
+						return DbgDotNetValueResult.CreateError(evalRes.ErrorMessage);
 
 					var resultValue = CreateDotNetValue_CorDebug(evalRes.CorValue, reflectionAppDomain, tryCreateStrongHandle: true);
 					createdCorValue = evalRes.CorValue;
-					return new DbgDotNetValueResult(resultValue, valueIsException: false);
+					return DbgDotNetValueResult.Create(resultValue);
 				}
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			}
 			finally {
 				foreach (var v in createdValues) {
@@ -707,20 +711,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var corType = GetType(appDomain, elementType);
 					var res = dnEval.CreateSZArray(corType, length, out int hr);
 					if (res == null)
-						return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 					Debug.Assert(!res.Value.WasException, "Shouldn't throw " + nameof(ArgumentOutOfRangeException));
 					if (res.Value.WasCustomNotification)
-						return new DbgDotNetValueResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
+						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
 					if (res.Value.WasCancelled)
-						return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
-					return new DbgDotNetValueResult(CreateDotNetValue_CorDebug(res.Value.ResultOrException, elementType.AppDomain, tryCreateStrongHandle: true), valueIsException: res.Value.WasException);
+						return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+					if (res.Value.WasException)
+						return DbgDotNetValueResult.CreateException(CreateDotNetValue_CorDebug(res.Value.ResultOrException, elementType.AppDomain, tryCreateStrongHandle: true));
+					return DbgDotNetValueResult.Create(CreateDotNetValue_CorDebug(res.Value.ResultOrException, elementType.AppDomain, tryCreateStrongHandle: true));
 				}
 			}
 			catch (TimeoutException) {
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			}
 		}
 

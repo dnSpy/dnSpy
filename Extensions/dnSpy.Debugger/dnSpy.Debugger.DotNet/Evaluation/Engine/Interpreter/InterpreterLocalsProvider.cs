@@ -67,9 +67,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					localValue = runtime.GetDefaultValue(type);
 					extraLocals.Add(index, localValue);
 				}
-				return new DbgDotNetValueResult(localValue, valueIsException: false);
+				return DbgDotNetValueResult.Create(localValue);
 			}
-			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
 		public override string SetVariable(int index, DmdType targetType, object value) {

@@ -561,13 +561,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		DbgDotNetValueResult CreateInstanceCore(DmdConstructorInfo ctor, ILValue[] arguments) {
 			if (ctor.IsStatic)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			const DotNetClassHookCallOptions options = DotNetClassHookCallOptions.None;
 			foreach (var anyHook in anyClassHooks) {
 				var res = anyHook.CreateInstance(options, ctor, arguments);
 				if (res != null)
-					return new DbgDotNetValueResult(res, valueIsException: false);
+					return DbgDotNetValueResult.Create(res);
 			}
 
 			var type = ctor.DeclaringType;
@@ -582,7 +582,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				if (hook != null) {
 					var res = hook.CreateInstance(options, ctor, arguments);
 					if (res != null)
-						return new DbgDotNetValueResult(res, valueIsException: false);
+						return DbgDotNetValueResult.Create(res);
 				}
 			}
 
@@ -755,7 +755,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			foreach (var anyHook in anyClassHooks) {
 				var res = anyHook.Call(options, obj, method, arguments);
 				if (res != null)
-					return new DbgDotNetValueResult(res, valueIsException: false);
+					return DbgDotNetValueResult.Create(res);
 			}
 
 			var type = method.DeclaringType;
@@ -770,7 +770,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				if (hook != null) {
 					var res = hook.Call(options, obj, method, arguments);
 					if (res != null)
-						return new DbgDotNetValueResult(res, valueIsException: false);
+						return DbgDotNetValueResult.Create(res);
 				}
 			}
 

@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (!Type.IsByRef)
 				return base.LoadIndirect();
 			if (IsNullByRef)
-				return new DbgDotNetValueResult(new SyntheticNullValue(Type.GetElementType()), valueIsException: false);
+				return DbgDotNetValueResult.Create(new SyntheticNullValue(Type.GetElementType()));
 			if (engine.CheckMonoDebugThread())
 				return Dereference_MonoDebug();
 			return engine.InvokeMonoDebugThread(() => Dereference_MonoDebug());
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		DbgDotNetValueResult Dereference_MonoDebug() {
 			Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyMonoDebugThread();
-			return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference()), valueIsException: false);
+			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference()));
 		}
 
 		public override string StoreIndirect(DbgEvaluationInfo evalInfo, object value) {
@@ -176,8 +176,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			engine.VerifyMonoDebugThread();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
 			if (info.errorMessage != null)
-				return new DbgDotNetValueResult(info.errorMessage);
-			return new DbgDotNetValueResult(engine.CreateDotNetValue_MonoDebug(info.valueLocation), valueIsException: false);
+				return DbgDotNetValueResult.CreateError(info.errorMessage);
+			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation));
 		}
 
 		(ArrayElementValueLocation valueLocation, string errorMessage) GetArrayElementValueLocation_MonoDebug(uint index) {
@@ -219,7 +219,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			engine.VerifyMonoDebugThread();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (!Type.IsValueType)
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			var value = this.value;
 			// Even if it's boxed, box the unboxed value. This code path should only be called if
 			// the compiler thinks it's an unboxed value, so we must make a new boxed value.

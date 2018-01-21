@@ -168,23 +168,23 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 						resultValue.Dispose();
 						resultValue = new NoResultValue(expectedType.AppDomain);
 					}
-					result = new DbgDotNetValueResult(resultValue, valueIsException: false);
+					result = DbgDotNetValueResult.Create(resultValue);
 				}
 				catch (InterpreterException ie) {
-					result = new DbgDotNetValueResult(GetErrorMessage(ie.Kind));
+					result = DbgDotNetValueResult.CreateError(GetErrorMessage(ie.Kind));
 				}
 				catch (InterpreterMessageException ime) {
-					result = new DbgDotNetValueResult(ime.Message);
+					result = DbgDotNetValueResult.CreateError(ime.Message);
 				}
 				catch (InterpreterThrownExceptionException thrownEx) {
 					Debug.Assert(thrownEx.ThrownValue is DbgDotNetValue);
 					if (thrownEx.ThrownValue is DbgDotNetValue thrownValue)
-						result = new DbgDotNetValueResult(thrownValue, valueIsException: true);
+						result = DbgDotNetValueResult.CreateException(thrownValue);
 					else
-						result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+						result = DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 				catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-					result = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					result = DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 				finally {
 					debuggerRuntime.Clear(result.Value);

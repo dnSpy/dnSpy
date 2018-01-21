@@ -360,8 +360,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			public override DbgDotNetValueResult GetVariable(int index) {
 				if (index == 0)
-					return new DbgDotNetValueResult(argument, valueIsException: false);
-				return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+					return DbgDotNetValueResult.Create(argument);
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
 
 			public override string SetVariable(int index, DmdType targetType, object value) => PredefinedEvaluationErrorMessages.InternalDebuggerError;

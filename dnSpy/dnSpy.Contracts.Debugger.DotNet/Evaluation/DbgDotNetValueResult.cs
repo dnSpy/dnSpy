@@ -51,21 +51,36 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public bool IsNormalResult => !HasError && !ValueIsException;
 
 		/// <summary>
-		/// Constructor
+		/// Creates a normal result
 		/// </summary>
 		/// <param name="value">Value</param>
-		/// <param name="valueIsException">true if <paramref name="value"/> contains the thrown exception instead of the expected return value / field value</param>
-		public DbgDotNetValueResult(DbgDotNetValue value, bool valueIsException) {
+		/// <returns></returns>
+		public static DbgDotNetValueResult Create(DbgDotNetValue value) =>
+			new DbgDotNetValueResult(value, valueIsException: false);
+
+		/// <summary>
+		/// Creates an exception result
+		/// </summary>
+		/// <param name="value">Exception value</param>
+		/// <returns></returns>
+		public static DbgDotNetValueResult CreateException(DbgDotNetValue value) =>
+			new DbgDotNetValueResult(value, valueIsException: true);
+
+		/// <summary>
+		/// Creates an error result
+		/// </summary>
+		/// <param name="errorMessage">Error message</param>
+		/// <returns></returns>
+		public static DbgDotNetValueResult CreateError(string errorMessage) =>
+			new DbgDotNetValueResult(errorMessage);
+
+		DbgDotNetValueResult(DbgDotNetValue value, bool valueIsException) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
 			ValueIsException = valueIsException;
 			ErrorMessage = null;
 		}
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="errorMessage">Error message</param>
-		public DbgDotNetValueResult(string errorMessage) {
+		DbgDotNetValueResult(string errorMessage) {
 			Value = null;
 			ValueIsException = false;
 			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));

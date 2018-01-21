@@ -188,7 +188,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					imageName = ImageNameUtils.GetImageName(property);
 					if ((options & DbgValueNodeEvaluationOptions.NoFuncEval) != 0) {
 						isReadOnly = true;
-						valueResult = new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
+						valueResult = DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
 					}
 					else {
 						var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();

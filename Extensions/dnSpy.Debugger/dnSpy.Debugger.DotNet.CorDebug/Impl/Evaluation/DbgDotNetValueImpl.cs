@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (!Type.IsByRef && !Type.IsPointer)
 				return base.LoadIndirect();
 			if (IsNullByRef || IsNull)
-				return new DbgDotNetValueResult(new SyntheticNullValue(Type.GetElementType()), valueIsException: false);
+				return DbgDotNetValueResult.Create(new SyntheticNullValue(Type.GetElementType()));
 			if (engine.CheckCorDebugThread())
 				return Dereference_CorDebug();
 			return engine.InvokeCorDebugThread(() => Dereference_CorDebug());
@@ -95,8 +95,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var dereferencedValue = TryGetCorValue()?.GetDereferencedValue(out hr);
 			// We sometimes get 0x80131C49 = CORDBG_E_READVIRTUAL_FAILURE
 			if (dereferencedValue == null)
-				return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
-			return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
+			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true));
 		}
 
 		public override string StoreIndirect(DbgEvaluationInfo evalInfo, object value) {
@@ -254,13 +254,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
 			if (corValue == null || corValue.IsNull)
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			using (var obj = new ArrayObjectValue(engine, corValue)) {
 				int hr = -1;
 				var elemValue = obj.Value?.GetElementAtPosition(index, out hr);
 				if (elemValue == null)
-					return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
-				return new DbgDotNetValueResult(engine.CreateDotNetValue_CorDebug(elemValue, Type.AppDomain, tryCreateStrongHandle: true), valueIsException: false);
+					return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
+				return DbgDotNetValueResult.Create(engine.CreateDotNetValue_CorDebug(elemValue, Type.AppDomain, tryCreateStrongHandle: true));
 			}
 		}
 
@@ -302,20 +302,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var corValue = TryGetCorValue();
 			if (corValue == null)
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame))
-				return new DbgDotNetValueResult(CordbgErrorHelper.InternalError);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			// Even if it's boxed, box the unboxed value. This code path should only be called if
 			// the compiler thinks it's an unboxed value, so we must make a new boxed value.
 			if (corValue.IsReference) {
 				corValue = corValue.GetDereferencedValue(out int hr);
 				if (corValue == null)
-					return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 			}
 			if (corValue.IsBox) {
 				corValue = corValue.GetBoxedValue(out int hr);
 				if (corValue == null)
-					return new DbgDotNetValueResult(CordbgErrorHelper.GetErrorMessage(hr));
+					return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 			}
 			return engine.Box_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), corValue, Type);
 		}
