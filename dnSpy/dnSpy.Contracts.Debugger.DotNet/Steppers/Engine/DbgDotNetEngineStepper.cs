@@ -170,11 +170,16 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 	/// <summary>
 	/// Stepper breakpoint event args
 	/// </summary>
-	public struct DbgDotNetStepperBreakpointEventArgs {
+	public sealed class DbgDotNetStepperBreakpointEventArgs {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>
 		public DbgThread Thread { get; }
+
+		/// <summary>
+		/// Set to true by the event handler to pause the process
+		/// </summary>
+		public bool Pause { get; set; }
 
 		/// <summary>
 		/// Constructor

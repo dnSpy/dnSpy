@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame)) {
 					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
 					// Don't throw if it fails to resolve. Callers must be able to handle null return values
-					var method = module.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
+					var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
 					if ((object)method != null) {
 						if (genericTypeArguments.Count != 0) {
 							var type = method.ReflectedType.MakeGenericType(genericTypeArguments);

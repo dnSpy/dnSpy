@@ -205,11 +205,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.RemoveBreakpoint(breakpoint);
 		}
 
-		internal DnILCodeBreakpoint CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Action<CorThread> callback) {
+		internal DnILCodeBreakpoint CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<CorThread, bool> callback) {
 			debuggerThread.VerifyAccess();
 			return dnDebugger.CreateBreakpoint(GetModuleId(module).ToDnModuleId(), token, offset, ctx => {
-				callback(ctx.E.CorThread);
-				ctx.E.AddPauseReason(DebuggerPauseReason.AsyncStepperBreakpoint);
+				if (callback(ctx.E.CorThread))
+					ctx.E.AddPauseReason(DebuggerPauseReason.AsyncStepperBreakpoint);
 				return false;
 			});
 		}

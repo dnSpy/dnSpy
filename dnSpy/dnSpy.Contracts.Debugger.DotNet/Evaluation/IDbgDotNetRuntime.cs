@@ -355,9 +355,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		NoDereferencePointers	= 0x00000004,
 
 		/// <summary>
-		/// Async step over with object ids isn't supported
+		/// Async step with object ids isn't supported
 		/// </summary>
-		NoAsyncStepOverId		= 0x00000008,
+		NoAsyncStepObjectId		= 0x00000008,
 	}
 
 	/// <summary>

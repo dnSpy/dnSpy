@@ -38,9 +38,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			breakpoint = engine.CreateBreakpointForStepper(module, token, offset, OnBreakpointHit);
 		}
 
-		void OnBreakpointHit(DbgThread thread) {
-			if (this.thread == null || thread == this.thread)
-				Hit?.Invoke(this, new DbgDotNetStepperBreakpointEventArgs(thread));
+		bool OnBreakpointHit(DbgThread thread) {
+			if (this.thread == null || thread == this.thread) {
+				var e = new DbgDotNetStepperBreakpointEventArgs(thread);
+				Hit?.Invoke(this, e);
+				return e.Pause;
+			}
+			else
+				return false;
 		}
 
 		internal void Dispose() {

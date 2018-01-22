@@ -55,10 +55,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
 				return true;
 			}
-			else if (breakpoint.Tag is Action<DbgThread> callback) {
-				callback(thread);
-				return true;
-			}
+			else if (breakpoint.Tag is Func<DbgThread, bool> callback)
+				return callback(thread);
 			else {
 				Debug.Fail("Breakpoint with invalid Tag data");
 				return false;
@@ -319,7 +317,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		// Assumes the method's declaring type has already been loaded so we can set a BP
-		internal BreakpointEventRequest CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Action<DbgThread> callback) {
+		internal BreakpointEventRequest CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<DbgThread, bool> callback) {
 			debuggerThread.VerifyAccess();
 			var reflectionModule = module.GetReflectionModule() ?? throw new InvalidOperationException();
 			if (!TryGetModuleData(module, out var data))

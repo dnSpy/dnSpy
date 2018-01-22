@@ -209,9 +209,9 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					return null;
 
 				getTaskResult = runtime.Call(evalInfo, builderValue, getMethod, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
-				if (!getTaskResult.IsNormalResult)
+				if (!getTaskResult.IsNormalResult || getTaskResult.Value.IsNull)
 					return null;
-				if (!getTaskResult.Value.IsNull && !getTaskResult.Value.Type.IsValueType)
+				if (!getTaskResult.Value.Type.IsValueType)
 					return resultValue = getTaskResult.Value;
 
 				var field = getTaskResult.Value.Type.GetField(ValueTask_Task_Fieldname, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
@@ -229,6 +229,77 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				if (taskFieldResult.Value != resultValue)
 					taskFieldResult.Value?.Dispose();
 			}
+		}
+
+		const string Task_NotifyDebuggerOfWaitCompletion_MethodName = "NotifyDebuggerOfWaitCompletion";
+		sealed class AsyncStepOutState {
+			public readonly DmdMethodInfo NotifyDebuggerOfWaitCompletionMethod;
+			public AsyncStepOutState(DmdMethodInfo notifyDebuggerOfWaitCompletionMethod) => NotifyDebuggerOfWaitCompletionMethod = notifyDebuggerOfWaitCompletionMethod;
+		}
+
+		static AsyncStepOutState GetAsyncStepOutState(DmdAppDomain appDomain) {
+			if (!appDomain.TryGetData(out AsyncStepOutState state))
+				state = SupportsAsyncStepOutCore(appDomain);
+			return state;
+
+			AsyncStepOutState SupportsAsyncStepOutCore(DmdAppDomain appDomain2) {
+				var task = appDomain2.GetWellKnownType(DmdWellKnownType.System_Threading_Tasks_Task, isOptional: true);
+				var method = task?.GetMethod(Task_NotifyDebuggerOfWaitCompletion_MethodName, DmdSignatureCallingConvention.HasThis,
+					0, appDomain2.System_Void, Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
+				return appDomain2.GetOrCreateData(() => new AsyncStepOutState(method));
+			}
+		}
+
+		public static bool SupportsAsyncStepOut(DmdAppDomain appDomain) =>
+			(object)GetNotifyDebuggerOfWaitCompletionMethod(appDomain) != null;
+
+		public static DmdMethodInfo GetNotifyDebuggerOfWaitCompletionMethod(DmdAppDomain appDomain) =>
+			GetAsyncStepOutState(appDomain).NotifyDebuggerOfWaitCompletionMethod;
+
+		const string SetNotificationForWaitCompletion_Name = "SetNotificationForWaitCompletion";
+
+		public static (bool success, DbgDotNetValue taskValue) CallSetNotificationForWaitCompletion(DbgEvaluationInfo evalInfo, DbgModule builderFieldModule, uint builderFieldToken, bool value) {
+			DbgDotNetValue builderValue = null;
+			DbgDotNetValue taskValue = null;
+			bool success = false;
+			try {
+				builderValue = TryGetBuilder(evalInfo, builderFieldModule.GetReflectionModule(), builderFieldToken);
+				if (builderValue == null)
+					return (false, null);
+				bool calledMethod = TryCallSetNotificationForWaitCompletion(evalInfo, builderValue, value);
+				taskValue = TryGetTaskValue(evalInfo, builderValue);
+				if (!calledMethod && taskValue != null)
+					calledMethod = TryCallSetNotificationForWaitCompletion(evalInfo, taskValue, value);
+				if (!calledMethod)
+					return (false, null);
+				success = true;
+				return (true, taskValue);
+			}
+			finally {
+				builderValue?.Dispose();
+				if (!success)
+					taskValue?.Dispose();
+			}
+		}
+
+		static bool TryCallSetNotificationForWaitCompletion(DbgEvaluationInfo evalInfo, DbgDotNetValue builder, bool value) {
+			var appDomain = builder.Type.AppDomain;
+			var method = builder.Type.GetMethod(SetNotificationForWaitCompletion_Name, DmdSignatureCallingConvention.HasThis,
+				0, appDomain.System_Void, new[] { appDomain.System_Boolean }, throwOnError: false);
+			if ((object)method == null)
+				return false;
+
+			var runtime = evalInfo.Runtime.GetDotNetRuntime();
+			var result = runtime.Call(evalInfo, builder, method, new object[] { value }, DbgDotNetInvokeOptions.None);
+			result.Value?.Dispose();
+			// Return true even if it failed due to an exception or if it timed out or some other error
+			return true;
+		}
+
+		static DbgDotNetValue TryGetTaskValue(DbgEvaluationInfo evalInfo, DbgDotNetValue value) {
+			var result = TryGetTaskObjectId_TaskProperty(evalInfo, value);
+			Debug.Assert(result == null || !result.IsNull);
+			return result;
 		}
 	}
 }

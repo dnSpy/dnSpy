@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -125,8 +126,30 @@ namespace dnSpy.Contracts.Debugger {
 				return frames.Length == 0 ? null : frames[0];
 			}
 			finally {
-				if (stackWalker != null)
-					Process.DbgManager.Close(stackWalker);
+				stackWalker?.Close();
+			}
+		}
+
+		/// <summary>
+		/// Gets the first <paramref name="count"/> frames.
+		/// The returned frame count can be less than <paramref name="count"/> if there's not enough frames available.
+		/// </summary>
+		/// <param name="count">Max number of frames to return</param>
+		/// <returns></returns>
+		public DbgStackFrame[] GetFrames(int count) {
+			if (count < 0)
+				throw new ArgumentOutOfRangeException(nameof(count));
+			if (count == 0)
+				return Array.Empty<DbgStackFrame>();
+			DbgStackWalker stackWalker = null;
+			try {
+				stackWalker = CreateStackWalker();
+				var frames = stackWalker.GetNextStackFrames(count);
+				Debug.Assert(frames.Length <= count);
+				return frames;
+			}
+			finally {
+				stackWalker?.Close();
 			}
 		}
 

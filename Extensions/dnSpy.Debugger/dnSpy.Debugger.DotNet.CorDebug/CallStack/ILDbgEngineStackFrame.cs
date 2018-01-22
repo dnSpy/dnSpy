@@ -136,12 +136,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			engine.VerifyCorDebugThread();
 			var corFrame = CorFrame;
 			methodMetadataToken = (int)corFrame.Token;
-			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
-			if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
-				throw new InvalidOperationException();
-			var reflectionAppDomain = module.AppDomain;
-			genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
-			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+			var corModule = corFrame.Function?.Module;
+			if (corModule != null) {
+				module = engine.TryGetModule(corModule)?.GetReflectionModule() ?? throw new InvalidOperationException();
+				if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
+					throw new InvalidOperationException();
+				var reflectionAppDomain = module.AppDomain;
+				genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
+				genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+				return;
+			}
+
+			module = null;
+			methodMetadataToken = 0;
+			genericTypeArguments = Array.Empty<DmdType>();
+			genericMethodArguments = Array.Empty<DmdType>();
 		}
 
 		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, CorType[] typeArgs) {

@@ -38,11 +38,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			breakpoint = engine.CreateBreakpointForStepper(module, token, offset, OnBreakpointHit);
 		}
 
-		void OnBreakpointHit(CorThread thread) {
+		bool OnBreakpointHit(CorThread thread) {
 			if (this.thread == null || engine.TryGetThread(thread) == this.thread) {
 				var currentThread = engine.TryGetThread(thread) ?? throw new InvalidOperationException();
-				Hit?.Invoke(this, new DbgDotNetStepperBreakpointEventArgs(currentThread));
+				var e = new DbgDotNetStepperBreakpointEventArgs(currentThread);
+				Hit?.Invoke(this, e);
+				return e.Pause;
 			}
+			else
+				return false;
 		}
 
 		internal void Dispose() {

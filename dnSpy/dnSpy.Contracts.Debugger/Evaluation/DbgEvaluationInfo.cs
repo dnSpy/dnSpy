@@ -59,5 +59,13 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 			if (context.Runtime != frame.Runtime)
 				throw new ArgumentException();
 		}
+
+		/// <summary>
+		/// Closes <see cref="Frame"/> and <see cref="Context"/>
+		/// </summary>
+		public void Close() {
+			Context.Close();
+			Frame.Close();
+		}
 	}
 }
