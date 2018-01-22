@@ -248,11 +248,43 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanStepOutCurrentProcess => CanStepProcessCommand;
 		public override void StepOutCurrentProcess() => Step(DbgStepKind.StepOutProcess);
 
+		sealed class StepperState : IDisposable {
+			public DbgStepper ActiveStepper;
+
+			public void SetStepper(DbgStepper stepper) {
+				var oldStepper = ActiveStepper;
+				ActiveStepper = stepper;
+				oldStepper?.Cancel();
+				oldStepper?.Close();
+			}
+
+			public void Cancel(DbgStepper oldStepper) {
+				if (oldStepper == ActiveStepper) {
+					var stepper = ActiveStepper;
+					ActiveStepper = null;
+					stepper?.Cancel();
+					stepper?.Close();
+				}
+			}
+
+			public void Dispose() {
+				ActiveStepper?.Close();
+				ActiveStepper = null;
+			}
+		}
+
 		void Step(DbgStepKind step) {
 			var thread = dbgManager.Value.CurrentThread.Current;
 			if (thread == null)
 				return;
-			thread.CreateStepper().Step(step, autoClose: true);
+
+			var state = thread.Runtime.GetOrCreateData<StepperState>();
+			var stepper = thread.CreateStepper();
+			// This cancels the old stepper, if any. An old stepper could still be active if
+			// we eg. step out, but hit a BP before we step out, and then we step again.
+			state.SetStepper(stepper);
+			stepper.Closed += (s, e) => UI(() => state.Cancel(stepper));
+			stepper.Step(step, autoClose: true);
 		}
 
 		public override bool CanToggleCreateBreakpoint => textViewBreakpointService.Value.CanToggleCreateBreakpoint;
