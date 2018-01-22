@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Steppers {
 
 		readonly object lockObj;
 		readonly DbgManagerImpl dbgManager;
-		readonly DbgThreadImpl thread;
+		DbgThreadImpl thread;
 		readonly DbgEngineStepper engineStepper;
 		object stepperTag;
 		bool closeWhenStepComplete;
@@ -52,7 +52,6 @@ namespace dnSpy.Debugger.Steppers {
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			this.engineStepper = engineStepper ?? throw new ArgumentNullException(nameof(engineStepper));
-			thread.AddAutoClose(this);
 			engineStepper.StepComplete += DbgEngineStepper_StepComplete;
 		}
 
@@ -65,6 +64,7 @@ namespace dnSpy.Debugger.Steppers {
 			lock (lockObj) {
 				wasStepping = stepperTag != null && stepperTag == e.Tag;
 				stepperTag = null;
+				thread = (DbgThreadImpl)e.Thread ?? thread;
 			}
 			if (IsClosed)
 				return;
@@ -174,7 +174,6 @@ namespace dnSpy.Debugger.Steppers {
 		public override void Close() => Thread.Process.DbgManager.Close(this);
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
-			thread.RemoveAutoClose(this);
 			engineStepper.StepComplete -= DbgEngineStepper_StepComplete;
 			engineStepper.Close(dispatcher);
 		}
