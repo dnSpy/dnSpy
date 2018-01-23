@@ -63,6 +63,7 @@
     <Compile Include="Code\DbgDotNetDebugInfoServiceImpl.cs" />
     <Compile Include="Code\DbgDotNetDecompilerGuidProviderImpl.cs" />
     <Compile Include="Code\DbgDotNetDecompilerServiceImpl.cs" />
+    <Compile Include="Code\DbgMethodDebugInfoProvider.cs" />
     <Compile Include="Code\DotNetReferenceNavigator.cs" />
     <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />

@@ -21,21 +21,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.DotNet.Code;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
-using dnSpy.Decompiler.Utils;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineLanguageImpl : DbgEngineLanguage {
@@ -50,12 +48,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNodeProvider TypeVariablesProvider { get; }
 		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
 
-		readonly DbgMetadataService dbgMetadataService;
+		readonly DbgMethodDebugInfoProvider dbgMethodDebugInfoProvider;
 		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly IDecompiler decompiler;
 		readonly IDebuggerDisplayAttributeEvaluator debuggerDisplayAttributeEvaluator;
 
-		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMetadataService dbgMetadataService, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgAliasProvider dbgAliasProvider, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
+		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMethodDebugInfoProvider dbgMethodDebugInfoProvider, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgAliasProvider dbgAliasProvider, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
 			if (dbgModuleReferenceProvider == null)
 				throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
 			if (formatter == null)
@@ -70,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-			this.dbgMetadataService = dbgMetadataService ?? throw new ArgumentNullException(nameof(dbgMetadataService));
+			this.dbgMethodDebugInfoProvider = dbgMethodDebugInfoProvider ?? throw new ArgumentNullException(nameof(dbgMethodDebugInfoProvider));
 			this.expressionCompiler = expressionCompiler ?? throw new ArgumentNullException(nameof(expressionCompiler));
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			var expressionEvaluator = new DbgEngineExpressionEvaluatorImpl(dbgModuleReferenceProvider, expressionCompiler, dnILInterpreter, dbgAliasProvider, predefinedEvaluationErrorMessagesHelper);
@@ -83,17 +81,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			TypeVariablesProvider = new DbgEngineTypeVariablesProviderImpl(valueNodeFactory);
 			ValueNodeFactory = new DbgEngineValueNodeFactoryImpl(expressionEvaluator, valueNodeFactory, formatter);
 			debuggerDisplayAttributeEvaluator = expressionEvaluator;
-		}
-
-		static class DecompilerOutputImplCache {
-			static DecompilerOutputImpl instance;
-			public static DecompilerOutputImpl Alloc() => Interlocked.Exchange(ref instance, null) ?? new DecompilerOutputImpl();
-			public static void Free(ref DecompilerOutputImpl inst) {
-				var tmp = inst;
-				inst = null;
-				tmp.Clear();
-				instance = tmp;
-			}
 		}
 
 		readonly struct DbgLanguageDebugInfoKey {
@@ -177,66 +164,19 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgLanguageDebugInfo CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
-			const DbgLoadModuleOptions options = DbgLoadModuleOptions.AutoLoaded;
-			ModuleDef mdModule;
-			if (location.DbgModule is DbgModule dbgModule)
-				mdModule = dbgMetadataService.TryGetMetadata(dbgModule, options);
-			else {
-				dbgModule = null;
-				mdModule = dbgMetadataService.TryGetMetadata(location.Module, options);
-			}
-			Debug.Assert(mdModule != null);
-			if (mdModule == null)
+			var result = dbgMethodDebugInfoProvider.GetMethodDebugInfo(context.Runtime, decompiler, location, cancellationToken);
+			if (result.DebugInfoOrNull == null)
 				return null;
-			cancellationToken.ThrowIfCancellationRequested();
-
-			var method = mdModule.ResolveToken(location.Token) as MethodDef;
-			// Could be null if it's a dynamic assembly. It will get refreshed later and we'll get called again.
-			if (method == null)
-				return null;
-
-			if (!StateMachineHelpers.TryGetKickoffMethod(method, out var containingMethod))
-				containingMethod = method;
 
 			var runtime = context.Runtime.GetDotNetRuntime();
-			int methodToken, localVarSigTok;
-			if (dbgModule == null || !runtime.TryGetMethodToken(dbgModule, (int)location.Token, out methodToken, out localVarSigTok)) {
+			if (location.DbgModule == null || !runtime.TryGetMethodToken(location.DbgModule, (int)location.Token, out int methodToken, out int localVarSigTok)) {
 				methodToken = (int)location.Token;
-				localVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
+				localVarSigTok = (int)result.LocalVarSigTok;
 			}
-
-			var decContext = new DecompilationContext {
-				CancellationToken = cancellationToken,
-				CalculateBinSpans = true,
-			};
-			var methodDebugInfo = TryCompileAndGetDebugInfo(containingMethod, location.Token, decContext, cancellationToken);
-			if (methodDebugInfo == null && containingMethod != method) {
-				// The decompiler can't decompile the iterator / async method, try again,
-				// but only decompile the MoveNext method
-				methodDebugInfo = TryCompileAndGetDebugInfo(method, location.Token, decContext, cancellationToken);
-			}
-			if (methodDebugInfo == null && method.Body == null) {
-				var scope = new MethodDebugScope(new BinSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
-				methodDebugInfo = new MethodDebugInfo(null, -1, method, null, Array.Empty<SourceStatement>(), scope, null, null);
-			}
-			if (methodDebugInfo == null)
-				return null;
 
 			// We don't support EnC so the version is always 1
 			const int methodVersion = 1;
-			return new DbgLanguageDebugInfo(methodDebugInfo, methodToken, localVarSigTok, methodVersion, location.Offset);
-		}
-
-		MethodDebugInfo TryCompileAndGetDebugInfo(MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
-			var output = DecompilerOutputImplCache.Alloc();
-			output.Initialize(methodToken);
-			//TODO: Whenever the decompiler options change, we need to invalidate our cache and every
-			//		single DbgLanguageDebugInfo instance.
-			decompiler.Decompile(method, output, decContext);
-			var methodDebugInfo = output.TryGetMethodDebugInfo();
-			DecompilerOutputImplCache.Free(ref output);
-			cancellationToken.ThrowIfCancellationRequested();
-			return methodDebugInfo;
+			return new DbgLanguageDebugInfo(result.DebugInfoOrNull, methodToken, localVarSigTok, methodVersion, location.Offset);
 		}
 	}
 }

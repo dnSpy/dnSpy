@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Threading;
 using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
@@ -38,15 +39,17 @@ namespace dnSpy.Debugger.DotNet.Code {
 		readonly DbgModuleIdProviderService dbgModuleIdProviderService;
 		readonly DbgMetadataService dbgMetadataService;
 		readonly Lazy<IDocumentTabService> documentTabService;
-		readonly Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator;
+		readonly Lazy<DbgMethodDebugInfoProvider> dbgMethodDebugInfoProvider;
+		readonly Lazy<IDecompilerService> decompilerService;
 
 		[ImportingConstructor]
-		DbgDotNetDebugInfoServiceImpl(UIDispatcher uiDispatcher, DbgModuleIdProviderService dbgModuleIdProviderService, DbgMetadataService dbgMetadataService, Lazy<IDocumentTabService> documentTabService, Lazy<DotNetReferenceNavigator> dotNetReferenceNavigator) {
+		DbgDotNetDebugInfoServiceImpl(UIDispatcher uiDispatcher, DbgModuleIdProviderService dbgModuleIdProviderService, DbgMetadataService dbgMetadataService, Lazy<IDocumentTabService> documentTabService, Lazy<DbgMethodDebugInfoProvider> dbgMethodDebugInfoProvider, Lazy<IDecompilerService> decompilerService) {
 			this.uiDispatcher = uiDispatcher;
 			this.dbgModuleIdProviderService = dbgModuleIdProviderService;
 			this.dbgMetadataService = dbgMetadataService;
 			this.documentTabService = documentTabService;
-			this.dotNetReferenceNavigator = dotNetReferenceNavigator;
+			this.dbgMethodDebugInfoProvider = dbgMethodDebugInfoProvider;
+			this.decompilerService = decompilerService;
 		}
 
 		void UI(Action callback) => uiDispatcher.UI(callback);
@@ -98,18 +101,9 @@ namespace dnSpy.Debugger.DotNet.Code {
 			var key = new ModuleTokenId(moduleId.Value, token);
 			var info = methodDebugService.TryGetMethodDebugInfo(key);
 			if (info == null) {
-				var md = dbgMetadataService.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
-				var mdMethod = md?.ResolveToken(token) as MethodDef;
-				if (mdMethod == null)
-					return null;
-
-				tab.FollowReference(mdMethod);
-				dotNetReferenceNavigator.Value.GoToLocation(tab, mdMethod, key, refNavOffset);
-				documentViewer = tab.TryGetDocumentViewer();
-				methodDebugService = documentViewer.GetMethodDebugService();
-				info = methodDebugService.TryGetMethodDebugInfo(key);
-				if (info == null)
-					return null;
+				var cancellationToken = CancellationToken.None;
+				var result = dbgMethodDebugInfoProvider.Value.GetMethodDebugInfo(decompilerService.Value.Decompiler, module, token, cancellationToken);
+				info = result.DebugInfoOrNull;
 			}
 
 			return info;
