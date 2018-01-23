@@ -84,8 +84,10 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 			if (!isInMemory && !isDynamic) {
 				var s = section.Attribute<string>("Method");
-				if (!string.IsNullOrEmpty(s) && s != GetMethodAsString(moduleId, token.Value))
+				if (!string.IsNullOrEmpty(s) && s != GetMethodAsString(moduleId, token.Value)) {
+					location.Close();
 					return null;
+				}
 				var state = location.GetOrCreateData<SerializedState>();
 				state.MethodAsString = s;
 				state.Initialized = true;
