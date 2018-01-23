@@ -151,7 +151,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				CancellationToken = ctx.CancellationToken
 			};
 			var body = new ILBlock(new ILAstBuilder().Build(method, true, context));
-			new ILAstOptimizer().Optimize(context, body, out _, out _);
+			new ILAstOptimizer().Optimize(context, body, out _, out _, out _);
 
 			var connIds = new Dictionary<int, Action<XamlContext, XElement>>();
 			var infos = GetCaseBlocks(body);

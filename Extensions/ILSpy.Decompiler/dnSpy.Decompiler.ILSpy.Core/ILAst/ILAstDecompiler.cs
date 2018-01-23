@@ -99,12 +99,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			};
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
+			var stateMachineKind = StateMachineKind.None;
 			MethodDef inlinedMethod = null;
 			AsyncMethodDebugInfo asyncInfo = null;
 			string compilerName = null;
 			if (abortBeforeStep != null) {
 				var optimizer = new ILAstOptimizer();
-				optimizer.Optimize(context, ilMethod, out inlinedMethod, out asyncInfo, abortBeforeStep.Value);
+				optimizer.Optimize(context, ilMethod, out stateMachineKind, out inlinedMethod, out asyncInfo, abortBeforeStep.Value);
 				compilerName = optimizer.CompilerName;
 			}
 
@@ -146,7 +147,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
-			var builder = new MethodDebugInfoBuilder(settingsVersion, inlinedMethod ?? method, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
+			var builder = new MethodDebugInfoBuilder(settingsVersion, stateMachineKind, inlinedMethod ?? method, inlinedMethod != null ? method : null, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
 			builder.CompilerName = compilerName;
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);

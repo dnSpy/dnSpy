@@ -39,9 +39,19 @@ namespace dnSpy.Contracts.Decompiler {
 		public int DecompilerOptionsVersion { get; }
 
 		/// <summary>
+		/// Gets the state machine kind
+		/// </summary>
+		public StateMachineKind StateMachineKind { get; }
+
+		/// <summary>
 		/// Gets the method
 		/// </summary>
 		public MethodDef Method { get; }
+
+		/// <summary>
+		/// Gets the kickoff method or null
+		/// </summary>
+		public MethodDef KickoffMethod { get; }
 
 		/// <summary>
 		/// Gets the parameters. There could be missing parameters, in which case use <see cref="Method"/>. This array isn't sorted.
@@ -78,17 +88,20 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="compilerName">Compiler name (<see cref="PredefinedCompilerNames"/>) or null</param>
 		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
+		/// <param name="stateMachineKind">State machine kind</param>
 		/// <param name="method">Method</param>
+		/// <param name="kickoffMethod">Kickoff method or null</param>
 		/// <param name="parameters">Parameters or null</param>
 		/// <param name="statements">Statements</param>
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
 		/// <param name="asyncMethodDebugInfo">Async info or null</param>
-		public MethodDebugInfo(string compilerName, int decompilerOptionsVersion, MethodDef method, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
+		public MethodDebugInfo(string compilerName, int decompilerOptionsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
 			CompilerName = compilerName;
 			Method = method ?? throw new ArgumentNullException(nameof(method));
+			KickoffMethod = kickoffMethod;
 			Parameters = parameters ?? Array.Empty<SourceParameter>();
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
@@ -244,6 +257,26 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 			return dict;
 		}
+	}
+
+	/// <summary>
+	/// State machine kind
+	/// </summary>
+	public enum StateMachineKind {
+		/// <summary>
+		/// Not a state machine
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Iterator method state machine
+		/// </summary>
+		IteratorMethod,
+
+		/// <summary>
+		/// Async method state machine
+		/// </summary>
+		AsyncMethod,
 	}
 
 	struct SmallList<T> {
