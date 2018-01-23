@@ -601,8 +601,15 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return thread;
 		}
 
-		static string GetStepFilterMessage(DmdMemberInfo member) {
-			var memberName = member.DeclaringType.FullName + "." + member.Name;
+		string GetStepFilterMessage(DmdMemberInfo member) {
+			var type = member.DeclaringType;
+			if (type.IsConstructedGenericType)
+				type = type.GetGenericTypeDefinition();
+			var typeName = type.FullName;
+			int index = typeName.IndexOf('`');
+			if (index >= 0)
+				typeName = typeName.Substring(0, index);
+			var memberName = typeName + "." + member.Name;
 
 			switch (member) {
 			case DmdPropertyInfo property:
