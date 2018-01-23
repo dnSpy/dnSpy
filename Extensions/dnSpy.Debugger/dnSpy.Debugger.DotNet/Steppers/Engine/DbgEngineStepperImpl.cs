@@ -368,14 +368,83 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (result.DebugInfoOrNull != null) {
 				if (!frame.TryGetLocation(out var module, out var token, out var offset))
 					throw new InvalidOperationException();
-				var currentStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
-				if (currentStatement == null) {
-					var ranges = CreateStepRanges(result.DebugInfoOrNull.GetUnusedRanges());
-					if (ranges.Length != 0)
-						return stepper.StepOverAsync(frame, ranges);
+				bool skipMethod = offset == 0 && IsIgnoredIteratorStateMachineMethod(result.DebugInfoOrNull.Method);
+				if (!skipMethod) {
+					var currentStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
+					if (currentStatement == null) {
+						var ranges = CreateStepRanges(result.DebugInfoOrNull.GetUnusedRanges());
+						if (ranges.Length != 0)
+							return stepper.StepOverAsync(frame, ranges);
+					}
+					return Task.FromResult(thread);
 				}
 			}
+
+			var binSpans = TryCreateMethodBodySpans(frame);
+			if (binSpans != null) {
+				var ranges = CreateStepRanges(binSpans);
+				if (ranges.Length != 0)
+					return stepper.StepOverAsync(frame, ranges);
+			}
 			return Task.FromResult(thread);
+		}
+
+		//TODO: This method should return false if iterator methods aren't decompiled (eg. option is disabled or language doesn't support it, eg. IL)
+		static bool IsIgnoredIteratorStateMachineMethod(MethodDef method) {
+			var declType = method.DeclaringType;
+			if (declType.DeclaringType == null)
+				return false;
+			if (!declType.IsDefined(utf8System_Runtime_CompilerServices, utf8CompilerGeneratedAttribute))
+				return false;
+
+			bool result = false;
+			foreach (var ii in declType.Interfaces) {
+				if (ii.Interface.FullName == "System.Collections.IEnumerator") {
+					result = true;
+					break;
+				}
+			}
+			if (!result)
+				return false;
+
+			if (method.IsVirtual) {
+				// Ignore everything except MoveNext
+				if (method.Name == utf8MoveNext)
+					return false;
+				foreach (var ovr in method.Overrides) {
+					if (ovr.MethodDeclaration.Name == utf8MoveNext)
+						return false;
+				}
+			}
+			return true;
+		}
+		static readonly UTF8String utf8MoveNext = new UTF8String("MoveNext");
+		static readonly UTF8String utf8System_Runtime_CompilerServices = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String utf8CompilerGeneratedAttribute = new UTF8String("CompilerGeneratedAttribute");
+
+		sealed class MethodBinSpanState {
+			public BinSpan[] BodyRange;
+		}
+
+		BinSpan[] TryCreateMethodBodySpans(DbgDotNetEngineStepperFrameInfo frame) {
+			if (!frame.TryGetLocation(out var module, out var token, out var offset))
+				return null;
+			DbgEvaluationInfo evalInfo = null;
+			try {
+				evalInfo = CreateEvaluationInfo(frame.Thread);
+				var method = runtime.GetFrameMethod(evalInfo);
+				if ((object)method == null)
+					return null;
+				var state = method.GetOrCreateData<MethodBinSpanState>();
+				if (state.BodyRange == null) {
+					var body = method.GetMethodBody();
+					state.BodyRange = new BinSpan[] { new BinSpan(0, (uint)body.GetILAsByteArray().Length) };
+				}
+				return state.BodyRange;
+			}
+			finally {
+				evalInfo?.Close();
+			}
 		}
 
 		async Task StepIntoAsync(object tag) {
@@ -459,93 +528,77 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		async Task<DbgThread> StepIntoCoreAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			runtime.Dispatcher.VerifyAccess();
-			var thread = await StepIntoSkipPropsAndOpersIfNeededAsync(frame);
-
-			frame = stepper.TryGetFrameInfo(thread);
-			Debug.Assert(frame != null);
-			if (frame == null)
-				return thread;
-			if (!frame.TryGetLocation(out var module, out var token, out var offset))
+			var origResult = await GetStepRangesAsync(frame, returnValues: true);
+			if (!frame.TryGetLocation(out var origModule, out var origToken, out _))
 				throw new InvalidOperationException();
-
-			// If offset isn't 0 we never stepped into a method
-			if (offset != 0)
-				return thread;
-
-			// Offset is 0, but it doesn't mean we stepped into a method, it could be a loop.
-			// However, kickoff methods shouldn't contain any loops so if we're in a kickoff method,
-			// we stepped into it.
-
-			var result = await GetStepRangesAsync(frame, returnValues: false);
-			if (debuggerSettings.AsyncDebugging && result.DebugInfoOrNull != null && result.StateMachineDebugInfoOrNull?.AsyncInfo != null) {
-				// Set a BP in state machine's MoveNext() method and let the process run until the BP hits.
-				var stepIntoTask = SetStepIntoBreakpoint(thread, module, result.StateMachineDebugInfoOrNull.Method.MDToken.Raw, 0);
-				stepper.Continue();
-				thread = await stepIntoTask;
-				ClearStepIntoState();
+			DbgThread thread;
+			var prevFrame = frame;
+			bool inSameFrame;
+			stepper.CollectReturnValues(frame, origResult.StatementInstructions);
+			for (;;) {
+				thread = await StepIntoCoreAsync(frame, origResult.DebugInfoOrNull, origResult.StatementRanges);
 				frame = stepper.TryGetFrameInfo(thread);
 				Debug.Assert(frame != null);
 				if (frame == null)
 					return thread;
-				thread = await StepOverHiddenInstructionsAsync(frame);
-			}
-
-			return thread;
-		}
-
-		async Task<DbgThread> StepIntoSkipPropsAndOpersIfNeededAsync(DbgDotNetEngineStepperFrameInfo frame) {
-			runtime.Dispatcher.VerifyAccess();
-			GetStepRangesAsyncResult result;
-			if (!debuggerSettings.StepOverPropertiesAndOperators) {
-				result = await GetStepRangesAsync(frame, returnValues: false);
-				return await StepIntoCoreAsync(result.Frame, result.DebugInfoOrNull, result.StatementRanges);
-			}
-			else {
-				result = await GetStepRangesAsync(frame, returnValues: true);
-				if (!frame.TryGetLocation(out var origModule, out var origToken, out _))
+				if (!frame.TryGetLocation(out var module, out var token, out uint offset))
 					throw new InvalidOperationException();
-				DbgThread thread;
-				var prevFrame = frame;
-				bool inSameFrame;
-				stepper.CollectReturnValues(frame, result.StatementInstructions);
-				for (;;) {
-					thread = await StepIntoCoreAsync(frame, result.DebugInfoOrNull, result.StatementRanges);
-					frame = stepper.TryGetFrameInfo(thread);
-					Debug.Assert(frame != null);
-					if (frame == null)
-						return thread;
-					if (!frame.TryGetLocation(out var module, out var token, out uint offset))
-						throw new InvalidOperationException();
 
-					// Check if we didn't step into a new method. frame.Equals() isn't always 100% reliable
-					// so we also check the offset. If it's not 0, we didn't step into it.
-					inSameFrame = origModule == module && origToken == token && (offset != 0 || prevFrame.Equals(frame));
-					if (inSameFrame)
-						break;
-
-					if (!IsPropertyOrOperatorMethod(thread, out var member))
-						break;
-					thread.Runtime.Process.DbgManager.WriteMessage(PredefinedDbgManagerMessageKinds.StepFilter, GetStepFilterMessage(member));
-
-					thread = await stepper.StepOutAsync(frame);
+				// If we're at the start of the method we may need to skip the first hidden instructions.
+				// If it's an async kickoff method, we need to set a BP in MoveNext() and continue the process.
+				if (offset == 0) {
+					if (debuggerSettings.AsyncDebugging) {
+						var newResult = await GetStepRangesAsync(frame, returnValues: false);
+						if (newResult.DebugInfoOrNull != null && newResult.StateMachineDebugInfoOrNull?.AsyncInfo != null) {
+							var stepIntoTask = SetStepIntoBreakpoint(thread, module, newResult.StateMachineDebugInfoOrNull.Method.MDToken.Raw, 0);
+							stepper.Continue();
+							thread = await stepIntoTask;
+							ClearStepIntoState();
+							frame = stepper.TryGetFrameInfo(thread);
+							Debug.Assert(frame != null);
+							if (frame == null)
+								return thread;
+						}
+					}
+					thread = await StepOverHiddenInstructionsAsync(frame);
 					frame = stepper.TryGetFrameInfo(thread);
 					Debug.Assert(frame != null);
 					if (frame == null)
 						return thread;
 					if (!frame.TryGetLocation(out module, out token, out offset))
 						throw new InvalidOperationException();
-					Debug.Assert(origModule == module && origToken == token);
-					if (origModule != module || origToken != token)
-						break;
-					if (!Contains(result.StatementRanges, offset))
-						break;
 				}
+
+				// Check if we didn't step into a new method. frame.Equals() isn't always 100% reliable
+				// so we also check the offset. If it's not 0, we didn't step into it.
+				inSameFrame = origModule == module && origToken == token && (offset != 0 || prevFrame.Equals(frame));
+				if (inSameFrame && !Contains(origResult.StatementRanges, offset))
+					break;
+
 				if (!inSameFrame) {
-					// Clear return values. These should only be shown if we're still in the same frame.
-					stepper.ClearReturnValues();
+					if (debuggerSettings.StepOverPropertiesAndOperators && IsPropertyOrOperatorMethod(thread, out var member)) {
+						thread.Runtime.Process.DbgManager.WriteMessage(PredefinedDbgManagerMessageKinds.StepFilter, GetStepFilterMessage(member));
+						thread = await stepper.StepOutAsync(frame);
+						frame = stepper.TryGetFrameInfo(thread);
+						Debug.Assert(frame != null);
+						if (frame == null)
+							return thread;
+						if (!frame.TryGetLocation(out module, out token, out offset))
+							throw new InvalidOperationException();
+						if (origModule != module || origToken != token)
+							break;
+					}
 				}
-				return thread;
+
+				inSameFrame = origModule == module && origToken == token && (offset != 0 || prevFrame.Equals(frame));
+				if (!inSameFrame || !Contains(origResult.StatementRanges, offset))
+					break;
 			}
+			if (!inSameFrame) {
+				// Clear return values. These should only be shown if we're still in the same frame.
+				stepper.ClearReturnValues();
+			}
+			return thread;
 		}
 
 		static string GetStepFilterMessage(DmdMemberInfo member) {
