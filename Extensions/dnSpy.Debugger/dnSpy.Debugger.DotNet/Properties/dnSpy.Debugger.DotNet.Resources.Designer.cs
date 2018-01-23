@@ -241,6 +241,24 @@ namespace dnSpy.Debugger.DotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Step into: Stepping over operator &apos;{0}&apos;..
+        /// </summary>
+        public static string StepFilter_SteppingOverOperator {
+            get {
+                return ResourceManager.GetString("StepFilter_SteppingOverOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step into: Stepping over property &apos;{0}&apos;..
+        /// </summary>
+        public static string StepFilter_SteppingOverProperty {
+            get {
+                return ResourceManager.GetString("StepFilter_SteppingOverProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown variable or object ID.
         /// </summary>
         public static string UnknownVariableOrObjectId {

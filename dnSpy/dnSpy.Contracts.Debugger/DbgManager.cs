@@ -250,6 +250,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// An error message that should be shown to the user
 		/// </summary>
 		public const string ErrorUser = nameof(ErrorUser);
+
+		/// <summary>
+		/// Messages by the stepper
+		/// </summary>
+		public const string StepFilter = nameof(StepFilter);
 	}
 
 	/// <summary>

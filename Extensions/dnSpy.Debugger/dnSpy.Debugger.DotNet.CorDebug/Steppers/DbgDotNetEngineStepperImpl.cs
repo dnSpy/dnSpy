@@ -68,6 +68,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				return module != null && token != 0 && offs != null;
 			}
 
+			public override bool Equals(DbgDotNetEngineStepperFrameInfo other) {
+				var otherImpl = (DbgDotNetEngineStepperFrameInfoImpl)other;
+				return otherImpl.CorFrame.StackStart == CorFrame.StackStart &&
+					otherImpl.CorFrame.StackEnd == CorFrame.StackEnd;
+			}
+
 			static uint? GetILOffset(CorFrame frame) {
 				var ip = frame.ILFrameIP;
 				if (ip.IsExact || ip.IsApproximate)
@@ -135,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 						if (reflectionModule != null) {
 							if (ReturnValues.Count >= maxReturnValues) {
 								TooManyReturnValues = true;
-								RemoveAllBreakpoints();
+								RemoveAllBreakpointsCore();
 								return;
 							}
 
@@ -164,7 +170,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				return res;
 			}
 
-			void RemoveAllBreakpoints() {
+			public void ClearReturnValues() {
+				RemoveAllBreakpointsCore();
+				foreach (var info in TakeOwnershipOfReturnValues())
+					info.Value.Dispose();
+			}
+
+			void RemoveAllBreakpointsCore() {
 				foreach (var rvState in rvStates) {
 					foreach (var kv in rvState.CallSiteInfos) {
 						foreach (var bp in kv.Value.Breakpoints)
@@ -174,15 +186,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				}
 			}
 
-			void ClearReturnValues() {
+			void ClearReturnValuesCore() {
 				foreach (var info in ReturnValues)
 					info.Value.Dispose();
 				ReturnValues.Clear();
 			}
 
 			public void Dispose() {
-				RemoveAllBreakpoints();
-				ClearReturnValues();
+				RemoveAllBreakpointsCore();
+				ClearReturnValuesCore();
 			}
 		}
 
@@ -209,6 +221,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			public SessionImpl(object tag) : base(tag) { }
 			public ReturnValuesCollection GetOrCreateReturnValuesCollection(DbgEngineImpl engine, int maxReturnValues) =>
 				returnValuesCollection ?? (returnValuesCollection = new ReturnValuesCollection(engine, maxReturnValues));
+			public void ClearReturnValues() => returnValuesCollection?.ClearReturnValues();
 			public DbgDotNetReturnValueInfo[] TakeOwnershipOfReturnValues() => returnValuesCollection?.TakeOwnershipOfReturnValues() ?? Array.Empty<DbgDotNetReturnValueInfo>();
 			public void Dispose() => returnValuesCollection?.Dispose();
 		}
@@ -359,6 +372,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 					rvState.CallSiteInfos.Add(instrOffs, callSiteInfo);
 				}
 			}
+		}
+
+		public override void ClearReturnValues() {
+			engine.VerifyCorDebugThread();
+			session?.ClearReturnValues();
 		}
 
 		DmdMethodBase GetMethod(CorFrame frame, int methodMetadataToken, ref DmdModule reflectionModule, ref IList<DmdType> genericTypeArguments, ref IList<DmdType> genericMethodArguments) {

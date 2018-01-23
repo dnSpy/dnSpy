@@ -117,6 +117,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		public abstract void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions);
 
 		/// <summary>
+		/// Clears all return values
+		/// </summary>
+		public abstract void ClearReturnValues();
+
+		/// <summary>
 		/// Creates a breakpoint
 		/// </summary>
 		/// <param name="thread">Thread or null to match any thread</param>

@@ -40,5 +40,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// <param name="offset">IL offset</param>
 		/// <returns></returns>
 		public abstract bool TryGetLocation(out DbgModule module, out uint token, out uint offset);
+
+		/// <summary>
+		/// Checks if this frame is the same as another frame <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Other frame</param>
+		/// <returns></returns>
+		public abstract bool Equals(DbgDotNetEngineStepperFrameInfo other);
 	}
 }

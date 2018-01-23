@@ -1348,6 +1348,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Step over properties and operators.
+        /// </summary>
+        public static string DbgSettings_StepOverPropertiesAndOperators {
+            get {
+                return ResourceManager.GetString("DbgSettings_StepOverPropertiesAndOperators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Suppress JIT optimization on module load.
         /// </summary>
         public static string DbgSettings_SuppressJITOptimization {

@@ -71,21 +71,32 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			internal ThreadMirror MonoThread { get; }
 
 			readonly DbgEngineImpl engine;
+			readonly MDS.StackFrame frame;
+			readonly MethodMirror frameMethod;
 
 			public DbgDotNetEngineStepperFrameInfoImpl(DbgEngineImpl engine, DbgThread thread) {
 				this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 				MonoThread = engine.GetThread(thread);
+				frame = GetFrame(MonoThread);
+				frameMethod = frame?.Method;
 			}
 
 			public override bool TryGetLocation(out DbgModule module, out uint token, out uint offset) {
 				engine.VerifyMonoDebugThread();
-				var frame = GetFrame(MonoThread);
-				module = engine.TryGetModule(frame?.Method?.DeclaringType.Module);
-				token = (uint)(frame?.Method?.MetadataToken ?? 0);
+				module = engine.TryGetModule(frameMethod?.DeclaringType.Module);
+				token = (uint)(frameMethod?.MetadataToken ?? 0);
 				var offs = frame?.ILOffset;
 				offset = (uint)(offs ?? 0);
 				return module != null && token != 0 && offs != null;
+			}
+
+			public override bool Equals(DbgDotNetEngineStepperFrameInfo other) {
+				var otherImpl = (DbgDotNetEngineStepperFrameInfoImpl)other;
+				// There's no address so this isn't 100% reliable
+				return otherImpl.frameMethod == frameMethod &&
+					otherImpl.frame?.IsDebuggerInvoke == frame?.IsDebuggerInvoke &&
+					otherImpl.frame?.IsNativeTransition == frame?.IsNativeTransition;
 			}
 		}
 
@@ -193,6 +204,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 		}
 
 		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions) { }
+		public override void ClearReturnValues() { }
 		public override void OnStepComplete() { }
 
 		public override void OnCanceled(SessionBase session) {

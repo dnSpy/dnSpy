@@ -186,5 +186,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Async debugging (step over await statements, step out of async methods)
 		/// </summary>
 		public abstract bool AsyncDebugging { get; set; }
+
+		/// <summary>
+		/// Step over properties and operators
+		/// </summary>
+		public abstract bool StepOverPropertiesAndOperators { get; set; }
 	}
 }

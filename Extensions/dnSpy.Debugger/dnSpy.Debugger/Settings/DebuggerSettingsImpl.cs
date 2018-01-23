@@ -581,6 +581,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool asyncDebugging = true;
 
+		public override bool StepOverPropertiesAndOperators {
+			get {
+				lock (lockObj)
+					return stepOverPropertiesAndOperators;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = stepOverPropertiesAndOperators != value;
+					stepOverPropertiesAndOperators = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(StepOverPropertiesAndOperators));
+					OnModified();
+				}
+			}
+		}
+		bool stepOverPropertiesAndOperators = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -613,6 +632,7 @@ namespace dnSpy.Debugger.Settings {
 			other.ShowOnlyPublicMembers = ShowOnlyPublicMembers;
 			other.ShowRawLocals = ShowRawLocals;
 			other.AsyncDebugging = AsyncDebugging;
+			other.StepOverPropertiesAndOperators = StepOverPropertiesAndOperators;
 			return other;
 		}
 	}
@@ -659,6 +679,7 @@ namespace dnSpy.Debugger.Settings {
 			ShowOnlyPublicMembers = sect.Attribute<bool?>(nameof(ShowOnlyPublicMembers)) ?? ShowOnlyPublicMembers;
 			ShowRawLocals = sect.Attribute<bool?>(nameof(ShowRawLocals)) ?? ShowRawLocals;
 			AsyncDebugging = sect.Attribute<bool?>(nameof(AsyncDebugging)) ?? AsyncDebugging;
+			StepOverPropertiesAndOperators = sect.Attribute<bool?>(nameof(StepOverPropertiesAndOperators)) ?? StepOverPropertiesAndOperators;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -696,6 +717,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(ShowOnlyPublicMembers), ShowOnlyPublicMembers);
 			sect.Attribute(nameof(ShowRawLocals), ShowRawLocals);
 			sect.Attribute(nameof(AsyncDebugging), AsyncDebugging);
+			sect.Attribute(nameof(StepOverPropertiesAndOperators), StepOverPropertiesAndOperators);
 		}
 	}
 }
