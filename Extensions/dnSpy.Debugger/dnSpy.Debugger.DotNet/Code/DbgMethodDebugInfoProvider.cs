@@ -34,9 +34,11 @@ using dnSpy.Decompiler.Utils;
 namespace dnSpy.Debugger.DotNet.Code {
 	struct MethodDebugInfoResult {
 		public MethodDebugInfo DebugInfoOrNull { get; }
+		public MethodDebugInfo StateMachineDebugInfoOrNull { get; }
 		public uint LocalVarSigTok { get; }
-		public MethodDebugInfoResult(MethodDebugInfo debugInfo, uint localVarSigTok) {
+		public MethodDebugInfoResult(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull, uint localVarSigTok) {
 			DebugInfoOrNull = debugInfo;
+			StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
 			LocalVarSigTok = localVarSigTok;
 		}
 	}
@@ -157,20 +159,20 @@ namespace dnSpy.Debugger.DotNet.Code {
 				CancellationToken = cancellationToken,
 				CalculateBinSpans = true,
 			};
-			var methodDebugInfo = TryCompileAndGetDebugInfo(decompiler, containingMethod, token, decContext, cancellationToken);
-			if (methodDebugInfo == null && containingMethod != method) {
+			var info = TryCompileAndGetDebugInfo(decompiler, containingMethod, token, decContext, cancellationToken);
+			if (info.debugInfo == null && containingMethod != method) {
 				// The decompiler can't decompile the iterator / async method, try again,
 				// but only decompile the MoveNext method
-				methodDebugInfo = TryCompileAndGetDebugInfo(decompiler, method, token, decContext, cancellationToken);
+				info = TryCompileAndGetDebugInfo(decompiler, method, token, decContext, cancellationToken);
 			}
-			if (methodDebugInfo == null && method.Body == null) {
+			if (info.debugInfo == null && method.Body == null) {
 				var scope = new MethodDebugScope(new BinSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
-				methodDebugInfo = new MethodDebugInfo(null, -1, method, null, Array.Empty<SourceStatement>(), scope, null, null);
+				info = (new MethodDebugInfo(null, -1, StateMachineKind.None, method, null, null, Array.Empty<SourceStatement>(), scope, null, null), null);
 			}
-			if (methodDebugInfo == null)
+			if (info.debugInfo == null)
 				return default;
 
-			return new MethodDebugInfoResult(methodDebugInfo, localVarSigTok);
+			return new MethodDebugInfoResult(info.debugInfo, info.stateMachineDebugInfoOrNull, localVarSigTok);
 		}
 
 		static class DecompilerOutputImplCache {
@@ -184,16 +186,16 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		MethodDebugInfo TryCompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
+		(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryCompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
 			var output = DecompilerOutputImplCache.Alloc();
 			output.Initialize(methodToken);
 			//TODO: Whenever the decompiler options change, we need to invalidate our cache and every
 			//		class instance created by callers
 			decompiler.Decompile(method, output, decContext);
-			var methodDebugInfo = output.TryGetMethodDebugInfo();
+			var info = output.TryGetMethodDebugInfo();
 			DecompilerOutputImplCache.Free(ref output);
 			cancellationToken.ThrowIfCancellationRequested();
-			return methodDebugInfo;
+			return info;
 		}
 	}
 }

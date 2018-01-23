@@ -54,33 +54,33 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		void UI(Action callback) => uiDispatcher.UI(callback);
 
-		public override Task<MethodDebugInfo> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset) {
+		public override Task<GetMethodDebugInfoResult> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			var tcs = new TaskCompletionSource<MethodDebugInfo>();
+			var tcs = new TaskCompletionSource<GetMethodDebugInfoResult>();
 			UI(() => GetMethodDebugInfo_UI(module, token, offset, tcs));
 			return tcs.Task;
 		}
 
-		void GetMethodDebugInfo_UI(DbgModule module, uint token, uint offset, TaskCompletionSource<MethodDebugInfo> tcs) {
+		void GetMethodDebugInfo_UI(DbgModule module, uint token, uint offset, TaskCompletionSource<GetMethodDebugInfoResult> tcs) {
 			uiDispatcher.VerifyAccess();
 			try {
-				var debugInfo = TryGetMethodDebugInfo_UI(module, token, offset);
-				tcs.SetResult(debugInfo);
+				var info = TryGetMethodDebugInfo_UI(module, token, offset);
+				tcs.SetResult(info);
 			}
 			catch (Exception ex) {
 				tcs.SetException(ex);
 			}
 		}
 
-		MethodDebugInfo TryGetMethodDebugInfo_UI(DbgModule module, uint token, uint offset) {
+		GetMethodDebugInfoResult TryGetMethodDebugInfo_UI(DbgModule module, uint token, uint offset) {
 			uiDispatcher.VerifyAccess();
 			var tab = documentTabService.Value.GetOrCreateActiveTab();
 			var documentViewer = tab.TryGetDocumentViewer();
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var moduleId = dbgModuleIdProviderService.GetModuleId(module);
 			if (moduleId == null)
-				return null;
+				return default;
 
 			uint refNavOffset;
 			if (offset == DbgDotNetInstructionOffsetConstants.EPILOG) {
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				if (mod?.ResolveToken(token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
 					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 				else
-					return null;
+					return default;
 			}
 			else if (offset == DbgDotNetInstructionOffsetConstants.PROLOG) {
 				refNavOffset = DotNetReferenceNavigator.PROLOG;
@@ -100,13 +100,15 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 			var key = new ModuleTokenId(moduleId.Value, token);
 			var info = methodDebugService.TryGetMethodDebugInfo(key);
+			MethodDebugInfo stateMachineDebugInfoOrNull = null;
 			if (info == null) {
 				var cancellationToken = CancellationToken.None;
 				var result = dbgMethodDebugInfoProvider.Value.GetMethodDebugInfo(decompilerService.Value.Decompiler, module, token, cancellationToken);
 				info = result.DebugInfoOrNull;
+				stateMachineDebugInfoOrNull = result.StateMachineDebugInfoOrNull;
 			}
 
-			return info;
+			return new GetMethodDebugInfoResult(info, stateMachineDebugInfoOrNull);
 		}
 	}
 }

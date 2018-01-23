@@ -22,7 +22,16 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Debugger.DotNet.Code {
+	readonly struct GetMethodDebugInfoResult {
+		public MethodDebugInfo DebugInfoOrNull { get; }
+		public MethodDebugInfo StateMachineDebugInfoOrNull { get; }
+		public GetMethodDebugInfoResult(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) {
+			DebugInfoOrNull = debugInfo;
+			StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
+		}
+	}
+
 	abstract class DbgDotNetDebugInfoService {
-		public abstract Task<MethodDebugInfo> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset);
+		public abstract Task<GetMethodDebugInfoResult> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset);
 	}
 }

@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		readonly IDbgDotNetRuntime runtime;
 		readonly DbgDotNetEngineStepper stepper;
 		ReturnToAwaiterState returnToAwaiterState;
+		StepIntoState stepIntoState;
 
 		sealed class ReturnToAwaiterState {
 			public DbgDotNetStepperBreakpoint breakpoint;
@@ -113,10 +114,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				return null;
 			if ((runtime.Features & DbgDotNetRuntimeFeatures.NoAsyncStepObjectId) != 0)
 				return null;
-			returnToAwaiterState = new ReturnToAwaiterState {
-				breakpoint = stepper.CreateBreakpoint(threadOrNull, module, methodToken, setResultOffset),
-				taskCompletionSource = new TaskCompletionSource<DbgThread>(),
-			};
+			if (returnToAwaiterState == null)
+				returnToAwaiterState = new ReturnToAwaiterState();
+			returnToAwaiterState.breakpoint = stepper.CreateBreakpoint(threadOrNull, module, methodToken, setResultOffset);
+			returnToAwaiterState.taskCompletionSource = new TaskCompletionSource<DbgThread>();
 			var tcs = returnToAwaiterState.taskCompletionSource;
 			returnToAwaiterState.breakpoint.Hit += (s, e) => {
 				if (returnToAwaiterState?.taskCompletionSource == tcs) {
@@ -153,10 +154,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				runtime.Dispatcher.VerifyAccess();
 				ClearReturnToAwaiterState();
 				var module = method.Module.GetDebuggerModule() ?? throw new InvalidOperationException();
-				returnToAwaiterState = new ReturnToAwaiterState {
-					breakpoint = stepper.CreateBreakpoint(null, module, (uint)method.MetadataToken, 0),
-					taskCompletionSource = new TaskCompletionSource<DbgThread>(),
-				};
+				if (returnToAwaiterState == null)
+					returnToAwaiterState = new ReturnToAwaiterState();
+				returnToAwaiterState.breakpoint = stepper.CreateBreakpoint(null, module, (uint)method.MetadataToken, 0);
+				returnToAwaiterState.taskCompletionSource = new TaskCompletionSource<DbgThread>();
 
 				if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) != 0)
 					returnToAwaiterState.taskObjectId = runtime.CreateObjectId(taskValue, 0);
@@ -231,22 +232,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 
 			// Step over any hidden instructions so we end up on a statement
-
 			var newFrame = stepper.TryGetFrameInfo(thread);
 			Debug.Assert(newFrame != null);
-			if (newFrame != null && newFrame.TryGetLocation(out var newModule, out var newToken, out var newOffset)) {
-				var result = await GetStepRangesAsync(newFrame, returnValues: false);
-				if (result.DebugInfoOrNull != null) {
-					var newStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(newOffset);
-					// If we're not on an existing statement (very likely), we need to step over the
-					// hidden instructions until we reach the next statement.
-					if (newStatement == null) {
-						var ranges = CreateStepRanges(result.DebugInfoOrNull.GetUnusedRanges());
-						if (ranges.Length != 0)
-							thread = await stepper.StepOverAsync(result.Frame, ranges);
-					}
-				}
-			}
+			if (newFrame != null)
+				thread = await StepOverHiddenInstructionsAsync(newFrame);
 
 			return thread;
 		}
@@ -324,7 +313,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		void RaiseStepComplete(object tag, string error, bool forciblyCanceled = false) {
 			runtime.Dispatcher.VerifyAccess();
-			SetAsyncStepOverState(null);
+			CleanUp();
 			if (IsClosed)
 				return;
 			var thread = CurrentThread.IsClosed ? null : CurrentThread;
@@ -368,6 +357,27 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
+		async Task<DbgThread> StepOverHiddenInstructionsAsync(DbgDotNetEngineStepperFrameInfo frame) {
+			runtime.Dispatcher.VerifyAccess();
+			var result = await GetStepRangesAsync(frame, returnValues: false);
+			return await StepOverHiddenInstructionsAsync(frame, result);
+		}
+
+		Task<DbgThread> StepOverHiddenInstructionsAsync(DbgDotNetEngineStepperFrameInfo frame, GetStepRangesAsyncResult result) {
+			var thread = frame.Thread;
+			if (result.DebugInfoOrNull != null) {
+				if (!frame.TryGetLocation(out var module, out var token, out var offset))
+					throw new InvalidOperationException();
+				var currentStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
+				if (currentStatement == null) {
+					var ranges = CreateStepRanges(result.DebugInfoOrNull.GetUnusedRanges());
+					if (ranges.Length != 0)
+						return stepper.StepOverAsync(frame, ranges);
+				}
+			}
+			return Task.FromResult(thread);
+		}
+
 		async Task StepIntoAsync(object tag) {
 			runtime.Dispatcher.VerifyAccess();
 			Debug.Assert(stepper.Session == null);
@@ -409,7 +419,81 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
+		sealed class StepIntoState {
+			public DbgDotNetStepperBreakpoint breakpoint;
+			public TaskCompletionSource<DbgThread> taskCompletionSource;
+		}
+
+		void ClearStepIntoState() => ClearStepIntoBreakpoint();
+
+		void ClearStepIntoBreakpoint() {
+			runtime.Dispatcher.VerifyAccess();
+			if (stepIntoState == null)
+				return;
+			if (stepIntoState.breakpoint != null) {
+				stepper.RemoveBreakpoints(new[] { stepIntoState.breakpoint });
+				stepIntoState.breakpoint = null;
+			}
+			stepIntoState.taskCompletionSource?.TrySetCanceled();
+			stepIntoState.taskCompletionSource = null;
+		}
+
+		Task<DbgThread> SetStepIntoBreakpoint(DbgThread thread, DbgModule module, uint token, uint offset) {
+			runtime.Dispatcher.VerifyAccess();
+			ClearStepIntoBreakpoint();
+			if (stepIntoState == null)
+				stepIntoState = new StepIntoState();
+			stepIntoState.taskCompletionSource = new TaskCompletionSource<DbgThread>();
+			stepIntoState.breakpoint = stepper.CreateBreakpoint(thread, module, token, offset);
+			var tcs = stepIntoState.taskCompletionSource;
+			stepIntoState.breakpoint.Hit += (s, e) => {
+				if (stepIntoState?.taskCompletionSource != tcs)
+					tcs.TrySetCanceled();
+				else {
+					e.Pause = true;
+					tcs.TrySetResult(e.Thread);
+				}
+			};
+			return stepIntoState.taskCompletionSource.Task;
+		}
+
 		async Task<DbgThread> StepIntoCoreAsync(DbgDotNetEngineStepperFrameInfo frame) {
+			runtime.Dispatcher.VerifyAccess();
+			var thread = await StepIntoSkipPropsAndOpersIfNeededAsync(frame);
+
+			frame = stepper.TryGetFrameInfo(thread);
+			Debug.Assert(frame != null);
+			if (frame == null)
+				return thread;
+			if (!frame.TryGetLocation(out var module, out var token, out var offset))
+				throw new InvalidOperationException();
+
+			// If offset isn't 0 we never stepped into a method
+			if (offset != 0)
+				return thread;
+
+			// Offset is 0, but it doesn't mean we stepped into a method, it could be a loop.
+			// However, kickoff methods shouldn't contain any loops so if we're in a kickoff method,
+			// we stepped into it.
+
+			var result = await GetStepRangesAsync(frame, returnValues: false);
+			if (debuggerSettings.AsyncDebugging && result.DebugInfoOrNull != null && result.StateMachineDebugInfoOrNull?.AsyncInfo != null) {
+				// Set a BP in state machine's MoveNext() method and let the process run until the BP hits.
+				var stepIntoTask = SetStepIntoBreakpoint(thread, module, result.StateMachineDebugInfoOrNull.Method.MDToken.Raw, 0);
+				stepper.Continue();
+				thread = await stepIntoTask;
+				ClearStepIntoState();
+				frame = stepper.TryGetFrameInfo(thread);
+				Debug.Assert(frame != null);
+				if (frame == null)
+					return thread;
+				thread = await StepOverHiddenInstructionsAsync(frame);
+			}
+
+			return thread;
+		}
+
+		async Task<DbgThread> StepIntoSkipPropsAndOpersIfNeededAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			runtime.Dispatcher.VerifyAccess();
 			GetStepRangesAsyncResult result;
 			if (!debuggerSettings.StepOverPropertiesAndOperators) {
@@ -418,8 +502,6 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 			else {
 				result = await GetStepRangesAsync(frame, returnValues: true);
-				frame = result.Frame;
-
 				if (!frame.TryGetLocation(out var origModule, out var origToken, out _))
 					throw new InvalidOperationException();
 				DbgThread thread;
@@ -611,16 +693,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 						Debug.Assert(newFrame != null);
 						if (newFrame != null && newFrame.TryGetLocation(out var newModule, out var newToken, out var newOffset)) {
 							Debug.Assert(newModule == module && asyncState.ResumeToken == newToken);
-							if (result.DebugInfoOrNull != null && newModule == module && asyncState.ResumeToken == newToken) {
-								var newStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(newOffset);
-								// If we're not on an existing statement (very likely), we need to step over the
-								// hidden instructions until we reach the next statement.
-								if (newStatement == null) {
-									var ranges = CreateStepRanges(result.DebugInfoOrNull.GetUnusedRanges());
-									if (ranges.Length != 0)
-										thread = await stepper.StepOverAsync(newFrame, ranges);
-								}
-							}
+							if (result.DebugInfoOrNull != null && newModule == module && asyncState.ResumeToken == newToken)
+								thread = await StepOverHiddenInstructionsAsync(newFrame, result);
 						}
 					}
 				}
@@ -698,7 +772,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				}
 			}
 
-			void AsyncBreakpointState_Hit(object sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.SetResult(bpState);
+			void AsyncBreakpointState_Hit(object sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.TrySetResult(bpState);
 
 			internal Task<DbgThread> SetResumeBreakpoint(DbgThread thread, DbgModule module) {
 				Debug.Assert(yieldTaskCompletionSource.Task.IsCompleted);
@@ -737,7 +811,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 						}
 						if (hit) {
 							e.Pause = true;
-							tcs.SetResult(e.Thread);
+							tcs.TrySetResult(e.Thread);
 						}
 					};
 					return tcs.Task;
@@ -895,12 +969,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		readonly struct GetStepRangesAsyncResult {
 			public MethodDebugInfo DebugInfoOrNull { get; }
+			public MethodDebugInfo StateMachineDebugInfoOrNull { get; }
 			public DbgDotNetEngineStepperFrameInfo Frame { get; }
 			public DbgCodeRange[] StatementRanges { get; }
 			public DbgCodeRange[] ExactStatementRanges { get; }
 			public DbgILInstruction[][] StatementInstructions { get; }
-			public GetStepRangesAsyncResult(MethodDebugInfo debugInfo, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgCodeRange[] exactStatementRanges, DbgILInstruction[][] statementInstructions) {
+			public GetStepRangesAsyncResult(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgCodeRange[] exactStatementRanges, DbgILInstruction[][] statementInstructions) {
 				DebugInfoOrNull = debugInfo;
+				StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
 				Frame = frame ?? throw new ArgumentNullException(nameof(frame));
 				StatementRanges = statementRanges ?? throw new ArgumentNullException(nameof(statementRanges));
 				ExactStatementRanges = exactStatementRanges ?? throw new ArgumentNullException(nameof(exactStatementRanges));
@@ -914,34 +990,34 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				throw new StepErrorException("Internal error");
 
 			uint continueCounter = stepper.ContinueCounter;
-			var methodDebugInfo = await dbgDotNetDebugInfoService.GetMethodDebugInfoAsync(module, token, offset);
+			var info = await dbgDotNetDebugInfoService.GetMethodDebugInfoAsync(module, token, offset);
 			if (continueCounter != stepper.ContinueCounter)
 				throw new StepErrorException("Internal error");
 
 			var codeRanges = Array.Empty<DbgCodeRange>();
 			var exactCodeRanges = Array.Empty<DbgCodeRange>();
 			var instructions = Array.Empty<DbgILInstruction[]>();
-			if (methodDebugInfo != null) {
-				var sourceStatement = methodDebugInfo.GetSourceStatementByCodeOffset(offset);
+			if (info.DebugInfoOrNull != null) {
+				var sourceStatement = info.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
 				BinSpan[] ranges;
 				if (sourceStatement == null)
-					ranges = methodDebugInfo.GetUnusedRanges();
+					ranges = info.DebugInfoOrNull.GetUnusedRanges();
 				else {
-					var sourceStatements = methodDebugInfo.GetBinSpansOfStatement(sourceStatement.Value.TextSpan);
+					var sourceStatements = info.DebugInfoOrNull.GetBinSpansOfStatement(sourceStatement.Value.TextSpan);
 					Debug.Assert(sourceStatements.Any(a => a == sourceStatement.Value.BinSpan));
 					exactCodeRanges = CreateStepRanges(sourceStatements);
-					ranges = methodDebugInfo.GetRanges(sourceStatements);
+					ranges = info.DebugInfoOrNull.GetRanges(sourceStatements);
 				}
 
 				codeRanges = CreateStepRanges(ranges);
 				if (returnValues && debuggerSettings.ShowReturnValues && frame.SupportsReturnValues)
-					instructions = GetInstructions(methodDebugInfo.Method, exactCodeRanges) ?? Array.Empty<DbgILInstruction[]>();
+					instructions = GetInstructions(info.DebugInfoOrNull.Method, exactCodeRanges) ?? Array.Empty<DbgILInstruction[]>();
 			}
 			if (codeRanges.Length == 0)
 				codeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
 			if (exactCodeRanges.Length == 0)
 				exactCodeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
-			return new GetStepRangesAsyncResult(methodDebugInfo, frame, codeRanges, exactCodeRanges, instructions);
+			return new GetStepRangesAsyncResult(info.DebugInfoOrNull, info.StateMachineDebugInfoOrNull, frame, codeRanges, exactCodeRanges, instructions);
 		}
 
 		static DbgILInstruction[][] GetInstructions(MethodDef method, DbgCodeRange[] ranges) {
@@ -1018,10 +1094,15 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			ForceCancel_EngineThread();
 		}
 
+		void CleanUp() {
+			ClearReturnToAwaiterState();
+			ClearStepIntoState();
+			SetAsyncStepOverState(null);
+		}
+
 		void ForceCancel_EngineThread() {
 			runtime.Dispatcher.VerifyAccess();
-			ClearReturnToAwaiterState();
-			SetAsyncStepOverState(null);
+			CleanUp();
 			var oldSession = stepper.Session;
 			stepper.Session = null;
 			if (oldSession != null)

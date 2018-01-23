@@ -27,6 +27,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		bool addIndent;
 		uint methodToken;
 		MethodDebugInfo methodDebugInfo;
+		MethodDebugInfo kickoffMethodDebugInfo;
 
 		public int Length => textLength;
 		public int NextPosition => textLength + (addIndent ? indentLevel : 0);
@@ -40,14 +41,32 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			addIndent = true;
 			methodToken = 0;
 			methodDebugInfo = null;
+			kickoffMethodDebugInfo = null;
 		}
 
 		public void Initialize(uint methodToken) => this.methodToken = methodToken;
-		public MethodDebugInfo TryGetMethodDebugInfo() => methodDebugInfo;
+		public (MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryGetMethodDebugInfo() {
+			if (methodDebugInfo != null) {
+				if (kickoffMethodDebugInfo != null)
+					return (kickoffMethodDebugInfo, methodDebugInfo);
+				return (methodDebugInfo, null);
+			}
+			return default;
+		}
 
 		public void AddCustomData<TData>(string id, TData data) {
-			if (id == PredefinedCustomDataIds.DebugInfo && data is MethodDebugInfo debugInfo && debugInfo.Method.MDToken.Raw == methodToken)
-				methodDebugInfo = debugInfo;
+			if (id == PredefinedCustomDataIds.DebugInfo && data is MethodDebugInfo debugInfo) {
+				if (debugInfo.Method.MDToken.Raw == methodToken)
+					methodDebugInfo = debugInfo;
+				else if (debugInfo.KickoffMethod?.MDToken.Raw == methodToken) {
+					var m = debugInfo.KickoffMethod;
+					var body = m.Body;
+					int bodySize = body?.GetCodeSize() ?? 0;
+					var scope = new MethodDebugScope(new BinSpan(0, (uint)bodySize), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
+					kickoffMethodDebugInfo = new MethodDebugInfo(debugInfo.CompilerName, debugInfo.DecompilerOptionsVersion, StateMachineKind.None, m, null, null, Array.Empty<SourceStatement>(), scope, null, null);
+					methodDebugInfo = debugInfo;
+				}
+			}
 		}
 
 		public void DecreaseIndent() => indentLevel--;

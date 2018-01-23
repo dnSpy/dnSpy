@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		/// 
 		/// null is returned if we couldn't find the field or if we failed to read the field.
 		/// </summary>
-		/// <param name="evalInfo">Eval info</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="builderFieldModule">Module of builder field or null if unknown</param>
 		/// <param name="builderFieldToken">Token of builder field or 0 if unknown</param>
 		/// <returns></returns>
@@ -99,6 +99,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		};
 
 		static DmdFieldInfo TryGetBuilderFieldByType(DmdType type) {
+			DmdFieldInfo builderField = null;
 			foreach (var field in type.Fields) {
 				var fieldType = field.FieldType;
 				if (fieldType.IsNested)
@@ -109,9 +110,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					if (fieldType.MetadataNamespace == info.@namespace && fieldType.MetadataName == info.name)
 						return field;
 				}
+				if ((object)builderField == null && fieldType.MetadataName != null &&
+					(fieldType.MetadataName.EndsWith("MethodBuilder", StringComparison.Ordinal) ||
+					fieldType.MetadataName.EndsWith("MethodBuilder`1", StringComparison.Ordinal))) {
+					builderField = field;
+				}
 			}
 
-			return null;
+			return builderField;
 		}
 		static readonly (string @namespace, string name)[] builderWellKnownTypeNames = new(string, string)[] {
 			("System.Runtime.CompilerServices", "AsyncTaskMethodBuilder"),
@@ -129,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		/// <summary>
 		/// Gets the task's object id or null on failure
 		/// </summary>
-		/// <param name="evalInfo">Eval info</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="builderValue">Builder value, see <see cref="TryGetBuilder(DbgEvaluationInfo, DmdModule, uint)"/></param>
 		/// <returns></returns>
 		public static DbgDotNetValue TryGetTaskObjectId(DbgEvaluationInfo evalInfo, DbgDotNetValue builderValue) {
