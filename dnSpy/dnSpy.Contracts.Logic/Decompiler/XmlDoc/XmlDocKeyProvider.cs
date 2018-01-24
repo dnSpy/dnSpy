@@ -117,6 +117,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		}
 
 		static void AppendTypeName(StringBuilder b, TypeSig type) {
+			type = type.RemovePinnedAndModifiers();
 			if (type == null)
 				return;
 			if (type is GenericInstSig giType) {
