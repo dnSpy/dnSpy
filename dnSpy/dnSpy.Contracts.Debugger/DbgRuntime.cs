@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Debugger {
 		Connected,
 
 		/// <summary>
-		/// It broke due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
+		/// It's paused due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
 		/// </summary>
 		Message,
 	}

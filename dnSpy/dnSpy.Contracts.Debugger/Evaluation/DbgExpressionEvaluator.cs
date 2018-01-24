@@ -185,6 +185,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Assignment result flags
 	/// </summary>
+	[Flags]
 	public enum DbgEEAssignmentResultFlags {
 		/// <summary>
 		/// No bit is set

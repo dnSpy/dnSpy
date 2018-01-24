@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, compRes.ErrorMessage);
 
 				var state = dnILInterpreter.CreateState(compRes.Assembly);
-				ref readonly var exprInfo = ref compRes.CompiledExpressions[0];
+				ref var exprInfo = ref compRes.CompiledExpressions[0];
 				if (exprInfo.ErrorMessage != null)
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, exprInfo.ErrorMessage);
 				resultFlags |= DbgEEAssignmentResultFlags.ExecutedCode;
@@ -282,7 +282,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					return errorRes.Value;
 
 				Debug.Assert(state.CompilationResult.CompiledExpressions.Length == 1);
-				ref readonly var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
+				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
 
 				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0 && !HasAllowFuncEval(exprInfo.FormatSpecifiers))
 					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);
@@ -331,7 +331,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var genericMethodArguments = Array.Empty<DmdType>();
 
 				Debug.Assert(state.CompilationResult.CompiledExpressions.Length == 1);
-				ref readonly var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
+				ref var exprInfo = ref state.CompilationResult.CompiledExpressions[0];
 
 				if ((options & DbgEvaluationOptions.NoSideEffects) != 0 && (exprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0 && !HasAllowFuncEval(exprInfo.FormatSpecifiers))
 					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);

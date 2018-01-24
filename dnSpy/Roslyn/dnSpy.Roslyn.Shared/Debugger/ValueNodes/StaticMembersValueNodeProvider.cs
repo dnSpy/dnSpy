@@ -49,7 +49,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult valueResult = default;
 			try {
-				ref readonly var info = ref membersCollection.Members[index];
+				ref var info = ref membersCollection.Members[index];
 				var typeExpression = GetExpression(info.Member.DeclaringType);
 				string expression, imageName;
 				bool isReadOnly;

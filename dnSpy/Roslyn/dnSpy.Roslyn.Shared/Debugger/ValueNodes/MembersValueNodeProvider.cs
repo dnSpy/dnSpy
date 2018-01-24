@@ -164,7 +164,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				options |= DbgValueNodeEvaluationOptions.RawView;
 			DbgDotNetValueResult valueResult = default;
 			try {
-				ref readonly var info = ref membersCollection.Members[index];
+				ref var info = ref membersCollection.Members[index];
 				string expression, imageName;
 				bool isReadOnly;
 				DmdType expectedType;

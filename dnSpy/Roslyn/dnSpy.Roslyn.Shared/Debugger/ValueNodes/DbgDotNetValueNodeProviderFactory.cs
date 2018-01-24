@@ -33,10 +33,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 	abstract class DbgDotNetValueNodeProviderFactory {
 		[Flags]
 		enum TypeStateFlags {
-			None = 0,
-			IsNullable = 1,
-			IsTupleType = 2,
-			IsDynamicViewType = 4,
+			None				= 0,
+			IsNullable			= 1,
+			IsTupleType			= 2,
+			IsDynamicViewType	= 4,
 		}
 
 		sealed class TypeState {
@@ -184,7 +184,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
 
 		[Flags]
-		enum CreateFlags {
+		enum CreationOptions {
 			None			= 0,
 			NoNullable		= 1,
 			NoProxy			= 2,
@@ -192,7 +192,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 
 		public DbgDotNetValueNodeProviderResult Create(DbgEvaluationInfo evalInfo, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options) {
 			var providers = new List<DbgDotNetValueNodeProvider>(2);
-			Create(evalInfo, providers, addParens, slotType, nodeInfo, options, CreateFlags.None);
+			Create(evalInfo, providers, addParens, slotType, nodeInfo, options, CreationOptions.None);
 			return new DbgDotNetValueNodeProviderResult(DbgDotNetValueNodeProvider.Create(providers));
 		}
 
@@ -219,7 +219,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			return GetOrCreateTypeState(type);
 		}
 
-		void Create(DbgEvaluationInfo evalInfo, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CreateFlags createFlags) =>
+		void Create(DbgEvaluationInfo evalInfo, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options, CreationOptions createFlags) =>
 			CreateCore(evalInfo, providers, addParens, slotType, nodeInfo, GetTypeState(nodeInfo), options, createFlags);
 
 		TypeState GetOrCreateTypeState(DmdType type) {
@@ -377,7 +377,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 		MemberValueNodeInfo[] InitializeOverloadedMembers(MemberValueNodeInfo[] memberInfos) {
 			var dict = new Dictionary<string, object>(stringComparer);
 			for (int i = 0; i < memberInfos.Length; i++) {
-				ref readonly var info = ref memberInfos[i];
+				ref var info = ref memberInfos[i];
 				if (dict.TryGetValue(info.Member.Name, out object value)) {
 					List<int> list;
 					if (value is int) {
@@ -398,13 +398,13 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				if (list == null)
 					continue;
 				list.Sort((a, b) => {
-					ref readonly var ai = ref memberInfosTmp[a];
-					ref readonly var bi = ref memberInfosTmp[b];
+					ref var ai = ref memberInfosTmp[a];
+					ref var bi = ref memberInfosTmp[b];
 					return ai.InheritanceLevel - bi.InheritanceLevel;
 				});
 				var firstType = memberInfos[list[0]].Member.DeclaringType;
 				for (int i = 1; i < list.Count; i++) {
-					ref readonly var info = ref memberInfos[list[i]];
+					ref var info = ref memberInfos[list[i]];
 					if (info.Member.DeclaringType != firstType)
 						info.SetNeedCastAndNeedTypeName();
 				}
@@ -438,8 +438,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		bool TryCreateNullable(DbgEvaluationInfo evalInfo, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, TypeState state, DbgValueNodeEvaluationOptions evalOptions, CreateFlags createFlags) {
-			Debug.Assert((createFlags & CreateFlags.NoNullable) == 0);
+		bool TryCreateNullable(DbgEvaluationInfo evalInfo, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, TypeState state, DbgValueNodeEvaluationOptions evalOptions, CreationOptions createFlags) {
+			Debug.Assert((createFlags & CreationOptions.NoNullable) == 0);
 			if (!state.IsNullable)
 				return false;
 
@@ -471,7 +471,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 					return false;
 
 				nodeInfo.SetDisplayValue(fieldValue.Value);
-				Create(evalInfo, providers, addParens, slotType, nodeInfo, evalOptions, createFlags | CreateFlags.NoNullable);
+				Create(evalInfo, providers, addParens, slotType, nodeInfo, evalOptions, createFlags | CreationOptions.NoNullable);
 				disposeFieldValue = false;
 				return true;
 			}
@@ -481,12 +481,12 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 		}
 
-		void CreateCore(DbgEvaluationInfo evalInfo, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, TypeState state, DbgValueNodeEvaluationOptions evalOptions, CreateFlags createFlags) {
+		void CreateCore(DbgEvaluationInfo evalInfo, List<DbgDotNetValueNodeProvider> providers, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, TypeState state, DbgValueNodeEvaluationOptions evalOptions, CreationOptions createFlags) {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (state.HasNoChildren)
 				return;
 
-			if ((createFlags & CreateFlags.NoNullable) == 0 && state.IsNullable) {
+			if ((createFlags & CreationOptions.NoNullable) == 0 && state.IsNullable) {
 				if (TryCreateNullable(evalInfo, providers, addParens, slotType, nodeInfo, state, evalOptions, createFlags))
 					return;
 			}
@@ -505,7 +505,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 				return;
 			}
 
-			if (!forceRawView && (createFlags & CreateFlags.NoProxy) == 0 && funcEval && !nodeInfo.Value.IsNull) {
+			if (!forceRawView && (createFlags & CreationOptions.NoProxy) == 0 && funcEval && !nodeInfo.Value.IsNull) {
 				var proxyCtor = DebuggerTypeProxyFinder.GetDebuggerTypeProxyConstructor(state.Type);
 				if ((object)proxyCtor != null) {
 					var runtime = evalInfo.Runtime.GetDotNetRuntime();
@@ -516,7 +516,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 						var origExpression = nodeInfo.Expression;
 						nodeInfo.Expression = GetNewObjectExpression(proxyCtor, nodeInfo.Expression, slotType);
 						nodeInfo.SetProxyValue(proxyTypeResult.Value);
-						Create(evalInfo, providers, false, slotType, nodeInfo, evalOptions | DbgValueNodeEvaluationOptions.PublicMembers, createFlags | CreateFlags.NoProxy);
+						Create(evalInfo, providers, false, slotType, nodeInfo, evalOptions | DbgValueNodeEvaluationOptions.PublicMembers, createFlags | CreationOptions.NoProxy);
 						AddProvidersOneChildNode(providers, state, origExpression, addParens, slotType, value, evalOptions, isRawView: true);
 						return;
 					}
