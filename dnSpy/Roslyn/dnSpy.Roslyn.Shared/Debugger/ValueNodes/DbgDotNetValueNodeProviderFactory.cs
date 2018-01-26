@@ -135,6 +135,10 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			}
 
 			static bool CheckIsDynamicViewType(DmdType type) {
+				// Windows Runtime types aren't supported
+				if (type.IsWindowsRuntime)
+					return false;
+
 				// Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView supports COM objects
 				if (type.CanCastTo(type.AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject)))
 					return true;
