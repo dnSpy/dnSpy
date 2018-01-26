@@ -27,7 +27,7 @@
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
-             Width="600"
+             Width="700"
              Title="{x:Static p:dnSpy_Debugger_Resources.EditBreakpointSettings_Title}"
              SizeToContent="Height"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
