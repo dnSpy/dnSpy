@@ -190,7 +190,7 @@ namespace dnSpy.MainApp {
 			var parts = discovery.CreatePartsAsync(mefAssemblies).Result;
 			Debug.Assert(parts.ThrowOnErrors() == parts);
 
-			var catalog = ComposableCatalog.Create(resolver).AddParts(parts).WithDesktopSupport();
+			var catalog = ComposableCatalog.Create(resolver).AddParts(parts);
 			var config = CompositionConfiguration.Create(catalog);
 			Debug.Assert(config.ThrowOnErrors() == config);
 
