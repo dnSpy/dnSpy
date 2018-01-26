@@ -28,6 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
 		readonly DbgDotNetNativeCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
+		WeakReference weakMethod;
 
 		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgDotNetNativeCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -63,15 +64,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 				printedToken = true;
 			}
 
-			var method = owner.GetDefinition<MethodDef>(location.Module, location.Token);
+			var method = weakMethod?.Target as MethodDef ?? owner.GetDefinition<MethodDef>(location.Module, location.Token);
 			if (method == null) {
 				if (printedToken)
 					output.Write(BoxedTextColor.Error, "???");
 				else
 					WriteToken(output, location.Token);
 			}
-			else
+			else {
+				if (weakMethod?.Target != method)
+					weakMethod = new WeakReference(method);
 				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
+			}
 
 			switch (location.ILOffsetMapping) {
 			case DbgILOffsetMapping.Exact:
