@@ -253,12 +253,20 @@ namespace dnSpy.Decompiler {
 			var td = type.ResolveTypeDef();
 			if (td == null)
 				return false;
-			return IsDeprecated(td.CustomAttributes);
+			return IsDeprecated(td.CustomAttributes) && !IsByRefLike(td);
 		}
 
 		static bool IsDeprecated(CustomAttributeCollection customAttributes) {
 			foreach (var ca in customAttributes) {
 				if (ca.TypeFullName == "System.ObsoleteAttribute")
+					return true;
+			}
+			return false;
+		}
+
+		static bool IsByRefLike(TypeDef td) {
+			foreach (var ca in td.CustomAttributes) {
+				if (ca.TypeFullName == "System.Runtime.CompilerServices.IsByRefLikeAttribute")
 					return true;
 			}
 			return false;
