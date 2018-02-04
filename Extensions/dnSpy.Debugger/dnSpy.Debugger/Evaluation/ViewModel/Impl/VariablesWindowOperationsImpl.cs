@@ -128,6 +128,34 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
+		public override bool CanCopyExpression(IValueNodesVM vm) => CanExecCommands(vm) && HasSelectedNodes(vm);
+		public override void CopyExpression(IValueNodesVM vm) {
+			if (!CanCopyExpression(vm))
+				return;
+
+			var output = new StringBuilder();
+			int count = 0;
+			foreach (var node in SortedSelectedNodes(vm)) {
+				if (node.RawNode.CanEvaluateExpression) {
+					if (count > 0)
+						output.AppendLine();
+					count++;
+					output.Append(node.RawNode.Expression);
+				}
+			}
+			if (count > 1)
+				output.AppendLine();
+			var s = output.ToString();
+			if (s.Length > 0) {
+				try {
+					var dataObj = new DataObject();
+					dataObj.SetText(s);
+					Clipboard.SetDataObject(dataObj);
+				}
+				catch (ExternalException) { }
+			}
+		}
+
 		public override bool CanCopyValue(IValueNodesVM vm) => CanExecCommands(vm) && HasSelectedNodes(vm);
 		public override void CopyValue(IValueNodesVM vm) {
 			if (!CanCopyValue(vm))

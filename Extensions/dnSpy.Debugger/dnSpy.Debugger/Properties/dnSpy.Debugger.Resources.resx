@@ -1494,4 +1494,7 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
     <value>Step over properties and operators</value>
   </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Copy E_xpression</value>
+  </data>
 </root>

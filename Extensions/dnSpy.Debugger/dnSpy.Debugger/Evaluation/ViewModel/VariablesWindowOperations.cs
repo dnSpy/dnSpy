@@ -24,6 +24,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 	abstract class VariablesWindowOperations {
 		public abstract bool CanCopy(IValueNodesVM vm);
 		public abstract void Copy(IValueNodesVM vm);
+		public abstract bool CanCopyExpression(IValueNodesVM vm);
+		public abstract void CopyExpression(IValueNodesVM vm);
 		public abstract bool SupportsPaste(IValueNodesVM vm);
 		public abstract bool CanPaste(IValueNodesVM vm);
 		public abstract void Paste(IValueNodesVM vm);

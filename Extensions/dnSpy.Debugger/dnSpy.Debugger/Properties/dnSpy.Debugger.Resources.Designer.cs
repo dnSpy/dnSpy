@@ -1123,6 +1123,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy E_xpression.
+        /// </summary>
+        public static string CopyExpressionCommand {
+            get {
+                return ResourceManager.GetString("CopyExpressionCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Debug engine.
         /// </summary>
         public static string DbgAsm_DebugEngine {

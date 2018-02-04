@@ -62,7 +62,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanCopy(context.VM);
 	}
 
-	[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:CopyExpressionCommand", Icon = DsImagesAttribute.Copy, Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_COPY, Order = 10)]
+	sealed class CopyExpressionVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
+		[ImportingConstructor]
+		CopyExpressionVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
+		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.CopyExpression(context.VM);
+		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanCopyExpression(context.VM);
+	}
+
+	[ExportMenuItem(Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_DBG_VARIABLES_WINDOW_COPY, Order = 20)]
 	sealed class PasteVariablesWindowCtxMenuCommand : VariablesWindowCtxMenuCommand {
 		[ImportingConstructor]
 		PasteVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
