@@ -253,8 +253,21 @@ namespace dnSpy.Decompiler {
 			var td = type.ResolveTypeDef();
 			if (td == null)
 				return false;
-			return IsDeprecated(td.CustomAttributes) && !IsByRefLike(td);
+			bool foundByRefLikeMarker = false;
+			foreach (var ca in td.CustomAttributes) {
+				if (ca.TypeFullName != "System.ObsoleteAttribute")
+					continue;
+				if (ca.ConstructorArguments.Count != 2)
+					return true;
+				if (!(ca.ConstructorArguments[0].Value is UTF8String s && s == ByRefLikeMarker))
+					return true;
+				if (!(ca.ConstructorArguments[1].Value is bool b && b))
+					return true;
+				foundByRefLikeMarker = true;
+			}
+			return foundByRefLikeMarker && !IsByRefLike(td);
 		}
+		static readonly UTF8String ByRefLikeMarker = new UTF8String("Types with embedded references are not supported in this version of your compiler.");
 
 		static bool IsDeprecated(CustomAttributeCollection customAttributes) {
 			foreach (var ca in customAttributes) {
