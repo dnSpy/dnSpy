@@ -27,6 +27,7 @@ Chinese Simplified:
 	SquallATF
 	linkinshi
 	YuXiaoChou
+	zqy2419328026
 
 Russian:
 
@@ -44,6 +45,8 @@ German:
 
 	patricksadowski
 	li0nsar3c00l
+	Michael Heinrich
+	Danghor
 
 Spanish:
 
