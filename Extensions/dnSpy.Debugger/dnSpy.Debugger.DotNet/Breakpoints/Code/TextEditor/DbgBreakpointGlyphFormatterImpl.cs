@@ -53,7 +53,31 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				(line.LineNumber + 1).ToString(CultureInfo.CurrentUICulture),
 				(span.Start - line.Start + 1).ToString(CultureInfo.CurrentUICulture)));
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, "0x" + location.Offset.ToString("X4")));
+			switch (location.ILOffsetMapping) {
+			case DbgILOffsetMapping.Exact:
+			case DbgILOffsetMapping.Approximate:
+				var prefix = location.ILOffsetMapping == DbgILOffsetMapping.Approximate ? "~0x" : "0x";
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, prefix + location.Offset.ToString("X4")));
+				break;
+
+			case DbgILOffsetMapping.Prolog:
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, "(prolog)"));
+				break;
+
+			case DbgILOffsetMapping.Epilog:
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, "(epilog)"));
+				break;
+
+			case DbgILOffsetMapping.Unknown:
+			case DbgILOffsetMapping.NoInfo:
+			case DbgILOffsetMapping.UnmappedAddress:
+				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_Resources.GlyphToolTip_IL_offset_0, "(???)"));
+				break;
+
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
+			}
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
 			Debug.Assert(documentViewer != null);

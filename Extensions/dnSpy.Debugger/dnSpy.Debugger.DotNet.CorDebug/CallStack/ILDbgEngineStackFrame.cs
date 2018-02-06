@@ -25,7 +25,6 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
@@ -112,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(module, moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object.Address, corFrame.NativeFrameIP, corCode);
 			}
 			else
-				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset);
+				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping);
 		}
 
 		sealed class ILFrameState {

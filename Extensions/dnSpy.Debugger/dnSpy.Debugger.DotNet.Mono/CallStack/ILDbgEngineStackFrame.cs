@@ -100,8 +100,9 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			uint ilOffset = (uint)monoFrame.ILOffset;
 			FunctionOffset = ilOffset == uint.MaxValue ? 0 : ilOffset;
 			var moduleId = DbgEngineImpl.TryGetModuleId(module) ?? default;
-			var options = ilOffset == uint.MaxValue || monoFrame.IsNativeTransition ? DbgDotNetCodeLocationOptions.InvalidOffset : 0;
-			Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, options);
+			var ilOffsetMapping = ilOffset == uint.MaxValue || monoFrame.IsNativeTransition ? DbgILOffsetMapping.Unknown :
+				frameIndex == 0 ? DbgILOffsetMapping.Exact : DbgILOffsetMapping.Approximate;
+			Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping);
 		}
 
 		sealed class ILFrameState {

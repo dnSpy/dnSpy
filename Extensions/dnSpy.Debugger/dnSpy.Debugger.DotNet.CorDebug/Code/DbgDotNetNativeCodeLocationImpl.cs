@@ -18,9 +18,10 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -102,7 +103,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 				WriteText(output, "???");
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
 			}
 
 			output.WriteSpace();

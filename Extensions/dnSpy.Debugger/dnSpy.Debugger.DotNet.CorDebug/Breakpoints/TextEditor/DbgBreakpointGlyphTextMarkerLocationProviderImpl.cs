@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Text.Editor;
 

@@ -20,6 +20,7 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Text.Editor;
 
@@ -30,20 +31,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 			switch (frame.Location) {
 			case DbgDotNetNativeCodeLocation nativeLoc:
 				switch (nativeLoc.ILOffsetMapping) {
-				case DbgILOffsetMapping.Prolog:
-				case DbgILOffsetMapping.Epilog:
 				case DbgILOffsetMapping.Exact:
 				case DbgILOffsetMapping.Approximate:
-					break;
+					return new DotNetMethodBodyGlyphTextMarkerLocationInfo(nativeLoc.Module, nativeLoc.Token, nativeLoc.Offset);
 
+				case DbgILOffsetMapping.Prolog:
+				case DbgILOffsetMapping.Epilog:
 				case DbgILOffsetMapping.Unknown:
 				case DbgILOffsetMapping.NoInfo:
 				case DbgILOffsetMapping.UnmappedAddress:
 				default:
-					return null;
+					return new DotNetTokenGlyphTextMarkerLocationInfo(nativeLoc.Module, nativeLoc.Token);
 				}
-
-				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(nativeLoc.Module, nativeLoc.Token, nativeLoc.Offset);
 
 			default:
 				return null;

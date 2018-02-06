@@ -24,7 +24,6 @@ using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
-using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.Metadata;

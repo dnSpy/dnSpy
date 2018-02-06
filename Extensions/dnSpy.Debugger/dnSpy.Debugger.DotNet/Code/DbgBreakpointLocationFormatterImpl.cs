@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -76,10 +78,42 @@ namespace dnSpy.Debugger.DotNet.Code {
 				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
 			}
 
+			switch (location.ILOffsetMapping) {
+			case DbgILOffsetMapping.Exact:
+			case DbgILOffsetMapping.Approximate:
+				output.WriteSpace();
+				output.Write(BoxedTextColor.Operator, "+");
+				output.WriteSpace();
+				if (location.ILOffsetMapping == DbgILOffsetMapping.Approximate)
+					output.Write(BoxedTextColor.Operator, "~");
+				WriteILOffset(output, location.Offset);
+				break;
+
+			case DbgILOffsetMapping.Prolog:
+				WriteText(output, "prolog");
+				break;
+
+			case DbgILOffsetMapping.Epilog:
+				WriteText(output, "epilog");
+				break;
+
+			case DbgILOffsetMapping.Unknown:
+			case DbgILOffsetMapping.NoInfo:
+			case DbgILOffsetMapping.UnmappedAddress:
+				WriteText(output, "???");
+				break;
+
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
+			}
+		}
+
+		static void WriteText(ITextColorWriter output, string text) {
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Operator, "+");
-			output.WriteSpace();
-			WriteILOffset(output, location.Offset);
+			output.Write(BoxedTextColor.Punctuation, "(");
+			output.Write(BoxedTextColor.Text, text);
+			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
 		FormatterOptions GetFormatterOptions(DbgBreakpointLocationFormatterOptions options) {

@@ -311,14 +311,40 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 			WriteSpace();
 			OutputWrite("(", BoxedTextColor.Punctuation);
 			OutputWrite("IL", BoxedTextColor.Text);
-			OutputWrite("=", BoxedTextColor.Operator);
 			var primitiveFormatter = new CSharpPrimitiveValueFormatter(output, GetValueFormatterOptions() & ~ValueFormatterOptions.Decimal, cultureInfo);
-			if (evalInfo.Frame.FunctionOffset <= ushort.MaxValue)
-				primitiveFormatter.FormatUInt16((ushort)evalInfo.Frame.FunctionOffset);
-			else
-				primitiveFormatter.FormatUInt32(evalInfo.Frame.FunctionOffset);
 
-			if (evalInfo.Frame.Location is IDbgDotNetCodeLocation loc) {
+			var loc = evalInfo.Frame.Location as IDbgDotNetCodeLocation;
+			var ilOffsetMapping = loc?.ILOffsetMapping ?? DbgILOffsetMapping.Exact;
+			switch (ilOffsetMapping) {
+			case DbgILOffsetMapping.Prolog:
+				OutputWrite("=", BoxedTextColor.Operator);
+				OutputWrite("prolog", BoxedTextColor.Text);
+				break;
+
+			case DbgILOffsetMapping.Epilog:
+				OutputWrite("=", BoxedTextColor.Operator);
+				OutputWrite("epilog", BoxedTextColor.Text);
+				break;
+
+			case DbgILOffsetMapping.Exact:
+			case DbgILOffsetMapping.Approximate:
+				OutputWrite(ilOffsetMapping == DbgILOffsetMapping.Exact ? "=" : "≈", BoxedTextColor.Operator);
+				if (evalInfo.Frame.FunctionOffset <= ushort.MaxValue)
+					primitiveFormatter.FormatUInt16((ushort)evalInfo.Frame.FunctionOffset);
+				else
+					primitiveFormatter.FormatUInt32(evalInfo.Frame.FunctionOffset);
+				break;
+
+			case DbgILOffsetMapping.Unknown:
+			case DbgILOffsetMapping.NoInfo:
+			case DbgILOffsetMapping.UnmappedAddress:
+			default:
+				OutputWrite("=", BoxedTextColor.Operator);
+				OutputWrite("???", BoxedTextColor.Error);
+				break;
+			}
+
+			if (loc != null) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();

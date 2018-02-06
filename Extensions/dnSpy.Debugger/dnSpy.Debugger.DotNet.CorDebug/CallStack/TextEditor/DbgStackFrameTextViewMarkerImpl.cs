@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -88,12 +89,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 				switch (frames[i].Location) {
 				case DbgDotNetNativeCodeLocation nativeLoc:
 					switch (nativeLoc.ILOffsetMapping) {
-					case DbgILOffsetMapping.Prolog:
-					case DbgILOffsetMapping.Epilog:
 					case DbgILOffsetMapping.Exact:
 					case DbgILOffsetMapping.Approximate:
 						break;
 
+					case DbgILOffsetMapping.Prolog:
+					case DbgILOffsetMapping.Epilog:
 					case DbgILOffsetMapping.Unknown:
 					case DbgILOffsetMapping.NoInfo:
 					case DbgILOffsetMapping.UnmappedAddress:
