@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Hex {
 			while (pos > HexPosition.Zero) {
 				var testPos = pos >= d ? pos - d : HexPosition.Zero;
 				var info = GetSpanInfo(testPos);
-				if (d < ulong.MaxValue)
+				if (d < 0x8000_0000_0000_0000)
 					d <<= 1;
 				if (info.HasData == validData && info.Span.End >= bestGuess) {
 					bestGuess = info.Span.Start;

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// </summary>
 	public abstract class StructureProviderFactory {
 		/// <summary>
-		/// Construfctor
+		/// Constructor
 		/// </summary>
 		protected StructureProviderFactory() { }
 
