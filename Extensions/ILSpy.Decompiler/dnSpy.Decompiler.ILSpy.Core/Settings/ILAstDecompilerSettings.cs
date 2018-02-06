@@ -18,11 +18,15 @@
 */
 
 #if DEBUG
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	sealed class ILAstDecompilerSettings : DecompilerSettingsBase {
+		public override int Version => 0;
+		public override event EventHandler VersionChanged { add { } remove { } }
+
 		public ILAstDecompilerSettings() {
 		}
 

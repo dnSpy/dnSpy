@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnSpy.Contracts.Decompiler;
@@ -28,10 +29,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		public ILSettings Settings => ilSettings;
 		readonly ILSettings ilSettings;
 
+		public override int Version => ilSettings.SettingsVersion;
+		public override event EventHandler VersionChanged;
+
 		public ILDecompilerSettings(ILSettings ilSettings = null) {
 			this.ilSettings = ilSettings ?? new ILSettings();
 			options = CreateOptions().ToArray();
+			this.ilSettings.SettingsVersionChanged += ILSettings_SettingsVersionChanged;
 		}
+
+		void ILSettings_SettingsVersionChanged(object sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
 
 		public override DecompilerSettingsBase Clone() => new ILDecompilerSettings(ilSettings.Clone());
 

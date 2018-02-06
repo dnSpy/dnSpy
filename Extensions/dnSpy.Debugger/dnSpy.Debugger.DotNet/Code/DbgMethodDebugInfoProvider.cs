@@ -122,6 +122,11 @@ namespace dnSpy.Debugger.DotNet.Code {
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
 					if (info.key.Equals(key)) {
+						if ((info.result.DebugInfoOrNull != null && info.result.DebugInfoOrNull.DecompilerSettingsVersion != decompiler.Settings.Version) ||
+							(info.result.StateMachineDebugInfoOrNull != null && info.result.StateMachineDebugInfoOrNull.DecompilerSettingsVersion != decompiler.Settings.Version)) {
+							debugInfos.RemoveAt(i);
+							continue;
+						}
 						if (i != debugInfos.Count - 1) {
 							debugInfos.RemoveAt(i);
 							debugInfos.Add(info);
@@ -189,8 +194,6 @@ namespace dnSpy.Debugger.DotNet.Code {
 		(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryCompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
 			var output = DecompilerOutputImplCache.Alloc();
 			output.Initialize(methodToken);
-			//TODO: Whenever the decompiler options change, we need to invalidate our cache and every
-			//		class instance created by callers
 			decompiler.Decompile(method, output, decContext);
 			var info = output.TryGetMethodDebugInfo();
 			DecompilerOutputImplCache.Free(ref output);

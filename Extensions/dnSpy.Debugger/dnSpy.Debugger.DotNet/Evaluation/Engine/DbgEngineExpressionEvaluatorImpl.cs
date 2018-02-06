@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		sealed class EvaluateImplExpressionState {
 			public readonly struct Key {
 				readonly DbgEngineExpressionEvaluatorImpl ee;
-				readonly int decompilerOptionsVersion;
+				readonly int decompilerSettingsVersion;
 				readonly object memberModule;
 				readonly int memberToken;
 				readonly int memberVersion;
@@ -133,9 +133,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				readonly DbgEvaluationOptions options;
 				readonly string expression;
 
-				public Key(DbgEngineExpressionEvaluatorImpl ee, int decompilerOptionsVersion, object memberModule, int memberToken, int memberVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgDotNetAlias[] aliases, DbgEvaluationOptions options, string expression) {
+				public Key(DbgEngineExpressionEvaluatorImpl ee, int decompilerSettingsVersion, object memberModule, int memberToken, int memberVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgDotNetAlias[] aliases, DbgEvaluationOptions options, string expression) {
 					this.ee = ee;
-					this.decompilerOptionsVersion = decompilerOptionsVersion;
+					this.decompilerSettingsVersion = decompilerSettingsVersion;
 					this.memberModule = memberModule;
 					this.memberToken = memberToken;
 					this.memberVersion = memberVersion;
@@ -150,7 +150,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					scope == other.scope &&
 					moduleReferences == other.moduleReferences &&
 					ee == other.ee &&
-					decompilerOptionsVersion == other.decompilerOptionsVersion &&
+					decompilerSettingsVersion == other.decompilerSettingsVersion &&
 					memberModule == other.memberModule &&
 					memberToken == other.memberToken &&
 					memberVersion == other.memberVersion &&
@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var methodDebugInfo = languageDebugInfo.MethodDebugInfo;
 			var module = evalInfo.Frame.Module ?? throw new InvalidOperationException();
 			var info = dbgAliasProvider.GetAliases(evalInfo);
-			return GetInterpreterStateCommon(evalInfo, null, methodDebugInfo.DecompilerOptionsVersion, module, methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion, MethodDebugScopeUtils.GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset), info.aliases, info.typeReferences, options, expression, stateObj, null, out evalExprState);
+			return GetInterpreterStateCommon(evalInfo, null, methodDebugInfo.DecompilerSettingsVersion, module, methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion, MethodDebugScopeUtils.GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset), info.aliases, info.typeReferences, options, expression, stateObj, null, out evalExprState);
 		}
 
 		EvaluateImplResult? GetTypeInterpreterState(DbgEvaluationInfo evalInfo, DmdType type, string expression, DbgEvaluationOptions options, object stateObj, out EvaluateImplExpressionState evalExprState) {
@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return GetInterpreterStateCommon(evalInfo, type.Module, 0, type.Module, type.MetadataToken, 0, null, aliases, typeReferences, options, expression, stateObj, type, out evalExprState);
 		}
 
-		EvaluateImplResult? GetInterpreterStateCommon(DbgEvaluationInfo evalInfo, DmdModule reflectionModuleOrNull, int decompilerOptionsVersion, object memberModule, int memberToken, int memberVersion, MethodDebugScope scope, DbgDotNetAlias[] aliases, DmdType[] typeReferences, DbgEvaluationOptions options, string expression, object stateObj, DmdType type, out EvaluateImplExpressionState evalExprState) {
+		EvaluateImplResult? GetInterpreterStateCommon(DbgEvaluationInfo evalInfo, DmdModule reflectionModuleOrNull, int decompilerSettingsVersion, object memberModule, int memberToken, int memberVersion, MethodDebugScope scope, DbgDotNetAlias[] aliases, DmdType[] typeReferences, DbgEvaluationOptions options, string expression, object stateObj, DmdType type, out EvaluateImplExpressionState evalExprState) {
 			evalExprState = null;
 			EvaluateImplExpressionState evalState;
 			if (stateObj != null) {
@@ -242,7 +242,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
-			var key = new EvaluateImplExpressionState.Key(this, decompilerOptionsVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, keyOptions, expression);
+			var key = new EvaluateImplExpressionState.Key(this, decompilerSettingsVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, keyOptions, expression);
 			if (!evalState.CachedKey.Equals(key)) {
 				evalState.CompilationResult = (object)type != null ?
 					expressionCompiler.CompileTypeExpression(evalInfo, type, refsResult.ModuleReferences, aliases, expression, keyOptions) :

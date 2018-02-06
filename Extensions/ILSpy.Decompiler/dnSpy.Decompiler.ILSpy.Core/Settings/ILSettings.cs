@@ -17,16 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	class ILSettings : ViewModelBase {
 		protected virtual void OnModified() { }
+		public event EventHandler SettingsVersionChanged;
 
 		void OptionsChanged() {
 			Interlocked.Increment(ref settingsVersion);
 			OnModified();
+			SettingsVersionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public int SettingsVersion => settingsVersion;

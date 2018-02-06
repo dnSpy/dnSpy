@@ -131,6 +131,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
+		//TODO: If decompiler settings change, we need to invalidate the cached data in DbgEvaluationContext, see decompiler.Settings.VersionChanged
 		DbgLanguageDebugInfo GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			DbgLanguageDebugInfoKey key;
 			if (location.DbgModule is DbgModule dbgModule)
@@ -140,6 +141,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			var debugInfos = state.DebugInfos;
 			lock (state.LockObj) {
+				if (debugInfos.Count > 0 && debugInfos[0].debugInfo.MethodDebugInfo.DecompilerSettingsVersion != decompiler.Settings.Version)
+					debugInfos.Clear();
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
 					if (info.key.Equals(key)) {

@@ -612,10 +612,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			var memberName = typeName + "." + member.Name;
 
 			switch (member) {
-			case DmdPropertyInfo property:
+			case DmdPropertyInfo _:
 				return string.Format(dnSpy_Debugger_DotNet_Resources.StepFilter_SteppingOverProperty, memberName);
 
-			case DmdMethodBase method:
+			case DmdMethodBase _:
 				return string.Format(dnSpy_Debugger_DotNet_Resources.StepFilter_SteppingOverOperator, memberName);
 
 			default:

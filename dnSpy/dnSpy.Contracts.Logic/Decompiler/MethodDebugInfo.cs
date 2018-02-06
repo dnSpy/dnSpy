@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Decompiler options version number
 		/// </summary>
-		public int DecompilerOptionsVersion { get; }
+		public int DecompilerSettingsVersion { get; }
 
 		/// <summary>
 		/// Gets the state machine kind
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="compilerName">Compiler name (<see cref="PredefinedCompilerNames"/>) or null</param>
-		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
+		/// <param name="decompilerSettingsVersion">Decompiler settings version number. This version number should get incremented when the settings change.</param>
 		/// <param name="stateMachineKind">State machine kind</param>
 		/// <param name="method">Method</param>
 		/// <param name="kickoffMethod">Kickoff method or null</param>
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
 		/// <param name="asyncMethodDebugInfo">Async info or null</param>
-		public MethodDebugInfo(string compilerName, int decompilerOptionsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
+		public MethodDebugInfo(string compilerName, int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
 			CompilerName = compilerName;
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Decompiler {
 			Parameters = parameters ?? Array.Empty<SourceParameter>();
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
-			DecompilerOptionsVersion = decompilerOptionsVersion;
+			DecompilerSettingsVersion = decompilerSettingsVersion;
 			Statements = statements;
 			Scope = scope ?? throw new ArgumentNullException(nameof(scope));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);

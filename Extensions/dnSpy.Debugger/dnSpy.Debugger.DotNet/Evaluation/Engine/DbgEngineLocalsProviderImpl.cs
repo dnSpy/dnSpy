@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		sealed class GetNodesState {
 			public readonly struct Key {
-				readonly int decompilerOptionsVersion;
+				readonly int decompilerSettingsVersion;
 				// NOTE: DbgModule isn't part of this struct because the state is attached to the module.
 				readonly int methodToken;
 				readonly int methodVersion;
@@ -99,8 +99,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				readonly MethodDebugScope scope;
 				readonly DbgValueNodeEvaluationOptions valueNodeEvaluationOptions;
 				readonly DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions;
-				public Key(int decompilerOptionsVersion, int methodToken, int methodVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgValueNodeEvaluationOptions valueNodeEvaluationOptions, DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions) {
-					this.decompilerOptionsVersion = decompilerOptionsVersion;
+				public Key(int decompilerSettingsVersion, int methodToken, int methodVersion, DbgModuleReference[] moduleReferences, MethodDebugScope scope, DbgValueNodeEvaluationOptions valueNodeEvaluationOptions, DbgLocalsValueNodeEvaluationOptions localsValueNodeEvaluationOptions) {
+					this.decompilerSettingsVersion = decompilerSettingsVersion;
 					this.methodToken = methodToken;
 					this.methodVersion = methodVersion;
 					this.moduleReferences = moduleReferences;
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					moduleReferences == other.moduleReferences &&
 					methodToken == other.methodToken &&
 					methodVersion == other.methodVersion &&
-					decompilerOptionsVersion == other.decompilerOptionsVersion &&
+					decompilerSettingsVersion == other.decompilerSettingsVersion &&
 					valueNodeEvaluationOptions == other.valueNodeEvaluationOptions &&
 					localsValueNodeEvaluationOptions == other.localsValueNodeEvaluationOptions;
 			}
@@ -146,7 +146,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);
 				var localsOptionsKey = localsOptions & ~(DbgLocalsValueNodeEvaluationOptions.ShowCompilerGeneratedVariables | DbgLocalsValueNodeEvaluationOptions.ShowDecompilerGeneratedVariables);
-				var key = new GetNodesState.Key(methodDebugInfo.DecompilerOptionsVersion,
+				var key = new GetNodesState.Key(methodDebugInfo.DecompilerSettingsVersion,
 						methodDebugInfo.Method.MDToken.ToInt32(), languageDebugInfo.MethodVersion,
 						refsResult.ModuleReferences, MethodDebugScopeUtils.GetScope(methodDebugInfo.Scope, languageDebugInfo.ILOffset),
 						options, localsOptionsKey);

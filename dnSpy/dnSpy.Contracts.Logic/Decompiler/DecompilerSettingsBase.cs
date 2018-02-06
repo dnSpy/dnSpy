@@ -33,6 +33,16 @@ namespace dnSpy.Contracts.Decompiler {
 		public abstract DecompilerSettingsBase Clone();
 
 		/// <summary>
+		/// Version number that gets incremented whenever the options change
+		/// </summary>
+		public abstract int Version { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Version"/> is changed
+		/// </summary>
+		public abstract event EventHandler VersionChanged;
+
+		/// <summary>
 		/// Gets all options
 		/// </summary>
 		public abstract IEnumerable<IDecompilerOption> Options { get; }
