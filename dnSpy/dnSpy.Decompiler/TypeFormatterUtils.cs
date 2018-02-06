@@ -300,13 +300,39 @@ namespace dnSpy.Decompiler {
 			var td = type.Resolve();
 			if (td == null)
 				return false;
-			return IsAwaitableType(td.FullName);
+			return IsAwaitableType(td);
 		}
 
-		static bool IsAwaitableType(string fullName) =>
-			fullName == "System.Threading.Tasks.Task" ||
-			fullName == "System.Threading.Tasks.Task`1" ||
-			fullName == "System.Threading.Tasks.ValueTask`1";
+		static bool IsAwaitableType(TypeDef td) {
+			if (td == null)
+				return false;
+
+			// See (Roslyn): IsCustomTaskType
+
+			if (td.GenericParameters.Count > 1)
+				return false;
+
+			if (td.Namespace == stringSystem_Threading_Tasks) {
+				if (td.Name == stringTask || td.Name == stringTask_1)
+					return true;
+			}
+
+			foreach (var ca in td.CustomAttributes) {
+				if (ca.TypeFullName != "System.Runtime.CompilerServices.AsyncMethodBuilderAttribute")
+					continue;
+				if (ca.ConstructorArguments.Count != 1)
+					continue;
+				if ((ca.ConstructorArguments[0].Type as ClassSig)?.TypeDefOrRef.FullName != "System.Type")
+					continue;
+
+				return true;
+			}
+
+			return false;
+		}
+		static readonly UTF8String stringSystem_Threading_Tasks = new UTF8String("System.Threading.Tasks");
+		static readonly UTF8String stringTask = new UTF8String("Task");
+		static readonly UTF8String stringTask_1 = new UTF8String("Task`1");
 
 		public static MemberSpecialFlags GetMemberSpecialFlags(IMethod method) {
 			var flags = MemberSpecialFlags.None;
@@ -324,7 +350,7 @@ namespace dnSpy.Decompiler {
 		public static MemberSpecialFlags GetMemberSpecialFlags(ITypeDefOrRef type) {
 			var flags = MemberSpecialFlags.None;
 
-			if (IsAwaitableType(type.FullName))
+			if (IsAwaitableType(type.ResolveTypeDef()))
 				flags |= MemberSpecialFlags.Awaitable;
 
 			return flags;
