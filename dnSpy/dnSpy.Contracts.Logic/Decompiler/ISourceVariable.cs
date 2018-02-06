@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -55,8 +56,34 @@ namespace dnSpy.Contracts.Decompiler {
 		FieldDef HoistedField { get; }
 
 		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		SourceVariableFlags Flags { get; }
+
+		/// <summary>
 		/// true if this is a decompiler generated variable
 		/// </summary>
 		bool IsDecompilerGenerated { get; }
+	}
+
+	/// <summary>
+	/// <see cref="ISourceVariable"/> flags
+	/// </summary>
+	[Flags]
+	public enum SourceVariableFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Decompiler generated variable
+		/// </summary>
+		DecompilerGenerated		= 0x00000001,
+
+		/// <summary>
+		/// Readonly local, eg. a 'ref readonly' local
+		/// </summary>
+		ReadOnly				= 0x00000002,
 	}
 }

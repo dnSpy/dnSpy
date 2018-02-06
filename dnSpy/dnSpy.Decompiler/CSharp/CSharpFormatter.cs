@@ -375,7 +375,7 @@ namespace dnSpy.Decompiler.CSharp {
 			WriteGenerics(genParams, BoxedTextColor.TypeGenericParameter);
 		}
 
-		bool WriteRefIfByRef(TypeSig typeSig, ParamDef pd) {
+		bool WriteRefIfByRef(TypeSig typeSig, ParamDef pd, bool forceReadOnly) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
 					OutputWrite(Keyword_out, BoxedTextColor.Keyword);
@@ -388,6 +388,10 @@ namespace dnSpy.Decompiler.CSharp {
 				else {
 					OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
 					WriteSpace();
+					if (forceReadOnly) {
+						OutputWrite(Keyword_readonly, BoxedTextColor.Keyword);
+						WriteSpace();
+					}
 				}
 				return true;
 			}
@@ -844,8 +848,8 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 		}
 
-		void Write(TypeSig type, ParamDef ownerParam, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs) {
-			WriteRefIfByRef(type, ownerParam);
+		void Write(TypeSig type, ParamDef ownerParam, IList<TypeSig> typeGenArgs, IList<TypeSig> methGenArgs, bool forceReadOnly = false) {
+			WriteRefIfByRef(type, ownerParam, forceReadOnly);
 			if (type.RemovePinnedAndModifiers() is ByRefSig byRef)
 				type = byRef.Next;
 			Write(type, typeGenArgs, methGenArgs);
@@ -1064,7 +1068,7 @@ namespace dnSpy.Decompiler.CSharp {
 			OutputWrite(isLocal ? dnSpy_Decompiler_Resources.ToolTip_Local : dnSpy_Decompiler_Resources.ToolTip_Parameter, BoxedTextColor.Text);
 			OutputWrite(DescriptionParenClose, BoxedTextColor.Punctuation);
 			WriteSpace();
-			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null);
+			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null, forceReadOnly: (variable.Flags & SourceVariableFlags.ReadOnly) != 0);
 			WriteSpace();
 			WriteIdentifier(TypeFormatterUtils.GetName(variable), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
 			if (pd != null)

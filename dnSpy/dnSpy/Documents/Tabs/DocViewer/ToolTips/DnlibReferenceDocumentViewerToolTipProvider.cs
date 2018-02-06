@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (@ref is IMemberRef mr)
 				return Create(context, mr);
 			if (@ref is Parameter pd)
-				return Create(context, new SourceParameter(pd, pd.Name, pd.Type));
+				return Create(context, new SourceParameter(pd, pd.Name, pd.Type, SourceVariableFlags.None));
 			if (@ref is SourceParameter p)
 				return Create(context, p);
 			if (@ref is SourceLocal l)
