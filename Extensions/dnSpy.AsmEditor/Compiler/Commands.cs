@@ -36,6 +36,7 @@ using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Decompiler.Utils;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[ExportAutoLoaded]
@@ -192,6 +193,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var method = list[0].Method;
+			if (StateMachineHelpers.TryGetKickoffMethod(method, out var containingMethod))
+				method = containingMethod;
 			var methodNode = appService.DocumentTreeView.FindNode(method);
 			if (methodNode == null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));

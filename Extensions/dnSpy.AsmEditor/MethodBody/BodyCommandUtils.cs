@@ -33,13 +33,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
-			var uiContext = context.Find<IDocumentViewer>();
-			if (uiContext == null)
+			var documentViewer = context.Find<IDocumentViewer>();
+			if (documentViewer == null)
 				return null;
 			var pos = context.Find<TextEditorPosition>();
 			if (pos == null)
 				return null;
-			return GetStatements(uiContext, pos.Position, options);
+			return GetStatements(documentViewer, pos.Position, options);
 		}
 
 		public static IList<MethodSourceStatement> GetStatements(IDocumentViewer documentViewer, int textPosition, FindByTextPositionOptions options) {
