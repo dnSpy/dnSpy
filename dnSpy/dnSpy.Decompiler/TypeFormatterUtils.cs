@@ -277,7 +277,7 @@ namespace dnSpy.Decompiler {
 			return false;
 		}
 
-		static bool IsByRefLike(TypeDef td) {
+		public static bool IsByRefLike(TypeDef td) {
 			foreach (var ca in td.CustomAttributes) {
 				if (ca.TypeFullName == "System.Runtime.CompilerServices.IsByRefLikeAttribute")
 					return true;
@@ -357,6 +357,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public static bool IsReadOnlyParameter(ParamDef pd) => HasIsReadOnlyAttribute(pd?.CustomAttributes);
+		public static bool IsReadOnlyType(TypeDef td) => HasIsReadOnlyAttribute(td?.CustomAttributes);
 
 		static bool HasIsReadOnlyAttribute(CustomAttributeCollection customAttributes) {
 			if (customAttributes == null)

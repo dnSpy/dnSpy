@@ -749,8 +749,17 @@ namespace dnSpy.Decompiler.CSharp {
 			string keyword;
 			if (td.IsEnum)
 				keyword = Keyword_enum;
-			else if (td.IsValueType)
+			else if (td.IsValueType) {
+				if (TypeFormatterUtils.IsReadOnlyType(td)) {
+					OutputWrite(Keyword_readonly, BoxedTextColor.Keyword);
+					WriteSpace();
+				}
+				if (TypeFormatterUtils.IsByRefLike(td)) {
+					OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
+					WriteSpace();
+				}
 				keyword = Keyword_struct;
+			}
 			else if (td.IsInterface)
 				keyword = Keyword_interface;
 			else
