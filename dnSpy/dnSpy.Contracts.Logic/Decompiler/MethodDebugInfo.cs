@@ -192,8 +192,13 @@ namespace dnSpy.Contracts.Decompiler {
 				if (statement.TextSpan.Start <= textPosition) {
 					if (textPosition < statement.TextSpan.End)
 						return statement;
-					if (textPosition == statement.TextSpan.End)
-						intersection = statement;
+					if (textPosition == statement.TextSpan.End) {
+						// If it matches more than one statement, pick the smallest one. More specifically,
+						// use the first statement if they're identical; that way we use the smallest
+						// IL offset since Statements is sorted by IL offset.
+						if (intersection == null || statement.TextSpan.Start > intersection.Value.TextSpan.Start)
+							intersection = statement;
+					}
 				}
 			}
 			if (intersection != null)
