@@ -411,17 +411,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
 						break;
 					if (fieldValue != null) {
-						if (fieldValue.IsNull)
-							continue;
-						if (field.FieldType.IsValueType) {
-							var objValue = fieldValue.GetDereferencedValue(out hr)?.GetBoxedValue(out hr);
-							var data = objValue?.ReadGenericValue();
-							if (data != null && !IsZero(data))
+						try {
+							if (fieldValue.IsNull)
+								continue;
+							if (field.FieldType.IsValueType) {
+								var objValue = fieldValue.GetDereferencedValue(out hr)?.GetBoxedValue(out hr);
+								var data = objValue?.ReadGenericValue();
+								if (data != null && !IsZero(data))
+									return;
+							}
+							else {
+								// It's a reference type and not null, so the field has been initialized
 								return;
+							}
 						}
-						else {
-							// It's a reference type and not null, so the field has been initialized
-							return;
+						finally {
+							engine.DisposeHandle_CorDebug(fieldValue);
 						}
 					}
 				}
@@ -454,35 +459,44 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		// Calls System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor():
 		//		RuntimeHelpers.RunClassConstructor(obj.GetType().TypeHandle);
 		bool RuntimeHelpersRunClassConstructor(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, DmdType type, DbgDotNetValue objValue) {
-			var reflectionAppDomain = type.AppDomain;
-			var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
-			Debug.Assert((object)getTypeMethod != null);
-			if ((object)getTypeMethod == null)
-				return false;
-			var corAppDomain = ilFrame.GetCorAppDomain();
-			var getTypeRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeMethod, objValue, Array.Empty<object>(), false);
-			if (getTypeRes.Value == null || getTypeRes.ValueIsException)
-				return false;
-			var typeObj = getTypeRes.Value;
-			var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
-			Debug.Assert((object)runtimeTypeHandleType != null);
-			if ((object)runtimeTypeHandleType == null)
-				return false;
-			var getTypeHandleMethod = typeObj.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
-			Debug.Assert((object)getTypeHandleMethod != null);
-			if ((object)getTypeHandleMethod == null)
-				return false;
-			var typeHandleRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false);
-			if (typeHandleRes.Value == null || typeHandleRes.ValueIsException)
-				return false;
-			var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
-			var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
-			Debug.Assert((object)runClassConstructorMethod != null);
-			if ((object)runClassConstructorMethod == null)
-				return false;
-			var res = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false);
-			res.Value?.Dispose();
-			return !res.HasError && !res.ValueIsException;
+			DbgDotNetValueResult getTypeRes = default;
+			DbgDotNetValueResult typeHandleRes = default;
+			DbgDotNetValueResult res = default;
+			try {
+				var reflectionAppDomain = type.AppDomain;
+				var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
+				Debug.Assert((object)getTypeMethod != null);
+				if ((object)getTypeMethod == null)
+					return false;
+				var corAppDomain = ilFrame.GetCorAppDomain();
+				getTypeRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeMethod, objValue, Array.Empty<object>(), false);
+				if (getTypeRes.Value == null || getTypeRes.ValueIsException)
+					return false;
+				var typeObj = getTypeRes.Value;
+				var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
+				Debug.Assert((object)runtimeTypeHandleType != null);
+				if ((object)runtimeTypeHandleType == null)
+					return false;
+				var getTypeHandleMethod = typeObj.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
+				Debug.Assert((object)getTypeHandleMethod != null);
+				if ((object)getTypeHandleMethod == null)
+					return false;
+				typeHandleRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false);
+				if (typeHandleRes.Value == null || typeHandleRes.ValueIsException)
+					return false;
+				var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
+				var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
+				Debug.Assert((object)runClassConstructorMethod != null);
+				if ((object)runClassConstructorMethod == null)
+					return false;
+				res = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false);
+				return !res.HasError && !res.ValueIsException;
+			}
+			finally {
+				getTypeRes.Value?.Dispose();
+				typeHandleRes.Value?.Dispose();
+				res.Value?.Dispose();
+			}
 		}
 
 		static bool IsZero(byte[] a) {
