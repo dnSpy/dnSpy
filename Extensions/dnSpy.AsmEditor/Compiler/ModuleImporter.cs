@@ -725,8 +725,14 @@ namespace dnSpy.AsmEditor.Compiler {
 						if (!newStateMachineTypes.Contains(nestedNewType)) {
 							targetTypes.Remove(nestedTargetType);
 							newTypes.Remove(nestedTargetType);
-							var nestedImportedType = AddMergedType(nestedNewType, nestedTargetType);
-							importedType.NewOrExistingNestedTypes.Add(nestedImportedType);
+							if (IsCompilerGenerated(nestedNewType)) {
+								var nestedImportedType = CreateNewImportedType(nestedNewType, targetType.NestedTypes);
+								importedType.NewOrExistingNestedTypes.Add(nestedImportedType);
+							}
+							else {
+								var nestedImportedType = AddMergedType(nestedNewType, nestedTargetType);
+								importedType.NewOrExistingNestedTypes.Add(nestedImportedType);
+							}
 						}
 					}
 					else {
@@ -741,6 +747,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			return importedType;
+		}
+ 
+		static bool IsCompilerGenerated(TypeDef type) {
+			if (!type.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute"))
+				return false;
+			var name = type.Name.String;
+			if (name.Length == 0 || name[0] == '<')
+				return true;
+			if (name.StartsWith("_Closure$__"))
+				return true;
+
+			return false;
 		}
 
 		void AddGlobalTypeMembers(TypeDef newGlobalType) =>
@@ -917,9 +935,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				for (int counter = 0; ; counter++) {
 					if (!typeNames.Contains(ns, name))
 						break;
-					// It's prepended because generic types have a `<number> appended to the name,
-					// which they still should have after the rename.
-					name = "__" + counter.ToString() + "__" + type.Name.String;
+					var typeName = type.Name.String;
+					int index = typeName.LastIndexOf('`');
+					if (index < 0)
+						index = typeName.Length;
+					name = typeName.Substring(0, index) + "__" + counter.ToString() + typeName.Substring(index);
 				}
 				typeNames.Add(ns, name);
 				return name;

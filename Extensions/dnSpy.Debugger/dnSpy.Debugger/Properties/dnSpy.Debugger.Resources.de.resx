@@ -1174,7 +1174,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>_Trefferanzahl</value>
   </data>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
-    <value>_Meldung im Ausgabefenster protokollieren</value>
+    <value>_Meldung protokollieren</value>
   </data>
   <data name="GlyphToolTip_Actions" xml:space="preserve">
     <value>Aktionen:</value>
@@ -1472,5 +1472,8 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>Veraltete Felder im Variablen-Fenster ausblenden</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Erleichtern des Debuggens für ein Abbild</value>
   </data>
 </root>

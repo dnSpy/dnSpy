@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>А_ргументы</value>
+    <value>Аргументы</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
     <value>_Сборка</value>
@@ -168,19 +168,19 @@
     <value>Отладчик ({0})</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Фоновый</value>
+    <value>Background</value>
   </data>
   <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Остановлен</value>
+    <value>Stopped</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>Запрос останова</value>
+    <value>StopRequested</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Приостановлен</value>
+    <value>Suspended</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Запрос приостановки</value>
+    <value>SuspendRequested</value>
   </data>
   <data name="Thread_UserState_ThreadPool" xml:space="preserve">
     <value>ThreadPool</value>
@@ -189,7 +189,7 @@
     <value>UnsafePoint</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Незапущен</value>
+    <value>Unstarted</value>
   </data>
   <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
     <value>WaitSleepJoin</value>
@@ -215,10 +215,10 @@
     <value>Другой процесс уже отлаживает процесс {0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Native Frame {0}</value>
+    <value>Естественный фрейм {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Appdomain Transition</value>
+    <value>Переход домена приложения</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
     <value>Инициализация Класса</value>
@@ -239,10 +239,10 @@
     <value>JIT-компиляция</value>
   </data>
   <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Lightweight Function</value>
+    <value>Облегченная функция</value>
   </data>
   <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Managed to Native Transition</value>
+    <value>Регулируемый естественным переходом</value>
   </data>
   <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
     <value>Переход от управляемого к управляемому</value>

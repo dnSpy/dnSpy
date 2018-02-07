@@ -1473,4 +1473,7 @@
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>在变量窗口中隐藏已弃用的成员</value>
   </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>使映像更易于调试</value>
+  </data>
 </root>
