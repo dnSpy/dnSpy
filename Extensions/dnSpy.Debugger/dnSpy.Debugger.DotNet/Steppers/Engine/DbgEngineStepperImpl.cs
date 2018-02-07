@@ -380,9 +380,9 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				}
 			}
 
-			var binSpans = TryCreateMethodBodySpans(frame);
-			if (binSpans != null) {
-				var ranges = CreateStepRanges(binSpans);
+			var ilSpans = TryCreateMethodBodySpans(frame);
+			if (ilSpans != null) {
+				var ranges = CreateStepRanges(ilSpans);
 				if (ranges.Length != 0)
 					return stepper.StepOverAsync(frame, ranges);
 			}
@@ -422,11 +422,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		static readonly UTF8String utf8System_Runtime_CompilerServices = new UTF8String("System.Runtime.CompilerServices");
 		static readonly UTF8String utf8CompilerGeneratedAttribute = new UTF8String("CompilerGeneratedAttribute");
 
-		sealed class MethodBinSpanState {
-			public BinSpan[] BodyRange;
+		sealed class MethodILSpanState {
+			public ILSpan[] BodyRange;
 		}
 
-		BinSpan[] TryCreateMethodBodySpans(DbgDotNetEngineStepperFrameInfo frame) {
+		ILSpan[] TryCreateMethodBodySpans(DbgDotNetEngineStepperFrameInfo frame) {
 			if (!frame.TryGetLocation(out var module, out var token, out var offset))
 				return null;
 			DbgEvaluationInfo evalInfo = null;
@@ -435,10 +435,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				var method = runtime.GetFrameMethod(evalInfo);
 				if ((object)method == null)
 					return null;
-				var state = method.GetOrCreateData<MethodBinSpanState>();
+				var state = method.GetOrCreateData<MethodILSpanState>();
 				if (state.BodyRange == null) {
 					var body = method.GetMethodBody();
-					state.BodyRange = new BinSpan[] { new BinSpan(0, (uint)body.GetILAsByteArray().Length) };
+					state.BodyRange = new ILSpan[] { new ILSpan(0, (uint)body.GetILAsByteArray().Length) };
 				}
 				return state.BodyRange;
 			}
@@ -935,7 +935,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
-		static IEnumerable<DbgCodeRange[]> GetHiddenRanges(DbgCodeRange[] statements, BinSpan[] unusedSpans) {
+		static IEnumerable<DbgCodeRange[]> GetHiddenRanges(DbgCodeRange[] statements, ILSpan[] unusedSpans) {
 #if DEBUG
 			for (int i = 1; i < statements.Length; i++)
 				Debug.Assert(statements[i - 1].End <= statements[i].Start);
@@ -1059,12 +1059,12 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			var instructions = Array.Empty<DbgILInstruction[]>();
 			if (info.DebugInfoOrNull != null) {
 				var sourceStatement = info.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
-				BinSpan[] ranges;
+				ILSpan[] ranges;
 				if (sourceStatement == null)
 					ranges = info.DebugInfoOrNull.GetUnusedRanges();
 				else {
-					var sourceStatements = info.DebugInfoOrNull.GetBinSpansOfStatement(sourceStatement.Value.TextSpan);
-					Debug.Assert(sourceStatements.Any(a => a == sourceStatement.Value.BinSpan));
+					var sourceStatements = info.DebugInfoOrNull.GetILSpansOfStatement(sourceStatement.Value.TextSpan);
+					Debug.Assert(sourceStatements.Any(a => a == sourceStatement.Value.ILSpan));
 					exactCodeRanges = CreateStepRanges(sourceStatements);
 					ranges = info.DebugInfoOrNull.GetRanges(sourceStatements);
 				}
@@ -1109,12 +1109,12 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return res;
 		}
 
-		static DbgCodeRange[] CreateStepRanges(BinSpan[] binSpans) {
-			if (binSpans.Length == 0)
+		static DbgCodeRange[] CreateStepRanges(ILSpan[] ilSpans) {
+			if (ilSpans.Length == 0)
 				return Array.Empty<DbgCodeRange>();
-			var stepRanges = new DbgCodeRange[binSpans.Length];
+			var stepRanges = new DbgCodeRange[ilSpans.Length];
 			for (int i = 0; i < stepRanges.Length; i++) {
-				ref readonly var span = ref binSpans[i];
+				ref readonly var span = ref ilSpans[i];
 				stepRanges[i] = new DbgCodeRange(span.Start, span.End);
 			}
 			return stepRanges;

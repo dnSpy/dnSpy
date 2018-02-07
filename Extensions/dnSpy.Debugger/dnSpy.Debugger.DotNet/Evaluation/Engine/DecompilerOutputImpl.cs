@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					var m = debugInfo.KickoffMethod;
 					var body = m.Body;
 					int bodySize = body?.GetCodeSize() ?? 0;
-					var scope = new MethodDebugScope(new BinSpan(0, (uint)bodySize), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
+					var scope = new MethodDebugScope(new ILSpan(0, (uint)bodySize), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
 					kickoffMethodDebugInfo = new MethodDebugInfo(debugInfo.CompilerName, debugInfo.DecompilerSettingsVersion, StateMachineKind.None, m, null, null, Array.Empty<SourceStatement>(), scope, null, null);
 					methodDebugInfo = debugInfo;
 				}

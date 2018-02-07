@@ -23,9 +23,9 @@ using System.Linq;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Binary span
+	/// IL span
 	/// </summary>
-	public readonly struct BinSpan : IEquatable<BinSpan> {
+	public readonly struct ILSpan : IEquatable<ILSpan> {
 		readonly uint start, end;
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="start">Start offset</param>
 		/// <param name="length">Length</param>
-		public BinSpan(uint start, uint length) {
+		public ILSpan(uint start, uint length) {
 			this.start = start;
 			end = start + length;
 		}
@@ -64,10 +64,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="start">Start offset</param>
 		/// <param name="end">End offset</param>
 		/// <returns></returns>
-		public static BinSpan FromBounds(uint start, uint end) {
+		public static ILSpan FromBounds(uint start, uint end) {
 			if (end < start)
 				throw new ArgumentOutOfRangeException(nameof(end));
-			return new BinSpan(start, end - start);
+			return new ILSpan(start, end - start);
 		}
 
 		/// <summary>
@@ -75,39 +75,39 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="input">Input values</param>
 		/// <returns></returns>
-		public static List<BinSpan> OrderAndCompact(IEnumerable<BinSpan> input) => OrderAndCompactList(input.ToList());
+		public static List<ILSpan> OrderAndCompact(IEnumerable<ILSpan> input) => OrderAndCompactList(input.ToList());
 
 		/// <summary>
 		/// Sorts and compacts <paramref name="input"/>
 		/// </summary>
 		/// <param name="input">Input list. It can be sorted, and it can also be returned to the caller.</param>
 		/// <returns></returns>
-		public static List<BinSpan> OrderAndCompactList(List<BinSpan> input) {// Don't rename to OrderAndCompact() since some pass in a list that shouldn't be modified
+		public static List<ILSpan> OrderAndCompactList(List<ILSpan> input) {// Don't rename to OrderAndCompact() since some pass in a list that shouldn't be modified
 			if (input.Count <= 1)
 				return input;
 
-			input.Sort(BinSpanComparer.Instance);
-			var res = new List<BinSpan>();
+			input.Sort(ILSpanComparer.Instance);
+			var res = new List<ILSpan>();
 			var curr = input[0];
 			res.Add(curr);
 			for (int i = 1; i < input.Count; i++) {
 				var next = input[i];
 				if (curr.End == next.Start)
-					res[res.Count - 1] = curr = new BinSpan(curr.Start, next.End - curr.Start);
+					res[res.Count - 1] = curr = new ILSpan(curr.Start, next.End - curr.Start);
 				else if (next.Start > curr.End) {
 					res.Add(next);
 					curr = next;
 				}
 				else if (next.End > curr.End)
-					res[res.Count - 1] = curr = new BinSpan(curr.Start, next.End - curr.Start);
+					res[res.Count - 1] = curr = new ILSpan(curr.Start, next.End - curr.Start);
 			}
 
 			return res;
 		}
 
-		sealed class BinSpanComparer : IComparer<BinSpan> {
-			public static readonly IComparer<BinSpan> Instance = new BinSpanComparer();
-			public int Compare(BinSpan x, BinSpan y) {
+		sealed class ILSpanComparer : IComparer<ILSpan> {
+			public static readonly IComparer<ILSpan> Instance = new ILSpanComparer();
+			public int Compare(ILSpan x, ILSpan y) {
 				int c = unchecked((int)x.Start - (int)y.Start);
 				if (c != 0)
 					return c;
@@ -121,7 +121,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(BinSpan left, BinSpan right) => left.Equals(right);
+		public static bool operator ==(ILSpan left, ILSpan right) => left.Equals(right);
 
 		/// <summary>
 		/// operator !=()
@@ -129,21 +129,21 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(BinSpan left, BinSpan right) => !left.Equals(right);
+		public static bool operator !=(ILSpan left, ILSpan right) => !left.Equals(right);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(BinSpan other) => start == other.start && end == other.end;
+		public bool Equals(ILSpan other) => start == other.start && end == other.end;
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is BinSpan && Equals((BinSpan)obj);
+		public override bool Equals(object obj) => obj is ILSpan && Equals((ILSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()

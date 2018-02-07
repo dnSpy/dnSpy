@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Code.TextEditor {
 			for (int i = 0; i < methodStatements.Count; i++) {
 				var statement = methodStatements[i];
 				var moduleId = moduleIdProvider.Create(statement.Method.Module);
-				locations[i] = dbgDotNetCodeLocationFactory.Value.Create(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+				locations[i] = dbgDotNetCodeLocationFactory.Value.Create(moduleId, statement.Method.MDToken.Raw, statement.Statement.ILSpan.Start);
 			}
 			return new DbgTextViewBreakpointLocationResult(locations, span);
 		}

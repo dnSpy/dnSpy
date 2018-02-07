@@ -438,7 +438,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			if (referencePosition.MethodSourceStatement != null) {
 				var methodSourceStatement = referencePosition.MethodSourceStatement.Value;
-				var methodStatement = methodDebugService.FindByCodeOffset(methodSourceStatement.Method, methodSourceStatement.Statement.BinSpan.Start);
+				var methodStatement = methodDebugService.FindByCodeOffset(methodSourceStatement.Method, methodSourceStatement.Statement.ILSpan.Start);
 				if (methodStatement != null) {
 					MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start, options);
 					return true;

@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Decompiler {
 			this.kickoffMethod = kickoffMethod;
 			statements = new List<SourceStatement>();
 			Scope = new MethodDebugScopeBuilder();
-			Scope.Span = BinSpan.FromBounds(0, (uint)method.Body.GetCodeSize());
+			Scope.Span = ILSpan.FromBounds(0, (uint)method.Body.GetCodeSize());
 			if (method == kickoffMethod)
 				throw new ArgumentException();
 		}

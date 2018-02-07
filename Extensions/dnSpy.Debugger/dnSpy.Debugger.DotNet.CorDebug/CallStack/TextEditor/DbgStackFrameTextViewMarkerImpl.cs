@@ -71,9 +71,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 					var textSpan = info.Statement.TextSpan;
 					if (textSpan.End > snapshot.Length)
 						yield break;// Old data, but we'll get called again
-					var binSpan = info.Statement.BinSpan;
+					var ilSpan = info.Statement.ILSpan;
 					foreach (uint ilOffset in ilOffsets) {
-						if (ilOffset >= binSpan.Start && ilOffset < binSpan.End)
+						if (ilOffset >= ilSpan.Start && ilOffset < ilSpan.End)
 							yield return new SnapshotSpan(snapshot, textSpan.Start, textSpan.Length);
 					}
 				}

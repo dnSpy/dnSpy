@@ -215,7 +215,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				if (methodSourceStatement.Value.Method != info.Method)
 					return;
-				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.BinSpan.Start);
+				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.ILSpan.Start);
 				if (stmt == null)
 					return;
 				statementSpan = new Span(stmt.Value.TextSpan.Start, stmt.Value.TextSpan.Length);

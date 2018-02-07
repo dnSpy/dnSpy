@@ -95,7 +95,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			DecompilerContext context = new DecompilerContext(settingsVersion, method.Module, MetadataTextColorProvider) {
 				CurrentType = method.DeclaringType,
 				CurrentMethod = method,
-				CalculateBinSpans = ctx.CalculateBinSpans,
+				CalculateILSpans = ctx.CalculateILSpans,
 			};
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 

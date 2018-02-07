@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var state = (EditMethodDecompileCodeState)decompileCodeState;
 			state.CancellationToken.ThrowIfCancellationRequested();
 
-			state.DecompilationContext.CalculateBinSpans = true;
+			state.DecompilationContext.CalculateILSpans = true;
 			var options = new DecompileTypeMethods(state.MainOutput, state.DecompilationContext, nonNestedTypeToEdit);
 			options.DecompileHidden = false;
 			options.ShowAll = true;

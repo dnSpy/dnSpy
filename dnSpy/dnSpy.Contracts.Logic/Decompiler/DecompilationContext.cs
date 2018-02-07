@@ -43,9 +43,9 @@ namespace dnSpy.Contracts.Decompiler {
 		public Func<IDisposable> GetDisableAssemblyLoad { get; set; }
 
 		/// <summary>
-		/// true to calculate BinSpans. Used when debugging
+		/// true to calculate ILSpans. Used when debugging
 		/// </summary>
-		public bool CalculateBinSpans { get; set; }
+		public bool CalculateILSpans { get; set; }
 
 		/// <summary>
 		/// Constructor

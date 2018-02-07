@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public SourceParameter[] Parameters { get; }
 
 		/// <summary>
-		/// Gets all statements, sorted by <see cref="BinSpan.Start"/>
+		/// Gets all statements, sorted by <see cref="ILSpan.Start"/>
 		/// </summary>
 		public SourceStatement[] Statements { get; }
 
@@ -127,38 +127,38 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets step ranges
 		/// </summary>
-		/// <param name="sourceBinSpans">Source statement spans</param>
+		/// <param name="sourceILSpans">Source statement spans</param>
 		/// <returns></returns>
-		public BinSpan[] GetRanges(BinSpan[] sourceBinSpans) {
-			var list = new List<BinSpan>(sourceBinSpans.Length + GetUnusedBinSpans().Length + 1);
-			list.AddRange(sourceBinSpans);
-			list.AddRange(GetUnusedBinSpans());
-			return BinSpan.OrderAndCompactList(list).ToArray();
+		public ILSpan[] GetRanges(ILSpan[] sourceILSpans) {
+			var list = new List<ILSpan>(sourceILSpans.Length + GetUnusedILSpans().Length + 1);
+			list.AddRange(sourceILSpans);
+			list.AddRange(GetUnusedILSpans());
+			return ILSpan.OrderAndCompactList(list).ToArray();
 		}
 
 		/// <summary>
 		/// Gets unused step ranges
 		/// </summary>
 		/// <returns></returns>
-		public BinSpan[] GetUnusedRanges() => GetUnusedBinSpans();
+		public ILSpan[] GetUnusedRanges() => GetUnusedILSpans();
 
-		BinSpan[] GetUnusedBinSpans() {
-			if (cachedUnusedBinSpans != null)
-				return cachedUnusedBinSpans;
-			var list = new List<BinSpan>(Statements.Length);
+		ILSpan[] GetUnusedILSpans() {
+			if (cachedUnusedILSpans != null)
+				return cachedUnusedILSpans;
+			var list = new List<ILSpan>(Statements.Length);
 			foreach (var s in Statements)
-				list.Add(s.BinSpan);
-			return cachedUnusedBinSpans = GetUnusedBinSpans(list).ToArray();
+				list.Add(s.ILSpan);
+			return cachedUnusedILSpans = GetUnusedILSpans(list).ToArray();
 		}
-		BinSpan[] cachedUnusedBinSpans;
+		ILSpan[] cachedUnusedILSpans;
 
-		List<BinSpan> GetUnusedBinSpans(List<BinSpan> list) {
+		List<ILSpan> GetUnusedILSpans(List<ILSpan> list) {
 			uint codeSize = (uint)Method.Body.GetCodeSize();
-			list = BinSpan.OrderAndCompact(list);
-			var res = new List<BinSpan>();
+			list = ILSpan.OrderAndCompact(list);
+			var res = new List<ILSpan>();
 			if (list.Count == 0) {
 				if (codeSize > 0)
-					res.Add(new BinSpan(0, codeSize));
+					res.Add(new ILSpan(0, codeSize));
 				return res;
 			}
 			uint prevEnd = 0;
@@ -167,12 +167,12 @@ namespace dnSpy.Contracts.Decompiler {
 				Debug.Assert(span.Start >= prevEnd);
 				uint length = span.Start - prevEnd;
 				if (length > 0)
-					res.Add(new BinSpan(prevEnd, length));
+					res.Add(new ILSpan(prevEnd, length));
 				prevEnd = span.End;
 			}
 			Debug.Assert(prevEnd <= codeSize);
 			if (prevEnd < codeSize)
-				res.Add(new BinSpan(prevEnd, codeSize - prevEnd));
+				res.Add(new ILSpan(prevEnd, codeSize - prevEnd));
 			return res;
 		}
 
@@ -213,7 +213,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var d = Math.Abs(a.TextSpan.Start - textPosition) - Math.Abs(b.TextSpan.Start - textPosition);
 				if (d != 0)
 					return d;
-				return (int)(a.BinSpan.Start - b.BinSpan.Start);
+				return (int)(a.ILSpan.Start - b.ILSpan.Start);
 			});
 			if (list.Count > 0)
 				return list[0];
@@ -227,18 +227,18 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public SourceStatement? GetSourceStatementByCodeOffset(uint ilOffset) {
 			foreach (var statement in Statements) {
-				if (statement.BinSpan.Start <= ilOffset && ilOffset < statement.BinSpan.End)
+				if (statement.ILSpan.Start <= ilOffset && ilOffset < statement.ILSpan.End)
 					return statement;
 			}
 			return null;
 		}
 
 		/// <summary>
-		/// Gets all binspans of a statement
+		/// Gets all ILSpans of a statement
 		/// </summary>
 		/// <param name="statementSpan">Statement span</param>
 		/// <returns></returns>
-		public BinSpan[] GetBinSpansOfStatement(TextSpan statementSpan) {
+		public ILSpan[] GetILSpansOfStatement(TextSpan statementSpan) {
 			if (statementsDict == null)
 				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
 			if (statementsDict.TryGetValue(statementSpan, out var list)) {
@@ -249,15 +249,15 @@ namespace dnSpy.Contracts.Decompiler {
 #endif
 				return spans;
 			}
-			return Array.Empty<BinSpan>();
+			return Array.Empty<ILSpan>();
 		}
-		Dictionary<TextSpan, SmallList<BinSpan>> statementsDict;
+		Dictionary<TextSpan, SmallList<ILSpan>> statementsDict;
 
-		static Dictionary<TextSpan, SmallList<BinSpan>> CreateStatementsDict(SourceStatement[] statements) {
-			var dict = new Dictionary<TextSpan, SmallList<BinSpan>>(statements.Length);
+		static Dictionary<TextSpan, SmallList<ILSpan>> CreateStatementsDict(SourceStatement[] statements) {
+			var dict = new Dictionary<TextSpan, SmallList<ILSpan>>(statements.Length);
 			foreach (var statement in statements) {
 				dict.TryGetValue(statement.TextSpan, out var list);
-				list.Add(statement.BinSpan);
+				list.Add(statement.ILSpan);
 				dict[statement.TextSpan] = list;
 			}
 			return dict;

@@ -59,7 +59,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 
 			var statement = methodStatements[0];
 			var moduleId = moduleIdProvider.Create(statement.Method.Module);
-			var location = dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+			var location = dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.ILSpan.Start);
 			return new TextViewBookmarkLocationResult(location, span);
 		}
 	}

@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			DecompileTypeMethods options;
 
-			state.DecompilationContext.CalculateBinSpans = true;
+			state.DecompilationContext.CalculateILSpans = true;
 			options = new DecompileTypeMethods(state.MainOutput, state.DecompilationContext, type);
 			options.Methods.Add(methodToEdit);
 			options.DecompileHidden = false;
@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			state.CancellationToken.ThrowIfCancellationRequested();
 
-			state.DecompilationContext.CalculateBinSpans = false;
+			state.DecompilationContext.CalculateILSpans = false;
 			options = new DecompileTypeMethods(state.HiddenOutput, state.DecompilationContext, type);
 			options.Methods.Add(methodToEdit);
 			options.DecompileHidden = true;

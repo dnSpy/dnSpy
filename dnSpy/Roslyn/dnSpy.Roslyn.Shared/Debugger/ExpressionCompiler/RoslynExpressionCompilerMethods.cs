@@ -21,11 +21,11 @@ namespace dnSpy.Roslyn.Shared.Debugger.ExpressionCompiler {
 			}
 		}
 
-		public static ILSpan GetReuseSpan(List<MethodDebugScope> scopes, uint ilOffset) {
+		public static Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan GetReuseSpan(List<MethodDebugScope> scopes, uint ilOffset) {
 			return MethodContextReuseConstraints.CalculateReuseSpan(
 				(int)ilOffset,
-				ILSpan.MaxValue,
-				scopes.Select(scope => new ILSpan(scope.Span.Start, scope.Span.End)));
+				Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan.MaxValue,
+				scopes.Select(scope => new Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan(scope.Span.Start, scope.Span.End)));
 		}
 
 		public static ImmutableArray<string> GetLocalNames(int totalLocals, List<MethodDebugScope> scopes, CompilerGeneratedVariableInfo[] compilerGeneratedVariables) {

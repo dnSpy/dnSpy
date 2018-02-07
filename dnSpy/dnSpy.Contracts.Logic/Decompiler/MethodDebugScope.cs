@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the span of this scope
 		/// </summary>
-		public BinSpan Span { get; }
+		public ILSpan Span { get; }
 
 		/// <summary>
 		/// Gets all child scopes
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="locals">Locals</param>
 		/// <param name="imports">Imports</param>
 		/// <param name="constants">Constants</param>
-		public MethodDebugScope(BinSpan span, MethodDebugScope[] scopes, SourceLocal[] locals, ImportInfo[] imports, MethodDebugConstant[] constants) {
+		public MethodDebugScope(ILSpan span, MethodDebugScope[] scopes, SourceLocal[] locals, ImportInfo[] imports, MethodDebugConstant[] constants) {
 			Span = span;
 			Scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
 			Locals = locals ?? throw new ArgumentNullException(nameof(locals));

@@ -44,7 +44,6 @@
     <Compile Include="Decompiler\AsyncMethodDebugInfo.cs" />
     <Compile Include="Decompiler\AsyncStepInfo.cs" />
     <Compile Include="Decompiler\BamlDecompilerOptions.cs" />
-    <Compile Include="Decompiler\BinSpan.cs" />
     <Compile Include="Decompiler\CodeBracesRange.cs" />
     <Compile Include="Decompiler\CodeBracesRangeFlags.cs" />
     <Compile Include="Decompiler\DecompilationContext.cs" />
@@ -68,6 +67,7 @@
     <Compile Include="Decompiler\IDecompilerProvider.cs" />
     <Compile Include="Decompiler\IdentifierEscaper.cs" />
     <Compile Include="Decompiler\IInstructionBytesReader.cs" />
+    <Compile Include="Decompiler\ILSpan.cs" />
     <Compile Include="Decompiler\InstructionReference.cs" />
     <Compile Include="Decompiler\ISimpleILPrinter.cs" />
     <Compile Include="Decompiler\ISourceVariable.cs" />

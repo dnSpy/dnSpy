@@ -141,7 +141,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		DecompileContext CreateDecompileContext(IShowContext ctx) {
 			var decompileContext = new DecompileContext();
 			var decompilationContext = new DecompilationContext();
-			decompilationContext.CalculateBinSpans = true;
+			decompilationContext.CalculateILSpans = true;
 			decompilationContext.GetDisableAssemblyLoad = () => decompileDocumentTabContentFactory.DocumentService.DisableAssemblyLoad();
 			decompilationContext.IsBodyModified = m => decompileDocumentTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var dispatcher = Dispatcher.CurrentDispatcher;

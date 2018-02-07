@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the span of this scope
 		/// </summary>
-		public BinSpan Span { get; set; }
+		public ILSpan Span { get; set; }
 
 		/// <summary>
 		/// Gets all child scopes

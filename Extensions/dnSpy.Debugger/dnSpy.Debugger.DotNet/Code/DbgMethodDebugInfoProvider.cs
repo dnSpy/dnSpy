@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 			var decContext = new DecompilationContext {
 				CancellationToken = cancellationToken,
-				CalculateBinSpans = true,
+				CalculateILSpans = true,
 			};
 			var info = TryCompileAndGetDebugInfo(decompiler, containingMethod, token, decContext, cancellationToken);
 			if (info.debugInfo == null && containingMethod != method) {
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				info = TryCompileAndGetDebugInfo(decompiler, method, token, decContext, cancellationToken);
 			}
 			if (info.debugInfo == null && method.Body == null) {
-				var scope = new MethodDebugScope(new BinSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
+				var scope = new MethodDebugScope(new ILSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
 				info = (new MethodDebugInfo(null, -1, StateMachineKind.None, method, null, null, Array.Empty<SourceStatement>(), scope, null, null), null);
 			}
 			if (info.debugInfo == null)

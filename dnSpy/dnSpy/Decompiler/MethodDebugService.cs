@@ -250,7 +250,7 @@ namespace dnSpy.Decompiler {
 			if (!dict.TryGetValue(token, out var info))
 				return null;
 			foreach (var sourceStatement in info.Statements) {
-				if (sourceStatement.BinSpan.Start <= codeOffset && codeOffset < sourceStatement.BinSpan.End)
+				if (sourceStatement.ILSpan.Start <= codeOffset && codeOffset < sourceStatement.ILSpan.End)
 					return new MethodSourceStatement(info.Method, sourceStatement);
 			}
 			return null;

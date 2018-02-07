@@ -257,8 +257,8 @@ namespace dnSpy.AsmEditor.Hex {
 			var context = HexMenuCommand.CreateContext(documentTabService);
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				ShowAddressReferenceInHexEditorCommand.ExecuteInternal(documentTabService, context);
-			else if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
-				ShowBinSpanInHexEditorCommand.ExecuteInternal(documentTabService, methodAnnotations, context);
+			else if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+				ShowILSpanInHexEditorCommand.ExecuteInternal(documentTabService, methodAnnotations, context);
 			else if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				ShowHexNodeInHexEditorCommand.ExecuteInternal(documentTabService, methodAnnotations, context);
 			else if (IsVisibleInternal(documentTabService, methodAnnotations, context))
@@ -268,7 +268,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static bool CanExecuteCommand(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
 			var context = HexMenuCommand.CreateContext(documentTabService);
 			return ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context) ||
-				ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
+				ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
 				ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
 				IsVisibleInternal(documentTabService, methodAnnotations, context);
 		}
@@ -291,7 +291,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static DsDocumentNode GetDocumentNode(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
@@ -377,7 +377,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	static class ShowBinSpanInHexEditorCommand {
+	static class ShowILSpanInHexEditorCommand {
 		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 20)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
@@ -433,11 +433,11 @@ namespace dnSpy.AsmEditor.Hex {
 			if (methodAnnotations.Value.IsBodyModified(method))
 				len = 0;
 			else if (methodStatements.Count == 1) {
-				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.BinSpan.Start;
-				len = methodStatements[0].Statement.BinSpan.End - methodStatements[0].Statement.BinSpan.Start;
+				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.ILSpan.Start;
+				len = methodStatements[0].Statement.ILSpan.End - methodStatements[0].Statement.ILSpan.Start;
 			}
 			else {
-				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.BinSpan.Start;
+				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.ILSpan.Start;
 				len = 0;
 			}
 
@@ -490,7 +490,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
@@ -546,7 +546,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)

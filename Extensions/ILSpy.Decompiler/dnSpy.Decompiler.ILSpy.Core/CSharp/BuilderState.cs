@@ -35,7 +35,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public BuilderState(DecompilationContext ctx, BuilderCache cache, MetadataTextColorProvider metadataTextColorProvider) {
 			this.cache = cache;
 			State = cache.AllocateAstBuilderState();
-			State.AstBuilder.Context.CalculateBinSpans = ctx.CalculateBinSpans;
+			State.AstBuilder.Context.CalculateILSpans = ctx.CalculateILSpans;
 			State.AstBuilder.Context.MetadataTextColorProvider = metadataTextColorProvider;
 		}
 

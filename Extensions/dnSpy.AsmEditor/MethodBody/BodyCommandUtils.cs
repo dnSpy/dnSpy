@@ -60,13 +60,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var foundInstrs = new HashSet<uint>();
 			// The instructions' offset field is assumed to be valid
 			var instrs = body.Instructions.Select(a => a.Offset).ToArray();
-			foreach (var binSpan in list.Select(a => a.Statement.BinSpan)) {
-				int index = Array.BinarySearch(instrs, binSpan.Start);
+			foreach (var ilSpan in list.Select(a => a.Statement.ILSpan)) {
+				int index = Array.BinarySearch(instrs, ilSpan.Start);
 				if (index < 0)
 					continue;
 				for (int i = index; i < instrs.Length; i++) {
 					uint instrOffset = instrs[i];
-					if (instrOffset >= binSpan.End)
+					if (instrOffset >= ilSpan.End)
 						break;
 
 					foundInstrs.Add(instrOffset);
