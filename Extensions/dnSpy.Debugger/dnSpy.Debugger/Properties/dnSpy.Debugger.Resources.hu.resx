@@ -1473,4 +1473,7 @@ Biztosan ki akarja nyitni?</value>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>Az elavult tagok elrejtése a változó ablakban</value>
   </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Megkönnyíti a futtatható csomag hibakeresését</value>
+  </data>
 </root>

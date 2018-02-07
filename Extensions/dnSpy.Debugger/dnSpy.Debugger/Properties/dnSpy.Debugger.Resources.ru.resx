@@ -333,8 +333,8 @@
     <value>Не могу вычислить пока появляется необработанное исключение</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>Could not start '{0}'
-ERROR: {1}</value>
+    <value>Не могу запустить '{0}'
+ОШИБКА: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Настройки и_сключений</value>
@@ -1468,9 +1468,12 @@ ERROR: {1}</value>
     <value>Установить фокус на отлаживаемый процесс</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
-    <value>Open All Modules</value>
+    <value>Открыть все модули</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>Hide deprecated members in variables windows</value>
+    <value>Скрыть deprecated члены в окнах переменных</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Как сделать образ легче отлаживаемым</value>
   </data>
 </root>

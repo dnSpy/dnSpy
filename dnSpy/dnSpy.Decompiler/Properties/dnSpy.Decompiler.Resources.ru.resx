@@ -235,7 +235,7 @@
     <value>&lt;Неизвестно&gt;</value>
   </data>
   <data name="CSharp_Awaitable_Method" xml:space="preserve">
-    <value>awaitable</value>
+    <value>ожидаемый</value>
   </data>
   <data name="CSharp_Deprecated_Member" xml:space="preserve">
     <value>устаревший</value>
@@ -244,7 +244,7 @@
     <value>расширение</value>
   </data>
   <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
-    <value>Awaitable</value>
+    <value>Ожидаемый</value>
   </data>
   <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
     <value>Устаревший</value>
