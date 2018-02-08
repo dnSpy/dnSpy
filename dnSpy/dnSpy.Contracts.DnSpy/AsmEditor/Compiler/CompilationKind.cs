@@ -25,12 +25,12 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// Edit assembly and module attributes
 		/// </summary>
-		Assembly,
+		EditAssembly,
 
 		/// <summary>
 		/// Edit method
 		/// </summary>
-		Method,
+		EditMethod,
 
 		/// <summary>
 		/// Add class

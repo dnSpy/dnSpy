@@ -45,8 +45,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		public bool CanCompile(CompilationKind kind) {
 			switch (kind) {
-			case CompilationKind.Assembly:
-			case CompilationKind.Method:
+			case CompilationKind.EditAssembly:
+			case CompilationKind.EditMethod:
 			case CompilationKind.AddClass:
 			case CompilationKind.EditClass:
 				return true;
