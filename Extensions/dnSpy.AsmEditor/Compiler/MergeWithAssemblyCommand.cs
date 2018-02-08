@@ -189,11 +189,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			var pdbFilename = Path.ChangeExtension(module.Location, "pdb");
 			try {
 				var pdbBytes = File.ReadAllBytes(pdbFilename);
-				string pdbMagic = "Microsoft C/C++ MSF 7.00\r\n";
+
+				const string pdbMagic = "Microsoft C/C++ MSF 7.00\r\n";
 				if (pdbBytes.Length > pdbMagic.Length && Encoding.ASCII.GetString(pdbBytes, 0, pdbMagic.Length) == pdbMagic)
 					return new DebugFileResult(DebugFileFormat.Pdb, pdbBytes);
 
-				//TODO: Support portable pdb and embedded pdb
+				if (pdbBytes.Length >= 4 && BitConverter.ToUInt32(pdbBytes, 0) == 0x424A5342)
+					return new DebugFileResult(DebugFileFormat.PortablePdb, pdbBytes);
 			}
 			catch {
 			}

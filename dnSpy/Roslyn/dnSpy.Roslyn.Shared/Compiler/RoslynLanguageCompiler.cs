@@ -45,8 +45,8 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 
 		public bool CanCompile(CompilationKind kind) {
 			switch (kind) {
-			case CompilationKind.Assembly:
-			case CompilationKind.Method:
+			case CompilationKind.EditAssembly:
+			case CompilationKind.EditMethod:
 			case CompilationKind.AddClass:
 			case CompilationKind.EditClass:
 				return true;
@@ -160,7 +160,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 				throw new InvalidOperationException("Project returned a null Compilation");
 			var peStream = new MemoryStream();
 			MemoryStream pdbStream = null;
-			var emitOpts = new EmitOptions(debugInformationFormat: DebugInformationFormat.Pdb);
+			var emitOpts = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
 			if (emitOpts.DebugInformationFormat == DebugInformationFormat.Pdb || emitOpts.DebugInformationFormat == DebugInformationFormat.PortablePdb)
 				pdbStream = new MemoryStream();
 			var emitResult = compilation.Emit(peStream, pdbStream, options: emitOpts, cancellationToken: cancellationToken);

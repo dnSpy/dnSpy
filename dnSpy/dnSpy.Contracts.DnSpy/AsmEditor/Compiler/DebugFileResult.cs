@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// </summary>
 	public readonly struct DebugFileResult {
 		/// <summary>
-		/// PDB file or null if none
+		/// PDB file or null if it's an embedded PDB file
 		/// </summary>
 		public byte[] RawFile { get; }
 
@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Constructor
 		/// </summary>
 		/// <param name="format">Debug file format</param>
-		/// <param name="rawFile">Debug file data</param>
+		/// <param name="rawFile">Debug file data or null if it's an embedded PDB file</param>
 		public DebugFileResult(DebugFileFormat format, byte[] rawFile) {
 			Format = format;
 			RawFile = rawFile;
