@@ -148,21 +148,19 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		ModuleDefMD LoadModule(byte[] rawGeneratedModule, DebugFileResult debugFile) {
 			var opts = new ModuleCreationOptions();
+			opts.TryToLoadPdbFromDisk = false;
 
 			switch (debugFile.Format) {
 			case DebugFileFormat.None:
 				break;
 
 			case DebugFileFormat.Pdb:
+			case DebugFileFormat.PortablePdb:
 				opts.PdbFileOrData = debugFile.RawFile;
 				break;
 
-			case DebugFileFormat.PortablePdb:
-				Debug.Fail("Portable PDB isn't supported yet");//TODO:
-				break;
-
 			case DebugFileFormat.Embedded:
-				Debug.Fail("Embedded Portable PDB isn't supported yet");//TODO:
+				opts.TryToLoadPdbFromDisk = true;
 				break;
 
 			default:
