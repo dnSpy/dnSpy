@@ -74,8 +74,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (info == null)
 				return null;
 			switch (kind) {
-			case CompilationKind.EditAssembly:		return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
-			case CompilationKind.EditMethod:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.EditAssembly:	return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.EditMethod:	return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.AddClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClass2, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.EditClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeEditClass2, info.Value.decompiler.GenericNameUI);
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
