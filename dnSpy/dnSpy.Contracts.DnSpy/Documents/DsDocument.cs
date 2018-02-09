@@ -210,8 +210,8 @@ namespace dnSpy.Contracts.Documents {
 				return;
 			try {
 				var pdbFilename = Path.Combine(Path.GetDirectoryName(dotNetFilename), Path.GetFileNameWithoutExtension(dotNetFilename) + ".pdb");
-				if (File.Exists(pdbFilename))
-					m.LoadPdb(pdbFilename);
+				// Don't check if the file exists, it could be an embedded portable PDB file
+				m.LoadPdb(pdbFilename);
 			}
 			catch {
 			}
