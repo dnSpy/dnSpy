@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public EditClassVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, IMemberDef defToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
-			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, defToEdit.Module) {
+			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, defToEdit.Module, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedTypeToEdit = defToEdit as TypeDef ?? defToEdit.DeclaringType;
 			while (nonNestedTypeToEdit.DeclaringType != null)

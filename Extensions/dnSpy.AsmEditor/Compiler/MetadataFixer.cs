@@ -17,46 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.IO;
 using dnlib.DotNet.MD;
-using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Compiler {
 	/// <summary>
-	/// Overwrites the metadata to make everything public
+	/// Overwrites the metadata to make almost everything public
 	/// </summary>
 	struct MetadataFixer {
 		readonly byte[] data;
-		IMetaData md;
+		readonly IMetaData md;
 
-		public MetadataFixer(byte[] data) {
+		public MetadataFixer(byte[] data, IMetaData md) {
 			this.data = data;
-			md = null;
+			this.md = md;
 		}
 
 		public bool MakePublic() {
-			try {
-				try {
-					md = MetaDataCreator.CreateMetaData(new PEImage(data));
-				}
-				catch (IOException) {
-					return false;
-				}
-				catch (BadImageFormatException) {
-					return false;
-				}
+			UpdateTypeDefTable();
+			UpdateFieldTable();
+			UpdateMethodTable();
+			UpdateExportedTypeTable();
 
-				UpdateTypeDefTable();
-				UpdateFieldTable();
-				UpdateMethodTable();
-				UpdateExportedTypeTable();
-
-				return true;
-			}
-			finally {
-				md?.Dispose();
-			}
+			return true;
 		}
 
 		void UpdateTypeDefTable() {
@@ -68,7 +50,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				var b = data[offset];
 				if ((b & 7) <= 1)
 					data[offset] = (byte)((b & ~7) | 1);	// Public
-				else
+				// Don't make NestedPrivate public
+				else if ((b & 7) != 3)
 					data[offset] = (byte)((b & ~7) | 2);	// NestedPublic
 			}
 		}
@@ -106,7 +89,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				var b = data[offset];
 				if ((b & 7) <= 1)
 					data[offset] = (byte)((b & ~7) | 1);	// Public
-				else
+				// Don't make NestedPrivate public
+				else if ((b & 7) != 3)
 					data[offset] = (byte)((b & ~7) | 2);	// NestedPublic
 			}
 		}

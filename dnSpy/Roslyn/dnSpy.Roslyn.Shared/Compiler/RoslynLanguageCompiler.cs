@@ -93,7 +93,7 @@ namespace dnSpy.Roslyn.Shared.Compiler {
 			foreach (var doc in decompiledCodeResult.Documents)
 				documents.Add(CreateDocument(projectId, doc));
 
-			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", Guid.NewGuid().ToString(), LanguageName,
+			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", decompiledCodeResult.AssemblyName, LanguageName,
 				compilationOptions: CompilationOptions
 						.WithOptimizationLevel(OptimizationLevel.Release)
 						.WithPlatform(GetPlatform(decompiledCodeResult.Platform))

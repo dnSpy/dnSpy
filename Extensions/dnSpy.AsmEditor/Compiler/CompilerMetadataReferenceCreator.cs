@@ -22,19 +22,17 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	static class CompilerMetadataReferenceCreator {
-		public static CompilerMetadataReference? Create(IRawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
+		public static CompilerMetadataReference? Create(IRawModuleBytesProvider rawModuleBytesProvider, IAssembly tempAssembly, ModuleDef module, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
 			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
 			if (moduleData == null)
 				return null;
-			if (makeEverythingPublic) {
-				bool success = new MetadataFixer(moduleData).MakePublic();
-				if (!success)
-					return null;
-			}
+			var patcher = new ModulePatcher(moduleData, tempAssembly, nonNestedEditedTypeOrNull, makeEverythingPublic);
+			if (!patcher.Patch(module, out var newModuleData))
+				return null;
 			var asmRef = module.Assembly.ToAssemblyRef();
 			if (module.IsManifestModule)
-				return CompilerMetadataReference.CreateAssemblyReference(moduleData, asmRef, module.Location);
-			return CompilerMetadataReference.CreateModuleReference(moduleData, asmRef, module.Location);
+				return CompilerMetadataReference.CreateAssemblyReference(newModuleData, asmRef, module.Location);
+			return CompilerMetadataReference.CreateModuleReference(newModuleData, asmRef, module.Location);
 		}
 	}
 }
