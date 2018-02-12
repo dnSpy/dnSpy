@@ -23,6 +23,11 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// </summary>
 	public interface IDecompiledCodeResult {
 		/// <summary>
+		/// Name of the edited assembly. It's only the simple name (eg. "MyAssembly"), and doesn't contain the public key token, version, etc
+		/// </summary>
+		string AssemblyName { get; }
+
+		/// <summary>
 		/// Gets the documents
 		/// </summary>
 		IDecompiledDocument[] Documents { get; }

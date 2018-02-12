@@ -22,9 +22,10 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	static class CompilerMetadataReferenceCreator {
-		public unsafe static (RawModuleBytes rawData, CompilerMetadataReference mdRef) Create(RawModuleBytesProvider rawModuleBytesProvider, ModuleDef module, bool makeEverythingPublic) {
+		public unsafe static (RawModuleBytes rawData, CompilerMetadataReference mdRef) Create(RawModuleBytesProvider rawModuleBytesProvider, IAssembly tempAssembly, ModuleDef module, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
 			var info = rawModuleBytesProvider.GetRawModuleBytes(module);
-			if (info.rawData == null)
+			var moduleData = info.rawData;
+			if (moduleData == null)
 				return default;
 			bool error = true;
 			try {
@@ -32,23 +33,26 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (!info.isFileLayout)
 					return default;
 
-				if (makeEverythingPublic) {
-					bool success = new MetadataFixer(info.rawData, info.isFileLayout).MakePublic();
-					if (!success)
-						return default;
+				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, nonNestedEditedTypeOrNull, makeEverythingPublic);
+				if (!patcher.Patch(module, out var newModuleData))
+					return default;
+				if (moduleData != newModuleData) {
+					moduleData.Dispose();
+					moduleData = newModuleData;
 				}
+
 				var asmRef = module.Assembly.ToAssemblyRef();
 				CompilerMetadataReference mdRef;
 				if (module.IsManifestModule)
-					mdRef = CompilerMetadataReference.CreateAssemblyReference(info.rawData.Pointer, info.rawData.Size, asmRef, module.Location);
+					mdRef = CompilerMetadataReference.CreateAssemblyReference(moduleData.Pointer, moduleData.Size, asmRef, module.Location);
 				else
-					mdRef = CompilerMetadataReference.CreateModuleReference(info.rawData.Pointer, info.rawData.Size, asmRef, module.Location);
+					mdRef = CompilerMetadataReference.CreateModuleReference(moduleData.Pointer, moduleData.Size, asmRef, module.Location);
 				error = false;
-				return (info.rawData, mdRef);
+				return (rawData: moduleData, mdRef);
 			}
 			finally {
 				if (error)
-					info.rawData.Dispose();
+					moduleData.Dispose();
 			}
 		}
 	}

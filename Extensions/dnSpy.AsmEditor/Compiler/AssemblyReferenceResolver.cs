@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 
@@ -25,14 +26,20 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class AssemblyReferenceResolver : IAssemblyReferenceResolver {
 		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IAssemblyResolver assemblyResolver;
+		readonly IAssembly tempAssembly;
 		readonly ModuleDef defaultSourceModule;
+		readonly TypeDef nonNestedEditedTypeOrNull;
 		readonly bool makeEverythingPublic;
 		readonly List<RawModuleBytes> rawModuleBytesList;
 
-		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef defaultSourceModule, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
+			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == defaultSourceModule);
+			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
+			this.tempAssembly = tempAssembly;
 			this.defaultSourceModule = defaultSourceModule;
+			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
 			this.makeEverythingPublic = makeEverythingPublic;
 			rawModuleBytesList = new List<RawModuleBytes>();
 		}
@@ -56,14 +63,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (asm == null)
 				return null;
 
-			return Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic));
+			return Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic));
 		}
 
 		public CompilerMetadataReference? Create(AssemblyDef asm) =>
-			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic));
+			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic));
 
 		public CompilerMetadataReference? Create(ModuleDef module) =>
-			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, module, makeEverythingPublic));
+			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, module, nonNestedEditedTypeOrNull, makeEverythingPublic));
 
 		public void Dispose() {
 			foreach (var rawData in rawModuleBytesList)

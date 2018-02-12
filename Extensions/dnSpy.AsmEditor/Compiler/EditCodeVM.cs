@@ -139,15 +139,29 @@ namespace dnSpy.AsmEditor.Compiler {
 		CompilerDiagnosticVM selectedCompilerDiagnosticVM;
 
 		protected readonly ModuleDef sourceModule;
+		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
+		protected EditCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule, TypeDef typeToEditOrNull) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
 			this.openFromGAC = openFromGAC;
 			this.openAssembly = openAssembly;
 			this.languageCompiler = languageCompiler;
 			this.decompiler = decompiler;
 			this.sourceModule = sourceModule;
-			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
+			if (typeToEditOrNull != null) {
+				Debug.Assert(typeToEditOrNull.Module == sourceModule);
+				while (typeToEditOrNull.DeclaringType != null)
+					typeToEditOrNull = typeToEditOrNull.DeclaringType;
+			}
+			tempAssembly = new AssemblyNameInfo {
+				HashAlgId = AssemblyHashAlgorithm.SHA1,
+				Version = new Version(0, 0, 0, 0),
+				Attributes = AssemblyAttributes.None,
+				PublicKeyOrToken = null,
+				Name = Guid.NewGuid().ToString(),
+				Culture = string.Empty,
+			};
+			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull, makeEverythingPublic);
 		}
 
 		protected abstract class AsyncStateBase : IDisposable {
@@ -283,7 +297,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				var docs = new List<IDecompiledDocument>();
 				foreach (var simpleDoc in simpleDocuments)
 					docs.Add(new DecompiledDocument(simpleDoc.Text, simpleDoc.NameNoExtension));
-				codeDocs = languageCompiler.AddDecompiledCode(new DecompiledCodeResult(docs.ToArray(), assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
+				codeDocs = languageCompiler.AddDecompiledCode(new DecompiledCodeResult(tempAssembly.Name, docs.ToArray(), assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
 			}
 
 			decompileCodeState?.Dispose();

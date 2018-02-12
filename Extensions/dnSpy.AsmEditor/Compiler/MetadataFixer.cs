@@ -17,50 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.IO;
 using dnlib.DotNet.MD;
-using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Compiler {
 	/// <summary>
-	/// Overwrites the metadata to make everything public
+	/// Overwrites the metadata to make almost everything public
 	/// </summary>
 	unsafe struct MetadataFixer {
 		readonly byte* data;
-		readonly int dataSize;
-		readonly bool isFileLayout;
-		IMetaData md;
+		readonly IMetaData md;
 
-		public MetadataFixer(RawModuleBytes rawData, bool isFileLayout) {
+		public MetadataFixer(RawModuleBytes rawData, IMetaData md) {
 			data = (byte*)rawData.Pointer;
-			dataSize = rawData.Size;
-			this.isFileLayout = isFileLayout;
-			md = null;
+			this.md = md;
 		}
 
 		public bool MakePublic() {
-			try {
-				try {
-					md = MetaDataCreator.CreateMetaData(new PEImage((IntPtr)data, dataSize, isFileLayout ? ImageLayout.File : ImageLayout.Memory, verify: true));
-				}
-				catch (IOException) {
-					return false;
-				}
-				catch (BadImageFormatException) {
-					return false;
-				}
-
-				UpdateTypeDefTable();
-				UpdateFieldTable();
-				UpdateMethodTable();
-				UpdateExportedTypeTable();
-
-				return true;
-			}
-			finally {
-				md?.Dispose();
-			}
+			UpdateTypeDefTable();
+			UpdateFieldTable();
+			UpdateMethodTable();
+			UpdateExportedTypeTable();
+			return true;
 		}
 
 		void UpdateTypeDefTable() {
@@ -72,7 +49,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				var b = data[offset];
 				if ((b & 7) <= 1)
 					data[offset] = (byte)((b & ~7) | 1);	// Public
-				else
+				// Don't make NestedPrivate public
+				else if ((b & 7) != 3)
 					data[offset] = (byte)((b & ~7) | 2);	// NestedPublic
 			}
 		}
@@ -110,7 +88,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				var b = data[offset];
 				if ((b & 7) <= 1)
 					data[offset] = (byte)((b & ~7) | 1);	// Public
-				else
+				// Don't make NestedPrivate public
+				else if ((b & 7) != 3)
 					data[offset] = (byte)((b & ~7) | 2);	// NestedPublic
 			}
 		}
