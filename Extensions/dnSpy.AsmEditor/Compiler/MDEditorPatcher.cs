@@ -194,8 +194,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			offset += column.Offset;
 			switch (column.Size) {
 			case 1:		return data[offset];
-			case 2:		return data[offset++] | ((uint)data[offset++] << 8);
-			case 4:		return data[offset++] | ((uint)data[offset++] << 8) | ((uint)data[offset++] << 16) | ((uint)data[offset++] << 24);
+			case 2:		return data[offset++] | ((uint)data[offset] << 8);
+			case 4:		return data[offset++] | ((uint)data[offset++] << 8) | ((uint)data[offset++] << 16) | ((uint)data[offset] << 24);
 			default:
 				Debug.Fail("Unreachable code");
 				return 0;
@@ -242,9 +242,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				var table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
 				int offset = (int)table.StartOffset;
 				int rowSize = (int)table.RowSize;
-				var columns = table.Columns;
+				var column = table.Columns[3];
 				for (uint i = 0; i < table.Rows; i++, offset += rowSize) {
-					uint codedToken = ReadColumn(moduleData, offset, columns[3]);
+					uint codedToken = ReadColumn(moduleData, offset, column);
 					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
 						continue;
 					if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
@@ -317,9 +317,10 @@ namespace dnSpy.AsmEditor.Compiler {
 				var table = mdEditor.RealMetadata.TablesStream.MemberRefTable;
 				int offset = (int)table.StartOffset;
 				int rowSize = (int)table.RowSize;
-				var columns = table.Columns;
+				var columnClass = table.Columns[0];
+				var columnSignature = table.Columns[2];
 				for (uint i = 0; i < table.Rows; i++, offset += rowSize) {
-					uint codedToken = ReadColumn(moduleData, offset, columns[0]);
+					uint codedToken = ReadColumn(moduleData, offset, columnClass);
 					if (!CodedToken.MemberRefParent.Decode(codedToken, out MDToken token))
 						continue;
 					uint rid = i + 1;
@@ -352,7 +353,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						break;
 					}
 
-					uint sig = ReadColumn(moduleData, offset, columns[2]);
+					uint sig = ReadColumn(moduleData, offset, columnSignature);
 					uint newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (sig != newSig) {
 						var row = tablesHeap.MemberRefTable.Get(rid);
