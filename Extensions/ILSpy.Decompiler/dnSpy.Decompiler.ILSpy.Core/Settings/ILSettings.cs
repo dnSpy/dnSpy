@@ -102,7 +102,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				}
 			}
 		}
-		bool showPdbInfo = false;
+		bool showPdbInfo = true;
 
 		public ILSettings Clone() => CopyTo(new ILSettings());
 
