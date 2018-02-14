@@ -44,53 +44,53 @@ namespace dnSpy.AsmEditor.Compiler {
 			var table = md.TablesStream.TypeDefTable;
 			int rowSize = (int)table.RowSize;
 			// Don't make the global type public so start from 2nd row
-			int offset = (int)table.StartOffset + rowSize;
-			for (uint row = 1; row < table.Rows; row++, offset += rowSize) {
-				var b = data[offset];
+			var p = data + (int)table.StartOffset + rowSize;
+			for (uint row = 1; row < table.Rows; row++, p += rowSize) {
+				var b = *p;
 				if ((b & 7) <= 1)
-					data[offset] = (byte)((b & ~7) | 1);	// Public
+					*p = (byte)((b & ~7) | 1);	// Public
 				// Don't make NestedPrivate public
 				else if ((b & 7) != 3)
-					data[offset] = (byte)((b & ~7) | 2);	// NestedPublic
+					*p = (byte)((b & ~7) | 2);	// NestedPublic
 			}
 		}
 
 		void UpdateFieldTable() {
 			var table = md.TablesStream.FieldTable;
-			int offset = (int)table.StartOffset;
+			var p = data + (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
-			for (uint row = 0; row < table.Rows; row++, offset += rowSize) {
-				var b = data[offset];
+			for (uint row = 0; row < table.Rows; row++, p += rowSize) {
+				var b = *p;
 				// Don't change private/compilercontrolled to public
 				if ((b & 7) >= 2)
-					data[offset] = (byte)((b & ~7) | 6); // Public
+					*p = (byte)((b & ~7) | 6); // Public
 			}
 		}
 
 		void UpdateMethodTable() {
 			var table = md.TablesStream.MethodTable;
-			int offset = (int)table.StartOffset;
+			var p = data + (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
-			offset += table.Columns[2].Offset;
-			for (uint row = 0; row < table.Rows; row++, offset += rowSize) {
-				var b = data[offset];
+			p += table.Columns[2].Offset;
+			for (uint row = 0; row < table.Rows; row++, p += rowSize) {
+				var b = *p;
 				// Don't change private/compilercontrolled to public
 				if ((b & 7) >= 2)
-					data[offset] = (byte)((b & ~7) | 6); // Public
+					*p = (byte)((b & ~7) | 6); // Public
 			}
 		}
 
 		void UpdateExportedTypeTable() {
 			var table = md.TablesStream.ExportedTypeTable;
-			int offset = (int)table.StartOffset;
+			var p = data + (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
-			for (uint row = 0; row < table.Rows; row++, offset += rowSize) {
-				var b = data[offset];
+			for (uint row = 0; row < table.Rows; row++, p += rowSize) {
+				var b = *p;
 				if ((b & 7) <= 1)
-					data[offset] = (byte)((b & ~7) | 1);	// Public
+					*p = (byte)((b & ~7) | 1);	// Public
 				// Don't make NestedPrivate public
 				else if ((b & 7) != 3)
-					data[offset] = (byte)((b & ~7) | 2);	// NestedPublic
+					*p = (byte)((b & ~7) | 2);	// NestedPublic
 			}
 		}
 	}
