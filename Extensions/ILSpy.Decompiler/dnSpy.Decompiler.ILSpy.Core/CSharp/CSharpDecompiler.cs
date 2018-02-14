@@ -512,6 +512,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			newOne.UsingDeclarations = useUsingDeclarations;
 			newOne.FullyQualifyAllTypes = !useUsingDeclarations;
 			newOne.RemoveNewDelegateClass = useUsingDeclarations;
+			newOne.ForceShowAllMembers = false;
 			return newOne;
 		}
 
