@@ -32,12 +32,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.md = md;
 		}
 
-		public bool MakePublic() {
+		public void MakePublic() {
 			UpdateTypeDefTable();
 			UpdateFieldTable();
 			UpdateMethodTable();
 			UpdateExportedTypeTable();
-			return true;
 		}
 
 		void UpdateTypeDefTable() {

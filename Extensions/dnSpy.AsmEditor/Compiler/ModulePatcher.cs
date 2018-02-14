@@ -49,13 +49,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				!module.Assembly.IsCorLib();
 			if (makeEverythingPublic || fixTypeDefRefs) {
 				using (var md = MDPatcherUtils.TryCreateMetadata(moduleData, isFileLayout)) {
-					if (makeEverythingPublic) {
-						bool success = new MetadataFixer(moduleData, md).MakePublic();
-						if (!success) {
-							newModuleData = null;
-							return false;
-						}
-					}
+					if (makeEverythingPublic)
+						new MetadataFixer(moduleData, md).MakePublic();
 					if (fixTypeDefRefs) {
 						var mdEditor = new MetadataEditor(moduleData, md);
 						var patcher = new MDEditorPatcher(moduleData, mdEditor, tempAssembly, nonNestedEditedTypeOrNull);
