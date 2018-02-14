@@ -63,14 +63,45 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (asm == null)
 				return null;
 
-			return Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic));
+			return Save(CreateRef(asm.ManifestModule));
 		}
 
-		public CompilerMetadataReference? Create(AssemblyDef asm) =>
-			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic));
+		public CompilerMetadataReference? Create(AssemblyDef asm) => Save(CreateRef(asm.ManifestModule));
+		public CompilerMetadataReference? Create(ModuleDef module) => Save(CreateRef(module));
 
-		public CompilerMetadataReference? Create(ModuleDef module) =>
-			Save(CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, module, nonNestedEditedTypeOrNull, makeEverythingPublic));
+		unsafe (RawModuleBytes rawData, CompilerMetadataReference mdRef) CreateRef(ModuleDef module) {
+			var info = rawModuleBytesProvider.GetRawModuleBytes(module);
+			var moduleData = info.rawData;
+			if (moduleData == null)
+				return default;
+			bool error = true;
+			try {
+				// Only file layout is supported by CompilerMetadataReference
+				if (!info.isFileLayout)
+					return default;
+
+				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, nonNestedEditedTypeOrNull, makeEverythingPublic);
+				if (!patcher.Patch(module, out var newModuleData))
+					return default;
+				if (moduleData != newModuleData) {
+					moduleData.Dispose();
+					moduleData = newModuleData;
+				}
+
+				var asmRef = module.Assembly.ToAssemblyRef();
+				CompilerMetadataReference mdRef;
+				if (module.IsManifestModule)
+					mdRef = CompilerMetadataReference.CreateAssemblyReference(moduleData.Pointer, moduleData.Size, asmRef, module.Location);
+				else
+					mdRef = CompilerMetadataReference.CreateModuleReference(moduleData.Pointer, moduleData.Size, asmRef, module.Location);
+				error = false;
+				return (rawData: moduleData, mdRef);
+			}
+			finally {
+				if (error)
+					moduleData.Dispose();
+			}
+		}
 
 		public void Dispose() {
 			foreach (var rawData in rawModuleBytesList)

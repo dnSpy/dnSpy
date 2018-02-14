@@ -119,7 +119,6 @@
     <Compile Include="Compiler\Commands.cs" />
     <Compile Include="Compiler\CompilerDiagnosticComparer.cs" />
     <Compile Include="Compiler\CompilerDiagnosticVM.cs" />
-    <Compile Include="Compiler\CompilerMetadataReferenceCreator.cs" />
     <Compile Include="Compiler\DecompiledCodeResult.cs" />
     <Compile Include="Compiler\DecompiledDocument.cs" />
     <Compile Include="Compiler\EditAssemblyCommands.cs" />
