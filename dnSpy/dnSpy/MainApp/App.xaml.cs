@@ -287,6 +287,8 @@ namespace dnSpy.MainApp {
 			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly);
 			// dnSpy.Roslyn.EditorFeatures
 			list.Add(typeof(Roslyn.EditorFeatures.Dummy).Assembly);
+			// dnSpy.Roslyn.CSharp.EditorFeatures
+			list.Add(typeof(Roslyn.CSharp.EditorFeatures.Dummy).Assembly);
 			// dnSpy.Roslyn.VisualBasic.EditorFeatures
 			list.Add(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly);
 			foreach (var asm in LoadExtensionAssemblies())

@@ -56,6 +56,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 			}
 			// dnSpy.Roslyn.Internal exports some stuff too
 			asms.Add(typeof(SignatureHelpService).Assembly);
+			asms.Add(typeof(Internal.QuickInfo.CSharp.SemanticQuickInfoProvider).Assembly);
 			asms.Add(typeof(Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo.SemanticQuickInfoProvider).Assembly);
 			return MefHostServices.Create(asms);
 		}

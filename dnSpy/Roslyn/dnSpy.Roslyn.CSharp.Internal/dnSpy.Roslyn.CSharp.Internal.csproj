@@ -4,17 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F10A60DA-4716-45F6-AB2E-4690440C0C7C}</ProjectGuid>
+    <ProjectGuid>{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Roslyn.EditorFeatures</RootNamespace>
-    <AssemblyName>dnSpy.Roslyn.EditorFeatures</AssemblyName>
+    <RootNamespace>dnSpy.Roslyn.CSharp.Internal</RootNamespace>
+    <AssemblyName>dnSpy.Roslyn.CSharp.Internal</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
-    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis.Workspaces</MakeEverythingPublicAssemblies>
+    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis.Workspaces;Microsoft.CodeAnalysis.CSharp;Microsoft.CodeAnalysis.CSharp.Workspaces;Microsoft.CodeAnalysis.CSharp.Features</MakeEverythingPublicAssemblies>
     <MakeEverythingPublicIVTString>$(AssemblyName)</MakeEverythingPublicIVTString>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,9 +25,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.EditorFeatures.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.CSharp.Internal.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,38 +36,21 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.EditorFeatures.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.CSharp.Internal.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Dummy.cs" />
-    <Compile Include="EditorFeaturesResources.cs" />
-    <Compile Include="Editor\ContentTypeNames.cs" />
-    <Compile Include="Extensions\DocumentHelpers.cs" />
-    <Compile Include="Extensions\Extensions2.cs" />
-    <Compile Include="Extensions\ITextSnapshotLineExtensions.cs" />
-    <Compile Include="Extensions\TextSpanExtensions.cs" />
-    <Compile Include="Host\IWaitContext.cs" />
-    <Compile Include="Host\IWaitIndicator.cs" />
-    <Compile Include="Host\ProgressTracker.cs" />
-    <Compile Include="Host\WaitIndicator.cs" />
     <Compile Include="MakeEverythingPublic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmartIndent\SmartIndent.cs" />
-    <Compile Include="SmartIndent\SmartIndentExtensions.cs" />
-    <Compile Include="SmartIndent\SmartIndentProvider.cs" />
-    <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.cs" />
-    <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.TextStructureNavigator.cs" />
+    <Compile Include="QuickInfo\SemanticQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\SyntacticQuickInfoProvider.cs" />
+    <Compile Include="SmartIndent\CSharpIndentationService.cs" />
+    <Compile Include="SmartIndent\CSharpIndentationService.Indenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
       <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
       <Name>dnSpy.Roslyn.Internal</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
-      <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
-      <Name>dnSpy.Roslyn.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -4,17 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F10A60DA-4716-45F6-AB2E-4690440C0C7C}</ProjectGuid>
+    <ProjectGuid>{B7CD7DF8-1723-43D2-8B8A-063BA033E203}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Roslyn.EditorFeatures</RootNamespace>
-    <AssemblyName>dnSpy.Roslyn.EditorFeatures</AssemblyName>
+    <RootNamespace>dnSpy.Roslyn.CSharp.EditorFeatures</RootNamespace>
+    <AssemblyName>dnSpy.Roslyn.CSharp.EditorFeatures</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
-    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis.Workspaces</MakeEverythingPublicAssemblies>
+    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis.CSharp;Microsoft.CodeAnalysis.CSharp.Workspaces;Microsoft.CodeAnalysis.CSharp.Features</MakeEverythingPublicAssemblies>
     <MakeEverythingPublicIVTString>$(AssemblyName)</MakeEverythingPublicIVTString>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,9 +25,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.EditorFeatures.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.CSharp.EditorFeatures.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,31 +36,20 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.EditorFeatures.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.CSharp.EditorFeatures.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Dummy.cs" />
-    <Compile Include="EditorFeaturesResources.cs" />
-    <Compile Include="Editor\ContentTypeNames.cs" />
-    <Compile Include="Extensions\DocumentHelpers.cs" />
-    <Compile Include="Extensions\Extensions2.cs" />
-    <Compile Include="Extensions\ITextSnapshotLineExtensions.cs" />
-    <Compile Include="Extensions\TextSpanExtensions.cs" />
-    <Compile Include="Host\IWaitContext.cs" />
-    <Compile Include="Host\IWaitIndicator.cs" />
-    <Compile Include="Host\ProgressTracker.cs" />
-    <Compile Include="Host\WaitIndicator.cs" />
     <Compile Include="MakeEverythingPublic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmartIndent\SmartIndent.cs" />
-    <Compile Include="SmartIndent\SmartIndentExtensions.cs" />
-    <Compile Include="SmartIndent\SmartIndentProvider.cs" />
-    <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.cs" />
-    <Compile Include="TextStructureNavigation\AbstractTextStructureNavigatorProvider.TextStructureNavigator.cs" />
+    <Compile Include="TextStructureNavigation\TextStructureNavigatorProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
+      <Project>{f10a60da-4716-45f6-ab2e-4690440c0c7c}</Project>
+      <Name>dnSpy.Roslyn.EditorFeatures</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
       <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
       <Name>dnSpy.Roslyn.Internal</Name>

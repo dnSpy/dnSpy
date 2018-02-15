@@ -1225,6 +1225,10 @@
       <Project>{83bbd76b-4ecd-42e1-bf9c-af8114e52317}</Project>
       <Name>dnSpy.Images</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.CSharp.EditorFeatures\dnSpy.Roslyn.CSharp.EditorFeatures.csproj">
+      <Project>{b7cd7df8-1723-43d2-8b8a-063ba033e203}</Project>
+      <Name>dnSpy.Roslyn.CSharp.EditorFeatures</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
       <Project>{f10a60da-4716-45f6-ab2e-4690440c0c7c}</Project>
       <Name>dnSpy.Roslyn.EditorFeatures</Name>

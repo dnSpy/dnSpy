@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Roslyn.EditorFeatures.Editor;
 using dnSpy.Roslyn.EditorFeatures.Host;
+using dnSpy.Roslyn.EditorFeatures.TextStructureNavigation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
@@ -11,7 +12,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
-namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation.CSharp
+namespace dnSpy.Roslyn.CSharp.EditorFeatures.TextStructureNavigation
 {
     [Export(typeof(ITextStructureNavigatorProvider))]
     [ContentType(ContentTypeNames.CSharpContentType)]

@@ -7,13 +7,15 @@
     <ProjectGuid>{30057546-DED0-450E-89C3-0354B4FF9CCD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Roslyn.VisualBasic.EditorFeatures</RootNamespace>
-    <AssemblyName>Roslyn.VisualStudio.Services.UnitTests</AssemblyName>
+    <AssemblyName>dnSpy.Roslyn.VisualBasic.EditorFeatures</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\dnSpy.Roslyn.Internal\RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
     <MyType>Windows</MyType>
+    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis.VisualBasic;Microsoft.CodeAnalysis.VisualBasic.Workspaces;Microsoft.CodeAnalysis.VisualBasic.Features</MakeEverythingPublicAssemblies>
+    <MakeEverythingPublicIVTString>$(AssemblyName), PublicKey=0024000004800000940000000602000000240000525341310004000001000100858d4f2519af95faeca8d359daa2078b20826765450f330daff3c5ec378adf9eb8e168eff8069ba51e15c1992d0d72b73129ed7a014f62863fa80a80dd9b010b8211c4d4c70ed26b9b65370007b0341685c98cc4cd2d16814d9581db82b382fb8ee838e1b8a2bd1c759e43ddda209e35cde530a7ba6a517787c04a3f283ea1b5</MakeEverythingPublicIVTString>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +23,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\..\dnSpy\bin\Debug\</OutputPath>
-    <DocumentationFile>..\..\dnSpy\bin\Debug\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.VisualBasic.EditorFeatures.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,7 +33,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>..\..\dnSpy\bin\Release\</OutputPath>
-    <DocumentationFile>..\..\dnSpy\bin\Release\Roslyn.VisualStudio.Services.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.VisualBasic.EditorFeatures.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -63,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dummy.vb" />
+    <Compile Include="MakeEverythingPublic.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="TextStructureNavigation\TextStructureNavigatorProvider.vb" />
   </ItemGroup>
@@ -75,5 +78,6 @@
       <Name>dnSpy.Roslyn.EditorFeatures</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\Build\MakeEverythingPublic\MakeEverythingPublic.tasks" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

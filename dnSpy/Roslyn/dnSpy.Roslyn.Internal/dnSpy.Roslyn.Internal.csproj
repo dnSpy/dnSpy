@@ -7,13 +7,15 @@
     <ProjectGuid>{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Roslyn.Internal</RootNamespace>
-    <AssemblyName>Roslyn.Services.Editor.CSharp.UnitTests</AssemblyName>
+    <AssemblyName>dnSpy.Roslyn.Internal</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
+    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis.Features;Microsoft.CodeAnalysis.Workspaces</MakeEverythingPublicAssemblies>
+    <MakeEverythingPublicIVTString>$(AssemblyName)</MakeEverythingPublicIVTString>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dnSpy\bin\Debug\Roslyn.Services.Editor.CSharp.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.Internal.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,16 +36,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\dnSpy\bin\Release\Roslyn.Services.Editor.CSharp.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.Internal.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="GlyphExtensions.cs" />
     <Compile Include="Helpers\SymbolDisplayPartExtensions.cs" />
+    <Compile Include="MakeEverythingPublic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuickInfo\CSharp\SemanticQuickInfoProvider.cs" />
-    <Compile Include="QuickInfo\CSharp\SyntacticQuickInfoProvider.cs" />
     <Compile Include="QuickInfo\ExportQuickInfoProviderAttribute.cs" />
     <Compile Include="QuickInfo\IQuickInfoProvider.cs" />
     <Compile Include="QuickInfo\PredefinedQuickInfoProviderNames.cs" />
@@ -62,8 +63,6 @@
     <Compile Include="SignatureHelp\SignatureHelpService.Roslyn.cs" />
     <Compile Include="SmartIndent\AbstractIndentationService.AbstractIndenter.cs" />
     <Compile Include="SmartIndent\AbstractIndentationService.cs" />
-    <Compile Include="SmartIndent\CSharp\CSharpIndentationService.cs" />
-    <Compile Include="SmartIndent\CSharp\CSharpIndentationService.Indenter.cs" />
     <Compile Include="SmartIndent\Helpers.cs" />
     <Compile Include="SmartIndent\IIndentationService.cs" />
     <Compile Include="VBHelpers\SyntaxNodeExtensions.cs" />
@@ -73,7 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
-    <None Include="README.md" />
   </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\Build\MakeEverythingPublic\MakeEverythingPublic.tasks" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
