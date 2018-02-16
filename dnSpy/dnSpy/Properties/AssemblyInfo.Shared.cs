@@ -26,9 +26,9 @@ using System.Reflection;
 
 static class DnSpyAssemblyConstants {
 	// Update App.config whenever this value changes.
-	public const string ASSEMBLY_VERSION							= "4.5.2.0";
+	public const string ASSEMBLY_VERSION							= "4.5.3.0";
 	// This is shown in the title bar
-	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "v4.5.2";
+	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "v4.5.3";
 	public const string ASSEMBLY_FILE_VERSION						= ASSEMBLY_VERSION;
 }
 #pragma warning restore 0436
