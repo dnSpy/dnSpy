@@ -1470,4 +1470,7 @@ Tem certeza que deseja expandi-la?</value>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>Hide deprecated members in variables windows</value>
   </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Making an Image Easier to Debug</value>
+  </data>
 </root>

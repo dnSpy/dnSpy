@@ -157,7 +157,7 @@
     <value>Показать ссылку в методе (новая _вкладка)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Перейти к ссылке (New Ta_b)</value>
+    <value>Перейти к ссылке (Новая вкла_дка)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>hides</value>

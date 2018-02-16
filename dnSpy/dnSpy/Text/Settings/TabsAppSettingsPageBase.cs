@@ -18,19 +18,15 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
 
 namespace dnSpy.Text.Settings {
-	abstract class TabsAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class TabsAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.TabsSettings;
 		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public Int32VM TabSizeVM { get; }
 		public Int32VM IndentSizeVM { get; }

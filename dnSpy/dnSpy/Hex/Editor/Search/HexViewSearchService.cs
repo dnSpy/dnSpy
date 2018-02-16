@@ -61,7 +61,7 @@ namespace dnSpy.Hex.Editor.Search {
 		void RaiseTagsChanged(HexBufferSpan span);
 	}
 
-	sealed class DataKindVM {
+	sealed class DataKindVM : ViewModelBase {
 		public HexDataKind DataKind { get; }
 		public string DisplayName { get; }
 		public string InputGestureText { get; }

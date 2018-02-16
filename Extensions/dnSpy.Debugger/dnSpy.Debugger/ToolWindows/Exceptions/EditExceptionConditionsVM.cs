@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		public ICommand RemoveCommand => new RelayCommand(a => owner.RemoveCondition(this));
 
-		sealed class ConditionTypeVM {
+		sealed class ConditionTypeVM : ViewModelBase {
 			public DbgExceptionConditionType Type { get; }
 			public string DisplayName { get; }
 

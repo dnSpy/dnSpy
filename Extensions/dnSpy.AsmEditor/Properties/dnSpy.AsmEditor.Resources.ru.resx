@@ -1733,10 +1733,10 @@
     <value>Сохранить {0} ресурсов, используя поддиректории</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>Отменить</value>
+    <value>Повторить</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Отменить</value>
+    <value>Повторить</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
     <value>Убрать и добавить Pops</value>

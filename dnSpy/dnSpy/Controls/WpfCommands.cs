@@ -74,6 +74,11 @@ namespace dnSpy.Controls {
 			}
 		}
 
+		static InputBinding Clone(InputBinding inputBinding) {
+			// We must clone it since it contains a reference to the UIElement
+			return (InputBinding)inputBinding.Clone();
+		}
+
 		public void Add(UIElement elem) {
 			if (elem == null)
 				throw new ArgumentNullException(nameof(elem));
@@ -81,7 +86,7 @@ namespace dnSpy.Controls {
 			foreach (var c in commandBindings)
 				elem.CommandBindings.Add(c);
 			foreach (var i in inputBindings)
-				elem.InputBindings.Add(i);
+				elem.InputBindings.Add(Clone(i));
 		}
 
 		public void Remove(UIElement elem) {
@@ -103,7 +108,7 @@ namespace dnSpy.Controls {
 		void Add(InputBinding inputBinding) {
 			inputBindings.Add(inputBinding);
 			foreach (var u in UIElements)
-				u.InputBindings.Add(inputBinding);
+				u.InputBindings.Add(Clone(inputBinding));
 		}
 
 		void AddIfNotAdded(KeyBinding kb) {

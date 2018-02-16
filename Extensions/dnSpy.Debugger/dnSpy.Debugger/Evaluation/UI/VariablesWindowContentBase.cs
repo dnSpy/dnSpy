@@ -38,6 +38,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public FrameworkElement ZoomElement => variablesWindowControl;
 		public IVariablesWindowVM VM => variablesWindowVM;
 
+		internal VariablesWindowControl VariablesWindowControl => variablesWindowControl;
+
 		readonly VariablesWindowControl variablesWindowControl;
 		IVariablesWindowVM variablesWindowVM;
 
@@ -49,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowControl.DataContext = variablesWindowVM;
 		}
 
-		void VariablesWindowVM_TreeViewChanged(object sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM.TreeView);
+		void VariablesWindowVM_TreeViewChanged(object sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM.TreeView, variablesWindowVM.VM.VariablesWindowKind);
 
 		public void Focus() {
 			var listView = variablesWindowControl.ListView;

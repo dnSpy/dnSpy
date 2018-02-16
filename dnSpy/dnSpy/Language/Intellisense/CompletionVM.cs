@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.MVVM;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionVM {
+	sealed class CompletionVM : ViewModelBase {
 		public object ImageUIObject { get; }
 		public object DisplayTextObject => this;
 		public object SuffixObject => this;

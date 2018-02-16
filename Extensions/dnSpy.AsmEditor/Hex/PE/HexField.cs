@@ -30,7 +30,7 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	[DebuggerDisplay("{Span} {Name} {DataFieldVM.StringValue}")]
-	abstract class HexField {
+	abstract class HexField : ViewModelBase {
 		protected readonly HexBuffer buffer;
 
 		public string NameUI => UIUtilities.EscapeMenuItemHeader(Name);

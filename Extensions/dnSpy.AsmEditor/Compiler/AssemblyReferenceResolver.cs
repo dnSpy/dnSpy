@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 
@@ -24,13 +25,19 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class AssemblyReferenceResolver : IAssemblyReferenceResolver {
 		readonly IRawModuleBytesProvider rawModuleBytesProvider;
 		readonly IAssemblyResolver assemblyResolver;
+		readonly IAssembly tempAssembly;
 		readonly ModuleDef defaultSourceModule;
+		readonly TypeDef nonNestedEditedTypeOrNull;
 		readonly bool makeEverythingPublic;
 
-		public AssemblyReferenceResolver(IRawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, ModuleDef defaultSourceModule, bool makeEverythingPublic) {
+		public AssemblyReferenceResolver(IRawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef defaultSourceModule, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
+			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == defaultSourceModule);
+			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
+			this.tempAssembly = tempAssembly;
 			this.defaultSourceModule = defaultSourceModule;
+			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
 			this.makeEverythingPublic = makeEverythingPublic;
 		}
 
@@ -40,13 +47,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (asm == null)
 				return null;
 
-			return CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic);
+			return CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic);
 		}
 
 		public CompilerMetadataReference? Create(AssemblyDef asm) =>
-			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, asm.ManifestModule, makeEverythingPublic);
+			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic);
 
 		public CompilerMetadataReference? Create(ModuleDef module) =>
-			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, module, makeEverythingPublic);
+			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, module, nonNestedEditedTypeOrNull, makeEverythingPublic);
 	}
 }

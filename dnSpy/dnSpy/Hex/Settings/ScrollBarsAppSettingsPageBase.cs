@@ -18,17 +18,13 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Hex.Settings {
-	abstract class ScrollBarsAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class ScrollBarsAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.ScrollBarsSettings;
 		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool HorizontalScrollBar {
 			get { return horizontalScrollBar; }

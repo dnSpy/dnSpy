@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		readonly ModulesControl modulesControl;
 		readonly IModulesVM modulesVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IModulesVM VM { get; }
 			ModulesOperations Operations { get; }
 

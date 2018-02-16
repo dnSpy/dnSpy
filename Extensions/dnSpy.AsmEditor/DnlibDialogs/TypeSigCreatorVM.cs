@@ -18,12 +18,12 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Text;
@@ -122,7 +122,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (TypeSig == null)
 					return "null";
 				var output = new StringBuilderTextColorOutput();
-				Language.WriteType(output, TypeSig.ToTypeDefOrRef(), true);
+				Language.Decompiler.WriteType(output, TypeSig.ToTypeDefOrRef(), true);
 				return output.ToString();
 			}
 		}
@@ -142,13 +142,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand AddCModReqdSigCommand => new RelayCommand(a => AddCModReqdSig(), a => AddCModReqdSigCanExecute());
 		public ICommand AddCModOptSigCommand => new RelayCommand(a => AddCModOptSig(), a => AddCModOptSigCanExecute());
 		public ICommand AddPinnedSigCommand => new RelayCommand(a => AddPinnedSig(), a => AddPinnedSigCanExecute());
-		public IEnumerable<IDecompiler> AllLanguages => options.DecompilerService.AllDecompilers;
+		public ObservableCollection<DecompilerVM> AllLanguages => allDecompilers;
+		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
-		public IDecompiler Language {
-			get { return options.Decompiler; }
+		public DecompilerVM Language {
+			get { return allDecompilers.FirstOrDefault(a => a.Decompiler == options.Decompiler); }
 			set {
-				if (options.Decompiler != value) {
-					options.Decompiler = value;
+				if (options.Decompiler != value.Decompiler) {
+					options.Decompiler = value.Decompiler;
 					OnPropertyChanged(nameof(Language));
 					OnPropertyChanged(nameof(TypeSigLanguageFullName));
 				}
@@ -173,6 +174,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Max = ModelUtils.COMPRESSED_INT32_MAX,
 			};
 			GenericVariableNumber = new UInt32VM(0, a => { });
+
+			allDecompilers = new ObservableCollection<DecompilerVM>(options.DecompilerService.AllDecompilers.Select(a => new DecompilerVM(a)));
 
 			Reinitialize();
 		}

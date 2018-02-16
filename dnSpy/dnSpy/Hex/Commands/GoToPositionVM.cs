@@ -74,7 +74,7 @@ namespace dnSpy.Hex.Commands {
 		public override bool HasError => OffsetVM.HasError;
 	}
 
-	sealed class PositionVM {
+	sealed class PositionVM : ViewModelBase {
 		public PositionKind Kind { get; }
 		public string Text { get; }
 		public string InputGestureText { get; }

@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly CodeBreakpointsControl codeBreakpointsControl;
 		readonly ICodeBreakpointsVM codeBreakpointsVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public ICodeBreakpointsVM VM { get; }
 			CodeBreakpointsOperations Operations { get; }
 

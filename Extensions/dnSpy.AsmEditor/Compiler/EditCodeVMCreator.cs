@@ -74,8 +74,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (info == null)
 				return null;
 			switch (kind) {
-			case CompilationKind.Assembly:		return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
-			case CompilationKind.Method:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.EditAssembly:	return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.EditMethod:	return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.AddClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClass2, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.EditClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeEditClass2, info.Value.decompiler.GenericNameUI);
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
@@ -87,12 +87,12 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 
 			switch (kind) {
-			case CompilationKind.Assembly:
+			case CompilationKind.EditAssembly:
 				if (!decompiler.CanDecompile(DecompilationType.AssemblyInfo))
 					return false;
 				break;
 
-			case CompilationKind.Method:
+			case CompilationKind.EditMethod:
 			case CompilationKind.EditClass:
 				if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
 					return false;
@@ -117,17 +117,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public EditCodeVM CreateEditMethodCode(MethodDef method, IList<MethodSourceStatement> statements) {
-			var info = GetLanguageCompilerProvider(CompilationKind.Method);
+			var info = GetLanguageCompilerProvider(CompilationKind.EditMethod);
 			if (info == null)
 				throw new InvalidOperationException();
-			return new EditMethodCodeVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.Method), info.Value.decompiler, method, statements);
+			return new EditMethodCodeVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.EditMethod), info.Value.decompiler, method, statements);
 		}
 
 		public EditCodeVM CreateEditAssembly(ModuleDef module) {
-			var info = GetLanguageCompilerProvider(CompilationKind.Assembly);
+			var info = GetLanguageCompilerProvider(CompilationKind.EditAssembly);
 			if (info == null)
 				throw new InvalidOperationException();
-			return new EditAssemblyVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.Assembly), info.Value.decompiler, module);
+			return new EditAssemblyVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.EditAssembly), info.Value.decompiler, module);
 		}
 
 		public EditCodeVM CreateAddClass(ModuleDef module) {

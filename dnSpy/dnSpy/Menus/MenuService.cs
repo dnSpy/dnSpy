@@ -326,14 +326,23 @@ namespace dnSpy.Menus {
 				}
 			}
 
+			ctx.OnDisposed += (_, __) => {
+				// Buggy automation peers could hold a reference to us, so clear the captured variables (we can't clear the captured 'this')
+				menuItem = null;
+				ctx = null;
+				commandTarget = null;
+				item = null;
+				iconImgRef = null;
+			};
+
 			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => {
 				Debug.Assert(!ctx.IsDisposed);
-				if (!ctx.IsDisposed) {
+				if (ctx?.IsDisposed == false) {
 					item.Execute(ctx);
-					ctx.Dispose();
+					ctx?.Dispose();
 				}
 			}, a => {
-				if (ctx.IsDisposed)
+				if (ctx?.IsDisposed != false)
 					return false;
 				bool b = item.IsEnabled(ctx);
 				if (lastIsEnabledCallValue != b && iconImgRef != null)
