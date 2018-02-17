@@ -65,9 +65,9 @@
       <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
       <Name>dnSpy.Roslyn.Internal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
+    <ProjectReference Include="..\dnSpy.Roslyn\dnSpy.Roslyn.csproj">
       <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
-      <Name>dnSpy.Roslyn.Shared</Name>
+      <Name>dnSpy.Roslyn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -13,13 +13,13 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
     static partial class Extensions2
     {
         public static SourceTextContainer AsTextContainer(this ITextBuffer buffer)
-            => Shared.Text.Extensions.AsTextContainer(buffer);
+            => Text.Extensions.AsTextContainer(buffer);
 
         public static ITextBuffer GetTextBuffer(this SourceTextContainer textContainer)
             => TryGetTextBuffer(textContainer) ?? throw new ArgumentException();
 
         public static ITextBuffer TryGetTextBuffer(this SourceTextContainer textContainer)
-            => Shared.Text.Extensions.TryFindEditorTextBuffer(textContainer);
+            => Text.Extensions.TryFindEditorTextBuffer(textContainer);
 
         /// <summary>
         /// Returns the ITextSnapshot behind this SourceText, or null if it wasn't created from one.
@@ -29,16 +29,16 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// </summary>
         /// <returns>The underlying ITextSnapshot.</returns>
         public static ITextSnapshot FindCorrespondingEditorTextSnapshot(this SourceText text)
-            => Shared.Text.Extensions.TryFindEditorSnapshot(text);
+            => Text.Extensions.TryFindEditorSnapshot(text);
 
         internal static ITextImage TryFindCorrespondingEditorTextImage(this SourceText text)
-            => Shared.Text.Extensions.TryFindEditorTextImage(text);
+            => Text.Extensions.TryFindEditorTextImage(text);
 
         internal static TextLine AsTextLine(this ITextSnapshotLine line)
             => line.Snapshot.AsText().Lines[line.LineNumber];
 
         public static SourceText AsText(this ITextSnapshot textSnapshot)
-            => Shared.Text.Extensions.AsText(textSnapshot);
+            => Text.Extensions.AsText(textSnapshot);
 
         //internal static SourceText AsRoslynText(this ITextSnapshot textSnapshot, Encoding encoding)
         //    => new SnapshotSourceText.ClosedSnapshotSourceText(((ITextSnapshot2)textSnapshot).TextImage, encoding);

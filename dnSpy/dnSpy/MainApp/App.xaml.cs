@@ -47,7 +47,7 @@ using dnSpy.Culture;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Extension;
 using dnSpy.Images;
-using dnSpy.Roslyn.Shared.Text.Classification;
+using dnSpy.Roslyn.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
 using Microsoft.VisualStudio.Composition;
@@ -277,7 +277,7 @@ namespace dnSpy.MainApp {
 			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
 			list.Add(typeof(MetroWindow).Assembly);
-			// dnSpy.Roslyn.Shared
+			// dnSpy.Roslyn
 			list.Add(typeof(RoslynClassifier).Assembly);
 			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)
 			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly);

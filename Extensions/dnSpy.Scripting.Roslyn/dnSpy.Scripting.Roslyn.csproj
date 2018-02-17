@@ -107,9 +107,9 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dnSpy\Roslyn\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
+    <ProjectReference Include="..\..\dnSpy\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj">
       <Project>{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}</Project>
-      <Name>dnSpy.Roslyn.Shared</Name>
+      <Name>dnSpy.Roslyn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

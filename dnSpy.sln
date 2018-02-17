@@ -51,7 +51,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "Ext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting.Roslyn", "Extensions\dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.Shared", "dnSpy\Roslyn\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj", "{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn", "dnSpy\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj", "{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Logic", "dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj", "{BB748E78-376F-429A-8D83-9A8946EC179F}"
 EndProject
