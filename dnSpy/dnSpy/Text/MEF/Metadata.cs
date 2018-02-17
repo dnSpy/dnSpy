@@ -28,10 +28,6 @@ namespace dnSpy.Text.MEF {
 
 	// All interfaces must be public or MEF will complain
 
-	public interface IContentTypeMetadata {
-		IEnumerable<string> ContentTypes { get; }
-	}
-
 	public interface ITextViewRoleMetadata {
 		IEnumerable<string> TextViewRoles { get; }
 	}
@@ -56,9 +52,6 @@ namespace dnSpy.Text.MEF {
 
 		[DefaultValue(null)]
 		IEnumerable<string> Replaces { get; }
-	}
-
-	public interface INamedContentTypeMetadata : IContentTypeMetadata, INameAndReplacesMetadata {
 	}
 
 	public interface IAdornmentLayersMetadata : IOrderable {

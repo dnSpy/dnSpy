@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {

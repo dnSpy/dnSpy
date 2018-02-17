@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"Microsoft.CodeAnalysis.CSharp.Scripting": "2.4.0",
-		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26201"
+		"Microsoft.VisualStudio.Text.UI.Wpf": "15.5.27130"
 	},
 	"frameworks": {
 		"net471": { }
