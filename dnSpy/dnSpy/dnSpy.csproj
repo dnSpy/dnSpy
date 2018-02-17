@@ -1155,6 +1155,7 @@
     <Compile Include="Text\TextDataModel.cs" />
     <Compile Include="Text\TextEdit.cs" />
     <Compile Include="Text\TextImage.cs" />
+    <Compile Include="Text\TextImageFactoryService.cs" />
     <Compile Include="Text\TextImageUtils.cs" />
     <Compile Include="Text\TextImageVersion.cs" />
     <Compile Include="Text\TextSnapshot.cs" />
