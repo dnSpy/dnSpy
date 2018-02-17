@@ -72,7 +72,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo.CSharp
             //}
 
             var span = TextSpan.FromBounds(spanStart, spanEnd);
-            return Task.FromResult(this.CreateElisionBufferDeferredContent(span));
+            return Task.FromResult(this.CreateProjectionBufferDeferredContent(span));
         }
 
         private static bool IsScopeBlock(SyntaxNode node)
@@ -86,10 +86,8 @@ namespace dnSpy.Roslyn.Internal.QuickInfo.CSharp
 
         private static void MarkInterestedSpanNearbyScopeBlock(SyntaxNode block, SyntaxToken openBrace, ref int spanStart, ref int spanEnd)
         {
-            SyntaxTrivia nearbyComment;
-
             var searchListAbove = openBrace.LeadingTrivia.Reverse();
-            if (TryFindFurthestNearbyComment(ref searchListAbove, out nearbyComment))
+            if (TryFindFurthestNearbyComment(ref searchListAbove, out var nearbyComment))
             {
                 spanStart = nearbyComment.SpanStart;
                 return;

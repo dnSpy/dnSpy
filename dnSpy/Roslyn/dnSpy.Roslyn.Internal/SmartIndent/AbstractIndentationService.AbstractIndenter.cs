@@ -55,7 +55,7 @@ namespace dnSpy.Roslyn.Internal.SmartIndent
                          this.TabSize,
                          this.OptionSet.GetOption(FormattingOptions.IndentationSize, syntaxRoot.Language),
                          tokenStream: null,
-                         lastToken: default(SyntaxToken));
+                         lastToken: default);
             }
 
             public IndentationResult? GetDesiredIndentation(Document document)
@@ -188,7 +188,7 @@ namespace dnSpy.Roslyn.Internal.SmartIndent
                     // This line is inside an inactive region. Examine the 
                     // first preceding line not in an inactive region.
                     var disabledSpan = _syntaxFacts.GetInactiveRegionSpanAroundPosition(this.Tree, actualLine.Span.Start, CancellationToken);
-                    if (disabledSpan != default(TextSpan))
+                    if (disabledSpan != default)
                     {
                         var targetLine = sourceText.Lines.GetLineFromPosition(disabledSpan.Start).LineNumber;
                         lineNumber = targetLine - 1;

@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             int position,
             CancellationToken cancellationToken)
         {
-            if (token != default(SyntaxToken) &&
+            if (token != default &&
                 token.Span.IntersectsWith(position))
             {
                 var deferredContent = await BuildContentAsync(document, token, cancellationToken).ConfigureAwait(false);
@@ -133,7 +133,7 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             return string.IsNullOrEmpty(documentationComment) ? ImmutableArray<TaggedText>.Empty : ImmutableArray.Create(new TaggedText(TextTags.Text, documentationComment));
         }
 
-        protected QuickInfoContent CreateElisionBufferDeferredContent(TextSpan span)
+        protected QuickInfoContent CreateProjectionBufferDeferredContent(TextSpan span)
         {
             return new CodeSpanQuickInfoContent(span);
         }

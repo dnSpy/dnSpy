@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp {
 
 		protected override bool SupportsModuleTypes => false;
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new CSharpValueNodeProviderFactory(this);
-		protected override bool IsIdentifierPartCharacter(char c) => UnicodeCharacterUtilities.IsIdentifierPartCharacter(c);
+		protected override bool IsIdentifierPartCharacter(char c) => Utilities.UnicodeCharacterUtilities.IsIdentifierPartCharacter(c);
 
 		void AddCastBegin(StringBuilder sb, DmdType castType) {
 			if ((object)castType == null)

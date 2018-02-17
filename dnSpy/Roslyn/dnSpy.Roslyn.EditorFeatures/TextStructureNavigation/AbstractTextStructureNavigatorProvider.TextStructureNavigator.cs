@@ -5,7 +5,6 @@ using System.Threading;
 using dnSpy.Roslyn.EditorFeatures.Extensions;
 using dnSpy.Roslyn.EditorFeatures.Host;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Internal.Log;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
@@ -39,14 +38,11 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
                 _waitIndicator = waitIndicator;
             }
 
-            public IContentType ContentType
-            {
-                get { return _subjectBuffer.ContentType; }
-            }
+            public IContentType ContentType => _subjectBuffer.ContentType;
 
             public TextExtent GetExtentOfWord(SnapshotPoint currentPosition)
             {
-                using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetExtentOfWord, CancellationToken.None))
+                //using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetExtentOfWord, CancellationToken.None))
                 {
                     var result = default(TextExtent);
                     _waitIndicator.Wait(
@@ -89,7 +85,7 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
                     var root = document.GetSyntaxRootSynchronously(cancellationToken);
                     var trivia = root.FindTrivia(position, findInsideTrivia: true);
 
-                    if (trivia != default(SyntaxTrivia))
+                    if (trivia != default)
                     {
                         if (trivia.Span.Start == position && _provider.ShouldSelectEntireTriviaFromStart(trivia))
                         {
@@ -119,7 +115,7 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
 
             public SnapshotSpan GetSpanOfEnclosing(SnapshotSpan activeSpan)
             {
-                using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfEnclosing, CancellationToken.None))
+                //using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfEnclosing, CancellationToken.None))
                 {
                     var span = default(SnapshotSpan);
                     var result = _waitIndicator.Wait(
@@ -150,7 +146,7 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
 
             public SnapshotSpan GetSpanOfFirstChild(SnapshotSpan activeSpan)
             {
-                using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfFirstChild, CancellationToken.None))
+                //using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfFirstChild, CancellationToken.None))
                 {
                     var span = default(SnapshotSpan);
                     var result = _waitIndicator.Wait(
@@ -185,7 +181,7 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
 
             public SnapshotSpan GetSpanOfNextSibling(SnapshotSpan activeSpan)
             {
-                using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfNextSibling, CancellationToken.None))
+                //using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfNextSibling, CancellationToken.None))
                 {
                     var span = default(SnapshotSpan);
                     var result = _waitIndicator.Wait(
@@ -236,7 +232,7 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
 
             public SnapshotSpan GetSpanOfPreviousSibling(SnapshotSpan activeSpan)
             {
-                using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfPreviousSibling, CancellationToken.None))
+                //using (Logger.LogBlock(FunctionId.TextStructureNavigator_GetSpanOfPreviousSibling, CancellationToken.None))
                 {
                     var span = default(SnapshotSpan);
                     var result = _waitIndicator.Wait(
@@ -302,8 +298,7 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
             /// </summary>
             private SyntaxNodeOrToken? FindLeafNode(SnapshotSpan span, CancellationToken cancellationToken)
             {
-                SyntaxToken token;
-                if (!TryFindLeafToken(span.Start, out token, cancellationToken))
+                if (!TryFindLeafToken(span.Start, out var token, cancellationToken))
                 {
                     return null;
                 }
@@ -322,14 +317,14 @@ namespace dnSpy.Roslyn.EditorFeatures.TextStructureNavigation
             /// </summary>
             private bool TryFindLeafToken(SnapshotPoint point, out SyntaxToken token, CancellationToken cancellationToken)
             {
-                var syntaxTree = DocumentHelpers.GetSyntaxTreeSynchronously(GetDocument(point, cancellationToken), cancellationToken);
+                var syntaxTree = GetDocument(point, cancellationToken).GetSyntaxTreeSynchronously(cancellationToken);
                 if (syntaxTree != null)
                 {
                     token = syntaxTree.GetRoot(cancellationToken).FindToken(point, true);
                     return true;
                 }
 
-                token = default(SyntaxToken);
+                token = default;
                 return false;
             }
 

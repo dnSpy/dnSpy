@@ -126,7 +126,7 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 		RetriggerCommand,
 	}
 
-	struct SignatureHelpTriggerInfo {
+	readonly struct SignatureHelpTriggerInfo {
 		public SignatureHelpTriggerReason TriggerReason { get; }
 		public char? TriggerCharacter { get; }
 		public SignatureHelpTriggerInfo(SignatureHelpTriggerReason triggerReason, char? triggerCharacter = null) {

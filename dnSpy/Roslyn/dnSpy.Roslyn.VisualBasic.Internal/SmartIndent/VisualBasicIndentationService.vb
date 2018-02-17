@@ -2,14 +2,13 @@
 
 Imports System.Composition
 Imports System.Threading
-Imports dnSpy.Roslyn.Internal
 Imports dnSpy.Roslyn.Internal.SmartIndent
-Imports dnSpy.Roslyn.Internal.VBHelpers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Formatting.Rules
 Imports Microsoft.CodeAnalysis.Host.Mef
 Imports Microsoft.CodeAnalysis.LanguageServices
 Imports Microsoft.CodeAnalysis.Options
+Imports Microsoft.CodeAnalysis.Shared.Extensions
 Imports Microsoft.CodeAnalysis.Text
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax

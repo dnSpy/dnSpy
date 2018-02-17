@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"Microsoft.CodeAnalysis.CSharp.Features": "2.4.0",
+		"Microsoft.CodeAnalysis.CSharp.Features": "2.6.1",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.5.27130"
 	},
 	"frameworks": {

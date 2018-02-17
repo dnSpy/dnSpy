@@ -45,7 +45,6 @@
     <Compile Include="Dummy.cs" />
     <Compile Include="EditorFeaturesResources.cs" />
     <Compile Include="Editor\ContentTypeNames.cs" />
-    <Compile Include="Extensions\DocumentHelpers.cs" />
     <Compile Include="Extensions\Extensions2.cs" />
     <Compile Include="Extensions\ITextSnapshotLineExtensions.cs" />
     <Compile Include="Extensions\TextSpanExtensions.cs" />

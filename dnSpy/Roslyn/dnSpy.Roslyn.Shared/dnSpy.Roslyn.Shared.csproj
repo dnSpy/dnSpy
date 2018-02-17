@@ -109,6 +109,7 @@
     <Compile Include="Debugger\ValueNodes\DynamicMetaObjectProviderDebugViewHelper.cs" />
     <Compile Include="Debugger\ValueNodes\DynamicViewMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\EnumerableDebugViewHelper.cs" />
+    <Compile Include="Debugger\ValueNodes\GeneratedMetadataNames.cs" />
     <Compile Include="Debugger\ValueNodes\ImageNameUtils.cs" />
     <Compile Include="Debugger\ValueNodes\InstanceMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\LanguageValueNodeFactory.cs" />
@@ -119,7 +120,6 @@
     <Compile Include="Debugger\ValueNodes\ReflectionAssemblyLoader.cs" />
     <Compile Include="Debugger\ValueNodes\ResultsViewMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\ReturnValueColumnFormatter.cs" />
-    <Compile Include="Debugger\ValueNodes\RoslynHelpers.cs" />
     <Compile Include="Debugger\ValueNodes\StaticMembersValueNodeProvider.cs" />
     <Compile Include="Debugger\ValueNodes\SyntheticNullValue.cs" />
     <Compile Include="Debugger\ValueNodes\TupleField.cs" />

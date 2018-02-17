@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes.CSharp
+namespace dnSpy.Roslyn.Utilities
 {
     /// <summary>
     /// Defines a set of helper methods to classify Unicode characters.

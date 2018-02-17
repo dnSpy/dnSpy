@@ -17,6 +17,7 @@
 
 Imports System.Runtime.CompilerServices
 
+<Assembly: IgnoresAccessChecksTo("Microsoft.CodeAnalysis")>
 <Assembly: IgnoresAccessChecksTo("Microsoft.CodeAnalysis.Workspaces")>
 <Assembly: IgnoresAccessChecksTo("Microsoft.CodeAnalysis.Features")>
 <Assembly: IgnoresAccessChecksTo("Microsoft.CodeAnalysis.VisualBasic")>

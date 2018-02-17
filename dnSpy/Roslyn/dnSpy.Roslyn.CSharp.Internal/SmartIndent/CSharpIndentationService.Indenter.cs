@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -154,7 +153,7 @@ namespace dnSpy.Roslyn.Internal.SmartIndent.CSharp
                 // cases:
                 //   if (true)
                 //     if (false)
-                //       Foo();
+                //       Goo();
                 //
                 //   if (true)
                 //     { }
@@ -256,41 +255,20 @@ namespace dnSpy.Roslyn.Internal.SmartIndent.CSharp
             private IndentationResult? GetIndentationFromCommaSeparatedList(SyntaxToken token)
             {
                 var node = token.Parent;
-
-                var argument = node as BaseArgumentListSyntax;
-                if (argument != null)
+                switch (node)
                 {
-                    return GetIndentationFromCommaSeparatedList(argument.Arguments, token);
-                }
-
-                var parameter = node as BaseParameterListSyntax;
-                if (parameter != null)
-                {
-                    return GetIndentationFromCommaSeparatedList(parameter.Parameters, token);
-                }
-
-                var typeArgument = node as TypeArgumentListSyntax;
-                if (typeArgument != null)
-                {
-                    return GetIndentationFromCommaSeparatedList(typeArgument.Arguments, token);
-                }
-
-                var typeParameter = node as TypeParameterListSyntax;
-                if (typeParameter != null)
-                {
-                    return GetIndentationFromCommaSeparatedList(typeParameter.Parameters, token);
-                }
-
-                var enumDeclaration = node as EnumDeclarationSyntax;
-                if (enumDeclaration != null)
-                {
-                    return GetIndentationFromCommaSeparatedList(enumDeclaration.Members, token);
-                }
-
-                var initializerSyntax = node as InitializerExpressionSyntax;
-                if (initializerSyntax != null)
-                {
-                    return GetIndentationFromCommaSeparatedList(initializerSyntax.Expressions, token);
+                    case BaseArgumentListSyntax argument:
+                        return GetIndentationFromCommaSeparatedList(argument.Arguments, token);
+                    case BaseParameterListSyntax parameter:
+                        return GetIndentationFromCommaSeparatedList(parameter.Parameters, token);
+                    case TypeArgumentListSyntax typeArgument:
+                        return GetIndentationFromCommaSeparatedList(typeArgument.Arguments, token);
+                    case TypeParameterListSyntax typeParameter:
+                        return GetIndentationFromCommaSeparatedList(typeParameter.Parameters, token);
+                    case EnumDeclarationSyntax enumDeclaration:
+                        return GetIndentationFromCommaSeparatedList(enumDeclaration.Members, token);
+                    case InitializerExpressionSyntax initializerSyntax:
+                        return GetIndentationFromCommaSeparatedList(initializerSyntax.Expressions, token);
                 }
 
                 return GetDefaultIndentationFromToken(token);

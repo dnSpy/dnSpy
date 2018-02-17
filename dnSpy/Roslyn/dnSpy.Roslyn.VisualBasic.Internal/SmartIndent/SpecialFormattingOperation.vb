@@ -7,6 +7,7 @@ Imports Microsoft.CodeAnalysis.Options
 Imports Microsoft.CodeAnalysis.Text
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Roslyn.Utilities
 
 Namespace Global.dnSpy.Roslyn.VisualBasic.Internal.SmartIndent
 

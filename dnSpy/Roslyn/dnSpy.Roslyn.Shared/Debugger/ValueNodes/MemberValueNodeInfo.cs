@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.ValueNodes {
 			var flags = GetInfoFlags(member);
 
 			// We don't check System.Runtime.CompilerServices.CompilerGeneratedAttribute. This matches VS (Roslyn) behavior.
-			if (RoslynHelpers.IsCompilerGenerated(member.Name))
+			if (Microsoft.CodeAnalysis.ExpressionEvaluator.GeneratedMetadataNames.IsCompilerGenerated(member.Name))
 				flags |= MemberValueNodeInfoFlags.CompilerGeneratedName;
 			var cas = member.CustomAttributes;
 			for (int i = 0; i < cas.Count; i++) {

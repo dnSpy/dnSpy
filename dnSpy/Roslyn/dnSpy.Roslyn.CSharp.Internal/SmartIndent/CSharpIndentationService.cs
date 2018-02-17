@@ -122,8 +122,7 @@ namespace dnSpy.Roslyn.Internal.SmartIndent.CSharp
                     return;
                 }
 
-                var argument = node as BaseArgumentListSyntax;
-                if (argument != null &&
+                if (node is BaseArgumentListSyntax argument &&
                     argument.Parent.Kind() != SyntaxKind.ThisConstructorInitializer &&
                     !IsBracketedArgumentListMissingBrackets(argument as BracketedArgumentListSyntax))
                 {
@@ -132,8 +131,7 @@ namespace dnSpy.Roslyn.Internal.SmartIndent.CSharp
                 }
 
                 // only valid if the user has started to actually type a constructor initializer
-                var constructorInitializer = node as ConstructorInitializerSyntax;
-                if (constructorInitializer != null &&
+                if (node is ConstructorInitializerSyntax constructorInitializer &&
                     constructorInitializer.ArgumentList.OpenParenToken.Kind() != SyntaxKind.None &&
                     !constructorInitializer.ThisOrBaseKeyword.IsMissing)
                 {

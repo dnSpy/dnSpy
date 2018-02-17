@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using dnSpy.Roslyn.Internal.Helpers;
 using Microsoft.CodeAnalysis;
 using SIGHLP = Microsoft.CodeAnalysis.SignatureHelp;
 

@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Shared.Text {
 		/// </summary>
 		/// <param name="textContainer">Text container</param>
 		/// <returns></returns>
-		public static ITextBuffer TryGetTextBuffer(this SourceTextContainer textContainer) =>
+		public static ITextBuffer TryFindEditorTextBuffer(this SourceTextContainer textContainer) =>
 			(textContainer as TextBufferSourceTextContainer)?.TextBuffer;
 
 		/// <summary>
@@ -70,8 +70,16 @@ namespace dnSpy.Roslyn.Shared.Text {
 		/// </summary>
 		/// <param name="sourceText">Source text</param>
 		/// <returns></returns>
-		public static ITextSnapshot TryGetTextSnapshot(this SourceText sourceText) =>
+		public static ITextSnapshot TryFindEditorSnapshot(this SourceText sourceText) =>
 			(sourceText as TextSnapshotSourceText)?.TextSnapshot;
+
+		/// <summary>
+		/// Gets the text image or null
+		/// </summary>
+		/// <param name="sourceText">Source text</param>
+		/// <returns></returns>
+		internal static ITextImage TryFindEditorTextImage(this SourceText sourceText) =>
+			((sourceText as TextSnapshotSourceText)?.TextSnapshot as ITextSnapshot2)?.TextImage;
 
 		internal static TextChangeEventArgs ToTextChangeEventArgs(this TextContentChangedEventArgs e) =>
 			new TextChangeEventArgs(e.Before.AsText(), e.After.AsText(), e.Changes.ToTextChangeRange());
