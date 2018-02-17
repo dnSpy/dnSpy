@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Text;
@@ -31,35 +30,35 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
-	[Export(typeof(IWpfTextViewConnectionListener))]
+	[Export(typeof(ITextViewConnectionListener))]
 	[ContentType(ContentTypes.Any)]
 	[TextViewRole(PredefinedTextViewRoles.Editable)]
 	[TextViewRole(PredefinedTextViewRoles.EmbeddedPeekTextView)]
 	[TextViewRole(PredefinedDsTextViewRoles.CanHaveIntellisenseControllers)]
-	sealed class IntellisenseControllerService : IWpfTextViewConnectionListener {
+	sealed class IntellisenseControllerService : ITextViewConnectionListener {
 		readonly Lazy<IIntellisenseControllerProvider, IContentTypeMetadata>[] intellisenseControllerProviders;
 
 		[ImportingConstructor]
 		IntellisenseControllerService([ImportMany] IEnumerable<Lazy<IIntellisenseControllerProvider, IContentTypeMetadata>> intellisenseControllerProviders) => this.intellisenseControllerProviders = intellisenseControllerProviders.ToArray();
 
 		sealed class TextViewState {
-			readonly IWpfTextView wpfTextView;
+			readonly ITextView textView;
 			readonly ControllerInfo[] controllerInfos;
 
-			public TextViewState(IWpfTextView wpfTextView, Lazy<IIntellisenseControllerProvider, IContentTypeMetadata>[] intellisenseControllerProviders) {
-				this.wpfTextView = wpfTextView;
+			public TextViewState(ITextView textView, Lazy<IIntellisenseControllerProvider, IContentTypeMetadata>[] intellisenseControllerProviders) {
+				this.textView = textView;
 				controllerInfos = intellisenseControllerProviders.Select(a => new ControllerInfo(a)).ToArray();
-				wpfTextView.Closed += WpfTextView_Closed;
+				textView.Closed += TextView_Closed;
 			}
 
-			public void SubjectBuffersConnected(ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
+			public void SubjectBuffersConnected(ConnectionReason reason, IReadOnlyCollection<ITextBuffer> subjectBuffers) {
 				var filteredBuffers = new List<ITextBuffer>(subjectBuffers.Count);
 				foreach (var info in controllerInfos) {
 					info.FilterBuffers(subjectBuffers, filteredBuffers);
 					if (filteredBuffers.Count == 0)
 						continue;
 					if (info.Controller == null)
-						info.Controller = info.Lazy.Value.TryCreateIntellisenseController(wpfTextView, filteredBuffers);
+						info.Controller = info.Lazy.Value.TryCreateIntellisenseController(textView, filteredBuffers);
 					else {
 						foreach (var buffer in filteredBuffers)
 							info.Controller.ConnectSubjectBuffer(buffer);
@@ -67,7 +66,7 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 
-			public void SubjectBuffersDisconnected(ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
+			public void SubjectBuffersDisconnected(ConnectionReason reason, IReadOnlyCollection<ITextBuffer> subjectBuffers) {
 				var filteredBuffers = new List<ITextBuffer>(subjectBuffers.Count);
 				foreach (var info in controllerInfos) {
 					if (info.Controller == null)
@@ -80,10 +79,10 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 
-			void WpfTextView_Closed(object sender, EventArgs e) {
+			void TextView_Closed(object sender, EventArgs e) {
 				foreach (var info in controllerInfos)
-					info.Controller?.Detach(wpfTextView);
-				wpfTextView.Closed -= WpfTextView_Closed;
+					info.Controller?.Detach(textView);
+				textView.Closed -= TextView_Closed;
 			}
 		}
 
@@ -93,7 +92,7 @@ namespace dnSpy.Language.Intellisense {
 
 			public ControllerInfo(Lazy<IIntellisenseControllerProvider, IContentTypeMetadata> lazy) => Lazy = lazy;
 
-			public List<ITextBuffer> FilterBuffers(IList<ITextBuffer> buffers, List<ITextBuffer> filteredBuffers) {
+			public List<ITextBuffer> FilterBuffers(IReadOnlyCollection<ITextBuffer> buffers, List<ITextBuffer> filteredBuffers) {
 				filteredBuffers.Clear();
 				foreach (var buffer in buffers) {
 					if (buffer.ContentType.IsOfAnyType(Lazy.Metadata.ContentTypes))
@@ -103,15 +102,15 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		TextViewState GetTextViewState(IWpfTextView textView) => textView.Properties.GetOrCreateSingletonProperty(typeof(TextViewState), () => new TextViewState(textView, intellisenseControllerProviders));
+		TextViewState GetTextViewState(ITextView textView) => textView.Properties.GetOrCreateSingletonProperty(typeof(TextViewState), () => new TextViewState(textView, intellisenseControllerProviders));
 
-		public void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
+		public void SubjectBuffersConnected(ITextView textView, ConnectionReason reason, IReadOnlyCollection<ITextBuffer> subjectBuffers) {
 			if (textView.IsClosed)
 				return;
 			GetTextViewState(textView).SubjectBuffersConnected(reason, subjectBuffers);
 		}
 
-		public void SubjectBuffersDisconnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) =>
+		public void SubjectBuffersDisconnected(ITextView textView, ConnectionReason reason, IReadOnlyCollection<ITextBuffer> subjectBuffers) =>
 			GetTextViewState(textView).SubjectBuffersDisconnected(reason, subjectBuffers);
 	}
 }
