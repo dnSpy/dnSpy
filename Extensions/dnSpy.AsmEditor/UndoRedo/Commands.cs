@@ -21,10 +21,10 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.AsmEditor.SaveModule;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.AsmEditor.SaveModule;
 
 namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportAutoLoaded]
