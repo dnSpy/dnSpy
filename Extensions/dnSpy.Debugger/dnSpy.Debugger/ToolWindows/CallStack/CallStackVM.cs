@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		// random thread
 		DbgValueFormatterOptions GetValueFormatterOptions() {
-			var options = DbgValueFormatterOptions.Display;
+			var options = DbgValueFormatterOptions.None;
 
 			if (!debuggerSettings.UseHexadecimal)					options |= DbgValueFormatterOptions.Decimal;
 			// We don't enable func-eval since each func-eval will invalidate all stack frames

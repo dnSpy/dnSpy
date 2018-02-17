@@ -430,17 +430,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				Write(">>>");
 			}
 			else {
-				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isDisplay: true);
+				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isEdit: false);
 				const CultureInfo cultureInfo = null;
 				language.Formatter.FormatValue(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}
 		}
 
-		DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string> formatSpecifiers, bool isDisplay) {
+		DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string> formatSpecifiers, bool isEdit) {
 			var options = DbgValueFormatterOptions.FuncEval | DbgValueFormatterOptions.ToString;
-			if (isDisplay)
-				options |= DbgValueFormatterOptions.Display;
+			if (isEdit)
+				options |= DbgValueFormatterOptions.Edit;
 			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.UseDigitSeparators)

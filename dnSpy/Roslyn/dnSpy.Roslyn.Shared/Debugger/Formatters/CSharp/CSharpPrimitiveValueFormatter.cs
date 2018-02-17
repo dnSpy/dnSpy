@@ -41,7 +41,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		const string CommentBegin = "/*";
 		const string CommentEnd = "*/";
 
-		bool Display => (options & ValueFormatterOptions.Display) != 0;
+		bool Edit => (options & ValueFormatterOptions.Edit) != 0;
 		bool Decimal => (options & ValueFormatterOptions.Decimal) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		void FormatType(DmdType type) {
 			var typeOptions = options.ToTypeFormatterOptions(showArrayValueSizes: false);
-			if (!Display) {
+			if (Edit) {
 				typeOptions |= TypeFormatterOptions.Namespaces;
 				typeOptions &= ~TypeFormatterOptions.Tokens;
 			}
@@ -211,7 +211,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		}
 
 		void WriteEnumField(DmdFieldInfo field) {
-			if (!Display) {
+			if (Edit) {
 				FormatType(field.ReflectedType);
 				OutputWrite(".", BoxedTextColor.Operator);
 			}
@@ -219,7 +219,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		}
 
 		void WriteEnumInteger(DmdType type, ulong value) {
-			if (!Display) {
+			if (Edit) {
 				OutputWrite("(", BoxedTextColor.Punctuation);
 				FormatType(type);
 				OutputWrite(")", BoxedTextColor.Punctuation);
@@ -273,7 +273,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 		}
 
 		public void FormatChar(char value) {
-			if (Display) {
+			if (!Edit) {
 				FormatUInt16(value);
 				WriteSpace();
 			}
@@ -480,7 +480,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		public void FormatSingle(float value, DmdAppDomain appDomain) {
 			if (float.IsNaN(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
@@ -489,7 +489,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				}
 			}
 			else if (float.IsNegativeInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
@@ -498,7 +498,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				}
 			}
 			else if (float.IsPositiveInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
@@ -512,7 +512,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		public void FormatDouble(double value, DmdAppDomain appDomain) {
 			if (double.IsNaN(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
@@ -521,7 +521,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				}
 			}
 			else if (double.IsNegativeInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
@@ -530,7 +530,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 				}
 			}
 			else if (double.IsPositiveInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
@@ -544,7 +544,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.CSharp {
 
 		string ToFormattedDecimal(decimal value) {
 			var s = value.ToString(cultureInfo);
-			if (!Display)
+			if (Edit)
 				s += DecimalSuffix;
 			return s;
 		}

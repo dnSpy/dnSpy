@@ -23,8 +23,8 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	static class ValueFormatterOptionsExtensions {
 		public static DbgValueFormatterOptions ToDbgValueFormatterOptions(this ValueFormatterOptions options) {
 			var res = DbgValueFormatterOptions.None;
-			if ((options & ValueFormatterOptions.Display) != 0)
-				res |= DbgValueFormatterOptions.Display;
+			if ((options & ValueFormatterOptions.Edit) != 0)
+				res |= DbgValueFormatterOptions.Edit;
 			if ((options & ValueFormatterOptions.Decimal) != 0)
 				res |= DbgValueFormatterOptions.Decimal;
 			if ((options & ValueFormatterOptions.FuncEval) != 0)

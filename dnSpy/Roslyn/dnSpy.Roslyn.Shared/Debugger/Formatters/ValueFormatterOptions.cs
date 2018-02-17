@@ -23,7 +23,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters {
 	[Flags]
 	enum ValueFormatterOptions {
 		None						= 0,
-		Display						= 0x00000001,
+		Edit						= 0x00000001,
 		Decimal						= 0x00000002,
 		FuncEval					= 0x00000004,
 		ToString					= 0x00000008,

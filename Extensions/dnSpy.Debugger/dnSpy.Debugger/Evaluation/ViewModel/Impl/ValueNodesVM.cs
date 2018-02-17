@@ -572,7 +572,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void UpdateFormatterOptions() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			var valueFormatterOptions = GetValueFormatterOptions(isDisplay: true);
+			var valueFormatterOptions = GetValueFormatterOptions(isEdit: false);
 			valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions = valueFormatterOptions;
 			valueNodesContext.ValueNodeFormatParameters.ValueFormatterOptions = valueFormatterOptions;
 			valueNodesContext.ValueNodeFormatParameters.TypeFormatterOptions = valueFormatterOptions;
@@ -587,10 +587,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.ValueNodeReader.SetValueNodeEvaluationOptions(valueNodesContext.ValueNodeEvaluationOptions);
 		}
 
-		DbgValueFormatterOptions GetValueFormatterOptions(bool isDisplay) {
+		DbgValueFormatterOptions GetValueFormatterOptions(bool isEdit) {
 			var options = DbgValueFormatterOptions.None;
-			if (isDisplay)
-				options |= DbgValueFormatterOptions.Display;
+			if (isEdit)
+				options |= DbgValueFormatterOptions.Edit;
 			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.PropertyEvalAndFunctionCalls)

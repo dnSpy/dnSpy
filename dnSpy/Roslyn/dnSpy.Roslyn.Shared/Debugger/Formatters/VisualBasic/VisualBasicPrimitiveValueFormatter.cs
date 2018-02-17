@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		const string CommentBegin = "/*";
 		const string CommentEnd = "*/";
 
-		bool Display => (options & ValueFormatterOptions.Display) != 0;
+		bool Edit => (options & ValueFormatterOptions.Edit) != 0;
 		bool Decimal => (options & ValueFormatterOptions.Decimal) != 0;
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		void FormatType(DmdType type) {
 			var typeOptions = options.ToTypeFormatterOptions(showArrayValueSizes: false);
-			if (!Display) {
+			if (Edit) {
 				typeOptions |= TypeFormatterOptions.Namespaces;
 				typeOptions &= ~TypeFormatterOptions.Tokens;
 			}
@@ -217,7 +217,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		void WriteRawValue(ulong enumValue, DmdType type) {
 			Debug.Assert(type.IsEnum);
-			if (!Display)
+			if (Edit)
 				return;
 			WriteSpace();
 			OutputWrite(TypeNameOpenParen, BoxedTextColor.Error);
@@ -226,7 +226,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		}
 
 		void WriteEnumField(DmdFieldInfo field) {
-			if (!Display) {
+			if (Edit) {
 				FormatType(field.ReflectedType);
 				OutputWrite(".", BoxedTextColor.Operator);
 			}
@@ -234,7 +234,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		}
 
 		void WriteEnumInteger(DmdType type, ulong value) {
-			if (!Display) {
+			if (Edit) {
 				OutputWrite("CType", BoxedTextColor.Keyword);
 				OutputWrite("(", BoxedTextColor.Punctuation);
 				WriteNumber(ToFormattedInteger(type, value));
@@ -285,7 +285,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 		}
 
 		public void FormatChar(char value) {
-			if (Display) {
+			if (!Edit) {
 				FormatUInt16(value);
 				WriteSpace();
 			}
@@ -504,7 +504,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		public void FormatSingle(float value, DmdAppDomain appDomain) {
 			if (float.IsNaN(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
@@ -513,7 +513,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				}
 			}
 			else if (float.IsNegativeInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
@@ -522,7 +522,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				}
 			}
 			else if (float.IsPositiveInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
@@ -536,7 +536,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		public void FormatDouble(double value, DmdAppDomain appDomain) {
 			if (double.IsNaN(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
@@ -545,7 +545,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				}
 			}
 			else if (double.IsNegativeInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
@@ -554,7 +554,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 				}
 			}
 			else if (double.IsPositiveInfinity(value)) {
-				if (Display)
+				if (!Edit)
 					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
@@ -568,7 +568,7 @@ namespace dnSpy.Roslyn.Shared.Debugger.Formatters.VisualBasic {
 
 		string ToFormattedDecimal(decimal value) {
 			var s = value.ToString(cultureInfo);
-			if (!Display)
+			if (Edit)
 				s += DecimalSuffix;
 			return s;
 		}

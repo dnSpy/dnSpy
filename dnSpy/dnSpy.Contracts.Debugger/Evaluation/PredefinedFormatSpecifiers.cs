@@ -190,7 +190,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 						options &= ~DbgValueFormatterOptions.DigitSeparators;
 						break;
 					case EditExpression:
-						options &= ~DbgValueFormatterOptions.Display;
+						options |= ~DbgValueFormatterOptions.Edit;
 						break;
 					case ToString:
 						options |= DbgValueFormatterOptions.ToString;
