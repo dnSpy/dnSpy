@@ -27,6 +27,7 @@ using dnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelectionLayer {
@@ -54,11 +55,11 @@ namespace dnSpy.Text.Editor {
 			textSelection.SelectionChanged += TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged += TextView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
-			UpdateUseReducedOpacityForHighContrastOption();
 			UpdateBackgroundBrush();
 		}
 
 		void UpdateBackgroundBrush() {
+			UpdateIsInContrastModeOption();
 			var newBackgroundBrush = GetBackgroundBrush();
 			if (BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
@@ -75,13 +76,15 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName)
-				UpdateUseReducedOpacityForHighContrastOption();
+			if (e.OptionId == DefaultTextViewHostOptions.IsInContrastModeName)
+				UpdateIsInContrastModeOption();
 		}
 
-		void UpdateUseReducedOpacityForHighContrastOption() {
-			bool reducedOpacity = textSelection.TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-			layer.Opacity = reducedOpacity ? 0.4 : 1;
+		void UpdateIsInContrastModeOption() {
+			bool isInContrastMode = textSelection.TextView.Options.IsInContrastMode();
+			var newValue = isInContrastMode ? 1 : 0.4;
+			if (layer.Opacity != newValue)
+				layer.Opacity = newValue;
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {

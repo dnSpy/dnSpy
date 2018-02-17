@@ -26,6 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Operations;
@@ -41,18 +42,22 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewMargin[] containerMargins;
 		readonly Grid grid;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly IThemeService themeService;
 
-		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDsWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
+		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDsWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, IThemeService themeService, bool setFocus) {
 			if (wpfTextViewMarginProviderCollectionProvider == null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			this.editorOperationsFactoryService = editorOperationsFactoryService ?? throw new ArgumentNullException(nameof(editorOperationsFactoryService));
+			this.themeService = themeService;
 			grid = CreateGrid();
 			TextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			Focusable = false;
 			Content = grid;
 
-			UpdateBackground();
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			TextView.BackgroundBrushChanged += TextView_BackgroundBrushChanged;
+			UpdateIsInContrastMode();
+			UpdateBackground();
 
 			containerMargins = new IWpfTextViewMargin[5];
 			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Top, true, 0, 0, 3);
@@ -70,6 +75,11 @@ namespace dnSpy.Text.Editor {
 				}));
 			}
 		}
+
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateIsInContrastMode();
+
+		void UpdateIsInContrastMode() =>
+			TextView.Options.GlobalOptions.SetOptionValue(DefaultTextViewHostOptions.IsInContrastModeId, themeService.Theme.IsHighContrast);
 
 		IWpfTextViewMargin CreateContainerMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, string name, bool isHorizontal, int row, int column, int columnSpan) {
 			var margin = new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionProvider, this, name, isHorizontal);
@@ -116,6 +126,7 @@ namespace dnSpy.Text.Editor {
 			TextView.Close();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
+			themeService.ThemeChanged -= ThemeService_ThemeChanged;
 			TextView.BackgroundBrushChanged -= TextView_BackgroundBrushChanged;
 			foreach (var margin in containerMargins) {
 				margin.VisualElement.MouseDown -= Margin_VisualElement_MouseDown;

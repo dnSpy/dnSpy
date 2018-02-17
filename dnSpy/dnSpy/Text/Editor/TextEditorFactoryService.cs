@@ -25,6 +25,7 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Themes;
 using dnSpy.Text.Formatting;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
@@ -60,6 +61,7 @@ namespace dnSpy.Text.Editor {
 		readonly IBufferGraphFactoryService bufferGraphFactoryService;
 		readonly Lazy<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>[] textViewModelProviders;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
+		readonly IThemeService themeService;
 		readonly Lazy<ITextViewUndoManagerProvider> textViewUndoManagerProvider;
 		ProviderSelector<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata> providerSelector;
 
@@ -108,7 +110,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		[ImportingConstructor]
-		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuService menuService, IEditorOperationsFactoryService editorOperationsFactoryService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, [ImportMany] IEnumerable<Lazy<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>> textViewModelProviders, IContentTypeRegistryService contentTypeRegistryService, Lazy<ITextViewUndoManagerProvider> textViewUndoManagerProvider) {
+		TextEditorFactoryService(ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, [ImportMany] IEnumerable<Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>> wpfTextViewCreationListeners, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IMenuService menuService, IEditorOperationsFactoryService editorOperationsFactoryService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, [ImportMany] IEnumerable<Lazy<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>> textViewModelProviders, IContentTypeRegistryService contentTypeRegistryService, IThemeService themeService, Lazy<ITextViewUndoManagerProvider> textViewUndoManagerProvider) {
 			this.textBufferFactoryService = textBufferFactoryService;
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 			this.commandService = commandService;
@@ -129,6 +131,7 @@ namespace dnSpy.Text.Editor {
 			this.bufferGraphFactoryService = bufferGraphFactoryService;
 			this.textViewModelProviders = textViewModelProviders.ToArray();
 			this.contentTypeRegistryService = contentTypeRegistryService;
+			this.themeService = themeService;
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 		}
 
@@ -229,7 +232,7 @@ namespace dnSpy.Text.Editor {
 		public IDsWpfTextViewHost CreateTextViewHost(IDsWpfTextView wpfTextView, bool setFocus) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			return new WpfTextViewHost(wpfTextViewMarginProviderCollectionProvider, wpfTextView, editorOperationsFactoryService, setFocus);
+			return new WpfTextViewHost(wpfTextViewMarginProviderCollectionProvider, wpfTextView, editorOperationsFactoryService, themeService, setFocus);
 		}
 
 		public ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new TextViewRoleSet(roles);

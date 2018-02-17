@@ -28,6 +28,7 @@ using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Operations;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Themes;
 using dnSpy.Hex.Formatting;
 using dnSpy.Hex.MEF;
 using TE = dnSpy.Text.Editor;
@@ -55,6 +56,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexSpaceReservationStackProvider spaceReservationStackProvider;
 		readonly HexBufferLineFormatterFactoryService hexBufferLineFormatterFactoryService;
 		readonly VSTC.IClassificationTypeRegistryService classificationTypeRegistryService;
+		readonly IThemeService themeService;
 		readonly Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>[] hexCursorProviderFactories;
 
 		public override VSTE.ITextViewRoleSet AllPredefinedRoles => new TE.TextViewRoleSet(allPredefinedRolesList);
@@ -108,7 +110,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		[ImportingConstructor]
-		HexEditorFactoryServiceImpl(HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, [ImportMany] IEnumerable<Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>> wpfHexViewCreationListeners, [ImportMany] IEnumerable<Lazy<HexEditorFactoryServiceListener>> hexEditorFactoryServiceListeners, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, IMenuService menuService, HexEditorOperationsFactoryService editorOperationsFactoryService, HexSpaceReservationStackProvider spaceReservationStackProvider, HexBufferLineFormatterFactoryService hexBufferLineFormatterFactoryService, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, [ImportMany] IEnumerable<Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>> hexCursorProviderFactories) {
+		HexEditorFactoryServiceImpl(HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, [ImportMany] IEnumerable<Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>> wpfHexViewCreationListeners, [ImportMany] IEnumerable<Lazy<HexEditorFactoryServiceListener>> hexEditorFactoryServiceListeners, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, IMenuService menuService, HexEditorOperationsFactoryService editorOperationsFactoryService, HexSpaceReservationStackProvider spaceReservationStackProvider, HexBufferLineFormatterFactoryService hexBufferLineFormatterFactoryService, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, IThemeService themeService, [ImportMany] IEnumerable<Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>> hexCursorProviderFactories) {
 			this.hexEditorOptionsFactoryService = hexEditorOptionsFactoryService;
 			this.commandService = commandService;
 			this.wpfHexViewCreationListeners = wpfHexViewCreationListeners.ToArray();
@@ -126,6 +128,7 @@ namespace dnSpy.Hex.Editor {
 			this.spaceReservationStackProvider = spaceReservationStackProvider;
 			this.hexBufferLineFormatterFactoryService = hexBufferLineFormatterFactoryService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
+			this.themeService = themeService;
 			this.hexCursorProviderFactories = hexCursorProviderFactories.ToArray();
 		}
 
@@ -160,7 +163,7 @@ namespace dnSpy.Hex.Editor {
 		public override WpfHexViewHost CreateHost(WpfHexView wpfHexView, bool setFocus) {
 			if (wpfHexView == null)
 				throw new ArgumentNullException(nameof(wpfHexView));
-			return new WpfHexViewHostImpl(wpfHexViewMarginProviderCollectionProvider, wpfHexView, editorOperationsFactoryService, setFocus);
+			return new WpfHexViewHostImpl(wpfHexViewMarginProviderCollectionProvider, wpfHexView, editorOperationsFactoryService, themeService, setFocus);
 		}
 
 		public override VSTE.ITextViewRoleSet CreateTextViewRoleSet(IEnumerable<string> roles) => new TE.TextViewRoleSet(roles);

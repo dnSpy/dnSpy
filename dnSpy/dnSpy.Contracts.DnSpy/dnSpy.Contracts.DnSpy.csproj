@@ -307,6 +307,7 @@
     <Compile Include="Hex\Classification\HexClassifierAggregatorService.cs" />
     <Compile Include="Hex\Classification\HexEditorFormatMapService.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorService.cs" />
+    <Compile Include="Hex\Editor\DefaultHexEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewHostEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewHostOptions.cs" />

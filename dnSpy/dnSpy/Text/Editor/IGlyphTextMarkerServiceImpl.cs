@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -29,7 +28,6 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextMarkerServiceImpl : IGlyphTextMarkerService {
-		IThemeService ThemeService { get; }
 		IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		IEditorFormatMapService EditorFormatMapService { get; }
 		IEnumerable<IGlyphTextMarkerImpl> AllMarkers { get; }

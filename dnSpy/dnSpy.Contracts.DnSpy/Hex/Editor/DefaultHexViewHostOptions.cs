@@ -35,6 +35,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> ZoomControlId = new VSTE.EditorOptionKey<bool>(ZoomControlName);
 		public const string GlyphMarginName = "HexViewHost/GlyphMargin";
 		public static readonly VSTE.EditorOptionKey<bool> GlyphMarginId = new VSTE.EditorOptionKey<bool>(GlyphMarginName);
+		public const string IsInContrastModeName = "HexViewHost/IsInContrastMode";
+		public static readonly VSTE.EditorOptionKey<bool> IsInContrastModeId = new VSTE.EditorOptionKey<bool>(IsInContrastModeName);
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

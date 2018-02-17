@@ -64,7 +64,6 @@ namespace dnSpy.Text.Editor {
 		static AdornmentLayerDefinition glyphTextMarkerAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public IThemeService ThemeService { get; }
 		public IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		public IEditorFormatMapService EditorFormatMapService { get; }
 		public IEnumerable<IGlyphTextMarkerImpl> AllMarkers => glyphTextMarkers;
@@ -73,8 +72,7 @@ namespace dnSpy.Text.Editor {
 		readonly HashSet<IGlyphTextMarkerImpl> glyphTextMarkers;
 
 		[ImportingConstructor]
-		GlyphTextMarkerService(IThemeService themeService, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>> glyphTextMarkerMouseProcessorProviders) {
-			ThemeService = themeService;
+		GlyphTextMarkerService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, [ImportMany] IEnumerable<Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>> glyphTextMarkerMouseProcessorProviders) {
 			ViewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			EditorFormatMapService = editorFormatMapService;
 			glyphTextMarkers = new HashSet<IGlyphTextMarkerImpl>();

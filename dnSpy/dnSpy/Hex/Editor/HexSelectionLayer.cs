@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using CTC = dnSpy.Contracts.Text.Classification;
 using TE = dnSpy.Text.Editor;
 using TWPF = dnSpy.Text.WPF;
@@ -55,11 +56,11 @@ namespace dnSpy.Hex.Editor {
 			hexSelection.SelectionChanged += HexSelection_SelectionChanged;
 			hexSelection.HexView.LayoutChanged += HexView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
-			UpdateUseReducedOpacityForHighContrastOption();
 			UpdateBackgroundBrush();
 		}
 
 		void UpdateBackgroundBrush() {
+			UpdateIsInContrastModeOption();
 			var newBackgroundBrush = GetBackgroundBrush();
 			if (TWPF.BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
@@ -76,13 +77,15 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionName)
-				UpdateUseReducedOpacityForHighContrastOption();
+			if (e.OptionId == DefaultHexViewHostOptions.IsInContrastModeName)
+				UpdateIsInContrastModeOption();
 		}
 
-		void UpdateUseReducedOpacityForHighContrastOption() {
-			bool reducedOpacity = hexSelection.HexView.Options.GetOptionValue(DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId);
-			layer.Opacity = reducedOpacity ? 0.4 : 1;
+		void UpdateIsInContrastModeOption() {
+			bool isInContrastMode = hexSelection.HexView.Options.IsInContrastMode();
+			var newValue = isInContrastMode ? 1 : 0.4;
+			if (layer.Opacity != newValue)
+				layer.Opacity = newValue;
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
