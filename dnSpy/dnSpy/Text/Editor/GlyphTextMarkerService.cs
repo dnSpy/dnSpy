@@ -27,7 +27,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
