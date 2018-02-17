@@ -84,6 +84,9 @@ namespace dnSpy.Text.MEF {
 		IEnumerable<string> BaseDefinition { get; }
 
 		string Name { get; }
+
+		[DefaultValue(null)]
+		string MimeType { get; }
 	}
 
 	public interface IWpfTextViewMarginMetadata : IOrderableContentTypeAndTextViewRoleMetadata {
