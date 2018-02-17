@@ -216,9 +216,6 @@
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>无法设置下一条语句。</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>尚未加载该类型。</value>
-  </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
     <value>进程已暂停，等待调试器</value>
   </data>

@@ -333,8 +333,7 @@
     <value>No se puede evaluar cuando ha ocurrido una excepción no controlada</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>Could not start '{0}'
-ERROR: {1}</value>
+    <value>No se pudo iniciar '{0}' ERROR: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Configuración de E_xcepción</value>
@@ -1466,12 +1465,33 @@ ERROR: {1}</value>
     <value>Proporcionar enfoque al proceso de depurado</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
-    <value>Open All Modules</value>
+    <value>Abrir todos los módulos</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>Hide deprecated members in variables windows</value>
+    <value>Ocultar los miembros obsoletos en variables windiws</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Show return values</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Redirect GUI applications' console output to the Output window</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
-    <value>Making an Image Easier to Debug</value>
+    <value>Hacer una imagen más fácil de depurar</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Public Members</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Show raw locals</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Enable async debugging</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Step over properties and operators</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Copy E_xpression</value>
   </data>
 </root>

@@ -216,9 +216,6 @@
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Nem állítható be a következő utasítás.</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>A típus még nincs betöltve.</value>
-  </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
     <value>A folyamat felfüggesztve és _vár a hibakeresőre</value>
   </data>

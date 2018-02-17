@@ -133,25 +133,25 @@
     <value>Descompilar métodos anónimos/lambdas</value>
   </data>
   <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
-    <value>Decompilar métodos asincrónicos (async/await)</value>
+    <value>Descompilar métodos asincrónicos (async/await)</value>
   </data>
   <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
-    <value>Decompilar eventos automáticos</value>
+    <value>Descompilar eventos automáticos</value>
   </data>
   <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
-    <value>Decompilar propiedades automáticas</value>
+    <value>Descompilar propiedades automáticas</value>
   </data>
   <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
-    <value>Decompilar enumeradores (retornos yield)</value>
+    <value>Descompilar enumeradores (retornos yield)</value>
   </data>
   <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
     <value>Descompilar árboles de expresión</value>
   </data>
   <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
-    <value>Decompilar declaraciones foreach</value>
+    <value>Descompilar declaraciones foreach</value>
   </data>
   <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
-    <value>Decompilar declaraciones lock</value>
+    <value>Descompilar declaraciones lock</value>
   </data>
   <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
     <value>Descompilar expresiones de consulta</value>
@@ -193,13 +193,13 @@
     <value>Reemplazar 'delegate-class(xxx) nuevo' con 'xxx'</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Mostrar ocultado compilador genera tipos y métodos</value>
+    <value>Mostrar los tipos y métodos ocultos generados por el compilador</value>
   </data>
   <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Comentarios de operación ver IL</value>
+    <value>Mostrar los oomentarios de opcpde IL</value>
   </data>
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Mostrar IL bytes de instrucciones</value>
+    <value>Mostrar instrucciones bytes IL</value>
   </data>
   <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
     <value>Mostrar números de línea y nombres de archivos si está disponible</value>
@@ -226,6 +226,6 @@
     <value>Utilice nombres de variables de símbolos de depuración, si está disponible</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Miembros de la orden en orden de código fuente</value>
+    <value>Miembros de la orden en el código fuente</value>
   </data>
 </root>

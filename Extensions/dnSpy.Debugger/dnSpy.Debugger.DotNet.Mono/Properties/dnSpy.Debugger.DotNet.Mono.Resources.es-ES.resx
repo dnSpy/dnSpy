@@ -216,9 +216,6 @@
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>No se pudo establecer la siguiente instrucción.</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
-  </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
     <value>Proceso se ha detenido y _waiting para el depurador</value>
   </data>
@@ -226,27 +223,27 @@
     <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>Adjuntar a _Proceso ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>Editor</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+    <value>Utilice el cuadro de diálogo Adjuntar al proceso (Unidad) para adjuntarlo a construcciones de depuración</value>
   </data>
   <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
-    <value>Can't set a breakpoint when the process is paused.</value>
+    <value>No se puede fijar un punto de ruptura cuando el proceso está en pausa.</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
-    <value>E_xecutable</value>
+    <value>E_jecutable</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
-    <value>Make sure you have patched the game's mono.dll file</value>
+    <value>Asegurate de que has parcheado la librería de juegos mono.dll</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
-    <value>_Timeout (s)</value>
+    <value>_Timeout(s)</value>
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
-    <value>This is for Unity Debug builds only</value>
+    <value>Esto es solamente para compilaciones Unity Debug</value>
   </data>
 </root>

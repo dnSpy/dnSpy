@@ -177,6 +177,12 @@
   <data name="ReturnValueNotAvailable" xml:space="preserve">
     <value>Возвращаемое значение сейчас недоступно</value>
   </data>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>Step into: Stepping over operator '{0}'.</value>
+  </data>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>Step into: Stepping over property '{0}'.</value>
+  </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>Неизвестная идентификатор переменной или объекта</value>
   </data>

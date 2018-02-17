@@ -1473,7 +1473,28 @@ Biztosan ki akarja nyitni?</value>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>Az elavult tagok elrejtése a változó ablakban</value>
   </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Show return values</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Redirect GUI applications' console output to the Output window</value>
+  </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Megkönnyíti a futtatható csomag hibakeresését</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Public Members</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Show raw locals</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Enable async debugging</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Step over properties and operators</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Copy E_xpression</value>
   </data>
 </root>

@@ -182,6 +182,9 @@
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
     <value>Keresett oszlop: {0}</value>
   </data>
+  <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
+    <value>Use '{0}' to invert the match, eg. {1}</value>
+  </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Az értéknek {0} típusúnak kell lennie.
 Hiba: {1}</value>

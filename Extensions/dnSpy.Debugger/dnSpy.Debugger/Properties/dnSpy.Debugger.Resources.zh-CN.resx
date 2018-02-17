@@ -1473,7 +1473,28 @@
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>在变量窗口中隐藏已弃用的成员</value>
   </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Show return values</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Redirect GUI applications' console output to the Output window</value>
+  </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>使映像更易于调试</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Public Members</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Show raw locals</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Enable async debugging</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Step over properties and operators</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Copy E_xpression</value>
   </data>
 </root>

@@ -216,9 +216,6 @@
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Konnte nächste Anweisung nicht setzen.</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>Dieser Typ wurde noch nicht geladen.</value>
-  </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
     <value>Prozess wurde angehalten und wartet auf Debugger</value>
   </data>

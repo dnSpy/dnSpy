@@ -1920,4 +1920,7 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   <data name="User_Administrator" xml:space="preserve">
     <value>Adminisztrátor</value>
   </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>Allow more than one instance (restart required)</value>
+  </data>
 </root>

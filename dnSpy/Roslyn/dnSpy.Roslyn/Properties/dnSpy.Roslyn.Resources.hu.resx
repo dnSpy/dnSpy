@@ -132,11 +132,14 @@
   <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
     <value>Statikus tagok</value>
   </data>
-  <data name="DebuggerVarsWindow_Empty_PropertyName" xml:space="preserve">
-    <value>Üres</value>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>Dynamic View</value>
   </data>
   <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
     <value>Hiba</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>Expanding the Dynamic View will get the dynamic members for the object</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
     <value>Az Eredmény Nézet kibővítése felsorolja az IEnumerable típusokat</value>
@@ -150,14 +153,17 @@
   <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
     <value>Eredmény nézet</value>
   </data>
-  <data name="DebuggerVarsWindow_ResultsView_NoResults" xml:space="preserve">
-    <value>A felsorolásnak nincs értéke</value>
-  </data>
   <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
     <value>Megosztott tagok</value>
   </data>
   <data name="DelegatesToolTip" xml:space="preserve">
     <value>Delegáltak</value>
+  </data>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>Dynamic View requires {0} to be referenced</value>
+  </data>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>Only COM or Dynamic objects can have Dynamic View</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>Felsorolások</value>
@@ -203,6 +209,9 @@
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
     <value>Tulajdonságok</value>
+  </data>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>Only Enumerable types can have Results View</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
     <value>Kódtöredékek</value>
