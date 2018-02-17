@@ -46,14 +46,6 @@ namespace dnSpy.Text.MEF {
 		IEnumerable<string> ClassificationTypeNames { get; }
 	}
 
-	public interface INameAndReplacesMetadata {
-		[DefaultValue(null)]
-		string Name { get; }
-
-		[DefaultValue(null)]
-		IEnumerable<string> Replaces { get; }
-	}
-
 	public interface IAdornmentLayersMetadata : IOrderable {
 		[DefaultValue(false)]
 		bool IsOverlayLayer { get; }

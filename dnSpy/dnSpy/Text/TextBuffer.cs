@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
-	sealed class TextBuffer : ITextBuffer {
+	sealed class TextBuffer : ITextBuffer2 {
 		public IContentType ContentType => contentType;
 		IContentType contentType;
 		TextVersion currentTextVersion;
@@ -49,7 +49,9 @@ namespace dnSpy.Text {
 			// It's null the first time it's called from the ctor
 			if (changes != null)
 				currentTextVersion = currentTextVersion.SetChanges(changes, reiteratedVersionNumber);
-			CurrentSnapshot = new TextSnapshot(afterTextSource ?? Document.CreateSnapshot(), ContentType, this, currentTextVersion);
+			var textSource = afterTextSource ?? Document.CreateSnapshot();
+			var textImage = new TextImage(this, textSource, currentTextVersion.ImageVersion);
+			CurrentSnapshot = new TextSnapshot(textImage, ContentType, this, currentTextVersion);
 		}
 
 		ITextSnapshot ITextBuffer.CurrentSnapshot => CurrentSnapshot;
@@ -64,6 +66,11 @@ namespace dnSpy.Text {
 #pragma warning disable 0067
 		public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;//TODO: Use this event
 #pragma warning restore 0067
+
+		event EventHandler<TextContentChangedEventArgs> ITextBuffer2.ChangedOnBackground {
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
+		}
 
 		internal TextDocument Document {
 			get { return document; }
@@ -81,7 +88,7 @@ namespace dnSpy.Text {
 		public TextBuffer(IContentType contentType, string text) {
 			Properties = new PropertyCollection();
 			this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
-			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
+			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0, new object());
 			Document = new TextDocument(text);
 			Document.SetOwnerThread(null);
 		}
@@ -180,9 +187,9 @@ namespace dnSpy.Text {
 			PostChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		internal bool IsSafeToAccessDocumentFromSnapshot(TextSnapshot snapshot) {
+		internal bool IsSafeToAccessDocumentFromSnapshot(TextImage snapshot) {
 			// If it's not the latest snapshot, Document could be different
-			if (snapshot != CurrentSnapshot)
+			if (snapshot != CurrentSnapshot.TextImage)
 				return false;
 			// It's only safe to access Document on the owner thread. If owner thread
 			// is null, assume there's only one thread that accesses the text buffer.

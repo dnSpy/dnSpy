@@ -1133,6 +1133,7 @@
     <Compile Include="Text\Settings\ICommonEditorOptions.cs" />
     <Compile Include="Text\Settings\ScrollBarsAppSettingsPageBase.cs" />
     <Compile Include="Text\Settings\TabsAppSettingsPageBase.cs" />
+    <Compile Include="Text\SimpleTextImage.cs" />
     <Compile Include="Text\Tagging\BufferTagAggregatorFactoryService.cs" />
     <Compile Include="Text\Tagging\ITaggerFactory.cs" />
     <Compile Include="Text\Tagging\TagAggregatorBase.cs" />
@@ -1153,6 +1154,9 @@
     <Compile Include="Text\TextChange.cs" />
     <Compile Include="Text\TextDataModel.cs" />
     <Compile Include="Text\TextEdit.cs" />
+    <Compile Include="Text\TextImage.cs" />
+    <Compile Include="Text\TextImageUtils.cs" />
+    <Compile Include="Text\TextImageVersion.cs" />
     <Compile Include="Text\TextSnapshot.cs" />
     <Compile Include="Text\TextSnapshotLine.cs" />
     <Compile Include="Text\TextVersion.cs" />
