@@ -40,6 +40,9 @@ namespace dnSpy.Text.MEF {
 
 		[DefaultValue(false)]
 		bool UserVisible { get; }
+
+		[DefaultValue(0)]
+		int Priority { get; }
 	}
 
 	public interface IClassificationFormatMetadata : IEditorFormatMetadata, IOrderable {

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Classification;
@@ -45,7 +46,13 @@ namespace dnSpy.Text.Classification {
 			toLazy = new Dictionary<string, Lazy<EditorFormatDefinition, IEditorFormatMetadata>>(StringComparer.OrdinalIgnoreCase);
 			foreach (var e in EditorFormatDefinitions) {
 				var name = e.Metadata.Name;
-				if (!toLazy.ContainsKey(name))
+				if (toLazy.TryGetValue(name, out var lz)) {
+					if (e.Metadata.Priority > lz.Metadata.Priority)
+						toLazy[name] = e;
+					else
+						Debug.Assert(e.Metadata.Priority < lz.Metadata.Priority);
+				}
+				else
 					toLazy.Add(name, e);
 			}
 		}

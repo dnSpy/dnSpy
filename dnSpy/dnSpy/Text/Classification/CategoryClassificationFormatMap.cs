@@ -139,6 +139,7 @@ namespace dnSpy.Text.Classification {
 			public IEnumerable<string> ClassificationTypeNames { get; }
 			public string Name { get; }
 			public bool UserVisible { get; }
+			public int Priority { get; }
 			public ClassificationFormatMetadata(string classification) {
 				Name = classification;
 				ClassificationTypeNames = new string[] { classification };
