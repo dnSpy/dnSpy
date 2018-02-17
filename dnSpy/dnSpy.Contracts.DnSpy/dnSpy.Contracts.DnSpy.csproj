@@ -341,6 +341,7 @@
     <Compile Include="Hex\Editor\HexStructureInfoProvider.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProviderAndData.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProviderFactory.cs" />
+    <Compile Include="Hex\Editor\HexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\PredefinedHexGlyphFactoryProviderNames.cs" />
     <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerNames.cs" />
     <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerTags.cs" />

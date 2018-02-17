@@ -108,6 +108,7 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformProviderService lineTransformProviderService;
 		readonly Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners;
+		readonly Lazy<ITextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] textViewCreationListeners;
 		readonly AdornmentLayerCollection normalAdornmentLayerCollection;
 		readonly AdornmentLayerCollection overlayAdornmentLayerCollection;
 		readonly AdornmentLayerCollection underlayAdornmentLayerCollection;
@@ -135,7 +136,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners, Lazy<ITextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] textViewCreationListeners) {
 			if (roles == null)
 				throw new ArgumentNullException(nameof(roles));
 			if (editorOptionsFactoryService == null)
@@ -156,6 +157,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(spaceReservationStackProvider));
 			if (wpfTextViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
+			if (textViewCreationListeners == null)
+				throw new ArgumentNullException(nameof(textViewCreationListeners));
 			if (wpfTextViewConnectionListenerServiceProvider == null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListenerServiceProvider));
 			if (bufferGraphFactoryService == null)
@@ -170,6 +173,7 @@ namespace dnSpy.Text.Editor {
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService ?? throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			this.lineTransformProviderService = lineTransformProviderService ?? throw new ArgumentNullException(nameof(lineTransformProviderService));
 			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
+			this.textViewCreationListeners = textViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
 			recreateLineTransformProvider = true;
 			normalAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Normal);
 			overlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Overlay);
@@ -228,6 +232,13 @@ namespace dnSpy.Text.Editor {
 
 		void NotifyTextViewCreated(IContentType newContentType, IContentType oldContentType) {
 			foreach (var lz in wpfTextViewCreationListeners) {
+				if (oldContentType != null && oldContentType.IsOfAnyType(lz.Metadata.ContentTypes))
+					continue;
+				if (!TextDataModel.ContentType.IsOfAnyType(lz.Metadata.ContentTypes))
+					continue;
+				lz.Value.TextViewCreated(this);
+			}
+			foreach (var lz in textViewCreationListeners) {
 				if (oldContentType != null && oldContentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				if (!TextDataModel.ContentType.IsOfAnyType(lz.Metadata.ContentTypes))
