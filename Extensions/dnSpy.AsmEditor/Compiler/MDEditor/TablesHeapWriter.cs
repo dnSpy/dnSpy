@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			tablesToIgnore[0x3E] = true;
 			tablesToIgnore[0x3F] = true;
 		}
-		static bool[] tablesToIgnore;
+		static readonly bool[] tablesToIgnore;
 
 		public unsafe override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
 			var tblStream = mdWriter.MetadataEditor.RealMetadata.TablesStream;
