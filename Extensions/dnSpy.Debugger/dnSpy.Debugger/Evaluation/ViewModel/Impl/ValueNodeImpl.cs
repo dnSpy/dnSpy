@@ -302,9 +302,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(RawNode.HasInitializedUnderlyingData);
 			if (RawNode.HasChildren == false)
 				yield break;
+			Debug.Assert(RawNode.HasInitializedUnderlyingData);
 
 			if (IsInvalid) {
 				ResetLazyLoading();
