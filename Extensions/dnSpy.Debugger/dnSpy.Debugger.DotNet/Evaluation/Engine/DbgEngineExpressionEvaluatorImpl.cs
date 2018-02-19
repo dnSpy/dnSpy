@@ -337,7 +337,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					return new EvaluateImplResult(PredefinedEvaluationErrorMessages.ExpressionCausesSideEffects, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags, exprInfo.ImageName, null);
 
 				var argumentsProvider = new TypeArgumentsProvider(obj);
-				var res = dnILInterpreter.Execute(evalInfo, genericTypeArguments, genericMethodArguments, argumentsProvider, null, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType);
+				var localsProvider = DummyLocalsProvider.Instance;
+				var res = dnILInterpreter.Execute(evalInfo, genericTypeArguments, genericMethodArguments, argumentsProvider, localsProvider, state.ILInterpreterState, exprInfo.TypeName, exprInfo.MethodName, options, out var expectedType);
 				if (res.HasError)
 					return new EvaluateImplResult(res.ErrorMessage, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, expectedType);
 				if (res.ValueIsException)
@@ -366,6 +367,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			public override string SetVariable(int index, DmdType targetType, object value) => PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			public override bool CanDispose(DbgDotNetValue value) => value != argument;
+			public override void Clear() { }
+		}
+
+		sealed class DummyLocalsProvider : VariablesProvider {
+			public static readonly DummyLocalsProvider Instance = new DummyLocalsProvider();
+			DummyLocalsProvider() { }
+			public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body) { }
+			public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) => null;
+			public override DbgDotNetValueResult GetVariable(int index) => DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			public override string SetVariable(int index, DmdType targetType, object value) => PredefinedEvaluationErrorMessages.InternalDebuggerError;
+			public override bool CanDispose(DbgDotNetValue value) => true;
 			public override void Clear() { }
 		}
 	}
