@@ -129,7 +129,6 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public sealed override DbgDotNetValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method) {
 			var columnFormatter = new ReturnValueColumnFormatter(this, method);
 			var output = ObjectCache.AllocDotNetTextOutput();
-			output = ObjectCache.AllocDotNetTextOutput();
 			evalInfo.Context.Language.Formatter.FormatReturnValueName(evalInfo.Context, output, id);
 			var expression = ObjectCache.FreeAndToText(ref output).ToString();
 			const bool isReadOnly = true;

@@ -168,7 +168,8 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			if (compilerGeneratedVariableInfos == null)
 				(compilerGeneratedVariableInfos, notCompilerGenerated) = CreateCompilerGeneratedVariableInfos(allScopes, methodDebugInfo);
 
-			(info.HoistedLocalScopeRecords, info.HoistedVarFieldTokenToNamesMap) = GetHoistedVariablesInfo(allScopes);
+			info.Compiler = GetCompiler(methodDebugInfo.CompilerName);
+			(info.HoistedLocalScopeRecords, info.HoistedVarFieldTokenToNamesMap) = GetHoistedVariablesInfo(allScopes, info.Compiler);
 			info.ImportRecordGroups = GetImports(methodDebugInfo.Method.DeclaringType, methodDebugInfo.Scope, out var defaultNamespaceName);
 			info.ExternAliasRecords = default;
 			info.DynamicLocalMap = default;
@@ -178,7 +179,6 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			info.ParameterNames = GetParameterNames(langDebugInfo.MethodDebugInfo.Method, methodDebugInfo.Parameters);
 			info.LocalConstants = default;
 			info.ReuseSpan = RoslynExpressionCompilerMethods.GetReuseSpan(allScopes, langDebugInfo.ILOffset);
-			info.Compiler = GetCompiler(methodDebugInfo.CompilerName);
 
 			return info;
 		}
@@ -192,13 +192,13 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			}
 		}
 
-		(ImmutableArray<HoistedLocalScopeRecord> hoistedLocalScopeRecords, ImmutableDictionary<int, string> hoistedVarFieldTokenToNamesMap) GetHoistedVariablesInfo(List<MethodDebugScope> scopes) {
+		(ImmutableArray<HoistedLocalScopeRecord> hoistedLocalScopeRecords, ImmutableDictionary<int, string> hoistedVarFieldTokenToNamesMap) GetHoistedVariablesInfo(List<MethodDebugScope> scopes, CompilerKind compiler) {
 			int maxSlotIndex = -1;
 			foreach (var scope in scopes) {
 				foreach (var local in scope.Locals) {
 					if (local.HoistedField == null)
 						continue;
-					if (TryGetHoistedLocalSlotIndex(local.HoistedField, out var slotIndex))
+					if (TryGetHoistedLocalSlotIndex(local.HoistedField, compiler, out var slotIndex))
 						maxSlotIndex = Math.Max(maxSlotIndex, slotIndex);
 				}
 			}
@@ -215,7 +215,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				foreach (var local in scope.Locals) {
 					if (local.HoistedField == null)
 						continue;
-					if (TryGetHoistedLocalSlotIndex(local.HoistedField, out var slotIndex)) {
+					if (TryGetHoistedLocalSlotIndex(local.HoistedField, compiler, out var slotIndex)) {
 						Debug.Assert((uint)slotIndex < (uint)scopeBuilder.Count);
 						scopeBuilder[slotIndex] = new HoistedLocalScopeRecord((int)scope.Span.Start, (int)scope.Span.Length);
 						namesBuilder[local.HoistedField.MDToken.ToInt32()] = local.Name;
@@ -225,8 +225,22 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return (scopeBuilder.ToImmutable(), namesBuilder.ToImmutable());
 		}
 
-		static bool TryGetHoistedLocalSlotIndex(FieldDef field, out int slotIndex) {
+		static bool TryGetHoistedLocalSlotIndex(FieldDef field, CompilerKind compiler, out int slotIndex) {
 			string name = field.Name;
+			switch (compiler) {
+			case CompilerKind.MicrosoftCSharp:
+				return CSharp.GeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex);
+			case CompilerKind.MicrosoftVisualBasic:
+				return VisualBasic.GeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex);
+			case CompilerKind.MonoCSharp:
+				return CSharp.MonoGeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex);
+			case CompilerKind.Unknown:
+				break;
+			default:
+				Debug.Fail($"Unknown compiler kind: {compiler}");
+				break;
+			}
+
 			if (CSharp.GeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex))
 				return true;
 			if (VisualBasic.GeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex))
