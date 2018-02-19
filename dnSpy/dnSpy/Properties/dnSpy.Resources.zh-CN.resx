@@ -1920,6 +1920,6 @@
     <value>管理员</value>
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
-    <value>Allow more than one instance (restart required)</value>
+    <value>允许多个实例 (需要重新启动)</value>
   </data>
 </root>

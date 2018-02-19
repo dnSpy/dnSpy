@@ -1471,27 +1471,27 @@ ERROR: {1}</value>
     <value>Ocultar los miembros obsoletos en variables windiws</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>Show return values</value>
+    <value>Mostar valores devueltos</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>Redirect GUI applications' console output to the Output window</value>
+    <value>Redirigir la salida de la consola de aplicaciones GUI para la ventana de salida</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Hacer una imagen más fácil de depurar</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>Public Members</value>
+    <value>Miembros públicos</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>Show raw locals</value>
+    <value>Mostrar primarios locales</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Enable async debugging</value>
+    <value>Habilitar la depuración asincrónica de código fuente</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
-    <value>Step over properties and operators</value>
+    <value>Paso sobre propiedades y operadores</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>Copy E_xpression</value>
+    <value>E_xpresión copia</value>
   </data>
 </root>

@@ -1474,27 +1474,27 @@
     <value>在变量窗口中隐藏已弃用的成员</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>Show return values</value>
+    <value>显示返回值</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>Redirect GUI applications' console output to the Output window</value>
+    <value>将 GUI 应用程序的控制台输出重定向到 "输出" 窗口</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>使映像更易于调试</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>Public Members</value>
+    <value>公共成员</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>Show raw locals</value>
+    <value>显示原始区域变量</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Enable async debugging</value>
+    <value>启用异步调试</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
-    <value>Step over properties and operators</value>
+    <value>跨越属性和运算符</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>Copy E_xpression</value>
+    <value>复制 E_xpression</value>
   </data>
 </root>

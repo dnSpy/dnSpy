@@ -1474,27 +1474,27 @@ Biztosan ki akarja nyitni?</value>
     <value>Az elavult tagok elrejtése a változó ablakban</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>Show return values</value>
+    <value>Visszatérési értékek mutatása</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>Redirect GUI applications' console output to the Output window</value>
+    <value>GUI-s alkalmazások konzol kimenetének átirányítása a kimeneti ablakba</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Megkönnyíti a futtatható csomag hibakeresését</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>Public Members</value>
+    <value>Nyilvános tagok</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>Show raw locals</value>
+    <value>Nyers helyi változók mutatása</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Enable async debugging</value>
+    <value>Aszinkron hibakeresés engedélyezése</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
-    <value>Step over properties and operators</value>
+    <value>Tulajdonságok és operátorok átlépése</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>Copy E_xpression</value>
+    <value>_Kifejezés másolása</value>
   </data>
 </root>

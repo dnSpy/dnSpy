@@ -178,10 +178,10 @@
     <value>返回值当前不可用</value>
   </data>
   <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
-    <value>Step into: Stepping over operator '{0}'.</value>
+    <value>步入：跨越运算符“{0}”。</value>
   </data>
   <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
-    <value>Step into: Stepping over property '{0}'.</value>
+    <value>步入：跨越属性“{0}”。</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>未知变量或对象ID</value>

@@ -1474,10 +1474,10 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Veraltete Felder im Variablen-Fenster ausblenden</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>Show return values</value>
+    <value>Rückgabewerte anzeigen</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>Redirect GUI applications' console output to the Output window</value>
+    <value>Konsolen-Output von GUI-Applikationen zum Ausgabe-Fenster umleiten</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Erleichtern des Debuggens für ein Abbild</value>
@@ -1486,15 +1486,15 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Public Members</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>Show raw locals</value>
+    <value>RAW locals anzeigen</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Enable async debugging</value>
+    <value>Asynchrones Debugging aktivieren</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
-    <value>Step over properties and operators</value>
+    <value>Eigenschaften und Operatoren überspringen</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>Copy E_xpression</value>
+    <value>Ausdruck kopieren</value>
   </data>
 </root>

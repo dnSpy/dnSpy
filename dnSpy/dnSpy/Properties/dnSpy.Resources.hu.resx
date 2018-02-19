@@ -1921,6 +1921,6 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>Adminisztrátor</value>
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
-    <value>Allow more than one instance (restart required)</value>
+    <value>Több, mint egy példány engedélyezése (újraindítás szükséges)</value>
   </data>
 </root>

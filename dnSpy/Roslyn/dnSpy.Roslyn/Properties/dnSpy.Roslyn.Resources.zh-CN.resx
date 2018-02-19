@@ -133,13 +133,13 @@
     <value>静态成员</value>
   </data>
   <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
-    <value>Dynamic View</value>
+    <value>动态视图</value>
   </data>
   <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
     <value>错误</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
-    <value>Expanding the Dynamic View will get the dynamic members for the object</value>
+    <value>展开动态视图将获得该对象的动态成员</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
     <value>展开“结果”视图将枚举IEnumerable</value>
@@ -160,10 +160,10 @@
     <value>委托</value>
   </data>
   <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
-    <value>Dynamic View requires {0} to be referenced</value>
+    <value>动态视图要求引用 {0}</value>
   </data>
   <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
-    <value>Only COM or Dynamic objects can have Dynamic View</value>
+    <value>只有 COM 或动态对象才能具有动态视图</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>枚举</value>
@@ -211,7 +211,7 @@
     <value>属性</value>
   </data>
   <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
-    <value>Only Enumerable types can have Results View</value>
+    <value>只有可枚举类型才能具有结果视图</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
     <value>代码块</value>

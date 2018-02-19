@@ -183,7 +183,7 @@
     <value>搜索列: {0}</value>
   </data>
   <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
-    <value>Use '{0}' to invert the match, eg. {1}</value>
+    <value>使用 “{0}” 反转匹配，例如 {1}</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>值必须为类型 {0}。

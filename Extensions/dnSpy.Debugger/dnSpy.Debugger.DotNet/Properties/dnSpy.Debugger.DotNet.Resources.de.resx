@@ -178,10 +178,10 @@
     <value>Rückgabewert derzeit nicht verfügbar</value>
   </data>
   <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
-    <value>Step into: Stepping over operator '{0}'.</value>
+    <value>Einzelschritt: Überspringe Operator '{0}'.</value>
   </data>
   <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
-    <value>Step into: Stepping over property '{0}'.</value>
+    <value>Einzelschritt: Überspringe Eigenschaft '{0}'.</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>Unbekannte Variable oder Objekt ID</value>
