@@ -116,18 +116,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				return rvState;
 			}
 
-			public void Hit(ReturnValueState rvstate, CorThread corThread, uint offset) {
+			public void Hit(ReturnValueState rvState, CorThread corThread, uint offset) {
 				if (TooManyReturnValues)
 					return;
-				if (rvstate.CorThread != corThread)
+				if (rvState.CorThread != corThread)
 					return;
 				var corFrame = corThread.ActiveFrame;
 				Debug.Assert(corFrame != null);
 				if (corFrame == null)
 					return;
-				if (rvstate.StackStart != corFrame.StackStart || rvstate.StackEnd != corFrame.StackEnd || rvstate.Token != corFrame.Token)
+				if (rvState.StackStart != corFrame.StackStart || rvState.StackEnd != corFrame.StackEnd || rvState.Token != corFrame.Token)
 					return;
-				if (!rvstate.CallSiteInfos.TryGetValue(offset, out var callSiteInfo))
+				if (!rvState.CallSiteInfos.TryGetValue(offset, out var callSiteInfo))
 					return;
 
 				CorValue corValue = null;
