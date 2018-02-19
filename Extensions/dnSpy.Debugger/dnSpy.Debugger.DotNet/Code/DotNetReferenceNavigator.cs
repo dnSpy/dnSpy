@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 	abstract class DotNetReferenceNavigator : ReferenceNavigator {
 		public const uint EPILOG = 0xFFFFFFFF;
 		public const uint PROLOG = 0xFFFFFFFE;
-		public abstract void GoToLocation(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset);
+		public abstract void GoToLocation(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool newTab);
 	}
 
 	[ExportReferenceNavigator]
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				offset = EPILOG;
 
 			var tab = documentTabService.GetOrCreateActiveTab();
-			GoToLocation(tab, method, new ModuleTokenId(bodyRef.Module, bodyRef.Token), offset);
+			GoToLocation(tab, method, new ModuleTokenId(bodyRef.Module, bodyRef.Token), offset, newTab);
 			return true;
 		}
 
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return true;
 		}
 
-		public override void GoToLocation(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset) {
+		public override void GoToLocation(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool newTab) {
 			bool specialIpOffset;
 			if (offset == EPILOG) {
 				specialIpOffset = true;
@@ -157,10 +157,10 @@ namespace dnSpy.Debugger.DotNet.Code {
 			else
 				specialIpOffset = false;
 
-			GoToLocationCore(tab, method, module, offset, specialIpOffset, canRefreshMethods: true);
+			GoToLocationCore(tab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: true);
 		}
 
-		void GoToLocationCore(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods) {
+		void GoToLocationCore(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab, bool canRefreshMethods) {
 			uiDispatcher.VerifyAccess();
 			if (tab == null || method == null)
 				return;
@@ -168,18 +168,17 @@ namespace dnSpy.Debugger.DotNet.Code {
 			var moduleTmp = module;
 			// The file could've been added lazily to the list so add a short delay before we select it
 			uiDispatcher.UIBackground(() => {
-				tab.FollowReference(method, false, e => {
-					Debug.Assert(e.Tab == tab);
+				tab.FollowReference(method, newTab, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, moduleTmp, offset, specialIpOffset, canRefreshMethods);
+						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, moduleTmp, offset, specialIpOffset, canRefreshMethods, newTab: false);
 						e.HasMovedCaret = true;
 					}
 				});
 			});
 		}
 
-		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods) {
+		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
 			if (documentViewer == null)
 				return false;
 			if (MoveCaretTo(documentViewer, module, offset))
@@ -187,7 +186,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (!canRefreshMethods)
 				return false;
 
-			RefreshMethodBodies(documentViewer, method, module, offset, specialIpOffset);
+			RefreshMethodBodies(documentViewer, method, module, offset, specialIpOffset, newTab: false);
 
 			return false;
 		}
@@ -212,7 +211,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return methodDebugService.TryGetMethodDebugInfo(token) != null;
 		}
 
-		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset) {
+		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab) {
 			// If it's in the prolog/epilog, ignore it
 			if (specialIpOffset)
 				return;
@@ -238,7 +237,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 					return;
 			}
 
-			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, canRefreshMethods: false);
+			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: false);
 		}
 	}
 }
