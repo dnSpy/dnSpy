@@ -72,6 +72,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public CustomAttribute[] NewAssemblyCustomAttributes { get; private set; }
 		public DeclSecurity[] NewAssemblyDeclSecurities { get; private set; }
 		public CustomAttribute[] NewModuleCustomAttributes { get; private set; }
+		public Version NewAssemblyVersion { get; private set; }
 		public Resource[] NewResources { get; private set; }
 
 		readonly ModuleDef targetModule;
@@ -311,6 +312,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				NewModuleCustomAttributes = attributes.ToArray();
 				var asm = sourceModule.Assembly;
 				if (asm != null) {
+					NewAssemblyVersion = asm.Version;
 					attributes.Clear();
 					ImportCustomAttributes(attributes, asm);
 					NewAssemblyCustomAttributes = attributes.ToArray();
