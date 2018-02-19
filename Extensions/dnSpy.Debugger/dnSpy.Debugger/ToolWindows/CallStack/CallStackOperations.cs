@@ -252,8 +252,12 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var info = GetBreakpoint();
 			if (info == null)
 				return;
-			if (info.Value.breakpoint != null)
-				info.Value.breakpoint.Remove();
+			if (info.Value.breakpoint != null) {
+				if (info.Value.breakpoint.IsEnabled)
+					info.Value.breakpoint.Remove();
+				else
+					info.Value.breakpoint.IsEnabled = true;
+			}
 			else {
 				var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(info.Value.location.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Temporary));
 				if (bp == null)
