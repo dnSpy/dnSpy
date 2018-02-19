@@ -219,6 +219,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 						break;
 					if (IsUserFrame(frames[0]))
 						break;
+					thread.Process.DbgManager.Close(frames);
+					frames = null;
 
 					var frame = stepper.TryGetFrameInfo(thread);
 					Debug.Assert(frame != null);
@@ -227,7 +229,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					thread = await stepper.StepOutAsync(frame);
 				}
 				finally {
-					thread.Process.DbgManager.Close(frames);
+					if (frames != null)
+						thread.Process.DbgManager.Close(frames);
 				}
 			}
 
