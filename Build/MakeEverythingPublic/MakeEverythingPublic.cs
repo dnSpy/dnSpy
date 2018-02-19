@@ -76,14 +76,14 @@ namespace MakeEverythingPublic {
 				var file = ReferencePath[i];
 				OutputReferencePath[i] = file;
 				var filename = file.ItemSpec;
-				if (!File.Exists(filename)) {
-					Log.LogMessageFromText($"File does not exist: {filename}", MessageImportance.High);
-					return false;
-				}
 				var fileExt = Path.GetExtension(filename);
 				var asmSimpleName = Path.GetFileNameWithoutExtension(filename);
 				if (!assembliesToFix.Contains(asmSimpleName))
 					continue;
+				if (!File.Exists(filename)) {
+					Log.LogMessageFromText($"File does not exist: {filename}", MessageImportance.High);
+					return false;
+				}
 
 				var patchDir = DestinationDirectory;
 				Directory.CreateDirectory(patchDir);
