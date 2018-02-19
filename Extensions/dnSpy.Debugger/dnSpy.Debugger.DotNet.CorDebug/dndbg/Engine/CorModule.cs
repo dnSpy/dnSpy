@@ -42,10 +42,11 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public bool IsManifestModule {
+		public bool IsManifestModule => Assembly?.ManifestModule == this;
+
+		public bool HasAssemblyRow {
 			get {
 				var mdi = GetMetaDataInterface<IMetaDataImport>();
-				// Only the manifest module should have an assembly row
 				return mdi != null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}

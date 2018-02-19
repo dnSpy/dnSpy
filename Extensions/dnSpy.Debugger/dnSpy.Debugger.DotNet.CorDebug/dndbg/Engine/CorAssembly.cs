@@ -77,16 +77,18 @@ namespace dndbg.Engine {
 
 		public CorModule ManifestModule {
 			get {
-				CorModule firstModule = null;
+				CorModule moduleWithAssemblyRow = null;
 				foreach (var module in Modules) {
-					if (module.IsManifestModule)
-						return module;
-					if (firstModule == null)
-						firstModule = module;
+					if (module.HasAssemblyRow) {
+						if (moduleWithAssemblyRow == null || (!IsFile(moduleWithAssemblyRow) && IsFile(module)))
+							moduleWithAssemblyRow = module;
+					}
 				}
-				return firstModule;
+				return moduleWithAssemblyRow;
 			}
 		}
+
+		bool IsFile(CorModule module) => !module.IsDynamic && !module.IsInMemory;
 
 		public CorAssembly(ICorDebugAssembly assembly)
 			: base(assembly) => Name = GetName(assembly) ?? string.Empty;
