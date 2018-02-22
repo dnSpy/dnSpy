@@ -164,11 +164,13 @@ namespace dnSpy.Roslyn.Compiler {
 			if (emitOpts.DebugInformationFormat == DebugInformationFormat.Pdb || emitOpts.DebugInformationFormat == DebugInformationFormat.PortablePdb)
 				pdbStream = new MemoryStream();
 			var emitResult = compilation.Emit(peStream, pdbStream, options: emitOpts, cancellationToken: cancellationToken);
-			var diagnostics = emitResult.Diagnostics.ToCompilerDiagnostics().ToArray();
+			var diagnostics = emitResult.Diagnostics.ToCompilerDiagnostics(GetHelpUri).ToArray();
 			if (!emitResult.Success)
 				return new CompilationResult(diagnostics);
 			return new CompilationResult(peStream.ToArray(), new DebugFileResult(emitOpts.DebugInformationFormat.ToDebugFileFormat(), pdbStream?.ToArray()), diagnostics);
 		}
+
+		protected abstract string GetHelpUri(Diagnostic diagnostic);
 
 		public bool AddMetadataReferences(CompilerMetadataReference[] metadataReferences) {
 			Debug.Assert(workspace != null);

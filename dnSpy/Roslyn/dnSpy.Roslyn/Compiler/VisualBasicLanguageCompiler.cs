@@ -69,5 +69,12 @@ namespace dnSpy.Roslyn.Compiler {
 		public VisualBasicLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
 			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
+
+		protected override string GetHelpUri(Diagnostic diagnostic) {
+			string id = diagnostic.Id.ToLowerInvariant();
+			// See https://github.com/dotnet/docs/tree/master/docs/visual-basic/misc
+			const string URL = "https://docs.microsoft.com/en-us/dotnet/visual-basic/misc/";
+			return URL + id;
+		}
 	}
 }

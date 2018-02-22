@@ -141,7 +141,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			isStub = new HashSet<object>();
 		}
 
-		void AddError(string id, string msg) => diagnostics.Add(new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, msg, id, null, null));
+		void AddError(string id, string msg) => diagnostics.Add(new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, msg, id, null, null, null));
 
 		void AddErrorThrow(string id, string msg) {
 			AddError(id, msg);

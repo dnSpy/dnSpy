@@ -66,5 +66,12 @@ namespace dnSpy.Roslyn.Compiler {
 		public CSharpLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
 			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
+
+		protected override string GetHelpUri(Diagnostic diagnostic) {
+			string id = diagnostic.Id.ToLowerInvariant();
+			// See https://github.com/dotnet/docs/tree/master/docs/csharp/misc
+			const string URL = "https://docs.microsoft.com/en-us/dotnet/csharp/misc/";
+			return URL + id;
+		}
 	}
 }

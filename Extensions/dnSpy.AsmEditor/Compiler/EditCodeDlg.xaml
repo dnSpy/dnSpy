@@ -86,7 +86,11 @@
                         <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.CompileDiagnostics_Header_Code}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Code}" />
+                                    <TextBlock>
+                                        <Hyperlink Command="{Binding ShowHelpCommand}">
+                                            <Run Text="{Binding Code, Mode=OneWay}" />
+                                        </Hyperlink>
+                                    </TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

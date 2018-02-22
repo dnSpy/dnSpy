@@ -41,6 +41,11 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public string Id { get; }
 
 		/// <summary>
+		/// Gets the help URI or null if none
+		/// </summary>
+		public string HelpUri { get; }
+
+		/// <summary>
 		/// Filename or null
 		/// </summary>
 		public string Filename { get; }
@@ -56,12 +61,14 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="severity">Severity</param>
 		/// <param name="description">Description</param>
 		/// <param name="id">Id</param>
+		/// <param name="helpUri">Help URI or null if none</param>
 		/// <param name="filename">Filename</param>
 		/// <param name="lineLocationSpan">Line location or null</param>
-		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string filename, in LineLocationSpan? lineLocationSpan) {
+		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string helpUri, string filename, in LineLocationSpan? lineLocationSpan) {
 			Severity = severity;
 			Description = description ?? string.Empty;
 			Id = id ?? string.Empty;
+			HelpUri = helpUri;
 			Filename = filename;
 			LineLocationSpan = lineLocationSpan;
 		}

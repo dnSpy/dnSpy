@@ -403,7 +403,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				// It gets canceled when the dialog box gets closed, or when Roslyn cancels the task
 				// for some unknown reason.
 				compilerDiagnostics = new CompilerDiagnostic[] {
-					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null),
+					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null, null),
 				};
 			}
 			else if (caughtException != null) {
@@ -446,7 +446,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected abstract void Import(ModuleImporter importer, in CompilationResult result);
 
 		static CompilerDiagnostic ToCompilerDiagnostic(Exception ex) =>
-			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null);
+			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null, null);
 
 		Task<CompilationResult> CompileAsync() {
 			Debug.Assert(compileCodeState == null);

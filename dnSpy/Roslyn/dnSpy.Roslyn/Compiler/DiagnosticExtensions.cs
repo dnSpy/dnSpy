@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.AsmEditor.Compiler;
@@ -25,7 +26,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace dnSpy.Roslyn.Compiler {
 	static class DiagnosticExtensions {
-		public static IEnumerable<CompilerDiagnostic> ToCompilerDiagnostics(this IEnumerable<Diagnostic> diagnostics) {
+		public static IEnumerable<CompilerDiagnostic> ToCompilerDiagnostics(this IEnumerable<Diagnostic> diagnostics, Func<Diagnostic, string> getHelpUri) {
 			foreach (var d in diagnostics) {
 				var severity = d.Severity.ToCompilerDiagnosticSeverity();
 				var description = d.GetMessage();
@@ -41,7 +42,7 @@ namespace dnSpy.Roslyn.Compiler {
 					filename = null;
 					lineLocationSpan = null;
 				}
-				yield return new CompilerDiagnostic(severity, description, id, filename, lineLocationSpan);
+				yield return new CompilerDiagnostic(severity, description, id, getHelpUri(d), filename, lineLocationSpan);
 			}
 		}
 

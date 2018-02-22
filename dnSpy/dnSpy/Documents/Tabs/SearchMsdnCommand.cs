@@ -247,8 +247,12 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static void SearchMsdn(string address) {
-			if (!string.IsNullOrEmpty(address))
-				Process.Start(address);
+			if (!string.IsNullOrEmpty(address)) {
+				try {
+					Process.Start(address);
+				}
+				catch { }
+			}
 		}
 	}
 }
