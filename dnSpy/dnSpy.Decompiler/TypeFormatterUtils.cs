@@ -356,22 +356,84 @@ namespace dnSpy.Decompiler {
 			return flags;
 		}
 
-		public static bool IsDefaultParameter(ParamDef pd) {
-			if (pd == null)
-				return false;
-			if (pd.Constant != null)
+		public static bool HasConstant(IHasConstant hc, out CustomAttribute constantAttribute) {
+			constantAttribute = null;
+			if (hc.Constant != null)
 				return true;
-			foreach (var ca in pd.CustomAttributes) {
+			foreach (var ca in hc.CustomAttributes) {
 				var type = ca.AttributeType;
 				while (type != null) {
 					var fullName = type.FullName;
 					if (fullName == "System.Runtime.CompilerServices.CustomConstantAttribute" ||
-						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute")
+						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
+						constantAttribute = ca;
 						return true;
+					}
 					type = type.GetBaseType();
 				}
 			}
 			return false;
+		}
+
+		public static bool TryGetConstant(IHasConstant hc, CustomAttribute constantAttribute, out object constant) {
+			if (hc.Constant != null) {
+				constant = hc.Constant.Value;
+				return true;
+			}
+
+			if (constantAttribute != null) {
+				if (constantAttribute.TypeFullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
+					if (TryGetDecimalConstantAttributeValue(constantAttribute, out var decimalValue)) {
+						constant = decimalValue;
+						return true;
+					}
+				}
+			}
+
+			constant = null;
+			return false;
+		}
+
+		static bool TryGetDecimalConstantAttributeValue(CustomAttribute ca, out decimal value) {
+			value = 0;
+			if (ca.ConstructorArguments.Count != 5)
+				return false;
+			if (!(ca.ConstructorArguments[0].Value is byte scale))
+				return false;
+			if (!(ca.ConstructorArguments[1].Value is byte sign))
+				return false;
+			int hi, mid, low;
+			if (ca.ConstructorArguments[2].Value is int) {
+				if (!(ca.ConstructorArguments[2].Value is int))
+					return false;
+				if (!(ca.ConstructorArguments[3].Value is int))
+					return false;
+				if (!(ca.ConstructorArguments[4].Value is int))
+					return false;
+				hi = (int)ca.ConstructorArguments[2].Value;
+				mid = (int)ca.ConstructorArguments[3].Value;
+				low = (int)ca.ConstructorArguments[4].Value;
+			}
+			else if (ca.ConstructorArguments[2].Value is uint) {
+				if (!(ca.ConstructorArguments[2].Value is uint))
+					return false;
+				if (!(ca.ConstructorArguments[3].Value is uint))
+					return false;
+				if (!(ca.ConstructorArguments[4].Value is uint))
+					return false;
+				hi = (int)(uint)ca.ConstructorArguments[2].Value;
+				mid = (int)(uint)ca.ConstructorArguments[3].Value;
+				low = (int)(uint)ca.ConstructorArguments[4].Value;
+			}
+			else
+				return false;
+			try {
+				value = new decimal(low, mid, hi, sign > 0, scale);
+				return true;
+			}
+			catch (ArgumentOutOfRangeException) {
+				return false;
+			}
 		}
 
 		public static bool IsReadOnlyProperty(PropertyDef property) => HasIsReadOnlyAttribute(property.CustomAttributes);

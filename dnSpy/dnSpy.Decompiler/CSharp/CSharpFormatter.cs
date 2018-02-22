@@ -520,10 +520,12 @@ namespace dnSpy.Decompiler.CSharp {
 			bool isEnumOwner = td != null && td.IsEnum;
 
 			var fd = field.ResolveFieldDef();
+			object constant = null;
+			bool isConstant = fd != null && (fd.IsLiteral || (fd.IsStatic && fd.IsInitOnly)) && TypeFormatterUtils.HasConstant(fd, out var constantAttribute) && TypeFormatterUtils.TryGetConstant(fd, constantAttribute, out constant);
 			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
 				if (isToolTip) {
 					OutputWrite(DescriptionParenOpen, BoxedTextColor.Punctuation);
-					OutputWrite(fd != null && fd.IsLiteral ? dnSpy_Decompiler_Resources.ToolTip_Constant : dnSpy_Decompiler_Resources.ToolTip_Field, BoxedTextColor.Text);
+					OutputWrite(isConstant ? dnSpy_Decompiler_Resources.ToolTip_Constant : dnSpy_Decompiler_Resources.ToolTip_Field, BoxedTextColor.Text);
 					OutputWrite(DescriptionParenClose, BoxedTextColor.Punctuation);
 					WriteSpace();
 				}
@@ -539,11 +541,11 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 			WriteIdentifier(field.Name, CSharpMetadataTextColorProvider.Instance.GetColor(field));
 			WriteToken(field);
-			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
+			if (ShowFieldLiteralValues && isConstant) {
 				WriteSpace();
 				OutputWrite("=", BoxedTextColor.Operator);
 				WriteSpace();
-				WriteConstant(fd.Constant.Value);
+				WriteConstant(constant);
 			}
 		}
 
@@ -600,6 +602,10 @@ namespace dnSpy.Decompiler.CSharp {
 
 			case TypeCode.Double:
 				FormatDouble((double)obj);
+				break;
+
+			case TypeCode.Decimal:
+				FormatDecimal((decimal)obj);
 				break;
 
 			case TypeCode.String:
@@ -1194,7 +1200,7 @@ namespace dnSpy.Decompiler.CSharp {
 				else
 					pd = null;
 
-				bool isDefault = TypeFormatterUtils.IsDefaultParameter(pd);
+				bool isDefault = TypeFormatterUtils.HasConstant(pd, out var constantAttribute);
 				if (isDefault)
 					OutputWrite(DefaultParamValueParenOpen, BoxedTextColor.Punctuation);
 
@@ -1221,12 +1227,11 @@ namespace dnSpy.Decompiler.CSharp {
 					else
 						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);
 				}
-				if (ShowParameterLiteralValues && isDefault) {
+				if (ShowParameterLiteralValues && isDefault && TypeFormatterUtils.TryGetConstant(pd, constantAttribute, out var constant)) {
 					if (needSpace)
 						WriteSpace();
 					needSpace = true;
 
-					var c = pd.Constant.Value;
 					WriteSpace();
 					OutputWrite("=", BoxedTextColor.Operator);
 					WriteSpace();
@@ -1234,10 +1239,10 @@ namespace dnSpy.Decompiler.CSharp {
 					var t = info.MethodSig.Params[i].RemovePinnedAndModifiers();
 					if (t.GetElementType() == ElementType.ByRef)
 						t = t.Next;
-					if (c == null && t != null && t.IsValueType)
+					if (constant == null && t != null && t.IsValueType)
 						OutputWrite(Keyword_default, BoxedTextColor.Keyword);
 					else
-						WriteConstant(c);
+						WriteConstant(constant);
 				}
 
 				if (isDefault)
@@ -1505,5 +1510,6 @@ namespace dnSpy.Decompiler.CSharp {
 		void FormatUInt32(uint value) => WriteNumber(ToFormattedUInt32(value));
 		void FormatInt64(long value) => WriteNumber(ToFormattedInt64(value));
 		void FormatUInt64(ulong value) => WriteNumber(ToFormattedUInt64(value));
+		void FormatDecimal(decimal value) => OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
 	}
 }
