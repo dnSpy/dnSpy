@@ -216,7 +216,7 @@
 		<color name="glyphmargin" bg="#FF333333" />
 		<color name="bracematching" bg="#FF0E4583" />
 		<color name="lineseparator" fg="#FFA5A5A5" />
-		<color name="findmatchhighlightmarker" bg="#FF773800" />
+		<color name="findmatchhighlightmarker" bg="#FF773800" fg="#FF000000" />
 		<color name="blockstructurenamespace" fg="#FF4C4C4C" />
 		<color name="blockstructuretype" fg="#FF135647" />
 		<color name="blockstructuremodule" fg="#FF135647" />
