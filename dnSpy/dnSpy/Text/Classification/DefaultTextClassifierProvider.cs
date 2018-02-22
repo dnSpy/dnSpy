@@ -30,23 +30,31 @@ namespace dnSpy.Text.Classification {
 	[ContentType(ContentTypes.Any)]
 	sealed class DefaultTextClassifierProvider : ITextClassifierProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		DefaultTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
+		DefaultTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
+		}
 
-		public ITextClassifier Create(IContentType contentType) => new DefaultTextClassifier(themeClassificationTypeService);
+		public ITextClassifier Create(IContentType contentType) => new DefaultTextClassifier(themeClassificationTypeService, classificationTypeRegistryService);
 	}
 
 	sealed class DefaultTextClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
-		public DefaultTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+		public DefaultTextClassifier(IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
+		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			if (!context.Colorize)
 				yield break;
 			foreach (var spanData in context.Colors) {
-				var ct = spanData.Data as IClassificationType ?? themeClassificationTypeService.GetClassificationType(spanData.Data as TextColor? ?? TextColor.Text);
+				var ct = ColorUtils.GetClassificationType(classificationTypeRegistryService, themeClassificationTypeService, spanData.Data);
 				yield return new TextClassificationTag(spanData.Span, ct);
 			}
 		}

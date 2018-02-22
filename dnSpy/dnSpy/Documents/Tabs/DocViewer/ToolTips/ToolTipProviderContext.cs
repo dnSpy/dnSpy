@@ -34,17 +34,19 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
-		public ToolTipProviderContext(IDotNetImageService dotNetImageService, IDecompiler decompiler, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
+		public ToolTipProviderContext(IDotNetImageService dotNetImageService, IDecompiler decompiler, ICodeToolTipSettings codeToolTipSettings, IDocumentViewer documentViewer, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			DocumentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
 			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			this.codeToolTipSettings = codeToolTipSettings ?? throw new ArgumentNullException(nameof(codeToolTipSettings));
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 		}
 
 		public ICodeToolTipProvider Create() =>
-			new CodeToolTipProvider(DocumentViewer.TextView, dotNetImageService, classificationFormatMap, themeClassificationTypeService, codeToolTipSettings.SyntaxHighlight);
+			new CodeToolTipProvider(DocumentViewer.TextView, dotNetImageService, classificationFormatMap, themeClassificationTypeService, classificationTypeRegistryService, codeToolTipSettings.SyntaxHighlight);
 	}
 }

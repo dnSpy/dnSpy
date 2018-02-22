@@ -121,22 +121,24 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IQuickInfoBroker quickInfoBroker;
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly IDecompilerService decompilerService;
 		readonly Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceProvider(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, IQuickInfoBroker quickInfoBroker, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, IDecompilerService decompilerService, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
+		DocumentViewerToolTipServiceProvider(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, IQuickInfoBroker quickInfoBroker, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService, IDecompilerService decompilerService, [ImportMany] IEnumerable<Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>> documentViewerToolTipProviders) {
 			this.dotNetImageService = dotNetImageService;
 			this.codeToolTipSettings = codeToolTipSettings;
 			this.quickInfoBroker = quickInfoBroker;
 			this.classificationFormatMapService = classificationFormatMapService;
 			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
 			this.decompilerService = decompilerService;
 			this.documentViewerToolTipProviders = documentViewerToolTipProviders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public DocumentViewerToolTipService GetService(IDocumentViewer documentViewer) =>
-			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc), themeClassificationTypeService, decompilerService));
+			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc), themeClassificationTypeService, classificationTypeRegistryService, decompilerService));
 	}
 
 	[Export(typeof(IQuickInfoSourceProvider))]
@@ -175,9 +177,10 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IQuickInfoBroker quickInfoBroker;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly IDecompilerService decompilerService;
 
-		public DocumentViewerToolTipService(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IDecompilerService decompilerService) {
+		public DocumentViewerToolTipService(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService, IDecompilerService decompilerService) {
 			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
 			this.codeToolTipSettings = codeToolTipSettings ?? throw new ArgumentNullException(nameof(codeToolTipSettings));
 			this.documentViewerToolTipProviders = documentViewerToolTipProviders ?? throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
@@ -185,6 +188,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.decompilerService = decompilerService ?? throw new ArgumentNullException(nameof(decompilerService));
 		}
 
@@ -242,7 +246,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (@ref == null)
 				return null;
 
-			var ctx = new ToolTipProviderContext(dotNetImageService, decompiler, codeToolTipSettings, documentViewer, classificationFormatMap, themeClassificationTypeService);
+			var ctx = new ToolTipProviderContext(dotNetImageService, decompiler, codeToolTipSettings, documentViewer, classificationFormatMap, themeClassificationTypeService, classificationTypeRegistryService);
 			foreach (var provider in documentViewerToolTipProviders) {
 				var toolTipContent = provider.Value.Create(ctx, @ref);
 				if (toolTipContent != null)

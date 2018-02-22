@@ -913,6 +913,7 @@
     <Compile Include="Text\CodeEditor\ScrollBarsAppSettingsPage.cs" />
     <Compile Include="Text\CodeEditor\TabsAppSettingsPage.cs" />
     <Compile Include="Text\CodeEditor\TextViewOptionsGroupNameProvider.cs" />
+    <Compile Include="Text\ColorUtils.cs" />
     <Compile Include="Text\ContentType.cs" />
     <Compile Include="Text\ContentTypeDefinitions.cs" />
     <Compile Include="Text\ContentTypeExtensions.cs" />

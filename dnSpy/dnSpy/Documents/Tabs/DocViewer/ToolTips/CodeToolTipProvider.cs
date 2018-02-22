@@ -41,13 +41,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IDotNetImageService dotNetImageService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly bool syntaxHighlight;
 
-		public CodeToolTipProvider(IWpfTextView wpfTextView, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+		public CodeToolTipProvider(IWpfTextView wpfTextView, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService, bool syntaxHighlight) {
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.syntaxHighlight = syntaxHighlight;
 			writers = new List<CodeToolTipWriter>();
 			CreateNewOutput();
@@ -83,7 +85,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		public ICodeToolTipWriter CreateNewOutput() {
-			writers.Add(new CodeToolTipWriter(classificationFormatMap, themeClassificationTypeService, syntaxHighlight));
+			writers.Add(new CodeToolTipWriter(classificationFormatMap, themeClassificationTypeService, classificationTypeRegistryService, syntaxHighlight));
 			return writers[writers.Count - 1];
 		}
 
