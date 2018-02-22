@@ -223,6 +223,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debugging Unity Games.
+        /// </summary>
+        public static string DebuggingUnityGamesText {
+            get {
+                return ResourceManager.GetString("DebuggingUnityGamesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Member can&apos;t be accessed due to runtime limitations.
         /// </summary>
         public static string Error_CannotAccessMemberRuntimeLimitations {

@@ -36,6 +36,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		const ushort DEFAULT_PORT = 55555;
 
 		public ICommand DebuggingUnityGamesCommand => new RelayCommand(a => DebuggingUnityGamesHelper.OpenDebuggingUnityGames());
+		public string DebuggingUnityGamesText => DebuggingUnityGamesHelper.DebuggingUnityGamesText;
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as UnityConnectStartDebuggingOptions;
