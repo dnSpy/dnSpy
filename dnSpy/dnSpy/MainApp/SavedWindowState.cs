@@ -93,7 +93,6 @@ namespace dnSpy.MainApp {
 				window.Left = rect.Left;
 				window.Height = rect.Height;
 				window.Width = rect.Width;
-				window.DisableDpiScalingAtStartup = savedSettings != null;
 			}
 		}
 
