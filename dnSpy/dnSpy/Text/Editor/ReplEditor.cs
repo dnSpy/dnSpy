@@ -696,8 +696,15 @@ namespace dnSpy.Text.Editor {
 		bool IsExecMode => OffsetOfPrompt == null;
 
 		public string GetCode() {
-			int startOffset = 0;
-			int endOffset = wpfTextView.TextSnapshot.Length;
+			int startOffset, endOffset;
+			if (TextView.Selection.IsEmpty) {
+				startOffset = 0;
+				endOffset = wpfTextView.TextSnapshot.Length;
+			}
+			else {
+				startOffset = TextView.Selection.Start.Position;
+				endOffset = TextView.Selection.End.Position;
+			}
 			if (endOffset <= startOffset)
 				return string.Empty;
 

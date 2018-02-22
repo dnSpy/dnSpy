@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		void SelectNextCommand();
 
 		/// <summary>
-		/// Gets all code
+		/// Gets all selected code
 		/// </summary>
 		/// <returns></returns>
 		string GetCode();
