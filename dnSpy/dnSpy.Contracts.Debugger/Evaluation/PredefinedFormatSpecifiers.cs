@@ -74,6 +74,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 
 		/// <summary>
 		/// Allow func-eval even if <see cref="NoSideEffects"/> is used and expression causes side effects
+		/// (ac = always calculate)
 		/// </summary>
 		public const string AllowFuncEval = "ac";
 
