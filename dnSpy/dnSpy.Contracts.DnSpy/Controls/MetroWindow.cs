@@ -699,10 +699,14 @@ namespace dnSpy.Contracts.Controls {
 
 		void SetTextFormattingMode(DependencyObject textObj, double scale) {
 			if (scale == 1) {
-				// Inherit the property. We assume that the root element has TextFormattingMode.Display.
-				// We shouldn't set it to Display since this UI element could be inside a parent that
-				// has been zoomed. We must inherit its Ideal mode, and not force Display mode.
-				textObj.ClearValue(TextOptions.TextFormattingModeProperty);
+				if (textObj is Window)
+					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
+				else {
+					// Inherit the property. We assume that the root element has TextFormattingMode.Display.
+					// We shouldn't set it to Display since this UI element could be inside a parent that
+					// has been zoomed. We must inherit its Ideal mode, and not force Display mode.
+					textObj.ClearValue(TextOptions.TextFormattingModeProperty);
+				}
 			}
 			else {
 				// We must set it to Ideal or the text will be blurry
