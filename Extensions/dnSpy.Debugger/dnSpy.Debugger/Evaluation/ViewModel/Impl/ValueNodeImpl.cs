@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return new EditableValueTextInfo(text, EditValueFlags.None);
 			// Always use the expression since the Name column could've been replaced with any random
 			// text if DebuggerDisplayAttribute.Name property isn't null.
-			return new EditableValueTextInfo(RawNode.Expression, EditValueFlags.None);
+			return new EditableValueTextInfo(RawNode.Expression, EditValueFlags.SelectText);
 		}
 
 		void SaveNameExpression(string expression) {
