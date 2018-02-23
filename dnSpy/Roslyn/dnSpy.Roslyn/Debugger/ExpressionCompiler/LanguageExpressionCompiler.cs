@@ -511,6 +511,14 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		protected static DbgDotNetText CreateErrorName(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, expression));
 
 		protected DbgDotNetText GetExpressionText(string languageName, CompilationOptions compilationOptions, ParseOptions parseOptions, string expression, string documentText, int documentTextExpressionOffset, IEnumerable<MetadataReference> metadataReferences, CancellationToken cancellationToken) {
+			//TODO: Once this API is public (see https://github.com/dotnet/roslyn/pull/24468 ), uncomment the following code and remove the reflection code below:
+			// compilationOptions = compilationOptions.WithMetadataImportOptions(MetadataImportOptions.All);
+			Debug.Assert(typeof(CompilationOptions).GetMethod("WithMetadataImportOptions", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)?.IsPublic != true, "WithMetadataImportOptions is public, update the code");
+			var method = typeof(CompilationOptions).
+				GetProperty("MetadataImportOptions", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)?.
+				GetSetMethod(nonPublic: true);
+			Debug.Assert((object)method != null);
+			method?.Invoke(compilationOptions, new object[] { (byte)2 });
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "P", Guid.NewGuid().ToString(), languageName,
 					compilationOptions: compilationOptions,
@@ -526,7 +534,6 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 
 				int pos = textSpan.Start;
 				var output = ObjectCache.AllocDotNetTextOutput();
-				//TODO: This fails to syntax highlight private members, eg. list._size
 				foreach (var info in classifier.GetColors(textSpan)) {
 					if (pos < info.Span.Start)
 						output.Write(BoxedTextColor.Text, expression.Substring(pos - textSpan.Start, info.Span.Start - pos));
