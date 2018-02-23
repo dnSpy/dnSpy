@@ -246,4 +246,7 @@
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
     <value>仅可用于Debug编译的Unity进程</value>
   </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Debugging Unity Games</value>
+  </data>
 </root>

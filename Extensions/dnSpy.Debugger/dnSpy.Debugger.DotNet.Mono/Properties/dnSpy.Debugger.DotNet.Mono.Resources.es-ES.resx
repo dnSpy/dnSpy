@@ -246,4 +246,7 @@
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
     <value>Esto es solamente para compilaciones Unity Debug</value>
   </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Debugging Unity Games</value>
+  </data>
 </root>

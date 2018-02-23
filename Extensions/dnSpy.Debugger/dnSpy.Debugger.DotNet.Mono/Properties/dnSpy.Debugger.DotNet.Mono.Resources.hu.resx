@@ -246,4 +246,7 @@
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
     <value>Ez csak a Unity hibakeresős fordításaival működik</value>
   </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Unity játékok hibakeresése</value>
+  </data>
 </root>
