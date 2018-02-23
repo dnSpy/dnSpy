@@ -28,7 +28,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected virtual void OnModified() { }
 
 		public WordWrapStyles WordWrapStyle {
-			get { return wordWrapStyle; }
+			get => wordWrapStyle;
 			set {
 				if (wordWrapStyle != value) {
 					wordWrapStyle = value;
@@ -40,7 +40,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
 
 		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
+			get => showLineNumbers;
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;

@@ -86,7 +86,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		WaitAdorner CurrentWaitAdorner {
-			get { return __currentWaitAdorner; }
+			get => __currentWaitAdorner;
 			set {
 				if (__currentWaitAdorner != null) {
 					__currentWaitAdorner.progressBar.IsIndeterminate = false;

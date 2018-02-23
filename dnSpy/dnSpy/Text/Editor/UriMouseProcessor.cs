@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool IsControlDown {
-			get { return isControlDown; }
+			get => isControlDown;
 			set {
 				if (isControlDown != value) {
 					isControlDown = value;

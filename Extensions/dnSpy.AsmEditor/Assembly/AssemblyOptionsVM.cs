@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public bool CanShowClrVersion {
-			get { return canShowClrVersion; }
+			get => canShowClrVersion;
 			set {
 				if (canShowClrVersion != value) {
 					canShowClrVersion = value;
@@ -101,28 +101,28 @@ namespace dnSpy.AsmEditor.Assembly {
 		AssemblyAttributes flags;
 
 		public bool FlagsPublicKey {
-			get { return GetFlagValue(AssemblyAttributes.PublicKey); }
-			set { SetFlagValue(AssemblyAttributes.PublicKey, value); }
+			get => GetFlagValue(AssemblyAttributes.PublicKey);
+			set => SetFlagValue(AssemblyAttributes.PublicKey, value);
 		}
 
 		public bool PA_Specified {
-			get { return GetFlagValue(AssemblyAttributes.PA_Specified); }
-			set { SetFlagValue(AssemblyAttributes.PA_Specified, value); }
+			get => GetFlagValue(AssemblyAttributes.PA_Specified);
+			set => SetFlagValue(AssemblyAttributes.PA_Specified, value);
 		}
 
 		public bool Retargetable {
-			get { return GetFlagValue(AssemblyAttributes.Retargetable); }
-			set { SetFlagValue(AssemblyAttributes.Retargetable, value); }
+			get => GetFlagValue(AssemblyAttributes.Retargetable);
+			set => SetFlagValue(AssemblyAttributes.Retargetable, value);
 		}
 
 		public bool EnableJITcompileTracking {
-			get { return GetFlagValue(AssemblyAttributes.EnableJITcompileTracking); }
-			set { SetFlagValue(AssemblyAttributes.EnableJITcompileTracking, value); }
+			get => GetFlagValue(AssemblyAttributes.EnableJITcompileTracking);
+			set => SetFlagValue(AssemblyAttributes.EnableJITcompileTracking, value);
 		}
 
 		public bool DisableJITcompileOptimizer {
-			get { return GetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer); }
-			set { SetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer, value); }
+			get => GetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer);
+			set => SetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer, value);
 		}
 
 		bool GetFlagValue(AssemblyAttributes flag) => (Flags & flag) != 0;
@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		public HexStringVM PublicKey { get; }
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -157,7 +157,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		UTF8String name;
 
 		public string Culture {
-			get { return culture; }
+			get => culture;
 			set {
 				if (culture != value) {
 					culture = value;

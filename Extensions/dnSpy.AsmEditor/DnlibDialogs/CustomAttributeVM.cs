@@ -84,7 +84,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public bool IsRawData {
-			get { return isRawData; }
+			get => isRawData;
 			set {
 				if (isRawData != value) {
 					isRawData = value;
@@ -100,14 +100,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool isRawData;
 
 		public bool IsNotRawData {
-			get { return !IsRawData; }
-			set { IsRawData = !value; }
+			get => !IsRawData;
+			set => IsRawData = !value;
 		}
 
 		public HexStringVM RawData { get; }
 
 		public ICustomAttributeType Constructor {
-			get { return constructor; }
+			get => constructor;
 			set {
 				if (constructor != value) {
 					constructor = value;

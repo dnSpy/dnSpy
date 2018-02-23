@@ -116,7 +116,7 @@ namespace dnSpy.Hex.Editor {
 			readonly Geometry geometry;
 
 			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+				get => backgroundBrush;
 				set {
 					if (value == null)
 						throw new ArgumentNullException(nameof(value));
@@ -129,7 +129,7 @@ namespace dnSpy.Hex.Editor {
 			Brush backgroundBrush;
 
 			public Pen Pen {
-				get { return pen; }
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;

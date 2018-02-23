@@ -45,8 +45,8 @@ namespace dndbg.DotNet {
 		public long Length => long.MaxValue;
 
 		public long Position {
-			get { return (long)(address - baseAddress); }
-			set { address = baseAddress + (ulong)value; }
+			get => (long)(address - baseAddress);
+			set => address = baseAddress + (ulong)value;
 		}
 
 		public void Dispose() => (reader as IDisposable)?.Dispose();

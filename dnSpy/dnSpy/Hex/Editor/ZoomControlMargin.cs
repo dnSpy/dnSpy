@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			double HexViewZoomLevel {
-				get { return owner.wpfHexViewHost.HexView.ZoomLevel; }
+				get => owner.wpfHexViewHost.HexView.ZoomLevel;
 				set {
 					if (owner.wpfHexViewHost.HexView.Options.IsOptionDefined(DefaultWpfHexViewOptions.ZoomLevelId, true))
 						owner.wpfHexViewHost.HexView.Options.SetOptionValue(DefaultWpfHexViewOptions.ZoomLevelId, value);

@@ -46,8 +46,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// Gets/sets the layer opacity
 		/// </summary>
 		public virtual double Opacity {
-			get { return VisualElement.Opacity; }
-			set { VisualElement.Opacity = value; }
+			get => VisualElement.Opacity;
+			set => VisualElement.Opacity = value;
 		}
 
 		/// <summary>

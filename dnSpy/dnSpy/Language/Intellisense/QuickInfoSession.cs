@@ -42,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 		bool IsStarted { get; set; }
 
 		public ITrackingSpan ApplicableToSpan {
-			get { return applicableToSpan; }
+			get => applicableToSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(applicableToSpan, value)) {
 					applicableToSpan = value;

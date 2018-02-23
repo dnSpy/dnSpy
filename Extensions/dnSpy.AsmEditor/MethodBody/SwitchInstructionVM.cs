@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public InstructionVM InstructionVM { get; }
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;

@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand PickEnumTypeCommand => new RelayCommand(a => PickEnumType(), a => PickEnumTypeCanExecute());
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool isEnabled = true;
 
 		public ITypeDefOrRef EnumType {
-			get { return enumType; }
+			get => enumType;
 			set {
 				if (enumType != value) {
 					enumType = value;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			(ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray;
 
 		public bool IsField {
-			get { return (NamedArgType)NamedArgTypeEnumList.SelectedItem == NamedArgType.Field; }
+			get => (NamedArgType)NamedArgTypeEnumList.SelectedItem == NamedArgType.Field;
 			set {
 				if (value)
 					NamedArgTypeEnumList.SelectedItem = NamedArgType.Field;
@@ -89,7 +89,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;

@@ -197,7 +197,7 @@ namespace dnSpy.Text.Editor {
 		const int PEN_THICKNESS = 2;
 
 		public Brush BackgroundBrush {
-			get { return backgroundBrush; }
+			get => backgroundBrush;
 			set {
 				if (!BrushComparer.Equals(backgroundBrush, value)) {
 					backgroundBrush = value;
@@ -208,7 +208,7 @@ namespace dnSpy.Text.Editor {
 		Brush backgroundBrush;
 
 		public Brush ForegroundBrush {
-			get { return foregroundBrush; }
+			get => foregroundBrush;
 			set {
 				if (!BrushComparer.Equals(foregroundBrush, value)) {
 					foregroundBrush = value;

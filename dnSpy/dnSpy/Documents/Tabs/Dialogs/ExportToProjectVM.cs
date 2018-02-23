@@ -46,7 +46,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public ICommand GenerateNewProjectGuidCommand => new RelayCommand(a => ProjectGuid.Value = Guid.NewGuid());
 
 		public string Directory {
-			get { return directory; }
+			get => directory;
 			set {
 				if (directory != value) {
 					directory = value;
@@ -58,7 +58,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string directory;
 
 		public string SolutionFilename {
-			get { return solutionFilename; }
+			get => solutionFilename;
 			set {
 				if (solutionFilename != value) {
 					solutionFilename = value;
@@ -70,7 +70,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string solutionFilename;
 
 		public bool CreateSolution {
-			get { return createSolution; }
+			get => createSolution;
 			set {
 				if (createSolution != value) {
 					createSolution = value;
@@ -82,8 +82,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool createSolution;
 
 		public ProjectVersion ProjectVersion {
-			get { return (ProjectVersion)ProjectVersionVM.SelectedItem; }
-			set { ProjectVersionVM.SelectedItem = value; }
+			get => (ProjectVersion)ProjectVersionVM.SelectedItem;
+			set => ProjectVersionVM.SelectedItem = value;
 		}
 
 		public EnumListVM ProjectVersionVM { get; } = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
@@ -91,7 +91,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
 		public DecompilerVM Decompiler {
-			get { return decompiler; }
+			get => decompiler;
 			set {
 				if (decompiler != value) {
 					decompiler = value;
@@ -104,7 +104,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public NullableGuidVM ProjectGuid { get; }
 
 		public bool DontReferenceStdLib {
-			get { return dontReferenceStdLib; }
+			get => dontReferenceStdLib;
 			set {
 				if (dontReferenceStdLib != value) {
 					dontReferenceStdLib = value;
@@ -115,7 +115,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool dontReferenceStdLib;
 
 		public bool UnpackResources {
-			get { return unpackResources; }
+			get => unpackResources;
 			set {
 				if (unpackResources != value) {
 					unpackResources = value;
@@ -128,7 +128,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool unpackResources;
 
 		public bool CreateResX {
-			get { return createResX; }
+			get => createResX;
 			set {
 				if (createResX != value) {
 					createResX = value;
@@ -139,7 +139,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool createResX;
 
 		public bool DecompileXaml {
-			get { return decompileXaml; }
+			get => decompileXaml;
 			set {
 				if (decompileXaml != value) {
 					decompileXaml = value;
@@ -150,7 +150,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool decompileXaml;
 
 		public bool OpenProject {
-			get { return openProject; }
+			get => openProject;
 			set {
 				if (openProject != value) {
 					openProject = value;
@@ -166,7 +166,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool CanCreateResX => UnpackResources && TheState == State.Editing;
 
 		public string FilesToExportMessage {
-			get { return filesToExportMessage; }
+			get => filesToExportMessage;
 			set {
 				if (filesToExportMessage != value) {
 					filesToExportMessage = value;
@@ -177,7 +177,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string filesToExportMessage;
 
 		public bool IsIndeterminate {
-			get { return isIndeterminate; }
+			get => isIndeterminate;
 			set {
 				if (isIndeterminate != value) {
 					isIndeterminate = value;
@@ -188,7 +188,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool isIndeterminate;
 
 		public double ProgressMinimum {
-			get { return progressMinimum; }
+			get => progressMinimum;
 			set {
 				if (progressMinimum != value) {
 					progressMinimum = value;
@@ -199,7 +199,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		double progressMinimum;
 
 		public double ProgressMaximum {
-			get { return progressMaximum; }
+			get => progressMaximum;
 			set {
 				if (progressMaximum != value) {
 					progressMaximum = value;
@@ -210,7 +210,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		double progressMaximum;
 
 		public double TotalProgress {
-			get { return totalProgress; }
+			get => totalProgress;
 			set {
 				if (totalProgress != value) {
 					totalProgress = value;
@@ -221,7 +221,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		double totalProgress;
 
 		State TheState {
-			get { return state; }
+			get => state;
 			set {
 				if (state != value) {
 					state = value;
@@ -294,7 +294,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public string ErrorLog {
-			get { return errorLog; }
+			get => errorLog;
 			set {
 				if (errorLog != value) {
 					errorLog = value;
@@ -305,7 +305,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string errorLog = string.Empty;
 
 		public bool ExportErrors {
-			get { return exportErrors; }
+			get => exportErrors;
 			set {
 				if (exportErrors != value) {
 					exportErrors = value;

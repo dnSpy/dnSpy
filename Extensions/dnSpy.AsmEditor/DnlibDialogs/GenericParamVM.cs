@@ -74,18 +74,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM GPVarianceVM { get; }
 
 		public bool ReferenceTypeConstraint {
-			get { return GetFlagValue(GenericParamAttributes.ReferenceTypeConstraint); }
-			set { SetFlagValue(GenericParamAttributes.ReferenceTypeConstraint, value); }
+			get => GetFlagValue(GenericParamAttributes.ReferenceTypeConstraint);
+			set => SetFlagValue(GenericParamAttributes.ReferenceTypeConstraint, value);
 		}
 
 		public bool NotNullableValueTypeConstraint {
-			get { return GetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint); }
-			set { SetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint, value); }
+			get => GetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint);
+			set => SetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint, value);
 		}
 
 		public bool DefaultConstructorConstraint {
-			get { return GetFlagValue(GenericParamAttributes.DefaultConstructorConstraint); }
-			set { SetFlagValue(GenericParamAttributes.DefaultConstructorConstraint, value); }
+			get => GetFlagValue(GenericParamAttributes.DefaultConstructorConstraint);
+			set => SetFlagValue(GenericParamAttributes.DefaultConstructorConstraint, value);
 		}
 
 		bool GetFlagValue(GenericParamAttributes flag) => (Attributes & flag) != 0;
@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;

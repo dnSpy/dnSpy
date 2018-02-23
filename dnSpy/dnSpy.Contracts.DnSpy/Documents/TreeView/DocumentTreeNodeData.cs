@@ -202,7 +202,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// this value.
 		/// </summary>
 		public int FilterVersion {
-			get { return filterVersion; }
+			get => filterVersion;
 			set {
 				if (filterVersion != value) {
 					filterVersion = value;

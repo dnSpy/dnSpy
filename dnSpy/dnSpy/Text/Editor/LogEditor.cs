@@ -42,13 +42,13 @@ namespace dnSpy.Text.Editor {
 		public IDsWpfTextViewHost TextViewHost => wpfTextViewHost;
 
 		public WordWrapStyles WordWrapStyle {
-			get { return wpfTextView.Options.WordWrapStyle(); }
-			set { wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value); }
+			get => wpfTextView.Options.WordWrapStyle();
+			set => wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value);
 		}
 
 		public bool ShowLineNumbers {
-			get { return wpfTextView.Options.IsLineNumberMarginEnabled(); }
-			set { wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value); }
+			get => wpfTextView.Options.IsLineNumberMarginEnabled();
+			set => wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value);
 		}
 
 		readonly IDsWpfTextViewHost wpfTextViewHost;

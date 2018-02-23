@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand PickEnumTypeCommand => new RelayCommand(a => PickEnumType());
 
 		public ITypeDefOrRef EnumType {
-			get { return enumInfo.EnumType; }
+			get => enumInfo.EnumType;
 			set {
 				enumInfo.EnumType = value;
 				var td = value.ResolveTypeDef();

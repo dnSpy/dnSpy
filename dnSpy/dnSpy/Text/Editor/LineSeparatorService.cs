@@ -161,8 +161,8 @@ namespace dnSpy.Text.Editor {
 
 		sealed class LineSeparatorElement : Border {
 			public Brush Brush {
-				get { return BorderBrush; }
-				set { BorderBrush = value; }
+				get => BorderBrush;
+				set => BorderBrush = value;
 			}
 
 			public SnapshotSpan Span { get; }

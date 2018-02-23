@@ -32,7 +32,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;

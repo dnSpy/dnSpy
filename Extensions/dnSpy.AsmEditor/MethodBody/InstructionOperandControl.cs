@@ -50,38 +50,38 @@ namespace dnSpy.AsmEditor.MethodBody {
 			new FrameworkPropertyMetadata(null));
 
 		public InstructionOperandVM InstructionOperandVM {
-			get { return (InstructionOperandVM)GetValue(InstructionOperandVMProperty); }
-			set { SetValue(InstructionOperandVMProperty, value); }
+			get => (InstructionOperandVM)GetValue(InstructionOperandVMProperty);
+			set => SetValue(InstructionOperandVMProperty, value);
 		}
 
 		public Style TextBoxStyle {
-			get { return (Style)GetValue(TextBoxStyleProperty); }
-			set { SetValue(TextBoxStyleProperty, value); }
+			get => (Style)GetValue(TextBoxStyleProperty);
+			set => SetValue(TextBoxStyleProperty, value);
 		}
 
 		public Style ComboBoxStyle {
-			get { return (Style)GetValue(ComboBoxStyleProperty); }
-			set { SetValue(ComboBoxStyleProperty, value); }
+			get => (Style)GetValue(ComboBoxStyleProperty);
+			set => SetValue(ComboBoxStyleProperty, value);
 		}
 
 		public DataTemplate ComboBoxItemTemplate {
-			get { return (DataTemplate)GetValue(ComboBoxItemTemplateProperty); }
-			set { SetValue(ComboBoxItemTemplateProperty, value); }
+			get => (DataTemplate)GetValue(ComboBoxItemTemplateProperty);
+			set => SetValue(ComboBoxItemTemplateProperty, value);
 		}
 
 		public DataTemplate ComboBoxSelectionBoxItemTemplate {
-			get { return (DataTemplate)GetValue(ComboBoxSelectionBoxItemTemplateProperty); }
-			set { SetValue(ComboBoxSelectionBoxItemTemplateProperty, value); }
+			get => (DataTemplate)GetValue(ComboBoxSelectionBoxItemTemplateProperty);
+			set => SetValue(ComboBoxSelectionBoxItemTemplateProperty, value);
 		}
 
 		public Style ButtonStyle {
-			get { return (Style)GetValue(ButtonStyleProperty); }
-			set { SetValue(ButtonStyleProperty, value); }
+			get => (Style)GetValue(ButtonStyleProperty);
+			set => SetValue(ButtonStyleProperty, value);
 		}
 
 		public ICommand ButtonCommand {
-			get { return (ICommand)GetValue(ButtonCommandProperty); }
-			set { SetValue(ButtonCommandProperty, value); }
+			get => (ICommand)GetValue(ButtonCommandProperty);
+			set => SetValue(ButtonCommandProperty, value);
 		}
 
 		static void OnInstructionOperandVMChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {

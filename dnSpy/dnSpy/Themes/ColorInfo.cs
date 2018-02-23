@@ -36,7 +36,7 @@ namespace dnSpy.Themes {
 		public ColorInfo Parent;
 
 		public ColorInfo[] Children {
-			get { return children; }
+			get => children;
 			set {
 				children = value ?? Array.Empty<ColorInfo>();
 				foreach (var child in children)

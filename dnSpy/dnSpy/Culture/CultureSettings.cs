@@ -32,7 +32,7 @@ namespace dnSpy.Culture {
 		protected virtual void OnModified() { }
 
 		public string UIName {
-			get { return uiName; }
+			get => uiName;
 			set {
 				if (uiName != value) {
 					uiName = value;

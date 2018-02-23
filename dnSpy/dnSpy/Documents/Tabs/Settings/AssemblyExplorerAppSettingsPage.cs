@@ -50,7 +50,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
 		public bool ShowToken {
-			get { return showToken; }
+			get => showToken;
 			set {
 				if (showToken != value) {
 					showToken = value;
@@ -61,7 +61,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool showToken;
 
 		public bool ShowAssemblyVersion {
-			get { return showAssemblyVersion; }
+			get => showAssemblyVersion;
 			set {
 				if (showAssemblyVersion != value) {
 					showAssemblyVersion = value;
@@ -72,7 +72,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool showAssemblyVersion;
 
 		public bool ShowAssemblyPublicKeyToken {
-			get { return showAssemblyPublicKeyToken; }
+			get => showAssemblyPublicKeyToken;
 			set {
 				if (showAssemblyPublicKeyToken != value) {
 					showAssemblyPublicKeyToken = value;
@@ -83,7 +83,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool showAssemblyPublicKeyToken;
 
 		public bool SingleClickExpandsTreeViewChildren {
-			get { return singleClickExpandsTreeViewChildren; }
+			get => singleClickExpandsTreeViewChildren;
 			set {
 				if (singleClickExpandsTreeViewChildren != value) {
 					singleClickExpandsTreeViewChildren = value;
@@ -94,7 +94,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool singleClickExpandsTreeViewChildren;
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
@@ -107,7 +107,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public DocumentFilterTypeVM[] DocumentFilterTypes { get; }
 
 		public DocumentFilterTypeVM FilterDraggedItems {
-			get { return filterDraggedItems; }
+			get => filterDraggedItems;
 			set {
 				if (filterDraggedItems != value) {
 					filterDraggedItems = value;
@@ -122,28 +122,28 @@ namespace dnSpy.Documents.Tabs.Settings {
 		readonly MemberKindVM[] memberKindVMs2;
 
 		public MemberKindVM MemberKind0 {
-			get { return memberKindVMs[0]; }
-			set { SetMemberKind(0, value); }
+			get => memberKindVMs[0];
+			set => SetMemberKind(0, value);
 		}
 
 		public MemberKindVM MemberKind1 {
-			get { return memberKindVMs[1]; }
-			set { SetMemberKind(1, value); }
+			get => memberKindVMs[1];
+			set => SetMemberKind(1, value);
 		}
 
 		public MemberKindVM MemberKind2 {
-			get { return memberKindVMs[2]; }
-			set { SetMemberKind(2, value); }
+			get => memberKindVMs[2];
+			set => SetMemberKind(2, value);
 		}
 
 		public MemberKindVM MemberKind3 {
-			get { return memberKindVMs[3]; }
-			set { SetMemberKind(3, value); }
+			get => memberKindVMs[3];
+			set => SetMemberKind(3, value);
 		}
 
 		public MemberKindVM MemberKind4 {
-			get { return memberKindVMs[4]; }
-			set { SetMemberKind(4, value); }
+			get => memberKindVMs[4];
+			set => SetMemberKind(4, value);
 		}
 
 		void SetMemberKind(int index, MemberKindVM newValue) {

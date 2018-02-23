@@ -117,14 +117,10 @@ namespace dnSpy.Text.AvalonEdit {
 		public StringTextSource(string text) => this.text = text ?? throw new ArgumentNullException("text");
 
 		/// <inheritdoc/>
-		public int TextLength {
-			get { return text.Length; }
-		}
+		public int TextLength => text.Length;
 
 		/// <inheritdoc/>
-		public string Text {
-			get { return text; }
-		}
+		public string Text => text;
 
 		/// <inheritdoc/>
 		public ITextSource CreateSnapshot() => this; // StringTextSource is immutable

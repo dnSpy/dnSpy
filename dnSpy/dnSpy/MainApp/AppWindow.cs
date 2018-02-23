@@ -171,14 +171,14 @@ namespace dnSpy.MainApp {
 		}
 
 		public event EventHandler<CancelEventArgs> MainWindowClosing {
-			add { mainWindowClosing.Add(value); }
-			remove { mainWindowClosing.Remove(value); }
+			add => mainWindowClosing.Add(value);
+			remove => mainWindowClosing.Remove(value);
 		}
 		readonly WeakEventList<CancelEventArgs> mainWindowClosing;
 
 		public event EventHandler<EventArgs> MainWindowClosed {
-			add { mainWindowClosed.Add(value); }
-			remove { mainWindowClosed.Remove(value); }
+			add => mainWindowClosed.Add(value);
+			remove => mainWindowClosed.Remove(value);
 		}
 		readonly WeakEventList<EventArgs> mainWindowClosed;
 

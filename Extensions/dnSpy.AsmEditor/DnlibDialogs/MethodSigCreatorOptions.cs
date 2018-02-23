@@ -37,10 +37,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool DontShowSignatureFullName { get; set; }
 
 		public TypeSigCreatorOptions TypeSigCreatorOptions {
-			get { return typeSigCreatorOptions; }
-			set {
-				typeSigCreatorOptions = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => typeSigCreatorOptions;
+			set => typeSigCreatorOptions = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		TypeSigCreatorOptions typeSigCreatorOptions;
 

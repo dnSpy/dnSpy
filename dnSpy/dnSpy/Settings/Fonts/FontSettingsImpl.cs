@@ -28,7 +28,7 @@ namespace dnSpy.Settings.Fonts {
 		public override Guid ThemeGuid { get; }
 
 		public override FontFamily FontFamily {
-			get { return fontFamily; }
+			get => fontFamily;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -41,7 +41,7 @@ namespace dnSpy.Settings.Fonts {
 		FontFamily fontFamily;
 
 		public override double FontSize {
-			get { return fontSize; }
+			get => fontSize;
 			set {
 				var newValue = FontUtilities.FilterFontSize(value);
 				if (fontSize != newValue) {

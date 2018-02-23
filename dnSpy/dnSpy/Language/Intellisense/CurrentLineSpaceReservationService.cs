@@ -59,7 +59,7 @@ namespace dnSpy.Language.Intellisense {
 		ISpaceReservationManager spaceReservationManager;
 
 		int ActiveSessions {
-			get { return activeSessions; }
+			get => activeSessions;
 			set {
 				if (wpfTextView.IsClosed)
 					return;

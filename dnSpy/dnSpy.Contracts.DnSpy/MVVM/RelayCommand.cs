@@ -42,8 +42,8 @@ namespace dnSpy.Contracts.MVVM {
 		bool ICommand.CanExecute(object parameter) => canExec == null ? true : canExec(parameter);
 
 		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		void ICommand.Execute(object parameter) => exec(parameter);

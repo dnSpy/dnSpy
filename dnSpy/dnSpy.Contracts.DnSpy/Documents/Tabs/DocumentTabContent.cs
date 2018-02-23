@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Written by the owner <see cref="IDocumentTab"/> instance
 		/// </summary>
 		public IDocumentTab DocumentTab {
-			get { return documentTab; }
+			get => documentTab;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

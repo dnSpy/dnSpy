@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// Gets/sets the selected index
 		/// </summary>
 		public int SelectedIndex {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					int oldIndex = index;

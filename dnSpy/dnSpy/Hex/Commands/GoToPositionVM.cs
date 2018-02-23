@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Commands {
 		public ObservableCollection<PositionVM> PositionsCollection { get; }
 
 		public PositionVM SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -46,12 +46,12 @@ namespace dnSpy.Hex.Commands {
 		PositionVM selectedItem;
 
 		public PositionKind PositionKind {
-			get { return SelectedItem.Kind; }
-			set { SelectedItem = PositionsCollection.First(a => a.Kind == value); }
+			get => SelectedItem.Kind;
+			set => SelectedItem = PositionsCollection.First(a => a.Kind == value);
 		}
 
 		public bool SelectToNewPosition {
-			get { return selectToNewPosition; }
+			get => selectToNewPosition;
 			set {
 				if (value != selectToNewPosition) {
 					selectToNewPosition = value;

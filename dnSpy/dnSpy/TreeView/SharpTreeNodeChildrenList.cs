@@ -30,8 +30,8 @@ namespace dnSpy.TreeView {
 		public SharpTreeNodeChildrenList(TreeNodeImpl owner) => node = new DsSharpTreeNode(owner);
 
 		public ITreeNode this[int index] {
-			get { return ((DsSharpTreeNode)node.Children[index]).TreeNodeImpl; }
-			set { node.Children[index] = GetAndVerifyTreeNodeImpl(value).Node; }
+			get => ((DsSharpTreeNode)node.Children[index]).TreeNodeImpl;
+			set => node.Children[index] = GetAndVerifyTreeNodeImpl(value).Node;
 		}
 
 		public int Count => node.Children.Count;

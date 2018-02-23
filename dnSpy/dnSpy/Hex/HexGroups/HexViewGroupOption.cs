@@ -26,7 +26,7 @@ namespace dnSpy.Hex.HexGroups {
 		public object DefaultValue => Definition.DefaultValue;
 
 		public object Value {
-			get { return theValue; }
+			get => theValue;
 			set {
 				if (!Equals(theValue, value)) {
 					theValue = value;

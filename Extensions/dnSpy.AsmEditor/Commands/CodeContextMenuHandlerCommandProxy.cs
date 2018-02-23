@@ -50,8 +50,8 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		bool ICommand.CanExecute(object parameter) {

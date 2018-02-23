@@ -34,8 +34,8 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index"></param>
 		/// <returns></returns>
 		public HexChange this[int index] {
-			get { return changes[index]; }
-			set { throw new NotSupportedException(); }
+			get => changes[index];
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary>

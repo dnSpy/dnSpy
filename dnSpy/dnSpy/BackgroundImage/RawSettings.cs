@@ -47,10 +47,8 @@ namespace dnSpy.BackgroundImage {
 		public TimeSpan Interval { get; set; }
 
 		public string[] Images {
-			get { return images; }
-			set {
-				images = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => images;
+			set => images = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		string[] images;
 

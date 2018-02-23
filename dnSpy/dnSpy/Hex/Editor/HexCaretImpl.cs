@@ -54,8 +54,8 @@ namespace dnSpy.Hex.Editor {
 		internal HexColumnPosition CurrentPosition => currentPosition;
 
 		public override bool IsHidden {
-			get { return hexCaretLayer.IsHidden; }
-			set { hexCaretLayer.IsHidden = value; }
+			get => hexCaretLayer.IsHidden;
+			set => hexCaretLayer.IsHidden = value;
 		}
 
 		public override event EventHandler<HexCaretPositionChangedEventArgs> PositionChanged;

@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand RemoveInstructionAndAddPopsCommand => new RelayCommand(a => RemoveInstructionAndAddPops((InstructionVM[])a), a => RemoveInstructionAndAddPopsCanExecute((InstructionVM[])a));
 
 		public bool KeepOldMaxStack {
-			get { return keepOldMaxStack; }
+			get => keepOldMaxStack;
 			set {
 				if (keepOldMaxStack != value) {
 					keepOldMaxStack = value;
@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		bool keepOldMaxStack;
 
 		public bool InitLocals {
-			get { return initLocals; }
+			get => initLocals;
 			set {
 				if (initLocals != value) {
 					initLocals = value;

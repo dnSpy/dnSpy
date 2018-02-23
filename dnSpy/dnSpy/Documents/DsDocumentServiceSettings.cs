@@ -32,7 +32,7 @@ namespace dnSpy.Documents {
 		protected virtual void OnModified() { }
 
 		public bool UseMemoryMappedIO {
-			get { return useMemoryMappedIO; }
+			get => useMemoryMappedIO;
 			set {
 				if (useMemoryMappedIO != value) {
 					useMemoryMappedIO = value;

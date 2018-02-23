@@ -32,7 +32,7 @@ namespace dnSpy.Text.Settings {
 		public Int32VM IndentSizeVM { get; }
 
 		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
+			get => convertTabsToSpaces;
 			set {
 				if (convertTabsToSpaces != value) {
 					convertTabsToSpaces = value;

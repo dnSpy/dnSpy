@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		SaveState State {
-			get { return saveState; }
+			get => saveState;
 			set {
 				if (value != saveState) {
 					saveState = value;
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public bool HasError {
-			get { return hasError; }
+			get => hasError;
 			private set {
 				if (hasError != value) {
 					hasError = value;
@@ -130,7 +130,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public bool HasNoError => !HasError;
 
 		public int ErrorCount {
-			get { return errorCount; }
+			get => errorCount;
 			set {
 				if (errorCount != value) {
 					errorCount = value;
@@ -148,7 +148,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public double ProgressMaximum => 100;
 
 		public double TotalProgress {
-			get { return totalProgress; }
+			get => totalProgress;
 			private set {
 				if (totalProgress != value) {
 					totalProgress = value;
@@ -159,7 +159,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		double totalProgress = 0;
 
 		public double CurrentFileProgress {
-			get { return currentFileProgress; }
+			get => currentFileProgress;
 			private set {
 				if (currentFileProgress != value) {
 					currentFileProgress = value;
@@ -170,7 +170,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		double currentFileProgress = 0;
 
 		public string CurrentFileName {
-			get { return currentFileName; }
+			get => currentFileName;
 			set {
 				if (currentFileName != value) {
 					currentFileName = value;

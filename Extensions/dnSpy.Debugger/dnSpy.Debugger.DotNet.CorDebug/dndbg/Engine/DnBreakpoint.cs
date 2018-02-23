@@ -29,7 +29,7 @@ namespace dndbg.Engine {
 		public object Tag { get; set; }
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;

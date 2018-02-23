@@ -45,18 +45,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand AddReturnTypeCommand => new RelayCommand(a => AddReturnType());
 
 		public PropertySig PropertySig {
-			get { return CreateSig(new PropertySig()); }
-			set { WriteSignature(value); }
+			get => CreateSig(new PropertySig());
+			set => WriteSignature(value);
 		}
 
 		public MethodSig MethodSig {
-			get { return CreateSig(new MethodSig()); }
-			set { WriteSignature(value); }
+			get => CreateSig(new MethodSig());
+			set => WriteSignature(value);
 		}
 
 		public MethodBaseSig MethodBaseSig {
-			get { return IsPropertySig ? (MethodBaseSig)PropertySig : MethodSig; }
-			set { WriteSignature(value); }
+			get => IsPropertySig ? (MethodBaseSig)PropertySig : MethodSig;
+			set => WriteSignature(value);
 		}
 
 		public bool ShowSignatureFullName => !options.DontShowSignatureFullName;
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CallingConvention CallingConvention {
-			get { return callingConvention; }
+			get => callingConvention;
 			set {
 				if (callingConvention != value) {
 					callingConvention = value;
@@ -89,18 +89,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		CallingConvention callingConvention;
 
 		public bool IsGeneric {
-			get { return GetFlags(dnlib.DotNet.CallingConvention.Generic); }
-			set { SetFlags(dnlib.DotNet.CallingConvention.Generic, value); }
+			get => GetFlags(dnlib.DotNet.CallingConvention.Generic);
+			set => SetFlags(dnlib.DotNet.CallingConvention.Generic, value);
 		}
 
 		public bool HasThis {
-			get { return GetFlags(dnlib.DotNet.CallingConvention.HasThis); }
-			set { SetFlags(dnlib.DotNet.CallingConvention.HasThis, value); }
+			get => GetFlags(dnlib.DotNet.CallingConvention.HasThis);
+			set => SetFlags(dnlib.DotNet.CallingConvention.HasThis, value);
 		}
 
 		public bool ExplicitThis {
-			get { return GetFlags(dnlib.DotNet.CallingConvention.ExplicitThis); }
-			set { SetFlags(dnlib.DotNet.CallingConvention.ExplicitThis, value); }
+			get => GetFlags(dnlib.DotNet.CallingConvention.ExplicitThis);
+			set => SetFlags(dnlib.DotNet.CallingConvention.ExplicitThis, value);
 		}
 
 		bool GetFlags(dnlib.DotNet.CallingConvention flag) => (CallingConvention & flag) != 0;
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		internal static readonly EnumVM[] methodCallingConvList = EnumVM.Create(typeof(MethodCallingConv));
 
 		public TypeSig ReturnType {
-			get { return retType; }
+			get => retType;
 			set {
 				if (retType != value) {
 					retType = value;

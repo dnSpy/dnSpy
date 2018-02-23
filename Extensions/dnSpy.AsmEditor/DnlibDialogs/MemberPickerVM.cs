@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand OpenCommand => new RelayCommand(a => OpenNewAssembly(), a => CanOpenAssembly);
 
 		public bool CanOpenAssembly {
-			get { return true; }
+			get => true;
 			set {
 				if (canOpenAssembly != value) {
 					canOpenAssembly = value;
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool canOpenAssembly = true;
 
 		public object SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public bool TooManyResults {
-			get { return tooManyResults; }
+			get => tooManyResults;
 			set {
 				if (tooManyResults != value) {
 					tooManyResults = value;
@@ -151,7 +151,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ObservableCollection<ISearchResult> SearchResults { get; }
 
 		public ISearchResult SelectedSearchResult {
-			get { return selectedSearchResult; }
+			get => selectedSearchResult;
 			set {
 				if (selectedSearchResult != value) {
 					selectedSearchResult = value;
@@ -162,7 +162,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		ISearchResult selectedSearchResult;
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					bool hasSearchTextChanged = string.IsNullOrEmpty(searchText) != string.IsNullOrEmpty(value);
@@ -180,7 +180,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool HasSearchText => !string.IsNullOrEmpty(searchText);
 
 		public ISearchResult SearchResult {
-			get { return searchResult; }
+			get => searchResult;
 			set {
 				if (searchResult != value) {
 					searchResult = value;
@@ -199,7 +199,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
 		public DecompilerVM Language {
-			get { return decompiler; }
+			get => decompiler;
 			set {
 				if (decompiler != value) {
 					decompiler = value;

@@ -30,8 +30,8 @@ namespace dnSpy.Text.Classification {
 		public bool IsInBatchUpdate => categoryMap.IsInBatchUpdate;
 
 		public TextFormattingRunProperties DefaultTextProperties {
-			get { return categoryMap.DefaultTextProperties; }
-			set { categoryMap.DefaultTextProperties = value; }
+			get => categoryMap.DefaultTextProperties;
+			set => categoryMap.DefaultTextProperties = value;
 		}
 
 		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;

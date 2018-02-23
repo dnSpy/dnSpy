@@ -187,8 +187,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		IList<MethodSourceStatement> GetStatements() {

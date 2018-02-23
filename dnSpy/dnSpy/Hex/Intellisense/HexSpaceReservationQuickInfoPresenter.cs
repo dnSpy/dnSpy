@@ -34,13 +34,11 @@ namespace dnSpy.Hex.Intellisense {
 		public event EventHandler PresentationSpanChanged;
 
 		public double Opacity {
-			get { return control.Opacity; }
-			set { control.Opacity = value; }
+			get => control.Opacity;
+			set => control.Opacity = value;
 		}
 
-		public HexBufferSpanSelection PresentationSpan {
-			get { return presentationSpan; }
-		}
+		public HexBufferSpanSelection PresentationSpan => presentationSpan;
 
 		void SetPresentationSpan(HexBufferSpanSelection newValue, in HexCellPosition triggerPoint) {
 			// Make sure that the popup is shown in the right column

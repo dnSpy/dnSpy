@@ -154,13 +154,13 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index">Index</param>
 		/// <returns></returns>
 		public HexBufferSpan this[int index] {
-			get { return new HexBufferSpan(buffer, coll[index]); }
-			set { throw new NotSupportedException(); }
+			get => new HexBufferSpan(buffer, coll[index]);
+			set => throw new NotSupportedException();
 		}
 
 		object IList.this[int index] {
-			get { return this[index]; }
-			set { throw new NotSupportedException(); }
+			get => this[index];
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary>

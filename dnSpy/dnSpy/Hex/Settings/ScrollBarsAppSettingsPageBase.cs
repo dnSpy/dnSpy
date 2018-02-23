@@ -27,7 +27,7 @@ namespace dnSpy.Hex.Settings {
 		public sealed override object UIObject => this;
 
 		public bool HorizontalScrollBar {
-			get { return horizontalScrollBar; }
+			get => horizontalScrollBar;
 			set {
 				if (horizontalScrollBar != value) {
 					horizontalScrollBar = value;
@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Settings {
 		bool horizontalScrollBar;
 
 		public bool VerticalScrollBar {
-			get { return verticalScrollBar; }
+			get => verticalScrollBar;
 			set {
 				if (verticalScrollBar != value) {
 					verticalScrollBar = value;

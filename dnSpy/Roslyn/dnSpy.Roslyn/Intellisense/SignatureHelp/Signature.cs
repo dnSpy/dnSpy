@@ -40,7 +40,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		public bool IsSelected { get; }
 
 		public IParameter CurrentParameter {
-			get { return currentParameter; }
+			get => currentParameter;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

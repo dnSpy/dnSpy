@@ -75,7 +75,7 @@ namespace dnSpy.Controls {
 		public int Count => children.Count;
 
 		public double SplitterLength {
-			get { return splitterLength; }
+			get => splitterLength;
 			set {
 				if (splitterLength != value) {
 					splitterLength = value;
@@ -103,7 +103,7 @@ namespace dnSpy.Controls {
 		readonly List<ChildInfo> children;
 
 		public bool IsHorizontal {
-			get { return isHorizontal; }
+			get => isHorizontal;
 			set {
 				if (isHorizontal != value) {
 					isHorizontal = value;

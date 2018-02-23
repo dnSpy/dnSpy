@@ -46,30 +46,22 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Returns the table type
 		/// </summary>
-		public Table Table {
-			get { return ToTable(token); }
-		}
+		public Table Table => ToTable(token);
 
 		/// <summary>
 		/// Returns the row id
 		/// </summary>
-		public uint Rid {
-			get { return ToRID(token); }
-		}
+		public uint Rid => ToRID(token);
 
 		/// <summary>
 		/// Returns the raw token
 		/// </summary>
-		public uint Raw {
-			get { return token; }
-		}
+		public uint Raw => token;
 
 		/// <summary>
 		/// Returns <c>true</c> if it's a <c>null</c> token
 		/// </summary>
-		public bool IsNull {
-			get { return Rid == 0; }
-		}
+		public bool IsNull => Rid == 0;
 
 		/// <summary>
 		/// Constructor

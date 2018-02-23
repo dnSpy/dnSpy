@@ -70,17 +70,13 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets all new or reformatted spans
 		/// </summary>
-		public NormalizedHexBufferSpanCollection NewOrReformattedSpans {
-			get { return newOrReformattedSpans ?? (newOrReformattedSpans = CreateSpans(NewOrReformattedLines)); }
-		}
+		public NormalizedHexBufferSpanCollection NewOrReformattedSpans => newOrReformattedSpans ?? (newOrReformattedSpans = CreateSpans(NewOrReformattedLines));
 		NormalizedHexBufferSpanCollection newOrReformattedSpans;
 
 		/// <summary>
 		/// Gets all translated spans
 		/// </summary>
-		public NormalizedHexBufferSpanCollection TranslatedSpans {
-			get { return translatedSpans ?? (translatedSpans = CreateSpans(TranslatedLines)); }
-		}
+		public NormalizedHexBufferSpanCollection TranslatedSpans => translatedSpans ?? (translatedSpans = CreateSpans(TranslatedLines));
 		NormalizedHexBufferSpanCollection translatedSpans;
 
 		static NormalizedHexBufferSpanCollection CreateSpans(ReadOnlyCollection<HexViewLine> lines) {

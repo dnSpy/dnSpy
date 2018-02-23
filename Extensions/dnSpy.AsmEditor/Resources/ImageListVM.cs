@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;

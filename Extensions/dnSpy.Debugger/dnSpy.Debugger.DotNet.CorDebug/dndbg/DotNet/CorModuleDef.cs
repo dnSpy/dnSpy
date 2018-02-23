@@ -117,8 +117,8 @@ namespace dndbg.DotNet {
 		/// instance can be accessed from other threads other than the main thread.
 		/// </summary>
 		public bool DisableMDAPICalls {
-			get { return disableMDAPICalls; }
-			set { disableMDAPICalls = value; }
+			get => disableMDAPICalls;
+			set => disableMDAPICalls = value;
 		}
 		bool disableMDAPICalls;
 

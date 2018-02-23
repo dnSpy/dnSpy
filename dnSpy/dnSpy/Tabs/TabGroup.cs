@@ -43,8 +43,8 @@ namespace dnSpy.Tabs {
 		public object Tag { get; set; }
 
 		public event EventHandler<TabContentAttachedEventArgs> TabContentAttached {
-			add { tabContentAttached.Add(value); }
-			remove { tabContentAttached.Remove(value); }
+			add => tabContentAttached.Add(value);
+			remove => tabContentAttached.Remove(value);
 		}
 		readonly WeakEventList<TabContentAttachedEventArgs> tabContentAttached;
 
@@ -52,7 +52,7 @@ namespace dnSpy.Tabs {
 		internal IEnumerable<TabItemImpl> AllTabItemImpls => tabControl.Items.Cast<TabItemImpl>();
 
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			internal set {
 				if (isActive != value) {
 					isActive = value;

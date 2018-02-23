@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public abstract object UndoDocument { get; }
 
 		public string FileName {
-			get { return filename; }
+			get => filename;
 			set {
 				filename = value ?? throw new ArgumentNullException(nameof(value));
 				OnPropertyChanged(nameof(FileName));

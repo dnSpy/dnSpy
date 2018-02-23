@@ -29,7 +29,7 @@ namespace dnSpy.Language.Intellisense {
 		public ImageReference ImageReference { get; }
 
 		public bool IsChecked {
-			get { return filter.IsChecked; }
+			get => filter.IsChecked;
 			set {
 				if (filter.IsChecked != value) {
 					filter.IsChecked = value;
@@ -40,7 +40,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public bool IsEnabled {
-			get { return filter.IsEnabled; }
+			get => filter.IsEnabled;
 			set {
 				if (filter.IsEnabled != value) {
 					filter.IsEnabled = value;

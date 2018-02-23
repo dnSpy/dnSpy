@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM CallConv { get; } = new EnumListVM(callConvList);
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool isEnabled = true;
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -84,7 +84,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		string name = string.Empty;
 
 		public string ModuleName {
-			get { return moduleName; }
+			get => moduleName;
 			set {
 				if (moduleName != value) {
 					moduleName = value;
@@ -118,13 +118,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		PInvokeAttributes attributes;
 
 		public bool NoMangle {
-			get { return GetFlagValue(PInvokeAttributes.NoMangle); }
-			set { SetFlagValue(PInvokeAttributes.NoMangle, value); }
+			get => GetFlagValue(PInvokeAttributes.NoMangle);
+			set => SetFlagValue(PInvokeAttributes.NoMangle, value);
 		}
 
 		public bool SupportsLastError {
-			get { return GetFlagValue(PInvokeAttributes.SupportsLastError); }
-			set { SetFlagValue(PInvokeAttributes.SupportsLastError, value); }
+			get => GetFlagValue(PInvokeAttributes.SupportsLastError);
+			set => SetFlagValue(PInvokeAttributes.SupportsLastError, value);
 		}
 
 		bool GetFlagValue(PInvokeAttributes flag) => (Attributes & flag) != 0;

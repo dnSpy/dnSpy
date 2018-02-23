@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand AddCommand => new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute());
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		string title;
 
 		public int? RequiredCount {
-			get { return requiredCount; }
+			get => requiredCount;
 			set {
 				if (requiredCount != value) {
 					requiredCount = value;

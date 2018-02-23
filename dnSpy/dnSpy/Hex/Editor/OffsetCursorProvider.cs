@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Editor {
 		public event EventHandler CursorInfoChanged;
 
 		public HexCursorInfo CursorInfo {
-			get { return cursorInfo; }
+			get => cursorInfo;
 			set {
 				if (cursorInfo != value) {
 					cursorInfo = value;

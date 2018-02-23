@@ -47,8 +47,8 @@ namespace dnSpy.Text.Editor {
 		PositionAffinity Affinity { get; set; }
 
 		public bool IsHidden {
-			get { return textCaretLayer.IsHidden; }
-			set { textCaretLayer.IsHidden = value; }
+			get => textCaretLayer.IsHidden;
+			set => textCaretLayer.IsHidden = value;
 		}
 
 		public event EventHandler<CaretPositionChangedEventArgs> PositionChanged;

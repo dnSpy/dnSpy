@@ -146,7 +146,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets the total progress
 		/// </summary>
 		public double TotalProgress {
-			get { return totalProgress; }
+			get => totalProgress;
 			set {
 				if (totalProgress != value) {
 					totalProgress = value;
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets whether it was cancelled
 		/// </summary>
 		public bool WasCanceled {
-			get { return wasCanceled; }
+			get => wasCanceled;
 			set {
 				if (wasCanceled != value) {
 					wasCanceled = value;
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets has-completed
 		/// </summary>
 		public bool HasCompleted {
-			get { return hasCompleted; }
+			get => hasCompleted;
 			set {
 				if (hasCompleted != value) {
 					hasCompleted = value;
@@ -188,7 +188,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets current description
 		/// </summary>
 		public string CurrentItemDescription {
-			get { return currentItemDescription; }
+			get => currentItemDescription;
 			set {
 				if (currentItemDescription != value) {
 					currentItemDescription = value;

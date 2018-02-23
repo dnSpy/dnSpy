@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		double TextViewZoomLevel {
-			get { return wpfTextViewHost.TextView.ZoomLevel; }
+			get => wpfTextViewHost.TextView.ZoomLevel;
 			set {
 				if (wpfTextViewHost.TextView.Options.IsOptionDefined(DefaultWpfViewOptions.ZoomLevelId, true))
 					wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, value);

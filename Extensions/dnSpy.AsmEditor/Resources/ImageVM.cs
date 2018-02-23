@@ -23,7 +23,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageVM : ViewModelBase {
 		public ImageSource ImageSource {
-			get { return imageSource; }
+			get => imageSource;
 			set {
 				if (imageSource != value) {
 					imageSource = value;

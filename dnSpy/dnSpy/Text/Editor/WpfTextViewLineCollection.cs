@@ -50,8 +50,8 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextViewLine this[int index] => lines[index];
 		ITextViewLine IList<ITextViewLine>.this[int index] {
-			get { return this[index]; }
-			set { throw new NotSupportedException(); }
+			get => this[index];
+			set => throw new NotSupportedException();
 		}
 
 		public int Count => lines.Count;

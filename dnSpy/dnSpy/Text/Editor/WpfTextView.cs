@@ -487,7 +487,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public new Brush Background {
-			get { return base.Background; }
+			get => base.Background;
 			set {
 				if (base.Background != value) {
 					base.Background = value;
@@ -498,7 +498,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public double ZoomLevel {
-			get { return zoomLevel; }
+			get => zoomLevel;
 			set {
 				if (IsClosed)
 					return;
@@ -541,7 +541,7 @@ namespace dnSpy.Text.Editor {
 		public double ViewportWidth => ActualWidth;
 		public double ViewportHeight => ActualHeight;
 		public double ViewportLeft {
-			get { return viewportLeft; }
+			get => viewportLeft;
 			set {
 				if (double.IsNaN(value))
 					throw new ArgumentOutOfRangeException(nameof(value));
@@ -922,8 +922,8 @@ namespace dnSpy.Text.Editor {
 			LineTransformProvider.GetLineTransform(line, yPosition, placement);
 
 		public event EventHandler<MouseHoverEventArgs> MouseHover {
-			add { mouseHoverHelper.MouseHover += value; }
-			remove { mouseHoverHelper.MouseHover -= value; }
+			add => mouseHoverHelper.MouseHover += value;
+			remove => mouseHoverHelper.MouseHover -= value;
 		}
 		readonly MouseHoverHelper mouseHoverHelper;
 

@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler PresentationSpanChanged;
 
 		public ITrackingSpan PresentationSpan {
-			get { return presentationSpan; }
+			get => presentationSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 		ITrackingSpan presentationSpan;
 
 		double IPopupIntellisensePresenter.Opacity {
-			get { return control.Opacity; }
+			get => control.Opacity;
 			set {
 				control.Opacity = value;
 				if (value != 1)

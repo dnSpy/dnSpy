@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// property.
 		/// </summary>
 		public ITreeNode TreeNode {
-			get { return treeNode; }
+			get => treeNode;
 			set {
 				if (treeNode != null)
 					throw new InvalidOperationException();

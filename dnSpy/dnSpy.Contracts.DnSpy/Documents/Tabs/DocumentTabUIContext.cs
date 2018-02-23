@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Gets the owner tab
 		/// </summary>
 		public IDocumentTab DocumentTab {
-			get { return documentTab; }
+			get => documentTab;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

@@ -27,8 +27,8 @@ using Microsoft.VisualStudio.Text;
 namespace dnSpy.Text {
 	sealed class NormalizedTextChangeCollection : INormalizedTextChangeCollection {
 		public ITextChange this[int index] {
-			get { return changes[index]; }
-			set { throw new NotSupportedException(); }
+			get => changes[index];
+			set => throw new NotSupportedException();
 		}
 
 		public int Count => changes.Length;

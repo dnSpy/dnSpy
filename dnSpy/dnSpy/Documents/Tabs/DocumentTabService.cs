@@ -79,7 +79,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		IDocumentTab IDocumentTabService.ActiveTab {
-			get { return ActiveTabContentImpl; }
+			get => ActiveTabContentImpl;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

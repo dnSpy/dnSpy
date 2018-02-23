@@ -27,8 +27,8 @@ namespace dnSpy.Settings.Dialog {
 			new UIPropertyMetadata(null, OwnerControlPropertyChangedCallback));
 
 		public object OwnerControl {
-			get { return (object)GetValue(OwnerControlProperty); }
-			set { SetValue(OwnerControlProperty, value); }
+			get => GetValue(OwnerControlProperty);
+			set => SetValue(OwnerControlProperty, value);
 		}
 
 		static void OwnerControlPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
@@ -39,8 +39,8 @@ namespace dnSpy.Settings.Dialog {
 			new UIPropertyMetadata(null, ContentConverterPropertyChangedCallback));
 
 		public IContentConverter ContentConverter {
-			get { return (IContentConverter)GetValue(ContentConverterProperty); }
-			set { SetValue(ContentConverterProperty, value); }
+			get => (IContentConverter)GetValue(ContentConverterProperty);
+			set => SetValue(ContentConverterProperty, value);
 		}
 
 		static void ContentConverterPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
@@ -51,8 +51,8 @@ namespace dnSpy.Settings.Dialog {
 			new UIPropertyMetadata(ContentConverterProperties.DefaultContentConverterVersion, ContentConverterVersionPropertyChangedCallback));
 
 		public int ContentConverterVersion {
-			get { return (int)GetValue(ContentConverterVersionProperty); }
-			set { SetValue(ContentConverterVersionProperty, value); }
+			get => (int)GetValue(ContentConverterVersionProperty);
+			set => SetValue(ContentConverterVersionProperty, value);
 		}
 
 		static void ContentConverterVersionPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
@@ -63,8 +63,8 @@ namespace dnSpy.Settings.Dialog {
 			new UIPropertyMetadata(null, TextPropertyChangedCallback));
 
 		public object Text {
-			get { return GetValue(TextProperty); }
-			set { SetValue(TextProperty, value); }
+			get => GetValue(TextProperty);
+			set => SetValue(TextProperty, value);
 		}
 
 		static void TextPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) =>

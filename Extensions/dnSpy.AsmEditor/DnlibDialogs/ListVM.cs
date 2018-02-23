@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		IEdit<TVM> editObject;
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;

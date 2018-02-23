@@ -45,14 +45,10 @@ namespace dnSpy.Text.AvalonEdit {
 		public Rope<char> GetRope() => rope.Clone();
 
 		/// <inheritdoc/>
-		public string Text {
-			get { return rope.ToString(); }
-		}
+		public string Text => rope.ToString();
 
 		/// <inheritdoc/>
-		public int TextLength {
-			get { return rope.Length; }
-		}
+		public int TextLength => rope.Length;
 
 		/// <inheritdoc/>
 		public char GetCharAt(int offset) => rope[offset];

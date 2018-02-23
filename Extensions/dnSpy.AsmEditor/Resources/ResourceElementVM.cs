@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ICommand PickRawBytesCommand => new RelayCommand(a => PickRawBytes(), a => IsRawBytes);
 
 		public bool CanChangeType {
-			get { return canChangeType; }
+			get => canChangeType;
 			set {
 				if (canChangeType != value) {
 					canChangeType = value;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public EnumListVM ResourceElementTypeVM { get; }
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -90,7 +90,7 @@ namespace dnSpy.AsmEditor.Resources {
 		UTF8String name;
 
 		public string String {
-			get { return @string; }
+			get => @string;
 			set {
 				if (@string != value) {
 					@string = value;
@@ -117,7 +117,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public TimeSpanVM TimeSpanVM { get; }
 
 		public byte[] Data {
-			get { return data; }
+			get => data;
 			set {
 				if (data != value) {
 					data = value;

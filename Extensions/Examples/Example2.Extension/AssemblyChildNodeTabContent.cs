@@ -164,7 +164,7 @@ namespace Example2.Extension {
 
 	sealed class AssemblyChildNodeVM : ViewModelBase {
 		public string SomeMessage {
-			get { return someMessage; }
+			get => someMessage;
 			set {
 				if (someMessage != value) {
 					someMessage = value;

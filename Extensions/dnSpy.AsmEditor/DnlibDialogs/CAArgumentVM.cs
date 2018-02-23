@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ConstantTypeVM ConstantTypeVM { get; }
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly ModuleDef module;
 
 		public TypeSig StorageType {
-			get { return storageType; }
+			get => storageType;
 			set {
 				if (storageType != value) {
 					storageType = value;

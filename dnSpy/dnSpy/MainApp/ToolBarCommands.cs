@@ -58,7 +58,7 @@ namespace dnSpy.MainApp {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public object SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;

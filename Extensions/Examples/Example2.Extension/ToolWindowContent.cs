@@ -121,7 +121,7 @@ namespace Example2.Extension {
 
 	sealed class ToolWindowVM : ViewModelBase {
 		public string StringOption1 {
-			get { return stringOption1; }
+			get => stringOption1;
 			set {
 				if (stringOption1 != value) {
 					stringOption1 = value;
@@ -132,7 +132,7 @@ namespace Example2.Extension {
 		string stringOption1 = string.Empty;
 
 		public string StringOption2 {
-			get { return stringOption2; }
+			get => stringOption2;
 			set {
 				if (stringOption2 != value) {
 					stringOption2 = value;
@@ -143,7 +143,7 @@ namespace Example2.Extension {
 		string stringOption2 = string.Empty;
 
 		public string StringOption3 {
-			get { return stringOption3; }
+			get => stringOption3;
 			set {
 				if (stringOption3 != value) {
 					stringOption3 = value;
@@ -154,7 +154,7 @@ namespace Example2.Extension {
 		string stringOption3 = string.Empty;
 
 		public string StringOption4 {
-			get { return stringOption4; }
+			get => stringOption4;
 			set {
 				if (stringOption4 != value) {
 					stringOption4 = value;

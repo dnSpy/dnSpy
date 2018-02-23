@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ICommand PickAssemblyCommand => new RelayCommand(a => PickAssembly(), a => IsAssemblyLinked);
 
 		ResourceType Type {
-			get { return type; }
+			get => type;
 			set {
 				if (type != value) {
 					type = value;
@@ -81,7 +81,7 @@ namespace dnSpy.AsmEditor.Resources {
 		ManifestResourceAttributes attrs;
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -92,7 +92,7 @@ namespace dnSpy.AsmEditor.Resources {
 		UTF8String name;
 
 		public AssemblyRef Assembly {
-			get { return assembly; }
+			get => assembly;
 			set {
 				if (assembly != value) {
 					assembly = value;
@@ -108,7 +108,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public HexStringVM FileHashValue { get; }
 
 		public string FileName {
-			get { return fileName; }
+			get => fileName;
 			set {
 				if (fileName != value) {
 					fileName = value;
@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.Resources {
 		UTF8String fileName;
 
 		public bool FileContainsNoMetaData {
-			get { return fileContainsNoMetaData; }
+			get => fileContainsNoMetaData;
 			set {
 				if (fileContainsNoMetaData != value) {
 					fileContainsNoMetaData = value;

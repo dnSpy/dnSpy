@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public ParamAttributes Attributes {
-			get { return attributes; }
+			get => attributes;
 			set {
 				if (attributes != value) {
 					attributes = value;
@@ -72,38 +72,38 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		ParamAttributes attributes;
 
 		public bool In {
-			get { return GetFlagValue(ParamAttributes.In); }
-			set { SetFlagValue(ParamAttributes.In, value); }
+			get => GetFlagValue(ParamAttributes.In);
+			set => SetFlagValue(ParamAttributes.In, value);
 		}
 
 		public bool Out {
-			get { return GetFlagValue(ParamAttributes.Out); }
-			set { SetFlagValue(ParamAttributes.Out, value); }
+			get => GetFlagValue(ParamAttributes.Out);
+			set => SetFlagValue(ParamAttributes.Out, value);
 		}
 
 		public bool Lcid {
-			get { return GetFlagValue(ParamAttributes.Lcid); }
-			set { SetFlagValue(ParamAttributes.Lcid, value); }
+			get => GetFlagValue(ParamAttributes.Lcid);
+			set => SetFlagValue(ParamAttributes.Lcid, value);
 		}
 
 		public bool Retval {
-			get { return GetFlagValue(ParamAttributes.Retval); }
-			set { SetFlagValue(ParamAttributes.Retval, value); }
+			get => GetFlagValue(ParamAttributes.Retval);
+			set => SetFlagValue(ParamAttributes.Retval, value);
 		}
 
 		public bool Optional {
-			get { return GetFlagValue(ParamAttributes.Optional); }
-			set { SetFlagValue(ParamAttributes.Optional, value); }
+			get => GetFlagValue(ParamAttributes.Optional);
+			set => SetFlagValue(ParamAttributes.Optional, value);
 		}
 
 		public bool HasDefault {
-			get { return GetFlagValue(ParamAttributes.HasDefault); }
-			set { SetFlagValue(ParamAttributes.HasDefault, value); }
+			get => GetFlagValue(ParamAttributes.HasDefault);
+			set => SetFlagValue(ParamAttributes.HasDefault, value);
 		}
 
 		public bool HasFieldMarshal {
-			get { return GetFlagValue(ParamAttributes.HasFieldMarshal); }
-			set { SetFlagValue(ParamAttributes.HasFieldMarshal, value); }
+			get => GetFlagValue(ParamAttributes.HasFieldMarshal);
+			set => SetFlagValue(ParamAttributes.HasFieldMarshal, value);
 		}
 
 		bool GetFlagValue(ParamAttributes flag) => (Attributes & flag) != 0;
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;

@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Images {
 		/// Gets/sets the image reference, eg. <see cref="DsImages.Assembly"/>
 		/// </summary>
 		public ImageReference ImageReference {
-			get { return (ImageReference)GetValue(ImageReferenceProperty); }
-			set { SetValue(ImageReferenceProperty, value); }
+			get => (ImageReference)GetValue(ImageReferenceProperty);
+			set => SetValue(ImageReferenceProperty, value);
 		}
 
 		/// <summary>

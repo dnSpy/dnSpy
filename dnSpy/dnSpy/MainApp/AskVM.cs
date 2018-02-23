@@ -28,7 +28,7 @@ namespace dnSpy.MainApp {
 		readonly string labelMessage;
 
 		public string Text {
-			get { return text; }
+			get => text;
 			set {
 				if (text != value) {
 					text = value;

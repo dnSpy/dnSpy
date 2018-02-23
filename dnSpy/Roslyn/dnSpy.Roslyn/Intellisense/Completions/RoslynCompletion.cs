@@ -32,7 +32,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 
 		public override string Description {
 			// Need to return a non-empty string or no tooltip is shown
-			get { return "."; }
+			get => ".";
 			set { }
 		}
 
@@ -45,7 +45,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		protected override ImageMoniker GetIconMoniker() => imageMonikerService.ToImageMoniker(CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? default);
 
 		public override IEnumerable<CompletionIcon> AttributeIcons {
-			get { return GetAttributeIcons(); }
+			get => GetAttributeIcons();
 			set { }
 		}
 

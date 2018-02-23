@@ -51,7 +51,7 @@ namespace dnSpy.Search {
 		public ISearchSettings SearchSettings { get; }
 
 		public bool TooManyResults {
-			get { return tooManyResults; }
+			get => tooManyResults;
 			set {
 				if (tooManyResults != value) {
 					tooManyResults = value;
@@ -72,7 +72,7 @@ namespace dnSpy.Search {
 		public ObservableCollection<SearchTypeVM> SearchTypeVMs { get; }
 
 		public SearchTypeVM SelectedSearchTypeVM {
-			get { return selectedSearchTypeVM; }
+			get => selectedSearchTypeVM;
 			set {
 				if (selectedSearchTypeVM != value) {
 					selectedSearchTypeVM = value;
@@ -89,7 +89,7 @@ namespace dnSpy.Search {
 		public ObservableCollection<ISearchResult> SearchResults { get; }
 
 		public ISearchResult SelectedSearchResult {
-			get { return selectedSearchResult; }
+			get => selectedSearchResult;
 			set {
 				if (selectedSearchResult != value) {
 					selectedSearchResult = value;
@@ -100,7 +100,7 @@ namespace dnSpy.Search {
 		ISearchResult selectedSearchResult;
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;
@@ -113,7 +113,7 @@ namespace dnSpy.Search {
 		readonly DelayedAction delayedSearch;
 
 		public IDecompiler Decompiler {
-			get { return decompiler; }
+			get => decompiler;
 			set {
 				if (decompiler != value) {
 					decompiler = value;

@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Commands {
 		void OnPropertyChanged(string propName) => OnPropertyChanged(new PropertyChangedEventArgs(propName));
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Commands {
 		bool isEnabled = true;
 
 		public int SelectedIndex {
-			get { return selectedIndex; }
+			get => selectedIndex;
 			set {
 				if (selectedIndex != value) {
 					selectedIndex = value;

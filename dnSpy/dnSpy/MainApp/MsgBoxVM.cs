@@ -31,7 +31,7 @@ namespace dnSpy.MainApp {
 		public string Message { get; }
 
 		public bool DontShowAgain {
-			get { return dontShowAgain; }
+			get => dontShowAgain;
 			set {
 				if (dontShowAgain != value) {
 					dontShowAgain = value;
@@ -42,7 +42,7 @@ namespace dnSpy.MainApp {
 		bool dontShowAgain;
 
 		public bool HasDontShowAgain {
-			get { return hasDontShowAgain; }
+			get => hasDontShowAgain;
 			set {
 				if (hasDontShowAgain != value) {
 					hasDontShowAgain = value;
@@ -53,7 +53,7 @@ namespace dnSpy.MainApp {
 		bool hasDontShowAgain;
 
 		public bool HasOKButton {
-			get { return hasOKButton; }
+			get => hasOKButton;
 			set {
 				if (hasOKButton != value) {
 					hasOKButton = value;
@@ -64,7 +64,7 @@ namespace dnSpy.MainApp {
 		bool hasOKButton;
 
 		public bool HasYesButton {
-			get { return hasYesButton; }
+			get => hasYesButton;
 			set {
 				if (hasYesButton != value) {
 					hasYesButton = value;
@@ -75,7 +75,7 @@ namespace dnSpy.MainApp {
 		bool hasYesButton;
 
 		public bool HasNoButton {
-			get { return hasNoButton; }
+			get => hasNoButton;
 			set {
 				if (hasNoButton != value) {
 					hasNoButton = value;
@@ -86,7 +86,7 @@ namespace dnSpy.MainApp {
 		bool hasNoButton;
 
 		public bool HasCancelButton {
-			get { return hasCancelButton; }
+			get => hasCancelButton;
 			set {
 				if (hasCancelButton != value) {
 					hasCancelButton = value;

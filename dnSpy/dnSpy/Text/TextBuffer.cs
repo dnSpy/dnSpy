@@ -73,7 +73,7 @@ namespace dnSpy.Text {
 		}
 
 		internal TextDocument Document {
-			get { return document; }
+			get => document;
 			private set {
 				if (document != null)
 					throw new InvalidOperationException();

@@ -72,7 +72,7 @@ namespace dnSpy.Text.Editor {
 			public int CountInDocument => inDocMarkers.Count;
 
 			public int SelectedMarkersInDocumentCount {
-				get { return selectedMarkersInDocumentCount; }
+				get => selectedMarkersInDocumentCount;
 				set {
 					Debug.Assert(value >= 0);
 					if (selectedMarkersInDocumentCount == value)
@@ -316,7 +316,7 @@ namespace dnSpy.Text.Editor {
 			readonly Geometry geometry;
 
 			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+				get => backgroundBrush;
 				set {
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -327,7 +327,7 @@ namespace dnSpy.Text.Editor {
 			Brush backgroundBrush;
 
 			public Pen Pen {
-				get { return pen; }
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;

@@ -32,7 +32,7 @@ namespace dnSpy.ToolWindows {
 		public IEnumerable<ToolWindowContent> TabContents => TabContentImpls.Select(a => a.Content);
 
 		public ToolWindowContent ActiveTabContent {
-			get { return ((TabContentImpl)TabGroup.ActiveTabContent)?.Content; }
+			get => ((TabContentImpl)TabGroup.ActiveTabContent)?.Content;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

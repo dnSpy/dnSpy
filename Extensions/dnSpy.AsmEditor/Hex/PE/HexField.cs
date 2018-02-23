@@ -522,7 +522,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 	sealed class BooleanHexBitField : HexBitField {
 		public bool BitValue {
-			get { return boolean; }
+			get => boolean;
 			set {
 				if (SetBitValue(value))
 					Owner.Updated(this);
@@ -606,7 +606,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt32HexField SizeVM { get; }
 
 		public bool IsVisible {
-			get { return isVisible; }
+			get => isVisible;
 			set {
 				if (isVisible != value) {
 					isVisible = value;

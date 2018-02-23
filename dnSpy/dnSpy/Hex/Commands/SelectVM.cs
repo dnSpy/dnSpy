@@ -40,7 +40,7 @@ namespace dnSpy.Hex.Commands {
 		public ObservableCollection<PositionLengthVM> PositionLengthCollection { get; }
 
 		public PositionVM PositionsCollectionSelectedItem {
-			get { return positionsCollectionSelectedItem; }
+			get => positionsCollectionSelectedItem;
 			set {
 				if (positionsCollectionSelectedItem != value) {
 					positionsCollectionSelectedItem = value;
@@ -51,7 +51,7 @@ namespace dnSpy.Hex.Commands {
 		PositionVM positionsCollectionSelectedItem;
 
 		public PositionLengthVM PositionLengthCollectionSelectedItem {
-			get { return positionLengthCollectionSelectedItem; }
+			get => positionLengthCollectionSelectedItem;
 			set {
 				if (positionLengthCollectionSelectedItem != value) {
 					positionLengthCollectionSelectedItem = value;
@@ -62,13 +62,13 @@ namespace dnSpy.Hex.Commands {
 		PositionLengthVM positionLengthCollectionSelectedItem;
 
 		public PositionKind PositionKind {
-			get { return PositionsCollectionSelectedItem.Kind; }
-			set { PositionsCollectionSelectedItem = PositionsCollection.First(a => a.Kind == value); }
+			get => PositionsCollectionSelectedItem.Kind;
+			set => PositionsCollectionSelectedItem = PositionsCollection.First(a => a.Kind == value);
 		}
 
 		public SelectPositionLengthKind PositionLengthKind {
-			get { return PositionLengthCollectionSelectedItem.Kind; }
-			set { PositionLengthCollectionSelectedItem = PositionLengthCollection.First(a => a.Kind == value); }
+			get => PositionLengthCollectionSelectedItem.Kind;
+			set => PositionLengthCollectionSelectedItem = PositionLengthCollection.First(a => a.Kind == value);
 		}
 
 		public SelectVM(HexPosition start, HexPosition end) {

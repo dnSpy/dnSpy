@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand AppendInstructionCommand => new RelayCommand(a => AppendInstruction(), a => AppendInstructionCanExecute());
 
 		public int SelectedIndex {
-			get { return selectedIndex; }
+			get => selectedIndex;
 			set {
 				if (selectedIndex != value) {
 					selectedIndex = value;

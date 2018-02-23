@@ -32,7 +32,7 @@ namespace dnSpy.Output {
 		protected virtual void OnModified() { }
 
 		public Guid SelectedGuid {
-			get { return selectedGuid; }
+			get => selectedGuid;
 			set {
 				if (selectedGuid != value) {
 					selectedGuid = value;

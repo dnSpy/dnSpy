@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand EditOtherCommand => new RelayCommand(a => EditOther(a), a => EditOtherCanExecute(a));
 
 		public InstructionOperandType InstructionOperandType {
-			get { return operandType; }
+			get => operandType;
 			set {
 				if (operandType != value) {
 					operandType = value;
@@ -242,7 +242,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public StringVM String { get; }
 
 		public object Other {
-			get { return other; }
+			get => other;
 			set {
 				if (other != value) {
 					other = value;
@@ -254,8 +254,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		object other;
 
 		public object OperandListItem {
-			get { return OperandListVM.SelectedItem; }
-			set { OperandListVM.SelectedItem = value; }
+			get => OperandListVM.SelectedItem;
+			set => OperandListVM.SelectedItem = value;
 		}
 
 		public ListVM<object> OperandListVM { get; }

@@ -60,8 +60,8 @@ namespace dnSpy.Decompiler {
 		IDecompiler decompiler;
 
 		public event EventHandler<EventArgs> DecompilerChanged {
-			add { decompilerChanged.Add(value); }
-			remove { decompilerChanged.Remove(value); }
+			add => decompilerChanged.Add(value);
+			remove => decompilerChanged.Remove(value);
 		}
 		readonly WeakEventList<EventArgs> decompilerChanged;
 

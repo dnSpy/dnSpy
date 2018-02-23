@@ -32,7 +32,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;

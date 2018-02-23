@@ -33,10 +33,8 @@ namespace dnSpy.Text.Operations {
 		public IList<ITextUndoPrimitive> UndoPrimitives => readOnlyUndoPrimitives;
 
 		public string Description {
-			get { return description; }
-			set {
-				description = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => description;
+			set => description = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		string description;
 

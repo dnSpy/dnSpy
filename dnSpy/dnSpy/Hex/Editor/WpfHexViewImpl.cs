@@ -535,7 +535,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override Brush Background {
-			get { return canvas.Background; }
+			get => canvas.Background;
 			set {
 				if (canvas.Background != value) {
 					canvas.Background = value;
@@ -546,7 +546,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override double ZoomLevel {
-			get { return zoomLevel; }
+			get => zoomLevel;
 			set {
 				if (IsClosed)
 					return;
@@ -586,7 +586,7 @@ namespace dnSpy.Hex.Editor {
 		public override double ViewportWidth => canvas.ActualWidth;
 		public override double ViewportHeight => canvas.ActualHeight;
 		public override double ViewportLeft {
-			get { return viewportLeft; }
+			get => viewportLeft;
 			set {
 				if (double.IsNaN(value))
 					throw new ArgumentOutOfRangeException(nameof(value));
@@ -1048,8 +1048,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override event EventHandler<HexMouseHoverEventArgs> MouseHover {
-			add { mouseHoverHelper.MouseHover += value; }
-			remove { mouseHoverHelper.MouseHover -= value; }
+			add => mouseHoverHelper.MouseHover += value;
+			remove => mouseHoverHelper.MouseHover -= value;
 		}
 		readonly MouseHoverHelper mouseHoverHelper;
 

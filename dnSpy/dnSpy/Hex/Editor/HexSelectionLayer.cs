@@ -33,7 +33,7 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Hex.Editor {
 	sealed class HexSelectionLayer {
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			set {
 				if (isActive != value) {
 					isActive = value;
@@ -142,7 +142,7 @@ namespace dnSpy.Hex.Editor {
 			readonly Geometry geometry;
 
 			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+				get => backgroundBrush;
 				set {
 					if (value == null)
 						throw new ArgumentNullException(nameof(value));
@@ -155,7 +155,7 @@ namespace dnSpy.Hex.Editor {
 			Brush backgroundBrush;
 
 			public Pen Pen {
-				get { return pen; }
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;

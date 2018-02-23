@@ -30,10 +30,8 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		public ITextView TextView { get; }
 
 		public string SearchString {
-			get { return searchString; }
-			set {
-				searchString = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => searchString;
+			set => searchString = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		string searchString;
 

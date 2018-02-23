@@ -33,12 +33,12 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler PresentationSpanChanged;
 
 		public double Opacity {
-			get { return control.Opacity; }
-			set { control.Opacity = value; }
+			get => control.Opacity;
+			set => control.Opacity = value;
 		}
 
 		public ITrackingSpan PresentationSpan {
-			get { return presentationSpan; }
+			get => presentationSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;

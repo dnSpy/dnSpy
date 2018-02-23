@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public VirtualizedList<MetaDataTableRecordVM> Collection { get; }
 
 		public object SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;

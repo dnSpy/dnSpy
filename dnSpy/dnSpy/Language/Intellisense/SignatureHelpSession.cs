@@ -42,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler Recalculated;
 
 		public ISignature SelectedSignature {
-			get { return selectedSignature; }
+			get => selectedSignature;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

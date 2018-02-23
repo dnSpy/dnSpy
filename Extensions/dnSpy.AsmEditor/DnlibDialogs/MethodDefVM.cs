@@ -26,7 +26,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MethodDef origMethod;
 
 		public MethodDef Method {
-			get { return method; }
+			get => method;
 			set {
 				if (method != value) {
 					method = value;

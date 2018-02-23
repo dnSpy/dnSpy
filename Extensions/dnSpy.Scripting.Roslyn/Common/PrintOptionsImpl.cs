@@ -26,28 +26,28 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly PrintOptions printOptions;
 
 		public string Ellipsis {
-			get { return printOptions.Ellipsis; }
-			set { printOptions.Ellipsis = value; }
+			get => printOptions.Ellipsis;
+			set => printOptions.Ellipsis = value;
 		}
 
 		public bool EscapeNonPrintableCharacters {
-			get { return printOptions.EscapeNonPrintableCharacters; }
-			set { printOptions.EscapeNonPrintableCharacters = value; }
+			get => printOptions.EscapeNonPrintableCharacters;
+			set => printOptions.EscapeNonPrintableCharacters = value;
 		}
 
 		public int MaximumOutputLength {
-			get { return printOptions.MaximumOutputLength; }
-			set { printOptions.MaximumOutputLength = value; }
+			get => printOptions.MaximumOutputLength;
+			set => printOptions.MaximumOutputLength = value;
 		}
 
 		public Contracts.Scripting.Roslyn.MemberDisplayFormat MemberDisplayFormat {
-			get { return (Contracts.Scripting.Roslyn.MemberDisplayFormat)printOptions.MemberDisplayFormat; }
-			set { printOptions.MemberDisplayFormat = (Microsoft.CodeAnalysis.Scripting.Hosting.MemberDisplayFormat)value; }
+			get => (Contracts.Scripting.Roslyn.MemberDisplayFormat)printOptions.MemberDisplayFormat;
+			set => printOptions.MemberDisplayFormat = (Microsoft.CodeAnalysis.Scripting.Hosting.MemberDisplayFormat)value;
 		}
 
 		public int NumberRadix {
-			get { return printOptions.NumberRadix; }
-			set { printOptions.NumberRadix = value; }
+			get => printOptions.NumberRadix;
+			set => printOptions.NumberRadix = value;
 		}
 
 		public bool AutoColorizeObjects { get; set; }

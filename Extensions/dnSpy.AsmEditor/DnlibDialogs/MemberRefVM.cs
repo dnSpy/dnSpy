@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand PickModuleRefCommand => new RelayCommand(a => PickModuleRef());
 
 		public IMemberRefParent Class {
-			get { return @class; }
+			get => @class;
 			set {
 				if (@class != value) {
 					@class = value;
@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;

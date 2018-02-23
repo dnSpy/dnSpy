@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Editor {
 		const double INACTIVE_CARET_HEIGHT = 2.0;
 
 		public HexColumnType ActiveColumn {
-			get { return activeColumn; }
+			get => activeColumn;
 			set {
 				if (value != HexColumnType.Values && value != HexColumnType.Ascii)
 					throw new ArgumentOutOfRangeException(nameof(value));
@@ -51,7 +51,7 @@ namespace dnSpy.Hex.Editor {
 		HexColumnType activeColumn;
 
 		public bool IsValuesCaretPresent {
-			get { return isValuesCaretPresent; }
+			get => isValuesCaretPresent;
 			set {
 				if (isValuesCaretPresent != value) {
 					isValuesCaretPresent = value;
@@ -62,7 +62,7 @@ namespace dnSpy.Hex.Editor {
 		bool isValuesCaretPresent;
 
 		public bool IsAsciiCaretPresent {
-			get { return isAsciiCaretPresent; }
+			get => isAsciiCaretPresent;
 			set {
 				if (isAsciiCaretPresent != value) {
 					isAsciiCaretPresent = value;
@@ -85,7 +85,7 @@ namespace dnSpy.Hex.Editor {
 		DispatcherTimer dispatcherTimer;
 
 		public bool OverwriteMode {
-			get { return overwriteMode; }
+			get => overwriteMode;
 			set {
 				if (overwriteMode != value) {
 					overwriteMode = value;
@@ -137,7 +137,7 @@ namespace dnSpy.Hex.Editor {
 		public double AsciiWidth => asciiCaretGeometry.Rect.Width;
 
 		public bool IsHidden {
-			get { return isHidden; }
+			get => isHidden;
 			set {
 				if (isHidden == value)
 					return;

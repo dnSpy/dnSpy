@@ -35,12 +35,12 @@ namespace dnSpy.Hex.Editor {
 		public override event EventHandler SelectionChanged;
 
 		public override bool IsActive {
-			get { return hexSelectionLayer.IsActive; }
-			set { hexSelectionLayer.IsActive = value; }
+			get => hexSelectionLayer.IsActive;
+			set => hexSelectionLayer.IsActive = value;
 		}
 
 		public override bool ActivationTracksFocus {
-			get { return activationTracksFocus; }
+			get => activationTracksFocus;
 			set {
 				if (activationTracksFocus == value)
 					return;

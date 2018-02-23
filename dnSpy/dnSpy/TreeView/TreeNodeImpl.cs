@@ -40,7 +40,7 @@ namespace dnSpy.TreeView {
 		}
 
 		public bool LazyLoading {
-			get { return Node.LazyLoading; }
+			get => Node.LazyLoading;
 			set {
 				if (Node.LazyLoading != value)
 					Node.LazyLoading = value;
@@ -48,13 +48,13 @@ namespace dnSpy.TreeView {
 		}
 
 		public bool IsExpanded {
-			get { return Node.IsExpanded; }
-			set { Node.IsExpanded = value; }
+			get => Node.IsExpanded;
+			set => Node.IsExpanded = value;
 		}
 
 		public bool IsHidden {
-			get { return Node.IsHidden; }
-			set { Node.IsHidden = value; }
+			get => Node.IsHidden;
+			set => Node.IsHidden = value;
 		}
 
 		public bool IsVisible => Node.IsVisible;

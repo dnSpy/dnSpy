@@ -107,7 +107,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		bool isResetting;
 
 		public bool WordWrap {
-			get { return (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0; }
+			get => (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 			set {
 				if (value)
 					WordWrapStyle |= WordWrapStyles.WordWrap;
@@ -117,7 +117,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		WordWrapStyles WordWrapStyle {
-			get { return ReplEditor.TextView.Options.WordWrapStyle(); }
+			get => ReplEditor.TextView.Options.WordWrapStyle();
 			set {
 				var oldWordWrapStyle = WordWrapStyle;
 				if (value == oldWordWrapStyle)
@@ -131,7 +131,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		bool ShowLineNumbers {
-			get { return ReplEditor.TextView.Options.IsLineNumberMarginEnabled(); }
+			get => ReplEditor.TextView.Options.IsLineNumberMarginEnabled();
 			set {
 				if (ShowLineNumbers == value)
 					return;

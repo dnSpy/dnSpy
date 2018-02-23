@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		protected virtual void OnModified() { }
 
 		public ProjectVersion ProjectVersion {
-			get { return projectVersion; }
+			get => projectVersion;
 			set {
 				if (projectVersion != value) {
 					projectVersion = value;

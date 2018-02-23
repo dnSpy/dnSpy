@@ -68,7 +68,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public ITrackingSpan PresentationSpan {
-			get { return presentationSpan; }
+			get => presentationSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
@@ -79,8 +79,8 @@ namespace dnSpy.Language.Intellisense {
 		ITrackingSpan presentationSpan;
 
 		public double Opacity {
-			get { return control.Opacity; }
-			set { control.Opacity = value; }
+			get => control.Opacity;
+			set => control.Opacity = value;
 		}
 
 		readonly SignatureHelpPresenterControl control;

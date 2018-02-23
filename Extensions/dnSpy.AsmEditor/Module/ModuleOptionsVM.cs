@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Module {
 		public NullableGuidVM EncBaseId { get; }
 
 		public string Name {
-			get { return options.Name; }
+			get => options.Name;
 			set {
 				options.Name = value;
 				OnPropertyChanged(nameof(Name));
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Module {
 		public EnumListVM ModuleKind { get; }
 
 		public Characteristics Characteristics {
-			get { return options.Characteristics; }
+			get => options.Characteristics;
 			set {
 				if (options.Characteristics != value) {
 					options.Characteristics = value;
@@ -93,83 +93,83 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public bool RelocsStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.RelocsStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.RelocsStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.RelocsStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.RelocsStripped, value);
 		}
 
 		public bool ExecutableImage {
-			get { return GetFlagValue(dnlib.PE.Characteristics.ExecutableImage); }
-			set { SetFlagValue(dnlib.PE.Characteristics.ExecutableImage, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.ExecutableImage);
+			set => SetFlagValue(dnlib.PE.Characteristics.ExecutableImage, value);
 		}
 
 		public bool LineNumsStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.LineNumsStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.LineNumsStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.LineNumsStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.LineNumsStripped, value);
 		}
 
 		public bool LocalSymsStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped, value);
 		}
 
 		public bool AggressiveWsTrim {
-			get { return GetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim); }
-			set { SetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim);
+			set => SetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim, value);
 		}
 
 		public bool LargeAddressAware {
-			get { return GetFlagValue(dnlib.PE.Characteristics.LargeAddressAware); }
-			set { SetFlagValue(dnlib.PE.Characteristics.LargeAddressAware, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.LargeAddressAware);
+			set => SetFlagValue(dnlib.PE.Characteristics.LargeAddressAware, value);
 		}
 
 		public bool CharacteristicsReserved1 {
-			get { return GetFlagValue(dnlib.PE.Characteristics.Reserved1); }
-			set { SetFlagValue(dnlib.PE.Characteristics.Reserved1, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.Reserved1);
+			set => SetFlagValue(dnlib.PE.Characteristics.Reserved1, value);
 		}
 
 		public bool BytesReversedLo {
-			get { return GetFlagValue(dnlib.PE.Characteristics.BytesReversedLo); }
-			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedLo, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.BytesReversedLo);
+			set => SetFlagValue(dnlib.PE.Characteristics.BytesReversedLo, value);
 		}
 
 		public bool Bit32Machine {
-			get { return GetFlagValue(dnlib.PE.Characteristics._32BitMachine); }
-			set { SetFlagValue(dnlib.PE.Characteristics._32BitMachine, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics._32BitMachine);
+			set => SetFlagValue(dnlib.PE.Characteristics._32BitMachine, value);
 		}
 
 		public bool DebugStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.DebugStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.DebugStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.DebugStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.DebugStripped, value);
 		}
 
 		public bool RemovableRunFromSwap {
-			get { return GetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap); }
-			set { SetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap);
+			set => SetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap, value);
 		}
 
 		public bool NetRunFromSwap {
-			get { return GetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap); }
-			set { SetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap);
+			set => SetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap, value);
 		}
 
 		public bool System {
-			get { return GetFlagValue(dnlib.PE.Characteristics.System); }
-			set { SetFlagValue(dnlib.PE.Characteristics.System, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.System);
+			set => SetFlagValue(dnlib.PE.Characteristics.System, value);
 		}
 
 		public bool Dll {
-			get { return GetFlagValue(dnlib.PE.Characteristics.Dll); }
-			set { SetFlagValue(dnlib.PE.Characteristics.Dll, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.Dll);
+			set => SetFlagValue(dnlib.PE.Characteristics.Dll, value);
 		}
 
 		public bool UpSystemOnly {
-			get { return GetFlagValue(dnlib.PE.Characteristics.UpSystemOnly); }
-			set { SetFlagValue(dnlib.PE.Characteristics.UpSystemOnly, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.UpSystemOnly);
+			set => SetFlagValue(dnlib.PE.Characteristics.UpSystemOnly, value);
 		}
 
 		public bool BytesReversedHi {
-			get { return GetFlagValue(dnlib.PE.Characteristics.BytesReversedHi); }
-			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.BytesReversedHi);
+			set => SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value);
 		}
 
 		bool GetFlagValue(Characteristics flag) => (Characteristics & flag) != 0;
@@ -182,7 +182,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public DllCharacteristics DllCharacteristics {
-			get { return options.DllCharacteristics; }
+			get => options.DllCharacteristics;
 			set {
 				if (options.DllCharacteristics != value) {
 					options.DllCharacteristics = value;
@@ -208,83 +208,83 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public bool DllCharacteristicsReserved1 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved1); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved1, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved1);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved1, value);
 		}
 
 		public bool DllCharacteristicsReserved2 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved2); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved2, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved2);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved2, value);
 		}
 
 		public bool DllCharacteristicsReserved3 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved3); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved3, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved3);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved3, value);
 		}
 
 		public bool DllCharacteristicsReserved4 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved4); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved4, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved4);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved4, value);
 		}
 
 		public bool DllCharacteristicsReserved5 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved5); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved5, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved5);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved5, value);
 		}
 
 		public bool HighEntropyVA {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA, value);
 		}
 
 		public bool DynamicBase {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase, value);
 		}
 
 		public bool ForceIntegrity {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity, value);
 		}
 
 		public bool NxCompat {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NxCompat); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NxCompat, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NxCompat);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NxCompat, value);
 		}
 
 		public bool NoIsolation {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation, value);
 		}
 
 		public bool NoSeh {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NoSeh); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NoSeh, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NoSeh);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NoSeh, value);
 		}
 
 		public bool NoBind {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NoBind); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NoBind, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NoBind);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NoBind, value);
 		}
 
 		public bool AppContainer {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.AppContainer); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.AppContainer, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.AppContainer);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.AppContainer, value);
 		}
 
 		public bool WdmDriver {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver, value);
 		}
 
 		public bool GuardCf {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.GuardCf); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.GuardCf, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.GuardCf);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.GuardCf, value);
 		}
 
 		public bool TerminalServerAware {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value);
 		}
 
 		bool GetFlagValue(DllCharacteristics flag) => (DllCharacteristics & flag) != 0;
@@ -297,7 +297,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public string RuntimeVersion {
-			get { return options.RuntimeVersion; }
+			get => options.RuntimeVersion;
 			set {
 				options.RuntimeVersion = value;
 				OnPropertyChanged(nameof(RuntimeVersion));
@@ -309,7 +309,7 @@ namespace dnSpy.AsmEditor.Module {
 		public EnumListVM Machine { get; }
 
 		public ComImageFlags Cor20HeaderFlags {
-			get { return options.Cor20HeaderFlags; }
+			get => options.Cor20HeaderFlags;
 			set {
 				if (options.Cor20HeaderFlags != value) {
 					options.Cor20HeaderFlags = value;
@@ -325,33 +325,33 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public bool ILOnly {
-			get { return GetFlagValue(ComImageFlags.ILOnly); }
-			set { SetFlagValue(ComImageFlags.ILOnly, value); }
+			get => GetFlagValue(ComImageFlags.ILOnly);
+			set => SetFlagValue(ComImageFlags.ILOnly, value);
 		}
 
 		public bool Bit32Required {
-			get { return GetFlagValue(ComImageFlags._32BitRequired); }
-			set { SetFlagValue(ComImageFlags._32BitRequired, value); }
+			get => GetFlagValue(ComImageFlags._32BitRequired);
+			set => SetFlagValue(ComImageFlags._32BitRequired, value);
 		}
 
 		public bool ILLibrary {
-			get { return GetFlagValue(ComImageFlags.ILLibrary); }
-			set { SetFlagValue(ComImageFlags.ILLibrary, value); }
+			get => GetFlagValue(ComImageFlags.ILLibrary);
+			set => SetFlagValue(ComImageFlags.ILLibrary, value);
 		}
 
 		public bool StrongNameSigned {
-			get { return GetFlagValue(ComImageFlags.StrongNameSigned); }
-			set { SetFlagValue(ComImageFlags.StrongNameSigned, value); }
+			get => GetFlagValue(ComImageFlags.StrongNameSigned);
+			set => SetFlagValue(ComImageFlags.StrongNameSigned, value);
 		}
 
 		public bool TrackDebugData {
-			get { return GetFlagValue(ComImageFlags.TrackDebugData); }
-			set { SetFlagValue(ComImageFlags.TrackDebugData, value); }
+			get => GetFlagValue(ComImageFlags.TrackDebugData);
+			set => SetFlagValue(ComImageFlags.TrackDebugData, value);
 		}
 
 		public bool Bit32Preferred {
-			get { return GetFlagValue(ComImageFlags._32BitPreferred); }
-			set { SetFlagValue(ComImageFlags._32BitPreferred, value); }
+			get => GetFlagValue(ComImageFlags._32BitPreferred);
+			set => SetFlagValue(ComImageFlags._32BitPreferred, value);
 		}
 
 		bool GetFlagValue(ComImageFlags flag) => (Cor20HeaderFlags & flag) != 0;
@@ -367,7 +367,7 @@ namespace dnSpy.AsmEditor.Module {
 		public NullableUInt16VM TablesHeaderVersion { get; }
 
 		public EntryPointType EntryPointEnum {
-			get { return entryPointEnum; }
+			get => entryPointEnum;
 			set {
 				if (entryPointEnum != value) {
 					entryPointEnum = value;
@@ -382,7 +382,7 @@ namespace dnSpy.AsmEditor.Module {
 		EntryPointType entryPointEnum;
 
 		public IManagedEntryPoint ManagedEntryPoint {
-			get { return managedEntryPoint; }
+			get => managedEntryPoint;
 			set {
 				if (managedEntryPoint != value) {
 					managedEntryPoint = value;

@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public ITypeDefOrRef AttributeType {
-			get { return attributeType; }
+			get => attributeType;
 			set {
 				if (attributeType != value) {
 					attributeType = value;

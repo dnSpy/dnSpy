@@ -50,7 +50,7 @@ namespace dnSpy.ToolWindows {
 		public IInputElement FocusedElement => Content.FocusedElement ?? Content.UIObject as IInputElement;
 
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			set {
 				if (isActive != value) {
 					isActive = value;

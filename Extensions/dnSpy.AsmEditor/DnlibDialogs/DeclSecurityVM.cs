@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string FullName => SecurityActionEnumList.SelectedItem.ToString();
 
 		public string V1XMLString {
-			get { return v1XMLString; }
+			get => v1XMLString;
 			set {
 				if (v1XMLString != value) {
 					v1XMLString = value;

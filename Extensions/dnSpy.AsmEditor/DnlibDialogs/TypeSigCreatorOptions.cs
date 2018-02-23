@@ -30,26 +30,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool NullTypeSigAllowed { get; set; }
 
 		public TypeDef OwnerType {
-			get { return ownerType ?? (OwnerMethod == null ? null : OwnerMethod.DeclaringType); }
-			set { ownerType = value; }
+			get => ownerType ?? (OwnerMethod == null ? null : OwnerMethod.DeclaringType);
+			set => ownerType = value;
 		}
 		TypeDef ownerType;
 
 		public MethodDef OwnerMethod { get; set; }
 
 		public ModuleDef OwnerModule {
-			get { return module; }
-			private set {
-				module = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => module;
+			private set => module = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		ModuleDef module;
 
 		public IDecompiler Decompiler {
-			get { return decompiler; }
-			set {
-				decompiler = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => decompiler;
+			set => decompiler = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		IDecompiler decompiler;
 

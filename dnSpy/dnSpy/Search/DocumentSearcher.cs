@@ -46,12 +46,12 @@ namespace dnSpy.Search {
 		readonly FilterSearcherOptions filterSearcherOptions;
 
 		public bool SyntaxHighlight {
-			get { return filterSearcherOptions.Context.SyntaxHighlight; }
-			set { filterSearcherOptions.Context.SyntaxHighlight = value; }
+			get => filterSearcherOptions.Context.SyntaxHighlight;
+			set => filterSearcherOptions.Context.SyntaxHighlight = value;
 		}
 
 		public IDecompiler Decompiler {
-			get { return filterSearcherOptions.Context.Decompiler; }
+			get => filterSearcherOptions.Context.Decompiler;
 			set {
 				filterSearcherOptions.Context.Decompiler = value ?? throw new ArgumentNullException(nameof(value));
 			}

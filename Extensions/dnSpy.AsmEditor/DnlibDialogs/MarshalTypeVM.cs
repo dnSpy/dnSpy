@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool NativeType_IsEnabled => IsEnabled;
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -177,23 +177,23 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public bool SafeArrayMarshalType_VT_Vector {
-			get { return GetFlagValue(VariantType.Vector); }
-			set { SetFlagValue(VariantType.Vector, value); }
+			get => GetFlagValue(VariantType.Vector);
+			set => SetFlagValue(VariantType.Vector, value);
 		}
 
 		public bool SafeArrayMarshalType_VT_Array {
-			get { return GetFlagValue(VariantType.Array); }
-			set { SetFlagValue(VariantType.Array, value); }
+			get => GetFlagValue(VariantType.Array);
+			set => SetFlagValue(VariantType.Array, value);
 		}
 
 		public bool SafeArrayMarshalType_VT_ByRef {
-			get { return GetFlagValue(VariantType.ByRef); }
-			set { SetFlagValue(VariantType.ByRef, value); }
+			get => GetFlagValue(VariantType.ByRef);
+			set => SetFlagValue(VariantType.ByRef, value);
 		}
 
 		public bool SafeArrayMarshalType_VT_Reserved {
-			get { return GetFlagValue(VariantType.Reserved); }
-			set { SetFlagValue(VariantType.Reserved, value); }
+			get => GetFlagValue(VariantType.Reserved);
+			set => SetFlagValue(VariantType.Reserved, value);
 		}
 
 		bool GetFlagValue(VariantType flag) => (SafeArrayMarshalType_VT & flag) != 0;
@@ -223,7 +223,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool ArrayMarshalType_Flags_IsEnabled => ArrayMarshalType_NumElems_IsEnabled && !ArrayMarshalType_NumElems.IsNull;
 
 		public string CustomMarshalType_GUID {
-			get { return customMarshalType_guid; }
+			get => customMarshalType_guid;
 			set {
 				if (customMarshalType_guid != value) {
 					customMarshalType_guid = value;
@@ -237,7 +237,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool CustomMarshalType_GUID_IsEnabled => IsEnabled;
 
 		public string CustomMarshalType_NativeTypeName {
-			get { return customMarshalType_nativeTypeName; }
+			get => customMarshalType_nativeTypeName;
 			set {
 				if (customMarshalType_nativeTypeName != value) {
 					customMarshalType_nativeTypeName = value;
@@ -253,7 +253,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled => IsEnabled;
 
 		public string CustomMarshalType_Cookie {
-			get { return customMarshalType_cookie; }
+			get => customMarshalType_cookie;
 			set {
 				if (customMarshalType_cookie != value) {
 					customMarshalType_cookie = value;

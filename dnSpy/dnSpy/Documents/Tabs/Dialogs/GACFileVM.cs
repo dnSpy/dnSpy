@@ -57,7 +57,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string fileVersion;
 
 		public bool IsDuplicate {
-			get { return isDuplicate; }
+			get => isDuplicate;
 			set {
 				if (isDuplicate != value) {
 					isDuplicate = value;

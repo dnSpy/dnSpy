@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand EditCatchTypeCommand => new RelayCommand(a => EditCatchType());
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ListVM<InstructionVM> HandlerEndVM { get; }
 
 		public ITypeDefOrRef CatchType {
-			get { return catchType; }
+			get => catchType;
 			set {
 				if (catchType != value) {
 					catchType = value;

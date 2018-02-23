@@ -33,7 +33,7 @@ namespace dnSpy.Decompiler {
 		protected virtual void OnModified() { }
 
 		public Guid LanguageGuid {
-			get { return languageGuid; }
+			get => languageGuid;
 			set {
 				if (languageGuid != value) {
 					languageGuid = value;

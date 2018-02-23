@@ -43,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler Committed;
 
 		public CompletionSet SelectedCompletionSet {
-			get { return selectedCompletionSet; }
+			get => selectedCompletionSet;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

@@ -603,9 +603,7 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 		}
 
-		bool ICollection<DocumentLine>.IsReadOnly {
-			get { return true; }
-		}
+		bool ICollection<DocumentLine>.IsReadOnly => true;
 
 		int IList<DocumentLine>.IndexOf(DocumentLine item) {
 			document.VerifyAccess();
@@ -619,11 +617,8 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		void IList<DocumentLine>.Insert(int index, DocumentLine item) => throw new NotSupportedException();
-
 		void IList<DocumentLine>.RemoveAt(int index) => throw new NotSupportedException();
-
 		void ICollection<DocumentLine>.Add(DocumentLine item) => throw new NotSupportedException();
-
 		void ICollection<DocumentLine>.Clear() => throw new NotSupportedException();
 
 		bool ICollection<DocumentLine>.Contains(DocumentLine item) {

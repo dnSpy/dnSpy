@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.App {
 		/// Gets the <see cref="IMessageBoxService"/> instance
 		/// </summary>
 		public static IMessageBoxService Instance {
-			get { return messageBoxService; }
+			get => messageBoxService;
 			internal set {
 				if (messageBoxService != null)
 					throw new InvalidOperationException();

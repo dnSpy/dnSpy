@@ -30,15 +30,15 @@ using dnSpy.Events;
 namespace dnSpy.Tabs {
 	sealed class TabGroupService : ITabGroupService, IStackedContentChild {
 		internal int ActiveIndex {
-			get { return _activeIndex; }
-			private set { _activeIndex = value; }
+			get => _activeIndex;
+			private set => _activeIndex = value;
 		}
 		int _activeIndex;
 
 		public object Tag { get; set; }
 
 		public ITabGroup ActiveTabGroup {
-			get { return ActiveIndex < 0 ? null : stackedContent[ActiveIndex]; }
+			get => ActiveIndex < 0 ? null : stackedContent[ActiveIndex];
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -53,31 +53,31 @@ namespace dnSpy.Tabs {
 		public object UIObject => stackedContent.UIObject;
 
 		public bool IsHorizontal {
-			get { return !stackedContent.IsHorizontal; }
-			set { stackedContent.IsHorizontal = !value; }
+			get => !stackedContent.IsHorizontal;
+			set => stackedContent.IsHorizontal = !value;
 		}
 
 		public event EventHandler<TabSelectedEventArgs> TabSelectionChanged {
-			add { tabSelectionChanged.Add(value); }
-			remove { tabSelectionChanged.Remove(value); }
+			add => tabSelectionChanged.Add(value);
+			remove => tabSelectionChanged.Remove(value);
 		}
 		readonly WeakEventList<TabSelectedEventArgs> tabSelectionChanged;
 
 		public event EventHandler<TabGroupSelectedEventArgs> TabGroupSelectionChanged {
-			add { tabGroupSelectionChanged.Add(value); }
-			remove { tabGroupSelectionChanged.Remove(value); }
+			add => tabGroupSelectionChanged.Add(value);
+			remove => tabGroupSelectionChanged.Remove(value);
 		}
 		readonly WeakEventList<TabGroupSelectedEventArgs> tabGroupSelectionChanged;
 
 		public event EventHandler<TabGroupCollectionChangedEventArgs> TabGroupCollectionChanged {
-			add { tabGroupCollectionChanged.Add(value); }
-			remove { tabGroupCollectionChanged.Remove(value); }
+			add => tabGroupCollectionChanged.Add(value);
+			remove => tabGroupCollectionChanged.Remove(value);
 		}
 		readonly WeakEventList<TabGroupCollectionChangedEventArgs> tabGroupCollectionChanged;
 
 		public StackedContentState StackedContentState {
-			get { return stackedContent.State; }
-			set { stackedContent.State = value; }
+			get => stackedContent.State;
+			set => stackedContent.State = value;
 		}
 
 		ITabService ITabGroupService.TabService => tabService;
@@ -158,7 +158,7 @@ namespace dnSpy.Tabs {
 		}
 
 		internal void OnSelectionChanged(TabGroup tabGroup, TabItemImpl selected, TabItemImpl unselected) =>
-			tabSelectionChanged.Raise(this, new TabSelectedEventArgs(tabGroup, selected == null ? null : selected.TabContent, unselected == null ? null : unselected.TabContent));
+			tabSelectionChanged.Raise(this, new TabSelectedEventArgs(tabGroup, selected?.TabContent, unselected == null ? null : unselected.TabContent));
 
 		public bool NewHorizontalTabGroupCanExecute => ActiveIndex >= 0 && (stackedContent.Count == 1 || IsHorizontal) && stackedContent[ActiveIndex].Count > 1;
 

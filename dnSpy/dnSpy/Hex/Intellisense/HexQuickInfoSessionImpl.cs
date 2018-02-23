@@ -42,9 +42,7 @@ namespace dnSpy.Hex.Intellisense {
 		bool hasInteractiveContent;
 		bool IsStarted { get; set; }
 
-		public override HexBufferSpanSelection ApplicableToSpan {
-			get { return applicableToSpan; }
-		}
+		public override HexBufferSpanSelection ApplicableToSpan => applicableToSpan;
 
 		void SetApplicableToSpan(HexBufferSpanSelection newValue) {
 			if (!applicableToSpan.Equals(newValue)) {

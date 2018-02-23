@@ -26,12 +26,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ConstantTypeVM ConstantTypeVM { get; }
 
 		public object Value {
-			get { return ConstantTypeVM.ValueNoSpecialNull; }
-			set { ConstantTypeVM.Value = value; }
+			get => ConstantTypeVM.ValueNoSpecialNull;
+			set => ConstantTypeVM.Value = value;
 		}
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool isEnabled = true;
 
 		public string ConstantCheckBoxToolTip {
-			get { return constantCheckBoxToolTip; }
+			get => constantCheckBoxToolTip;
 			set {
 				if (constantCheckBoxToolTip != value) {
 					constantCheckBoxToolTip = value;

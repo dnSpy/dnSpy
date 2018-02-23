@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand PickMethodCommand => new RelayCommand(a => PickMethod());
 
 		public IMethodDefOrRef Method {
-			get { return method; }
+			get => method;
 			set {
 				if (method != value) {
 					method = value;

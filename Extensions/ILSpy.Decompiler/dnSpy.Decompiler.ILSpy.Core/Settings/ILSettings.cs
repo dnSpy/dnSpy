@@ -36,7 +36,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		volatile int settingsVersion;
 
 		public bool ShowILComments {
-			get { return showILComments; }
+			get => showILComments;
 			set {
 				if (showILComments != value) {
 					showILComments = value;
@@ -48,7 +48,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showILComments = false;
 
 		public bool ShowXmlDocumentation {
-			get { return showXmlDocumentation; }
+			get => showXmlDocumentation;
 			set {
 				if (showXmlDocumentation != value) {
 					showXmlDocumentation = value;
@@ -60,7 +60,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showXmlDocumentation = true;
 
 		public bool ShowTokenAndRvaComments {
-			get { return showTokenAndRvaComments; }
+			get => showTokenAndRvaComments;
 			set {
 				if (showTokenAndRvaComments != value) {
 					showTokenAndRvaComments = value;
@@ -72,7 +72,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showTokenAndRvaComments = true;
 
 		public bool ShowILBytes {
-			get { return showILBytes; }
+			get => showILBytes;
 			set {
 				if (showILBytes != value) {
 					showILBytes = value;
@@ -84,7 +84,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showILBytes = true;
 
 		public bool SortMembers {
-			get { return sortMembers; }
+			get => sortMembers;
 			set {
 				if (sortMembers != value) {
 					sortMembers = value;
@@ -96,7 +96,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool sortMembers = false;
 
 		public bool ShowPdbInfo {
-			get { return showPdbInfo; }
+			get => showPdbInfo;
 			set {
 				if (showPdbInfo != value) {
 					showPdbInfo = value;

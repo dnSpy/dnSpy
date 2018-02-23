@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.Property {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public PropertyAttributes Attributes {
-			get { return attributes; }
+			get => attributes;
 			set {
 				if (attributes != value) {
 					attributes = value;
@@ -49,18 +49,18 @@ namespace dnSpy.AsmEditor.Property {
 		PropertyAttributes attributes;
 
 		public bool SpecialName {
-			get { return GetFlagValue(PropertyAttributes.SpecialName); }
-			set { SetFlagValue(PropertyAttributes.SpecialName, value); }
+			get => GetFlagValue(PropertyAttributes.SpecialName);
+			set => SetFlagValue(PropertyAttributes.SpecialName, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(PropertyAttributes.RTSpecialName); }
-			set { SetFlagValue(PropertyAttributes.RTSpecialName, value); }
+			get => GetFlagValue(PropertyAttributes.RTSpecialName);
+			set => SetFlagValue(PropertyAttributes.RTSpecialName, value);
 		}
 
 		public bool HasDefault {
-			get { return GetFlagValue(PropertyAttributes.HasDefault); }
-			set { SetFlagValue(PropertyAttributes.HasDefault, value); }
+			get => GetFlagValue(PropertyAttributes.HasDefault);
+			set => SetFlagValue(PropertyAttributes.HasDefault, value);
 		}
 
 		bool GetFlagValue(PropertyAttributes flag) => (Attributes & flag) != 0;
@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.Property {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -84,8 +84,8 @@ namespace dnSpy.AsmEditor.Property {
 		UTF8String name;
 
 		public PropertySig PropertySig {
-			get { return MethodSigCreator.PropertySig; }
-			set { MethodSigCreator.PropertySig = value; }
+			get => MethodSigCreator.PropertySig;
+			set => MethodSigCreator.PropertySig = value;
 		}
 
 		public string PropertySigHeader => string.Format(dnSpy_AsmEditor_Resources.PropertyX, MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig.ToString());

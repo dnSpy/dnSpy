@@ -25,7 +25,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.Module {
 	sealed class NetModuleOptionsVM : ViewModelBase {
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (!value.Equals(name, StringComparison.Ordinal)) {
 					name = value;

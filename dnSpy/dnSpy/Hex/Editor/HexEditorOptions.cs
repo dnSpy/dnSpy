@@ -27,7 +27,7 @@ namespace dnSpy.Hex.Editor {
 		public VSTE.IEditorOptions GlobalOptions => service.GlobalOptions;
 
 		public VSTE.IEditorOptions Parent {
-			get { return parent; }
+			get => parent;
 			set {
 				// Check if we're the global options
 				if (parent == null)

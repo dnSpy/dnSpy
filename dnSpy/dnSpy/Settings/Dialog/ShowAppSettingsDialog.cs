@@ -60,7 +60,7 @@ namespace dnSpy.Settings.Dialog {
 		public Guid? LastSelectedGuid { get; private set; }
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;

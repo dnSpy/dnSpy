@@ -35,7 +35,7 @@ namespace dnSpy.Analyzer {
 		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer {
 		bool syntaxHighlight = true;
 
 		public bool ShowToken {
-			get { return showToken; }
+			get => showToken;
 			set {
 				if (showToken != value) {
 					showToken = value;
@@ -59,7 +59,7 @@ namespace dnSpy.Analyzer {
 		bool showToken = true;
 
 		public bool SingleClickExpandsChildren {
-			get { return singleClickExpandsChildren; }
+			get => singleClickExpandsChildren;
 			set {
 				if (singleClickExpandsChildren != value) {
 					singleClickExpandsChildren = value;
@@ -71,7 +71,7 @@ namespace dnSpy.Analyzer {
 		bool singleClickExpandsChildren = true;
 
 		public bool UseNewRenderer {
-			get { return useNewRenderer; }
+			get => useNewRenderer;
 			set {
 				if (useNewRenderer != value) {
 					useNewRenderer = value;

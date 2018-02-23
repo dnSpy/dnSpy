@@ -60,8 +60,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		object IList.this[int index] {
-			get { return this[index]; }
-			set { Debug.Fail("Method shouldn't be called"); }
+			get => this[index];
+			set => Debug.Fail("Method shouldn't be called");
 		}
 
 		public int Count => list.Length;

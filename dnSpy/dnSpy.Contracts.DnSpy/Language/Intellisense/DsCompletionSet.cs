@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Gets or sets the text tracking span to which this completion applies
 		/// </summary>
 		public override ITrackingSpan ApplicableTo {
-			get { return base.ApplicableTo; }
+			get => base.ApplicableTo;
 			protected set {
 				searchText = null;
 				base.ApplicableTo = value;

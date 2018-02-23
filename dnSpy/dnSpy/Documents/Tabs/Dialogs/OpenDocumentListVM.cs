@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ListCollectionView collectionView;
 
 		public object SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -55,13 +55,13 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		object selectedItem;
 
 		public DocumentListVM[] SelectedItems {
-			get { return selectedItems; }
-			set { selectedItems = value ?? Array.Empty<DocumentListVM>(); }
+			get => selectedItems;
+			set => selectedItems = value ?? Array.Empty<DocumentListVM>();
 		}
 		DocumentListVM[] selectedItems;
 
 		public bool SearchingForDefaultLists {
-			get { return searchingForDefaultLists; }
+			get => searchingForDefaultLists;
 			set {
 				if (searchingForDefaultLists != value) {
 					searchingForDefaultLists = value;
@@ -75,7 +75,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool NotSearchingForDefaultLists => !SearchingForDefaultLists;
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;
@@ -87,7 +87,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string searchText;
 
 		public bool ShowSavedLists {
-			get { return showSavedLists; }
+			get => showSavedLists;
 			set {
 				if (showSavedLists != value) {
 					showSavedLists = value;

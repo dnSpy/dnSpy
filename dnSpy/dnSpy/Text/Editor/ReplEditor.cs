@@ -470,8 +470,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public string SearchText {
-			get { return searchText ?? (searchText = CurrentInput); }
-			set { searchText = value; }
+			get => searchText ?? (searchText = CurrentInput);
+			set => searchText = value;
 		}
 		string searchText = string.Empty;
 
@@ -646,8 +646,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IReplCommandHandler CommandHandler {
-			get { return replCommandHandler ?? ReplCommandHandler.Null; }
-			set { replCommandHandler = value; }
+			get => replCommandHandler ?? ReplCommandHandler.Null;
+			set => replCommandHandler = value;
 		}
 		IReplCommandHandler replCommandHandler;
 

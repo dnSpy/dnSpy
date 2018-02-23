@@ -29,7 +29,7 @@ namespace dnSpy.Hex.Settings {
 		public sealed override object UIObject => this;
 
 		public bool ShowColumnLines {
-			get { return showColumnLines; }
+			get => showColumnLines;
 			set {
 				if (showColumnLines != value) {
 					showColumnLines = value;
@@ -40,7 +40,7 @@ namespace dnSpy.Hex.Settings {
 		bool showColumnLines;
 
 		public bool RemoveExtraTextLineVerticalPixels {
-			get { return removeExtraTextLineVerticalPixels; }
+			get => removeExtraTextLineVerticalPixels;
 			set {
 				if (removeExtraTextLineVerticalPixels != value) {
 					removeExtraTextLineVerticalPixels = value;
@@ -51,7 +51,7 @@ namespace dnSpy.Hex.Settings {
 		bool removeExtraTextLineVerticalPixels;
 
 		public bool SelectionMargin {
-			get { return selectionMargin; }
+			get => selectionMargin;
 			set {
 				if (selectionMargin != value) {
 					selectionMargin = value;
@@ -62,7 +62,7 @@ namespace dnSpy.Hex.Settings {
 		bool selectionMargin;
 
 		public bool GlyphMargin {
-			get { return glyphMargin; }
+			get => glyphMargin;
 			set {
 				if (glyphMargin != value) {
 					glyphMargin = value;
@@ -73,7 +73,7 @@ namespace dnSpy.Hex.Settings {
 		bool glyphMargin;
 
 		public bool ZoomControl {
-			get { return zoomControl; }
+			get => zoomControl;
 			set {
 				if (zoomControl != value) {
 					zoomControl = value;
@@ -84,7 +84,7 @@ namespace dnSpy.Hex.Settings {
 		bool zoomControl;
 
 		public bool EnableMouseWheelZoom {
-			get { return enableMouseWheelZoom; }
+			get => enableMouseWheelZoom;
 			set {
 				if (enableMouseWheelZoom != value) {
 					enableMouseWheelZoom = value;
@@ -96,23 +96,23 @@ namespace dnSpy.Hex.Settings {
 
 		public EnumListVM ColumnLine0VM { get; }
 		public HexColumnLineKind ColumnLine0 {
-			get { return (HexColumnLineKind)ColumnLine0VM.SelectedItem; }
-			set { ColumnLine0VM.SelectedItem = value; }
+			get => (HexColumnLineKind)ColumnLine0VM.SelectedItem;
+			set => ColumnLine0VM.SelectedItem = value;
 		}
 		public EnumListVM ColumnLine1VM { get; }
 		public HexColumnLineKind ColumnLine1 {
-			get { return (HexColumnLineKind)ColumnLine1VM.SelectedItem; }
-			set { ColumnLine1VM.SelectedItem = value; }
+			get => (HexColumnLineKind)ColumnLine1VM.SelectedItem;
+			set => ColumnLine1VM.SelectedItem = value;
 		}
 		public EnumListVM ColumnGroupLine0VM { get; }
 		public HexColumnLineKind ColumnGroupLine0 {
-			get { return (HexColumnLineKind)ColumnGroupLine0VM.SelectedItem; }
-			set { ColumnGroupLine0VM.SelectedItem = value; }
+			get => (HexColumnLineKind)ColumnGroupLine0VM.SelectedItem;
+			set => ColumnGroupLine0VM.SelectedItem = value;
 		}
 		public EnumListVM ColumnGroupLine1VM { get; }
 		public HexColumnLineKind ColumnGroupLine1 {
-			get { return (HexColumnLineKind)ColumnGroupLine1VM.SelectedItem; }
-			set { ColumnGroupLine1VM.SelectedItem = value; }
+			get => (HexColumnLineKind)ColumnGroupLine1VM.SelectedItem;
+			set => ColumnGroupLine1VM.SelectedItem = value;
 		}
 		static readonly EnumVM[] hexColumnLineKindList = new EnumVM[6] {
 			new EnumVM(HexColumnLineKind.None, dnSpy_Resources.BlockStructureLineKind_None),

@@ -24,8 +24,8 @@ using dnSpy.Contracts.Controls;
 namespace dnSpy.MainApp {
 	sealed partial class MsgBoxDlg : WindowBase {
 		public MsgBoxButton ClickedButton {
-			get { return clickedButton; }
-			set { clickedButton = value; }
+			get => clickedButton;
+			set => clickedButton = value;
 		}
 		MsgBoxButton clickedButton;
 

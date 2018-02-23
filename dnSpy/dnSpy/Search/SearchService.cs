@@ -74,18 +74,18 @@ namespace dnSpy.Search {
 		readonly IDocumentTabService documentTabService;
 
 		public SearchLocation SearchLocation {
-			get { return (SearchLocation)vmSearch.SearchLocationVM.SelectedItem; }
-			set { vmSearch.SearchLocationVM.SelectedItem = value; }
+			get => (SearchLocation)vmSearch.SearchLocationVM.SelectedItem;
+			set => vmSearch.SearchLocationVM.SelectedItem = value;
 		}
 
 		public SearchType SearchType {
-			get { return vmSearch.SelectedSearchTypeVM.SearchType; }
-			set { vmSearch.SelectedSearchTypeVM = vmSearch.SearchTypeVMs.First(a => a.SearchType == value); }
+			get => vmSearch.SelectedSearchTypeVM.SearchType;
+			set => vmSearch.SelectedSearchTypeVM = vmSearch.SearchTypeVMs.First(a => a.SearchType == value);
 		}
 
 		public string SearchText {
-			get { return vmSearch.SearchText; }
-			set { vmSearch.SearchText = value; }
+			get => vmSearch.SearchText;
+			set => vmSearch.SearchText = value;
 		}
 
 		public IInputElement FocusedElement => searchControl.SearchTextBox;

@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor {
 		Brush overwriteCaretBrush;
 
 		public bool OverwriteMode {
-			get { return overwriteMode; }
+			get => overwriteMode;
 			set {
 				if (overwriteMode != value) {
 					overwriteMode = value;
@@ -69,7 +69,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public bool IsHidden {
-			get { return isHidden; }
+			get => isHidden;
 			set {
 				if (isHidden == value)
 					return;

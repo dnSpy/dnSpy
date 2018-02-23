@@ -76,8 +76,8 @@ namespace dndbg.Engine {
 		}
 
 		public DebuggerPauseState[] PauseStates {
-			get { return pauseStates; }
-			internal set { pauseStates = value ?? Array.Empty<DebuggerPauseState>(); }
+			get => pauseStates;
+			internal set => pauseStates = value ?? Array.Empty<DebuggerPauseState>();
 		}
 		DebuggerPauseState[] pauseStates;
 

@@ -45,7 +45,7 @@ namespace dnSpy.Text.Operations {
 		SnapshotPoint? startPoint;
 
 		public ITrackingSpan SearchSpan {
-			get { return searchSpan; }
+			get => searchSpan;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

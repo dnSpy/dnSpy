@@ -121,8 +121,8 @@ namespace dnSpy.Tabs {
 		void ZoomReset() => ZoomValue = 1;
 
 		public double ZoomValue {
-			get { return zoomable?.ZoomValue ?? currentZoomValue; }
-			set { SetZoomValue(value, force: false); }
+			get => zoomable?.ZoomValue ?? currentZoomValue;
+			set => SetZoomValue(value, force: false);
 		}
 		double currentZoomValue = 1;
 		MetroWindow metroWindow;
