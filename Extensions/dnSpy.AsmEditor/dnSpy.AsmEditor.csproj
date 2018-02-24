@@ -160,6 +160,7 @@
     <Compile Include="Compiler\MDEditor\StrongNameSignatureSectionData.cs" />
     <Compile Include="Compiler\MDEditor\TablesHeapWriter.cs" />
     <Compile Include="Compiler\MDEditor\TablesMDHeap.cs" />
+    <Compile Include="Compiler\MDEditor\TableWriter.cs" />
     <Compile Include="Compiler\MDEditor\UnknownMDHeap.cs" />
     <Compile Include="Compiler\MDEditor\USMDHeap.cs" />
     <Compile Include="Compiler\MDPatcherUtils.cs" />

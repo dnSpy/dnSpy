@@ -33,6 +33,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			public abstract MDTable MDTable { get; }
 			public abstract bool HasChanges { get; }
 			public abstract uint FirstModifiedRowId { get; }
+			public bool HasNewRows => Rows > MDTable.Rows;
 			public bool IsEmpty => Rows == 0;
 			public abstract uint Rows { get; }
 			public abstract void WriteRow(uint rowIndex, IList<ColumnInfo> newColumns, byte[] destination, int destinationIndex);

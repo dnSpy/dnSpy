@@ -26,6 +26,13 @@ using dnlib.IO;
 using dnSpy.AsmEditor.Compiler.MDEditor;
 
 namespace dnSpy.AsmEditor.Compiler {
+	[Flags]
+	enum MDEditorPatcherOptions {
+		None							= 0,
+		UpdateTypeReferences			= 0x0000_0001,
+		AllowInternalAccess				= 0x0000_0002,
+	}
+
 	unsafe struct MDEditorPatcher {
 		readonly RawModuleBytes moduleData;
 		readonly byte* peFile;
@@ -34,9 +41,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly Dictionary<uint, uint> remappedTypeTokens;
 		readonly List<byte> sigBuilder;
 		readonly MetadataEditor mdEditor;
+		readonly MDEditorPatcherOptions options;
 		uint tempAssemblyRefRid;
 
-		public MDEditorPatcher(RawModuleBytes moduleData, MetadataEditor mdEditor, IAssembly tempAssembly, TypeDef nonNestedEditedTypeOrNull) {
+		bool UpdateTypeReferences => (options & MDEditorPatcherOptions.UpdateTypeReferences) != 0;
+		bool AllowInternalAccess => (options & MDEditorPatcherOptions.AllowInternalAccess) != 0;
+
+		public MDEditorPatcher(RawModuleBytes moduleData, MetadataEditor mdEditor, IAssembly tempAssembly, TypeDef nonNestedEditedTypeOrNull, MDEditorPatcherOptions options) {
 			this.moduleData = moduleData;
 			peFile = (byte*)moduleData.Pointer;
 			this.tempAssembly = tempAssembly;
@@ -44,6 +55,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			remappedTypeTokens = new Dictionary<uint, uint>();
 			sigBuilder = new List<byte>();
 			this.mdEditor = mdEditor;
+			this.options = options;
 			tempAssemblyRefRid = 0;
 		}
 
@@ -54,10 +66,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Patch(ModuleDef module) {
-			if (nonNestedEditedTypeOrNull.Module == module)
-				DeleteTypeDef(mdEditor, nonNestedEditedTypeOrNull);
-			PatchTypeRefsToEditedType(nonNestedEditedTypeOrNull);
-			PatchTypeTokenReferences(nonNestedEditedTypeOrNull);
+			if (UpdateTypeReferences) {
+				if (nonNestedEditedTypeOrNull.Module == module)
+					DeleteTypeDef(mdEditor, nonNestedEditedTypeOrNull);
+				PatchTypeRefsToEditedType(nonNestedEditedTypeOrNull);
+				PatchTypeTokenReferences(nonNestedEditedTypeOrNull);
+			}
+			if (AllowInternalAccess)
+				AddInternalsVisibleToAttribute();
 		}
 
 		void DeleteTypeDef(MetadataEditor mdEditor, TypeDef nonNestedTypeDef) {
@@ -489,5 +505,115 @@ namespace dnSpy.AsmEditor.Compiler {
 			callConvSigDict.Add(sig, newSig);
 			return newSig;
 		}
+
+		void AddInternalsVisibleToAttribute() {
+			bool b = GetCorLibToken(out var corlibToken);
+			Debug.Assert(b, "No corlib assembly found");
+			if (!b)
+				return;
+			b = CodedToken.ResolutionScope.Encode(corlibToken, out uint corlibEncodedToken);
+			Debug.Assert(b);
+			if (!b)
+				return;
+
+			uint ivtTypeRefRid = mdEditor.TablesHeap.TypeRefTable.Create();
+			var ivtTypeRefRow = mdEditor.TablesHeap.TypeRefTable.Get(ivtTypeRefRid);
+			ivtTypeRefRow.Name = mdEditor.StringsHeap.Create("InternalsVisibleToAttribute");
+			ivtTypeRefRow.Namespace = mdEditor.StringsHeap.Create("System.Runtime.CompilerServices");
+			ivtTypeRefRow.ResolutionScope = corlibEncodedToken;
+			mdEditor.TablesHeap.TypeRefTable.Set(ivtTypeRefRid, ivtTypeRefRow);
+
+			uint ivtCtorRid = mdEditor.TablesHeap.MemberRefTable.Create();
+			var ivtCtorRow = mdEditor.TablesHeap.MemberRefTable.Get(ivtCtorRid);
+			ivtCtorRow.Class = CodedToken.MemberRefParent.Encode(new MDToken(Table.TypeRef, ivtTypeRefRid));
+			ivtCtorRow.Name = mdEditor.StringsHeap.Create(".ctor");
+			ivtCtorRow.Signature = mdEditor.BlobHeap.Create(ivtCtorSigBlob);
+			mdEditor.TablesHeap.MemberRefTable.Set(ivtCtorRid, ivtCtorRow);
+
+			uint ivtCARid = mdEditor.TablesHeap.CustomAttributeTable.Create();
+			var ivtCARow = mdEditor.TablesHeap.CustomAttributeTable.Get(ivtCARid);
+			ivtCARow.Parent = CodedToken.HasCustomAttribute.Encode(new MDToken(Table.Assembly, 1));
+			ivtCARow.Type = CodedToken.CustomAttributeType.Encode(new MDToken(Table.MemberRef, ivtCtorRid));
+			ivtCARow.Value = mdEditor.BlobHeap.Create(MDPatcherUtils.CreateIVTBlob(tempAssembly));
+			mdEditor.TablesHeap.CustomAttributeTable.Set(ivtCARid, ivtCARow);
+		}
+		static readonly byte[] ivtCtorSigBlob = new byte[] { 0x20, 0x01, 0x01, 0x0E };
+
+		bool GetCorLibToken(out MDToken corlibToken) {
+			using (var stringsStream = mdEditor.RealMetadata.StringsStream.GetClonedImageStream()) {
+				// Check if we have any assembly refs to the corlib
+				{
+					var table = mdEditor.RealMetadata.TablesStream.AssemblyRefTable;
+					var p = peFile + (int)table.StartOffset;
+					int rowSize = (int)table.RowSize;
+					var columnName = table.Columns[6];
+					for (uint i = 0; i < table.Rows; i++, p += rowSize) {
+						UTF8String foundCorlibName = null;
+						foreach (var corlibName in corlibSimpleNames) {
+							if (StringsStreamNameEquals(stringsStream, ReadColumn(p, columnName), corlibName.Data)) {
+								foundCorlibName = corlibName;
+								break;
+							}
+						}
+						if ((object)foundCorlibName == null)
+							continue;
+
+						// Don't use any WinMD mscorlib refs
+						if (StringComparer.OrdinalIgnoreCase.Equals(foundCorlibName.String, "mscorlib") &&
+							ReadColumn(p, table.Columns[0]) == 255 && ReadColumn(p, table.Columns[1]) == 255 &&
+							ReadColumn(p, table.Columns[2]) == 255 && ReadColumn(p, table.Columns[3]) == 255) {
+							continue;
+						}
+
+						corlibToken = new MDToken(Table.AssemblyRef, i + 1);
+						return true;
+					}
+				}
+
+				// Check if we are the corlib. We're the corlib if System.Object is defined and if there
+				// are no assembly references
+				if (mdEditor.RealMetadata.TablesStream.AssemblyRefTable.Rows == 0) {
+					var table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
+					var p = peFile + (int)table.StartOffset;
+					int rowSize = (int)table.RowSize;
+					var columnFlags = table.Columns[0];
+					var columnName = table.Columns[1];
+					var columnNamespace = table.Columns[2];
+					var columnExtends = table.Columns[3];
+					for (uint i = 0; i < table.Rows; i++, p += rowSize) {
+						if ((ReadColumn(p, columnFlags) & (uint)TypeAttributes.VisibilityMask) >= (int)TypeAttributes.NestedPublic)
+							continue;
+						uint nameOffset = ReadColumn(p, columnName);
+						if (!StringsStreamNameEquals(stringsStream, nameOffset, nameObject.Data))
+							continue;
+						uint namespaceOffset = ReadColumn(p, columnNamespace);
+						if (!StringsStreamNameEquals(stringsStream, namespaceOffset, nameSystem.Data))
+							continue;
+						uint extendsCodedToken = ReadColumn(p, columnExtends);
+						if (!CodedToken.TypeDefOrRef.Decode(extendsCodedToken, out MDToken extends))
+							continue;
+						if (extends.Rid != 0)
+							continue;
+
+						corlibToken = new MDToken(Table.Module, 1);
+						return true;
+					}
+				}
+			}
+
+			corlibToken = default;
+			return false;
+		}
+		static readonly UTF8String nameSystem = new UTF8String(nameof(System));
+		static readonly UTF8String nameObject = new UTF8String(nameof(Object));
+
+		// See dnlib IsCorLib()
+		static readonly UTF8String[] corlibSimpleNames = new UTF8String[] {
+			"mscorlib",
+			"System.Runtime",
+			"System.Private.CoreLib",
+			"netstandard",
+			"corefx",
+		};
 	}
 }

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -93,11 +94,17 @@ namespace dnSpy.Roslyn.Compiler {
 			foreach (var doc in decompiledCodeResult.Documents)
 				documents.Add(CreateDocument(projectId, doc));
 
+			var compilationOptions = CompilationOptions
+				.WithOptimizationLevel(OptimizationLevel.Release)
+				.WithPlatform(GetPlatform(decompiledCodeResult.Platform))
+				.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
+			if (decompiledCodeResult.PublicKey != null) {
+				compilationOptions = compilationOptions
+					.WithCryptoPublicKey(ImmutableArray.Create<byte>(decompiledCodeResult.PublicKey))
+					.WithDelaySign(true);
+			}
 			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", decompiledCodeResult.AssemblyName, LanguageName,
-				compilationOptions: CompilationOptions
-						.WithOptimizationLevel(OptimizationLevel.Release)
-						.WithPlatform(GetPlatform(decompiledCodeResult.Platform))
-						.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default),
+				compilationOptions: compilationOptions,
 				parseOptions: ParseOptions,
 				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,

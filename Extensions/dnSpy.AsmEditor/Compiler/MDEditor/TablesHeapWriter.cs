@@ -142,22 +142,25 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				if (info == null || info.IsEmpty)
 					continue;
 
+				var tableWriter = TableWriter.Create(info);
+				var mdTable = info.MDTable;
+
 				var tbl = tableInfos[i];
 				var columns = tbl.Columns;
-				var rows = info.Rows;
+				var rows = tableWriter.Rows;
 				uint currentRowIndex = 0;
 				var rowSize = (uint)tbl.RowSize;
 				Debug.Assert(tempBuffer.Length >= rowSize, "Temp buffer is too small");
 
 				// If there are no changes in the original metadata or layout, just copy everything
-				uint unmodifiedRows = info.FirstModifiedRowId - 1;
-				if (unmodifiedRows > 0 && Equals(info.MDTable.TableInfo, tbl)) {
+				uint unmodifiedRows = tableWriter.FirstModifiedRowId - 1;
+				if (unmodifiedRows > 0 && Equals(mdTable.TableInfo, tbl)) {
 					if (tempBufferIndex > 0) {
 						stream.Write(tempBuffer, 0, tempBufferIndex);
 						tempBufferIndex = 0;
 					}
 
-					stream.Write((byte*)mdWriter.ModuleData.Pointer + (int)info.MDTable.StartOffset, (int)(unmodifiedRows * info.MDTable.RowSize));
+					stream.Write((byte*)mdWriter.ModuleData.Pointer + (int)mdTable.StartOffset, (int)(unmodifiedRows * mdTable.RowSize));
 
 					Debug.Assert(unmodifiedRows <= rows);
 					rows -= unmodifiedRows;
@@ -177,7 +180,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 					Debug.Assert(maxRows > 0);
 
 					for (uint endRowIndex = currentRowIndex + maxRows; currentRowIndex < endRowIndex; currentRowIndex++, tempBufferIndex += (int)rowSize)
-						info.WriteRow(currentRowIndex, columns, tempBuffer, tempBufferIndex);
+						tableWriter.WriteRow(currentRowIndex, columns, tempBuffer, tempBufferIndex);
 					rows -= maxRows;
 				}
 			}

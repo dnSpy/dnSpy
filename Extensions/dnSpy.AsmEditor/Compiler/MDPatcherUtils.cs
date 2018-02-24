@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
@@ -103,6 +105,135 @@ namespace dnSpy.AsmEditor.Compiler {
 			catch (BadImageFormatException) {
 			}
 			return null;
+		}
+
+		public static bool CheckTypeDefOrTypeRefName(ITypeDefOrRef tdr, UTF8String @namespace, UTF8String name) {
+			if (tdr is TypeDef td)
+				return td.Name == name && td.Namespace == @namespace;
+			if (tdr is TypeRef tr)
+				return tr.Name == name && tr.Namespace == @namespace;
+			return false;
+		}
+
+		public static bool HasModuleInternalAccess(ModuleDef targetModule, ModuleDef sourceModule) =>
+			HasIgnoresAccessChecksToAttribute(targetModule, sourceModule) ||
+			HasInternalsVisibleToAttribute(targetModule, sourceModule);
+
+		static bool HasIgnoresAccessChecksToAttribute(ModuleDef targetModule, ModuleDef sourceModule) {
+			var targetAssembly = targetModule.Assembly;
+			if (targetAssembly == null)
+				return false;
+			var sourceAssembly = sourceModule.Assembly;
+			if (sourceAssembly == null)
+				return false;
+			foreach (var ca in sourceAssembly.CustomAttributes) {
+				if (ca.ConstructorArguments.Count != 1)
+					continue;
+				if (!MDPatcherUtils.CheckTypeDefOrTypeRefName(ca.Constructor?.DeclaringType, nameSystem_Runtime_CompilerServices, nameIgnoresAccessChecksToAttribute))
+					continue;
+				var asmName = (ca.ConstructorArguments[0].Value as UTF8String)?.String;
+				if (asmName == null)
+					continue;
+				int index = asmName.IndexOf(',');
+				if (index >= 0)
+					asmName = asmName.Substring(0, index);
+				asmName = asmName.Trim();
+				if (!StringComparer.OrdinalIgnoreCase.Equals(targetAssembly.Name.String, asmName))
+					continue;
+
+				return true;
+			}
+			return false;
+		}
+		static readonly UTF8String nameSystem_Runtime_CompilerServices = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String nameIgnoresAccessChecksToAttribute = new UTF8String("IgnoresAccessChecksToAttribute");
+		static readonly UTF8String nameInternalsVisibleToAttribute = new UTF8String("InternalsVisibleToAttribute");
+
+		static bool HasInternalsVisibleToAttribute(ModuleDef targetModule, ModuleDef sourceModule) {
+			var targetAssembly = targetModule.Assembly;
+			if (targetAssembly == null)
+				return false;
+			var sourceAssembly = sourceModule.Assembly;
+			if (sourceAssembly == null)
+				return false;
+			foreach (var ca in targetAssembly.CustomAttributes) {
+				if (ca.ConstructorArguments.Count != 1)
+					continue;
+				if (!MDPatcherUtils.CheckTypeDefOrTypeRefName(ca.Constructor?.DeclaringType, nameSystem_Runtime_CompilerServices, nameInternalsVisibleToAttribute))
+					continue;
+				var asmName = (ca.ConstructorArguments[0].Value as UTF8String)?.String;
+				if (asmName == null)
+					continue;
+				int index = asmName.IndexOf(',');
+				if (index >= 0)
+					asmName = asmName.Substring(0, index);
+				asmName = asmName.Trim();
+				if (!StringComparer.OrdinalIgnoreCase.Equals(sourceAssembly.Name.String, asmName))
+					continue;
+
+				return true;
+
+			}
+			return false;
+		}
+
+		public static byte[] CreateIVTBlob(IAssembly sourceAssembly) => CreateIVTBlob(GetIVTString(sourceAssembly));
+
+		static string GetIVTString(IAssembly sourceAssembly) {
+			if (sourceAssembly.PublicKeyOrToken is PublicKeyToken)
+				throw new InvalidOperationException("PublicKey must be used or it must be null");
+			var publicKeyBytes = (sourceAssembly.PublicKeyOrToken as PublicKey)?.Data;
+			if (publicKeyBytes == null || publicKeyBytes.Length == 0)
+				return sourceAssembly.Name;
+			else {
+				var sb = new StringBuilder();
+				sb.Append(sourceAssembly.Name.String);
+				sb.Append(", PublicKey=");
+				foreach (var b in publicKeyBytes) {
+					sb.Append(ToLowerHexDigit(b >> 4));
+					sb.Append(ToLowerHexDigit(b & 0x0F));
+				}
+				return sb.ToString();
+			}
+		}
+
+		public static byte[] CreateIVTBlob(string newIVTString) {
+			var caStream = new MemoryStream();
+			var caWriter = new BinaryWriter(caStream);
+			caWriter.Write((ushort)1);
+			WriteString(caWriter, newIVTString);
+			caWriter.Write((ushort)0);
+			return caStream.ToArray();
+		}
+
+		static void WriteString(BinaryWriter writer, string s) {
+			var bytes = Encoding.UTF8.GetBytes(s);
+			WriteCompressedUInt32(writer, (uint)bytes.Length);
+			writer.Write(bytes);
+		}
+
+		static void WriteCompressedUInt32(BinaryWriter writer, uint value) {
+			if (value <= 0x7F)
+				writer.Write((byte)value);
+			else if (value <= 0x3FFF) {
+				writer.Write((byte)((value >> 8) | 0x80));
+				writer.Write((byte)value);
+			}
+			else if (value <= 0x1FFFFFFF) {
+				writer.Write((byte)((value >> 24) | 0xC0));
+				writer.Write((byte)(value >> 16));
+				writer.Write((byte)(value >> 8));
+				writer.Write((byte)value);
+			}
+			else
+				throw new ArgumentOutOfRangeException("UInt32 value can't be compressed");
+		}
+
+		static char ToLowerHexDigit(int b) {
+			Debug.Assert(0 <= b && b <= 0xF);
+			if (b < 10)
+				return (char)('0' + b);
+			return (char)('a' + b - 10);
 		}
 	}
 }

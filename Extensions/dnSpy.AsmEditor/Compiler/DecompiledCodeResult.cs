@@ -22,13 +22,15 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class DecompiledCodeResult : IDecompiledCodeResult {
 		public string AssemblyName { get; }
+		public byte[] PublicKey { get; }
 		public IDecompiledDocument[] Documents { get; }
 		public CompilerMetadataReference[] AssemblyReferences { get; }
 		public IAssemblyReferenceResolver AssemblyReferenceResolver { get; }
 		public TargetPlatform Platform { get; }
 
-		public DecompiledCodeResult(string assemblyName, IDecompiledDocument[] documents, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, TargetPlatform platform) {
+		public DecompiledCodeResult(string assemblyName, byte[] publicKey, IDecompiledDocument[] documents, CompilerMetadataReference[] assemblyReferences, IAssemblyReferenceResolver assemblyReferenceResolver, TargetPlatform platform) {
 			AssemblyName = assemblyName;
+			PublicKey = publicKey;
 			Documents = documents;
 			AssemblyReferences = assemblyReferences;
 			AssemblyReferenceResolver = assemblyReferenceResolver;

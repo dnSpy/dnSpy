@@ -27,17 +27,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IAssemblyResolver assemblyResolver;
 		readonly IAssembly tempAssembly;
-		readonly ModuleDef defaultSourceModule;
+		readonly ModuleDef editedModule;
 		readonly TypeDef nonNestedEditedTypeOrNull;
 		readonly List<RawModuleBytes> rawModuleBytesList;
 
-		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef defaultSourceModule, TypeDef nonNestedEditedTypeOrNull) {
-			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == defaultSourceModule);
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
+			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == editedModule);
 			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.tempAssembly = tempAssembly;
-			this.defaultSourceModule = defaultSourceModule;
+			this.editedModule = editedModule;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
 			rawModuleBytesList = new List<RawModuleBytes>();
 		}
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public CompilerMetadataReference? Resolve(IAssembly asmRef) {
 			ModuleDef sourceModule = null;
-			var asm = assemblyResolver.Resolve(asmRef, sourceModule ?? defaultSourceModule);
+			var asm = assemblyResolver.Resolve(asmRef, sourceModule ?? editedModule);
 			if (asm == null)
 				return null;
 
@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (!info.isFileLayout)
 					return default;
 
-				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, nonNestedEditedTypeOrNull);
+				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, editedModule, nonNestedEditedTypeOrNull);
 				if (!patcher.Patch(module, out var newModuleData))
 					return default;
 				if (moduleData != newModuleData) {

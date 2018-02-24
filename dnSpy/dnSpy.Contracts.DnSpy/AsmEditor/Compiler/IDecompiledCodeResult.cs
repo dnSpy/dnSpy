@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		string AssemblyName { get; }
 
 		/// <summary>
+		/// The public key or null if none
+		/// </summary>
+		byte[] PublicKey { get; }
+
+		/// <summary>
 		/// Gets the documents
 		/// </summary>
 		IDecompiledDocument[] Documents { get; }

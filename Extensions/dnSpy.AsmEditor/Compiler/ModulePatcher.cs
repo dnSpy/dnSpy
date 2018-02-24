@@ -26,12 +26,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly RawModuleBytes moduleData;
 		readonly bool isFileLayout;
 		readonly IAssembly tempAssembly;
+		readonly ModuleDef editedModule;
 		readonly TypeDef nonNestedEditedTypeOrNull;
 
-		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, TypeDef nonNestedEditedTypeOrNull) {
+		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
 			this.moduleData = moduleData;
 			this.isFileLayout = isFileLayout;
 			this.tempAssembly = tempAssembly;
+			this.editedModule = editedModule;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
 		}
 
@@ -45,25 +47,29 @@ namespace dnSpy.AsmEditor.Compiler {
 				MDPatcherUtils.ExistsInMetadata(nonNestedEditedTypeOrNull) &&
 				MDPatcherUtils.ReferencesModule(module, nonNestedEditedTypeOrNull?.Module) &&
 				!module.Assembly.IsCorLib();
-			if (fixTypeDefRefs) {
+			bool addIVT = module == editedModule || MDPatcherUtils.HasModuleInternalAccess(module, editedModule);
+			if (fixTypeDefRefs || addIVT) {
 				using (var md = MDPatcherUtils.TryCreateMetadata(moduleData, isFileLayout)) {
-					if (fixTypeDefRefs) {
-						var mdEditor = new MetadataEditor(moduleData, md);
-						var patcher = new MDEditorPatcher(moduleData, mdEditor, tempAssembly, nonNestedEditedTypeOrNull);
-						patcher.Patch(module);
-						if (mdEditor.MustRewriteMetadata()) {
-							var stream = new MDWriterMemoryStream();
-							new MDWriter(moduleData, mdEditor, stream).Write();
-							NativeMemoryRawModuleBytes newRawData = null;
-							try {
-								newRawData = new NativeMemoryRawModuleBytes((int)stream.Length);
-								stream.CopyTo((IntPtr)newRawData.Pointer, newRawData.Size);
-								moduleData = newRawData;
-							}
-							catch {
-								newRawData?.Dispose();
-								throw;
-							}
+					var mdEditor = new MetadataEditor(moduleData, md);
+					var options = MDEditorPatcherOptions.None;
+					if (fixTypeDefRefs)
+						options |= MDEditorPatcherOptions.UpdateTypeReferences;
+					if (addIVT)
+						options |= MDEditorPatcherOptions.AllowInternalAccess;
+					var patcher = new MDEditorPatcher(moduleData, mdEditor, tempAssembly, nonNestedEditedTypeOrNull, options);
+					patcher.Patch(module);
+					if (mdEditor.MustRewriteMetadata()) {
+						var stream = new MDWriterMemoryStream();
+						new MDWriter(moduleData, mdEditor, stream).Write();
+						NativeMemoryRawModuleBytes newRawData = null;
+						try {
+							newRawData = new NativeMemoryRawModuleBytes((int)stream.Length);
+							stream.CopyTo((IntPtr)newRawData.Pointer, newRawData.Size);
+							moduleData = newRawData;
+						}
+						catch {
+							newRawData?.Dispose();
+							throw;
 						}
 					}
 				}
