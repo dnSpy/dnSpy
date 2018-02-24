@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
-			var importer = new ModuleImporter(module, EditCodeVM.makeEverythingPublic);
+			var importer = new ModuleImporter(module);
 			try {
 				importer.Import(result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
 			}

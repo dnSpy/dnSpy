@@ -29,10 +29,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef defaultSourceModule;
 		readonly TypeDef nonNestedEditedTypeOrNull;
-		readonly bool makeEverythingPublic;
 		readonly List<RawModuleBytes> rawModuleBytesList;
 
-		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef defaultSourceModule, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef defaultSourceModule, TypeDef nonNestedEditedTypeOrNull) {
 			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == defaultSourceModule);
 			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
@@ -40,7 +39,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.tempAssembly = tempAssembly;
 			this.defaultSourceModule = defaultSourceModule;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
-			this.makeEverythingPublic = makeEverythingPublic;
 			rawModuleBytesList = new List<RawModuleBytes>();
 		}
 
@@ -80,7 +78,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (!info.isFileLayout)
 					return default;
 
-				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, nonNestedEditedTypeOrNull, makeEverythingPublic);
+				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, nonNestedEditedTypeOrNull);
 				if (!patcher.Patch(module, out var newModuleData))
 					return default;
 				if (moduleData != newModuleData) {

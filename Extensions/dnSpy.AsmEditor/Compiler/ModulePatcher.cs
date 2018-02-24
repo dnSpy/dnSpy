@@ -27,14 +27,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly bool isFileLayout;
 		readonly IAssembly tempAssembly;
 		readonly TypeDef nonNestedEditedTypeOrNull;
-		readonly bool makeEverythingPublic;
 
-		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
+		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, TypeDef nonNestedEditedTypeOrNull) {
 			this.moduleData = moduleData;
 			this.isFileLayout = isFileLayout;
 			this.tempAssembly = tempAssembly;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
-			this.makeEverythingPublic = makeEverythingPublic;
 		}
 
 		public unsafe bool Patch(ModuleDef module, out RawModuleBytes newModuleData) {
@@ -47,10 +45,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				MDPatcherUtils.ExistsInMetadata(nonNestedEditedTypeOrNull) &&
 				MDPatcherUtils.ReferencesModule(module, nonNestedEditedTypeOrNull?.Module) &&
 				!module.Assembly.IsCorLib();
-			if (makeEverythingPublic || fixTypeDefRefs) {
+			if (fixTypeDefRefs) {
 				using (var md = MDPatcherUtils.TryCreateMetadata(moduleData, isFileLayout)) {
-					if (makeEverythingPublic)
-						new MetadataFixer(moduleData, md).MakePublic();
 					if (fixTypeDefRefs) {
 						var mdEditor = new MetadataEditor(moduleData, md);
 						var patcher = new MDEditorPatcher(moduleData, mdEditor, tempAssembly, nonNestedEditedTypeOrNull);

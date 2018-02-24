@@ -76,7 +76,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		public Resource[] NewResources { get; private set; }
 
 		readonly ModuleDef targetModule;
-		readonly bool makeEverythingPublic;
 		readonly List<CompilerDiagnostic> diagnostics;
 		readonly List<NewImportedType> newNonNestedImportedTypes;
 		readonly List<MergedImportedType> nonNestedMergedImportedTypes;
@@ -118,9 +117,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		const SigComparerOptions SIG_COMPARER_OPTIONS = SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
 
-		public ModuleImporter(ModuleDef targetModule, bool makeEverythingPublic) {
+		public ModuleImporter(ModuleDef targetModule) {
 			this.targetModule = targetModule;
-			this.makeEverythingPublic = makeEverythingPublic;
 			diagnostics = new List<CompilerDiagnostic>();
 			newNonNestedImportedTypes = new List<NewImportedType>();
 			nonNestedMergedImportedTypes = new List<MergedImportedType>();
@@ -613,13 +611,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			importSigComparerOptions = newSourceModule == null ? null : new ImportSigComparerOptions(newSourceModule, targetModule);
 		}
 
-		FieldDefOptions CreateFieldDefOptions(FieldDef newField, FieldDef targetField) {
-			var options = new FieldDefOptions(newField);
-			// All fields are made public, so do not copy the access bits
-			if (makeEverythingPublic && (options.Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public)
-				options.Attributes = (options.Attributes & ~FieldAttributes.FieldAccessMask) | (targetField.Attributes & FieldAttributes.FieldAccessMask);
-			return options;
-		}
+		FieldDefOptions CreateFieldDefOptions(FieldDef newField, FieldDef targetField) =>
+			new FieldDefOptions(newField);
 
 		PropertyDefOptions CreatePropertyDefOptions(PropertyDef newProperty) =>
 			new PropertyDefOptions(newProperty);
@@ -633,9 +626,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			options.ParamDefs.AddRange(newMethod.ParamDefs.Select(a => Clone(a)));
 			options.GenericParameters.Clear();
 			options.GenericParameters.AddRange(newMethod.GenericParameters.Select(a => Clone(a)));
-			// All methods are made public, so do not copy the access bits
-			if (makeEverythingPublic && (options.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
-				options.Attributes = (options.Attributes & ~MethodAttributes.MemberAccessMask) | (targetMethod.Attributes & MethodAttributes.MemberAccessMask);
 			return options;
 		}
 
@@ -1170,12 +1160,6 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void Initialize(TypeDef compiledType, TypeDef targetType, TypeDefOptions options) {
 			options.Attributes = compiledType.Attributes;
-
-			// All types are made public, so do not copy the access bits
-			var publicValue = targetType.DeclaringType == null ? TypeAttributes.Public : TypeAttributes.NestedPublic;
-			if (makeEverythingPublic && (options.Attributes & TypeAttributes.VisibilityMask) == publicValue)
-				options.Attributes = (options.Attributes & ~TypeAttributes.VisibilityMask) | (targetType.Attributes & TypeAttributes.VisibilityMask);
-
 			options.Namespace = compiledType.Namespace;
 			options.Name = compiledType.Name;
 			options.PackingSize = compiledType.ClassLayout?.PackingSize;

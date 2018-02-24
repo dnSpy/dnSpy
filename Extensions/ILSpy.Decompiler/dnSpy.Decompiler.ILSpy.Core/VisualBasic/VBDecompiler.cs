@@ -297,7 +297,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			try {
 				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => CSharpDecompiler.GetDecompiledBodyKind(info, builder, method);
 				state.AstBuilder.AddType(info.Type);
-				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic, info.ShowAll));
+				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.ShowAll));
 			}
 			finally {
 				state.Dispose();

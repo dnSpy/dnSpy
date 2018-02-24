@@ -165,7 +165,6 @@
     <Compile Include="Compiler\MDPatcherUtils.cs" />
     <Compile Include="Compiler\MDSigPatcher.cs" />
     <Compile Include="Compiler\MergeWithAssemblyCommand.cs" />
-    <Compile Include="Compiler\MetadataFixer.cs" />
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
     <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />

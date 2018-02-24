@@ -49,11 +49,6 @@ namespace dnSpy.Contracts.Decompiler {
 		public bool DecompileHidden { get; set; }
 
 		/// <summary>
-		/// true to make every type, method, field, property, event public
-		/// </summary>
-		public bool MakeEverythingPublic { get; set; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="output">Output</param>

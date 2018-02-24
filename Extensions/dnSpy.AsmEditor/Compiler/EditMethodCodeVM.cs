@@ -64,7 +64,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			options = new DecompileTypeMethods(state.MainOutput, state.DecompilationContext, type);
 			options.Methods.Add(methodToEdit);
 			options.DecompileHidden = false;
-			options.MakeEverythingPublic = makeEverythingPublic;
 			decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 			state.CancellationToken.ThrowIfCancellationRequested();
@@ -73,7 +72,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			options = new DecompileTypeMethods(state.HiddenOutput, state.DecompilationContext, type);
 			options.Methods.Add(methodToEdit);
 			options.DecompileHidden = true;
-			options.MakeEverythingPublic = makeEverythingPublic;
 			decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 			state.CancellationToken.ThrowIfCancellationRequested();

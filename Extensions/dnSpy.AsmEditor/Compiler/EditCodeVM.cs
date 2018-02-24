@@ -52,10 +52,6 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		internal MetroWindow OwnerWindow { get; set; }
 
-		// Make all types, methods, fields public so we don't get a compilation error when trying
-		// to reference an internal type or a private method in the original assembly.
-		internal const bool makeEverythingPublic = true;
-
 		protected const string MAIN_CODE_NAME = "main";
 		protected const string MAIN_G_CODE_NAME = "main.g";
 
@@ -161,7 +157,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				Name = Guid.NewGuid().ToString(),
 				Culture = string.Empty,
 			};
-			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull, makeEverythingPublic);
+			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull);
 		}
 
 		protected abstract class AsyncStateBase : IDisposable {
@@ -411,7 +407,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			else if (result?.Success == true) {
 				try {
-					importer = new ModuleImporter(sourceModule, makeEverythingPublic);
+					importer = new ModuleImporter(sourceModule);
 					Import(importer, result.Value);
 					compilerDiagnostics = importer.Diagnostics;
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
