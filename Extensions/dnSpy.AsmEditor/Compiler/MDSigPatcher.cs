@@ -26,7 +26,7 @@ using dnlib.DotNet.MD;
 namespace dnSpy.AsmEditor.Compiler {
 	unsafe struct MDSigPatcher {
 		readonly List<byte> sigBuilder;
-		readonly Dictionary<uint, uint> remappedTypeTokens;
+		readonly RemappedTypeTokens remappedTypeTokens;
 		readonly byte* startPos;
 		readonly byte* endPos;
 		byte* currPos;
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		sealed class InvalidSignatureException : Exception { }
 
-		MDSigPatcher(List<byte> sigBuilder, Dictionary<uint, uint> remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
+		MDSigPatcher(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			this.sigBuilder = sigBuilder;
 			this.remappedTypeTokens = remappedTypeTokens;
 			currPos = (byte*)moduleData.Pointer + blobOffset + sigOffset;
@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return sigBuilder.ToArray();
 		}
 
-		public static byte[] PatchTypeSignature(List<byte> sigBuilder, Dictionary<uint, uint> remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
+		public static byte[] PatchTypeSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			try {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchTypeSignature();
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		public static byte[] PatchCallingConventionSignature(List<byte> sigBuilder, Dictionary<uint, uint> remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
+		public static byte[] PatchCallingConventionSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			try {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchCallingConventionSignature();

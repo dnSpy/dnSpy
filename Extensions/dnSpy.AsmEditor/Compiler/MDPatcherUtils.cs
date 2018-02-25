@@ -43,9 +43,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				return 1;
 			if (value <= 0x3FFF)
 				return 2;
-			if (value <= 0x1FFFFFFF)
-				return 4;
-			throw new ArgumentOutOfRangeException("UInt32 value can't be compressed");
+			Debug.Assert(value <= 0x1FFFFFFF);
+			return 4;
 		}
 
 		public unsafe static uint ReadCompressedUInt32(ref byte* data, byte* end) {

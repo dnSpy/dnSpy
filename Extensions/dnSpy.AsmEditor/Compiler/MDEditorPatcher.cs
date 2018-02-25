@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly byte* peFile;
 		readonly IAssembly tempAssembly;
 		readonly TypeDef nonNestedEditedTypeOrNull;
-		readonly Dictionary<uint, uint> remappedTypeTokens;
+		readonly RemappedTypeTokens remappedTypeTokens;
 		readonly List<byte> sigBuilder;
 		readonly MetadataEditor mdEditor;
 		readonly MDEditorPatcherOptions options;
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			peFile = (byte*)moduleData.Pointer;
 			this.tempAssembly = tempAssembly;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
-			remappedTypeTokens = new Dictionary<uint, uint>();
+			remappedTypeTokens = new RemappedTypeTokens(nonNestedEditedTypeOrNull);
 			sigBuilder = new List<byte>();
 			this.mdEditor = mdEditor;
 			this.options = options;
@@ -98,6 +98,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					tdRow.Flags = (tdRow.Flags & ~7U) | 3;  // NestedPrivate
 				mdEditor.TablesHeap.TypeDefTable.Set(type.Rid, tdRow);
 			}
+			remappedTypeTokens.SetReadOnly();
 
 			foreach (var kv in dict) {
 				var deletedType = kv.Value;
