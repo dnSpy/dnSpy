@@ -94,10 +94,9 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 						uint value = row.Read(i);
 						switch (newColumns[i].Size) {
 						case 1:
-							Debug.Assert(i + 1 < newColumns.Count && newColumns[i + 1].Offset == newColumns[i].Offset + 2);
+							Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
 							Debug.Assert(value <= byte.MaxValue);
 							destination[destinationIndex++] = (byte)value;
-							destination[destinationIndex++] = 0;
 							break;
 
 						case 2:
@@ -133,8 +132,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 					for (int i = 0; i < newColumns.Count; i++) {
 						switch (newColumns[i].Size) {
 						case 1:
-							Debug.Assert(i + 1 < newColumns.Count && newColumns[i + 1].Offset == newColumns[i].Offset + 2);
-							destination[destinationIndex++] = *p++;
+							Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
 							destination[destinationIndex++] = *p++;
 							break;
 
