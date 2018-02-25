@@ -202,7 +202,7 @@
     <value>Process</value>
   </data>
   <data name="Column_ProcessArchitecture" xml:space="preserve">
-    <value>Arch</value>
+    <value>Architecture</value>
   </data>
   <data name="Column_ProcessFilename" xml:space="preserve">
     <value>Filename</value>

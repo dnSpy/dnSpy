@@ -898,7 +898,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Arch.
+        ///   Looks up a localized string similar to Architecture.
         /// </summary>
         public static string Column_ProcessArchitecture {
             get {
