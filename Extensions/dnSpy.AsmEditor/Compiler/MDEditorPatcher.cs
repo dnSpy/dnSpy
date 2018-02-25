@@ -128,15 +128,19 @@ namespace dnSpy.AsmEditor.Compiler {
 				var columns = table.Columns;
 				var nameData = nonNestedEditedType.Name?.Data ?? Array.Empty<byte>();
 				var namespaceData = nonNestedEditedType.Namespace?.Data ?? Array.Empty<byte>();
+				var columnResolutionScope = columns[0];
+				var columnName = columns[1];
+				var columnNamespace = columns[2];
+				p += columnName.Offset;
 				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint nameOffset = ReadColumn(p, columns[1]);
+					uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
 					if (!StringsStreamNameEquals(stringsStream, nameOffset, nameData))
 						continue;
-					uint namespaceOffset = ReadColumn(p, columns[2]);
+					uint namespaceOffset = columnNamespace.Size == 2 ? *(ushort*)(p + columnName.Size) : *(uint*)(p + columnName.Size);
 					if (!StringsStreamNameEquals(stringsStream, namespaceOffset, namespaceData))
 						continue;
 
-					uint resolutionScopeCodedToken = ReadColumn(p, columns[0]);
+					uint resolutionScopeCodedToken = columnResolutionScope.Size == 2 ? *(ushort*)(p - 2) : *(uint*)(p - 4);
 					if (!resolutionScopeCodedTokenCache.TryGetValue(resolutionScopeCodedToken, out var res)) {
 						if (!CodedToken.ResolutionScope.Decode(resolutionScopeCodedToken, out MDToken resolutionScope))
 							continue;
@@ -208,18 +212,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			return stringsStream.ReadByte() == 0;
 		}
 
-		unsafe static uint ReadColumn(byte* p, ColumnInfo column) {
-			p += column.Offset;
-			switch (column.Size) {
-			case 1:		return *p;
-			case 2:		return *p++ | ((uint)*p << 8);
-			case 4:		return *p++ | ((uint)*p++ << 8) | ((uint)*p++ << 16) | ((uint)*p << 24);
-			default:
-				Debug.Fail("Unreachable code");
-				return 0;
-			}
-		}
-
 		static bool DataEquals(byte[] a, byte[] b) {
 			if (a == b)
 				return true;
@@ -255,17 +247,25 @@ namespace dnSpy.AsmEditor.Compiler {
 			var typeSigDict = new Dictionary<uint, uint>();
 			var callConvSigDict = new Dictionary<uint, uint>();
 
+			MDTable table;
+			byte* p;
+			int rowSize;
+			ColumnInfo column, column2;
+			uint i, codedToken, newToken, sig, newSig, rid;
+			MDToken token;
+
 			// Patch the TypeDef table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[3];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint codedToken = ReadColumn(p, column);
-					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
+				table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[3];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					codedToken = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
 						continue;
-					if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
+					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.TypeDefTable.Get(i + 1);
 						row.Extends = CodedToken.TypeDefOrRef.Encode(newToken);
 						tablesHeap.TypeDefTable.Set(i + 1, row);
@@ -275,13 +275,14 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the Field table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.FieldTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[2];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint sig = ReadColumn(p, column);
-					uint newSig = PatchCallingConventionSignature(callConvSigDict, sig);
+				table = mdEditor.RealMetadata.TablesStream.FieldTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[2];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					sig = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.FieldTable.Get(i + 1);
 						row.Signature = newSig;
@@ -292,13 +293,14 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the Method table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.MethodTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[4];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint sig = ReadColumn(p, column);
-					uint newSig = PatchCallingConventionSignature(callConvSigDict, sig);
+				table = mdEditor.RealMetadata.TablesStream.MethodTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[4];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					sig = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.MethodTable.Get(i + 1);
 						row.Signature = newSig;
@@ -309,15 +311,16 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the InterfaceImpl table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.InterfaceImplTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[1];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint codedToken = ReadColumn(p, column);
-					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
+				table = mdEditor.RealMetadata.TablesStream.InterfaceImplTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[1];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					codedToken = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
 						continue;
-					if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
+					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.InterfaceImplTable.Get(i + 1);
 						row.Interface = CodedToken.TypeDefOrRef.Encode(newToken);
 						tablesHeap.InterfaceImplTable.Set(i + 1, row);
@@ -332,22 +335,23 @@ namespace dnSpy.AsmEditor.Compiler {
 			//		took ~25% of the total time (patch file, write new MD, test file was dnSpy.exe = 3.3MB).
 			// Patch the MemberRef table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.MemberRefTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var columnClass = table.Columns[0];
-				var columnSignature = table.Columns[2];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint codedToken = ReadColumn(p, columnClass);
-					if (!CodedToken.MemberRefParent.Decode(codedToken, out MDToken token))
+				table = mdEditor.RealMetadata.TablesStream.MemberRefTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[0];
+				column2 = table.Columns[2];
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					codedToken = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					if (!CodedToken.MemberRefParent.Decode(codedToken, out token))
 						continue;
-					uint rid = i + 1;
+					rid = i + 1;
+					RawMemberRefRow row;
 					switch (token.Table) {
 					case Table.TypeRef:
 					case Table.TypeDef:
 					case Table.TypeSpec:
-						if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
-							var row = tablesHeap.MemberRefTable.Get(rid);
+						if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
+							row = tablesHeap.MemberRefTable.Get(rid);
 							row.Class = CodedToken.MemberRefParent.Encode(newToken);
 							tablesHeap.MemberRefTable.Set(rid, row);
 						}
@@ -356,7 +360,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					case Table.ModuleRef:
 						if (nonNestedEditedType.IsGlobalModuleType && CheckResolutionScopeIsSameModule(token, nonNestedEditedType.Module)) {
 							if (remappedTypeTokens.TryGetValue(nonNestedEditedType.MDToken.Raw, out newToken)) {
-								var row = tablesHeap.MemberRefTable.Get(rid);
+								row = tablesHeap.MemberRefTable.Get(rid);
 								row.Class = CodedToken.MemberRefParent.Encode(newToken);
 								tablesHeap.MemberRefTable.Set(rid, row);
 							}
@@ -371,10 +375,10 @@ namespace dnSpy.AsmEditor.Compiler {
 						break;
 					}
 
-					uint sig = ReadColumn(p, columnSignature);
-					uint newSig = PatchCallingConventionSignature(callConvSigDict, sig);
+					sig = column2.Size == 2 ? *(ushort*)(p + column2.Offset) : *(uint*)(p + column2.Offset);
+					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (sig != newSig) {
-						var row = tablesHeap.MemberRefTable.Get(rid);
+						row = tablesHeap.MemberRefTable.Get(rid);
 						row.Signature = newSig;
 						tablesHeap.MemberRefTable.Set(rid, row);
 					}
@@ -383,15 +387,16 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the Event table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.EventTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[2];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint codedToken = ReadColumn(p, column);
-					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
+				table = mdEditor.RealMetadata.TablesStream.EventTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[2];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					codedToken = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
 						continue;
-					if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
+					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.EventTable.Get(i + 1);
 						row.EventType = CodedToken.TypeDefOrRef.Encode(newToken);
 						tablesHeap.EventTable.Set(i + 1, row);
@@ -401,13 +406,14 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the Property table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.PropertyTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[2];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint sig = ReadColumn(p, column);
-					uint newSig = PatchCallingConventionSignature(callConvSigDict, sig);
+				table = mdEditor.RealMetadata.TablesStream.PropertyTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[2];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					sig = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.PropertyTable.Get(i + 1);
 						row.Type = newSig;
@@ -418,13 +424,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the TypeSpec table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.TypeSpecTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[0];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint sig = ReadColumn(p, column);
-					uint newSig = PatchTypeSignature(typeSigDict, sig);
+				table = mdEditor.RealMetadata.TablesStream.TypeSpecTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[0];
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					sig = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					newSig = PatchTypeSignature(typeSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.TypeSpecTable.Get(i + 1);
 						row.Signature = newSig;
@@ -435,15 +441,16 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the GenericParam table
 			if (mdEditor.RealMetadata.TablesStream.GenericParamTable.Columns.Count == 5) {
-				var table = mdEditor.RealMetadata.TablesStream.GenericParamTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[4];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint codedToken = ReadColumn(p, column);
-					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
+				table = mdEditor.RealMetadata.TablesStream.GenericParamTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[4];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					codedToken = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
 						continue;
-					if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
+					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.GenericParamTable.Get(i + 1);
 						row.Kind = CodedToken.TypeDefOrRef.Encode(newToken);
 						tablesHeap.GenericParamTable.Set(i + 1, row);
@@ -453,15 +460,16 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Patch the GenericParamConstraint table
 			{
-				var table = mdEditor.RealMetadata.TablesStream.GenericParamConstraintTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var column = table.Columns[1];
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint codedToken = ReadColumn(p, column);
-					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
+				table = mdEditor.RealMetadata.TablesStream.GenericParamConstraintTable;
+				p = peFile + (int)table.StartOffset;
+				rowSize = (int)table.RowSize;
+				column = table.Columns[1];
+				p += column.Offset;
+				for (i = 0; i < table.Rows; i++, p += rowSize) {
+					codedToken = column.Size == 2 ? *(ushort*)p : *(uint*)p;
+					if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
 						continue;
-					if (remappedTypeTokens.TryGetValue(token.Raw, out var newToken)) {
+					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.GenericParamConstraintTable.Get(i + 1);
 						row.Constraint = CodedToken.TypeDefOrRef.Encode(newToken);
 						tablesHeap.GenericParamConstraintTable.Set(i + 1, row);
@@ -547,10 +555,12 @@ namespace dnSpy.AsmEditor.Compiler {
 					var p = peFile + (int)table.StartOffset;
 					int rowSize = (int)table.RowSize;
 					var columnName = table.Columns[6];
+					p += columnName.Offset;
 					for (uint i = 0; i < table.Rows; i++, p += rowSize) {
+						uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
 						UTF8String foundCorlibName = null;
 						foreach (var corlibName in corlibSimpleNames) {
-							if (StringsStreamNameEquals(stringsStream, ReadColumn(p, columnName), corlibName.Data)) {
+							if (StringsStreamNameEquals(stringsStream, nameOffset, corlibName.Data)) {
 								foundCorlibName = corlibName;
 								break;
 							}
@@ -558,10 +568,9 @@ namespace dnSpy.AsmEditor.Compiler {
 						if ((object)foundCorlibName == null)
 							continue;
 
-						// Don't use any WinMD mscorlib refs
+						// Don't use any WinMD mscorlib refs (version = 255.255.255.255)
 						if (StringComparer.OrdinalIgnoreCase.Equals(foundCorlibName.String, "mscorlib") &&
-							ReadColumn(p, table.Columns[0]) == 255 && ReadColumn(p, table.Columns[1]) == 255 &&
-							ReadColumn(p, table.Columns[2]) == 255 && ReadColumn(p, table.Columns[3]) == 255) {
+							*(ulong*)(p - columnName.Offset) == 0x00FF_00FF_00FF_00FF) {
 							continue;
 						}
 
@@ -576,20 +585,19 @@ namespace dnSpy.AsmEditor.Compiler {
 					var table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
 					var p = peFile + (int)table.StartOffset;
 					int rowSize = (int)table.RowSize;
-					var columnFlags = table.Columns[0];
 					var columnName = table.Columns[1];
 					var columnNamespace = table.Columns[2];
 					var columnExtends = table.Columns[3];
 					for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-						if ((ReadColumn(p, columnFlags) & (uint)TypeAttributes.VisibilityMask) >= (int)TypeAttributes.NestedPublic)
+						if ((*(uint*)p & (uint)TypeAttributes.VisibilityMask) >= (int)TypeAttributes.NestedPublic)
 							continue;
-						uint nameOffset = ReadColumn(p, columnName);
+						uint nameOffset = columnName.Size == 2 ? *(ushort*)(p + columnName.Offset) : *(uint*)(p + columnName.Offset);
 						if (!StringsStreamNameEquals(stringsStream, nameOffset, nameObject.Data))
 							continue;
-						uint namespaceOffset = ReadColumn(p, columnNamespace);
+						uint namespaceOffset = columnNamespace.Size == 2 ? *(ushort*)(p + columnNamespace.Offset) : *(uint*)(p + columnNamespace.Offset);
 						if (!StringsStreamNameEquals(stringsStream, namespaceOffset, nameSystem.Data))
 							continue;
-						uint extendsCodedToken = ReadColumn(p, columnExtends);
+						uint extendsCodedToken = columnExtends.Size == 2 ? *(ushort*)(p + columnExtends.Offset) : *(uint*)(p + columnExtends.Offset);
 						if (!CodedToken.TypeDefOrRef.Decode(extendsCodedToken, out MDToken extends))
 							continue;
 						if (extends.Rid != 0)

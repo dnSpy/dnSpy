@@ -20,6 +20,7 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Compiler.MDEditor;
+using dnSpy.Contracts.ETW;
 
 namespace dnSpy.AsmEditor.Compiler {
 	struct ModulePatcher {
@@ -49,6 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				!module.Assembly.IsCorLib();
 			bool addIVT = module == editedModule || MDPatcherUtils.HasModuleInternalAccess(module, editedModule);
 			if (fixTypeDefRefs || addIVT) {
+				DnSpyEventSource.Log.EditCodePatchModuleStart(module.Location);
 				using (var md = MDPatcherUtils.TryCreateMetadata(moduleData, isFileLayout)) {
 					var mdEditor = new MetadataEditor(moduleData, md);
 					var options = MDEditorPatcherOptions.None;
@@ -73,6 +75,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						}
 					}
 				}
+				DnSpyEventSource.Log.EditCodePatchModuleStop(module.Location);
 			}
 
 			newModuleData = moduleData;
