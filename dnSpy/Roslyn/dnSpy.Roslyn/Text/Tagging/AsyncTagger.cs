@@ -277,13 +277,16 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			if (tagsResultList.Length == 0)
 				return;
 
-			bool sameSnapshot = tagsResultList[0].Span.Snapshot == lastSnapshotState.Snapshot;
-			if (sameSnapshot) {
-				lock (lockObj) {
+			bool sameSnapshot;
+			lock (lockObj) {
+				sameSnapshot = tagsResultList[0].Span.Snapshot == lastSnapshotState?.Snapshot;
+				if (sameSnapshot) {
 					foreach (var result in tagsResultList)
 						cachedTags[result.Span.Span.Start] = result.Tags;
 				}
+			}
 
+			if (sameSnapshot) {
 				foreach (var result in tagsResultList)
 					TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(result.Span));
 			}
