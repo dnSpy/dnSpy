@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach.Dialogs;
@@ -318,6 +320,38 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			sbOutput.Reset();
 			attachToProcessContext.Formatter.WriteCommandLine(sbOutput, vm);
 			return sbOutput.ToString();
+		}
+
+		public void Copy(ProgramVM[] programs) {
+			if (programs.Length == 0)
+				return;
+
+			var sb = new StringBuilderTextColorOutput();
+			var formatter = attachToProcessContext.Formatter;
+			foreach (var vm in programs) {
+				formatter.WriteProcess(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WritePid(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteTitle(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteType(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteMachine(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WritePath(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteCommandLine(sb, vm);
+				sb.Write(BoxedTextColor.Text, Environment.NewLine);
+			}
+
+			var s = sb.ToString();
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		void ShowInfoLinkPage() {
