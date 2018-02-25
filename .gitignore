@@ -9,4 +9,5 @@ _ReSharper*/
 /packages
 *.ide/
 *.tmp_proj
+*_wpftmp.csproj
 project.lock.json
