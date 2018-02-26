@@ -163,6 +163,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 			var decContext = new DecompilationContext {
 				CancellationToken = cancellationToken,
 				CalculateILSpans = true,
+				// This is only needed when decompiling more than one body
+				AsyncMethodBodyDecompilation = false,
 			};
 			var info = TryCompileAndGetDebugInfo(decompiler, containingMethod, token, decContext, cancellationToken);
 			if (info.debugInfo == null && containingMethod != method) {

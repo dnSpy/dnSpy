@@ -37,6 +37,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			State = cache.AllocateAstBuilderState();
 			State.AstBuilder.Context.CalculateILSpans = ctx.CalculateILSpans;
 			State.AstBuilder.Context.MetadataTextColorProvider = metadataTextColorProvider;
+			State.AstBuilder.Context.AsyncMethodBodyDecompilation = ctx.AsyncMethodBodyDecompilation;
 		}
 
 		public void Dispose() => cache.Free(State);

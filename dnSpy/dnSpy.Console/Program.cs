@@ -730,6 +730,7 @@ namespace dnSpy_Console {
 				if (GetLanguage().ProjectFileExtension == null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotSupportProjects, GetLanguage().UniqueNameUI));
 
+				decompilationContext.AsyncMethodBodyDecompilation = false;
 				var options = new ProjectCreatorOptions(outputDir, decompilationContext.CancellationToken);
 				options.Logger = this;
 				options.ProjectVersion = projectVersion;

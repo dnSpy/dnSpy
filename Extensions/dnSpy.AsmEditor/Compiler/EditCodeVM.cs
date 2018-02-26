@@ -251,6 +251,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public DecompilationContext DecompilationContext { get; }
 			protected DecompileCodeState() => DecompilationContext = new DecompilationContext {
 				CancellationToken = CancellationToken,
+				AsyncMethodBodyDecompilation = false,
 			};
 		}
 		protected DecompileCodeState decompileCodeState;

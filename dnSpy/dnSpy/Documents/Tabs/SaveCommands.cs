@@ -157,6 +157,7 @@ namespace dnSpy.Documents.Tabs {
 					var decompilationContext = new DecompilationContext {
 						CancellationToken = cancellationToken,
 						GetDisableAssemblyLoad = () => owner.documentTreeView.DocumentService.DisableAssemblyLoad(),
+						AsyncMethodBodyDecompilation = false,
 					};
 					var options = new ProjectCreatorOptions(vm.Directory, cancellationToken);
 					options.ProjectVersion = vm.ProjectVersion;

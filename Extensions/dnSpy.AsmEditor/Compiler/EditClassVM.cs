@@ -31,10 +31,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly TypeDef nonNestedTypeToEdit;
 		readonly MethodSourceStatement? methodSourceStatement;
 
-		sealed class EditMethodDecompileCodeState : DecompileCodeState {
+		sealed class EditClassDecompileCodeState : DecompileCodeState {
 			public ReferenceDecompilerOutput MainOutput { get; }
 
-			public EditMethodDecompileCodeState(object referenceToEdit, MethodSourceStatement? methodSourceStatement) => MainOutput = new ReferenceDecompilerOutput(referenceToEdit, methodSourceStatement);
+			public EditClassDecompileCodeState(object referenceToEdit, MethodSourceStatement? methodSourceStatement) {
+				MainOutput = new ReferenceDecompilerOutput(referenceToEdit, methodSourceStatement);
+				DecompilationContext.AsyncMethodBodyDecompilation = true;
+			}
 		}
 
 		public EditClassVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, IMemberDef defToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
@@ -48,10 +51,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
-			new EditMethodDecompileCodeState(defToEdit, methodSourceStatement);
+			new EditClassDecompileCodeState(defToEdit, methodSourceStatement);
 
 		protected override Task<DecompileAsyncResult> DecompileAsync(DecompileCodeState decompileCodeState) {
-			var state = (EditMethodDecompileCodeState)decompileCodeState;
+			var state = (EditClassDecompileCodeState)decompileCodeState;
 			state.CancellationToken.ThrowIfCancellationRequested();
 
 			state.DecompilationContext.CalculateILSpans = true;
