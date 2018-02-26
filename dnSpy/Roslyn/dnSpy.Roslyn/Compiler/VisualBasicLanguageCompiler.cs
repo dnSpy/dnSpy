@@ -73,7 +73,7 @@ namespace dnSpy.Roslyn.Compiler {
 		protected override string GetHelpUri(Diagnostic diagnostic) {
 			string id = diagnostic.Id.ToLowerInvariant();
 			// See https://github.com/dotnet/docs/tree/master/docs/visual-basic/misc
-			const string URL = "https://docs.microsoft.com/en-us/dotnet/visual-basic/misc/";
+			const string URL = "https://docs.microsoft.com/dotnet/visual-basic/misc/";
 			return URL + id;
 		}
 	}
