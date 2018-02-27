@@ -139,11 +139,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected EditCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule, TypeDef typeToEditOrNull) {
 			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
-			this.openFromGAC = openFromGAC;
-			this.openAssembly = openAssembly;
-			this.languageCompiler = languageCompiler;
-			this.decompiler = decompiler;
-			this.sourceModule = sourceModule;
+			if (rawModuleBytesProvider == null)
+				throw new ArgumentNullException(nameof(rawModuleBytesProvider));
+			this.openFromGAC = openFromGAC ?? throw new ArgumentNullException(nameof(openFromGAC));
+			this.openAssembly = openAssembly ?? throw new ArgumentNullException(nameof(openAssembly));
+			this.languageCompiler = languageCompiler ?? throw new ArgumentNullException(nameof(languageCompiler));
+			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			this.sourceModule = sourceModule ?? throw new ArgumentNullException(nameof(sourceModule));
 			if (typeToEditOrNull != null) {
 				Debug.Assert(typeToEditOrNull.Module == sourceModule);
 				while (typeToEditOrNull.DeclaringType != null)
@@ -344,7 +346,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		async Task<(DecompileAsyncResult result, CompilerMetadataReference[] assemblyReferences)> DecompileAndGetRefsAsync() {
 			var result = await DecompileAsync().ConfigureAwait(false);
 			decompileCodeState.CancellationToken.ThrowIfCancellationRequested();
-			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.RequiredAssemblyReferences, decompileCodeState.CancellationToken).ConfigureAwait(false);
+			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.GetRequiredAssemblyReferences(sourceModule), decompileCodeState.CancellationToken).ConfigureAwait(false);
 			return (result, refs);
 		}
 

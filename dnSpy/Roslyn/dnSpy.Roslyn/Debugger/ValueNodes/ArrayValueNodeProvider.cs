@@ -23,7 +23,6 @@ using System.Linq;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
-using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;

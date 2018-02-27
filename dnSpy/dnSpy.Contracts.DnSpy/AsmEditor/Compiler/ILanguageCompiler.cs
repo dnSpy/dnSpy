@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using dnlib.DotNet;
 
 namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
@@ -33,7 +34,9 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// language uses types from certain language specific assemblies, eg. Visual Basic
 		/// usually needs <c>Microsoft.VisualBasic</c>.
 		/// </summary>
-		IEnumerable<string> RequiredAssemblyReferences { get; }
+		/// <param name="editedModule">The module the user is editing</param>
+		/// <returns></returns>
+		IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
 		/// <summary>
 		/// Called after the code has been decompiled

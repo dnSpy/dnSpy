@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text.Editor;
@@ -66,7 +67,6 @@ namespace dnSpy.Roslyn.Compiler {
 		protected abstract ParseOptions ParseOptions { get; }
 		protected abstract string FileExtension { get; }
 		protected abstract string AppearanceCategory { get; }
-		public abstract IEnumerable<string> RequiredAssemblyReferences { get; }
 
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
@@ -82,6 +82,8 @@ namespace dnSpy.Roslyn.Compiler {
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider ?? throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
 			documents = new List<RoslynCodeDocument>();
 		}
+
+		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
 		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
 			Debug.Assert(workspace == null);

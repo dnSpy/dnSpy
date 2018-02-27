@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
@@ -57,17 +58,33 @@ namespace dnSpy.Roslyn.Compiler {
 		protected override string TextViewRole => PredefinedDsTextViewRoles.RoslynVisualBasicCodeEditor;
 		protected override string ContentType => ContentTypes.VisualBasicRoslyn;
 		protected override string LanguageName => LanguageNames.VisualBasic;
-		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary, embedVbCoreRuntime: embedVbCoreRuntime);
 		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest);
 		protected override string FileExtension => ".vb";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
-		public override IEnumerable<string> RequiredAssemblyReferences => requiredAssemblyReferences;
-		static readonly string[] requiredAssemblyReferences = new string[] {
-			"Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-		};
+
+		bool embedVbCoreRuntime;
 
 		public VisualBasicLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
 			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
+		}
+
+		public override IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule) {
+			var frameworkKind = FrameworkDetector.GetFrameworkKind(editedModule);
+			// If we're editing mscorlib, embed the types
+			if (editedModule.Assembly.IsCorLib())
+				frameworkKind = FrameworkKind.Unknown;
+			switch (frameworkKind) {
+			case FrameworkKind.DotNetFramework2:
+				return new[] { "Microsoft.VisualBasic, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
+
+			case FrameworkKind.DotNetFramework4:
+				return new[] { "Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
+
+			default:
+				embedVbCoreRuntime = true;
+				return Array.Empty<string>();
+			}
 		}
 
 		protected override string GetHelpUri(Diagnostic diagnostic) {

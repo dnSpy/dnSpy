@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Images;
@@ -61,11 +62,12 @@ namespace dnSpy.Roslyn.Compiler {
 		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: LanguageVersion.Latest);
 		protected override string FileExtension => ".cs";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
-		public override IEnumerable<string> RequiredAssemblyReferences => Array.Empty<string>();
 
 		public CSharpLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
 			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
+
+		public override IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule) => Array.Empty<string>();
 
 		protected override string GetHelpUri(Diagnostic diagnostic) {
 			string id = diagnostic.Id.ToLowerInvariant();
