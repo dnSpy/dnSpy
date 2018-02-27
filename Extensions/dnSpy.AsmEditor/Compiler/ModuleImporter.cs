@@ -94,6 +94,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly Dictionary<FieldDef, FieldDef> editedFieldsToFix;
 		readonly Dictionary<PropertyDef, PropertyDef> editedPropertiesToFix;
 		readonly Dictionary<EventDef, EventDef> editedEventsToFix;
+		Dictionary<TypeDef, TypeDef> originalTypes;
 		readonly HashSet<MethodDef> usedMethods;
 		readonly HashSet<object> isStub;
 		ImportSigComparerOptions importSigComparerOptions;
@@ -284,6 +285,33 @@ namespace dnSpy.AsmEditor.Compiler {
 			return createdFile;
 		}
 
+		void AddNewOrMergedNonNestedType(TypeDef sourceType) {
+			Debug.Assert(!sourceType.IsGlobalModuleType);
+			Debug.Assert(sourceType.DeclaringType == null);
+
+			// VB embeds the used core types. Merge all of them
+			TypeDef targetType = null;
+			bool merge = false;
+			if (HasVBEmbeddedAttribute(sourceType)) {
+				if (originalTypes == null) {
+					originalTypes = new Dictionary<TypeDef, TypeDef>(new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope));
+					foreach (var t in targetModule.GetTypes())
+						originalTypes[t] = t;
+				}
+				merge = originalTypes.TryGetValue(sourceType, out targetType) && HasVBEmbeddedAttribute(targetType);
+			}
+			if (merge)
+				nonNestedMergedImportedTypes.Add(MergeEditedTypes(sourceType, targetType));
+			else
+				newNonNestedImportedTypes.Add(CreateNewImportedType(sourceType, targetModule.Types));
+		}
+
+		static bool HasVBEmbeddedAttribute(TypeDef type) {
+			var ca = type.CustomAttributes.Find("Microsoft.VisualBasic.Embedded");
+			// The attribute should also be embedded, so make sure the ctor is a MethodDef
+			return ca?.Constructor is MethodDef;
+		}
+
 		/// <summary>
 		/// Imports everything into the target module. All global members are merged and possibly renamed.
 		/// All non-nested types are renamed if a type with the same name exists in the target module.
@@ -298,7 +326,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var type in sourceModule.Types) {
 				if (type.IsGlobalModuleType)
 					continue;
-				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
+				AddNewOrMergedNonNestedType(type);
 			}
 			InitializeTypesAndMethods();
 
@@ -358,7 +386,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					continue;
 				if (type == newType)
 					continue;
-				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
+				AddNewOrMergedNonNestedType(type);
 			}
 			nonNestedMergedImportedTypes.Add(MergeEditedTypes(newType, targetType));
 			InitializeTypesAndMethods();
@@ -568,7 +596,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					continue;
 				if (type == newMethodNonNestedDeclType)
 					continue;
-				newNonNestedImportedTypes.Add(CreateNewImportedType(type, targetModule.Types));
+				AddNewOrMergedNonNestedType(type);
 			}
 			InitializeTypesAndMethods();
 
@@ -1298,7 +1326,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		MethodOverride Import(MethodOverride o) => new MethodOverride(Import(o.MethodBody), Import(o.MethodDeclaration));
 		IMethodDefOrRef Import(IMethodDefOrRef method) => (IMethodDefOrRef)Import((IMethod)method);
 
 		ITypeDefOrRef Import(ITypeDefOrRef type) {

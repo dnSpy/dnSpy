@@ -82,8 +82,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 			else {
-				// Unlikely code path
-				Debug.Fail("Shouldn't be here, could be a bug");
+				// Unlikely code path (if it's a Microsoft compiler, a very likely path if it's mcs)
 
 				if (token == enclosingTypeToken || (minNestedToken <= token && token <= maxNestedToken))
 					return dict.TryGetValue(token, out newToken);
