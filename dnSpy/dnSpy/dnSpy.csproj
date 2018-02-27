@@ -1380,8 +1380,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\DefaultWatermarkDark.png" />
-    <Resource Include="Images\DefaultWatermarkLight.png" />
     <Resource Include="Images\dnSpy.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
