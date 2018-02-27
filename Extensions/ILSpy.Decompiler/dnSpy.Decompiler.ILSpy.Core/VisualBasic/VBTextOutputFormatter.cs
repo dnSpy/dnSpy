@@ -27,6 +27,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
+using CSharp2 = ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class VBTextOutputFormatter : IOutputFormatter {
@@ -257,14 +258,38 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		public void Unindent() => output.DecreaseIndent();
 		public void NewLine() => output.WriteLine();
 
-		public void WriteComment(bool isDocumentation, string content) {
+		public void WriteComment(bool isDocumentation, string content, CSharp2.CommentReference[] refs) {
 			if (isDocumentation) {
+				Debug.Assert(refs == null);
 				output.Write("'''", BoxedTextColor.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
 			}
-			else
-				output.WriteLine("'" + content, BoxedTextColor.Comment);
+			else {
+				output.Write("'", BoxedTextColor.Comment);
+				Write(content, refs);
+				output.WriteLine();
+			}
+		}
+
+		void Write(string content, CSharp2.CommentReference[] refs)
+		{
+			if (refs == null) {
+				output.Write(content, BoxedTextColor.Comment);
+				return;
+			}
+
+			int offs = 0;
+			for (int i = 0; i < refs.Length; i++) {
+				var @ref = refs[i];
+				var s = content.Substring(offs, @ref.Length);
+				offs += @ref.Length;
+				if (@ref.Reference == null)
+					output.Write(s, BoxedTextColor.Comment);
+				else
+					output.Write(s, @ref.Reference, @ref.IsLocal ? DecompilerReferenceFlags.Local : DecompilerReferenceFlags.None, BoxedTextColor.Comment);
+			}
+			Debug.Assert(offs == content.Length);
 		}
 
 		static bool IsDefinition(AstNode node) =>
