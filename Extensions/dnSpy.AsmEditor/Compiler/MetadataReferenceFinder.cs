@@ -94,7 +94,20 @@ namespace dnSpy.AsmEditor.Compiler {
 					yield return a;
 			}
 		}
-		static readonly PublicKeyToken contractsPublicKeyToken = new PublicKeyToken("b03f5f7f11d50a3a");
+		static readonly PublicKeyToken[] contractsPublicKeyTokens = new PublicKeyToken[] {
+			// Normal contract asms
+			new PublicKeyToken("b03f5f7f11d50a3a"),
+			// netstandard
+			new PublicKeyToken("cc7b13ffcd2ddd51"),
+		};
+
+		static bool IsPublicKeyToken(PublicKeyToken[] tokens, PublicKeyToken token) {
+			foreach (var t in tokens) {
+				if (token.Equals(t))
+					return true;
+			}
+			return false;
+		}
 
 		IEnumerable<AssemblyDef> GetResolvedContractAssemblies(ModuleDef module) {
 			var nonContractAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
@@ -102,7 +115,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			while (stack.Count > 0) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var asmRef = stack.Pop();
-				if (!contractsPublicKeyToken.Equals(asmRef.PublicKeyOrToken?.Token))
+				if (!IsPublicKeyToken(contractsPublicKeyTokens, asmRef.PublicKeyOrToken?.Token))
 					continue;
 				if (checkedContractsAssemblies.Contains(asmRef))
 					continue;
@@ -114,7 +127,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					foreach (var m in contractsAsm.Modules) {
 						foreach (var ar in m.GetAssemblyRefs()) {
 							cancellationToken.ThrowIfCancellationRequested();
-							if (contractsPublicKeyToken.Equals(ar.PublicKeyOrToken))
+							if (IsPublicKeyToken(contractsPublicKeyTokens, ar.PublicKeyOrToken?.Token))
 								stack.Push(ar);
 							else
 								nonContractAsms.Add(ar);
