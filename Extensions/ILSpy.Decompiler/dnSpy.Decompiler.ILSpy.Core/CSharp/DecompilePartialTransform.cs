@@ -50,8 +50,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					var tdecl = en as TypeDeclaration;
 					Debug.Assert(tdecl != null);
 					if (tdecl != null) {
-						if (addPartialKeyword)
+						if (addPartialKeyword) {
 							tdecl.Modifiers |= Modifiers.Partial;
+
+							// Make sure the comments are still shown before the method and its modifiers
+							var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();
+							foreach (var c in comments) {
+								c.Remove();
+								en.InsertChildAfter(null, c, Roles.Comment);
+							}
+						}
 						foreach (var iface in tdecl.BaseTypes) {
 							var tdr = iface.Annotation<ITypeDefOrRef>();
 							if (tdr != null && ifacesToRemove.Contains(tdr))

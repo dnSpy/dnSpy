@@ -89,6 +89,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 							tdecl.BaseTypes.Clear();
 							tdecl.Attributes.Clear();
 						}
+
+						// Make sure the comments are still shown before the method and its modifiers
+						var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();
+						foreach (var c in comments) {
+							c.Remove();
+							en.InsertChildAfter(null, c, Roles.Comment);
+						}
 					}
 				}
 				else {
