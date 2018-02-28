@@ -1017,6 +1017,8 @@ namespace dnSpy.Text.Operations {
 				int columnsLeft = line.Length - column;
 				int replaceLength = Math.Min(columnsLeft, text.Length);
 				TextBuffer.Replace(new Span(newPos.Position.Position, replaceLength), text);
+				if (replaceLength != 0)
+					newPos = new VirtualSnapshotPoint(newPos.Position + replaceLength);
 				newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
 			}
 
