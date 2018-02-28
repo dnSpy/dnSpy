@@ -99,6 +99,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly HashSet<object> isStub;
 		ImportSigComparerOptions importSigComparerOptions;
 
+		Dictionary<TypeDef, TypeDef> OriginalTypes {
+			get {
+				if (originalTypes == null) {
+					originalTypes = new Dictionary<TypeDef, TypeDef>(new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope));
+					foreach (var t in targetModule.GetTypes())
+						originalTypes[t] = t;
+				}
+				return originalTypes;
+			}
+		}
+
 		readonly struct MemberInfo<T> where T : IMemberDef {
 			public T TargetMember { get; }
 			public T EditedMember { get; }
@@ -289,17 +300,17 @@ namespace dnSpy.AsmEditor.Compiler {
 			Debug.Assert(!sourceType.IsGlobalModuleType);
 			Debug.Assert(sourceType.DeclaringType == null);
 
-			// VB embeds the used core types. Merge all of them
 			TypeDef targetType = null;
 			bool merge = false;
-			if (HasVBEmbeddedAttribute(sourceType)) {
-				if (originalTypes == null) {
-					originalTypes = new Dictionary<TypeDef, TypeDef>(new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope));
-					foreach (var t in targetModule.GetTypes())
-						originalTypes[t] = t;
-				}
-				merge = originalTypes.TryGetValue(sourceType, out targetType) && HasVBEmbeddedAttribute(targetType);
-			}
+
+			// VB embeds the used core types. Merge all of them
+			if (HasVBEmbeddedAttribute(sourceType))
+				merge |= OriginalTypes.TryGetValue(sourceType, out targetType) && HasVBEmbeddedAttribute(targetType);
+
+			// Merge all embedded COM types
+			if (TIAHelper.IsTypeDefEquivalent(sourceType) && OriginalTypes.TryGetValue(sourceType, out targetType))
+				merge |= new SigComparer().Equals(sourceType, targetType);
+
 			if (merge)
 				nonNestedMergedImportedTypes.Add(MergeEditedTypes(sourceType, targetType));
 			else
