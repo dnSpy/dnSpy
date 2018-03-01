@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
@@ -28,11 +29,12 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[DebuggerDisplay("{Description}")]
-	sealed class AddClassCommand : EditCodeCommandBase {
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 14)]
+	sealed class AddClassMembersCommand : EditCodeCommandBase {
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 13)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -47,13 +49,13 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.editCodeVMCreator = editCodeVMCreator;
 			}
 
-			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon(CompilationKind.AddClass);
-			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader(CompilationKind.AddClass);
-			public override bool IsVisible(AsmEditorContext context) => AddClassCommand.CanExecute(editCodeVMCreator, context.Nodes);
-			public override void Execute(AsmEditorContext context) => AddClassCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
+			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon(CompilationKind.AddMembers);
+			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader(CompilationKind.AddMembers);
+			public override bool IsVisible(AsmEditorContext context) => AddClassMembersCommand.CanExecute(editCodeVMCreator, context.Nodes);
+			public override void Execute(AsmEditorContext context) => AddClassMembersCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 44)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 43)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -69,13 +71,13 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.editCodeVMCreator = editCodeVMCreator;
 			}
 
-			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon(CompilationKind.AddClass);
-			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader(CompilationKind.AddClass);
-			public override bool IsVisible(AsmEditorContext context) => AddClassCommand.CanExecute(editCodeVMCreator, context.Nodes);
-			public override void Execute(AsmEditorContext context) => AddClassCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
+			public override ImageReference? GetIcon(AsmEditorContext context) => editCodeVMCreator.GetIcon(CompilationKind.AddMembers);
+			public override string GetHeader(AsmEditorContext context) => editCodeVMCreator.GetHeader(CompilationKind.AddMembers);
+			public override bool IsVisible(AsmEditorContext context) => AddClassMembersCommand.CanExecute(editCodeVMCreator, context.Nodes);
+			public override void Execute(AsmEditorContext context) => AddClassMembersCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 14)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 13)]
 		sealed class CodeCommand : NodesCodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -91,48 +93,53 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.editCodeVMCreator = editCodeVMCreator;
 			}
 
-			public override ImageReference? GetIcon(CodeContext context) => editCodeVMCreator.GetIcon(CompilationKind.AddClass);
-			public override string GetHeader(CodeContext context) => editCodeVMCreator.GetHeader(CompilationKind.AddClass);
-			public override bool IsEnabled(CodeContext context) => AddClassCommand.CanExecute(editCodeVMCreator, context.Nodes);
-			public override void Execute(CodeContext context) => AddClassCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
+			public override ImageReference? GetIcon(CodeContext context) => editCodeVMCreator.GetIcon(CompilationKind.AddMembers);
+			public override string GetHeader(CodeContext context) => editCodeVMCreator.GetHeader(CompilationKind.AddMembers);
+			public override bool IsEnabled(CodeContext context) => AddClassMembersCommand.CanExecute(editCodeVMCreator, context.Nodes);
+			public override void Execute(CodeContext context) => AddClassMembersCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
 		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, DocumentTreeNodeData[] nodes) =>
-			editCodeVMCreator.CanCreate(CompilationKind.AddClass) && nodes.Length == 1 && GetModuleNode(nodes[0]) != null;
+			editCodeVMCreator.CanCreate(CompilationKind.AddMembers) &&
+			nodes.Length == 1 &&
+			(nodes[0] as IMDTokenNode)?.Reference is IMemberDef;
 
-		static ModuleDocumentNode GetModuleNode(DocumentTreeNodeData node) {
-			if (node is AssemblyDocumentNode asmNode) {
-				asmNode.TreeNode.EnsureChildrenLoaded();
-				return asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
-			}
-			else
-				return node.GetModuleNode();
-		}
-
-		static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
+		internal static void Execute(EditCodeVMCreator editCodeVMCreator, Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(editCodeVMCreator, nodes))
 				return;
 
-			var modNode = GetModuleNode(nodes[0]);
+			var node = nodes[0];
+			var tokNode = node as IMDTokenNode;
+			var defToEdit = tokNode?.Reference as IMemberDef;
+			if (defToEdit == null)
+				return;
+
+			TypeNode typeNode = null;
+			for (TreeNodeData n = node; n != null;) {
+				if (n is TypeNode t)
+					typeNode = t;
+				n = n.TreeNode.Parent?.Data;
+			}
+			if (typeNode == null)
+				return;
+
+			var asmNode = nodes[0] as AssemblyDocumentNode;
+			ModuleDocumentNode modNode;
+			if (asmNode != null) {
+				asmNode.TreeNode.EnsureChildrenLoaded();
+				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
+			}
+			else
+				modNode = nodes[0].GetModuleNode();
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				return;
-			var module = modNode.Document.ModuleDef;
-			Debug.Assert(module != null);
-			if (module == null)
-				throw new InvalidOperationException();
 
-			AssemblyDocumentNode asmNode;
-			if (module.IsManifestModule)
-				asmNode = modNode.TreeNode.Parent?.Data as AssemblyDocumentNode;
-			else
-				asmNode = null;
-
-			var vm = editCodeVMCreator.CreateAddClass(module);
+			var vm = editCodeVMCreator.CreateAddMembers(defToEdit);
 			var win = new EditCodeDlg();
 			win.DataContext = vm;
 			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", dnSpy_AsmEditor_Resources.EditCodeAddClass, asmNode?.ToString() ?? modNode.ToString());
+			win.Title = string.Format("{0} - {1}", dnSpy_AsmEditor_Resources.EditCodeAddClassMembers, typeNode.ToString());
 
 			if (win.ShowDialog() != true) {
 				vm.Dispose();
@@ -140,14 +147,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			Debug.Assert(vm.Result != null);
 
-			undoCommandService.Value.Add(new AddClassCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
+			undoCommandService.Value.Add(new AddClassMembersCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();
 		}
 
-		AddClassCommand(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer)
+		AddClassMembersCommand(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer)
 			: base(addUpdatedNodesHelperProvider, modNode, importer) {
 		}
 
-		public override string Description => dnSpy_AsmEditor_Resources.EditCodeAddClass;
+		public override string Description => dnSpy_AsmEditor_Resources.EditCodeAddClassMembers;
 	}
 }

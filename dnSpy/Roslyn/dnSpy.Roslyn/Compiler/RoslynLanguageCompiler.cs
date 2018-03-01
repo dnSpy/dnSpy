@@ -51,6 +51,7 @@ namespace dnSpy.Roslyn.Compiler {
 			case CompilationKind.EditMethod:
 			case CompilationKind.AddClass:
 			case CompilationKind.EditClass:
+			case CompilationKind.AddMembers:
 				return true;
 			default:
 				Debug.Fail($"Unknown kind: {kind}");

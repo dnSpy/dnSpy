@@ -41,5 +41,10 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Edit an existing class
 		/// </summary>
 		EditClass,
+
+		/// <summary>
+		/// Add members
+		/// </summary>
+		AddMembers,
 	}
 }

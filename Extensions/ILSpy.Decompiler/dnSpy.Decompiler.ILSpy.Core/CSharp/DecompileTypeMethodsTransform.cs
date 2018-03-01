@@ -31,7 +31,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		readonly bool showDefinitions;
 		readonly bool showAll;
 
-		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool showAll) {
+		public DecompileTypeMethodsTransform(HashSet<TypeDef> types, HashSet<MethodDef> methods, bool showDefinitions, bool showAll) {
 			defsToShow = new HashSet<IMemberDef>();
 			partialTypes = new HashSet<TypeDef>();
 			this.showDefinitions = showDefinitions;
@@ -66,10 +66,22 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						defsToShow.Add(method);
 				}
 			}
-
+			foreach (var type in types) {
+				if (!type.IsEnum) {
+					defsToShow.Add(type);
+					partialTypes.Add(type);
+				}
+			}
 			foreach (var def in defsToShow) {
 				for (var declType = def.DeclaringType; declType != null; declType = declType.DeclaringType)
 					partialTypes.Add(declType);
+			}
+			foreach (var type in types) {
+				if (type.IsEnum) {
+					defsToShow.Add(type);
+					foreach (var f in type.Fields)
+						defsToShow.Add(f);
+				}
 			}
 		}
 
@@ -84,7 +96,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					var tdecl = en as TypeDeclaration;
 					Debug.Assert(tdecl != null);
 					if (tdecl != null) {
-						tdecl.Modifiers |= Modifiers.Partial;
+						if (tdecl.ClassType != ClassType.Enum)
+							tdecl.Modifiers |= Modifiers.Partial;
 						if (!showDefinitions) {
 							tdecl.BaseTypes.Clear();
 							tdecl.Attributes.Clear();

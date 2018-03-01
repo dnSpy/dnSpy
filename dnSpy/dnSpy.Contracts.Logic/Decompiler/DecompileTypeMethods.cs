@@ -38,6 +38,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public HashSet<MethodDef> Methods { get; }
 
 		/// <summary>
+		/// All nested types to show, not including their members
+		/// </summary>
+		public HashSet<TypeDef> Types { get; }
+
+		/// <summary>
 		/// true to decompile everything
 		/// </summary>
 		public bool ShowAll { get; set; }
@@ -58,6 +63,7 @@ namespace dnSpy.Contracts.Decompiler {
 			: base(output, ctx) {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			Methods = new HashSet<MethodDef>();
+			Types = new HashSet<TypeDef>();
 			DecompileHidden = false;
 		}
 	}

@@ -81,6 +81,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			case CompilationKind.EditMethod:	return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.AddClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClass2, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.EditClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeEditClass2, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.AddMembers:	return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClassMembers2, info.Value.decompiler.GenericNameUI);
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
 			}
 		}
@@ -97,6 +98,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			case CompilationKind.EditMethod:
 			case CompilationKind.EditClass:
+			case CompilationKind.AddMembers:
 				if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
 					return false;
 				break;
@@ -188,6 +190,23 @@ namespace dnSpy.AsmEditor.Compiler {
 				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
 			};
 			return new EditClassVM(options, def, statements);
+		}
+
+		public EditCodeVM CreateAddMembers(IMemberDef def) {
+			var info = GetLanguageCompilerProvider(CompilationKind.AddMembers);
+			if (info == null)
+				throw new InvalidOperationException();
+			var options = new EditCodeVMOptions {
+				RawModuleBytesProvider = rawModuleBytesProvider,
+				OpenFromGAC = openFromGAC,
+				OpenAssembly = openAssembly,
+				PickFilename = pickFilename,
+				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.AddMembers),
+				Decompiler = info.Value.decompiler,
+				SourceModule = def.Module,
+				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
+			};
+			return new AddMembersCodeVM(options, def);
 		}
 	}
 }

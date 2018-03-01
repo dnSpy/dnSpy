@@ -415,6 +415,39 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new InvalidOperationException();
 		}
 
+		/// <summary>
+		/// Imports all new types and members. Nothing is removed.
+		/// </summary>
+		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
+		/// <param name="debugFile">Debug file</param>
+		/// <param name="targetType">Original type that was edited</param>
+		public void ImportNewMembers(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+			if (targetType.Module != targetModule)
+				throw new InvalidOperationException();
+			if (targetType.DeclaringType != null)
+				throw new ArgumentException("Type must not be nested");
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+
+			var newType = FindSourceType(targetType);
+			if (newType.DeclaringType != null)
+				throw new ArgumentException("Type must not be nested");
+
+			if (!newType.IsGlobalModuleType)
+				AddGlobalTypeMembers(sourceModule.GlobalType);
+			foreach (var type in sourceModule.Types) {
+				if (type.IsGlobalModuleType)
+					continue;
+				if (type == newType)
+					continue;
+				AddNewOrMergedNonNestedType(type);
+			}
+			nonNestedMergedImportedTypes.Add(AddMergedType(newType, targetType));
+			InitializeTypesAndMethods();
+
+			ImportResources();
+			SetSourceModule(null);
+		}
+
 		readonly struct ExistingMember<T> where T : IMemberDef {
 			/// <summary>Compiled member</summary>
 			public T CompiledMember { get; }

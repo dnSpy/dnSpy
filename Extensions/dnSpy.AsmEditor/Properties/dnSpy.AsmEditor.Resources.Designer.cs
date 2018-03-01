@@ -1583,6 +1583,24 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Class Members.
+        /// </summary>
+        public static string EditCodeAddClassMembers {
+            get {
+                return ResourceManager.GetString("EditCodeAddClassMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Class Members ({0})....
+        /// </summary>
+        public static string EditCodeAddClassMembers2 {
+            get {
+                return ResourceManager.GetString("EditCodeAddClassMembers2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Class.
         /// </summary>
         public static string EditCodeEditClass {

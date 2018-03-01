@@ -51,7 +51,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					Debug.Assert(tdecl != null);
 					if (tdecl != null) {
 						if (addPartialKeyword) {
-							tdecl.Modifiers |= Modifiers.Partial;
+							if (tdecl.ClassType != ClassType.Enum)
+								tdecl.Modifiers |= Modifiers.Partial;
 
 							// Make sure the comments are still shown before the method and its modifiers
 							var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();

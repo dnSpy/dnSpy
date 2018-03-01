@@ -2519,4 +2519,10 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
     <value>Ctrl+Shift+O</value>
   </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>Add Class Members</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>Add Class Members ({0})...</value>
+  </data>
 </root>
