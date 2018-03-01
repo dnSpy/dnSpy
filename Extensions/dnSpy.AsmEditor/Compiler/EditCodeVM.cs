@@ -312,7 +312,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				foreach (var simpleDoc in simpleDocuments)
 					docs.Add(new DecompiledDocument(simpleDoc.Text, simpleDoc.NameNoExtension));
 				var publicKeyData = (tempAssembly.PublicKeyOrToken as PublicKey)?.Data;
-				codeDocs = languageCompiler.AddDecompiledCode(new DecompiledCodeResult(tempAssembly.Name, publicKeyData, docs.ToArray(), assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
+				languageCompiler.InitializeProject(new CompilerProjectInfo(tempAssembly.Name, publicKeyData, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
+				codeDocs = languageCompiler.AddDocuments(docs.ToArray());
 			}
 
 			decompileCodeState?.Dispose();

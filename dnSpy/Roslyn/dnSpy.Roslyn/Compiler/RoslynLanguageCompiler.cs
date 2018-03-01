@@ -73,6 +73,7 @@ namespace dnSpy.Roslyn.Compiler {
 		readonly IRoslynDocumentationProviderFactory docFactory;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
+		readonly ProjectId projectId;
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
@@ -81,46 +82,33 @@ namespace dnSpy.Roslyn.Compiler {
 			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider ?? throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
 			documents = new List<RoslynCodeDocument>();
+			projectId = ProjectId.CreateNewId();
 		}
 
 		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
-		public ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult) {
+		public void InitializeProject(CompilerProjectInfo projectInfo) {
 			Debug.Assert(workspace == null);
 
 			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
 			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
-			var refs = decompiledCodeResult.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
-			var projectId = ProjectId.CreateNewId();
-
-			foreach (var doc in decompiledCodeResult.Documents)
-				documents.Add(CreateDocument(projectId, doc));
+			var refs = projectInfo.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
 
 			var compilationOptions = CompilationOptions
 				.WithOptimizationLevel(OptimizationLevel.Release)
-				.WithPlatform(GetPlatform(decompiledCodeResult.Platform))
+				.WithPlatform(GetPlatform(projectInfo.Platform))
 				.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
-			if (decompiledCodeResult.PublicKey != null) {
+			if (projectInfo.PublicKey != null) {
 				compilationOptions = compilationOptions
-					.WithCryptoPublicKey(ImmutableArray.Create<byte>(decompiledCodeResult.PublicKey))
+					.WithCryptoPublicKey(ImmutableArray.Create<byte>(projectInfo.PublicKey))
 					.WithDelaySign(true);
 			}
-			var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", decompiledCodeResult.AssemblyName, LanguageName,
+			var roslynProjInfo = ProjectInfo.Create(projectId, VersionStamp.Create(), "compilecodeproj", projectInfo.AssemblyName, LanguageName,
 				compilationOptions: compilationOptions,
 				parseOptions: ParseOptions,
-				documents: documents.Select(a => a.Info),
 				metadataReferences: refs,
 				isSubmission: false, hostObjectType: null);
-			workspace.AddProject(projectInfo);
-			foreach (var doc in documents)
-				workspace.OpenDocument(doc.Info.Id);
-
-			foreach (var doc in documents) {
-				if (textViewUndoManagerProvider.TryGetTextViewUndoManager(doc.TextView, out var manager))
-					manager.ClearUndoHistory();
-			}
-
-			return documents.ToArray();
+			workspace.AddProject(roslynProjInfo);
 		}
 
 		void Workspace_WorkspaceChanged(object sender, WorkspaceChangeEventArgs e) {
@@ -159,6 +147,26 @@ namespace dnSpy.Roslyn.Compiler {
 
 			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), doc.NameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Create()));
 			return new RoslynCodeDocument(codeEditor, documentInfo, doc.NameNoExtension);
+		}
+
+		public ICodeDocument[] AddDocuments(IDecompiledDocument[] documents) {
+			var newDocuments = new List<RoslynCodeDocument>();
+
+			foreach (var doc in documents)
+				newDocuments.Add(CreateDocument(projectId, doc));
+
+			foreach (var doc in newDocuments)
+				workspace.AddDocument(doc.Info);
+
+			foreach (var doc in newDocuments)
+				workspace.OpenDocument(doc.Info.Id);
+
+			foreach (var doc in newDocuments) {
+				if (textViewUndoManagerProvider.TryGetTextViewUndoManager(doc.TextView, out var manager))
+					manager.ClearUndoHistory();
+			}
+
+			return newDocuments.ToArray();
 		}
 
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {

@@ -39,10 +39,10 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
 		/// <summary>
-		/// Called after the code has been decompiled
+		/// Initializes the project
 		/// </summary>
-		/// <param name="decompiledCodeResult">Decompiled code</param>
-		ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
+		/// <param name="projectInfo">Project info</param>
+		void InitializeProject(CompilerProjectInfo projectInfo);
 
 		/// <summary>
 		/// Compiles the code
@@ -52,8 +52,14 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		Task<CompilationResult> CompileAsync(CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Adds new metadata references. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
-		/// has been called.
+		/// Adds more documents
+		/// </summary>
+		/// <param name="documents">Documents to add to the compilation</param>
+		/// <returns></returns>
+		ICodeDocument[] AddDocuments(IDecompiledDocument[] documents);
+
+		/// <summary>
+		/// Adds new metadata references
 		/// </summary>
 		/// <param name="metadataReferences">Metadata references</param>
 		/// <returns></returns>
