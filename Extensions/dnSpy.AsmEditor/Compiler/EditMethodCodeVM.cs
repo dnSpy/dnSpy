@@ -20,8 +20,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using dnlib.DotNet;
-using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 
@@ -40,8 +38,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public EditMethodCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
-			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, methodToEdit.Module, methodToEdit.DeclaringType) {
+		public EditMethodCodeVM(EditCodeVMOptions options, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+			: base(options, methodToEdit.DeclaringType) {
 			this.methodToEdit = methodToEdit;
 			methodSourceStatement = statementsInMethodToEdit.Count == 0 ? (MethodSourceStatement?)null : statementsInMethodToEdit[0];
 			StartDecompile();

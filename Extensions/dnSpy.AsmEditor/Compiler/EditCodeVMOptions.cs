@@ -17,26 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading.Tasks;
+using dnlib.DotNet;
+using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.Compiler {
-	sealed class AddClassVM : EditCodeVM {
-		sealed class AddClassDecompileCodeState : DecompileCodeState {
-		}
-
-		public AddClassVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
-
-		protected override DecompileCodeState CreateDecompileCodeState() =>
-			new AddClassDecompileCodeState();
-
-		protected override Task<DecompileAsyncResult> DecompileAsync(DecompileCodeState decompileCodeState) {
-			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, string.Empty, null);
-			return Task.FromResult(result);
-		}
-
-		protected override void Import(ModuleImporter importer, in CompilationResult result) =>
-			importer.Import(result.RawFile, result.DebugFile, ModuleImporterOptions.None);
+	struct EditCodeVMOptions {
+		public RawModuleBytesProvider RawModuleBytesProvider;
+		public IOpenFromGAC OpenFromGAC;
+		public IOpenAssembly OpenAssembly;
+		public ILanguageCompiler LanguageCompiler;
+		public IDecompiler Decompiler;
+		public ModuleDef SourceModule;
 	}
 }

@@ -137,15 +137,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected readonly ModuleDef sourceModule;
 		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule, TypeDef typeToEditOrNull) {
-			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
-			if (rawModuleBytesProvider == null)
-				throw new ArgumentNullException(nameof(rawModuleBytesProvider));
-			this.openFromGAC = openFromGAC ?? throw new ArgumentNullException(nameof(openFromGAC));
-			this.openAssembly = openAssembly ?? throw new ArgumentNullException(nameof(openAssembly));
-			this.languageCompiler = languageCompiler ?? throw new ArgumentNullException(nameof(languageCompiler));
-			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
-			this.sourceModule = sourceModule ?? throw new ArgumentNullException(nameof(sourceModule));
+		protected EditCodeVM(EditCodeVMOptions options, TypeDef typeToEditOrNull) {
+			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
+			this.openFromGAC = options.OpenFromGAC;
+			this.openAssembly = options.OpenAssembly;
+			this.languageCompiler = options.LanguageCompiler;
+			this.decompiler = options.Decompiler;
+			this.sourceModule = options.SourceModule;
 			if (typeToEditOrNull != null) {
 				Debug.Assert(typeToEditOrNull.Module == sourceModule);
 				while (typeToEditOrNull.DeclaringType != null)
@@ -162,7 +160,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				tempAssembly.PublicKeyOrToken = new PublicKey(publicKeyData);
 				tempAssembly.Attributes |= AssemblyAttributes.PublicKey;
 			}
-			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull);
+			assemblyReferenceResolver = new AssemblyReferenceResolver(options.RawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull);
 		}
 		static readonly byte[] publicKeyData = new byte[] {
 			0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00, 0x06, 0x02, 0x00, 0x00,

@@ -18,9 +18,6 @@
 */
 
 using System.Threading.Tasks;
-using dnlib.DotNet;
-using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 
@@ -30,8 +27,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public StringBuilderDecompilerOutput MainOutput { get; } = new StringBuilderDecompilerOutput();
 		}
 
-		public EditAssemblyVM(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef module)
-			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, module, null) => StartDecompile();
+		public EditAssemblyVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
 			new EditAssemblyDecompileCodeState();
