@@ -307,6 +307,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (HasVBEmbeddedAttribute(sourceType))
 				merge |= OriginalTypes.TryGetValue(sourceType, out targetType) && HasVBEmbeddedAttribute(targetType);
 
+			// C# embeds some attributes if the target framework doesn't have them (Eg. IsByRefLikeAttribute, IsReadOnlyAttribute)
+			if (HasCodeAnalysisEmbeddedAttribute(sourceType))
+				merge |= OriginalTypes.TryGetValue(sourceType, out targetType) && HasCodeAnalysisEmbeddedAttribute(targetType);
+
 			// Merge all embedded COM types
 			if (TIAHelper.IsTypeDefEquivalent(sourceType) && OriginalTypes.TryGetValue(sourceType, out targetType))
 				merge |= new SigComparer().Equals(sourceType, targetType);
@@ -319,6 +323,12 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		static bool HasVBEmbeddedAttribute(TypeDef type) {
 			var ca = type.CustomAttributes.Find("Microsoft.VisualBasic.Embedded");
+			// The attribute should also be embedded, so make sure the ctor is a MethodDef
+			return ca?.Constructor is MethodDef;
+		}
+
+		static bool HasCodeAnalysisEmbeddedAttribute(TypeDef type) {
+			var ca = type.CustomAttributes.Find("Microsoft.CodeAnalysis.EmbeddedAttribute");
 			// The attribute should also be embedded, so make sure the ctor is a MethodDef
 			return ca?.Constructor is MethodDef;
 		}
