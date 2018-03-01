@@ -29,6 +29,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
@@ -36,14 +37,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
+		readonly IPickFilename pickFilename;
 		readonly IDecompilerService decompilerService;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+		EditCodeVMCreator(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IPickFilename pickFilename, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.openFromGAC = openFromGAC;
 			openAssembly = new OpenAssembly(documentTreeView.DocumentService);
+			this.pickFilename = pickFilename;
 			this.decompilerService = decompilerService;
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
@@ -116,6 +119,9 @@ namespace dnSpy.AsmEditor.Compiler {
 					decompilerService.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a, kind));
 		}
 
+		ImageReference GetAddDocumentsImage(ILanguageCompilerProvider languageCompilerProvider) =>
+			languageCompilerProvider.Icon ?? DsImages.CSFileNode;
+
 		public EditCodeVM CreateEditMethodCode(MethodDef method, IList<MethodSourceStatement> statements) {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditMethod);
 			if (info == null)
@@ -124,9 +130,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				RawModuleBytesProvider = rawModuleBytesProvider,
 				OpenFromGAC = openFromGAC,
 				OpenAssembly = openAssembly,
+				PickFilename = pickFilename,
 				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.EditMethod),
 				Decompiler = info.Value.decompiler,
 				SourceModule = method.Module,
+				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
 			};
 			return new EditMethodCodeVM(options, method, statements);
 		}
@@ -139,9 +147,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				RawModuleBytesProvider = rawModuleBytesProvider,
 				OpenFromGAC = openFromGAC,
 				OpenAssembly = openAssembly,
+				PickFilename = pickFilename,
 				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.EditAssembly),
 				Decompiler = info.Value.decompiler,
 				SourceModule = module,
+				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
 			};
 			return new EditAssemblyVM(options);
 		}
@@ -154,9 +164,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				RawModuleBytesProvider = rawModuleBytesProvider,
 				OpenFromGAC = openFromGAC,
 				OpenAssembly = openAssembly,
+				PickFilename = pickFilename,
 				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.AddClass),
 				Decompiler = info.Value.decompiler,
 				SourceModule = module,
+				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
 			};
 			return new AddClassVM(options);
 		}
@@ -169,9 +181,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				RawModuleBytesProvider = rawModuleBytesProvider,
 				OpenFromGAC = openFromGAC,
 				OpenAssembly = openAssembly,
+				PickFilename = pickFilename,
 				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.EditClass),
 				Decompiler = info.Value.decompiler,
 				SourceModule = def.Module,
+				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
 			};
 			return new EditClassVM(options, def, statements);
 		}

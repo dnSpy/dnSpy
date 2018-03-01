@@ -22,14 +22,18 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	struct EditCodeVMOptions {
 		public RawModuleBytesProvider RawModuleBytesProvider;
 		public IOpenFromGAC OpenFromGAC;
 		public IOpenAssembly OpenAssembly;
+		public IPickFilename PickFilename;
 		public ILanguageCompiler LanguageCompiler;
 		public IDecompiler Decompiler;
 		public ModuleDef SourceModule;
+		public ImageReference AddDocumentsImage;
 	}
 }

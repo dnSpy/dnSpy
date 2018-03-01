@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,6 +47,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	abstract class EditCodeVM : ViewModelBase, IDisposable {
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
+		readonly IPickFilename pickFilename;
 		readonly ILanguageCompiler languageCompiler;
 		protected readonly IDecompiler decompiler;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
@@ -61,8 +63,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
+		public ICommand AddDocumentsCommand => new RelayCommand(a => AddDocuments(), a => CanAddDocuments);
+		public ImageReference AddDocumentsImage { get; }
 		public ICommand GoToNextDiagnosticCommand => new RelayCommand(a => GoToNextDiagnostic(), a => CanGoToNextDiagnostic);
 		public ICommand GoToPreviousDiagnosticCommand => new RelayCommand(a => GoToPreviousDiagnostic(), a => CanGoToPreviousDiagnostic);
+
+		public string AddAssemblyReferenceToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.AddAssemblyReferenceToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlO);
+		public string AddGacReferenceToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.AddGacReferenceToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftO);
+		public string AddDocumentsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.AddDocumentsToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftA);
 
 		public bool CanCompile {
 			get => canCompile;
@@ -138,11 +146,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected EditCodeVM(EditCodeVMOptions options, TypeDef typeToEditOrNull) {
 			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
-			this.openFromGAC = options.OpenFromGAC;
-			this.openAssembly = options.OpenAssembly;
-			this.languageCompiler = options.LanguageCompiler;
-			this.decompiler = options.Decompiler;
-			this.sourceModule = options.SourceModule;
+			openFromGAC = options.OpenFromGAC;
+			openAssembly = options.OpenAssembly;
+			pickFilename = options.PickFilename;
+			languageCompiler = options.LanguageCompiler;
+			decompiler = options.Decompiler;
+			sourceModule = options.SourceModule;
+			AddDocumentsImage = options.AddDocumentsImage;
 			if (typeToEditOrNull != null) {
 				Debug.Assert(typeToEditOrNull.Module == sourceModule);
 				while (typeToEditOrNull.DeclaringType != null)
@@ -316,9 +326,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;
 
-			foreach (var doc in codeDocs)
-				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
-			Documents.AddRange(codeDocs.Select(a => new CodeDocument(a)));
+			AddDocuments(codeDocs, initializeDocs: false);
 			SelectedDocument = Documents.FirstOrDefault(a => a.Name == MainCodeName) ?? Documents.FirstOrDefault();
 			Debug.Assert(Documents.Count == simpleDocuments.Length);
 			for (int i = 0; i < Documents.Count; i++) {
@@ -334,6 +342,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			HasDecompiled = true;
 			OnPropertyChanged(nameof(HasDecompiled));
 		}
+
+		void AddDocuments(ICodeDocument[] codeDocs, bool initializeDocs) {
+			foreach (var doc in codeDocs)
+				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
+			foreach (var codeDoc in codeDocs) {
+				var doc = new CodeDocument(codeDoc);
+				Documents.Add(doc);
+				if (initializeDocs)
+					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
+			}
+		}
+
 		static readonly object editCodeTextViewKey = new object();
 
 		internal static EditCodeVM TryGet(ITextView textView) {
@@ -528,6 +548,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			try {
 				if (!languageCompiler.AddMetadataReferences(mdRefs.ToArray()))
 					MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_CouldNotAddAssemblyReferences);
+			}
+			catch (Exception ex) {
+				MsgBox.Instance.Show(ex);
+			}
+		}
+
+		bool CanAddDocuments => true;
+		void AddDocuments() {
+			var files = pickFilename.GetFilenames(null, null);
+			if (files.Length == 0)
+				return;
+			try {
+				var codeDocs = languageCompiler.AddDocuments(files.Select(a => new CompilerDocumentInfo(File.ReadAllText(a), Path.GetFileName(a))).ToArray());
+				AddDocuments(codeDocs, initializeDocs: true);
 			}
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
