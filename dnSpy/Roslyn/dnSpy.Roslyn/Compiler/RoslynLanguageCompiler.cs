@@ -117,11 +117,32 @@ namespace dnSpy.Roslyn.Compiler {
 		void Workspace_WorkspaceChanged(object sender, WorkspaceChangeEventArgs e) {
 			if (isDisposed)
 				return;
-			if (e.Kind != WorkspaceChangeKind.DocumentChanged)
-				return;
-			if (!loadedDocuments.Add(e.DocumentId))
-				return;
-			RefreshTextViews();
+			if (e.Kind == WorkspaceChangeKind.DocumentChanged) {
+				if (!loadedDocuments.Add(e.DocumentId))
+					return;
+				RefreshTextViews();
+			}
+			else if (e.Kind == WorkspaceChangeKind.ProjectChanged) {
+				var oldProj = e.OldSolution.Projects.Single();
+				var newProj = e.NewSolution.Projects.Single();
+				if (CollectionEquals(oldProj.MetadataReferences, newProj.MetadataReferences))
+					return;
+				RefreshTextViews();
+			}
+		}
+
+		static bool CollectionEquals<TElement>(IReadOnlyList<TElement> a, IReadOnlyList<TElement> b) where TElement : class {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Count != b.Count)
+				return false;
+			for (int i = 0; i < a.Count; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
 		}
 
 		void RefreshTextViews() {
