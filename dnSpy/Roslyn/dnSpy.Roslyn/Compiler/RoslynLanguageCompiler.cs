@@ -75,6 +75,7 @@ namespace dnSpy.Roslyn.Compiler {
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 		readonly ProjectId projectId;
+		readonly HashSet<DocumentId> loadedDocuments;
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
@@ -84,6 +85,7 @@ namespace dnSpy.Roslyn.Compiler {
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider ?? throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
 			documents = new List<RoslynCodeDocument>();
 			projectId = ProjectId.CreateNewId();
+			loadedDocuments = new HashSet<DocumentId>();
 		}
 
 		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
@@ -117,15 +119,15 @@ namespace dnSpy.Roslyn.Compiler {
 				return;
 			if (e.Kind != WorkspaceChangeKind.DocumentChanged)
 				return;
-			docChangedEventCount++;
-			if (docChangedEventCount != documents.Count)
+			if (!loadedDocuments.Add(e.DocumentId))
 				return;
+			RefreshTextViews();
+		}
 
-			workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
+		void RefreshTextViews() {
 			foreach (var doc in documents)
 				roslynDocumentChangedService.RaiseDocumentChanged(doc.TextView.TextSnapshot);
 		}
-		int docChangedEventCount;
 
 		static Platform GetPlatform(TargetPlatform platform) {
 			// AnyCpu32BitPreferred can only be used when creating executables (we create a dll)
@@ -155,6 +157,7 @@ namespace dnSpy.Roslyn.Compiler {
 
 			foreach (var doc in documents)
 				newDocuments.Add(CreateDocument(projectId, doc));
+			this.documents.AddRange(newDocuments);
 
 			foreach (var doc in newDocuments)
 				workspace.AddDocument(doc.Info);

@@ -24,7 +24,6 @@ using Microsoft.CodeAnalysis;
 namespace dnSpy.Roslyn.Compiler {
 	sealed class RoslynCodeDocument : ICodeDocument {
 		public string Name => Info.Name;
-		public string NameNoExtension { get; }
 		public IDsWpfTextView TextView => codeEditor.TextView;
 		public IDsWpfTextViewHost TextViewHost => codeEditor.TextViewHost;
 		public DocumentInfo Info { get; }
