@@ -109,13 +109,23 @@ namespace dnSpy.AsmEditor.Compiler {
 			return false;
 		}
 
+		static bool IsOtherReferenceAssembly(IAssembly assembly) {
+			string name = assembly.Name;
+			if (PublicKeyBase.IsNullOrEmpty2(assembly.PublicKeyOrToken)) {
+				const string UnityEngine = "UnityEngine";
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, UnityEngine) || name.StartsWith(UnityEngine + ".", StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			return false;
+		}
+
 		IEnumerable<AssemblyDef> GetResolvedContractAssemblies(ModuleDef module) {
 			var nonContractAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 			var stack = new Stack<AssemblyRef>(module.GetAssemblyRefs());
 			while (stack.Count > 0) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var asmRef = stack.Pop();
-				if (!IsPublicKeyToken(contractsPublicKeyTokens, asmRef.PublicKeyOrToken?.Token))
+				if (!IsPublicKeyToken(contractsPublicKeyTokens, asmRef.PublicKeyOrToken?.Token) && !IsOtherReferenceAssembly(asmRef))
 					continue;
 				if (checkedContractsAssemblies.Contains(asmRef))
 					continue;
@@ -127,7 +137,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					foreach (var m in contractsAsm.Modules) {
 						foreach (var ar in m.GetAssemblyRefs()) {
 							cancellationToken.ThrowIfCancellationRequested();
-							if (IsPublicKeyToken(contractsPublicKeyTokens, ar.PublicKeyOrToken?.Token))
+							if (IsPublicKeyToken(contractsPublicKeyTokens, ar.PublicKeyOrToken?.Token) || IsOtherReferenceAssembly(ar))
 								stack.Push(ar);
 							else
 								nonContractAsms.Add(ar);
