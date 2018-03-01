@@ -82,8 +82,8 @@ namespace dnSpy.Contracts.Decompiler {
 		DecompilerGenerated		= 0x00000001,
 
 		/// <summary>
-		/// Readonly local, eg. a 'ref readonly' local
+		/// Readonly reference, eg. a 'ref readonly' local
 		/// </summary>
-		ReadOnly				= 0x00000002,
+		ReadOnlyReference		= 0x00000002,
 	}
 }

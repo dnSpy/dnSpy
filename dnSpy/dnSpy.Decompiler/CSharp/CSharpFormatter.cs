@@ -1074,7 +1074,7 @@ namespace dnSpy.Decompiler.CSharp {
 			OutputWrite(isLocal ? dnSpy_Decompiler_Resources.ToolTip_Local : dnSpy_Decompiler_Resources.ToolTip_Parameter, BoxedTextColor.Text);
 			OutputWrite(DescriptionParenClose, BoxedTextColor.Punctuation);
 			WriteSpace();
-			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null, forceReadOnly: (variable.Flags & SourceVariableFlags.ReadOnly) != 0);
+			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable).ParamDef : null, null, null, forceReadOnly: (variable.Flags & SourceVariableFlags.ReadOnlyReference) != 0);
 			WriteSpace();
 			WriteIdentifier(TypeFormatterUtils.GetName(variable), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
 			if (pd != null)
