@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public EditClassVM(EditCodeVMOptions options, IMemberDef defToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+		public EditClassVM(in EditCodeVMOptions options, IMemberDef defToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
 			: base(options, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedTypeToEdit = defToEdit as TypeDef ?? defToEdit.DeclaringType;

@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public EditMethodCodeVM(EditCodeVMOptions options, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+		public EditMethodCodeVM(in EditCodeVMOptions options, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
 			: base(options, methodToEdit.DeclaringType) {
 			this.methodToEdit = methodToEdit;
 			methodSourceStatement = statementsInMethodToEdit.Count == 0 ? (MethodSourceStatement?)null : statementsInMethodToEdit[0];

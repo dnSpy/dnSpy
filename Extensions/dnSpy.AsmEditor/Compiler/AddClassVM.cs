@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		sealed class AddClassDecompileCodeState : DecompileCodeState {
 		}
 
-		public AddClassVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
+		public AddClassVM(in EditCodeVMOptions options) : base(options, null) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
 			new AddClassDecompileCodeState();

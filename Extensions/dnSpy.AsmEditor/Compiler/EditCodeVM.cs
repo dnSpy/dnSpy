@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected readonly ModuleDef sourceModule;
 		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(EditCodeVMOptions options, TypeDef typeToEditOrNull) {
+		protected EditCodeVM(in EditCodeVMOptions options, TypeDef typeToEditOrNull) {
 			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
 			openFromGAC = options.OpenFromGAC;
 			openAssembly = options.OpenAssembly;

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.App;
@@ -26,14 +27,25 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
-	struct EditCodeVMOptions {
-		public RawModuleBytesProvider RawModuleBytesProvider;
-		public IOpenFromGAC OpenFromGAC;
-		public IOpenAssembly OpenAssembly;
-		public IPickFilename PickFilename;
-		public ILanguageCompiler LanguageCompiler;
-		public IDecompiler Decompiler;
-		public ModuleDef SourceModule;
-		public ImageReference AddDocumentsImage;
+	readonly struct EditCodeVMOptions {
+		public readonly RawModuleBytesProvider RawModuleBytesProvider;
+		public readonly IOpenFromGAC OpenFromGAC;
+		public readonly IOpenAssembly OpenAssembly;
+		public readonly IPickFilename PickFilename;
+		public readonly ILanguageCompiler LanguageCompiler;
+		public readonly IDecompiler Decompiler;
+		public readonly ModuleDef SourceModule;
+		public readonly ImageReference AddDocumentsImage;
+
+		public EditCodeVMOptions(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, IPickFilename pickFilename, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule, ImageReference addDocumentsImage) {
+			RawModuleBytesProvider = rawModuleBytesProvider ?? throw new ArgumentNullException(nameof(rawModuleBytesProvider));
+			OpenFromGAC = openFromGAC ?? throw new ArgumentNullException(nameof(openFromGAC));
+			OpenAssembly = openAssembly ?? throw new ArgumentNullException(nameof(openAssembly));
+			PickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
+			LanguageCompiler = languageCompiler ?? throw new ArgumentNullException(nameof(languageCompiler));
+			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			SourceModule = sourceModule ?? throw new ArgumentNullException(nameof(sourceModule));
+			AddDocumentsImage = addDocumentsImage;
+		}
 	}
 }

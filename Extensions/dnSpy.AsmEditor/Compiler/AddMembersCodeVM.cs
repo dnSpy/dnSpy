@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public AddMembersCodeVM(EditCodeVMOptions options, IMemberDef defToEdit)
+		public AddMembersCodeVM(in EditCodeVMOptions options, IMemberDef defToEdit)
 			: base(options, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedType = defToEdit as TypeDef ?? defToEdit.DeclaringType;

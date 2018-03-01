@@ -128,16 +128,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditMethod);
 			if (info == null)
 				throw new InvalidOperationException();
-			var options = new EditCodeVMOptions {
-				RawModuleBytesProvider = rawModuleBytesProvider,
-				OpenFromGAC = openFromGAC,
-				OpenAssembly = openAssembly,
-				PickFilename = pickFilename,
-				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.EditMethod),
-				Decompiler = info.Value.decompiler,
-				SourceModule = method.Module,
-				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
-			};
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.EditMethod),
+				info.Value.decompiler,
+				method.Module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
 			return new EditMethodCodeVM(options, method, statements);
 		}
 
@@ -145,16 +145,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditAssembly);
 			if (info == null)
 				throw new InvalidOperationException();
-			var options = new EditCodeVMOptions {
-				RawModuleBytesProvider = rawModuleBytesProvider,
-				OpenFromGAC = openFromGAC,
-				OpenAssembly = openAssembly,
-				PickFilename = pickFilename,
-				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.EditAssembly),
-				Decompiler = info.Value.decompiler,
-				SourceModule = module,
-				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
-			};
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.EditAssembly),
+				info.Value.decompiler,
+				module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
 			return new EditAssemblyVM(options);
 		}
 
@@ -162,16 +162,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(CompilationKind.AddClass);
 			if (info == null)
 				throw new InvalidOperationException();
-			var options = new EditCodeVMOptions {
-				RawModuleBytesProvider = rawModuleBytesProvider,
-				OpenFromGAC = openFromGAC,
-				OpenAssembly = openAssembly,
-				PickFilename = pickFilename,
-				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.AddClass),
-				Decompiler = info.Value.decompiler,
-				SourceModule = module,
-				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
-			};
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.AddClass),
+				info.Value.decompiler,
+				module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
 			return new AddClassVM(options);
 		}
 
@@ -179,16 +179,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditClass);
 			if (info == null)
 				throw new InvalidOperationException();
-			var options = new EditCodeVMOptions {
-				RawModuleBytesProvider = rawModuleBytesProvider,
-				OpenFromGAC = openFromGAC,
-				OpenAssembly = openAssembly,
-				PickFilename = pickFilename,
-				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.EditClass),
-				Decompiler = info.Value.decompiler,
-				SourceModule = def.Module,
-				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
-			};
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.EditClass),
+				info.Value.decompiler,
+				def.Module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
 			return new EditClassVM(options, def, statements);
 		}
 
@@ -196,16 +196,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			var info = GetLanguageCompilerProvider(CompilationKind.AddMembers);
 			if (info == null)
 				throw new InvalidOperationException();
-			var options = new EditCodeVMOptions {
-				RawModuleBytesProvider = rawModuleBytesProvider,
-				OpenFromGAC = openFromGAC,
-				OpenAssembly = openAssembly,
-				PickFilename = pickFilename,
-				LanguageCompiler = info.Value.languageCompilerProvider.Create(CompilationKind.AddMembers),
-				Decompiler = info.Value.decompiler,
-				SourceModule = def.Module,
-				AddDocumentsImage = GetAddDocumentsImage(info.Value.languageCompilerProvider),
-			};
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.AddMembers),
+				info.Value.decompiler,
+				def.Module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
 			return new AddMembersCodeVM(options, def);
 		}
 	}

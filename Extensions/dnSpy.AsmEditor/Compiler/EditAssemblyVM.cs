@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public StringBuilderDecompilerOutput MainOutput { get; } = new StringBuilderDecompilerOutput();
 		}
 
-		public EditAssemblyVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
+		public EditAssemblyVM(in EditCodeVMOptions options) : base(options, null) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
 			new EditAssemblyDecompileCodeState();
