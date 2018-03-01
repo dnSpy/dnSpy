@@ -58,13 +58,13 @@
     <Compile Include="AsmEditor\Compiler\CompilationResult.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnostic.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnosticSeverity.cs" />
+    <Compile Include="AsmEditor\Compiler\CompilerDocumentInfo.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerMetadataReference.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerProjectInfo.cs" />
     <Compile Include="AsmEditor\Compiler\DebugFileFormat.cs" />
     <Compile Include="AsmEditor\Compiler\DebugFileResult.cs" />
     <Compile Include="AsmEditor\Compiler\IAssemblyReferenceResolver.cs" />
     <Compile Include="AsmEditor\Compiler\ICodeDocument.cs" />
-    <Compile Include="AsmEditor\Compiler\IDecompiledDocument.cs" />
     <Compile Include="AsmEditor\Compiler\ILanguageCompiler.cs" />
     <Compile Include="AsmEditor\Compiler\ILanguageCompilerProvider.cs" />
     <Compile Include="AsmEditor\Compiler\LineLocation.cs" />

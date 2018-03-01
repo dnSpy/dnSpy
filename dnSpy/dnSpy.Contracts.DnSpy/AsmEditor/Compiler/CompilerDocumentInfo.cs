@@ -17,19 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
-	/// Decompiled code document
+	/// Document info
 	/// </summary>
-	public interface IDecompiledDocument {
+	public readonly struct CompilerDocumentInfo {
 		/// <summary>
 		/// All code
 		/// </summary>
-		string Code { get; }
+		public string Code { get; }
 
 		/// <summary>
-		/// Name of document, without the extension
+		/// Name of document
 		/// </summary>
-		string NameNoExtension { get; }
+		public string Name { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="code">All code</param>
+		/// <param name="name">Name of document</param>
+		public CompilerDocumentInfo(string code, string name) {
+			Code = code ?? throw new ArgumentNullException(nameof(name));
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+		}
 	}
 }

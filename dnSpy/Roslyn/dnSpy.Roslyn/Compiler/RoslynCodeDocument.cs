@@ -31,10 +31,9 @@ namespace dnSpy.Roslyn.Compiler {
 
 		readonly ICodeEditor codeEditor;
 
-		public RoslynCodeDocument(ICodeEditor codeEditor, DocumentInfo documentInfo, string nameNoExtension) {
+		public RoslynCodeDocument(ICodeEditor codeEditor, DocumentInfo documentInfo) {
 			this.codeEditor = codeEditor;
 			Info = documentInfo;
-			NameNoExtension = nameNoExtension;
 		}
 
 		public void Dispose() => codeEditor.Dispose();

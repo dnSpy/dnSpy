@@ -65,7 +65,7 @@ namespace dnSpy.Roslyn.Compiler {
 		protected abstract string LanguageName { get; }
 		protected abstract CompilationOptions CompilationOptions { get; }
 		protected abstract ParseOptions ParseOptions { get; }
-		protected abstract string FileExtension { get; }
+		public abstract string FileExtension { get; }
 		protected abstract string AppearanceCategory { get; }
 
 		readonly ICodeEditorProvider codeEditorProvider;
@@ -133,7 +133,7 @@ namespace dnSpy.Roslyn.Compiler {
 			return platform.ToPlatform();
 		}
 
-		RoslynCodeDocument CreateDocument(ProjectId projectId, IDecompiledDocument doc) {
+		RoslynCodeDocument CreateDocument(ProjectId projectId, CompilerDocumentInfo doc) {
 			var options = new CodeEditorOptions();
 			options.ContentTypeString = ContentType;
 			options.Roles.Add(PredefinedDsTextViewRoles.RoslynCodeEditor);
@@ -145,11 +145,11 @@ namespace dnSpy.Roslyn.Compiler {
 			var textBuffer = codeEditor.TextView.TextBuffer;
 			textBuffer.Replace(new Span(0, textBuffer.CurrentSnapshot.Length), doc.Code);
 
-			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), doc.NameNoExtension + FileExtension, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Create()));
-			return new RoslynCodeDocument(codeEditor, documentInfo, doc.NameNoExtension);
+			var documentInfo = DocumentInfo.Create(DocumentId.CreateNewId(projectId), doc.Name, null, SourceCodeKind.Regular, TextLoader.From(codeEditor.TextBuffer.AsTextContainer(), VersionStamp.Create()));
+			return new RoslynCodeDocument(codeEditor, documentInfo);
 		}
 
-		public ICodeDocument[] AddDocuments(IDecompiledDocument[] documents) {
+		public ICodeDocument[] AddDocuments(CompilerDocumentInfo[] documents) {
 			var newDocuments = new List<RoslynCodeDocument>();
 
 			foreach (var doc in documents)

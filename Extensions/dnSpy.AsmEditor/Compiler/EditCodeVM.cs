@@ -52,8 +52,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		internal MetroWindow OwnerWindow { get; set; }
 
-		protected const string MAIN_CODE_NAME = "main";
-		protected const string MAIN_G_CODE_NAME = "main.g";
+		protected string MainCodeName => "main" + languageCompiler.FileExtension;
+		protected string MainGeneratedCodeName => "main.g" + languageCompiler.FileExtension;
 
 		public ModuleImporter Result { get; set; }
 		public event EventHandler CodeCompiled;
@@ -77,7 +77,6 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public sealed class CodeDocument : ViewModelBase {
 			public string Name => codeDocument.Name;
-			public string NameNoExtension => codeDocument.NameNoExtension;
 			public IDsWpfTextView TextView => codeDocument.TextView;
 			public IDsWpfTextViewHost TextViewHost => codeDocument.TextViewHost;
 
@@ -266,11 +265,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		protected readonly struct SimpleDocument {
-			public string NameNoExtension { get; }
+			public string Name { get; }
 			public string Text { get; }
 			public Span? CaretSpan { get; }
-			public SimpleDocument(string nameNoExtension, string text, Span? caretSpan) {
-				NameNoExtension = nameNoExtension;
+			public SimpleDocument(string name, string text, Span? caretSpan) {
+				Name = name;
 				Text = text;
 				CaretSpan = caretSpan;
 			}
@@ -279,8 +278,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected sealed class DecompileAsyncResult {
 			public List<SimpleDocument> Documents { get; } = new List<SimpleDocument>();
 
-			public void AddDocument(string nameNoExtension, string text, Span? caretSpan) =>
-				Documents.Add(new SimpleDocument(nameNoExtension, text, caretSpan));
+			public void AddDocument(string name, string text, Span? caretSpan) =>
+				Documents.Add(new SimpleDocument(name, text, caretSpan));
 		}
 
 		async Task StartDecompileAsync() {
@@ -298,7 +297,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			catch (Exception ex) {
 				simpleDocuments = new SimpleDocument[] {
-					new SimpleDocument(MAIN_CODE_NAME, ex.ToString(), null)
+					new SimpleDocument(MainCodeName, ex.ToString(), null)
 				};
 			}
 
@@ -306,9 +305,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!canceled) {
 				// This helps a little to speed up the code
 				ProfileOptimizationHelper.StartProfile("add-decompiled-code-" + decompiler.UniqueGuid.ToString());
-				var docs = new List<IDecompiledDocument>();
+				var docs = new List<CompilerDocumentInfo>();
 				foreach (var simpleDoc in simpleDocuments)
-					docs.Add(new DecompiledDocument(simpleDoc.Text, simpleDoc.NameNoExtension));
+					docs.Add(new CompilerDocumentInfo(simpleDoc.Text, simpleDoc.Name));
 				var publicKeyData = (tempAssembly.PublicKeyOrToken as PublicKey)?.Data;
 				languageCompiler.InitializeProject(new CompilerProjectInfo(tempAssembly.Name, publicKeyData, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
 				codeDocs = languageCompiler.AddDocuments(docs.ToArray());
@@ -320,7 +319,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var doc in codeDocs)
 				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
 			Documents.AddRange(codeDocs.Select(a => new CodeDocument(a)));
-			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
+			SelectedDocument = Documents.FirstOrDefault(a => a.Name == MainCodeName) ?? Documents.FirstOrDefault();
 			Debug.Assert(Documents.Count == simpleDocuments.Length);
 			for (int i = 0; i < Documents.Count; i++) {
 				var doc = Documents[i];

@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			state.CancellationToken.ThrowIfCancellationRequested();
 
 			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, state.MainOutput.ToString(), null);
+			result.AddDocument(MainCodeName, state.MainOutput.ToString(), null);
 			return Task.FromResult(result);
 		}
 

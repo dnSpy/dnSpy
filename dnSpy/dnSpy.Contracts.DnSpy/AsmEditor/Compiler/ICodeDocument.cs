@@ -31,11 +31,6 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		string Name { get; }
 
 		/// <summary>
-		/// Name of document without the extension. Identical to <see cref="IDecompiledDocument.NameNoExtension"/>
-		/// </summary>
-		string NameNoExtension { get; }
-
-		/// <summary>
 		/// Gets the text view
 		/// </summary>
 		IDsWpfTextView TextView { get; }

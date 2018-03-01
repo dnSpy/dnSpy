@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected override Task<DecompileAsyncResult> DecompileAsync(DecompileCodeState decompileCodeState) {
 			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, string.Empty, null);
+			result.AddDocument(MainCodeName, string.Empty, null);
 			return Task.FromResult(result);
 		}
 

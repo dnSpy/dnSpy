@@ -29,6 +29,11 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// </summary>
 	public interface ILanguageCompiler : IDisposable {
 		/// <summary>
+		/// Gets the file extension, including the period, eg. ".cs"
+		/// </summary>
+		string FileExtension { get; }
+
+		/// <summary>
 		/// Assembly references that must be included when compiling the code, even if the
 		/// references aren't part of the edited assembly. This is usually empty unless the
 		/// language uses types from certain language specific assemblies, eg. Visual Basic
@@ -56,7 +61,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="documents">Documents to add to the compilation</param>
 		/// <returns></returns>
-		ICodeDocument[] AddDocuments(IDecompiledDocument[] documents);
+		ICodeDocument[] AddDocuments(CompilerDocumentInfo[] documents);
 
 		/// <summary>
 		/// Adds new metadata references
