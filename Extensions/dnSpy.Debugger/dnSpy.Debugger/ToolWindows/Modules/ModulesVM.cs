@@ -698,7 +698,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// UI thread
 		public void SortList_UI() {
 			moduleContext.UIDispatcher.VerifyAccess();
-			var newList = new List<ModuleVM>(GetFilteredItems_UI(filterText, (SimpleProcessVM)SelectedProcess));
+			var newList = new List<ModuleVM>(AllItems);
 			newList.Sort(SortListComparer);
 			AllItems.Reset(newList);
 		}

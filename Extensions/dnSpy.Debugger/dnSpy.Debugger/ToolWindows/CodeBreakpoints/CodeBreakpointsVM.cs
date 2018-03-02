@@ -543,7 +543,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		void SortList_UI() {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
-			var newList = new List<CodeBreakpointVM>(GetFilteredItems_UI(filterText));
+			var newList = new List<CodeBreakpointVM>(AllItems);
 			newList.Sort(SortListComparer);
 			AllItems.Reset(newList);
 		}
