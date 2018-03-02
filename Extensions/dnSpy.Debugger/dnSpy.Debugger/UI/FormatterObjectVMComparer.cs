@@ -24,7 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.UI {
-	public abstract class FormatterObjectVMComparer<TVM>
+	abstract class FormatterObjectVMComparer<TVM>
 		: IComparer<TVM>, IComparer where TVM : class {
 
 
