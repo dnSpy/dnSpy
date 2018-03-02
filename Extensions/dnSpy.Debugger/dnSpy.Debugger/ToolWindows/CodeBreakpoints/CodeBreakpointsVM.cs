@@ -541,7 +541,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// UI thread
-		public void SortList_UI() {
+		void SortList_UI() {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			var newList = new List<CodeBreakpointVM>(GetFilteredItems_UI(filterText));
 			newList.Sort(SortListComparer);
@@ -552,7 +552,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			get {
 				if (sortListComparer == null) sortListComparer = CodeBreakpointVMComparer.Instance;
 				return sortListComparer;
-			} set {
+			}
+			set {
 				if (value == null) value = sortListComparer = CodeBreakpointVMComparer.Instance;
 				sortListComparer = value;
 				SortList_UI();
