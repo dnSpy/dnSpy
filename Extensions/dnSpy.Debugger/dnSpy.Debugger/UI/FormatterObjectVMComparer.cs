@@ -47,11 +47,11 @@ namespace dnSpy.Debugger.UI {
 				Tag = TranslateVMPropertyToClassifierTags(VMPropertyName, x ?? y);
 			}
 
-			var c = doCompare(x, y);
+			var c = CompareCore(x, y);
 			return Direction == ListSortDirection.Descending ? c * -1 : c;
 		}
 
-		protected abstract int doCompare(TVM x, TVM y);
+		protected abstract int CompareCore(TVM x, TVM y);
 
 		protected virtual string TranslateVMPropertyToClassifierTags(string vmPropertyName, TVM instance) {
 			var formatter = typeof(TVM).GetProperty(VMPropertyName)

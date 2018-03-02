@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public ModuleVMComparer(string vmPropertyName, ListSortDirection direction) : base(vmPropertyName, direction) { }
 
-		protected override int doCompare(ModuleVM x, ModuleVM y) {
+		protected override int CompareCore(ModuleVM x, ModuleVM y) {
 			if (String.IsNullOrEmpty(VMPropertyName))
 				return x.Order - y.Order;
 
