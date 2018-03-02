@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
@@ -82,6 +83,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			this.modulesVM = modulesVM;
 			modulesControl.DataContext = new ControlVM(modulesVM, modulesOperations, messageBoxService, modulesControl);
 			modulesControl.ModulesListViewDoubleClick += ModulesControl_ModulesListViewDoubleClick;
+			modulesControl.ApplySort += ModulesControl_ApplySort;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_CONTROL, modulesControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_MODULES_LISTVIEW, modulesControl.ListView);
@@ -91,6 +93,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (Operations.CanGoToModule)
 				Operations.GoToModule(newTab);
+		}
+		void ModulesControl_ApplySort(SortDescription sortDescr) {
+			this.modulesVM.ApplySortDescr(sortDescr);
 		}
 
 		public void FocusSearchTextBox() => modulesControl.FocusSearchTextBox();
