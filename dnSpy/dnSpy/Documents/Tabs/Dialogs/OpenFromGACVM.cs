@@ -214,11 +214,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public int Compare(object x, object y) {
 			var c = doCompare(x as GACFileVM, y as GACFileVM);
-			if (SortDescription.Direction == ListSortDirection.Descending) {
+			if (SortDescription.Direction == ListSortDirection.Descending)
 				return c * -1;
-			} else {
+			else
 				return c;
-			}
 		}
 
 		private int doCompare(GACFileVM a, GACFileVM b) {

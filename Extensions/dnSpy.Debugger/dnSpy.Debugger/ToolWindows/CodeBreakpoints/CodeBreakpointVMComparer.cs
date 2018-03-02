@@ -33,9 +33,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public CodeBreakpointVMComparer(string vmPropertyName, ListSortDirection direction) : base(vmPropertyName, direction) {}
 
 		protected override int doCompare(CodeBreakpointVM x, CodeBreakpointVM y) {
-			if (String.IsNullOrEmpty(VMPropertyName)) {
+			if (String.IsNullOrEmpty(VMPropertyName))
 				return x.Order - y.Order;
-			}
 
 			if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowName)
 				return Comparer<DbgCodeLocation>.Default.Compare(x.CodeBreakpoint.Location, y.CodeBreakpoint.Location);

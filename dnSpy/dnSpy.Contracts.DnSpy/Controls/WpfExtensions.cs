@@ -60,9 +60,8 @@ namespace dnSpy.Contracts.Controls {
 
 			var children = GetChildren(@this, mode);
 			foreach (var child in children) {
-				if (child.Is<T>(predicate)) {
+				if (child.Is<T>(predicate))
 					yield return (T)child;
-				}
 			}
 
 			foreach (var child in children) {

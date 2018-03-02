@@ -60,9 +60,8 @@ namespace dnSpy.Debugger.UI {
 					?.GetGetMethod().Invoke(instance, null)
 					as FormatterObject<TVM>;
 
-			if (formatter == null) {
+			if (formatter == null) 
 				Debug.Fail($"Unknown vw property name: {VMPropertyName}");
-			}
 
 			return formatter.Tag;
 		}

@@ -52,9 +52,8 @@ namespace dnSpy.Contracts.Utilities {
 				var gridView = listView.View as GridView;
 
 				var headers = listView.Query<GridViewColumnHeader>();
-				foreach (var header in headers) {
+				foreach (var header in headers) 
 					header.Click += onHeaderClick;
-				}
 			};
 
 			// ================================================================
@@ -110,9 +109,8 @@ namespace dnSpy.Contracts.Utilities {
 					if (contentPresenter != null) {
 						var bindingExpr = contentPresenter.GetBindingExpression(ContentPresenter.ContentProperty);
 
-						if (bindingExpr != null) {
+						if (bindingExpr != null) 
 							sortPropertyName = bindingExpr.ParentBinding.Path.Path;
-						}
 					}
 				}
 
@@ -123,9 +121,8 @@ namespace dnSpy.Contracts.Utilities {
 
 			// ================================================================
 			// run onLoad (only once)
-			if (listView.IsLoaded) {
-				onLoaded();
-			}
+			if (listView.IsLoaded) 
+				onLoaded();			
 			else {
 				RoutedEventHandler evt = null;
 				evt = (s, e) => {
@@ -146,11 +143,10 @@ namespace dnSpy.Contracts.Utilities {
 
 			protected virtual object GetValue(object source) {
 				var dependencyObject = source as DependencyObject;
-				if (dependencyObject == null) {
+				if (dependencyObject == null) 
 					return source?.GetType().GetProperty(bindingExpression.ParentBinding.Path.Path).GetGetMethod().Invoke(source, null);
-				} else {
+				else
 					return dependencyObject.GetValue(bindingExpression.TargetProperty);
-				}
 			}
 
 			public int Compare(object x, object y) {
@@ -187,9 +183,8 @@ namespace dnSpy.Contracts.Utilities {
 				var converted = converter.Convert(source, converterTargeType, converterParameter, converterCulture);
 
 				var textBlock = converted as TextBlock;
-				if (textBlock != null) {
+				if (textBlock != null)
 					return textBlock.Text;
-				}
 
 				return converted;
 			}
