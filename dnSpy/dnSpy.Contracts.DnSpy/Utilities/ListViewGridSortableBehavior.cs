@@ -18,20 +18,19 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using dnSpy.Contracts.Controls;
+using System.Windows.Media;
 
 namespace dnSpy.Contracts.Utilities {
 	/// <summary>
 	/// Helper for adding sorting to ListViews
 	/// </summary>
-	public class ListViewGridSortableBehavior {
+	public static class ListViewGridSortableBehavior {
 
 		/// <summary>
 		/// Enables sorting for a given ListView
@@ -51,7 +50,7 @@ namespace dnSpy.Contracts.Utilities {
 			onLoaded = () => {
 				var gridView = listView.View as GridView;
 
-				var headers = listView.Query<GridViewColumnHeader>();
+				var headers = Query<GridViewColumnHeader>(listView);
 				foreach (var header in headers) 
 					header.Click += onHeaderClick;
 			};
@@ -131,62 +130,29 @@ namespace dnSpy.Contracts.Utilities {
 				};
 				listView.Loaded += evt;
 			}			
-		}
+		}		
 
-		private class ComparerByBinding : IComparer {
+		private static IEnumerable<T> Query<T>(DependencyObject @this, Func<T, bool> predicate = null) where T : DependencyObject {
+			if (predicate == null) predicate = x => true;
 
-			private readonly BindingExpression bindingExpression;
-
-			public ComparerByBinding(BindingExpression bindingExpression) {
-				this.bindingExpression = bindingExpression;
+			var children = GetChildren(@this);
+			foreach (var child in children) {
+				var typedChild = child as T;
+				if (typedChild != null && predicate(typedChild))
+					yield return (T)child;
 			}
 
-			protected virtual object GetValue(object source) {
-				var dependencyObject = source as DependencyObject;
-				if (dependencyObject == null) 
-					return source?.GetType().GetProperty(bindingExpression.ParentBinding.Path.Path).GetGetMethod().Invoke(source, null);
-				else
-					return dependencyObject.GetValue(bindingExpression.TargetProperty);
-			}
-
-			public int Compare(object x, object y) {
-				object cx = GetValue(x);
-				object cy = GetValue(y);
-
-				return Comparer.Default.Compare(cx, cy);
+			foreach (var child in children) {
+				foreach (var descendant in Query<T>(child, predicate)) {
+					yield return descendant;
+				}
 			}
 		}
 
-		private class ComparerByConverter : ComparerByBinding {
-
-			private readonly IValueConverter converter;
-			private readonly Type converterTargeType;
-			private readonly object converterParameter;
-			private readonly CultureInfo converterCulture;
-
-			public ComparerByConverter(BindingExpression bindingExpression) 
-				: this(bindingExpression, bindingExpression.ParentBinding.Converter, bindingExpression.TargetProperty.PropertyType, bindingExpression.ParentBinding.ConverterParameter, bindingExpression.ParentBinding.ConverterCulture)
-			{
-			}
-
-			public ComparerByConverter(BindingExpression bindingExpression, IValueConverter converter, Type converterTargeType, object converterParameter, CultureInfo converterCulture) 
-			: base(bindingExpression) {
-
-				this.converter = converter;
-				this.converterTargeType = converterTargeType;
-				this.converterParameter = converterParameter;
-				this.converterCulture = converterCulture;
-			}
-
-			protected override object GetValue(object source) {
-				source = base.GetValue(source);
-				var converted = converter.Convert(source, converterTargeType, converterParameter, converterCulture);
-
-				var textBlock = converted as TextBlock;
-				if (textBlock != null)
-					return textBlock.Text;
-
-				return converted;
+		private static IEnumerable<DependencyObject> GetChildren(DependencyObject @this) {
+			var childrenCount = VisualTreeHelper.GetChildrenCount(@this);
+			for (var i = 0; i < childrenCount; ++i) {
+				yield return VisualTreeHelper.GetChild(@this, i);
 			}
 		}
 	}

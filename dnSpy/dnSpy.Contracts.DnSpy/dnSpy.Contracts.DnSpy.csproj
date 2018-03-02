@@ -147,7 +147,6 @@
     <Compile Include="Controls\ToolWindows\IEditValue.cs" />
     <Compile Include="Controls\ToolWindows\ListBoxSelectedItemsAP.cs" />
     <Compile Include="Controls\WindowBase.cs" />
-    <Compile Include="Controls\WpfExtensions.cs" />
     <Compile Include="Decompiler\IDecompilerService.cs" />
     <Compile Include="Decompiler\IMethodDebugService.cs" />
     <Compile Include="Documents\AnnotationsImpl.cs" />
