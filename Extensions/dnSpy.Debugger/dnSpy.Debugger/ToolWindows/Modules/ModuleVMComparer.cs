@@ -35,9 +35,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				return x.Order - y.Order;
 
 			if (Tag == PredefinedTextClassifierTags.ModulesWindowName)
-				return String.Compare(x.Module.Name, y.Module.Name);
+				return StringComparer.CurrentCulture.Compare(x.Module.Name, y.Module.Name);
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowPath)
-				return String.Compare(x.Module.Filename, y.Module.Filename);
+				return StringComparer.CurrentCulture.Compare(x.Module.Filename, y.Module.Filename);
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowOptimized)
 				return Comparer<bool?>.Default.Compare(x.Module.IsOptimized, y.Module.IsOptimized);
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowDynamic)
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowOrder)
 				return Comparer<int>.Default.Compare(x.Module.Order, y.Module.Order);
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowVersion)
-				return String.Compare(x.Module.Version, y.Module.Version);
+				return StringComparer.CurrentCulture.Compare(x.Module.Version, y.Module.Version);
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowTimestamp)
 				return Comparer<DateTime?>.Default.Compare(x.Module.Timestamp, y.Module.Timestamp);
 			else if (Tag == PredefinedTextClassifierTags.ModulesWindowAddress)

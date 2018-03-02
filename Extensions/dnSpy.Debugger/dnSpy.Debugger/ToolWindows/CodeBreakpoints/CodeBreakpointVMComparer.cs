@@ -40,18 +40,18 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				//TODO
 				return 0;
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowLabels)
-				return String.Compare(
+				return StringComparer.CurrentCulture.Compare(
 					String.Join(",", x.CodeBreakpoint.Labels ?? Enumerable.Empty<string>()),
 					String.Join(",", y.CodeBreakpoint.Labels ?? Enumerable.Empty<string>())
 				);
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowCondition)
-				return String.Compare(x.CodeBreakpoint.Condition?.Condition, y.CodeBreakpoint.Condition?.Condition);
+				return StringComparer.CurrentCulture.Compare(x.CodeBreakpoint.Condition?.Condition, y.CodeBreakpoint.Condition?.Condition);
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount)
 				return Comparer<int?>.Default.Compare(x.CodeBreakpoint.HitCount?.Count, y.CodeBreakpoint.HitCount?.Count);
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowFilter)
-				return String.Compare(x.CodeBreakpoint.Filter?.Filter, y.CodeBreakpoint.Filter?.Filter);
+				return StringComparer.CurrentCulture.Compare(x.CodeBreakpoint.Filter?.Filter, y.CodeBreakpoint.Filter?.Filter);
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit)
-				return String.Compare(x.CodeBreakpoint.Trace?.Message, y.CodeBreakpoint.Trace?.Message);
+				return StringComparer.CurrentCulture.Compare(x.CodeBreakpoint.Trace?.Message, y.CodeBreakpoint.Trace?.Message);
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowModule)
 				//TODO
 				return 0;
