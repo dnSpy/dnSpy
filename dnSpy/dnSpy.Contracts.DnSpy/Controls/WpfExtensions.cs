@@ -50,60 +50,6 @@ namespace dnSpy.Contracts.Controls {
 
 		#endregion
 
-		#region Up
-
-		/// <summary>
-		/// Returns a parent object out of the parent hierarchy which matches a given condition
-		/// </summary>
-		/// <returns>The found parent or null</returns>
-		/// <example>
-		/// Button myButton;
-		/// Window myWindow = myButton.Up&lt;Window&gt;();
-		/// </example>
-		public static T Up<T>(this FrameworkElement @this, Func<T, bool> predicate = null) where T : FrameworkElement {
-			if (@this == null) throw new ArgumentNullException(nameof(@this));
-			if (predicate == null) predicate = x => true;
-
-			FrameworkElement current = @this;
-			while ((current = current.Up()) != null) {
-				if (@this.Is<T>(predicate)) { return (T)current; }
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		/// Returns the parent of the actual element. Same as this.Parent;
-		/// </summary>
-		/// <returns>The parent or null</returns>
-		public static FrameworkElement Up(this FrameworkElement @this) {
-			if (@this == null) throw new ArgumentNullException(nameof(@this));
-
-			return @this.Parent as FrameworkElement;
-		}
-
-		#endregion
-
-		#region Down
-
-		/// <summary>
-		/// Returns the first child which matches a given condition.
-		/// </summary>
-		public static T Down<T>(this DependencyObject @this, QueryMode mode, Func<T, bool> predicate = null) where T : DependencyObject {
-			if (predicate == null) predicate = x => true;
-
-			return @this.Query<T>(mode, predicate).FirstOrDefault();
-		}
-
-		/// <summary>
-		/// Returns the first child which matches a given condition.
-		/// </summary>
-		public static T Down<T>(this DependencyObject @this, Func<T, bool> predicate = null) where T : DependencyObject {
-			return @this.Down<T>(QueryMode.Visual, predicate);
-		}
-
-		#endregion
-
 		#region Query
 
 		/// <summary>
