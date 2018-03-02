@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;

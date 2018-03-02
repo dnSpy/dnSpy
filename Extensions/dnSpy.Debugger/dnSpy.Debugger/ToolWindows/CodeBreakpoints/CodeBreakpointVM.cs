@@ -18,14 +18,12 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;

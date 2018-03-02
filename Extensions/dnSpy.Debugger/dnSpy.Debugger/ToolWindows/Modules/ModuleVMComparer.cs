@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Text.Classification;
-using dnSpy.Debugger.ToolWindows.Modules;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
