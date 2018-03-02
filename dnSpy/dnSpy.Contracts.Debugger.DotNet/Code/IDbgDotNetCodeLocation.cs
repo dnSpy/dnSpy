@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// .NET code location
 	/// </summary>
-	public interface IDbgDotNetCodeLocation : IComparable<IDbgDotNetCodeLocation>, IComparable {
+	public interface IDbgDotNetCodeLocation {
 		/// <summary>
 		/// Gets the module
 		/// </summary>

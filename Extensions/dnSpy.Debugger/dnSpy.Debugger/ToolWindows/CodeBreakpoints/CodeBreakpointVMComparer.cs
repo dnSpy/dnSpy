@@ -37,7 +37,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				return x.Order - y.Order;
 
 			if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowName)
-				return Comparer<DbgCodeLocation>.Default.Compare(x.CodeBreakpoint.Location, y.CodeBreakpoint.Location);
+				//TODO
+				return 0;
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowLabels)
 				return String.Compare(
 					String.Join(",", x.CodeBreakpoint.Labels ?? Enumerable.Empty<string>()),
@@ -52,7 +53,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit)
 				return String.Compare(x.CodeBreakpoint.Trace?.Message, y.CodeBreakpoint.Trace?.Message);
 			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowModule)
-				return Comparer<DbgCodeLocation>.Default.Compare(x.CodeBreakpoint.Location, y.CodeBreakpoint.Location);
+				//TODO
+				return 0;
 			else
 				Debug.Fail($"Unknown code breakpoint property: {Tag}");
 
