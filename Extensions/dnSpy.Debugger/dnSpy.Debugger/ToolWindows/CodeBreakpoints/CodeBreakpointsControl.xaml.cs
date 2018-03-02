@@ -32,7 +32,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public CodeBreakpointsControl() {
 			InitializeComponent();
 			SearchTextBox.GotKeyboardFocus += SearchTextBox_GotKeyboardFocus;
-
 			ListViewGridSortableBehavior.EnableSort(listView, x => ApplySort(x));
 		}
 
