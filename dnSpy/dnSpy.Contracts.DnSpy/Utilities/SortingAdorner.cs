@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Utilities {
 	/// <summary>
 	/// Adorner for sorting
 	/// </summary>
-	public class SortingAdorner : Adorner {
+	sealed class SortingAdorner : Adorner {
 		private static Geometry _arrowUp = Geometry.Parse("M 5,5 15,5 10,0 5,5");
 		private static Geometry _arrowDown = Geometry.Parse("M 5,0 10,5 15,0 5,0");
 		private Geometry _sortDirection;
