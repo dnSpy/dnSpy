@@ -14,29 +14,29 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public CodeBreakpointVMComparer(string vmPropertyName, ListSortDirection direction) : base(vmPropertyName, direction) {}
 
 		protected override int doCompare(CodeBreakpointVM x, CodeBreakpointVM y) {
-			if (String.IsNullOrEmpty(this.VMPropertyName)) {
+			if (String.IsNullOrEmpty(VMPropertyName)) {
 				return x.Order - y.Order;
 			}
 
-			if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowName)
+			if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowName)
 				return Comparer<DbgCodeLocation>.Default.Compare(x.CodeBreakpoint.Location, y.CodeBreakpoint.Location);
-			else if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowLabels)
+			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowLabels)
 				return String.Compare(
 					String.Join(",", x.CodeBreakpoint.Labels ?? Enumerable.Empty<string>()),
 					String.Join(",", y.CodeBreakpoint.Labels ?? Enumerable.Empty<string>())
 				);
-			else if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowCondition)
+			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowCondition)
 				return String.Compare(x.CodeBreakpoint.Condition?.Condition, y.CodeBreakpoint.Condition?.Condition);
-			else if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount)
+			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowHitCount)
 				return Comparer<int?>.Default.Compare(x.CodeBreakpoint.HitCount?.Count, y.CodeBreakpoint.HitCount?.Count);
-			else if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowFilter)
+			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowFilter)
 				return String.Compare(x.CodeBreakpoint.Filter?.Filter, y.CodeBreakpoint.Filter?.Filter);
-			else if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit)
+			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowWhenHit)
 				return String.Compare(x.CodeBreakpoint.Trace?.Message, y.CodeBreakpoint.Trace?.Message);
-			else if (this.Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowModule)
+			else if (Tag == PredefinedTextClassifierTags.CodeBreakpointsWindowModule)
 				return Comparer<DbgCodeLocation>.Default.Compare(x.CodeBreakpoint.Location, y.CodeBreakpoint.Location);
 			else
-				Debug.Fail($"Unknown code breakpoint property: {this.Tag}");
+				Debug.Fail($"Unknown code breakpoint property: {Tag}");
 
 			return 0;
 		}

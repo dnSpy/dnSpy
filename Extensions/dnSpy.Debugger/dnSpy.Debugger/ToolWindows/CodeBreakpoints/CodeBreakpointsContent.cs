@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		void CodeBreakpointsControl_ApplySort(SortDescription sortDescr) {
-			this.codeBreakpointsVM.ApplySortDescr(sortDescr);
+			codeBreakpointsVM.ApplySortDescr(sortDescr);
 		}
 
 		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {

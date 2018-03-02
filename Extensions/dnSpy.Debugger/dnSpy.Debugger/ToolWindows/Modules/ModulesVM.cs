@@ -436,7 +436,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// UI thread
 		int GetInsertionIndex_UI(ModuleVM vm) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
-			var comparer = this.SortListComparer;
+			var comparer = SortListComparer;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
@@ -461,7 +461,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			moduleContext.SearchMatcher.SetSearchText(filterText);
 
 			var newList = new List<ModuleVM>(GetFilteredItems_UI(filterText, selectedProcess));
-			newList.Sort(this.SortListComparer);
+			newList.Sort(SortListComparer);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText, selectedProcess);
 		}

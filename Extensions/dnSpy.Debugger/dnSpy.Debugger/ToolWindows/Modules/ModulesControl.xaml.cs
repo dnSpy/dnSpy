@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public ModulesControl() {
 			InitializeComponent();
 			SearchTextBox.GotKeyboardFocus += SearchTextBox_GotKeyboardFocus;
-			ListViewGridSortableBehavior.EnableSort(listView, x => this.ApplySort(x));
+			ListViewGridSortableBehavior.EnableSort(listView, x => ApplySort(x));
 		}
 
 		void SearchTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>

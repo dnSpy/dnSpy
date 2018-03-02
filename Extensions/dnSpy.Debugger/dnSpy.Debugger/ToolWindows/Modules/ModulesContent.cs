@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				Operations.GoToModule(newTab);
 		}
 		void ModulesControl_ApplySort(SortDescription sortDescr) {
-			this.modulesVM.ApplySortDescr(sortDescr);
+			modulesVM.ApplySortDescr(sortDescr);
 		}
 
 		public void FocusSearchTextBox() => modulesControl.FocusSearchTextBox();

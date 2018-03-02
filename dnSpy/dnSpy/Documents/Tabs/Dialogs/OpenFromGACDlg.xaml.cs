@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			});
 			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
-			ListViewGridSortableBehavior.EnableSort(listView, x => this.ApplySort(x));
+			ListViewGridSortableBehavior.EnableSort(listView, x => ApplySort(x));
 		}
 
 		public IEnumerable<GACFileVM> SelectedItems {

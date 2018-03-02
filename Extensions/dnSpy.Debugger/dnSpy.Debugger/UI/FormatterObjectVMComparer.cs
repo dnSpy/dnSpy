@@ -17,8 +17,8 @@ namespace dnSpy.Debugger.UI {
 		public string Tag;
 
 		public FormatterObjectVMComparer(string vmPropertyName, ListSortDirection direction) {
-			this.VMPropertyName = vmPropertyName;
-			this.Direction = direction;
+			VMPropertyName = vmPropertyName;
+			Direction = direction;
 		}
 
 		public int Compare(TVM x, TVM y) {
@@ -26,11 +26,11 @@ namespace dnSpy.Debugger.UI {
 			if (x == null) return -1;
 			if (y == null) return 1;
 
-			if (String.IsNullOrEmpty(this.Tag) && !String.IsNullOrEmpty(this.VMPropertyName)) {
+			if (String.IsNullOrEmpty(Tag) && !String.IsNullOrEmpty(VMPropertyName)) {
 				// we get from view "ConditionObject". Translate to "Condition"
 				// translate "ConditionObject" -> "Condition"
 
-				this.Tag = this.TranslateVMPropertyToClassifierTags(this.VMPropertyName, x ?? y);
+				Tag = TranslateVMPropertyToClassifierTags(VMPropertyName, x ?? y);
 			}
 
 			var c = doCompare(x, y);
@@ -40,19 +40,19 @@ namespace dnSpy.Debugger.UI {
 		protected abstract int doCompare(TVM x, TVM y);
 
 		protected virtual string TranslateVMPropertyToClassifierTags(string vmPropertyName, TVM instance) {
-			var formatter = typeof(TVM).GetProperty(this.VMPropertyName)
+			var formatter = typeof(TVM).GetProperty(VMPropertyName)
 					?.GetGetMethod().Invoke(instance, null)
 					as FormatterObject<TVM>;
 
 			if (formatter == null) {
-				Debug.Fail($"Unknown vw property name: {this.VMPropertyName}");
+				Debug.Fail($"Unknown vw property name: {VMPropertyName}");
 			}
 
 			return formatter.Tag;
 		}
 
 		int IComparer.Compare(object x, object y) {
-			return this.Compare(x as TVM, y as TVM);
+			return Compare(x as TVM, y as TVM);
 		}
 	}
 }

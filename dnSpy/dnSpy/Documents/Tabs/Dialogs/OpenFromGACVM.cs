@@ -169,7 +169,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		static readonly char[] sep = new char[] { ' ' };
 
 		public void ApplySort(SortDescription descr) {
-			this.collectionView.CustomSort = new GACFileVM_Comparer(descr);
+			collectionView.CustomSort = new GACFileVM_Comparer(descr);
 		}
 
 		public void Dispose() {
@@ -209,12 +209,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public readonly SortDescription SortDescription;
 	
 		public GACFileVM_Comparer(SortDescription sortDescription) {
-			this.SortDescription = sortDescription;
+			SortDescription = sortDescription;
 		}
 
 		public int Compare(object x, object y) {
-			var c = this.doCompare(x as GACFileVM, y as GACFileVM);
-			if (this.SortDescription.Direction == ListSortDirection.Descending) {
+			var c = doCompare(x as GACFileVM, y as GACFileVM);
+			if (SortDescription.Direction == ListSortDirection.Descending) {
 				return c * -1;
 			} else {
 				return c;
@@ -229,7 +229,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			if (b == null)
 				return 1;
 			
-			switch (this.SortDescription.PropertyName ) {
+			switch (SortDescription.PropertyName ) {
 			case "VersionObject":
 				return Comparer<Version>.Default.Compare(a.Version, b.Version);
 			default:
