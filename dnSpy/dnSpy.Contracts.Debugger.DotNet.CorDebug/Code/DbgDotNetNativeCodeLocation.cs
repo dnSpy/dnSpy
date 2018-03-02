@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Metadata;
@@ -55,5 +57,38 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
 		/// Gets the native address
 		/// </summary>
 		public abstract DbgDotNetNativeFunctionAddress NativeAddress { get; }
+
+		/// <summary>
+		/// Compares this instance with another
+		/// </summary>
+		public virtual int CompareTo(IDbgDotNetCodeLocation other) {
+			if (other == null) return -1;
+
+			int c;
+
+			c = this.Module.CompareTo(other.Module);
+			if (c != 0) return c;
+
+			c = this.Token.CompareTo(other.Token);
+			if (c != 0) return c;
+
+			c = this.Offset.CompareTo(other.Offset);
+			if (c != 0) return c;
+
+			c = this.ILOffsetMapping.CompareTo(other.ILOffsetMapping);
+			if (c != 0) return c;
+
+			c = Comparer<DbgModule>.Default.Compare(this.DbgModule, other.DbgModule);
+			if (c != 0) return c;
+
+			c = Comparer<ulong>.Default.Compare(this.NativeAddress.Address, other.NativeAddress.Address);
+			if (c != 0) return c;
+
+			return 0;
+		}
+
+		int IComparable.CompareTo(object obj) {
+			return CompareTo(obj as DbgDotNetCodeLocation);
+		}
 	}
 }

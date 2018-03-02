@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,6 +97,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.codeBreakpointsVM = codeBreakpointsVM;
 			codeBreakpointsControl.DataContext = new ControlVM(codeBreakpointsVM, codeBreakpointsOperations, messageBoxService, codeBreakpointsControl);
 			codeBreakpointsControl.CodeBreakpointsListViewDoubleClick += CodeBreakpointsControl_CodeBreakpointsListViewDoubleClick;
+			codeBreakpointsControl.ApplySort += CodeBreakpointsControl_ApplySort;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL, codeBreakpointsControl);
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW, codeBreakpointsControl.ListView);
@@ -107,6 +109,10 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (!Operations.IsEditingValues && Operations.CanGoToSourceCode)
 				Operations.GoToSourceCode(newTab);
+		}
+
+		void CodeBreakpointsControl_ApplySort(SortDescription sortDescr) {
+			this.codeBreakpointsVM.ApplySortDescr(sortDescr);
 		}
 
 		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {

@@ -17,13 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// .NET code location
 	/// </summary>
-	public interface IDbgDotNetCodeLocation {
+	public interface IDbgDotNetCodeLocation : IComparable<IDbgDotNetCodeLocation>, IComparable {
 		/// <summary>
 		/// Gets the module
 		/// </summary>

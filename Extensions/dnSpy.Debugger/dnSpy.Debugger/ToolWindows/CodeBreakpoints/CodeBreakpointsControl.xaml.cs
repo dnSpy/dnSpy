@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -31,6 +32,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public CodeBreakpointsControl() {
 			InitializeComponent();
 			SearchTextBox.GotKeyboardFocus += SearchTextBox_GotKeyboardFocus;
+
+			ListViewGridSortableBehavior.EnableSort(listView, x => this.ApplySort(x));
 		}
 
 		void SearchTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
@@ -48,5 +51,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		public event EventHandler CodeBreakpointsListViewDoubleClick;
+		public Action<SortDescription> ApplySort;
 	}
 }

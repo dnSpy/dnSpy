@@ -27,7 +27,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Code {
-	sealed class DbgDotNetNativeCodeLocationImpl : DbgDotNetNativeCodeLocation {
+	sealed class DbgDotNetNativeCodeLocationImpl : DbgDotNetNativeCodeLocation, IComparable<DbgDotNetNativeCodeLocationImpl> {
 		public override string Type => PredefinedDbgCodeLocationTypes.DotNetCorDebugNative;
 		public override ModuleId Module { get; }
 		public override uint Token { get; }
@@ -69,5 +69,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 			NativeAddress.Offset == other.NativeAddress.Offset;
 
 		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token ^ (int)Offset ^ (int)ILOffsetMapping ^ NativeAddress.Address.GetHashCode() ^ NativeAddress.Offset.GetHashCode() ^ CorCode.HashCode;
+
+		public int CompareTo(DbgDotNetNativeCodeLocationImpl other) {
+			return this.CompareTo((DbgDotNetNativeCodeLocation)other);
+		}
 	}
 }

@@ -233,6 +233,7 @@
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsToolWindowContent.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsVM.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointVM.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointVMComparer.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Commands.cs" />

@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Metadata {
 	/// <summary>
 	/// Module ID
 	/// </summary>
-	public readonly struct ModuleId : IEquatable<ModuleId> {
+	public readonly struct ModuleId : IEquatable<ModuleId>, IComparable<ModuleId>, IComparable {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,
@@ -174,10 +174,8 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(ModuleId other) =>
-			(ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
-			ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
-			(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
+		public bool Equals(ModuleId other) => CompareTo(other) == 0;
+
 
 		/// <summary>
 		/// Equals()
@@ -202,6 +200,32 @@ namespace dnSpy.Contracts.Metadata {
 			if (ModuleNameOnly)
 				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, ModuleName);
 			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
+		}
+
+		/// <summary>
+		/// Compares this instance with an other
+		/// </summary>
+		public int CompareTo(ModuleId other) {
+			int c;
+			if (!ModuleNameOnly && !other.ModuleNameOnly) {
+				c = AssemblyNameComparer.Compare(AssemblyFullName, other.AssemblyFullName);
+				if (c != 0) return c;
+			}
+
+			c = ModuleNameComparer.Compare(ModuleName, other.ModuleName);
+			if (c != 0) return c;
+
+			c = (flags & Flags.CompareMask).CompareTo(other.flags & Flags.CompareMask);
+			if (c != 0) return c;
+
+			return 0;
+		}
+
+		int IComparable.CompareTo(object obj) {
+			if (obj == null) return -1;
+			if (obj is ModuleId) return CompareTo((ModuleId)obj);
+
+			return -1;
 		}
 	}
 }
