@@ -555,8 +555,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			} set {
 				if (value == null) value = sortListComparer = CodeBreakpointVMComparer.Instance;
 				sortListComparer = value;
-
-				OnPropertyChanged(nameof(SortListComparer));
 				SortList_UI();
 			}
 		}
