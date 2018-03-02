@@ -24,9 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.UI {
-	abstract class FormatterObjectVMComparer<TVM>
-		: IComparer<TVM>, IComparer where TVM : class {
-
+	abstract class FormatterObjectVMComparer<TVM> : IComparer<TVM>, IComparer where TVM : class {
 
 		public readonly string VMPropertyName;
 		public readonly ListSortDirection Direction;
@@ -60,7 +58,7 @@ namespace dnSpy.Debugger.UI {
 					?.GetGetMethod().Invoke(instance, null)
 					as FormatterObject<TVM>;
 
-			if (formatter == null) 
+			if (formatter == null)
 				Debug.Fail($"Unknown vw property name: {VMPropertyName}");
 
 			return formatter.Tag;
