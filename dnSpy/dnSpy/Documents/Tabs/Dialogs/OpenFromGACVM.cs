@@ -205,7 +205,6 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	}
 
 	sealed class GACFileVM_Comparer : System.Collections.IComparer {
-
 		public readonly SortDescription SortDescription;
 	
 		public GACFileVM_Comparer(SortDescription sortDescription) {

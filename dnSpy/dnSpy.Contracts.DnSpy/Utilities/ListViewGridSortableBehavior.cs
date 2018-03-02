@@ -31,7 +31,6 @@ namespace dnSpy.Contracts.Utilities {
 	/// Helper for adding sorting to ListViews
 	/// </summary>
 	public static class ListViewGridSortableBehavior {
-
 		/// <summary>
 		/// Enables sorting for a given ListView
 		/// </summary>
