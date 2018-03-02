@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.UI {
 		}
 
 		int IComparer.Compare(object x, object y) {
-			return Compare(x as TVM, y as TVM);
+			return Compare((TVM)x, (TVM)y);
 		}
 	}
 }
