@@ -102,6 +102,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		};
 
 		static bool IsPublicKeyToken(PublicKeyToken[] tokens, PublicKeyToken token) {
+			if (token == null)
+				return false;
 			foreach (var t in tokens) {
 				if (token.Equals(t))
 					return true;
