@@ -51,6 +51,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly ILanguageCompiler languageCompiler;
 		protected readonly IDecompiler decompiler;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
+		readonly HashSet<string> currentReferences;
 
 		internal MetroWindow OwnerWindow { get; set; }
 
@@ -153,6 +154,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompiler = options.Decompiler;
 			sourceModule = options.SourceModule;
 			AddDocumentsImage = options.AddDocumentsImage;
+			currentReferences = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			if (typeToEditOrNull != null) {
 				Debug.Assert(typeToEditOrNull.Module == sourceModule);
 				while (typeToEditOrNull.DeclaringType != null)
@@ -320,6 +322,10 @@ namespace dnSpy.AsmEditor.Compiler {
 					docs.Add(new CompilerDocumentInfo(simpleDoc.Text, simpleDoc.Name));
 				var publicKeyData = (tempAssembly.PublicKeyOrToken as PublicKey)?.Data;
 				languageCompiler.InitializeProject(new CompilerProjectInfo(tempAssembly.Name, publicKeyData, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
+				foreach (var ar in assemblyReferences) {
+					if (!string.IsNullOrEmpty(ar.Filename))
+						currentReferences.Add(ar.Filename);
+				}
 				codeDocs = languageCompiler.AddDocuments(docs.ToArray());
 			}
 
@@ -532,6 +538,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		void AddReferences(ModuleDef[] modules) {
 			var mdRefs = new List<CompilerMetadataReference>();
 			foreach (var module in modules) {
+				if (!string.IsNullOrEmpty(module.Location) && currentReferences.Contains(module.Location))
+					continue;
 				CompilerMetadataReference? cmr;
 				if (module.IsManifestModule)
 					cmr = assemblyReferenceResolver.Create(module.Assembly);
@@ -541,6 +549,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					continue;
 
 				mdRefs.Add(cmr.Value);
+				if (!string.IsNullOrEmpty(module.Location))
+					currentReferences.Add(module.Location);
 			}
 			if (mdRefs.Count == 0)
 				return;
