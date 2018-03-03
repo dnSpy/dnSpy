@@ -358,6 +358,8 @@ namespace dnSpy.Decompiler {
 
 		public static bool HasConstant(IHasConstant hc, out CustomAttribute constantAttribute) {
 			constantAttribute = null;
+			if (hc == null)
+				return false;
 			if (hc.Constant != null)
 				return true;
 			foreach (var ca in hc.CustomAttributes) {
