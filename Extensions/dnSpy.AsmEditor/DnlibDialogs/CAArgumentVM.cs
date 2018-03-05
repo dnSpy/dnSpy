@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.MVVM;
 
@@ -386,7 +385,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Debug.Assert(list != null || value == null);
 			if (list == null)
 				return new CAArgument(aryType, null);
-			var ary = ThreadSafeListCreator.Create<CAArgument>(list.Count);
+			var ary = new List<CAArgument>(list.Count);
 
 			for (int i = 0; i < list.Count; i++)
 				ary.Add(CreateCAArgument(elemType, list[i]));

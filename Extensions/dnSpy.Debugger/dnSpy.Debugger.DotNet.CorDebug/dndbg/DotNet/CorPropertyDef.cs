@@ -22,11 +22,6 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
 
-#if THREAD_SAFE
-#else
-using ThreadSafe = System.Collections.Generic;
-#endif
-
 namespace dndbg.DotNet {
 	sealed class CorPropertyDef : PropertyDef, ICorHasCustomAttribute {
 		readonly CorModuleDef readerModule;

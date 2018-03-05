@@ -21,11 +21,6 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.DotNet;
 
-#if THREAD_SAFE
-#else
-using ThreadSafe = System.Collections.Generic;
-#endif
-
 namespace dndbg.DotNet {
 	sealed class CorEventDef : EventDef, ICorHasCustomAttribute {
 		readonly CorModuleDef readerModule;

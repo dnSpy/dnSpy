@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using dnlib.DotNet;
-using dnlib.Threading;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
@@ -209,14 +208,14 @@ namespace dnSpy.Contracts.Decompiler {
 			outSig.GenParamCount = inSig.GenParamCount;
 			UpdateSigList(outSig.Params, inSig.Params);
 			if (inSig.ParamsAfterSentinel != null) {
-				outSig.ParamsAfterSentinel = ThreadSafeListCreator.Create<TypeSig>(inSig.ParamsAfterSentinel.Count);
+				outSig.ParamsAfterSentinel = new List<TypeSig>(inSig.ParamsAfterSentinel.Count);
 				UpdateSigList(outSig.ParamsAfterSentinel, inSig.ParamsAfterSentinel);
 			}
 			return outSig;
 		}
 
 		void UpdateSigList(IList<TypeSig> inList, IList<TypeSig> outList) {
-			foreach (var arg in outList.GetSafeEnumerable())
+			foreach (var arg in outList)
 				inList.Add(ResolveGenericArgs(arg));
 		}
 

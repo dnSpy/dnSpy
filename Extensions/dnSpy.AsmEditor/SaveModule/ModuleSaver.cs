@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	sealed class ModuleSaver : IModuleWriterListener, ILogger {
+	sealed class ModuleSaver : ILogger {
 		SaveState[] filesToSave;
 
 		sealed class SaveState {
@@ -223,7 +223,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		void Save(SaveModuleOptionsVM vm) {
 			fileProgress = new ModuleFileProgress();
 			var opts = vm.CreateWriterOptions();
-			opts.Listener = this;
+			opts.WriterEvent += OnWriterEvent;
 			opts.Logger = this;
 			// Make sure the order of the interfaces don't change, see https://github.com/dotnet/roslyn/issues/3905
 			opts.MetaDataOptions.Flags |= MetaDataFlags.RoslynSortInterfaceImpl;
@@ -278,9 +278,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void NotifyProgressUpdated() => OnProgressUpdated?.Invoke(this, EventArgs.Empty);
 
-		void IModuleWriterListener.OnWriterEvent(ModuleWriterBase writer, ModuleWriterEvent evt) {
+		void OnWriterEvent(object sender, ModuleWriterEventArgs e) {
 			ThrowIfCanceled();
-			((ModuleFileProgress)fileProgress).CurrentEventIndex = evt - ModuleWriterEvent.Begin;
+			((ModuleFileProgress)fileProgress).CurrentEventIndex = e.Event - ModuleWriterEvent.Begin;
 			Debug.Assert(((ModuleFileProgress)fileProgress).CurrentEventIndex >= 0);
 			NotifyProgressUpdated();
 		}

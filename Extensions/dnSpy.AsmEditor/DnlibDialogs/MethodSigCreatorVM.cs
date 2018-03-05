@@ -18,9 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.MVVM;
@@ -185,7 +185,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			sig.Params.AddRange(ParametersCreateTypeSigArray.TypeSigArray);
 			sig.GenParamCount = GenericParameterCount.HasError ? 0 : GenericParameterCount.Value;
 			var sentAry = SentinelCreateTypeSigArray.TypeSigArray;
-			sig.ParamsAfterSentinel = sentAry.Length == 0 ? null : ThreadSafeListCreator.Create<TypeSig>(sentAry);
+			sig.ParamsAfterSentinel = sentAry.Length == 0 ? null : new List<TypeSig>(sentAry);
 			return sig;
 		}
 

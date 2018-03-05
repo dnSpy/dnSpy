@@ -39,12 +39,6 @@ using dnlib.PE;
 using dnlib.Threading;
 using dnlib.Utils;
 
-#if THREAD_SAFE
-using ThreadSafe = dnlib.Threading.Collections;
-#else
-using ThreadSafe = System.Collections.Generic;
-#endif
-
 namespace dndbg.DotNet {
 	sealed class MemberInfo<TItem> {
 		readonly TItem item;
@@ -325,7 +319,7 @@ namespace dndbg.DotNet {
 			return ca;
 		}
 
-		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref ThreadSafe.IList<DeclSecurity> declSecurities) {
+		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref IList<DeclSecurity> declSecurities) {
 			var tokens = MDAPI.GetPermissionSetTokens(mdi, hds.OriginalToken.Raw);
 			var tmp = new LazyList<DeclSecurity>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens[index]));
 			Interlocked.CompareExchange(ref declSecurities, tmp, null);

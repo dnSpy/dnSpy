@@ -24,7 +24,6 @@ using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.PE;
-using dnlib.Threading;
 using dnSpy.AsmEditor.Event;
 using dnSpy.AsmEditor.Field;
 using dnSpy.AsmEditor.Method;
@@ -1629,7 +1628,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (value is CAArgument)
 				return Import((CAArgument)value);
 			if (value is IList<CAArgument> args) {
-				var newArgs = ThreadSafeListCreator.Create<CAArgument>(args.Count);
+				var newArgs = new List<CAArgument>(args.Count);
 				foreach (var arg in args)
 					newArgs.Add(Import(arg));
 				return newArgs;

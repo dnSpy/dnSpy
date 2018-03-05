@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
@@ -273,7 +272,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield break;
 			}
 
-			foreach (var m in asm.Modules.GetSafeEnumerable())
+			foreach (var m in asm.Modules)
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
 
 			var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
@@ -281,7 +280,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef.Modules.SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
@@ -290,7 +289,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (found) {
 					var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
 					if (typeref != null) {
-						foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
+						foreach (var m in assembly.AssemblyDef.Modules)
 							yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
 					}
 				}
@@ -304,7 +303,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield break;
 			}
 
-			foreach (var m in asm.Modules.GetSafeEnumerable())
+			foreach (var m in asm.Modules)
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
 
 			if (asm.HasCustomAttributes) {
@@ -329,7 +328,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 						if (friendAssemblies.Contains(assembly.AssemblyDef.Name)) {
 							var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
 							if (typeref != null) {
-								foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
+								foreach (var m in assembly.AssemblyDef.Modules)
 									yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
 							}
 						}
@@ -339,7 +338,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		ITypeDefOrRef GetScopeTypeRefInAssembly(AssemblyDef asm) {
-			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
+			foreach (var mod in asm.Modules) {
 				foreach (var typeref in mod.GetTypeRefs()) {
 					if (new SigComparer().Equals(analyzedType, typeref))
 						return typeref;
