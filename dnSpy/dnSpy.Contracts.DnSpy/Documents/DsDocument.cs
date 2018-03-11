@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public virtual ModuleDef ModuleDef => null;
 		/// <inheritdoc/>
-		public virtual IPEImage PEImage => (ModuleDef as ModuleDefMD)?.MetaData?.PEImage;
+		public virtual IPEImage PEImage => (ModuleDef as ModuleDefMD)?.Metadata?.PEImage;
 
 		/// <inheritdoc/>
 		public string Filename {

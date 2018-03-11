@@ -147,7 +147,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, DotNetCor20Data cor20, HexPosition position) {
 			HexSpan? span;
-			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.MetaData.Data, position)) != null)
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Metadata.Data, position)) != null)
 				return span;
 			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Resources.Data, position)) != null)
 				return span;

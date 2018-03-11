@@ -105,13 +105,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override IEnumerable<HexField> HexFields => hexFields;
 		readonly HexField[] hexFields;
 
-		public MetaDataTableVM[] MetaDataTables => metaDataTables;
-		readonly MetaDataTableVM[] metaDataTables;
+		public MetadataTableVM[] MetadataTables => metadataTables;
+		readonly MetadataTableVM[] metadataTables;
 
-		public TablesStreamVM(HexBuffer buffer, TablesHeap tablesHeap, MetaDataTableVM[] metaDataTables)
+		public TablesStreamVM(HexBuffer buffer, TablesHeap tablesHeap, MetadataTableVM[] metadataTables)
 			: base(tablesHeap.HeaderSpan) {
-			Debug.Assert(metaDataTables.Length == 0x40);
-			this.metaDataTables = metaDataTables;
+			Debug.Assert(metadataTables.Length == 0x40);
+			this.metadataTables = metadataTables;
 			Name = tablesHeap.Header.Name;
 			M_ulReservedVM = new UInt32HexField(tablesHeap.Header.Reserved);
 			M_majorVM = new ByteHexField(tablesHeap.Header.MajorVersion, true);
@@ -232,10 +232,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			field.Add(new BooleanHexBitField("Reserved 3F", 63));
 		}
 
-		public MetaDataTableVM TryGetMetaDataTable(Table table) {
-			if ((uint)table >= (uint)metaDataTables.Length)
+		public MetadataTableVM TryGetMetadataTable(Table table) {
+			if ((uint)table >= (uint)metadataTables.Length)
 				return null;
-			return metaDataTables[(int)table];
+			return metadataTables[(int)table];
 		}
 	}
 }

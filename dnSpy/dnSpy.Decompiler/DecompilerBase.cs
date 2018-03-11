@@ -76,7 +76,7 @@ namespace dnSpy.Decompiler {
 
 		static IPEImage TryGetPEImage(ModuleDef mod) {
 			var m = mod as ModuleDefMD;
-			return m == null ? null : m.MetaData.PEImage;
+			return m == null ? null : m.Metadata.PEImage;
 		}
 
 		protected void WriteAssembly(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {

@@ -93,8 +93,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		(RawModuleBytes rawData, bool isFileLayout) TryReadModule(ModuleDefMD module) {
-			using (var stream = module.MetaData.PEImage.CreateFullStream())
-				return TryReadStream(stream, module.MetaData.PEImage.IsFileImageLayout);
+			using (var stream = module.Metadata.PEImage.CreateFullStream())
+				return TryReadStream(stream, module.Metadata.PEImage.IsFileImageLayout);
 		}
 
 		(RawModuleBytes rawData, bool isFileLayout) TryReadStream(IImageStream stream, bool isFileLayout) {

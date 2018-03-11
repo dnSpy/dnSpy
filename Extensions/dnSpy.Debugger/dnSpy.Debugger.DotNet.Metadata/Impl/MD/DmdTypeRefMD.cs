@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
@@ -33,7 +34,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public DmdTypeRefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-			var row = reader.TablesStream.ReadTypeRefRow(rid);
+			bool b = reader.TablesStream.TryReadTypeRefRow(rid, out var row);
+			Debug.Assert(b);
 			var ns = reader.StringsStream.Read(row.Namespace);
 			MetadataNamespace = string.IsNullOrEmpty(ns) ? null : ns;
 			MetadataName = reader.StringsStream.ReadNoNull(row.Name);
@@ -51,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				break;
 
 			case 0x1A:
-				var moduleRefRow = reader.TablesStream.ReadModuleRefRow(resScopeToken & 0x00FFFFFF) ?? new RawModuleRefRow();
+				reader.TablesStream.TryReadModuleRefRow(resScopeToken & 0x00FFFFFF, out var moduleRefRow);
 				var moduleName = reader.StringsStream.ReadNoNull(moduleRefRow.Name);
 				TypeScope = new DmdTypeScope(reader.GetName(), moduleName);
 				break;

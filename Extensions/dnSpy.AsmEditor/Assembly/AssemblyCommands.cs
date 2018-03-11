@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 			var peImage = fileNode.Document.PEImage;
 			if (peImage == null)
-				peImage = (fileNode.Document.ModuleDef as ModuleDefMD)?.MetaData?.PEImage;
+				peImage = (fileNode.Document.ModuleDef as ModuleDefMD)?.Metadata?.PEImage;
 
 			return peImage != null && peImage.IsMemoryMappedIO ? fileNode.Document : null;
 		}

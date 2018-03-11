@@ -1285,12 +1285,12 @@
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MinorRuntimeVersionVMTextBox}" Content="{Binding MinorRuntimeVersionVM.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Name="MinorRuntimeVersionVMTextBox" Text="{Binding MinorRuntimeVersionVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding MetaDataVM.RVAVM.OffsetString, Mode=OneTime}" IsTabStop="False" />
-                <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MetaDataVMRVAVMTextBox}" Content="{Binding MetaDataVM.RVAVM.NameUI, Mode=OneTime}" />
-                <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Name="MetaDataVMRVAVMTextBox" Text="{Binding MetaDataVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding MetaDataVM.SizeVM.OffsetString, Mode=OneTime}" IsTabStop="False" />
-                <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MetaDataVMSizeVMTextBox}" Content="{Binding MetaDataVM.SizeVM.NameUI, Mode=OneTime}" />
-                <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Name="MetaDataVMSizeVMTextBox" Text="{Binding MetaDataVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding MetadataVM.RVAVM.OffsetString, Mode=OneTime}" IsTabStop="False" />
+                <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MetadataVMRVAVMTextBox}" Content="{Binding MetadataVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Name="MetadataVMRVAVMTextBox" Text="{Binding MetadataVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding MetadataVM.SizeVM.OffsetString, Mode=OneTime}" IsTabStop="False" />
+                <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MetadataVMSizeVMTextBox}" Content="{Binding MetadataVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Name="MetadataVMSizeVMTextBox" Text="{Binding MetadataVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
 
                 <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding FlagsVM.OffsetString, Mode=OneTime}" IsTabStop="False" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=FlagsVMTextBox}" Content="{Binding FlagsVM.NameUI, Mode=OneTime}" />
@@ -2168,7 +2168,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable1VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable1VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2217,7 +2217,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable2VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable2VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2273,7 +2273,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable3VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable3VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2336,7 +2336,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable4VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable4VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2406,7 +2406,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable5VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable5VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2483,7 +2483,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable6VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable6VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2567,7 +2567,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable9VM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable9VM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
@@ -2672,7 +2672,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable1InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable1InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -2729,7 +2729,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable2InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable2InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -2793,7 +2793,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable3InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable3InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -2864,7 +2864,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable4InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable4InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -2942,7 +2942,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable5InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable5InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -3027,7 +3027,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable6InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable6InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -3119,7 +3119,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTable9InfoVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTable9InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
                 ScrollViewer.IsDeferredScrollingEnabled="True"
@@ -3232,7 +3232,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:MetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.Resources>
@@ -3304,7 +3304,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:TypeDefMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:TypeDefMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3410,7 +3410,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:FieldMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:FieldMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3488,7 +3488,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MethodMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:MethodMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3631,7 +3631,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:ParamMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:ParamMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3687,7 +3687,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:DeclSecurityMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:DeclSecurityMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3738,7 +3738,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:EventMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:EventMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3787,7 +3787,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:PropertyMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:PropertyMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3837,7 +3837,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:MethodSemanticsMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:MethodSemanticsMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3892,7 +3892,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:ImplMapMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:ImplMapMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -3971,7 +3971,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:AssemblyMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:AssemblyMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -4095,7 +4095,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:AssemblyRefMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:AssemblyRefMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -4203,7 +4203,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:FileMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:FileMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -4251,7 +4251,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:ExportedTypeMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:ExportedTypeMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -4351,7 +4351,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:ManifestResourceMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:ManifestResourceMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -4408,7 +4408,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:GenericParamMetaDataTableRecordV11VM}">
+    <DataTemplate DataType="{x:Type tnhex:GenericParamMetadataTableRecordV11VM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -4488,7 +4488,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type tnhex:GenericParamMetaDataTableRecordVM}">
+    <DataTemplate DataType="{x:Type tnhex:GenericParamMetadataTableRecordVM}">
         <Border mvvm:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>

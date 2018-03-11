@@ -37,7 +37,7 @@ namespace dnSpy.Decompiler.IL {
 			if (m == null)
 				return null;
 
-			return m.MetaData.PEImage.CreateStream((RVA)rva);
+			return m.Metadata.PEImage.CreateStream((RVA)rva);
 		}
 
 		public int ReadByte() {

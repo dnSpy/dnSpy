@@ -133,8 +133,8 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public bool Bit32Machine {
-			get => GetFlagValue(dnlib.PE.Characteristics._32BitMachine);
-			set => SetFlagValue(dnlib.PE.Characteristics._32BitMachine, value);
+			get => GetFlagValue(dnlib.PE.Characteristics.Bit32Machine);
+			set => SetFlagValue(dnlib.PE.Characteristics.Bit32Machine, value);
 		}
 
 		public bool DebugStripped {
@@ -330,8 +330,8 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public bool Bit32Required {
-			get => GetFlagValue(ComImageFlags._32BitRequired);
-			set => SetFlagValue(ComImageFlags._32BitRequired, value);
+			get => GetFlagValue(ComImageFlags.Bit32Required);
+			set => SetFlagValue(ComImageFlags.Bit32Required, value);
 		}
 
 		public bool ILLibrary {
@@ -350,8 +350,8 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public bool Bit32Preferred {
-			get => GetFlagValue(ComImageFlags._32BitPreferred);
-			set => SetFlagValue(ComImageFlags._32BitPreferred, value);
+			get => GetFlagValue(ComImageFlags.Bit32Preferred);
+			set => SetFlagValue(ComImageFlags.Bit32Preferred, value);
 		}
 
 		bool GetFlagValue(ComImageFlags flag) => (Cor20HeaderFlags & flag) != 0;
@@ -550,7 +550,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		protected override string Verify(string columnName) {
 			if (columnName == nameof(RuntimeVersion))
-				return SaveModule.MetaDataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
+				return SaveModule.MetadataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
 
 			return string.Empty;
 		}

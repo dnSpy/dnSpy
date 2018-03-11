@@ -144,7 +144,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorFieldDef(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			fields = new LazyList<FieldDef>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			fields = new LazyList<FieldDef, MemberInfo<CorFieldDef>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		public void UpdateMethods() {
@@ -167,7 +167,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorMethodDef(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			methods = new LazyList<MethodDef>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			methods = new LazyList<MethodDef, MemberInfo<CorMethodDef>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		public void UpdateGenericParams() {
@@ -190,7 +190,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorGenericParam(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			genericParameters = new LazyList<GenericParam>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			genericParameters = new LazyList<GenericParam, MemberInfo<CorGenericParam>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		public void UpdateProperties() {
@@ -213,7 +213,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorPropertyDef(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			properties = new LazyList<PropertyDef>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			properties = new LazyList<PropertyDef, MemberInfo<CorPropertyDef>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		public void UpdateEvents() {
@@ -236,7 +236,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorEventDef(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			events = new LazyList<EventDef>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			events = new LazyList<EventDef, MemberInfo<CorEventDef>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		void InitInterfaceImpls_NoLock() {
@@ -246,7 +246,7 @@ namespace dndbg.DotNet {
 			interfaces?.Clear();
 
 			var itemTokens = MDAPI.GetInterfaceImplTokens(mdi, token);
-			interfaces = new LazyList<InterfaceImpl>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens[index], new GenericParamContext(this)));
+			interfaces = new LazyList<InterfaceImpl, uint[]>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens2[index], new GenericParamContext(this)));
 		}
 
 		void InitCustomAttributes_NoLock() => customAttributes = null;
@@ -408,7 +408,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeNestedTypes() {
 			var list = readerModule.GetTypeDefNestedClassRids(this);
-			var tmp = new LazyList<TypeDef>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(((uint[])list2)[index]));
+			var tmp = new LazyList<TypeDef, uint[]>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(list2[index]));
 			Interlocked.CompareExchange(ref nestedTypes, tmp, null);
 		}
 	}

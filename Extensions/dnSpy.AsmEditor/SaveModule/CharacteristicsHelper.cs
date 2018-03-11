@@ -32,11 +32,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public static Characteristics GetCharacteristics(Characteristics characteristics, Machine machine) {
 			if (machine == Machine.IA64 || machine == Machine.AMD64 || machine == Machine.ARM64) {
-				characteristics &= ~Characteristics._32BitMachine;
+				characteristics &= ~Characteristics.Bit32Machine;
 				characteristics |= Characteristics.LargeAddressAware;
 			}
 			else
-				characteristics |= Characteristics._32BitMachine;
+				characteristics |= Characteristics.Bit32Machine;
 			return characteristics;
 		}
 	}

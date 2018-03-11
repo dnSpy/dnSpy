@@ -153,7 +153,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorParamDef(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			paramDefs = new LazyList<ParamDef>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			paramDefs = new LazyList<ParamDef, MemberInfo<CorParamDef>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		public void UpdateGenericParams() {
@@ -176,7 +176,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorGenericParam(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			genericParameters = new LazyList<GenericParam>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			genericParameters = new LazyList<GenericParam, MemberInfo<CorGenericParam>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		protected override void InitializeOverrides() {

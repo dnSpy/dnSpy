@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			var resultStream = new MemoryStream();
 			var options = new ModuleWriterOptions(md);
-			options.MetaDataOptions.Flags = MetaDataFlags.PreserveRids;
+			options.MetadataOptions.Flags = MetadataFlags.PreserveRids;
 			md.Write(resultStream, options);
 
 			state.Module = null;

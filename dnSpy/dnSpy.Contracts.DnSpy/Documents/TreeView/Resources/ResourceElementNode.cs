@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				if (module == null)
 					return 0;
 
-				return (uint)module.MetaData.PEImage.ToRVA(fo);
+				return (uint)module.Metadata.PEImage.ToRVA(fo);
 			}
 		}
 

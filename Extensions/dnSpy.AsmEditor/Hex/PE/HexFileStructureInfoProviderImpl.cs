@@ -86,8 +86,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 				var tblsStream = peStructureProvider.TablesStream;
 				if (tblsStream != null) {
-					var first = tblsStream.MetaDataTables.FirstOrDefault(a => a != null);
-					var last = tblsStream.MetaDataTables.LastOrDefault(a => a != null);
+					var first = tblsStream.MetadataTables.FirstOrDefault(a => a != null);
+					var last = tblsStream.MetadataTables.LastOrDefault(a => a != null);
 					Debug.Assert(first != null);
 					if (first != null)
 						metadataTablesSpan = HexSpan.FromBounds(first.Span.Start, last.Span.End);
@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 				}
 				if (metadataTablesSpan.Contains(position)) {
-					foreach (var mdTbl in peStructureProvider.TablesStream.MetaDataTables) {
+					foreach (var mdTbl in peStructureProvider.TablesStream.MetadataTables) {
 						if (mdTbl == null || !mdTbl.Span.Contains(position))
 							continue;
 						var offset = position - mdTbl.Span.Start;

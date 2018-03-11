@@ -30,8 +30,8 @@ namespace dnSpy.AsmEditor.Hex {
 				return 0;
 
 			try {
-				using (var reader = mod.MetaData.PEImage.CreateFullStream()) {
-					reader.Position = (long)mod.MetaData.PEImage.ToFileOffset(md.RVA);
+				using (var reader = mod.Metadata.PEImage.CreateFullStream()) {
+					reader.Position = (long)mod.Metadata.PEImage.ToFileOffset(md.RVA);
 					var start = reader.Position;
 					if (!ReadHeader(reader, out ushort flags, out uint codeSize))
 						return 0;

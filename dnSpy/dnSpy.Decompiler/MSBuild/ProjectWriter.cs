@@ -357,7 +357,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		string GetFileAlignment() {
 			if (project.Module is ModuleDefMD mod)
-				return mod.MetaData.PEImage.ImageNTHeaders.OptionalHeader.FileAlignment.ToString();
+				return mod.Metadata.PEImage.ImageNTHeaders.OptionalHeader.FileAlignment.ToString();
 			return "512";
 		}
 

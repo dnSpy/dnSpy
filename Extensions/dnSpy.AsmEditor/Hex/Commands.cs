@@ -557,7 +557,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var mod = context.Nodes[0].GetModule() as ModuleDefMD;
 			if (mod == null)
 				return null;
-			var pe = mod.MetaData.PEImage;
+			var pe = mod.Metadata.PEImage;
 
 			if (context.Nodes[0] is ImageSectionHeaderNode sectNode) {
 				if (sectNode.SectionNumber >= pe.ImageSectionHeaders.Count)
@@ -567,11 +567,11 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 
 			if (context.Nodes[0] is StorageStreamNode stgNode) {
-				if (stgNode.StreamNumber >= mod.MetaData.MetaDataHeader.StreamHeaders.Count)
+				if (stgNode.StreamNumber >= mod.Metadata.MetadataHeader.StreamHeaders.Count)
 					return null;
-				var sh = mod.MetaData.MetaDataHeader.StreamHeaders[stgNode.StreamNumber];
+				var sh = mod.Metadata.MetadataHeader.StreamHeaders[stgNode.StreamNumber];
 
-				return new AddressReference(mod.Location, false, (ulong)mod.MetaData.MetaDataHeader.StartOffset + sh.Offset, sh.StreamSize);
+				return new AddressReference(mod.Location, false, (ulong)mod.Metadata.MetadataHeader.StartOffset + sh.Offset, sh.StreamSize);
 			}
 
 			return null;
@@ -1344,7 +1344,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return string.Empty;
 			if (module is ModuleDefMD md) {
 				var mdToken = new MDToken(token);
-				var table = md.MetaData.TablesStream.Get(mdToken.Table);
+				var table = md.Metadata.TablesStream.Get(mdToken.Table);
 				if (table?.IsValidRID(mdToken.Rid) == true)
 					return string.Empty;
 			}

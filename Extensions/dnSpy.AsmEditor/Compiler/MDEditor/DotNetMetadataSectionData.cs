@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			var heapInfos = new(long offsetAndSizePosition, long dataPosition, long dataEndPosition)[heapWriters.Count];
 
 			// Write the metadata header
-			var mdHeader = mdWriter.MetadataEditor.RealMetadata.MetaDataHeader;
+			var mdHeader = mdWriter.MetadataEditor.RealMetadata.MetadataHeader;
 			stream.Write(0x424A5342);// BSJB
 			stream.Write(mdHeader.MajorVersion);
 			stream.Write(mdHeader.MinorVersion);

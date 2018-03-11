@@ -25,7 +25,7 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.PE {
-	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
+	abstract class MetadataTableRecordVM : HexVM, IVirtualizedListItem {
 		public int Index => (int)mdToken.Rid - 1;
 		public override string Name => string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
 		public string OffsetString => string.Format("0x{0:X8}", Span.Start.ToUInt64());
@@ -170,10 +170,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		Guid? ReadGuidHeap(HexField field) => mdVM.ReadGuidHeap(ReadFieldValue(field));
 
-		MetaDataTableRecordVM GetMetaDataTableRecordVM(Table table, uint rid) {
+		MetadataTableRecordVM GetMetadataTableRecordVM(Table table, uint rid) {
 			if (rid == 0)
 				return null;
-			var tblVM = mdVM.TablesStream.TryGetMetaDataTable(table);
+			var tblVM = mdVM.TablesStream.TryGetMetadataTable(table);
 			if (tblVM == null)
 				return null;
 			if (rid - 1 >= (uint)tblVM.Collection.Count)
@@ -196,7 +196,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		string GetInfo(Table table, uint rid) {
-			var recVM = GetMetaDataTableRecordVM(table, rid);
+			var recVM = GetMetadataTableRecordVM(table, rid);
 			return recVM?.Info ?? string.Empty;
 		}
 
@@ -313,11 +313,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public virtual string Info => string.Empty;
 		protected virtual int[] InfoColumnIndexes => null;
 
-		protected readonly MetaDataTableVM mdVM;
+		protected readonly MetadataTableVM mdVM;
 		MDToken mdToken;
 		readonly HexField[] hexFields;
 
-		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+		protected MetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(new HexSpan(mdVM.Span.Start + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize, (ulong)mdVM.TableInfo.RowSize)) {
 			this.mdVM = mdVM;
 			this.mdToken = mdToken;
@@ -360,8 +360,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 	}
 
-	sealed class ModuleMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ModuleMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ModuleMetadataTableRecordVM : MetadataTableRecordVM {
+		public ModuleMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -370,8 +370,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
-	sealed class TypeRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public TypeRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class TypeRefMetadataTableRecordVM : MetadataTableRecordVM {
+		public TypeRefMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -381,8 +381,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public static string CreateTypeString(string ns, string name) => string.IsNullOrEmpty(ns) ? name : string.Format("{0}.{1}", ns, name);
 	}
 
-	sealed class TypeDefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public TypeDefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class TypeDefMetadataTableRecordVM : MetadataTableRecordVM {
+		public TypeDefMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -448,19 +448,19 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return field;
 		}
 
-		public override string Info => TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1));
+		public override string Info => TypeRefMetadataTableRecordVM.CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1));
 		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1, 2 };
 	}
 
-	sealed class FieldPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class FieldPtrMetadataTableRecordVM : MetadataTableRecordVM {
+		public FieldPtrMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class FieldMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class FieldMetadataTableRecordVM : MetadataTableRecordVM {
+		public FieldMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -498,14 +498,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
-	sealed class MethodPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MethodPtrMetadataTableRecordVM : MetadataTableRecordVM {
+		public MethodPtrMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class MethodMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MethodMetadataTableRecordVM : MetadataTableRecordVM {
+		public MethodMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -576,14 +576,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
-	sealed class ParamPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ParamPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ParamPtrMetadataTableRecordVM : MetadataTableRecordVM {
+		public ParamPtrMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class ParamMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ParamMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ParamMetadataTableRecordVM : MetadataTableRecordVM {
+		public ParamMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -607,14 +607,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
-	sealed class InterfaceImplMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public InterfaceImplMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class InterfaceImplMetadataTableRecordVM : MetadataTableRecordVM {
+		public InterfaceImplMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class MemberRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MemberRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MemberRefMetadataTableRecordVM : MetadataTableRecordVM {
+		public MemberRefMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -623,26 +623,26 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
-	sealed class ConstantMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ConstantMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ConstantMetadataTableRecordVM : MetadataTableRecordVM {
+		public ConstantMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class CustomAttributeMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public CustomAttributeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class CustomAttributeMetadataTableRecordVM : MetadataTableRecordVM {
+		public CustomAttributeMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class FieldMarshalMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldMarshalMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class FieldMarshalMetadataTableRecordVM : MetadataTableRecordVM {
+		public FieldMarshalMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class DeclSecurityMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public DeclSecurityMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class DeclSecurityMetadataTableRecordVM : MetadataTableRecordVM {
+		public DeclSecurityMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -675,38 +675,38 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 	}
 
-	sealed class ClassLayoutMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ClassLayoutMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ClassLayoutMetadataTableRecordVM : MetadataTableRecordVM {
+		public ClassLayoutMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class FieldLayoutMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldLayoutMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class FieldLayoutMetadataTableRecordVM : MetadataTableRecordVM {
+		public FieldLayoutMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class StandAloneSigMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public StandAloneSigMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class StandAloneSigMetadataTableRecordVM : MetadataTableRecordVM {
+		public StandAloneSigMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class EventMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public EventMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class EventMapMetadataTableRecordVM : MetadataTableRecordVM {
+		public EventMapMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class EventPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public EventPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class EventPtrMetadataTableRecordVM : MetadataTableRecordVM {
+		public EventPtrMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class EventMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public EventMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class EventMetadataTableRecordVM : MetadataTableRecordVM {
+		public EventMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -725,20 +725,20 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
-	sealed class PropertyMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public PropertyMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class PropertyMapMetadataTableRecordVM : MetadataTableRecordVM {
+		public PropertyMapMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class PropertyPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public PropertyPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class PropertyPtrMetadataTableRecordVM : MetadataTableRecordVM {
+		public PropertyPtrMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class PropertyMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public PropertyMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class PropertyMetadataTableRecordVM : MetadataTableRecordVM {
+		public PropertyMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -758,8 +758,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
-	sealed class MethodSemanticsMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodSemanticsMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MethodSemanticsMetadataTableRecordVM : MetadataTableRecordVM {
+		public MethodSemanticsMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -778,14 +778,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 	}
 
-	sealed class MethodImplMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodImplMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MethodImplMetadataTableRecordVM : MetadataTableRecordVM {
+		public MethodImplMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class ModuleRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ModuleRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ModuleRefMetadataTableRecordVM : MetadataTableRecordVM {
+		public ModuleRefMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -794,14 +794,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 0 };
 	}
 
-	sealed class TypeSpecMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public TypeSpecMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class TypeSpecMetadataTableRecordVM : MetadataTableRecordVM {
+		public TypeSpecMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class ImplMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ImplMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ImplMapMetadataTableRecordVM : MetadataTableRecordVM {
+		public ImplMapMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -851,26 +851,26 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
-	sealed class FieldRVAMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldRVAMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class FieldRVAMetadataTableRecordVM : MetadataTableRecordVM {
+		public FieldRVAMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class ENCLogMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ENCLogMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ENCLogMetadataTableRecordVM : MetadataTableRecordVM {
+		public ENCLogMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class ENCMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ENCMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ENCMapMetadataTableRecordVM : MetadataTableRecordVM {
+		public ENCMapMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class AssemblyMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class AssemblyMetadataTableRecordVM : MetadataTableRecordVM {
+		public AssemblyMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -935,14 +935,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 7 };
 	}
 
-	sealed class AssemblyProcessorMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyProcessorMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class AssemblyProcessorMetadataTableRecordVM : MetadataTableRecordVM {
+		public AssemblyProcessorMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class AssemblyOSMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyOSMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class AssemblyOSMetadataTableRecordVM : MetadataTableRecordVM {
+		public AssemblyOSMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -953,8 +953,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 	}
 
-	sealed class AssemblyRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class AssemblyRefMetadataTableRecordVM : MetadataTableRecordVM {
+		public AssemblyRefMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -962,7 +962,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (0 <= colInfo.Index && colInfo.Index <= 3)
 				return new UInt16HexField(mdVM.Buffer, Name, colInfo.Name, Span.Start + (uint)colInfo.Offset, true);
 			else if (colInfo.Index == 4)
-				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
+				return AssemblyMetadataTableRecordVM.CreateAssemblyAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
@@ -971,14 +971,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 6 };
 	}
 
-	sealed class AssemblyRefProcessorMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyRefProcessorMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class AssemblyRefProcessorMetadataTableRecordVM : MetadataTableRecordVM {
+		public AssemblyRefProcessorMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class AssemblyRefOSMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyRefOSMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class AssemblyRefOSMetadataTableRecordVM : MetadataTableRecordVM {
+		public AssemblyRefOSMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -989,8 +989,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 	}
 
-	sealed class FileMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FileMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class FileMetadataTableRecordVM : MetadataTableRecordVM {
+		public FileMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -1008,24 +1008,24 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
-	sealed class ExportedTypeMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ExportedTypeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ExportedTypeMetadataTableRecordVM : MetadataTableRecordVM {
+		public ExportedTypeMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0)
-				return TypeDefMetaDataTableRecordVM.CreateTypeAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
+				return TypeDefMetadataTableRecordVM.CreateTypeAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
-		public override string Info => TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column3), ReadStringsHeap(Column2));
+		public override string Info => TypeRefMetadataTableRecordVM.CreateTypeString(ReadStringsHeap(Column3), ReadStringsHeap(Column2));
 		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 2, 3 };
 	}
 
-	sealed class ManifestResourceMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ManifestResourceMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ManifestResourceMetadataTableRecordVM : MetadataTableRecordVM {
+		public ManifestResourceMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -1048,20 +1048,20 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
-	sealed class NestedClassMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public NestedClassMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class NestedClassMetadataTableRecordVM : MetadataTableRecordVM {
+		public NestedClassMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class GenericParamMetaDataTableRecordV11VM : MetaDataTableRecordVM {
-		public GenericParamMetaDataTableRecordV11VM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class GenericParamMetadataTableRecordV11VM : MetadataTableRecordVM {
+		public GenericParamMetadataTableRecordV11VM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1)
-				return GenericParamMetaDataTableRecordVM.CreateGenericParamAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
+				return GenericParamMetadataTableRecordVM.CreateGenericParamAttributesField(colInfo, mdVM.Buffer, Name, Span.Start);
 			return base.CreateField(colInfo);
 		}
 
@@ -1070,8 +1070,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
-	sealed class GenericParamMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public GenericParamMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class GenericParamMetadataTableRecordVM : MetadataTableRecordVM {
+		public GenericParamMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 
@@ -1101,62 +1101,62 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
-	sealed class MethodSpecMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodSpecMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MethodSpecMetadataTableRecordVM : MetadataTableRecordVM {
+		public MethodSpecMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class GenericParamConstraintMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public GenericParamConstraintMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class GenericParamConstraintMetadataTableRecordVM : MetadataTableRecordVM {
+		public GenericParamConstraintMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class DocumentMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public DocumentMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class DocumentMetadataTableRecordVM : MetadataTableRecordVM {
+		public DocumentMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class MethodDebugInformationMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodDebugInformationMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class MethodDebugInformationMetadataTableRecordVM : MetadataTableRecordVM {
+		public MethodDebugInformationMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class LocalScopeMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public LocalScopeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class LocalScopeMetadataTableRecordVM : MetadataTableRecordVM {
+		public LocalScopeMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class LocalVariableMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public LocalVariableMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class LocalVariableMetadataTableRecordVM : MetadataTableRecordVM {
+		public LocalVariableMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class LocalConstantMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public LocalConstantMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class LocalConstantMetadataTableRecordVM : MetadataTableRecordVM {
+		public LocalConstantMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class ImportScopeMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ImportScopeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class ImportScopeMetadataTableRecordVM : MetadataTableRecordVM {
+		public ImportScopeMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class StateMachineMethodMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public StateMachineMethodMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class StateMachineMethodMetadataTableRecordVM : MetadataTableRecordVM {
+		public StateMachineMethodMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}
 
-	sealed class CustomDebugInformationMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public CustomDebugInformationMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+	sealed class CustomDebugInformationMetadataTableRecordVM : MetadataTableRecordVM {
+		public CustomDebugInformationMetadataTableRecordVM(MetadataTableVM mdVM, MDToken mdToken)
 			: base(mdVM, mdToken) {
 		}
 	}

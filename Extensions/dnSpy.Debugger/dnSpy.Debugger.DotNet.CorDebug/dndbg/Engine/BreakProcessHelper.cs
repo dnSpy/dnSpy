@@ -173,7 +173,7 @@ namespace dndbg.Engine {
 
 					using (var mod = ModuleDefMD.Load(peImage)) {
 						var file = mod.ResolveFile(token & 0x00FFFFFF);
-						if (file == null || !file.ContainsMetaData)
+						if (file == null || !file.ContainsMetadata)
 							return 0;
 
 						otherModuleName = file.Name;

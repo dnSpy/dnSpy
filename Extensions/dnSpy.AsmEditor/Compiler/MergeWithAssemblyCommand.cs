@@ -174,7 +174,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			try {
 				using (var module = ModuleDefMD.Load(filename)) {
 					// It's a .NET file, return all bytes
-					var bytes = module.MetaData.PEImage.CreateFullStream().ReadAllBytes();
+					var bytes = module.Metadata.PEImage.CreateFullStream().ReadAllBytes();
 					var asm = module.Assembly?.ToAssemblyRef();
 					var debugFile = GetDebugFile(module);
 					return new ModuleResult(asm, bytes, debugFile);

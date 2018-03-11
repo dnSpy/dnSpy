@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				if (module == null)
 					return 0;
 
-				return (uint)module.MetaData.PEImage.ToRVA(fo);
+				return (uint)module.Metadata.PEImage.ToRVA(fo);
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				break;
 			case ResourceType.Linked:
 				var file = ((LinkedResource)Resource).File;
-				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", SimpleTypeConverter.ByteArrayToString(file.HashValue));
+				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetadata ? "ContainsNoMetaData" : "ContainsMetaData", SimpleTypeConverter.ByteArrayToString(file.HashValue));
 				break;
 			case ResourceType.Embedded:
 				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);

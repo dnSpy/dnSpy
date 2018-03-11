@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>IMAGE_COR20_HEADER.MinorRuntimeVersion</summary>
 		public abstract StructField<UInt16Data> MinorRuntimeVersion { get; }
 		/// <summary>IMAGE_COR20_HEADER.MetaData</summary>
-		public abstract StructField<DataDirectoryData> MetaData { get; }
+		public abstract StructField<DataDirectoryData> Metadata { get; }
 		/// <summary>IMAGE_COR20_HEADER.Flags</summary>
 		public abstract StructField<UInt32FlagsData> Flags { get; }
 		/// <summary>IMAGE_COR20_HEADER.EntryPointToken / IMAGE_COR20_HEADER.EntryPointRVA</summary>

@@ -120,9 +120,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 				if (dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48) {
 					var cor20 = new ImageCor20Header(peImage.CreateStream(dotNetDir.VirtualAddress, 0x48), true);
-					var mdStart = (long)peImage.ToFileOffset(cor20.MetaData.VirtualAddress);
+					var mdStart = (long)peImage.ToFileOffset(cor20.Metadata.VirtualAddress);
 					var mdAddr = new IntPtr((byte*)address + mdStart);
-					var mdSize = (int)cor20.MetaData.Size;
+					var mdSize = (int)cor20.Metadata.Size;
 					return (mdAddr, mdSize);
 				}
 			}

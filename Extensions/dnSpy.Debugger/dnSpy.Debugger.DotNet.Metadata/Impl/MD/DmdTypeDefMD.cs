@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
@@ -33,7 +34,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		public DmdTypeDefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			var row = reader.TablesStream.ReadTypeDefRow(rid);
+			bool b = reader.TablesStream.TryReadTypeDefRow(rid, out var row);
+			Debug.Assert(b);
 			string ns = reader.StringsStream.Read(row.Namespace);
 			MetadataNamespace = string.IsNullOrEmpty(ns) ? null : ns;
 			MetadataName = reader.StringsStream.ReadNoNull(row.Name);
@@ -43,12 +45,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeDefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeDefMD(reader, Rid, null));
 
-		protected override DmdType GetDeclaringType() =>
-			Module.ResolveType(0x02000000 + (int)(reader.TablesStream.ReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid))?.EnclosingClass ?? 0), DmdResolveOptions.None);
+		protected override DmdType GetDeclaringType() {
+			if (!reader.TablesStream.TryReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid), out var row))
+				return null;
+			return Module.ResolveType(0x02000000 + (int)row.EnclosingClass, DmdResolveOptions.None);
+		}
 
 		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) {
-			uint extends = reader.TablesStream.ReadTypeDefRow(Rid).Extends;
-			if (!CodedToken.TypeDefOrRef.Decode(extends, out uint token))
+			if (!reader.TablesStream.TryReadTypeDefRow(Rid, out var row))
+				return null;
+			if (!CodedToken.TypeDefOrRef.Decode(row.Extends, out uint token))
 				return null;
 			return reader.Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None);
 		}
@@ -60,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var genericParams = new DmdType[ridList.Count];
 			for (int i = 0; i < genericParams.Length; i++) {
 				uint rid = ridList[i];
-				var row = reader.TablesStream.ReadGenericParamRow(rid) ?? new RawGenericParamRow();
+				reader.TablesStream.TryReadGenericParamRow(rid, out var row);
 				var gpName = reader.StringsStream.ReadNoNull(row.Name);
 				var gpType = new DmdGenericParameterTypeMD(reader, rid, this, gpName, row.Number, (DmdGenericParameterAttributes)row.Flags, null);
 				genericParams[i] = gpType;
@@ -125,8 +131,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var res = new DmdType[ridList.Count];
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = ridList[i];
-				var row = reader.Metadata.TablesStream.ReadInterfaceImplRow(rid);
-				if (row == null || !CodedToken.TypeDefOrRef.Decode(row.Interface, out uint token))
+				if (!reader.Metadata.TablesStream.TryReadInterfaceImplRow(rid, out var row))
+					return null;
+				if (!CodedToken.TypeDefOrRef.Decode(row.Interface, out uint token))
 					return null;
 				res[i] = Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.ThrowOnError);
 			}
@@ -155,8 +162,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		protected override (int packingSize, int classSize) GetClassLayout() {
-			var row = reader.TablesStream.ReadClassLayoutRow(reader.Metadata.GetClassLayoutRid(Rid));
-			if (row == null)
+			if (!reader.TablesStream.TryReadClassLayoutRow(reader.Metadata.GetClassLayoutRid(Rid), out var row))
 				return (0, 0);
 			return (row.PackingSize, (int)row.ClassSize);
 		}

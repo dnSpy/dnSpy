@@ -82,32 +82,33 @@ namespace dnSpy.AsmEditor.Compiler {
 			var dict = new Dictionary<TypeDef, (TypeDef Type, uint TypeRefRid, RawTypeRefRow TypeRefRow)>();
 			foreach (var type in MDPatcherUtils.GetMetadataTypes(nonNestedTypeDef)) {
 				var typeRefRid = mdEditor.TablesHeap.TypeRefTable.Create();
-				var deletedType = (Type: type, TypeRefRid: typeRefRid, TypeRefRow: mdEditor.TablesHeap.TypeRefTable.Get(typeRefRid));
-				dict.Add(type, deletedType);
 				remappedTypeTokens.Add(type.MDToken.Raw, new MDToken(Table.TypeRef, typeRefRid).Raw);
 
 				// Remove the type by renaming it and making it private/internal
 				var tdRow = mdEditor.TablesHeap.TypeDefTable.Get(type.Rid);
-				deletedType.TypeRefRow.Name = tdRow.Name;
-				deletedType.TypeRefRow.Namespace = tdRow.Namespace;
-				tdRow.Name = mdEditor.StringsHeap.Create(Guid.NewGuid().ToString());
-				tdRow.Namespace = mdEditor.StringsHeap.Create(string.Empty);
-				if ((tdRow.Flags & 7) <= 1)
-					tdRow.Flags = tdRow.Flags & ~7U;        // NotPublic
+				var flags = tdRow.Flags;
+				if ((flags & 7) <= 1)
+					flags = flags & ~7U;		// NotPublic
 				else
-					tdRow.Flags = (tdRow.Flags & ~7U) | 3;  // NestedPrivate
-				mdEditor.TablesHeap.TypeDefTable.Set(type.Rid, tdRow);
+					flags = (flags & ~7U) | 3;  // NestedPrivate
+				var deletedType = (Type: type, TypeRefRid: typeRefRid, TypeRefRow: new RawTypeRefRow(0, tdRow.Name, tdRow.Namespace));
+				tdRow = new RawTypeDefRow(flags, mdEditor.StringsHeap.Create(Guid.NewGuid().ToString()), mdEditor.StringsHeap.Create(string.Empty), tdRow.Extends, tdRow.FieldList, tdRow.MethodList);
+				mdEditor.TablesHeap.TypeDefTable.Set(type.Rid, ref tdRow);
+				dict.Add(type, deletedType);
 			}
 			remappedTypeTokens.SetReadOnly();
 
 			foreach (var kv in dict) {
 				var deletedType = kv.Value;
+				uint resolutionScope;
 				if (deletedType.Type.DeclaringType != null) {
 					var declType = dict[deletedType.Type.DeclaringType];
-					deletedType.TypeRefRow.ResolutionScope = CodedToken.ResolutionScope.Encode(new MDToken(Table.TypeRef, declType.TypeRefRid));
+					resolutionScope = CodedToken.ResolutionScope.Encode(new MDToken(Table.TypeRef, declType.TypeRefRid));
 				}
 				else
-					deletedType.TypeRefRow.ResolutionScope = CodedToken.ResolutionScope.Encode(new MDToken(Table.AssemblyRef, GetOrCreateTempAssemblyRid()));
+					resolutionScope = CodedToken.ResolutionScope.Encode(new MDToken(Table.AssemblyRef, GetOrCreateTempAssemblyRid()));
+				deletedType.TypeRefRow = new RawTypeRefRow(resolutionScope, deletedType.TypeRefRow.Name, deletedType.TypeRefRow.Namespace);
+				mdEditor.TablesHeap.TypeRefTable.Set(deletedType.TypeRefRid, ref deletedType.TypeRefRow);
 			}
 		}
 
@@ -153,8 +154,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						continue;
 
 					var typeRefRow = mdEditor.TablesHeap.TypeRefTable.Get(i + 1);
-					typeRefRow.ResolutionScope = CodedToken.ResolutionScope.Encode(new MDToken(Table.AssemblyRef, GetOrCreateTempAssemblyRid()));
-					mdEditor.TablesHeap.TypeRefTable.Set(i + 1, typeRefRow);
+					typeRefRow = new RawTypeRefRow(CodedToken.ResolutionScope.Encode(new MDToken(Table.AssemblyRef, GetOrCreateTempAssemblyRid())), typeRefRow.Name, typeRefRow.Namespace);
+					mdEditor.TablesHeap.TypeRefTable.Set(i + 1, ref typeRefRow);
 				}
 			}
 		}
@@ -165,8 +166,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return resolutionScope.Rid == 1;
 
 			case Table.ModuleRef:
-				var moduleRefRow = mdEditor.RealMetadata.TablesStream.ReadModuleRefRow(resolutionScope.Rid);
-				if (moduleRefRow == null)
+				if (!mdEditor.RealMetadata.TablesStream.TryReadModuleRefRow(resolutionScope.Rid, out var moduleRefRow))
 					return false;
 				var moduleRefName = mdEditor.RealMetadata.StringsStream.ReadNoNull(moduleRefRow.Name);
 				return StringComparer.OrdinalIgnoreCase.Equals(moduleRefName.String, module.Name.String);
@@ -175,7 +175,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				var asm = module.Assembly;
 				if (asm == null)
 					return false;
-				var assemblyRefRow = mdEditor.RealMetadata.TablesStream.ReadAssemblyRefRow(resolutionScope.Rid);
+				if (!mdEditor.RealMetadata.TablesStream.TryReadAssemblyRefRow(resolutionScope.Rid, out var assemblyRefRow))
+					return false;
 				// The version number isn't checked due to binding redirects
 				var assemblyRefName = mdEditor.RealMetadata.StringsStream.ReadNoNull(assemblyRefRow.Name);
 				if (!StringComparer.OrdinalIgnoreCase.Equals(assemblyRefName.String, UTF8String.ToSystemStringOrEmpty(asm.Name)))
@@ -268,8 +269,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						continue;
 					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.TypeDefTable.Get(i + 1);
-						row.Extends = CodedToken.TypeDefOrRef.Encode(newToken);
-						tablesHeap.TypeDefTable.Set(i + 1, row);
+						row = new RawTypeDefRow(row.Flags, row.Name, row.Namespace, CodedToken.TypeDefOrRef.Encode(newToken), row.FieldList, row.MethodList);
+						tablesHeap.TypeDefTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -286,8 +287,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.FieldTable.Get(i + 1);
-						row.Signature = newSig;
-						tablesHeap.FieldTable.Set(i + 1, row);
+						row = new RawFieldRow(row.Flags, row.Name, newSig);
+						tablesHeap.FieldTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -304,8 +305,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.MethodTable.Get(i + 1);
-						row.Signature = newSig;
-						tablesHeap.MethodTable.Set(i + 1, row);
+						row = new RawMethodRow(row.RVA, row.ImplFlags, row.Flags, row.Name, newSig, row.ParamList);
+						tablesHeap.MethodTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -323,8 +324,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						continue;
 					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.InterfaceImplTable.Get(i + 1);
-						row.Interface = CodedToken.TypeDefOrRef.Encode(newToken);
-						tablesHeap.InterfaceImplTable.Set(i + 1, row);
+						row = new RawInterfaceImplRow(row.Class, CodedToken.TypeDefOrRef.Encode(newToken));
+						tablesHeap.InterfaceImplTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -353,8 +354,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					case Table.TypeSpec:
 						if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 							row = tablesHeap.MemberRefTable.Get(rid);
-							row.Class = CodedToken.MemberRefParent.Encode(newToken);
-							tablesHeap.MemberRefTable.Set(rid, row);
+							row = new RawMemberRefRow(CodedToken.MemberRefParent.Encode(newToken), row.Name, row.Signature);
+							tablesHeap.MemberRefTable.Set(rid, ref row);
 						}
 						break;
 
@@ -362,8 +363,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						if (nonNestedEditedType.IsGlobalModuleType && CheckResolutionScopeIsSameModule(token, nonNestedEditedType.Module)) {
 							if (remappedTypeTokens.TryGetValue(nonNestedEditedType.MDToken.Raw, out newToken)) {
 								row = tablesHeap.MemberRefTable.Get(rid);
-								row.Class = CodedToken.MemberRefParent.Encode(newToken);
-								tablesHeap.MemberRefTable.Set(rid, row);
+								row = new RawMemberRefRow(CodedToken.MemberRefParent.Encode(newToken), row.Name, row.Signature);
+								tablesHeap.MemberRefTable.Set(rid, ref row);
 							}
 						}
 						break;
@@ -380,8 +381,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (sig != newSig) {
 						row = tablesHeap.MemberRefTable.Get(rid);
-						row.Signature = newSig;
-						tablesHeap.MemberRefTable.Set(rid, row);
+						row = new RawMemberRefRow(row.Class, row.Name, newSig);
+						tablesHeap.MemberRefTable.Set(rid, ref row);
 					}
 				}
 			}
@@ -399,8 +400,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						continue;
 					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.EventTable.Get(i + 1);
-						row.EventType = CodedToken.TypeDefOrRef.Encode(newToken);
-						tablesHeap.EventTable.Set(i + 1, row);
+						row = new RawEventRow(row.EventFlags, row.Name, CodedToken.TypeDefOrRef.Encode(newToken));
+						tablesHeap.EventTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -417,8 +418,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					newSig = PatchCallingConventionSignature(callConvSigDict, sig);
 					if (newSig != sig) {
 						var row = tablesHeap.PropertyTable.Get(i + 1);
-						row.Type = newSig;
-						tablesHeap.PropertyTable.Set(i + 1, row);
+						row = new RawPropertyRow(row.PropFlags, row.Name, newSig);
+						tablesHeap.PropertyTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -433,9 +434,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					sig = column.Size == 2 ? *(ushort*)p : *(uint*)p;
 					newSig = PatchTypeSignature(typeSigDict, sig);
 					if (newSig != sig) {
-						var row = tablesHeap.TypeSpecTable.Get(i + 1);
-						row.Signature = newSig;
-						tablesHeap.TypeSpecTable.Set(i + 1, row);
+						var row = new RawTypeSpecRow(newSig);
+						tablesHeap.TypeSpecTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -453,8 +453,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						continue;
 					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.GenericParamTable.Get(i + 1);
-						row.Kind = CodedToken.TypeDefOrRef.Encode(newToken);
-						tablesHeap.GenericParamTable.Set(i + 1, row);
+						row = new RawGenericParamRow(row.Number, row.Flags, row.Owner, row.Name, CodedToken.TypeDefOrRef.Encode(newToken));
+						tablesHeap.GenericParamTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -472,8 +472,8 @@ namespace dnSpy.AsmEditor.Compiler {
 						continue;
 					if (remappedTypeTokens.TryGetValue(token.Raw, out newToken)) {
 						var row = tablesHeap.GenericParamConstraintTable.Get(i + 1);
-						row.Constraint = CodedToken.TypeDefOrRef.Encode(newToken);
-						tablesHeap.GenericParamConstraintTable.Set(i + 1, row);
+						row = new RawGenericParamConstraintRow(row.Owner, CodedToken.TypeDefOrRef.Encode(newToken));
+						tablesHeap.GenericParamConstraintTable.Set(i + 1, ref row);
 					}
 				}
 			}
@@ -526,25 +526,19 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			uint ivtTypeRefRid = mdEditor.TablesHeap.TypeRefTable.Create();
-			var ivtTypeRefRow = mdEditor.TablesHeap.TypeRefTable.Get(ivtTypeRefRid);
-			ivtTypeRefRow.Name = mdEditor.StringsHeap.Create("InternalsVisibleToAttribute");
-			ivtTypeRefRow.Namespace = mdEditor.StringsHeap.Create("System.Runtime.CompilerServices");
-			ivtTypeRefRow.ResolutionScope = corlibEncodedToken;
-			mdEditor.TablesHeap.TypeRefTable.Set(ivtTypeRefRid, ivtTypeRefRow);
+			var ivtTypeRefRow = new RawTypeRefRow(corlibEncodedToken, mdEditor.StringsHeap.Create("InternalsVisibleToAttribute"), mdEditor.StringsHeap.Create("System.Runtime.CompilerServices"));
+			mdEditor.TablesHeap.TypeRefTable.Set(ivtTypeRefRid, ref ivtTypeRefRow);
 
 			uint ivtCtorRid = mdEditor.TablesHeap.MemberRefTable.Create();
-			var ivtCtorRow = mdEditor.TablesHeap.MemberRefTable.Get(ivtCtorRid);
-			ivtCtorRow.Class = CodedToken.MemberRefParent.Encode(new MDToken(Table.TypeRef, ivtTypeRefRid));
-			ivtCtorRow.Name = mdEditor.StringsHeap.Create(".ctor");
-			ivtCtorRow.Signature = mdEditor.BlobHeap.Create(ivtCtorSigBlob);
-			mdEditor.TablesHeap.MemberRefTable.Set(ivtCtorRid, ivtCtorRow);
+			var ivtCtorRow = new RawMemberRefRow(CodedToken.MemberRefParent.Encode(new MDToken(Table.TypeRef, ivtTypeRefRid)),
+				mdEditor.StringsHeap.Create(".ctor"), mdEditor.BlobHeap.Create(ivtCtorSigBlob));
+			mdEditor.TablesHeap.MemberRefTable.Set(ivtCtorRid, ref ivtCtorRow);
 
 			uint ivtCARid = mdEditor.TablesHeap.CustomAttributeTable.Create();
-			var ivtCARow = mdEditor.TablesHeap.CustomAttributeTable.Get(ivtCARid);
-			ivtCARow.Parent = CodedToken.HasCustomAttribute.Encode(new MDToken(Table.Assembly, 1));
-			ivtCARow.Type = CodedToken.CustomAttributeType.Encode(new MDToken(Table.MemberRef, ivtCtorRid));
-			ivtCARow.Value = mdEditor.BlobHeap.Create(MDPatcherUtils.CreateIVTBlob(tempAssembly));
-			mdEditor.TablesHeap.CustomAttributeTable.Set(ivtCARid, ivtCARow);
+			var ivtCARow = new RawCustomAttributeRow(CodedToken.HasCustomAttribute.Encode(new MDToken(Table.Assembly, 1)),
+					CodedToken.CustomAttributeType.Encode(new MDToken(Table.MemberRef, ivtCtorRid)),
+					mdEditor.BlobHeap.Create(MDPatcherUtils.CreateIVTBlob(tempAssembly)));
+			mdEditor.TablesHeap.CustomAttributeTable.Set(ivtCARid, ref ivtCARow);
 		}
 		static readonly byte[] ivtCtorSigBlob = new byte[] { 0x20, 0x01, 0x01, 0x0E };
 

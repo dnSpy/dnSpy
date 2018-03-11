@@ -948,7 +948,7 @@ namespace dnSpy.AsmEditor.Resources {
 				ResourceType = ResourceType.Linked,
 				Name = "filelinked",
 				Attributes = ManifestResourceAttributes.Public,
-				File = new FileDefUser("somefile", dnlib.DotNet.FileAttributes.ContainsNoMetaData, Array.Empty<byte>()),
+				File = new FileDefUser("somefile", dnlib.DotNet.FileAttributes.ContainsNoMetadata, Array.Empty<byte>()),
 			};
 			var data = new ResourceVM(options, module);
 			var win = new ResourceDlg();

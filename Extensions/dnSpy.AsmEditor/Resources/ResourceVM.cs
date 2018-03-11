@@ -118,16 +118,16 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		UTF8String fileName;
 
-		public bool FileContainsNoMetaData {
-			get => fileContainsNoMetaData;
+		public bool FileContainsNoMetadata {
+			get => fileContainsNoMetadata;
 			set {
-				if (fileContainsNoMetaData != value) {
-					fileContainsNoMetaData = value;
-					OnPropertyChanged(nameof(FileContainsNoMetaData));
+				if (fileContainsNoMetadata != value) {
+					fileContainsNoMetadata = value;
+					OnPropertyChanged(nameof(FileContainsNoMetadata));
 				}
 			}
 		}
-		bool fileContainsNoMetaData;
+		bool fileContainsNoMetadata;
 
 		readonly ModuleDef ownerModule;
 
@@ -160,12 +160,12 @@ namespace dnSpy.AsmEditor.Resources {
 			if (options.File != null) {
 				FileHashValue.Value = options.File.HashValue;
 				FileName = options.File.Name ?? UTF8String.Empty;
-				FileContainsNoMetaData = options.File.ContainsNoMetaData;
+				FileContainsNoMetadata = options.File.ContainsNoMetadata;
 			}
 			else {
 				FileHashValue.Value = Array.Empty<byte>();
 				FileName = string.Empty;
-				FileContainsNoMetaData = false;
+				FileContainsNoMetadata = false;
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.Resources {
 			options.Name = Name;
 			options.Assembly = Assembly;
 			options.File = new FileDefUser(FileName,
-					FileContainsNoMetaData ? FileAttributes.ContainsNoMetaData : FileAttributes.ContainsMetaData,
+					FileContainsNoMetadata ? FileAttributes.ContainsNoMetadata : FileAttributes.ContainsMetadata,
 					FileHashValue.Value.ToArray());
 			return options;
 		}

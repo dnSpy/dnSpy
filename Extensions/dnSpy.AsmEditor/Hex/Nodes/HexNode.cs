@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public HexNode FindNode(HexVM structure, HexField field) {
-			Debug.Assert(!(structure is MetaDataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
+			Debug.Assert(!(structure is MetadataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
 			bool found = false;
 			foreach (var span in Spans) {
 				if (span.Contains(field.Span)) {

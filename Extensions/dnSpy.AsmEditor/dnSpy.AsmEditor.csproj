@@ -155,6 +155,7 @@
     <Compile Include="Compiler\MDEditor\MDWriterStream.cs" />
     <Compile Include="Compiler\MDEditor\MetadataEditor.cs" />
     <Compile Include="Compiler\MDEditor\PESectionData.cs" />
+    <Compile Include="Compiler\MDEditor\RawRowColumnReader.cs" />
     <Compile Include="Compiler\MDEditor\SectionSizes.cs" />
     <Compile Include="Compiler\MDEditor\StringsHeapWriter.cs" />
     <Compile Include="Compiler\MDEditor\StringsMDHeap.cs" />
@@ -383,8 +384,8 @@
     <Compile Include="Hex\Nodes\ImageOptionalHeader32Node.cs" />
     <Compile Include="Hex\Nodes\ImageOptionalHeader64Node.cs" />
     <Compile Include="Hex\Nodes\ImageSectionHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
+    <Compile Include="Hex\Nodes\MetadataTableNode.cs" />
+    <Compile Include="Hex\Nodes\MetadataTableRecordNode.cs" />
     <Compile Include="Hex\Nodes\PENode.cs" />
     <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
     <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
@@ -406,8 +407,8 @@
     <Compile Include="Hex\PE\ImageOptionalHeader64VM.cs" />
     <Compile Include="Hex\PE\ImageOptionalHeaderVM.cs" />
     <Compile Include="Hex\PE\ImageSectionHeaderVM.cs" />
-    <Compile Include="Hex\PE\MetaDataTableRecordVM.cs" />
-    <Compile Include="Hex\PE\MetaDataTableVM.cs" />
+    <Compile Include="Hex\PE\MetadataTableRecordVM.cs" />
+    <Compile Include="Hex\PE\MetadataTableVM.cs" />
     <Compile Include="Hex\PE\PEStructureProvider.cs" />
     <Compile Include="Hex\PE\StorageHeaderVM.cs" />
     <Compile Include="Hex\PE\StorageSignatureVM.cs" />

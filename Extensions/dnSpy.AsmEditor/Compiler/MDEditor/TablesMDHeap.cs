@@ -39,9 +39,10 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			public abstract void WriteRow(uint rowIndex, IList<ColumnInfo> newColumns, byte[] destination, int destinationIndex);
 		}
 
-		public unsafe sealed class TableInfo<TRow> : TableInfo where TRow : class, IRawRow, new() {
+		public unsafe sealed class TableInfo<TRow> : TableInfo where TRow : struct {
 			public override MDTable MDTable { get; }
 
+			readonly RawRowColumnReader.ReadColumnDelegate<TRow> readColumn;
 			readonly RawModuleBytes moduleData;
 			readonly byte* peFile;
 			readonly Func<uint, TRow> readRow;
@@ -51,6 +52,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			uint firstModifiedRid;
 
 			public TableInfo(RawModuleBytes moduleData, MDTable mdTable, Func<uint, TRow> readRow) {
+				readColumn = (RawRowColumnReader.ReadColumnDelegate<TRow>)RawRowColumnReader.GetDelegate(mdTable.Table);
 				this.moduleData = moduleData;
 				peFile = (byte*)moduleData.Pointer;
 				MDTable = mdTable;
@@ -63,7 +65,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 
 			public uint Create() {
 				uint rid = nextRid++;
-				rowsDict.Add(rid, new TRow());
+				rowsDict.Add(rid, default);
 				Debug.Assert(firstModifiedRid <= rid);
 				return rid;
 			}
@@ -75,7 +77,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				return readRow(rid);
 			}
 
-			public void Set(uint rid, TRow row) {
+			public void Set(uint rid, ref TRow row) {
 				Debug.Assert(rid != 0);
 				rowsDict[rid] = row;
 				firstModifiedRid = Math.Min(firstModifiedRid, rid);
@@ -91,7 +93,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				var rid = rowIndex + 1;
 				if (rid >= firstModifiedRid && rowsDict.TryGetValue(rid, out var row)) {
 					for (int i = 0; i < newColumns.Count; i++) {
-						uint value = row.Read(i);
+						uint value = readColumn(ref row, i);
 						switch (newColumns[i].Size) {
 						case 1:
 							Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
@@ -229,59 +231,59 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			this.tablesStream = tablesStream ?? throw new ArgumentNullException(nameof(tablesStream));
 
 			allTableInfos = new TableInfo[64];
-			allTableInfos[(int)Table.Module] = ModuleTable = new TableInfo<RawModuleRow>(mdEditor.ModuleData, tablesStream.ModuleTable, rid => this.tablesStream.ReadModuleRow(rid));
-			allTableInfos[(int)Table.TypeRef] = TypeRefTable = new TableInfo<RawTypeRefRow>(mdEditor.ModuleData, tablesStream.TypeRefTable, rid => this.tablesStream.ReadTypeRefRow(rid));
-			allTableInfos[(int)Table.TypeDef] = TypeDefTable = new TableInfo<RawTypeDefRow>(mdEditor.ModuleData, tablesStream.TypeDefTable, rid => this.tablesStream.ReadTypeDefRow(rid));
-			allTableInfos[(int)Table.FieldPtr] = FieldPtrTable = new TableInfo<RawFieldPtrRow>(mdEditor.ModuleData, tablesStream.FieldPtrTable, rid => this.tablesStream.ReadFieldPtrRow(rid));
-			allTableInfos[(int)Table.Field] = FieldTable = new TableInfo<RawFieldRow>(mdEditor.ModuleData, tablesStream.FieldTable, rid => this.tablesStream.ReadFieldRow(rid));
-			allTableInfos[(int)Table.MethodPtr] = MethodPtrTable = new TableInfo<RawMethodPtrRow>(mdEditor.ModuleData, tablesStream.MethodPtrTable, rid => this.tablesStream.ReadMethodPtrRow(rid));
-			allTableInfos[(int)Table.Method] = MethodTable = new TableInfo<RawMethodRow>(mdEditor.ModuleData, tablesStream.MethodTable, rid => this.tablesStream.ReadMethodRow(rid));
-			allTableInfos[(int)Table.ParamPtr] = ParamPtrTable = new TableInfo<RawParamPtrRow>(mdEditor.ModuleData, tablesStream.ParamPtrTable, rid => this.tablesStream.ReadParamPtrRow(rid));
-			allTableInfos[(int)Table.Param] = ParamTable = new TableInfo<RawParamRow>(mdEditor.ModuleData, tablesStream.ParamTable, rid => this.tablesStream.ReadParamRow(rid));
-			allTableInfos[(int)Table.InterfaceImpl] = InterfaceImplTable = new TableInfo<RawInterfaceImplRow>(mdEditor.ModuleData, tablesStream.InterfaceImplTable, rid => this.tablesStream.ReadInterfaceImplRow(rid));
-			allTableInfos[(int)Table.MemberRef] = MemberRefTable = new TableInfo<RawMemberRefRow>(mdEditor.ModuleData, tablesStream.MemberRefTable, rid => this.tablesStream.ReadMemberRefRow(rid));
-			allTableInfos[(int)Table.Constant] = ConstantTable = new TableInfo<RawConstantRow>(mdEditor.ModuleData, tablesStream.ConstantTable, rid => this.tablesStream.ReadConstantRow(rid));
-			allTableInfos[(int)Table.CustomAttribute] = CustomAttributeTable = new TableInfo<RawCustomAttributeRow>(mdEditor.ModuleData, tablesStream.CustomAttributeTable, rid => this.tablesStream.ReadCustomAttributeRow(rid));
-			allTableInfos[(int)Table.FieldMarshal] = FieldMarshalTable = new TableInfo<RawFieldMarshalRow>(mdEditor.ModuleData, tablesStream.FieldMarshalTable, rid => this.tablesStream.ReadFieldMarshalRow(rid));
-			allTableInfos[(int)Table.DeclSecurity] = DeclSecurityTable = new TableInfo<RawDeclSecurityRow>(mdEditor.ModuleData, tablesStream.DeclSecurityTable, rid => this.tablesStream.ReadDeclSecurityRow(rid));
-			allTableInfos[(int)Table.ClassLayout] = ClassLayoutTable = new TableInfo<RawClassLayoutRow>(mdEditor.ModuleData, tablesStream.ClassLayoutTable, rid => this.tablesStream.ReadClassLayoutRow(rid));
-			allTableInfos[(int)Table.FieldLayout] = FieldLayoutTable = new TableInfo<RawFieldLayoutRow>(mdEditor.ModuleData, tablesStream.FieldLayoutTable, rid => this.tablesStream.ReadFieldLayoutRow(rid));
-			allTableInfos[(int)Table.StandAloneSig] = StandAloneSigTable = new TableInfo<RawStandAloneSigRow>(mdEditor.ModuleData, tablesStream.StandAloneSigTable, rid => this.tablesStream.ReadStandAloneSigRow(rid));
-			allTableInfos[(int)Table.EventMap] = EventMapTable = new TableInfo<RawEventMapRow>(mdEditor.ModuleData, tablesStream.EventMapTable, rid => this.tablesStream.ReadEventMapRow(rid));
-			allTableInfos[(int)Table.EventPtr] = EventPtrTable = new TableInfo<RawEventPtrRow>(mdEditor.ModuleData, tablesStream.EventPtrTable, rid => this.tablesStream.ReadEventPtrRow(rid));
-			allTableInfos[(int)Table.Event] = EventTable = new TableInfo<RawEventRow>(mdEditor.ModuleData, tablesStream.EventTable, rid => this.tablesStream.ReadEventRow(rid));
-			allTableInfos[(int)Table.PropertyMap] = PropertyMapTable = new TableInfo<RawPropertyMapRow>(mdEditor.ModuleData, tablesStream.PropertyMapTable, rid => this.tablesStream.ReadPropertyMapRow(rid));
-			allTableInfos[(int)Table.PropertyPtr] = PropertyPtrTable = new TableInfo<RawPropertyPtrRow>(mdEditor.ModuleData, tablesStream.PropertyPtrTable, rid => this.tablesStream.ReadPropertyPtrRow(rid));
-			allTableInfos[(int)Table.Property] = PropertyTable = new TableInfo<RawPropertyRow>(mdEditor.ModuleData, tablesStream.PropertyTable, rid => this.tablesStream.ReadPropertyRow(rid));
-			allTableInfos[(int)Table.MethodSemantics] = MethodSemanticsTable = new TableInfo<RawMethodSemanticsRow>(mdEditor.ModuleData, tablesStream.MethodSemanticsTable, rid => this.tablesStream.ReadMethodSemanticsRow(rid));
-			allTableInfos[(int)Table.MethodImpl] = MethodImplTable = new TableInfo<RawMethodImplRow>(mdEditor.ModuleData, tablesStream.MethodImplTable, rid => this.tablesStream.ReadMethodImplRow(rid));
-			allTableInfos[(int)Table.ModuleRef] = ModuleRefTable = new TableInfo<RawModuleRefRow>(mdEditor.ModuleData, tablesStream.ModuleRefTable, rid => this.tablesStream.ReadModuleRefRow(rid));
-			allTableInfos[(int)Table.TypeSpec] = TypeSpecTable = new TableInfo<RawTypeSpecRow>(mdEditor.ModuleData, tablesStream.TypeSpecTable, rid => this.tablesStream.ReadTypeSpecRow(rid));
-			allTableInfos[(int)Table.ImplMap] = ImplMapTable = new TableInfo<RawImplMapRow>(mdEditor.ModuleData, tablesStream.ImplMapTable, rid => this.tablesStream.ReadImplMapRow(rid));
-			allTableInfos[(int)Table.FieldRVA] = FieldRVATable = new TableInfo<RawFieldRVARow>(mdEditor.ModuleData, tablesStream.FieldRVATable, rid => this.tablesStream.ReadFieldRVARow(rid));
-			allTableInfos[(int)Table.ENCLog] = ENCLogTable = new TableInfo<RawENCLogRow>(mdEditor.ModuleData, tablesStream.ENCLogTable, rid => this.tablesStream.ReadENCLogRow(rid));
-			allTableInfos[(int)Table.ENCMap] = ENCMapTable = new TableInfo<RawENCMapRow>(mdEditor.ModuleData, tablesStream.ENCMapTable, rid => this.tablesStream.ReadENCMapRow(rid));
-			allTableInfos[(int)Table.Assembly] = AssemblyTable = new TableInfo<RawAssemblyRow>(mdEditor.ModuleData, tablesStream.AssemblyTable, rid => this.tablesStream.ReadAssemblyRow(rid));
-			allTableInfos[(int)Table.AssemblyProcessor] = AssemblyProcessorTable = new TableInfo<RawAssemblyProcessorRow>(mdEditor.ModuleData, tablesStream.AssemblyProcessorTable, rid => this.tablesStream.ReadAssemblyProcessorRow(rid));
-			allTableInfos[(int)Table.AssemblyOS] = AssemblyOSTable = new TableInfo<RawAssemblyOSRow>(mdEditor.ModuleData, tablesStream.AssemblyOSTable, rid => this.tablesStream.ReadAssemblyOSRow(rid));
-			allTableInfos[(int)Table.AssemblyRef] = AssemblyRefTable = new TableInfo<RawAssemblyRefRow>(mdEditor.ModuleData, tablesStream.AssemblyRefTable, rid => this.tablesStream.ReadAssemblyRefRow(rid));
-			allTableInfos[(int)Table.AssemblyRefProcessor] = AssemblyRefProcessorTable = new TableInfo<RawAssemblyRefProcessorRow>(mdEditor.ModuleData, tablesStream.AssemblyRefProcessorTable, rid => this.tablesStream.ReadAssemblyRefProcessorRow(rid));
-			allTableInfos[(int)Table.AssemblyRefOS] = AssemblyRefOSTable = new TableInfo<RawAssemblyRefOSRow>(mdEditor.ModuleData, tablesStream.AssemblyRefOSTable, rid => this.tablesStream.ReadAssemblyRefOSRow(rid));
-			allTableInfos[(int)Table.File] = FileTable = new TableInfo<RawFileRow>(mdEditor.ModuleData, tablesStream.FileTable, rid => this.tablesStream.ReadFileRow(rid));
-			allTableInfos[(int)Table.ExportedType] = ExportedTypeTable = new TableInfo<RawExportedTypeRow>(mdEditor.ModuleData, tablesStream.ExportedTypeTable, rid => this.tablesStream.ReadExportedTypeRow(rid));
-			allTableInfos[(int)Table.ManifestResource] = ManifestResourceTable = new TableInfo<RawManifestResourceRow>(mdEditor.ModuleData, tablesStream.ManifestResourceTable, rid => this.tablesStream.ReadManifestResourceRow(rid));
-			allTableInfos[(int)Table.NestedClass] = NestedClassTable = new TableInfo<RawNestedClassRow>(mdEditor.ModuleData, tablesStream.NestedClassTable, rid => this.tablesStream.ReadNestedClassRow(rid));
-			allTableInfos[(int)Table.GenericParam] = GenericParamTable = new TableInfo<RawGenericParamRow>(mdEditor.ModuleData, tablesStream.GenericParamTable, rid => this.tablesStream.ReadGenericParamRow(rid));
-			allTableInfos[(int)Table.MethodSpec] = MethodSpecTable = new TableInfo<RawMethodSpecRow>(mdEditor.ModuleData, tablesStream.MethodSpecTable, rid => this.tablesStream.ReadMethodSpecRow(rid));
-			allTableInfos[(int)Table.GenericParamConstraint] = GenericParamConstraintTable = new TableInfo<RawGenericParamConstraintRow>(mdEditor.ModuleData, tablesStream.GenericParamConstraintTable, rid => this.tablesStream.ReadGenericParamConstraintRow(rid));
-			allTableInfos[(int)Table.Document] = DocumentTable = new TableInfo<RawDocumentRow>(mdEditor.ModuleData, tablesStream.DocumentTable, rid => this.tablesStream.ReadDocumentRow(rid));
-			allTableInfos[(int)Table.MethodDebugInformation] = MethodDebugInformationTable = new TableInfo<RawMethodDebugInformationRow>(mdEditor.ModuleData, tablesStream.MethodDebugInformationTable, rid => this.tablesStream.ReadMethodDebugInformationRow(rid));
-			allTableInfos[(int)Table.LocalScope] = LocalScopeTable = new TableInfo<RawLocalScopeRow>(mdEditor.ModuleData, tablesStream.LocalScopeTable, rid => this.tablesStream.ReadLocalScopeRow(rid));
-			allTableInfos[(int)Table.LocalVariable] = LocalVariableTable = new TableInfo<RawLocalVariableRow>(mdEditor.ModuleData, tablesStream.LocalVariableTable, rid => this.tablesStream.ReadLocalVariableRow(rid));
-			allTableInfos[(int)Table.LocalConstant] = LocalConstantTable = new TableInfo<RawLocalConstantRow>(mdEditor.ModuleData, tablesStream.LocalConstantTable, rid => this.tablesStream.ReadLocalConstantRow(rid));
-			allTableInfos[(int)Table.ImportScope] = ImportScopeTable = new TableInfo<RawImportScopeRow>(mdEditor.ModuleData, tablesStream.ImportScopeTable, rid => this.tablesStream.ReadImportScopeRow(rid));
-			allTableInfos[(int)Table.StateMachineMethod] = StateMachineMethodTable = new TableInfo<RawStateMachineMethodRow>(mdEditor.ModuleData, tablesStream.StateMachineMethodTable, rid => this.tablesStream.ReadStateMachineMethodRow(rid));
-			allTableInfos[(int)Table.CustomDebugInformation] = CustomDebugInformationTable = new TableInfo<RawCustomDebugInformationRow>(mdEditor.ModuleData, tablesStream.CustomDebugInformationTable, rid => this.tablesStream.ReadCustomDebugInformationRow(rid));
+			allTableInfos[(int)Table.Module] = ModuleTable = new TableInfo<RawModuleRow>(mdEditor.ModuleData, tablesStream.ModuleTable, rid => { this.tablesStream.TryReadModuleRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.TypeRef] = TypeRefTable = new TableInfo<RawTypeRefRow>(mdEditor.ModuleData, tablesStream.TypeRefTable, rid => { this.tablesStream.TryReadTypeRefRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.TypeDef] = TypeDefTable = new TableInfo<RawTypeDefRow>(mdEditor.ModuleData, tablesStream.TypeDefTable, rid => { this.tablesStream.TryReadTypeDefRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.FieldPtr] = FieldPtrTable = new TableInfo<RawFieldPtrRow>(mdEditor.ModuleData, tablesStream.FieldPtrTable, rid => { this.tablesStream.TryReadFieldPtrRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Field] = FieldTable = new TableInfo<RawFieldRow>(mdEditor.ModuleData, tablesStream.FieldTable, rid => { this.tablesStream.TryReadFieldRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.MethodPtr] = MethodPtrTable = new TableInfo<RawMethodPtrRow>(mdEditor.ModuleData, tablesStream.MethodPtrTable, rid => { this.tablesStream.TryReadMethodPtrRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Method] = MethodTable = new TableInfo<RawMethodRow>(mdEditor.ModuleData, tablesStream.MethodTable, rid => { this.tablesStream.TryReadMethodRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ParamPtr] = ParamPtrTable = new TableInfo<RawParamPtrRow>(mdEditor.ModuleData, tablesStream.ParamPtrTable, rid => { this.tablesStream.TryReadParamPtrRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Param] = ParamTable = new TableInfo<RawParamRow>(mdEditor.ModuleData, tablesStream.ParamTable, rid => { this.tablesStream.TryReadParamRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.InterfaceImpl] = InterfaceImplTable = new TableInfo<RawInterfaceImplRow>(mdEditor.ModuleData, tablesStream.InterfaceImplTable, rid => { this.tablesStream.TryReadInterfaceImplRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.MemberRef] = MemberRefTable = new TableInfo<RawMemberRefRow>(mdEditor.ModuleData, tablesStream.MemberRefTable, rid => { this.tablesStream.TryReadMemberRefRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Constant] = ConstantTable = new TableInfo<RawConstantRow>(mdEditor.ModuleData, tablesStream.ConstantTable, rid => { this.tablesStream.TryReadConstantRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.CustomAttribute] = CustomAttributeTable = new TableInfo<RawCustomAttributeRow>(mdEditor.ModuleData, tablesStream.CustomAttributeTable, rid => { this.tablesStream.TryReadCustomAttributeRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.FieldMarshal] = FieldMarshalTable = new TableInfo<RawFieldMarshalRow>(mdEditor.ModuleData, tablesStream.FieldMarshalTable, rid => { this.tablesStream.TryReadFieldMarshalRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.DeclSecurity] = DeclSecurityTable = new TableInfo<RawDeclSecurityRow>(mdEditor.ModuleData, tablesStream.DeclSecurityTable, rid => { this.tablesStream.TryReadDeclSecurityRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ClassLayout] = ClassLayoutTable = new TableInfo<RawClassLayoutRow>(mdEditor.ModuleData, tablesStream.ClassLayoutTable, rid => { this.tablesStream.TryReadClassLayoutRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.FieldLayout] = FieldLayoutTable = new TableInfo<RawFieldLayoutRow>(mdEditor.ModuleData, tablesStream.FieldLayoutTable, rid => { this.tablesStream.TryReadFieldLayoutRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.StandAloneSig] = StandAloneSigTable = new TableInfo<RawStandAloneSigRow>(mdEditor.ModuleData, tablesStream.StandAloneSigTable, rid => { this.tablesStream.TryReadStandAloneSigRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.EventMap] = EventMapTable = new TableInfo<RawEventMapRow>(mdEditor.ModuleData, tablesStream.EventMapTable, rid => { this.tablesStream.TryReadEventMapRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.EventPtr] = EventPtrTable = new TableInfo<RawEventPtrRow>(mdEditor.ModuleData, tablesStream.EventPtrTable, rid => { this.tablesStream.TryReadEventPtrRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Event] = EventTable = new TableInfo<RawEventRow>(mdEditor.ModuleData, tablesStream.EventTable, rid => { this.tablesStream.TryReadEventRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.PropertyMap] = PropertyMapTable = new TableInfo<RawPropertyMapRow>(mdEditor.ModuleData, tablesStream.PropertyMapTable, rid => { this.tablesStream.TryReadPropertyMapRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.PropertyPtr] = PropertyPtrTable = new TableInfo<RawPropertyPtrRow>(mdEditor.ModuleData, tablesStream.PropertyPtrTable, rid => { this.tablesStream.TryReadPropertyPtrRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Property] = PropertyTable = new TableInfo<RawPropertyRow>(mdEditor.ModuleData, tablesStream.PropertyTable, rid => { this.tablesStream.TryReadPropertyRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.MethodSemantics] = MethodSemanticsTable = new TableInfo<RawMethodSemanticsRow>(mdEditor.ModuleData, tablesStream.MethodSemanticsTable, rid => { this.tablesStream.TryReadMethodSemanticsRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.MethodImpl] = MethodImplTable = new TableInfo<RawMethodImplRow>(mdEditor.ModuleData, tablesStream.MethodImplTable, rid => { this.tablesStream.TryReadMethodImplRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ModuleRef] = ModuleRefTable = new TableInfo<RawModuleRefRow>(mdEditor.ModuleData, tablesStream.ModuleRefTable, rid => { this.tablesStream.TryReadModuleRefRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.TypeSpec] = TypeSpecTable = new TableInfo<RawTypeSpecRow>(mdEditor.ModuleData, tablesStream.TypeSpecTable, rid => { this.tablesStream.TryReadTypeSpecRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ImplMap] = ImplMapTable = new TableInfo<RawImplMapRow>(mdEditor.ModuleData, tablesStream.ImplMapTable, rid => { this.tablesStream.TryReadImplMapRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.FieldRVA] = FieldRVATable = new TableInfo<RawFieldRVARow>(mdEditor.ModuleData, tablesStream.FieldRVATable, rid => { this.tablesStream.TryReadFieldRVARow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ENCLog] = ENCLogTable = new TableInfo<RawENCLogRow>(mdEditor.ModuleData, tablesStream.ENCLogTable, rid => { this.tablesStream.TryReadENCLogRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ENCMap] = ENCMapTable = new TableInfo<RawENCMapRow>(mdEditor.ModuleData, tablesStream.ENCMapTable, rid => { this.tablesStream.TryReadENCMapRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Assembly] = AssemblyTable = new TableInfo<RawAssemblyRow>(mdEditor.ModuleData, tablesStream.AssemblyTable, rid => { this.tablesStream.TryReadAssemblyRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.AssemblyProcessor] = AssemblyProcessorTable = new TableInfo<RawAssemblyProcessorRow>(mdEditor.ModuleData, tablesStream.AssemblyProcessorTable, rid => { this.tablesStream.TryReadAssemblyProcessorRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.AssemblyOS] = AssemblyOSTable = new TableInfo<RawAssemblyOSRow>(mdEditor.ModuleData, tablesStream.AssemblyOSTable, rid => { this.tablesStream.TryReadAssemblyOSRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.AssemblyRef] = AssemblyRefTable = new TableInfo<RawAssemblyRefRow>(mdEditor.ModuleData, tablesStream.AssemblyRefTable, rid => { this.tablesStream.TryReadAssemblyRefRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.AssemblyRefProcessor] = AssemblyRefProcessorTable = new TableInfo<RawAssemblyRefProcessorRow>(mdEditor.ModuleData, tablesStream.AssemblyRefProcessorTable, rid => { this.tablesStream.TryReadAssemblyRefProcessorRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.AssemblyRefOS] = AssemblyRefOSTable = new TableInfo<RawAssemblyRefOSRow>(mdEditor.ModuleData, tablesStream.AssemblyRefOSTable, rid => { this.tablesStream.TryReadAssemblyRefOSRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.File] = FileTable = new TableInfo<RawFileRow>(mdEditor.ModuleData, tablesStream.FileTable, rid => { this.tablesStream.TryReadFileRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ExportedType] = ExportedTypeTable = new TableInfo<RawExportedTypeRow>(mdEditor.ModuleData, tablesStream.ExportedTypeTable, rid => { this.tablesStream.TryReadExportedTypeRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ManifestResource] = ManifestResourceTable = new TableInfo<RawManifestResourceRow>(mdEditor.ModuleData, tablesStream.ManifestResourceTable, rid => { this.tablesStream.TryReadManifestResourceRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.NestedClass] = NestedClassTable = new TableInfo<RawNestedClassRow>(mdEditor.ModuleData, tablesStream.NestedClassTable, rid => { this.tablesStream.TryReadNestedClassRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.GenericParam] = GenericParamTable = new TableInfo<RawGenericParamRow>(mdEditor.ModuleData, tablesStream.GenericParamTable, rid => { this.tablesStream.TryReadGenericParamRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.MethodSpec] = MethodSpecTable = new TableInfo<RawMethodSpecRow>(mdEditor.ModuleData, tablesStream.MethodSpecTable, rid => { this.tablesStream.TryReadMethodSpecRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.GenericParamConstraint] = GenericParamConstraintTable = new TableInfo<RawGenericParamConstraintRow>(mdEditor.ModuleData, tablesStream.GenericParamConstraintTable, rid => { this.tablesStream.TryReadGenericParamConstraintRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.Document] = DocumentTable = new TableInfo<RawDocumentRow>(mdEditor.ModuleData, tablesStream.DocumentTable, rid => { this.tablesStream.TryReadDocumentRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.MethodDebugInformation] = MethodDebugInformationTable = new TableInfo<RawMethodDebugInformationRow>(mdEditor.ModuleData, tablesStream.MethodDebugInformationTable, rid => { this.tablesStream.TryReadMethodDebugInformationRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.LocalScope] = LocalScopeTable = new TableInfo<RawLocalScopeRow>(mdEditor.ModuleData, tablesStream.LocalScopeTable, rid => { this.tablesStream.TryReadLocalScopeRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.LocalVariable] = LocalVariableTable = new TableInfo<RawLocalVariableRow>(mdEditor.ModuleData, tablesStream.LocalVariableTable, rid => { this.tablesStream.TryReadLocalVariableRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.LocalConstant] = LocalConstantTable = new TableInfo<RawLocalConstantRow>(mdEditor.ModuleData, tablesStream.LocalConstantTable, rid => { this.tablesStream.TryReadLocalConstantRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.ImportScope] = ImportScopeTable = new TableInfo<RawImportScopeRow>(mdEditor.ModuleData, tablesStream.ImportScopeTable, rid => { this.tablesStream.TryReadImportScopeRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.StateMachineMethod] = StateMachineMethodTable = new TableInfo<RawStateMachineMethodRow>(mdEditor.ModuleData, tablesStream.StateMachineMethodTable, rid => { this.tablesStream.TryReadStateMachineMethodRow(rid, out var row); return row; });
+			allTableInfos[(int)Table.CustomDebugInformation] = CustomDebugInformationTable = new TableInfo<RawCustomDebugInformationRow>(mdEditor.ModuleData, tablesStream.CustomDebugInformationTable, rid => { this.tablesStream.TryReadCustomDebugInformationRow(rid, out var row); return row; });
 		}
 
 		public override bool MustRewriteHeap() {

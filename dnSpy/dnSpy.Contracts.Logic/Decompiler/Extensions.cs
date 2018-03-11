@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Decompiler {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (m == null)
 				return null;
-			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);
+			return (long)m.Metadata.PEImage.ToFileOffset((RVA)rva);
 		}
 
 		/// <summary>

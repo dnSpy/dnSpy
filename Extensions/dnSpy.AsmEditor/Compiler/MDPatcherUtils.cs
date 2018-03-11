@@ -95,9 +95,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			return false;
 		}
 
-		public static IMetaData TryCreateMetadata(RawModuleBytes moduleData, bool isFileLayout) {
+		public static Metadata TryCreateMetadata(RawModuleBytes moduleData, bool isFileLayout) {
 			try {
-				return MetaDataCreator.CreateMetaData(new PEImage((IntPtr)moduleData.Pointer, moduleData.Size, isFileLayout ? ImageLayout.File : ImageLayout.Memory, verify: true));
+				return MetadataCreator.CreateMetadata(new PEImage((IntPtr)moduleData.Pointer, moduleData.Size, isFileLayout ? ImageLayout.File : ImageLayout.Memory, verify: true));
 			}
 			catch (IOException) {
 			}

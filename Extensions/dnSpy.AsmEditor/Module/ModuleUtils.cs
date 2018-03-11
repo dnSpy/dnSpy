@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.Module {
 		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef existingModule = null) {
 			var module = CreateModuleDef(name, mvid, clrVersion, existingModule);
 			module.Kind = kind;
-			module.Characteristics = Characteristics._32BitMachine | Characteristics.ExecutableImage;
+			module.Characteristics = Characteristics.Bit32Machine | Characteristics.ExecutableImage;
 			if (kind == ModuleKind.Dll || kind == ModuleKind.NetModule)
 				module.Characteristics |= Characteristics.Dll;
 			module.DllCharacteristics = DllCharacteristics.TerminalServerAware | DllCharacteristics.NoSeh | DllCharacteristics.NxCompat | DllCharacteristics.DynamicBase;

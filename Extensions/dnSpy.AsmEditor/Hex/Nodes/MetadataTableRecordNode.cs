@@ -29,7 +29,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	sealed class MetaDataTableRecordNode : HexNode {
+	sealed class MetadataTableRecordNode : HexNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.MDTBLREC_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, index.ToString());
 		public override object VMObject => Record;
@@ -39,14 +39,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override ImageReference IconReference => DsImages.Metadata;
-		MetaDataTableNode MDParent => (MetaDataTableNode)TreeNode.Parent.Data;
-		MetaDataTableRecordVM Record => MDParent.MetaDataTableVM.Get(index);
+		MetadataTableNode MDParent => (MetadataTableNode)TreeNode.Parent.Data;
+		MetadataTableRecordVM Record => MDParent.MetadataTableVM.Get(index);
 		public override bool SingleClickExpandsChildren => false;
 
 		readonly int index;
 		readonly Tuple<int[], Action<ITextColorWriter>> infoTuple;
 
-		public MetaDataTableRecordNode(TableInfo tableInfo, int index, HexPosition startOffset, HexPosition endOffset)
+		public MetadataTableRecordNode(TableInfo tableInfo, int index, HexPosition startOffset, HexPosition endOffset)
 			: base(HexSpan.FromBounds(startOffset, endOffset)) {
 			this.index = index;
 			infoTuple = GetInfoTuple(tableInfo);
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
 			if (infoTuple != null) {
-				var tableInfo = ((MetaDataTableNode)TreeNode.Parent.Data).TableInfo;
+				var tableInfo = ((MetadataTableNode)TreeNode.Parent.Data).TableInfo;
 				foreach (var index in infoTuple.Item1) {
 					var col = tableInfo.Columns[index];
 					var span = new HexSpan(Span.Start + (ulong)col.Offset, (ulong)col.Size);
@@ -136,9 +136,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		string ReadStringsHeap(int index) {
-			var mdt = (MetaDataTableNode)TreeNode.Parent.Data;
+			var mdt = (MetadataTableNode)TreeNode.Parent.Data;
 			var tableInfo = mdt.TableInfo;
-			var s = SimpleTypeConverter.ToString(mdt.MetaDataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Buffer, tableInfo.Columns[index])), false);
+			var s = SimpleTypeConverter.ToString(mdt.MetadataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Buffer, tableInfo.Columns[index])), false);
 			Debug.Assert(s.Length >= 2);
 			if (s.Length < 2)
 				return s;

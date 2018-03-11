@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(HeapKind == DotNetHeapKind.Unknown ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
 		}
 
-		public MetaDataTableRecordNode FindTokenNode(uint token) {
+		public MetadataTableRecordNode FindTokenNode(uint token) {
 			if (HeapKind != DotNetHeapKind.Tables)
 				return null;
 			return ((TablesStreamNode)TreeNode.Children[0].Data).FindTokenNode(token);

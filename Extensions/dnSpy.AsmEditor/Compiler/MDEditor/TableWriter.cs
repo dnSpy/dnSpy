@@ -51,13 +51,13 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			}
 
 			public override void WriteRow(uint rowIndex, IList<ColumnInfo> newColumns, byte[] destination, int destinationIndex) =>
-				WriteRow(sortedRows[rowIndex], newColumns, destination, destinationIndex);
+				WriteRow(ref sortedRows[rowIndex], RawRowColumnReader.ReadCustomAttributeColumn, newColumns, destination, destinationIndex);
 		}
 
-		protected void WriteRow<TRow>(TRow row, IList<ColumnInfo> newColumns, byte[] destination, int destinationIndex) where TRow : IRawRow {
+		protected void WriteRow<TRow>(ref TRow row, RawRowColumnReader.ReadColumnDelegate<TRow> readColumn, IList<ColumnInfo> newColumns, byte[] destination, int destinationIndex) where TRow : struct {
 			var oldColumns = info.MDTable.Columns;
 			for (int i = 0; i < newColumns.Count; i++) {
-				uint value = row.Read(i);
+				uint value = readColumn(ref row, i);
 				switch (newColumns[i].Size) {
 				case 1:
 					Debug.Assert(newColumns[i].Size == oldColumns[i].Size);

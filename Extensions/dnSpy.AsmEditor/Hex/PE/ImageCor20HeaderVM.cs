@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt32HexField CbVM { get; }
 		public UInt16HexField MajorRuntimeVersionVM { get; }
 		public UInt16HexField MinorRuntimeVersionVM { get; }
-		public DataDirectoryVM MetaDataVM { get; }
+		public DataDirectoryVM MetadataVM { get; }
 		public UInt32FlagsHexField FlagsVM { get; }
 		public UInt32HexField EntryPointTokenRVAVM { get; }
 		public DataDirectoryVM ResourcesVM { get; }
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			CbVM = new UInt32HexField(cor20.Cb);
 			MajorRuntimeVersionVM = new UInt16HexField(cor20.MajorRuntimeVersion, true);
 			MinorRuntimeVersionVM = new UInt16HexField(cor20.MinorRuntimeVersion, true);
-			MetaDataVM = new DataDirectoryVM(cor20.MetaData);
+			MetadataVM = new DataDirectoryVM(cor20.Metadata);
 			FlagsVM = new UInt32FlagsHexField(cor20.Flags);
 			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_IL_Only, 0));
 			FlagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitReqd, 1));
@@ -68,8 +68,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				CbVM,
 				MajorRuntimeVersionVM,
 				MinorRuntimeVersionVM,
-				MetaDataVM.RVAVM,
-				MetaDataVM.SizeVM,
+				MetadataVM.RVAVM,
+				MetadataVM.SizeVM,
 				FlagsVM,
 				EntryPointTokenRVAVM,
 				ResourcesVM.RVAVM,

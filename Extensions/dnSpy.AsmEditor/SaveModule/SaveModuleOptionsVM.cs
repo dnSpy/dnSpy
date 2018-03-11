@@ -140,18 +140,18 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public PEHeadersOptionsVM PEHeadersOptions { get; }
 		public Cor20HeaderOptionsVM Cor20HeaderOptions { get; }
-		public MetaDataOptionsVM MetaDataOptions { get; }
+		public MetadataOptionsVM MetadataOptions { get; }
 
 		public SaveModuleOptionsVM(IDsDocument document) {
 			this.document = document;
 			Module = document.ModuleDef;
 			PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
 			Cor20HeaderOptions = new Cor20HeaderOptionsVM();
-			MetaDataOptions = new MetaDataOptionsVM();
+			MetadataOptions = new MetadataOptionsVM();
 
 			PEHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 			Cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			MetaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			MetadataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged(nameof(Extension));
@@ -204,7 +204,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		void CopyTo(ModuleWriterOptionsBase options) {
 			PEHeadersOptions.CopyTo(options.PEHeadersOptions);
 			Cor20HeaderOptions.CopyTo(options.Cor20HeaderOptions);
-			MetaDataOptions.CopyTo(options.MetaDataOptions);
+			MetadataOptions.CopyTo(options.MetadataOptions);
 
 			options.WritePdb = WritePdb;
 			options.ShareMethodBodies = ShareMethodBodies;
@@ -247,7 +247,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			PEHeadersOptions.InitializeFrom(options.PEHeadersOptions);
 			Cor20HeaderOptions.InitializeFrom(options.Cor20HeaderOptions);
-			MetaDataOptions.InitializeFrom(options.MetaDataOptions);
+			MetadataOptions.InitializeFrom(options.MetadataOptions);
 
 			WritePdb = options.WritePdb;
 			ShareMethodBodies = options.ShareMethodBodies;
@@ -265,7 +265,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return base.HasError ||
 						PEHeadersOptions.HasError ||
 						Cor20HeaderOptions.HasError ||
-						MetaDataOptions.HasError;
+						MetadataOptions.HasError;
 			}
 		}
 	}
@@ -377,8 +377,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public bool? Bit32Machine {
-			get => GetFlagValue(dnlib.PE.Characteristics._32BitMachine);
-			set => SetFlagValue(dnlib.PE.Characteristics._32BitMachine, value);
+			get => GetFlagValue(dnlib.PE.Characteristics.Bit32Machine);
+			set => SetFlagValue(dnlib.PE.Characteristics.Bit32Machine, value);
 		}
 
 		public bool? DebugStripped {
@@ -684,8 +684,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public bool? Bit32Required {
-			get => GetFlagValue(ComImageFlags._32BitRequired);
-			set => SetFlagValue(ComImageFlags._32BitRequired, value);
+			get => GetFlagValue(ComImageFlags.Bit32Required);
+			set => SetFlagValue(ComImageFlags.Bit32Required, value);
 		}
 
 		public bool? ILLibrary {
@@ -704,8 +704,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public bool? Bit32Preferred {
-			get => GetFlagValue(ComImageFlags._32BitPreferred);
-			set => SetFlagValue(ComImageFlags._32BitPreferred, value);
+			get => GetFlagValue(ComImageFlags.Bit32Preferred);
+			set => SetFlagValue(ComImageFlags.Bit32Preferred, value);
 		}
 
 		bool? GetFlagValue(ComImageFlags flag) => Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
@@ -744,19 +744,19 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	sealed class MetaDataOptionsVM : ViewModelBase {
-		public MetaDataOptionsVM() {
-			MetaDataHeaderOptions = new MetaDataHeaderOptionsVM();
+	sealed class MetadataOptionsVM : ViewModelBase {
+		public MetadataOptionsVM() {
+			MetadataHeaderOptions = new MetadataHeaderOptionsVM();
 			TablesHeapOptions = new TablesHeapOptionsVM();
 
-			MetaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			MetadataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 			TablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 		}
 
-		public MetaDataHeaderOptionsVM MetaDataHeaderOptions { get; }
+		public MetadataHeaderOptionsVM MetadataHeaderOptions { get; }
 		public TablesHeapOptionsVM TablesHeapOptions { get; }
 
-		public MetaDataFlags Flags {
+		public MetadataFlags Flags {
 			get => flags;
 			set {
 				if (flags != value) {
@@ -765,67 +765,67 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 			}
 		}
-		MetaDataFlags flags;
+		MetadataFlags flags;
 
 		public bool PreserveTypeRefRids {
-			get => GetFlagValue(MetaDataFlags.PreserveTypeRefRids);
-			set => SetFlagValue(MetaDataFlags.PreserveTypeRefRids, value, nameof(PreserveRids), nameof(PreserveTypeRefRids));
+			get => GetFlagValue(MetadataFlags.PreserveTypeRefRids);
+			set => SetFlagValue(MetadataFlags.PreserveTypeRefRids, value, nameof(PreserveRids), nameof(PreserveTypeRefRids));
 		}
 
 		public bool PreserveTypeDefRids {
-			get => GetFlagValue(MetaDataFlags.PreserveTypeDefRids);
-			set => SetFlagValue(MetaDataFlags.PreserveTypeDefRids, value, nameof(PreserveRids), nameof(PreserveTypeDefRids));
+			get => GetFlagValue(MetadataFlags.PreserveTypeDefRids);
+			set => SetFlagValue(MetadataFlags.PreserveTypeDefRids, value, nameof(PreserveRids), nameof(PreserveTypeDefRids));
 		}
 
 		public bool PreserveFieldRids {
-			get => GetFlagValue(MetaDataFlags.PreserveFieldRids);
-			set => SetFlagValue(MetaDataFlags.PreserveFieldRids, value, nameof(PreserveRids), nameof(PreserveFieldRids));
+			get => GetFlagValue(MetadataFlags.PreserveFieldRids);
+			set => SetFlagValue(MetadataFlags.PreserveFieldRids, value, nameof(PreserveRids), nameof(PreserveFieldRids));
 		}
 
 		public bool PreserveMethodRids {
-			get => GetFlagValue(MetaDataFlags.PreserveMethodRids);
-			set => SetFlagValue(MetaDataFlags.PreserveMethodRids, value, nameof(PreserveRids), nameof(PreserveMethodRids));
+			get => GetFlagValue(MetadataFlags.PreserveMethodRids);
+			set => SetFlagValue(MetadataFlags.PreserveMethodRids, value, nameof(PreserveRids), nameof(PreserveMethodRids));
 		}
 
 		public bool PreserveParamRids {
-			get => GetFlagValue(MetaDataFlags.PreserveParamRids);
-			set => SetFlagValue(MetaDataFlags.PreserveParamRids, value, nameof(PreserveRids), nameof(PreserveParamRids));
+			get => GetFlagValue(MetadataFlags.PreserveParamRids);
+			set => SetFlagValue(MetadataFlags.PreserveParamRids, value, nameof(PreserveRids), nameof(PreserveParamRids));
 		}
 
 		public bool PreserveMemberRefRids {
-			get => GetFlagValue(MetaDataFlags.PreserveMemberRefRids);
-			set => SetFlagValue(MetaDataFlags.PreserveMemberRefRids, value, nameof(PreserveRids), nameof(PreserveMemberRefRids));
+			get => GetFlagValue(MetadataFlags.PreserveMemberRefRids);
+			set => SetFlagValue(MetadataFlags.PreserveMemberRefRids, value, nameof(PreserveRids), nameof(PreserveMemberRefRids));
 		}
 
 		public bool PreserveStandAloneSigRids {
-			get => GetFlagValue(MetaDataFlags.PreserveStandAloneSigRids);
-			set => SetFlagValue(MetaDataFlags.PreserveStandAloneSigRids, value, nameof(PreserveRids), nameof(PreserveStandAloneSigRids));
+			get => GetFlagValue(MetadataFlags.PreserveStandAloneSigRids);
+			set => SetFlagValue(MetadataFlags.PreserveStandAloneSigRids, value, nameof(PreserveRids), nameof(PreserveStandAloneSigRids));
 		}
 
 		public bool PreserveEventRids {
-			get => GetFlagValue(MetaDataFlags.PreserveEventRids);
-			set => SetFlagValue(MetaDataFlags.PreserveEventRids, value, nameof(PreserveRids), nameof(PreserveEventRids));
+			get => GetFlagValue(MetadataFlags.PreserveEventRids);
+			set => SetFlagValue(MetadataFlags.PreserveEventRids, value, nameof(PreserveRids), nameof(PreserveEventRids));
 		}
 
 		public bool PreservePropertyRids {
-			get => GetFlagValue(MetaDataFlags.PreservePropertyRids);
-			set => SetFlagValue(MetaDataFlags.PreservePropertyRids, value, nameof(PreserveRids), nameof(PreservePropertyRids));
+			get => GetFlagValue(MetadataFlags.PreservePropertyRids);
+			set => SetFlagValue(MetadataFlags.PreservePropertyRids, value, nameof(PreserveRids), nameof(PreservePropertyRids));
 		}
 
 		public bool PreserveTypeSpecRids {
-			get => GetFlagValue(MetaDataFlags.PreserveTypeSpecRids);
-			set => SetFlagValue(MetaDataFlags.PreserveTypeSpecRids, value, nameof(PreserveRids), nameof(PreserveTypeSpecRids));
+			get => GetFlagValue(MetadataFlags.PreserveTypeSpecRids);
+			set => SetFlagValue(MetadataFlags.PreserveTypeSpecRids, value, nameof(PreserveRids), nameof(PreserveTypeSpecRids));
 		}
 
 		public bool PreserveMethodSpecRids {
-			get => GetFlagValue(MetaDataFlags.PreserveMethodSpecRids);
-			set => SetFlagValue(MetaDataFlags.PreserveMethodSpecRids, value, nameof(PreserveRids), nameof(PreserveMethodSpecRids));
+			get => GetFlagValue(MetadataFlags.PreserveMethodSpecRids);
+			set => SetFlagValue(MetadataFlags.PreserveMethodSpecRids, value, nameof(PreserveRids), nameof(PreserveMethodSpecRids));
 		}
 
 		public bool? PreserveRids {
 			get {
-				var val = Flags & MetaDataFlags.PreserveRids;
-				if (val == MetaDataFlags.PreserveRids)
+				var val = Flags & MetadataFlags.PreserveRids;
+				if (val == MetadataFlags.PreserveRids)
 					return true;
 				if (val == 0)
 					return false;
@@ -834,9 +834,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set {
 				if (value != null && value != PreserveRids) {
 					if (value.Value)
-						Flags |= MetaDataFlags.PreserveRids;
+						Flags |= MetadataFlags.PreserveRids;
 					else
-						Flags &= ~MetaDataFlags.PreserveRids;
+						Flags &= ~MetadataFlags.PreserveRids;
 					OnPropertyChanged(nameof(PreserveRids));
 					OnPropertyChanged(nameof(PreserveTypeRefRids));
 					OnPropertyChanged(nameof(PreserveTypeDefRids));
@@ -854,53 +854,53 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public bool PreserveStringsOffsets {
-			get => GetFlagValue(MetaDataFlags.PreserveStringsOffsets);
-			set => SetFlagValue(MetaDataFlags.PreserveStringsOffsets, value, nameof(PreserveStringsOffsets));
+			get => GetFlagValue(MetadataFlags.PreserveStringsOffsets);
+			set => SetFlagValue(MetadataFlags.PreserveStringsOffsets, value, nameof(PreserveStringsOffsets));
 		}
 
 		public bool PreserveUSOffsets {
-			get => GetFlagValue(MetaDataFlags.PreserveUSOffsets);
-			set => SetFlagValue(MetaDataFlags.PreserveUSOffsets, value, nameof(PreserveUSOffsets));
+			get => GetFlagValue(MetadataFlags.PreserveUSOffsets);
+			set => SetFlagValue(MetadataFlags.PreserveUSOffsets, value, nameof(PreserveUSOffsets));
 		}
 
 		public bool PreserveBlobOffsets {
-			get => GetFlagValue(MetaDataFlags.PreserveBlobOffsets);
-			set => SetFlagValue(MetaDataFlags.PreserveBlobOffsets, value, nameof(PreserveBlobOffsets));
+			get => GetFlagValue(MetadataFlags.PreserveBlobOffsets);
+			set => SetFlagValue(MetadataFlags.PreserveBlobOffsets, value, nameof(PreserveBlobOffsets));
 		}
 
 		public bool PreserveExtraSignatureData {
-			get => GetFlagValue(MetaDataFlags.PreserveExtraSignatureData);
-			set => SetFlagValue(MetaDataFlags.PreserveExtraSignatureData, value, nameof(PreserveExtraSignatureData));
+			get => GetFlagValue(MetadataFlags.PreserveExtraSignatureData);
+			set => SetFlagValue(MetadataFlags.PreserveExtraSignatureData, value, nameof(PreserveExtraSignatureData));
 		}
 
 		public bool KeepOldMaxStack {
-			get => GetFlagValue(MetaDataFlags.KeepOldMaxStack);
-			set => SetFlagValue(MetaDataFlags.KeepOldMaxStack, value, nameof(KeepOldMaxStack));
+			get => GetFlagValue(MetadataFlags.KeepOldMaxStack);
+			set => SetFlagValue(MetadataFlags.KeepOldMaxStack, value, nameof(KeepOldMaxStack));
 		}
 
 		public bool AlwaysCreateGuidHeap {
-			get => GetFlagValue(MetaDataFlags.AlwaysCreateGuidHeap);
-			set => SetFlagValue(MetaDataFlags.AlwaysCreateGuidHeap, value, nameof(AlwaysCreateGuidHeap));
+			get => GetFlagValue(MetadataFlags.AlwaysCreateGuidHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateGuidHeap, value, nameof(AlwaysCreateGuidHeap));
 		}
 
 		public bool AlwaysCreateStringsHeap {
-			get => GetFlagValue(MetaDataFlags.AlwaysCreateStringsHeap);
-			set => SetFlagValue(MetaDataFlags.AlwaysCreateStringsHeap, value, nameof(AlwaysCreateStringsHeap));
+			get => GetFlagValue(MetadataFlags.AlwaysCreateStringsHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateStringsHeap, value, nameof(AlwaysCreateStringsHeap));
 		}
 
 		public bool AlwaysCreateUSHeap {
-			get => GetFlagValue(MetaDataFlags.AlwaysCreateUSHeap);
-			set => SetFlagValue(MetaDataFlags.AlwaysCreateUSHeap, value, nameof(AlwaysCreateUSHeap));
+			get => GetFlagValue(MetadataFlags.AlwaysCreateUSHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateUSHeap, value, nameof(AlwaysCreateUSHeap));
 		}
 
 		public bool AlwaysCreateBlobHeap {
-			get => GetFlagValue(MetaDataFlags.AlwaysCreateBlobHeap);
-			set => SetFlagValue(MetaDataFlags.AlwaysCreateBlobHeap, value, nameof(AlwaysCreateBlobHeap));
+			get => GetFlagValue(MetadataFlags.AlwaysCreateBlobHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateBlobHeap, value, nameof(AlwaysCreateBlobHeap));
 		}
 
-		bool GetFlagValue(MetaDataFlags flag) => (Flags & flag) != 0;
+		bool GetFlagValue(MetadataFlags flag) => (Flags & flag) != 0;
 
-		void SetFlagValue(MetaDataFlags flag, bool value, string prop1, string prop2 = null) {
+		void SetFlagValue(MetadataFlags flag, bool value, string prop1, string prop2 = null) {
 			bool origValue = (Flags & flag) != 0;
 			if (origValue == value)
 				return;
@@ -915,14 +915,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 				OnPropertyChanged(prop2);
 		}
 
-		public void CopyTo(MetaDataOptions options) {
-			MetaDataHeaderOptions.CopyTo(options.MetaDataHeaderOptions);
+		public void CopyTo(MetadataOptions options) {
+			MetadataHeaderOptions.CopyTo(options.MetadataHeaderOptions);
 			TablesHeapOptions.CopyTo(options.TablesHeapOptions);
 			options.Flags = Flags;
 		}
 
-		public void InitializeFrom(MetaDataOptions options) {
-			MetaDataHeaderOptions.InitializeFrom(options.MetaDataHeaderOptions);
+		public void InitializeFrom(MetadataOptions options) {
+			MetadataHeaderOptions.InitializeFrom(options.MetadataHeaderOptions);
 			TablesHeapOptions.InitializeFrom(options.TablesHeapOptions);
 			Flags = options.Flags;
 			OnFlagsChanged();
@@ -954,14 +954,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				return MetaDataHeaderOptions.HasError ||
+				return MetadataHeaderOptions.HasError ||
 					TablesHeapOptions.HasError;
 			}
 		}
 	}
 
-	sealed class MetaDataHeaderOptionsVM : ViewModelBase {
-		public MetaDataHeaderOptionsVM() {
+	sealed class MetadataHeaderOptionsVM : ViewModelBase {
+		public MetadataHeaderOptionsVM() {
 			Signature = new NullableUInt32VM(a => HasErrorUpdated());
 			MajorVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			MinorVersion = new NullableUInt16VM(a => HasErrorUpdated());
@@ -988,7 +988,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableByteVM StorageFlags { get; }
 		public NullableByteVM Reserved2 { get; }
 
-		public void CopyTo(MetaDataHeaderOptions options) {
+		public void CopyTo(MetadataHeaderOptions options) {
 			options.Signature = Signature.Value;
 			options.MajorVersion = MajorVersion.Value;
 			options.MinorVersion = MinorVersion.Value;
@@ -998,7 +998,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.Reserved2 = Reserved2.Value;
 		}
 
-		public void InitializeFrom(MetaDataHeaderOptions options) {
+		public void InitializeFrom(MetadataHeaderOptions options) {
 			Signature.Value = options.Signature;
 			MajorVersion.Value = options.MajorVersion;
 			MinorVersion.Value = options.MinorVersion;

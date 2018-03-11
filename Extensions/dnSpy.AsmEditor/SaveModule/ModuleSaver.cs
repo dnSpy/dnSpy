@@ -226,7 +226,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			opts.WriterEvent += OnWriterEvent;
 			opts.Logger = this;
 			// Make sure the order of the interfaces don't change, see https://github.com/dotnet/roslyn/issues/3905
-			opts.MetaDataOptions.Flags |= MetaDataFlags.RoslynSortInterfaceImpl;
+			opts.MetadataOptions.Flags |= MetadataFlags.RoslynSortInterfaceImpl;
 			var filename = vm.FileName;
 			if (opts is NativeModuleWriterOptions)
 				((ModuleDefMD)vm.Module).NativeWrite(filename, (NativeModuleWriterOptions)opts);

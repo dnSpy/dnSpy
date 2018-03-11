@@ -47,10 +47,10 @@ namespace MakeEverythingPublic {
 		const string ROSLYN_OPEN_SOURCE_PUBLIC_KEY = "002400000480000094000000060200000024000052534131000400000100010055e0217eb635f69281051f9a823e0c7edd90f28063eb6c7a742a19b4f6139778ee0af438f47aed3b6e9f99838aa8dba689c7a71ddb860c96d923830b57bbd5cd6119406ddb9b002cf1c723bf272d6acbb7129e9d6dd5a5309c94e0ff4b2c884d45a55f475cd7dba59198086f61f5a8c8b5e601c0edbf269733f6f578fc8579c2";
 
 		readonly byte[] data;
-		readonly IMetaData md;
+		readonly Metadata md;
 		readonly byte[] ivtBlob;
 
-		public IVTPatcher(byte[] data, IMetaData md, byte[] ivtBlob) {
+		public IVTPatcher(byte[] data, Metadata md, byte[] ivtBlob) {
 			this.data = data;
 			this.md = md;
 			this.ivtBlob = ivtBlob;
@@ -58,7 +58,7 @@ namespace MakeEverythingPublic {
 
 		public IVTPatcherResult Patch() {
 			var rids = md.GetCustomAttributeRidList(Table.Assembly, 1);
-			if (rids.Length == 0)
+			if (rids.Count == 0)
 				return IVTPatcherResult.NoCustomAttributes;
 
 			if (FindIVT(rids, out var foundIVT, out uint ivtBlobOffset)) {
@@ -141,8 +141,7 @@ namespace MakeEverythingPublic {
 				return IsIVT_TypeDef(declTypeDefToken);
 
 			case Table.MemberRef:
-				var memberRefRow = md.TablesStream.ReadMemberRefRow(ctor.Rid);
-				if (memberRefRow == null)
+				if (!md.TablesStream.TryReadMemberRefRow(ctor.Rid, out var memberRefRow))
 					return false;
 				if (!CodedToken.MemberRefParent.Decode(memberRefRow.Class, out MDToken parentToken))
 					return false;
@@ -164,8 +163,7 @@ namespace MakeEverythingPublic {
 		}
 
 		bool IsIVT_TypeRef(uint typeRefRid) {
-			var typeRefRow = md.TablesStream.ReadTypeRefRow(typeRefRid);
-			if (typeRefRow == null)
+			if (!md.TablesStream.TryReadTypeRefRow(typeRefRid, out var typeRefRow))
 				return false;
 			if (!CodedToken.ResolutionScope.Decode(typeRefRow.ResolutionScope, out MDToken scope) || scope.Table == Table.TypeRef)
 				return false;
@@ -173,8 +171,7 @@ namespace MakeEverythingPublic {
 		}
 
 		bool IsIVT_TypeDef(uint typeDefRid) {
-			var typeDefRow = md.TablesStream.ReadTypeDefRow(typeDefRid);
-			if (typeDefRow == null)
+			if (!md.TablesStream.TryReadTypeDefRow(typeDefRid, out var typeDefRow))
 				return false;
 			if ((typeDefRow.Flags & (uint)TypeAttributes.VisibilityMask) >= (uint)TypeAttributes.NestedPublic)
 				return false;

@@ -307,7 +307,7 @@ namespace dndbg.DotNet {
 
 		internal void InitCustomAttributes(ICorHasCustomAttribute hca, ref CustomAttributeCollection customAttributes, GenericParamContext gpContext) {
 			var tokens = MDAPI.GetCustomAttributeTokens(mdi, hca.OriginalToken.Raw);
-			var tmp = new CustomAttributeCollection(tokens.Length, tokens, (tokens2, index) => ReadCustomAttribute(tokens[index], gpContext));
+			var tmp = new CustomAttributeCollection(tokens.Length, tokens, (tokens2, index) => ReadCustomAttribute(((uint[])tokens2)[index], gpContext));
 			Interlocked.CompareExchange(ref customAttributes, tmp, null);
 		}
 
@@ -321,7 +321,7 @@ namespace dndbg.DotNet {
 
 		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref IList<DeclSecurity> declSecurities) {
 			var tokens = MDAPI.GetPermissionSetTokens(mdi, hds.OriginalToken.Raw);
-			var tmp = new LazyList<DeclSecurity>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens[index]));
+			var tmp = new LazyList<DeclSecurity, uint[]>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens2[index]));
 			Interlocked.CompareExchange(ref declSecurities, tmp, null);
 		}
 
@@ -369,14 +369,14 @@ namespace dndbg.DotNet {
 
 				// Only one of these two bits can be set
 				if ((peKind & CorPEKind.pe32BitRequired) != 0)
-					Cor20HeaderFlags |= ComImageFlags._32BitRequired;
+					Cor20HeaderFlags |= ComImageFlags.Bit32Required;
 				else if ((peKind & CorPEKind.pe32BitPreferred) != 0)
-					Cor20HeaderFlags |= ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred;
+					Cor20HeaderFlags |= ComImageFlags.Bit32Required | ComImageFlags.Bit32Preferred;
 
 				if (mach == Machine.AMD64 || mach == Machine.ARM64 || mach == Machine.IA64 || (peKind & CorPEKind.pe32BitRequired) == 0)
 					Characteristics |= Characteristics.LargeAddressAware;
 				else
-					Characteristics |= Characteristics._32BitMachine;
+					Characteristics |= Characteristics.Bit32Machine;
 			}
 
 			if (Kind != ModuleKind.NetModule) {
@@ -948,7 +948,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeTypes() {
 			var list = GetNonNestedClassRids();
-			var tmp = new LazyList<TypeDef>(list.Length, this, list, (list2, index) => ResolveTypeDef(((uint[])list2)[index]));
+			var tmp = new LazyList<TypeDef, uint[]>(list.Length, this, list, (list2, index) => ResolveTypeDef(list2[index]));
 			Interlocked.CompareExchange(ref types, tmp, null);
 		}
 
@@ -1080,7 +1080,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeExportedTypes() {
 			var list = MDAPI.GetExportedTypeRids(MetaDataAssemblyImport);
-			var tmp = new LazyList<ExportedType>(list.Length, list, (list2, i) => ResolveExportedType(((uint[])list2)[i]));
+			var tmp = new LazyList<ExportedType, uint[]>(list.Length, list, (list2, i) => ResolveExportedType(list2[i]));
 			Interlocked.CompareExchange(ref exportedTypes, tmp, null);
 			lastExportedTypeRidInList = list.Length == 0 ? 0 : list.Max();
 		}
@@ -1114,7 +1114,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeResources() {
 			var list = MDAPI.GetManifestResourceRids(MetaDataAssemblyImport);
-			var tmp = new ResourceCollection(list.Length, null, (ctx, i) => CreateResource(i + 1));
+			var tmp = new ResourceCollection(list.Length, null, (ctx, i) => CreateResource((uint)i + 1));
 			Interlocked.CompareExchange(ref resources, tmp, null);
 			lastManifestResourceRidInList = list.Length == 0 ? 0 : list.Max();
 		}
