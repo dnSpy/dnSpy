@@ -371,8 +371,8 @@ namespace dnSpy.AsmEditor.Hex {
 			if (mod != null && File.Exists(mod.Location))
 				return mod.Location;
 			var peImage = fileNode.Document.PEImage;
-			if (peImage != null && File.Exists(peImage.FileName))
-				return peImage.FileName;
+			if (peImage != null && File.Exists(peImage.Filename))
+				return peImage.Filename;
 			return null;
 		}
 	}

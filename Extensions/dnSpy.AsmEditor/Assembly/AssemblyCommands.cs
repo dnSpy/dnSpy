@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
@@ -62,7 +63,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			if (peImage == null)
 				peImage = (fileNode.Document.ModuleDef as ModuleDefMD)?.Metadata?.PEImage;
 
-			return peImage != null && peImage.IsMemoryMappedIO ? fileNode.Document : null;
+			return (peImage as IInternalPEImage)?.IsMemoryMappedIO == true ? fileNode.Document : null;
 		}
 
 		public override void Execute(IMenuItemContext context) {
@@ -74,11 +75,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				if (file != null)
 					asms.Add(file);
 			}
-			foreach (var asm in asms) {
-				var peImage = asm.PEImage;
-				if (peImage != null)
-					peImage.UnsafeDisableMemoryMappedIO();
-			}
+			foreach (var asm in asms)
+				(asm.PEImage as IInternalPEImage)?.UnsafeDisableMemoryMappedIO();
 		}
 	}
 

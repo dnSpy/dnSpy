@@ -482,11 +482,9 @@ namespace dndbg.DotNet {
 
 		CilBody ReadCilBody(IList<Parameter> parameters, uint rva, uint mdToken, GenericParamContext gpContext) {
 			// rva could be 0 if it's a dynamic module so we can't exit early
-			var reader = corModuleDefHelper.CreateBodyReader(rva, mdToken);
-			if (reader == null)
+			if (!corModuleDefHelper.TryCreateBodyReader(rva, mdToken, out var reader))
 				return new CilBody();
-			using (reader)
-				return MethodBodyReader.CreateCilBody(this, reader, parameters, gpContext);
+			return MethodBodyReader.CreateCilBody(this, reader, parameters, gpContext);
 		}
 
 		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken) => ResolveTypeDefOrRef(codedToken, new GenericParamContext());
@@ -1146,15 +1144,18 @@ namespace dndbg.DotNet {
 		Resource CreateResource(uint rid) {
 			uint? implementationToken = MDAPI.GetManifestResourceImplementationToken(mdi as IMetaDataAssemblyImport, new MDToken(Table.ManifestResource, rid).Raw);
 			if (implementationToken == null)
-				return new EmbeddedResource(UTF8String.Empty, MemoryImageStream.CreateEmpty(), 0) { Rid = rid };
+				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 			var token = new MDToken(implementationToken.Value);
 
 			var mr = ResolveManifestResource(rid);
 			if (mr == null)
-				return new EmbeddedResource(UTF8String.Empty, MemoryImageStream.CreateEmpty(), 0) { Rid = rid };
+				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 
-			if (token.Rid == 0)
-				return new EmbeddedResource(mr.Name, CreateResourceStream(mr.Offset), mr.Flags) { Rid = rid, Offset = mr.Offset };
+			if (token.Rid == 0) {
+				if (TryCreateResourceStream(mr.Offset, out var dataReaderFactory, out uint resourceOffset, out uint resourceLength))
+					return new EmbeddedResource(mr.Name, dataReaderFactory, resourceOffset, resourceLength, mr.Flags) { Rid = rid, Offset = mr.Offset };
+				return new EmbeddedResource(mr.Name, Array.Empty<byte>(), mr.Flags) { Rid = rid, Offset = mr.Offset };
+			}
 
 			if (mr.Implementation is FileDef file)
 				return new LinkedResource(mr.Name, file, mr.Flags) { Rid = rid, Offset = mr.Offset };
@@ -1162,10 +1163,11 @@ namespace dndbg.DotNet {
 			if (mr.Implementation is AssemblyRef asmRef)
 				return new AssemblyLinkedResource(mr.Name, asmRef, mr.Flags) { Rid = rid, Offset = mr.Offset };
 
-			return new EmbeddedResource(mr.Name, MemoryImageStream.CreateEmpty(), mr.Flags) { Rid = rid, Offset = mr.Offset };
+			return new EmbeddedResource(mr.Name, Array.Empty<byte>(), mr.Flags) { Rid = rid, Offset = mr.Offset };
 		}
 
-		IImageStream CreateResourceStream(uint offset) => corModuleDefHelper.CreateResourceStream(offset) ?? MemoryImageStream.CreateEmpty();
+		bool TryCreateResourceStream(uint offset, out DataReaderFactory dataReaderFactory, out uint resourceOffset, out uint resourceLength) =>
+			corModuleDefHelper.TryCreateResourceStream(offset, out dataReaderFactory, out resourceOffset, out resourceLength);
 
 		/// <summary>
 		/// Add all new types that have been added to the module. Returns true if at least one new

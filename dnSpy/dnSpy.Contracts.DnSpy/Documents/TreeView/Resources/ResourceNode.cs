@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.IO;
@@ -72,20 +71,20 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// Gets the offset of the resource
 		/// </summary>
-		public ulong FileOffset {
+		public uint FileOffset {
 			get {
 				GetModuleOffset(out var fo);
-				return (ulong)fo;
+				return (uint)fo;
 			}
 		}
 
 		/// <summary>
 		/// Gets the length of the resource
 		/// </summary>
-		public ulong Length {
+		public uint Length {
 			get {
 				var er = Resource as EmbeddedResource;
-				return er == null ? 0 : (ulong)er.Data.Length;
+				return er == null ? 0 : er.Length;
 			}
 		}
 
@@ -113,7 +112,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (module == null)
 				return null;
 
-			fileOffset = er.Data.FileOffset;
+			fileOffset = (FileOffset)er.GetReader().StartOffset;
 			return module;
 		}
 
@@ -153,7 +152,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetadata ? "ContainsNoMetaData" : "ContainsMetaData", SimpleTypeConverter.ByteArrayToString(file.HashValue));
 				break;
 			case ResourceType.Embedded:
-				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Data.Length);
+				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Length);
 				break;
 			}
 			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedTextColor.Comment);
@@ -193,7 +192,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <returns></returns>
 		protected virtual IEnumerable<ResourceData> GetSerializedData() {
 			if (Resource is EmbeddedResource er)
-				yield return new ResourceData(Resource.Name, token => new MemoryStream(er.GetResourceData()));
+				yield return new ResourceData(Resource.Name, token => er.GetReader().AsStream());
 		}
 
 		/// <inheritdoc/>

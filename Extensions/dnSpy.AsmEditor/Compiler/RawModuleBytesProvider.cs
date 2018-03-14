@@ -93,32 +93,20 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		(RawModuleBytes rawData, bool isFileLayout) TryReadModule(ModuleDefMD module) {
-			using (var stream = module.Metadata.PEImage.CreateFullStream())
-				return TryReadStream(stream, module.Metadata.PEImage.IsFileImageLayout);
+			var reader = module.Metadata.PEImage.CreateReader();
+			return TryReadStream(ref reader, module.Metadata.PEImage.IsFileImageLayout);
 		}
 
-		(RawModuleBytes rawData, bool isFileLayout) TryReadStream(IImageStream stream, bool isFileLayout) {
+		(RawModuleBytes rawData, bool isFileLayout) TryReadStream(ref DataReader reader, bool isFileLayout) {
 			RawModuleBytes rawModuleBytes = null;
 			bool error = true;
 			try {
-				if (stream.Length > int.MaxValue)
+				if (reader.Length > int.MaxValue)
 					return default;
-				rawModuleBytes = new NativeMemoryRawModuleBytes((int)stream.Length);
-				var p = (byte*)rawModuleBytes.Pointer;
-				for (;;) {
-					int bytesLeft = (int)(stream.Length - stream.Position);
-					if (bytesLeft == 0) {
-						error = false;
-						return (rawModuleBytes, isFileLayout);
-					}
-					if (bytesLeft > buffer.Length)
-						bytesLeft = buffer.Length;
-					int readBytes = stream.Read(buffer, 0, bytesLeft);
-					if (readBytes == 0)
-						return default;
-					Marshal.Copy(buffer, 0, (IntPtr)p, readBytes);
-					p += readBytes;
-				}
+				rawModuleBytes = new NativeMemoryRawModuleBytes((int)reader.Length);
+				reader.ReadBytes(rawModuleBytes.Pointer, rawModuleBytes.Size);
+				error = false;
+				return (rawModuleBytes, isFileLayout);
 			}
 			finally {
 				if (error)

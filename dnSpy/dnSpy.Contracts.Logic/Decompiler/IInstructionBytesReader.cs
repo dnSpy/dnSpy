@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Instruction bytes reader
 	/// </summary>
-	public interface IInstructionBytesReader : IDisposable {
+	public interface IInstructionBytesReader {
 		/// <summary>
 		/// true if it's reading the original bytes, false if the method has been modified
 		/// </summary>

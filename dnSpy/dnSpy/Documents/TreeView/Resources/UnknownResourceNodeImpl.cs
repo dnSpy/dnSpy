@@ -47,13 +47,13 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public override string ToString(CancellationToken token, bool canDecompile) {
 			if (Resource is EmbeddedResource er)
-				return ResourceUtilities.TryGetString(new MemoryStream(er.GetResourceData()));
+				return ResourceUtilities.TryGetString(er.GetReader().AsStream());
 			return null;
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			if (Resource is EmbeddedResource er)
-				return ResourceUtilities.Decompile(context, new MemoryStream(er.GetResourceData()), er.Name);
+				return ResourceUtilities.Decompile(context, er.GetReader().AsStream(), er.Name);
 			return false;
 		}
 	}

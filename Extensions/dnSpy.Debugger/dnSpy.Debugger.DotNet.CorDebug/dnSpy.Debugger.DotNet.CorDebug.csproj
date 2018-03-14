@@ -157,6 +157,7 @@
     <Compile Include="dndbg\Engine\NativeMethods.cs" />
     <Compile Include="dndbg\Engine\PreventManagedDebuggerDetection.cs" />
     <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
+    <Compile Include="dndbg\Engine\ProcessDataStream.cs" />
     <Compile Include="dndbg\Engine\StepRange.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
     <Compile Include="Impl\Attach\CorDebugAttachToProgramOptions.cs" />

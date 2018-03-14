@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public BlobMDHeap(MetadataEditor mdEditor, BlobStream blobStream) {
 			this.mdEditor = mdEditor ?? throw new ArgumentNullException(nameof(mdEditor));
 			this.blobStream = blobStream ?? throw new ArgumentNullException(nameof(blobStream));
-			currentOffset = (uint)blobStream.ImageStreamLength;
+			currentOffset = blobStream.StreamLength;
 			newData = new List<byte[]>();
 		}
 

@@ -38,11 +38,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 			var er = resource as EmbeddedResource;
 			if (er == null)
 				return null;
-			er.Data.Position = 0;
-			if (!ResourceReader.CouldBeResourcesFile(er.Data))
+			if (!ResourceReader.CouldBeResourcesFile(er.GetReader()))
 				return null;
-
-			er.Data.Position = 0;
 			return new ResourceElementSetNodeImpl(treeNodeGroup, module, er);
 		}
 
@@ -59,7 +56,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		public ResourceElementSetNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDef module, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
 			this.module = module;
-			resourceElementSet = ResourceReader.Read(module, resource.Data);
+			resourceElementSet = ResourceReader.Read(module, resource.GetReader());
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;

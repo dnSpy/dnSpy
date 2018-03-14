@@ -60,7 +60,5 @@ namespace dnSpy.Decompiler.IL {
 			instrIndex = index;
 			InitializeNextInstruction();
 		}
-
-		public void Dispose() { }
 	}
 }

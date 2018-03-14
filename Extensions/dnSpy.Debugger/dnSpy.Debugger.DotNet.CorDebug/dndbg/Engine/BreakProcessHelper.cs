@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnlib.IO;
 using dnlib.PE;
 
 namespace dndbg.Engine {
@@ -156,7 +155,6 @@ namespace dndbg.Engine {
 
 		static uint GetEntryPointToken(string filename, out string otherModuleName) {
 			otherModuleName = null;
-			IImageStream cor20HeaderStream = null;
 			try {
 				using (var peImage = new PEImage(filename)) {
 					var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
@@ -164,7 +162,8 @@ namespace dndbg.Engine {
 						return 0;
 					if (dotNetDir.Size < 0x48)
 						return 0;
-					var cor20Header = new ImageCor20Header(cor20HeaderStream = peImage.CreateStream(dotNetDir.VirtualAddress, 0x48), true);
+					var cor20HeaderReader = peImage.CreateReader(dotNetDir.VirtualAddress, 0x48);
+					var cor20Header = new ImageCor20Header(ref cor20HeaderReader, true);
 					if ((cor20Header.Flags & ComImageFlags.NativeEntryPoint) != 0)
 						return 0;
 					uint token = cor20Header.EntryPointToken_or_RVA;
@@ -182,10 +181,6 @@ namespace dndbg.Engine {
 				}
 			}
 			catch {
-			}
-			finally {
-				if (cor20HeaderStream != null)
-					cor20HeaderStream.Dispose();
 			}
 			return 0;
 		}

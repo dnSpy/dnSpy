@@ -78,9 +78,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 		sealed class DmdDataStreamImpl : DmdDataStream {
-			readonly IBinaryReader reader;
-			public DmdDataStreamImpl(IBinaryReader reader) => this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			public override long Position { get => reader.Position; set => reader.Position = value; }
+			readonly DataReader reader;
+			public DmdDataStreamImpl(DataReader reader) => this.reader = reader;
+			public override long Position { get => reader.Position; set => reader.Position = (uint)value; }
 			public override long Length => reader.Length;
 			public override byte ReadByte() => reader.ReadByte();
 			public override ushort ReadUInt16() => reader.ReadUInt16();
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			public override float ReadSingle() => reader.ReadSingle();
 			public override double ReadDouble() => reader.ReadDouble();
 			public override byte[] ReadBytes(int length) => reader.ReadBytes(length);
-			public override void Dispose() => reader.Dispose();
+			public override void Dispose() { }
 		}
 		void Test() {
 			var runtime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl2(), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);

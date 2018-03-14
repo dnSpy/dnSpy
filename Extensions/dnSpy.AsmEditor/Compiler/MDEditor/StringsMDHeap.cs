@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public StringsMDHeap(MetadataEditor mdEditor, StringsStream stringsStream) {
 			this.mdEditor = mdEditor ?? throw new ArgumentNullException(nameof(mdEditor));
 			this.stringsStream = stringsStream ?? throw new ArgumentNullException(nameof(stringsStream));
-			currentOffset = (uint)stringsStream.ImageStreamLength;
+			currentOffset = stringsStream.StreamLength;
 			newData = new List<byte[]>();
 		}
 

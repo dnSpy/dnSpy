@@ -116,10 +116,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 
 		unsafe (IntPtr metadataAddress, int metadataSize) GetMetadataInfo() {
 			try {
-				var peImage = new PEImage(address, size, isFileLayout ? ImageLayout.File : ImageLayout.Memory, true);
+				var peImage = new PEImage(address, (uint)size, isFileLayout ? ImageLayout.File : ImageLayout.Memory, true);
 				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 				if (dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48) {
-					var cor20 = new ImageCor20Header(peImage.CreateStream(dotNetDir.VirtualAddress, 0x48), true);
+					var cor20Reader = peImage.CreateReader(dotNetDir.VirtualAddress, 0x48);
+					var cor20 = new ImageCor20Header(ref cor20Reader, true);
 					var mdStart = (long)peImage.ToFileOffset(cor20.Metadata.VirtualAddress);
 					var mdAddr = new IntPtr((byte*)address + mdStart);
 					var mdSize = (int)cor20.Metadata.Size;

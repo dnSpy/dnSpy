@@ -19,41 +19,33 @@
 
 using dnlib.DotNet;
 using dnlib.IO;
-using dnlib.PE;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.IL {
 	sealed class OriginalInstructionBytesReader : IInstructionBytesReader {
-		readonly IImageStream stream;
+		readonly bool hasReader;
+		DataReader reader;
 
 		public bool IsOriginalBytes => true;
 
-		public OriginalInstructionBytesReader(MethodDef method) =>
+		public OriginalInstructionBytesReader(MethodDef method) {
 			//TODO: This fails and returns null if it's a CorMethodDef!
-			stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
-
-		static IImageStream GetImageStream(ModuleDef module, uint rva) {
-			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
-			if (m == null)
-				return null;
-
-			return m.Metadata.PEImage.CreateStream((RVA)rva);
+			//TODO: Support CorModuleDef
+			if (method.Module is ModuleDefMD m) {
+				reader = m.Metadata.PEImage.CreateReader(method.RVA + method.Body.HeaderSize);
+				hasReader = true;
+			}
 		}
 
 		public int ReadByte() {
-			if (stream != null)
-				return stream.ReadByte();
+			if (hasReader)
+				return reader.ReadByte();
 			return -1;
 		}
 
 		public void SetInstruction(int index, uint offset) {
-			if (stream != null)
-				stream.Position = offset;
-		}
-
-		public void Dispose() {
-			if (stream != null)
-				stream.Dispose();
+			if (hasReader)
+				reader.Position = offset;
 		}
 	}
 }

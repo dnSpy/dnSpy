@@ -21,10 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using dnlib.IO;
 
 namespace dndbg.DotNet {
-	sealed class ProcessBinaryReader : IBinaryReader {
+	sealed class ProcessBinaryReader {
 		const int CACHE_SIZE = 0x100;
 		readonly IProcessReader reader;
 		readonly ulong baseAddress;

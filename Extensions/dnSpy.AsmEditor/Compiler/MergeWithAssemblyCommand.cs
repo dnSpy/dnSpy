@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using dnlib.DotNet;
-using dnlib.IO;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
@@ -174,7 +173,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			try {
 				using (var module = ModuleDefMD.Load(filename)) {
 					// It's a .NET file, return all bytes
-					var bytes = module.Metadata.PEImage.CreateFullStream().ReadAllBytes();
+					var bytes = module.Metadata.PEImage.CreateReader().ToArray();
 					var asm = module.Assembly?.ToAssemblyRef();
 					var debugFile = GetDebugFile(module);
 					return new ModuleResult(asm, bytes, debugFile);

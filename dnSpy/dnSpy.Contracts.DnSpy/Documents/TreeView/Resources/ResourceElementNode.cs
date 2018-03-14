@@ -74,17 +74,17 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// Gets the file offset of the resource
 		/// </summary>
-		public ulong FileOffset {
+		public uint FileOffset {
 			get {
 				GetModuleOffset(out var fo);
-				return (ulong)fo;
+				return (uint)fo;
 			}
 		}
 
 		/// <summary>
 		/// Gets the length of the resource
 		/// </summary>
-		public ulong Length => (ulong)(resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset);
+		public uint Length => resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset;
 
 		/// <summary>
 		/// Gets the RVA of the resource

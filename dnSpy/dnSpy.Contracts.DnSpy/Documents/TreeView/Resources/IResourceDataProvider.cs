@@ -34,12 +34,12 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// File offset of resource or 0
 		/// </summary>
-		ulong FileOffset { get; }
+		uint FileOffset { get; }
 
 		/// <summary>
 		/// Length of the resource
 		/// </summary>
-		ulong Length { get; }
+		uint Length { get; }
 
 		/// <summary>
 		/// Gets the resource data

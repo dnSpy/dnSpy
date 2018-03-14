@@ -123,40 +123,39 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var resolutionScopeCodedTokenCache = new Dictionary<uint, bool>();
 			var md = mdEditor.RealMetadata;
-			using (var stringsStream = md.StringsStream.GetClonedImageStream()) {
-				var table = md.TablesStream.TypeRefTable;
-				var p = peFile + (int)table.StartOffset;
-				int rowSize = (int)table.RowSize;
-				var columns = table.Columns;
-				var nameData = nonNestedEditedType.Name?.Data ?? Array.Empty<byte>();
-				var namespaceData = nonNestedEditedType.Namespace?.Data ?? Array.Empty<byte>();
-				var columnResolutionScope = columns[0];
-				var columnName = columns[1];
-				var columnNamespace = columns[2];
-				p += columnName.Offset;
-				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-					uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
-					if (!StringsStreamNameEquals(stringsStream, nameOffset, nameData))
-						continue;
-					uint namespaceOffset = columnNamespace.Size == 2 ? *(ushort*)(p + columnName.Size) : *(uint*)(p + columnName.Size);
-					if (!StringsStreamNameEquals(stringsStream, namespaceOffset, namespaceData))
-						continue;
+			var stringsStream = md.StringsStream.GetReader();
+			var table = md.TablesStream.TypeRefTable;
+			var p = peFile + (int)table.StartOffset;
+			int rowSize = (int)table.RowSize;
+			var columns = table.Columns;
+			var nameData = nonNestedEditedType.Name?.Data ?? Array.Empty<byte>();
+			var namespaceData = nonNestedEditedType.Namespace?.Data ?? Array.Empty<byte>();
+			var columnResolutionScope = columns[0];
+			var columnName = columns[1];
+			var columnNamespace = columns[2];
+			p += columnName.Offset;
+			for (uint i = 0; i < table.Rows; i++, p += rowSize) {
+				uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
+				if (!StringsStreamNameEquals(ref stringsStream, nameOffset, nameData))
+					continue;
+				uint namespaceOffset = columnNamespace.Size == 2 ? *(ushort*)(p + columnName.Size) : *(uint*)(p + columnName.Size);
+				if (!StringsStreamNameEquals(ref stringsStream, namespaceOffset, namespaceData))
+					continue;
 
-					uint resolutionScopeCodedToken = columnResolutionScope.Size == 2 ? *(ushort*)(p - 2) : *(uint*)(p - 4);
-					if (!resolutionScopeCodedTokenCache.TryGetValue(resolutionScopeCodedToken, out var res)) {
-						if (!CodedToken.ResolutionScope.Decode(resolutionScopeCodedToken, out MDToken resolutionScope))
-							continue;
-						if (resolutionScope.Table == Table.AssemblyRef)
-							continue;
-						resolutionScopeCodedTokenCache.Add(resolutionScopeCodedToken, res = CheckResolutionScopeIsSameModule(resolutionScope, nonNestedEditedType.Module));
-					}
-					if (!res)
+				uint resolutionScopeCodedToken = columnResolutionScope.Size == 2 ? *(ushort*)(p - 2) : *(uint*)(p - 4);
+				if (!resolutionScopeCodedTokenCache.TryGetValue(resolutionScopeCodedToken, out var res)) {
+					if (!CodedToken.ResolutionScope.Decode(resolutionScopeCodedToken, out MDToken resolutionScope))
 						continue;
-
-					var typeRefRow = mdEditor.TablesHeap.TypeRefTable.Get(i + 1);
-					typeRefRow = new RawTypeRefRow(CodedToken.ResolutionScope.Encode(new MDToken(Table.AssemblyRef, GetOrCreateTempAssemblyRid())), typeRefRow.Name, typeRefRow.Namespace);
-					mdEditor.TablesHeap.TypeRefTable.Set(i + 1, ref typeRefRow);
+					if (resolutionScope.Table == Table.AssemblyRef)
+						continue;
+					resolutionScopeCodedTokenCache.Add(resolutionScopeCodedToken, res = CheckResolutionScopeIsSameModule(resolutionScope, nonNestedEditedType.Module));
 				}
+				if (!res)
+					continue;
+
+				var typeRefRow = mdEditor.TablesHeap.TypeRefTable.Get(i + 1);
+				typeRefRow = new RawTypeRefRow(CodedToken.ResolutionScope.Encode(new MDToken(Table.AssemblyRef, GetOrCreateTempAssemblyRid())), typeRefRow.Name, typeRefRow.Namespace);
+				mdEditor.TablesHeap.TypeRefTable.Set(i + 1, ref typeRefRow);
 			}
 		}
 
@@ -184,20 +183,21 @@ namespace dnSpy.AsmEditor.Compiler {
 				var assemblyRefLocale = mdEditor.RealMetadata.StringsStream.ReadNoNull(assemblyRefRow.Name);
 				if (!StringComparer.OrdinalIgnoreCase.Equals(assemblyRefLocale.String, UTF8String.ToSystemStringOrEmpty(asm.Culture)))
 					return false;
-				var data = mdEditor.RealMetadata.BlobStream.ReadNoNull(assemblyRefRow.PublicKeyOrToken);
+				if (!mdEditor.RealMetadata.BlobStream.TryCreateReader(assemblyRefRow.PublicKeyOrToken, out var reader))
+					return false;
 				byte[] asmPublicKeyOrTokenData;
 				if ((assemblyRefRow.Flags & (uint)AssemblyAttributes.PublicKey) != 0)
 					asmPublicKeyOrTokenData = asm.PublicKey?.Data ?? Array.Empty<byte>();
 				else
 					asmPublicKeyOrTokenData = asm.PublicKeyToken?.Data ?? Array.Empty<byte>();
-				return DataEquals(data, asmPublicKeyOrTokenData);
+				return DataEquals(ref reader, asmPublicKeyOrTokenData);
 
 			default:
 				return false;
 			}
 		}
 
-		bool StringsStreamNameEquals(IImageStream stringsStream, uint offset, byte[] nameData) {
+		bool StringsStreamNameEquals(ref DataReader stringsStream, uint offset, byte[] nameData) {
 			if (offset == 0)
 				return nameData.Length == 0;
 			stringsStream.Position = offset;
@@ -214,15 +214,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			return stringsStream.ReadByte() == 0;
 		}
 
-		static bool DataEquals(byte[] a, byte[] b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
+		static bool DataEquals(ref DataReader a, byte[] b) {
+			if (b == null)
 				return false;
-			if (a.Length != b.Length)
+			if (a.Length != (uint)b.Length)
 				return false;
 			for (int i = 0; i < a.Length; i++) {
-				if (a[i] != b[i])
+				if (a.ReadByte() != b[i])
 					return false;
 			}
 			return true;
@@ -543,64 +541,64 @@ namespace dnSpy.AsmEditor.Compiler {
 		static readonly byte[] ivtCtorSigBlob = new byte[] { 0x20, 0x01, 0x01, 0x0E };
 
 		bool GetCorLibToken(out MDToken corlibToken) {
-			using (var stringsStream = mdEditor.RealMetadata.StringsStream.GetClonedImageStream()) {
-				// Check if we have any assembly refs to the corlib
-				{
-					var table = mdEditor.RealMetadata.TablesStream.AssemblyRefTable;
-					var p = peFile + (int)table.StartOffset;
-					int rowSize = (int)table.RowSize;
-					var columnName = table.Columns[6];
-					p += columnName.Offset;
-					for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-						uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
-						UTF8String foundCorlibName = null;
-						foreach (var corlibName in corlibSimpleNames) {
-							if (StringsStreamNameEquals(stringsStream, nameOffset, corlibName.Data)) {
-								foundCorlibName = corlibName;
-								break;
-							}
-						}
-						if ((object)foundCorlibName == null)
-							continue;
+			var stringsStream = mdEditor.RealMetadata.StringsStream.GetReader();
 
-						// Don't use any WinMD mscorlib refs (version = 255.255.255.255)
-						if (StringComparer.OrdinalIgnoreCase.Equals(foundCorlibName.String, "mscorlib") &&
-							*(ulong*)(p - columnName.Offset) == 0x00FF_00FF_00FF_00FF) {
-							continue;
+			// Check if we have any assembly refs to the corlib
+			{
+				var table = mdEditor.RealMetadata.TablesStream.AssemblyRefTable;
+				var p = peFile + (int)table.StartOffset;
+				int rowSize = (int)table.RowSize;
+				var columnName = table.Columns[6];
+				p += columnName.Offset;
+				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
+					uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
+					UTF8String foundCorlibName = null;
+					foreach (var corlibName in corlibSimpleNames) {
+						if (StringsStreamNameEquals(ref stringsStream, nameOffset, corlibName.Data)) {
+							foundCorlibName = corlibName;
+							break;
 						}
-
-						corlibToken = new MDToken(Table.AssemblyRef, i + 1);
-						return true;
 					}
+					if ((object)foundCorlibName == null)
+						continue;
+
+					// Don't use any WinMD mscorlib refs (version = 255.255.255.255)
+					if (StringComparer.OrdinalIgnoreCase.Equals(foundCorlibName.String, "mscorlib") &&
+						*(ulong*)(p - columnName.Offset) == 0x00FF_00FF_00FF_00FF) {
+						continue;
+					}
+
+					corlibToken = new MDToken(Table.AssemblyRef, i + 1);
+					return true;
 				}
+			}
 
-				// Check if we are the corlib. We're the corlib if System.Object is defined and if there
-				// are no assembly references
-				if (mdEditor.RealMetadata.TablesStream.AssemblyRefTable.Rows == 0) {
-					var table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
-					var p = peFile + (int)table.StartOffset;
-					int rowSize = (int)table.RowSize;
-					var columnName = table.Columns[1];
-					var columnNamespace = table.Columns[2];
-					var columnExtends = table.Columns[3];
-					for (uint i = 0; i < table.Rows; i++, p += rowSize) {
-						if ((*(uint*)p & (uint)TypeAttributes.VisibilityMask) >= (int)TypeAttributes.NestedPublic)
-							continue;
-						uint nameOffset = columnName.Size == 2 ? *(ushort*)(p + columnName.Offset) : *(uint*)(p + columnName.Offset);
-						if (!StringsStreamNameEquals(stringsStream, nameOffset, nameObject.Data))
-							continue;
-						uint namespaceOffset = columnNamespace.Size == 2 ? *(ushort*)(p + columnNamespace.Offset) : *(uint*)(p + columnNamespace.Offset);
-						if (!StringsStreamNameEquals(stringsStream, namespaceOffset, nameSystem.Data))
-							continue;
-						uint extendsCodedToken = columnExtends.Size == 2 ? *(ushort*)(p + columnExtends.Offset) : *(uint*)(p + columnExtends.Offset);
-						if (!CodedToken.TypeDefOrRef.Decode(extendsCodedToken, out MDToken extends))
-							continue;
-						if (extends.Rid != 0)
-							continue;
+			// Check if we are the corlib. We're the corlib if System.Object is defined and if there
+			// are no assembly references
+			if (mdEditor.RealMetadata.TablesStream.AssemblyRefTable.Rows == 0) {
+				var table = mdEditor.RealMetadata.TablesStream.TypeDefTable;
+				var p = peFile + (int)table.StartOffset;
+				int rowSize = (int)table.RowSize;
+				var columnName = table.Columns[1];
+				var columnNamespace = table.Columns[2];
+				var columnExtends = table.Columns[3];
+				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
+					if ((*(uint*)p & (uint)TypeAttributes.VisibilityMask) >= (int)TypeAttributes.NestedPublic)
+						continue;
+					uint nameOffset = columnName.Size == 2 ? *(ushort*)(p + columnName.Offset) : *(uint*)(p + columnName.Offset);
+					if (!StringsStreamNameEquals(ref stringsStream, nameOffset, nameObject.Data))
+						continue;
+					uint namespaceOffset = columnNamespace.Size == 2 ? *(ushort*)(p + columnNamespace.Offset) : *(uint*)(p + columnNamespace.Offset);
+					if (!StringsStreamNameEquals(ref stringsStream, namespaceOffset, nameSystem.Data))
+						continue;
+					uint extendsCodedToken = columnExtends.Size == 2 ? *(ushort*)(p + columnExtends.Offset) : *(uint*)(p + columnExtends.Offset);
+					if (!CodedToken.TypeDefOrRef.Decode(extendsCodedToken, out MDToken extends))
+						continue;
+					if (extends.Rid != 0)
+						continue;
 
-						corlibToken = new MDToken(Table.Module, 1);
-						return true;
-					}
+					corlibToken = new MDToken(Table.Module, 1);
+					return true;
 				}
 			}
 

@@ -55,7 +55,7 @@ namespace dnSpy.Images {
 					var rsrc = mod.Resources.Find(rsrcName) as EmbeddedResource;
 					Debug.Assert(rsrc != null);
 					if (rsrc != null) {
-						var set = ResourceReader.Read(mod, rsrc.Data);
+						var set = ResourceReader.Read(mod, rsrc.GetReader());
 						foreach (var elem in set.ResourceElements) {
 							const string imagesPrefix = "images/";
 							if (elem.Name != null && elem.Name.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase)) {

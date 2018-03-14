@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (!showOffsetComment)
 				return;
 
-			ulong fo = node.FileOffset;
+			var fo = node.FileOffset;
 			if (fo == 0)
 				return;
 

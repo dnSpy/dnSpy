@@ -75,36 +75,35 @@ namespace MakeEverythingPublic {
 			ivtBlobDataOffset = 0;
 			foundIVT = false;
 			uint otherIVTBlobOffset = uint.MaxValue;
-			using (var blobStream = md.BlobStream.GetClonedImageStream()) {
-				var tbl = md.TablesStream.CustomAttributeTable;
-				uint baseOffset = (uint)tbl.StartOffset;
-				var columnType = tbl.Columns[1];
-				var columnValue = tbl.Columns[2];
-				for (int i = 0; i < rids.Count; i++) {
-					uint rid = rids[i];
-					uint offset = baseOffset + (rid - 1) * tbl.RowSize;
-					uint type = ReadColumn(columnType, offset);
-					if (!IsIVTCtor(type))
-						continue;
-					foundIVT = true;
-					uint blobOffset = ReadColumn(columnValue, offset);
-					if (blobOffset + ivtBlob.Length > blobStream.Length)
-						continue;
-					blobStream.Position = blobOffset;
-					if (!blobStream.ReadCompressedUInt32(out uint len))
-						continue;
-					var compressedSize = blobStream.Position - blobOffset;
-					if (compressedSize + len < ivtBlob.Length)
-						continue;
-					if (!ParseIVTBlob(blobStream, blobStream.Position + len, out var publicKeyString))
-						continue;
-					if (StringComparer.OrdinalIgnoreCase.Equals(publicKeyString, ROSLYN_OPEN_SOURCE_PUBLIC_KEY)) {
-						ivtBlobDataOffset = (uint)md.BlobStream.StartOffset + blobOffset;
-						return true;
-					}
-					else
-						otherIVTBlobOffset = (uint)md.BlobStream.StartOffset + blobOffset;
+			var blobStream = md.BlobStream.GetReader();
+			var tbl = md.TablesStream.CustomAttributeTable;
+			uint baseOffset = (uint)tbl.StartOffset;
+			var columnType = tbl.Columns[1];
+			var columnValue = tbl.Columns[2];
+			for (int i = 0; i < rids.Count; i++) {
+				uint rid = rids[i];
+				uint offset = baseOffset + (rid - 1) * tbl.RowSize;
+				uint type = ReadColumn(columnType, offset);
+				if (!IsIVTCtor(type))
+					continue;
+				foundIVT = true;
+				uint blobOffset = ReadColumn(columnValue, offset);
+				if (blobOffset + ivtBlob.Length > blobStream.Length)
+					continue;
+				blobStream.Position = blobOffset;
+				if (!blobStream.ReadCompressedUInt32(out uint len))
+					continue;
+				var compressedSize = blobStream.Position - blobOffset;
+				if (compressedSize + len < ivtBlob.Length)
+					continue;
+				if (!ParseIVTBlob(ref blobStream, blobStream.Position + len, out var publicKeyString))
+					continue;
+				if (StringComparer.OrdinalIgnoreCase.Equals(publicKeyString, ROSLYN_OPEN_SOURCE_PUBLIC_KEY)) {
+					ivtBlobDataOffset = (uint)md.BlobStream.StartOffset + blobOffset;
+					return true;
 				}
+				else
+					otherIVTBlobOffset = (uint)md.BlobStream.StartOffset + blobOffset;
 			}
 			if (otherIVTBlobOffset != uint.MaxValue) {
 				ivtBlobDataOffset = otherIVTBlobOffset;
@@ -114,16 +113,15 @@ namespace MakeEverythingPublic {
 			return false;
 		}
 
-		static bool ParseIVTBlob(IImageStream stream, long end, out string publicKeyString) {
+		static bool ParseIVTBlob(ref DataReader reader, uint end, out string publicKeyString) {
 			publicKeyString = null;
-			if (stream.Position + 2 > end)
+			if ((ulong)reader.Position + 2 > end)
 				return false;
-			if (stream.ReadUInt16() != 1)
+			if (reader.ReadUInt16() != 1)
 				return false;
-			if (!stream.ReadCompressedUInt32(out uint len) || stream.Position + len >= end)
+			if (!reader.ReadCompressedUInt32(out uint len) || (ulong)reader.Position + len >= end)
 				return false;
-			var bytes = stream.ReadBytes((int)len);
-			var s = Encoding.UTF8.GetString(bytes);
+			var s = reader.ReadString((int)len, Encoding.UTF8);
 			const string PublicKeyPattern = "PublicKey=";
 			int index = s.IndexOf(PublicKeyPattern, StringComparison.OrdinalIgnoreCase);
 			if (index >= 0)

@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="peImage">PE image</param>
 		public DsPEDocument(IPEImage peImage) {
 			PEImage = peImage;
-			Filename = peImage.FileName ?? string.Empty;
+			Filename = peImage.Filename ?? string.Empty;
 		}
 
 		/// <inheritdoc/>
@@ -336,9 +336,9 @@ namespace dnSpy.Contracts.Documents {
 				return;
 			// Files in the GAC are read-only so there's no need to disable memory mapped I/O to
 			// allow other programs to write to the file.
-			if (GacInfo.IsGacPath(peImage.FileName))
+			if (GacInfo.IsGacPath(peImage.Filename))
 				return;
-			peImage.UnsafeDisableMemoryMappedIO();
+			(peImage as IInternalPEImage)?.UnsafeDisableMemoryMappedIO();
 		}
 	}
 }
