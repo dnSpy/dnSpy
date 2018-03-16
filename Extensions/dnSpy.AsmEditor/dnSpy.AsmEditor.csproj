@@ -176,6 +176,7 @@
     <Compile Include="Compiler\PlatformHelper.cs" />
     <Compile Include="Compiler\RawModuleBytes.cs" />
     <Compile Include="Compiler\RawModuleBytesProvider.cs" />
+    <Compile Include="Compiler\RecursionCounter.cs" />
     <Compile Include="Compiler\RemappedTypeTokens.cs" />
     <Compile Include="Compiler\ResourceNodeCreator.cs" />
     <Compile Include="Compiler\TIAHelper.cs" />

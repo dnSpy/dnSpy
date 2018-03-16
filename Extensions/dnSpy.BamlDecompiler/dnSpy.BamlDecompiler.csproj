@@ -69,6 +69,7 @@
     <Compile Include="IHandlers.cs" />
     <Compile Include="IRewritePass.cs" />
     <Compile Include="MenuCommands.cs" />
+    <Compile Include="RecursionCounter.cs" />
     <Compile Include="Rewrite\AttributeRewritePass.cs" />
     <Compile Include="Rewrite\ConnectionIdRewritePass.cs" />
     <Compile Include="Rewrite\DocumentRewritePass.cs" />

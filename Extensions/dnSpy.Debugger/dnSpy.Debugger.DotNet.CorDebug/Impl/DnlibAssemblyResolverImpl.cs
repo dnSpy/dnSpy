@@ -60,9 +60,5 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return null;
 			return dnModule.GetOrCreateCorModuleDef().Assembly;
 		}
-
-		bool IAssemblyResolver.AddToCache(AssemblyDef asm) => true;
-		bool IAssemblyResolver.Remove(AssemblyDef asm) => false;
-		void IAssemblyResolver.Clear() { }
 	}
 }

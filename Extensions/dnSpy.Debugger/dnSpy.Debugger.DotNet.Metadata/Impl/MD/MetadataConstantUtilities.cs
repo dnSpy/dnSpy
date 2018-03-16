@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			case ElementType.Char:
 				if (reader.Length < 2)
 					return (char)0;
-				return (char)reader.ReadUInt16();
+				return reader.ReadChar();
 
 			case ElementType.I1:
 				if (reader.Length < 1)

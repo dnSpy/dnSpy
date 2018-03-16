@@ -939,7 +939,7 @@ namespace dnSpy_Console {
 
 		ProjectModuleOptions CreateProjectModuleOptions(ModuleDef mod) {
 			mod.EnableTypeDefFindCache = true;
-			moduleContext.AssemblyResolver.AddToCache(mod);
+			((AssemblyResolver)moduleContext.AssemblyResolver).AddToCache(mod);
 			AddSearchPath(Path.GetDirectoryName(mod.Location));
 			var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationContext);
 			proj.DontReferenceStdLib = !addCorlibRef;

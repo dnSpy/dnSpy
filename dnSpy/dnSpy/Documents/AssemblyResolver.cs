@@ -74,9 +74,6 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		bool IAssemblyResolver.AddToCache(AssemblyDef asm) => false;
-		void IAssemblyResolver.Clear() { }
-		bool IAssemblyResolver.Remove(AssemblyDef asm) => false;
 		AssemblyDef IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
 			Resolve(assembly, sourceModule)?.AssemblyDef;
 

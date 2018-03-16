@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -231,6 +232,26 @@ namespace dnSpy.Contracts.Decompiler {
 			var gsig = new GenericInstMethodSig();
 			UpdateSigList(gsig.GenericArguments, sig.GenericArguments);
 			return gsig;
+		}
+	}
+
+	struct RecursionCounter {
+		const int MAX_RECURSION_COUNT = 100;
+		int counter;
+
+		public bool Increment() {
+			if (counter >= MAX_RECURSION_COUNT)
+				return false;
+			counter++;
+			return true;
+		}
+
+		public void Decrement() {
+#if DEBUG
+			if (counter <= 0)
+				throw new InvalidOperationException("recursionCounter <= 0");
+#endif
+			counter--;
 		}
 	}
 }
