@@ -216,7 +216,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return GoToTarget(spanData, false, false, options);
 			}
 
-			Debug.Fail(string.Format("Unknown type: {0} = {1}", reference.GetType(), reference));
+			Debug.Fail($"Unknown type: {reference.GetType()} = {reference}");
 			return false;
 		}
 

@@ -115,7 +115,7 @@ namespace dnSpy.Documents.Tabs {
 			var saveDlg = new SaveFileDialog {
 				FileName = FilenameUtils.CleanName(nodes[0].ToString(decompiler, DocumentNodeWriteOptions.Title)) + decompiler.FileExtension,
 				DefaultExt = decompiler.FileExtension,
-				Filter = string.Format("{0}|*{1}|{2}|*.*", decompiler.GenericNameUI, decompiler.FileExtension, dnSpy_Resources.AllFiles),
+				Filter = $"{decompiler.GenericNameUI}|*{decompiler.FileExtension}|{dnSpy_Resources.AllFiles}|*.*",
 			};
 			if (saveDlg.ShowDialog() != true)
 				return null;

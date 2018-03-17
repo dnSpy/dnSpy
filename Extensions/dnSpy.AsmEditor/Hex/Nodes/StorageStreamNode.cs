@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Number, StreamNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(HeapKind == DotNetHeapKind.Unknown ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
+			output.Write(HeapKind == DotNetHeapKind.Unknown ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, storageStreamVM.RCNameVM.StringZ);
 		}
 
 		public MetadataTableRecordNode FindTokenNode(uint token) {

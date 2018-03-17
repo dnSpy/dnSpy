@@ -225,7 +225,7 @@ static class " + FilterExpressionClassName + @" {
 				emitResult = comp.Emit(peStream);
 			}
 			catch (Exception ex) {
-				return (null, string.Format("Internal compiler error: {0}: {1}", ex.GetType().FullName, ex.Message));
+				return (null, $"Internal compiler error: {ex.GetType().FullName}: {ex.Message}");
 			}
 			if (!emitResult.Success) {
 				var error = emitResult.Diagnostics.FirstOrDefault(a => a.Severity == DiagnosticSeverity.Error)?.ToString() ?? "Unknown error";

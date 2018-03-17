@@ -105,6 +105,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorAppDomain other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorAppDomain);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[AppDomain] {0} {1}", Id, Name);
+		public override string ToString() => $"[AppDomain] {Id} {Name}";
 	}
 }

@@ -204,6 +204,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorModule other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorModule);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Module] DYN={0} MEM={1} A={2:X8} S={3:X8} {4}", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+		public override string ToString() => $"[Module] DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";
 	}
 }

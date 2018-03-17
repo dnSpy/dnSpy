@@ -132,6 +132,6 @@ namespace dndbg.Engine {
 		}
 		CorAssemblyDef corAssemblyDef;
 
-		public override string ToString() => string.Format("{0} {1}", UniqueId, Name);
+		public override string ToString() => $"{UniqueId} {Name}";
 	}
 }

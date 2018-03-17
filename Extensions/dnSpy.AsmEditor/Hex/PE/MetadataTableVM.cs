@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public Table Table => TableInfo.Table;
 		public uint Rows { get; }
 		public TableInfo TableInfo { get; }
-		public override string Name => string.Format("{0:X2} {1}", (byte)TableInfo.Table, TableInfo.Table);
+		public override string Name => $"{(byte)TableInfo.Table:X2} {TableInfo.Table}";
 		public string Column0Name => GetColumnName(0);
 		public string Column1Name => GetColumnName(1);
 		public string Column2Name => GetColumnName(2);

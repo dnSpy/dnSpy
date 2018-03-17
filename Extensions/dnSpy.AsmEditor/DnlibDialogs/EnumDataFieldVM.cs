@@ -43,17 +43,17 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (td != null) {
 				var s = ModelUtils.GetEnumFieldName(td, Value);
 				if (s != null)
-					return string.Format("{0}.{1}", EnumType, s);
+					return $"{EnumType}.{s}";
 			}
 			if (!IsArray)
-				return string.Format("({0}){1}", EnumType == null ? (object)dnSpy_AsmEditor_Resources.UnknownEnum : EnumType, Value);
+				return $"({(EnumType ?? (object)dnSpy_AsmEditor_Resources.UnknownEnum)}){Value}";
 
 			var list = Value as System.Collections.IList;
 			if (list == null)
-				return string.Format("({0}[])null", EnumType == null ? (object)dnSpy_AsmEditor_Resources.UnknownEnum : EnumType);
+				return $"({(EnumType ?? (object)dnSpy_AsmEditor_Resources.UnknownEnum)}[])null";
 
 			var sb = new StringBuilder();
-			sb.Append(string.Format("new {0}[] {{", EnumType == null ? (object)dnSpy_AsmEditor_Resources.UnknownEnum : EnumType));
+			sb.Append($"new {(EnumType ?? (object)dnSpy_AsmEditor_Resources.UnknownEnum)}[] {{");
 			for (int i = 0; i < list.Count; i++) {
 				if (i > 0)
 					sb.Append(',');

@@ -375,7 +375,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (value is IList<object>)
 				return CreateArray(module.CorLibTypes.Object, value);
 
-			Debug.Fail(string.Format("Unknown CA arg: {0}, ownerType: {1}", value, ownerType));
+			Debug.Fail($"Unknown CA arg: {value}, ownerType: {ownerType}");
 			return new CAArgument();
 		}
 

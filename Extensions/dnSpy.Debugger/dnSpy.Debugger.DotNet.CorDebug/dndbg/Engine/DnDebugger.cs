@@ -320,7 +320,7 @@ namespace dndbg.Engine {
 				DebugCallbackEvent?.Invoke(this, e);
 			}
 			catch (Exception ex) {
-				Debug.WriteLine(string.Format("dndbg: EX:\n\n{0}", ex));
+				Debug.WriteLine($"dndbg: EX:\n\n{ex}");
 				ResetDebuggerStates();
 				throw;
 			}
@@ -399,7 +399,7 @@ namespace dndbg.Engine {
 			// Continue() has been called!
 			int hr = controller.Continue(0);
 			bool success = hr >= 0 || hr == CordbgErrors.CORDBG_E_PROCESS_TERMINATED || hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
-			Debug.WriteLineIf(!success, string.Format("dndbg: ICorDebugController::Continue() failed: 0x{0:X8}", hr));
+			Debug.WriteLineIf(!success, $"dndbg: ICorDebugController::Continue() failed: 0x{hr:X8}");
 			return success;
 		}
 		bool continuing = false;
@@ -860,7 +860,7 @@ namespace dndbg.Engine {
 				appDomain = null;
 				if (process != null && cadArgs.AppDomain != null) {
 					b = cadArgs.AppDomain.Attach() >= 0;
-					Debug.WriteLineIf(!b, string.Format("CreateAppDomain: could not attach to AppDomain: {0:X8}", cadArgs.AppDomain.GetHashCode()));
+					Debug.WriteLineIf(!b, $"CreateAppDomain: could not attach to AppDomain: {cadArgs.AppDomain.GetHashCode():X8}");
 					if (b)
 						appDomain = process.TryAdd(cadArgs.AppDomain);
 				}
@@ -1007,7 +1007,7 @@ namespace dndbg.Engine {
 
 			default:
 				InitializeCurrentDebuggerState(e, null);
-				Debug.Fail(string.Format("Unknown debug callback type: {0}", e.Kind));
+				Debug.Fail($"Unknown debug callback type: {e.Kind}");
 				break;
 			}
 		}

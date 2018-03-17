@@ -274,7 +274,7 @@ namespace dnSpy.AsmEditor.Method {
 			set => MethodSigCreator.MethodSig = value;
 		}
 
-		public string MethodSigHeader => string.Format("MethodSig: {0}", MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig.ToString());
+		public string MethodSigHeader => $"MethodSig: {(MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig.ToString())}";
 
 		public MethodSigCreatorVM MethodSigCreator { get; }
 		public CustomAttributesVM CustomAttributesVM { get; }

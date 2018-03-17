@@ -142,7 +142,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				var win = new EditCodeDlg();
 				win.DataContext = vm;
 				win.Owner = appService.MainWindow;
-				win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
+				win.Title = $"{win.Title} - {methodNode.ToString()}";
 
 				if (win.ShowDialog() != true)
 					return;

@@ -169,7 +169,7 @@ namespace dnSpy.Documents.Tabs {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown NodeType: {0}", nodeType));
+				Debug.Fail($"Unknown NodeType: {nodeType}");
 				goto case NodeType.Unknown;
 			}
 		}

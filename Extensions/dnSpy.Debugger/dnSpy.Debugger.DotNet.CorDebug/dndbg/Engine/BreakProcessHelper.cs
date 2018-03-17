@@ -48,7 +48,7 @@ namespace dndbg.Engine {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown BreakProcessKind: {0}", type));
+				Debug.Fail($"Unknown BreakProcessKind: {type}");
 				break;
 			}
 		}

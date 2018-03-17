@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Number, SectionNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(BoxedTextColor.HexPeSectionName, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
+			output.Write(BoxedTextColor.HexPeSectionName, imageSectionHeaderVM.NameVM.String);
 		}
 	}
 }

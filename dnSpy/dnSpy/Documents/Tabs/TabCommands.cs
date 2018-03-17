@@ -619,8 +619,8 @@ namespace dnSpy.Documents.Tabs {
 			else if (i > 10)
 				s = i.ToString();
 			else
-				s = string.Format("_{0}", i);
-			return string.Format("{0} {1}", s, GetShortMenuItemHeader(tab.Content.Title));
+				s = $"_{i}";
+			return $"{s} {GetShortMenuItemHeader(tab.Content.Title)}";
 		}
 
 		void ShowTabsDlg() {

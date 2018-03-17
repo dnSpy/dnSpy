@@ -39,12 +39,11 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		protected override string Logo {
 			get {
 				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/CSharp/Interactive/CSharpReplServiceProvider.cs
-				return string.Format("Microsoft (R) Roslyn C# Compiler version {0}",
-					FileVersionInfo.GetVersionInfo(typeof(CSharpCommandLineArguments).Assembly.Location).FileVersion);
+				return $"Microsoft (R) Roslyn C# Compiler version {FileVersionInfo.GetVersionInfo(typeof(CSharpCommandLineArguments).Assembly.Location).FileVersion}";
 			}
 		}
 
-		static readonly string CODEFILTERTEXT = string.Format("{1} (*.csx)|*.csx|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.CSharpScriptFiles);
+		static readonly string CODEFILTERTEXT = $"{dnSpy_Scripting_Roslyn_Resources.CSharpScriptFiles} (*.csx)|*.csx|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
 		protected override ObjectFormatter ObjectFormatter => CSharpObjectFormatter.Instance;

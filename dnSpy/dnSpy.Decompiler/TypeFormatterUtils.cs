@@ -76,7 +76,7 @@ namespace dnSpy.Decompiler {
 				if (c >= ' ')
 					sb.Append(c);
 				else
-					sb.Append(string.Format("\\u{0:X4}", (ushort)c));
+					sb.Append($"\\u{(ushort)c:X4}");
 			}
 
 			if (sb.Length > MAX_NAME_LEN)
@@ -104,9 +104,9 @@ namespace dnSpy.Decompiler {
 		public static string GetNumberOfOverloadsString(TypeDef type, string name) {
 			int overloads = TypeFormatterUtils.GetNumberOfOverloads(type, name);
 			if (overloads == 1)
-				return string.Format(" (+ {0})", dnSpy_Decompiler_Resources.ToolTip_OneMethodOverload);
+				return $" (+ {dnSpy_Decompiler_Resources.ToolTip_OneMethodOverload})";
 			else if (overloads > 1)
-				return string.Format(" (+ {0})", string.Format(dnSpy_Decompiler_Resources.ToolTip_NMethodOverloads, overloads));
+				return $" (+ {string.Format(dnSpy_Decompiler_Resources.ToolTip_NMethodOverloads, overloads)})";
 			return null;
 		}
 

@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs {
 		static void ExecuteInternal(uint? token) {
 			if (token != null) {
 				try {
-					Clipboard.SetText(string.Format("0x{0:X8}", token.Value));
+					Clipboard.SetText($"0x{token.Value:X8}");
 				}
 				catch (ExternalException) { }
 			}

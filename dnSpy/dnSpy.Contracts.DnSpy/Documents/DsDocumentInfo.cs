@@ -76,6 +76,6 @@ namespace dnSpy.Contracts.Documents {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => string.Format("{0} {1}", Name, Type);
+		public override string ToString() => $"{Name} {Type}";
 	}
 }

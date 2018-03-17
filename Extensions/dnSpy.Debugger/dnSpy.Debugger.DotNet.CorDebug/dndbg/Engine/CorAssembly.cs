@@ -116,6 +116,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorAssembly other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorAssembly);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Assembly] {0}", Name);
+		public override string ToString() => $"[Assembly] {Name}";
 	}
 }

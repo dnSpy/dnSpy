@@ -183,6 +183,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, ProcessId, Filename);
+		public override string ToString() => $"{UniqueId} {ProcessId} {Filename}";
 	}
 }

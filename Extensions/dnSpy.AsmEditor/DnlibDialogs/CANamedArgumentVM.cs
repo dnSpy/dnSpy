@@ -257,7 +257,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				break;
 			}
 
-			Debug.Fail(string.Format("Unsupported CA named type: {0}", type));
+			Debug.Fail($"Unsupported CA named type: {type}");
 			return ConstantType.Object;
 		}
 
@@ -305,7 +305,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			case ConstantType.TypeArray:	return new SZArraySig(new ClassSig(ownerModule.CorLibTypes.GetTypeRef("System", "Type")));
 			}
 
-			Debug.Fail(string.Format("Unknown constant type: {0}", ct));
+			Debug.Fail($"Unknown constant type: {ct}");
 			return ownerModule.CorLibTypes.Object;
 		}
 
@@ -319,6 +319,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		bool PickEnumTypeCanExecute() => IsEnabled;
 		public override bool HasError => IsEnabled && CAArgumentVM.HasError;
-		public override string ToString() => string.Format("{0} = {1}", Name, CAArgumentVM.ToString());
+		public override string ToString() => $"{Name} = {CAArgumentVM.ToString()}";
 	}
 }

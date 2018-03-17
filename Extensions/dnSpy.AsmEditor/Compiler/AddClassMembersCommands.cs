@@ -139,7 +139,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var win = new EditCodeDlg();
 			win.DataContext = vm;
 			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", dnSpy_AsmEditor_Resources.EditCodeAddClassMembers, typeNode.ToString());
+			win.Title = $"{dnSpy_AsmEditor_Resources.EditCodeAddClassMembers} - {typeNode.ToString()}";
 
 			if (win.ShowDialog() != true) {
 				vm.Dispose();

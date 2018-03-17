@@ -253,7 +253,7 @@ namespace dnSpy.Output {
 				MsgBox.Instance.Show(ex);
 			}
 		}
-		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Resources.AllFiles, dnSpy_Resources.TextFiles);
+		static readonly string TEXTFILES_FILTER = $"{dnSpy_Resources.TextFiles} (*.txt)|*.txt|{dnSpy_Resources.AllFiles} (*.*)|*.*";
 
 		string GetFilename(OutputBufferVM vm) {
 			// Same as VS2015

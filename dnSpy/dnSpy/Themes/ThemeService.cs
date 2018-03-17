@@ -178,7 +178,7 @@ namespace dnSpy.Themes {
 				return theme;
 			}
 			catch (Exception) {
-				Debug.Fail(string.Format("Failed to load file '{0}'", filename));
+				Debug.Fail($"Failed to load file '{filename}'");
 			}
 			return null;
 		}

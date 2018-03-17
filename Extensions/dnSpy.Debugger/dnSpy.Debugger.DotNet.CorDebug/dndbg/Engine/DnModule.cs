@@ -92,6 +92,6 @@ namespace dndbg.Engine {
 			CachedJITCompilerFlags = CorModule.JITCompilerFlags;
 
 		internal void SetHasUnloaded() => HasUnloaded = true;
-		public override string ToString() => string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", UniqueId, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+		public override string ToString() => $"{UniqueId} DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";
 	}
 }

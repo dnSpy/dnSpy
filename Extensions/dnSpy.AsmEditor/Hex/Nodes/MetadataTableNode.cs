@@ -61,12 +61,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
-			output.Write(BoxedTextColor.Number, string.Format("{0:X2}", (byte)MetadataTableVM.Table));
+			output.Write(BoxedTextColor.Number, ((byte)MetadataTableVM.Table).ToString("X2"));
 			output.WriteSpace();
-			output.Write(BoxedTextColor.HexTableName, string.Format("{0}", MetadataTableVM.Table));
+			output.Write(BoxedTextColor.HexTableName, MetadataTableVM.Table.ToString());
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Number, string.Format("{0}", MetadataTableVM.Rows));
+			output.Write(BoxedTextColor.Number, MetadataTableVM.Rows.ToString());
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
@@ -89,7 +89,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void WriteHeader(IDecompilerOutput output) {
 			var cols = MetadataTableVM.TableInfo.Columns;
 
-			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedTextColor.Comment);
+			output.Write($"{dnSpy_AsmEditor_Resources.RowIdentifier}\t{dnSpy_AsmEditor_Resources.Token}\t{dnSpy_AsmEditor_Resources.Offset}", BoxedTextColor.Comment);
 			for (int i = 0; i < cols.Count; i++) {
 				output.Write("\t", BoxedTextColor.Comment);
 				output.Write(MetadataTableVM.GetColumnName(i), BoxedTextColor.Comment);

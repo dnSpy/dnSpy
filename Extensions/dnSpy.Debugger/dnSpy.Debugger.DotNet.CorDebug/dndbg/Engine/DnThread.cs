@@ -69,6 +69,6 @@ namespace dndbg.Engine {
 
 		internal void NameChanged() { }
 
-		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, ThreadId, VolatileThreadId);
+		public override string ToString() => $"{UniqueId} {ThreadId} {VolatileThreadId}";
 	}
 }

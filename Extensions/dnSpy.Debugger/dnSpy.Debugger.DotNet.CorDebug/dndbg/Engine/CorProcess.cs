@@ -210,6 +210,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorProcess other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorProcess);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Process] {0} CLR v{1} Flags={2}", ProcessId, CLRVersion, DesiredNGENCompilerFlags);
+		public override string ToString() => $"[Process] {ProcessId} CLR v{CLRVersion} Flags={DesiredNGENCompilerFlags}";
 	}
 }

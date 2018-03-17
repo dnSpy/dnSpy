@@ -447,7 +447,7 @@ namespace dnSpy.Tabs {
 				if (ti.TabContent == content)
 					return i;
 			}
-			Debug.Fail(string.Format("Couldn't find {0}", content));
+			Debug.Fail($"Couldn't find {content}");
 			return -1;
 		}
 

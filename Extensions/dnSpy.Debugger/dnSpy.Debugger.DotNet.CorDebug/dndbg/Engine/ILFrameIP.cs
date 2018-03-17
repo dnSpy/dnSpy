@@ -38,14 +38,14 @@ namespace dndbg.Engine {
 
 		public override string ToString() {
 			if (IsExact)
-				return string.Format("0x{0:X4}", Offset);
+				return $"0x{Offset:X4}";
 			if (IsApproximate)
-				return string.Format("~0x{0:X4}", Offset);
+				return $"~0x{Offset:X4}";
 			if (IsProlog)
 				return "prolog";
 			if (IsEpilog)
 				return "epilog";
-			return string.Format("(0x{0:X4}, {1})", Offset, Mapping);
+			return $"(0x{Offset:X4}, {Mapping})";
 		}
 	}
 }

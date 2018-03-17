@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				public void Write(IDecompilerOutput output, MethodSig sig) => Write(output, sig);
 
-				void Write(IDecompilerOutput output, object value) => output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedTextColor.Text);
+				void Write(IDecompilerOutput output, object value) => output.Write($"Missing ISimpleILPrinter: {value}", BoxedTextColor.Text);
 			}
 		}
 
@@ -593,13 +593,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		static string GetLocalName(string name, int index) {
 			if (!string.IsNullOrEmpty(name))
 				return name;
-			return string.Format("V_{0}", index);
+			return $"V_{index}";
 		}
 
 		static string GetParameterName(string name, int index) {
 			if (!string.IsNullOrEmpty(name))
 				return name;
-			return string.Format("A_{0}", index);
+			return $"A_{index}";
 		}
 
 		static void WriteLocalParameterIndex(this ITextColorWriter output, int index) {
@@ -649,7 +649,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			output.Write(BoxedTextColor.Number, instr.Index.ToString());
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Label, string.Format("{0:X4}", instr.Offset));
+			output.Write(BoxedTextColor.Label, instr.Offset.ToString("X4"));
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 

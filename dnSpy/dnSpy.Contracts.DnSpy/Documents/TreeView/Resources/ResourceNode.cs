@@ -149,13 +149,13 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				break;
 			case ResourceType.Linked:
 				var file = ((LinkedResource)Resource).File;
-				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetadata ? "ContainsNoMetaData" : "ContainsMetaData", SimpleTypeConverter.ByteArrayToString(file.HashValue));
+				extra = $"{file.Name}, {(file.ContainsNoMetadata ? "ContainsNoMetaData" : "ContainsMetaData")}, {SimpleTypeConverter.ByteArrayToString(file.HashValue)}";
 				break;
 			case ResourceType.Embedded:
 				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Length);
 				break;
 			}
-			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), Resource.ResourceType, Resource.Attributes), BoxedTextColor.Comment);
+			output.Write($" ({(extra == null ? string.Empty : $"{extra}, ")}{Resource.ResourceType}, {Resource.Attributes})", BoxedTextColor.Comment);
 			decompiler.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

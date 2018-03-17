@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			var sb = new StringBuilder(data.Length * 2);
 			foreach (var b in data)
-				sb.Append(string.Format("{0:X2}", b));
+				sb.Append(b.ToString("X2"));
 			return sb.ToString();
 		}
 

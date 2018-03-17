@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var win = new MethodBodyDlg();
 			win.DataContext = data;
 			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
+			win.Title = $"{win.Title} - {methodNode.ToString()}";
 
 			if (data.IsCilBody && offsets != null)
 				data.CilBodyVM.Select(offsets);

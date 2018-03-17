@@ -190,7 +190,7 @@ namespace dnSpy.MainApp {
 		void UpdateTitle() => mainWindow.Title = GetDefaultTitle();
 
 		string GetDefaultTitle() {
-			var t = string.Format("dnSpy {0} ({1})", AssemblyInformationalVersion, string.Join(", ", titleInfos.ToArray()));
+			var t = $"dnSpy {AssemblyInformationalVersion} ({string.Join(", ", titleInfos.ToArray())})";
 			return t;
 		}
 		readonly List<string> titleInfos = new List<string>();

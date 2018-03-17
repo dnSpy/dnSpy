@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			var dlg = new WF.OpenFileDialog {
 				RestoreDirectory = true,
 				Multiselect = false,
-				Filter = string.Format("{1}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico|{0} (*.*)|*.*", dnSpy_AsmEditor_Resources.AllFiles, dnSpy_AsmEditor_Resources.Images),
+				Filter = $"{dnSpy_AsmEditor_Resources.Images}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico|{dnSpy_AsmEditor_Resources.AllFiles} (*.*)|*.*",
 			};
 			if (dlg.ShowDialog() != WF.DialogResult.OK)
 				return null;

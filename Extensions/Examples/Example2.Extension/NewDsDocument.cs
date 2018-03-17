@@ -34,7 +34,7 @@ namespace Example2.Extension {
 					return text = File.ReadAllText(Filename);
 				}
 				catch {
-					return text = string.Format("Couldn't read the file: {0}", Filename);
+					return text = $"Couldn't read the file: {Filename}";
 				}
 			}
 		}

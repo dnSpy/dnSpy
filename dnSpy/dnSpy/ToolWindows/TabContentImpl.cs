@@ -226,7 +226,7 @@ namespace dnSpy.ToolWindows {
 			case TabContentVisibilityEvent.GotKeyboardFocus:	return ToolWindowContentVisibilityEvent.GotKeyboardFocus;
 			case TabContentVisibilityEvent.LostKeyboardFocus:	return ToolWindowContentVisibilityEvent.LostKeyboardFocus;
 			default:
-				Debug.Fail(string.Format("Unknown event: {0}", ev));
+				Debug.Fail($"Unknown event: {ev}");
 				return null;
 			}
 		}

@@ -147,7 +147,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			for (int i = 0; i < instrs.Length; i++) {
 				if (lines++ > 0)
 					sb.AppendLine();
-				sb.Append(string.Format("0x{0:X8}", baseOffset + instrs[i].Offset));
+				sb.Append($"0x{baseOffset + instrs[i].Offset:X8}");
 			}
 			if (lines > 1)
 				sb.AppendLine();
@@ -177,7 +177,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				if (lines++ > 0)
 					sb.AppendLine();
-				sb.Append(string.Format("0x{0:X8}", token.Value));
+				sb.Append($"0x{token.Value:X8}");
 			}
 			if (lines > 1)
 				sb.AppendLine();
@@ -250,7 +250,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				var instr = instrs[i];
 				output.Write(BoxedTextColor.Number, instr.Index.ToString());
 				output.Write(BoxedTextColor.Text, "\t");
-				output.Write(BoxedTextColor.Label, string.Format("{0:X4}", instr.Offset));
+				output.Write(BoxedTextColor.Label, instr.Offset.ToString("X4"));
 				output.Write(BoxedTextColor.Text, "\t");
 				output.Write(BoxedTextColor.OpCode, instr.Code.ToOpCode().ToString());
 

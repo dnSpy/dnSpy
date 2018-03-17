@@ -641,7 +641,7 @@ namespace dnSpy.Language.Intellisense {
 			if (string.IsNullOrEmpty(toolTip))
 				return null;
 			if (!string.IsNullOrEmpty(accessKey))
-				return string.Format("{0} ({1})", toolTip, string.Format(dnSpy_Resources.ShortCutKeyAltPlusAnyKey, accessKey.ToUpper()));
+				return $"{toolTip} ({string.Format(dnSpy_Resources.ShortCutKeyAltPlusAnyKey, accessKey.ToUpper())})";
 			return toolTip;
 		}
 

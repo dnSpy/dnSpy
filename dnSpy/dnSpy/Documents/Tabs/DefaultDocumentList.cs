@@ -327,7 +327,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			public string AssemblyFullName =>
-				string.Format("{0}, Version={1}, Culture={2}, PublicKeyToken={3}", AssemblyName, Version, string.IsNullOrEmpty(Culture) ? "null" : Culture, string.IsNullOrEmpty(PublicKeyToken) ? "null" : PublicKeyToken);
+				$"{AssemblyName}, Version={Version}, Culture={(string.IsNullOrEmpty(Culture) ? "null" : Culture)}, PublicKeyToken={(string.IsNullOrEmpty(PublicKeyToken) ? "null" : PublicKeyToken)}";
 
 			public override string ToString() => AssemblyFullName;
 			public void Write(XElement elem) => elem.SetAttributeValue("name", AssemblyFullName);

@@ -39,12 +39,11 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		protected override string Logo {
 			get {
 				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/VisualBasic/Interactive/VisualBasicReplServiceProvider.vb
-				return string.Format("Microsoft (R) Roslyn Visual Basic Compiler version {0}",
-					FileVersionInfo.GetVersionInfo(typeof(VisualBasicCommandLineArguments).Assembly.Location).FileVersion);
+				return $"Microsoft (R) Roslyn Visual Basic Compiler version {FileVersionInfo.GetVersionInfo(typeof(VisualBasicCommandLineArguments).Assembly.Location).FileVersion}";
 			}
 		}
 
-		static readonly string CODEFILTERTEXT = string.Format("{1} (*.vbx)|*.vbx|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.VisualBasicScriptFiles);
+		static readonly string CODEFILTERTEXT = $"{dnSpy_Scripting_Roslyn_Resources.VisualBasicScriptFiles} (*.vbx)|*.vbx|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
 		protected override ObjectFormatter ObjectFormatter => VisualBasicObjectFormatter.Instance;
@@ -103,7 +102,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 					break;
 
 				default:
-					Debug.Fail(string.Format("Unknown option: '{0}'", t.Item1));
+					Debug.Fail($"Unknown option: '{t.Item1}'");
 					break;
 				}
 			}

@@ -352,7 +352,7 @@ namespace dnSpy.Documents.TreeView {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown event type: {0}", e.Type));
+				Debug.Fail($"Unknown event type: {e.Type}");
 				break;
 			}
 		}

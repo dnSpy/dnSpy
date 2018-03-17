@@ -58,7 +58,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
 		internal const string CMD_PREFIX = "#";
 
-		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.TextFiles);
+		static readonly string TEXTFILES_FILTER = $"{dnSpy_Scripting_Roslyn_Resources.TextFiles} (*.txt)|*.txt|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected abstract string TextFilenameNoExtension { get; }
 		protected abstract string CodeFilenameNoExtension { get; }

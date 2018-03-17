@@ -180,6 +180,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public override int GetHashCode() => (int)token;
 
 		/// <inheritdoc/>
-		public override string ToString() => string.Format("{0:X8}", token);
+		public override string ToString() => token.ToString("X8");
 	}
 }

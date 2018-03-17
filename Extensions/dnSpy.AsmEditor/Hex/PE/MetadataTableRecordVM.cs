@@ -27,8 +27,8 @@ using dnSpy.Contracts.Utilities;
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class MetadataTableRecordVM : HexVM, IVirtualizedListItem {
 		public int Index => (int)mdToken.Rid - 1;
-		public override string Name => string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
-		public string OffsetString => string.Format("0x{0:X8}", Span.Start.ToUInt64());
+		public override string Name => $"{mdToken.Table}[{mdToken.Rid:X6}]";
+		public string OffsetString => $"0x{Span.Start.ToUInt64():X8}";
 		public MDToken Token => mdToken;
 		public override IEnumerable<HexField> HexFields => hexFields;
 		public HexField Column0 => GetField(0);
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			case ColumnSize.TypeOrMethodDef: return GetCodedTokenDescription(CodedToken.TypeOrMethodDef, "TypeOrMethodDef", col, field);
 			case ColumnSize.HasCustomDebugInformation: return GetCodedTokenDescription(CodedToken.HasCustomDebugInformation, "HasCustomDebugInformation", col, field);
 			default:
-				Debug.Fail(string.Format("Unknown ColumnSize: {0}", col.ColumnSize));
+				Debug.Fail($"Unknown ColumnSize: {col.ColumnSize}");
 				return string.Empty;
 			}
 		}
@@ -184,14 +184,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		string GetStringsDescription(HexField field) {
 			var s = ReadStringsHeap(field);
 			if (!string.IsNullOrEmpty(s))
-				return string.Format("{0} (#Strings Heap Offset)", s);
+				return $"{s} (#Strings Heap Offset)";
 			return "#Strings Heap Offset";
 		}
 
 		string GetGuidDescription(HexField field) {
 			var g = ReadGuidHeap(field);
 			if (g != null)
-				return string.Format("{0} (#GUID Heap Index)", g.Value.ToString());
+				return $"{g.Value.ToString()} (#GUID Heap Index)";
 			return "#GUID Heap Index";
 		}
 
@@ -203,18 +203,18 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		string GetDescription(Table table, HexField field) {
 			var info = GetInfo(table, ReadFieldValue(field));
 			if (string.IsNullOrEmpty(info))
-				return string.Format("{0} RID", table);
-			return string.Format("{0} ({1} RID)", info, table);
+				return $"{table} RID";
+			return $"{info} ({table} RID)";
 		}
 
 		string GetCodedTokenDescription(CodedToken codedToken, string codedTokenName, ColumnInfo col, HexField field) {
 			if (!codedToken.Decode(ReadFieldValue(field), out MDToken token))
-				return string.Format("Invalid {0} Coded Token", codedTokenName);
+				return $"Invalid {codedTokenName} Coded Token";
 
 			var info = GetInfo(token.Table, token.Rid);
 			if (string.IsNullOrEmpty(info))
-				return string.Format("{0}: {1}[{2}], 0x{3:X8}", codedTokenName, token.Table, token.Rid, token.Raw);
-			return string.Format("{0} ({1}: {2}[{3}], 0x{4:X8})", info, codedTokenName, token.Table, token.Rid, token.Raw);
+				return $"{codedTokenName}: {token.Table}[{token.Rid}], 0x{token.Raw:X8}";
+			return $"{info} ({codedTokenName}: {token.Table}[{token.Rid}], 0x{token.Raw:X8})";
 		}
 
 		uint ReadFieldValue(HexField field) {
@@ -307,9 +307,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		void InvalidateDescription(int index) => OnPropertyChanged(string.Format("Column{0}Description", index));
+		void InvalidateDescription(int index) => OnPropertyChanged($"Column{index}Description");
 		public string RidString => mdToken.Rid.ToString();
-		public string TokenString => string.Format("0x{0:X8}", mdToken.Raw);
+		public string TokenString => $"0x{mdToken.Raw:X8}";
 		public virtual string Info => string.Empty;
 		protected virtual int[] InfoColumnIndexes => null;
 
@@ -378,7 +378,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override string Info => CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1));
 		protected override int[] InfoColumnIndexes => infoColIndexes;
 		static readonly int[] infoColIndexes = new int[] { 1, 2 };
-		public static string CreateTypeString(string ns, string name) => string.IsNullOrEmpty(ns) ? name : string.Format("{0}.{1}", ns, name);
+		public static string CreateTypeString(string ns, string name) => string.IsNullOrEmpty(ns) ? name : $"{ns}.{name}";
 	}
 
 	sealed class TypeDefMetadataTableRecordVM : MetadataTableRecordVM {

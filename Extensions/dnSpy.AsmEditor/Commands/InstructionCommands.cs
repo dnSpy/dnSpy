@@ -147,7 +147,7 @@ namespace dnSpy.AsmEditor.Commands {
 						FoundUnknownBytes = true;
 					}
 					else
-						sb.Append(string.Format("{0:X2}", b));
+						sb.Append(b.ToString("X2"));
 				}
 			}
 

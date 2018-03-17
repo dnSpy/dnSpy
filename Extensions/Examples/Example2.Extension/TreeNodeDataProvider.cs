@@ -191,7 +191,7 @@ namespace Example2.Extension {
 				return false;
 
 			context.Decompiler.WriteCommentLine(context.Output, "The secret message has been decrypted.");
-			context.Decompiler.WriteCommentLine(context.Output, string.Format("The message is: {0}", msgNode.Message));
+			context.Decompiler.WriteCommentLine(context.Output, $"The message is: {msgNode.Message}");
 			context.ContentTypeString = ContentTypes.PlainText;
 			return true;
 		}

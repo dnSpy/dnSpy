@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = context.Decompiler.ContentTypeString;
-			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", Span.Start.ToUInt64(), Span.End.ToUInt64() - 1, ToString()));
+			context.Decompiler.WriteCommentLine(context.Output, $"{Span.Start.ToUInt64():X8} - {Span.End.ToUInt64() - 1:X8} {ToString()}");
 			DecompileFields(context.Decompiler, context.Output);
 			(context.Output as IDocumentViewerOutput)?.DisableCaching();
 			return true;
@@ -56,9 +56,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected virtual void DecompileFields(IDecompiler decompiler, IDecompilerOutput output) {
 			foreach (var vm in HexVMs) {
 				decompiler.WriteCommentLine(output, string.Empty);
-				decompiler.WriteCommentLine(output, string.Format("{0}:", vm.Name));
+				decompiler.WriteCommentLine(output, $"{vm.Name}:");
 				foreach (var field in vm.HexFields)
-					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.Span.Start.ToUInt64(), field.Span.End.ToUInt64() - 1, field.FormattedValue, field.Name));
+					decompiler.WriteCommentLine(output, $"{field.Span.Start.ToUInt64():X8} - {field.Span.End.ToUInt64() - 1:X8} {field.FormattedValue} = {field.Name}");
 			}
 		}
 

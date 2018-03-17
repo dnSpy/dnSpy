@@ -75,7 +75,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				if (lines++ > 0)
 					sb.AppendLine();
-				sb.Append(string.Format("0x{0:X8}", token.Value));
+				sb.Append($"0x{token.Value:X8}");
 			}
 			if (lines > 1)
 				sb.AppendLine();

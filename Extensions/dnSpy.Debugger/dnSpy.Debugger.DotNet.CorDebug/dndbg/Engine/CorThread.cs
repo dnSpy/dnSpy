@@ -169,6 +169,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorThread other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorThread);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Thread] TID={0}, VTID={1} State={2} UserState={3}", ThreadId, VolatileThreadId, State, UserState);
+		public override string ToString() => $"[Thread] TID={ThreadId}, VTID={VolatileThreadId} State={State} UserState={UserState}";
 	}
 }

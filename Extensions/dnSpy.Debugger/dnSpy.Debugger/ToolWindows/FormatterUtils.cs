@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.ToolWindows {
 
 			foreach (var c in s) {
 				if (c < ' ')
-					sb.Append(string.Format("\\u{0:X4}", (ushort)c));
+					sb.Append($"\\u{(ushort)c:X4}");
 				else
 					sb.Append(c);
 			}

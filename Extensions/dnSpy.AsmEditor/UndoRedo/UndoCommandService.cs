@@ -418,7 +418,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					return uo;
 			}
 
-			Debug.Fail(string.Format("Unknown modified object: {0}: {1}", obj?.GetType(), obj));
+			Debug.Fail($"Unknown modified object: {obj?.GetType()}: {obj}");
 			return null;
 		}
 
@@ -434,7 +434,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 						break;
 				}
 
-				Debug.Assert(found, string.Format("Unknown modified object: {0}: {1}", obj?.GetType(), obj));
+				Debug.Assert(found, $"Unknown modified object: {obj?.GetType()}: {obj}");
 			}
 		}
 

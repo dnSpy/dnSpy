@@ -103,13 +103,13 @@ namespace dnSpy.Menus {
 			foreach (var item in mefMenus) {
 				string ownerGuidString = item.Metadata.OwnerGuid ?? MenuConstants.APP_MENU_GUID;
 				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
-				Debug.Assert(b, string.Format("Menu: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
+				Debug.Assert(b, $"Menu: Couldn't parse OwnerGuid property: '{ownerGuidString}'");
 				if (!b)
 					continue;
 
 				string guidString = item.Metadata.Guid;
 				b = Guid.TryParse(guidString, out var guid);
-				Debug.Assert(b, string.Format("Menu: Couldn't parse Guid property: '{0}'", guidString));
+				Debug.Assert(b, $"Menu: Couldn't parse Guid property: '{guidString}'");
 				if (!b)
 					continue;
 
@@ -146,14 +146,14 @@ namespace dnSpy.Menus {
 			foreach (var item in mefMenuItems) {
 				string ownerGuidString = item.Metadata.OwnerGuid ?? MenuConstants.CTX_MENU_GUID;
 				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
-				Debug.Assert(b, string.Format("MenuItem: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
+				Debug.Assert(b, $"MenuItem: Couldn't parse OwnerGuid property: '{ownerGuidString}'");
 				if (!b)
 					continue;
 
 				string guidString = item.Metadata.Guid;
 				if (guidString != null) {
 					b = Guid.TryParse(guidString, out var guid);
-					Debug.Assert(b, string.Format("MenuItem: Couldn't parse Guid property: '{0}'", guidString));
+					Debug.Assert(b, $"MenuItem: Couldn't parse Guid property: '{guidString}'");
 					if (!b)
 						continue;
 				}
@@ -171,7 +171,7 @@ namespace dnSpy.Menus {
 					dict.Add(ownerGuid, groupDict = new Dictionary<string, MenuItemGroupMD>());
 				if (!groupDict.TryGetValue(groupName, out var mdGroup))
 					groupDict.Add(groupName, mdGroup = new MenuItemGroupMD(groupOrder));
-				Debug.Assert(mdGroup.Order == groupOrder, string.Format("MenuItem: Group order is different: {0} vs {1}", mdGroup.Order, groupOrder));
+				Debug.Assert(mdGroup.Order == groupOrder, $"MenuItem: Group order is different: {mdGroup.Order} vs {groupOrder}");
 				mdGroup.Items.Add(new MenuItemMD(item));
 			}
 

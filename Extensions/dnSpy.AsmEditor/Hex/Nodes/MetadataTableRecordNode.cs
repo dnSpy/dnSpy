@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
-			output.Write(BoxedTextColor.Number, string.Format("{0}", index + 1));
+			output.Write(BoxedTextColor.Number, (index + 1).ToString());
 			if (infoTuple != null) {
 				output.WriteSpace();
 				output.Write(BoxedTextColor.Operator, "-");

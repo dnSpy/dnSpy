@@ -241,8 +241,7 @@ namespace dnSpy.Hex.Editor.Search {
 			new DataKindVM(HexDataKind.Single, "Single"),
 			new DataKindVM(HexDataKind.Double, "Double"),
 		};
-		static string GetStringDataKind(string encodingName) =>
-			string.Format("String ({0})", encodingName);
+		static string GetStringDataKind(string encodingName) => $"String ({encodingName})";
 
 		readonly WpfHexView wpfHexView;
 		readonly HexEditorOperations editorOperations;

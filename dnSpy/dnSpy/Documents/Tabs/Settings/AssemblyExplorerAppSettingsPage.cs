@@ -159,9 +159,9 @@ namespace dnSpy.Documents.Tabs.Settings {
 				memberKindVMs[otherIndex] = memberKindVMs[index];
 				memberKindVMs[index] = newValue;
 
-				OnPropertyChanged(string.Format("MemberKind{0}", otherIndex));
+				OnPropertyChanged($"MemberKind{otherIndex}");
 			}
-			OnPropertyChanged(string.Format("MemberKind{0}", index));
+			OnPropertyChanged($"MemberKind{index}");
 		}
 
 		public AssemblyExplorerAppSettingsPage(DocumentTreeViewSettingsImpl documentTreeViewSettings) {

@@ -188,7 +188,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			var provider = context.Create();
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
-			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
+			string opCodeHex = opCode.Size > 1 ? $"0x{opCode.Value:X4}" : $"0x{opCode.Value:X2}";
 			provider.Output.Write(BoxedTextColor.OpCode, opCode.Name);
 			provider.Output.WriteSpace();
 			provider.Output.Write(BoxedTextColor.Punctuation, "(");

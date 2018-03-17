@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				return;
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "@");
-			output.Write(BoxedTextColor.Number, string.Format("{0:X8}", tok.MDToken.Raw));
+			output.Write(BoxedTextColor.Number, tok.MDToken.Raw.ToString("X8"));
 		}
 
 		/// <summary>

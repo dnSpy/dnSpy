@@ -58,7 +58,7 @@ namespace dnSpy_Console {
 				return new DnSpyDecompiler().Run(args);
 			}
 			catch (Exception ex) {
-				Console.Error.WriteLine(string.Format("{0}", ex));
+				Console.Error.WriteLine(ex.ToString());
 				return 1;
 			}
 			finally {

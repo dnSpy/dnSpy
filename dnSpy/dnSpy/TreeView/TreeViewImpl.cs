@@ -206,7 +206,7 @@ namespace dnSpy.TreeView {
 			if (ga.Order > gb.Order)
 				return 1;
 			if (ga.GetType() != gb.GetType()) {
-				Debug.Fail(string.Format("Two different groups have identical order: {0} vs {1}", ga.GetType(), gb.GetType()));
+				Debug.Fail($"Two different groups have identical order: {ga.GetType()} vs {gb.GetType()}");
 				return ga.GetType().GetHashCode().CompareTo(gb.GetType().GetHashCode());
 			}
 			return ga.Compare(a, b);
