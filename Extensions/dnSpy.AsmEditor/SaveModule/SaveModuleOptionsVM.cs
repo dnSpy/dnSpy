@@ -178,7 +178,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void ReinitializeModuleWriterOptions() {
 			if (UseMixedMode)
-				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)Module));
+				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)Module, optimizeImageSize: true));
 			else
 				InitializeFrom(new ModuleWriterOptions(Module));
 			WritePdb = CanWritePdb;
@@ -186,7 +186,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public ModuleWriterOptionsBase CreateWriterOptions() {
 			if (UseMixedMode) {
-				var options = new NativeModuleWriterOptions((ModuleDefMD)Module);
+				var options = new NativeModuleWriterOptions((ModuleDefMD)Module, optimizeImageSize: true);
 				CopyTo(options);
 				options.KeepExtraPEData = KeepExtraPEData;
 				options.KeepWin32Resources = KeepWin32Resources;
