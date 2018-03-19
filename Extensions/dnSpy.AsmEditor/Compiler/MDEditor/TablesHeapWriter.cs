@@ -196,8 +196,8 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				return false;
 			var ac = a.Columns;
 			var bc = b.Columns;
-			Debug.Assert(ac.Count == bc.Count);
-			for (int i = 0; i < ac.Count; i++) {
+			Debug.Assert(ac.Length == bc.Length);
+			for (int i = 0; i < ac.Length; i++) {
 				if (ac[i].Offset != bc[i].Offset)
 					return false;
 			}
