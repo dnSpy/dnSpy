@@ -127,7 +127,7 @@
     <value>Siempre generar variables de excepción en bloques catch a menos que sea de tipo objeto</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
-    <value>Orden de decompilación</value>
+    <value>Orden de descompilación</value>
   </data>
   <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
     <value>Descompilar métodos anónimos/lambdas</value>

@@ -202,7 +202,7 @@
     <value>Вычисление функции</value>
   </data>
   <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+    <value>Переход native</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
     <value>Эта среда выполнения не поддерживает вызов обобщенных методов</value>
@@ -244,9 +244,9 @@
     <value>_Таймаут (с)</value>
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
-    <value>This is for Unity Debug builds only</value>
+    <value>Только для билдов Unity Debug</value>
   </data>
   <data name="DebuggingUnityGamesText" xml:space="preserve">
-    <value>Debugging Unity Games</value>
+    <value>Отладка игр Unity</value>
   </data>
 </root>

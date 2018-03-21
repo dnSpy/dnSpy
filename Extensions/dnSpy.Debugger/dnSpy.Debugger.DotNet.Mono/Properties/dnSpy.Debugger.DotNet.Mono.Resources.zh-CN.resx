@@ -247,6 +247,6 @@
     <value>仅可用于Debug编译的Unity进程</value>
   </data>
   <data name="DebuggingUnityGamesText" xml:space="preserve">
-    <value>Debugging Unity Games</value>
+    <value>调试 Unity 游戏</value>
   </data>
 </root>

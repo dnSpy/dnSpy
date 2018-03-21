@@ -1920,6 +1920,6 @@
     <value>Администратор</value>
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
-    <value>Allow more than one instance (restart required)</value>
+    <value>Разрешить более одного экземпляра (требуется перезапуск)</value>
   </data>
 </root>

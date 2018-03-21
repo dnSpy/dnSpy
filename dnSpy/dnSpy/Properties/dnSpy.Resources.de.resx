@@ -292,7 +292,7 @@
     <value>Gehe zu MD Token</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>_Verstecke alle Registerkarten</value>
+    <value>Alle Registerkarten _verstecken</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
     <value>_Ausblenden</value>
@@ -325,16 +325,16 @@
     <value>_Fenster</value>
   </data>
   <data name="MergeAllTabGroupsCommand" xml:space="preserve">
-    <value>Führe alle Registergruppen zusammen</value>
+    <value>Alle Registergruppen zusammenführen</value>
   </data>
   <data name="MessageBoxDontShowAgain" xml:space="preserve">
     <value>_Nicht wieder anzeigen</value>
   </data>
   <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe alle in nächste Registergruppe</value>
+    <value>Alle in nächste Registergruppe verschieben</value>
   </data>
   <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe alle in vorherige Registergruppe</value>
+    <value>Alle in vorherige Registergruppe verschieben</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
     <value>_Unten</value>
@@ -346,10 +346,10 @@
     <value>_Rechts</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe Registergruppe hinter nächste Registergruppe</value>
+    <value>Registergruppe hinter nächste Registergruppe verschieben</value>
   </data>
   <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe Registergruppe vor vorherige Registergruppe</value>
+    <value>Registergruppe vor vorherige Registergruppe verschieben</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
     <value>Gehe zu _nächster Registergruppe</value>
@@ -655,7 +655,7 @@
     <value>Strg+L</value>
   </data>
   <data name="SearchWindow_Local" xml:space="preserve">
-    <value>Lokal</value>
+    <value>Feld</value>
   </data>
   <data name="SearchWindow_Local_Key" xml:space="preserve">
     <value>Strg+I</value>
@@ -694,7 +694,7 @@
     <value>Parameter</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Parameter/Lokal</value>
+    <value>Parameter/Feld</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
     <value>Strg+N</value>
@@ -1362,7 +1362,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Gehe zu Versatz...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Speichere Auswah_l...</value>
+    <value>Auswah_l speichern...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
     <value>Auswählen...</value>
@@ -1666,7 +1666,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+E, Strg+S</value>
   </data>
   <data name="HexEditFieldCommand" xml:space="preserve">
-    <value>Bearbeite Feld</value>
+    <value>Feld bearbeiten</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
     <value>Den Text einfärben</value>
@@ -1858,7 +1858,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Rückgabetypen anzeigen</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Tokens anzeigen</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
     <value>Strg+K, Strg+W</value>

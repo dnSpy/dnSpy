@@ -133,16 +133,16 @@
     <value>Статические члены</value>
   </data>
   <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
-    <value>Dynamic View</value>
+    <value>Представление Dynamic</value>
   </data>
   <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
     <value>Ошибка</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
-    <value>Expanding the Dynamic View will get the dynamic members for the object</value>
+    <value>Раскрытие представления Dynamic запросит динамические члены объекта</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
-    <value>Раскрытие Results View приведет к перечислению IEnumerable</value>
+    <value>Раскрытие представления результатов приведет к перечислению IEnumerable</value>
   </data>
   <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
     <value>Члены экземпляра</value>
@@ -151,7 +151,7 @@
     <value>Исходный вид</value>
   </data>
   <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
-    <value>Результаты</value>
+    <value>Представление результатов</value>
   </data>
   <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
     <value>Shared члены</value>
@@ -160,10 +160,10 @@
     <value>Делегаты</value>
   </data>
   <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
-    <value>Dynamic View requires {0} to be referenced</value>
+    <value>Представлению Dynamic необходима ссылка на {0}</value>
   </data>
   <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
-    <value>Only COM or Dynamic objects can have Dynamic View</value>
+    <value>Представление Dynamic может быть только у объектов COM или dynamic</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>Перечисления</value>
@@ -211,7 +211,7 @@
     <value>Свойства</value>
   </data>
   <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
-    <value>Only Enumerable types can have Results View</value>
+    <value>Представление результатов может быть только у типов Enumerable</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
     <value>Фрагменты</value>
@@ -220,7 +220,7 @@
     <value>Структуры</value>
   </data>
   <data name="SystemCoreDllNotLoaded" xml:space="preserve">
-    <value>Результатам необходимо ссылка на {0}</value>
+    <value>Предоставлению результатов необходима ссылка на {0}</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
     <value>Тип «{0}» не существует в сборке «{1}»</value>

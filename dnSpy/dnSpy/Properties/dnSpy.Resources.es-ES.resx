@@ -139,7 +139,7 @@
     <value>Todos los archivos</value>
   </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
-    <value>Asamblea Ex_plorer</value>
+    <value>Ex_plorador de ensamblados</value>
   </data>
   <data name="AssemblyExplorerKey" xml:space="preserve">
     <value>Ctrl+Alt+L</value>
@@ -394,7 +394,7 @@
     <value>_Abrir carpeta contenedora</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
-    <value>Abierto de _GAC...</value>
+    <value>Abierto emsamblados _GAC...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
     <value>Creado por:</value>
@@ -418,7 +418,7 @@
     <value>Mostrando {0:n0} de {1:n0} archivos</value>
   </data>
   <data name="OpenGAC_Title" xml:space="preserve">
-    <value>Abrir desde GAC</value>
+    <value>Abrir ensamblados GAC</value>
   </data>
   <data name="OpenGAC_Version_Column" xml:space="preserve">
     <value>Versión</value>
@@ -442,7 +442,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="OpenListCommand" xml:space="preserve">
-    <value>Abrir L_ista...</value>
+    <value>Abrir L_ista de ensamblados...</value>
   </data>
   <data name="OpenList_AskForName" xml:space="preserve">
     <value>_Nombre</value>
@@ -481,13 +481,13 @@
     <value>Opciones</value>
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
-    <value>Permitir todos los mensajes de advertencia</value>
+    <value>Habilitar todos los mensajes de advertencia</value>
   </data>
   <data name="Options_Misc_Deserialize" xml:space="preserve">
     <value>Deserializar los tipos en recursos (inseguro)</value>
   </data>
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Cualquier Asamblea podría obtener cargado y ejecutado con los datos de los recursos.</value>
+    <value>Cualquier ensamblado podría ser cargado y ejecutado con los datos de los recursos.</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Utilizar ficheros de mappeo en memoria I/O</value>
@@ -511,7 +511,7 @@
     <value>Guardando...</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
-    <value>Búsqueda abortada, más que {0:n0} se han encontrado resultados.</value>
+    <value>Búsqueda abortada, más de {0:n0} resultados encontrado.</value>
   </data>
   <data name="SearchAssembliesCommand" xml:space="preserve">
     <value>_Buscar ensamblados</value>
@@ -565,7 +565,7 @@
     <value>Se ha producido un error desconocido</value>
   </data>
   <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
-    <value>Uso de grupos de la pestaña Horizontal</value>
+    <value>Use grupos de pestaña Horizontal</value>
   </data>
   <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
     <value>Uso de grupos de la pestaña Vertical</value>
@@ -589,7 +589,7 @@
     <value>Restaurar las pestañas al iniciar</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Mostrar token de clave pública de ensamblaje</value>
+    <value>Mostrar token de clave pública del ensamblado</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
     <value>Mostrar la versión del ensamblado</value>
@@ -598,7 +598,7 @@
     <value>Mostrar números de línea</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
-    <value>Mostrar metadatos tokens</value>
+    <value>Mostrar tokens de metadatos</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
     <value>_Opciones...</value>
@@ -610,10 +610,10 @@
     <value>Ctrl+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+    <value>Ensamblado</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
-    <value>AssemblyRef</value>
+    <value>Referencia de ensamblado</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
     <value>Búsqueda de mayúsculas y minúsculas</value>
@@ -679,10 +679,10 @@
     <value>Ctrl+M</value>
   </data>
   <data name="SearchWindow_Module" xml:space="preserve">
-    <value>Module</value>
+    <value>Módulo</value>
   </data>
   <data name="SearchWindow_ModuleRef" xml:space="preserve">
-    <value>ModuleRef</value>
+    <value>Referencia de Módulo</value>
   </data>
   <data name="SearchWindow_Namespace" xml:space="preserve">
     <value>Espacio de nombres</value>
@@ -730,10 +730,10 @@
     <value>Posición de la ventana</value>
   </data>
   <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Utilizar al formateador de texto nuevo</value>
+    <value>Utilice el nuevo formateador de texto</value>
   </data>
   <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>El formateador de texto nuevo es más rápido pero no soporta Resumen o todos los caracteres unicode.</value>
+    <value>El formateador de texto nuevo es más rápido pero no soporta resumen o todos los caracteres unicode.</value>
   </data>
   <data name="UseNewRenderer_HexEditor" xml:space="preserve">
     <value>Editor Hexadecimal</value>
@@ -775,13 +775,13 @@
     <value>¿Desea cargar la configuración guardada?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>Exportar a pro_yecto...</value>
+    <value>Exportar pro_yecto...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
-    <value>Exportar a proyecto</value>
+    <value>Exportar proyecto</value>
   </data>
   <data name="Error_FileAlreadyExists" xml:space="preserve">
-    <value>Ya existe un archivo con el mismo nombre que la carpeta de destino.</value>
+    <value>Ya existe un archivo con el mismo nombre de la carpeta destino.</value>
   </data>
   <data name="Error_MissingDestinationFolder" xml:space="preserve">
     <value>Falta la carpeta destino.</value>
@@ -799,10 +799,10 @@
     <value>_Carpeta</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
-    <value>Se descompilar un archivo. Seleccione más de una Asamblea a descompilar más de un archivo.</value>
+    <value>Se descompilará un archivo. Seleccione más de un Asamblado para descompilar más de un archivo.</value>
   </data>
   <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
-    <value>{0:n0} archivos se decompilarán.</value>
+    <value>Se descompilarán {0:n0} archivos.</value>
   </data>
   <data name="ExportToProject_Language" xml:space="preserve">
     <value>_Idioma</value>
@@ -834,7 +834,7 @@
     <value>Registro de errores</value>
   </data>
   <data name="DecompilerDlgTabTitle" xml:space="preserve">
-    <value>Decompilador</value>
+    <value>Descompilador</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
     <value>Eventos</value>
@@ -873,7 +873,7 @@
     <value>Tipo seleccionado</value>
   </data>
   <data name="GoToResourceCommand" xml:space="preserve">
-    <value>Ir al recur_so</value>
+    <value>Ir a recur_so</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
     <value>Colapsar la vista del árbol de nodos</value>
@@ -900,7 +900,7 @@
     <value>Borrar todo</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>_Mostrar salida desde:</value>
+    <value>_Mostrar salida de:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
     <value>Alternar el ajuste de la palabra</value>
@@ -981,7 +981,7 @@
     <value>Agregar rutas de acceso a imágenes y carpetas de la imagen, una ruta por línea:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>Intervalo</value>
+    <value>Intérvalo</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
     <value>Altura Máxima</value>
@@ -1044,10 +1044,10 @@
     <value>Ambos</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Abajo sólo</value>
+    <value>Sólo abajo</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Arriba sólo</value>
+    <value>Sólo arriba</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
     <value>Imágenes</value>
@@ -1086,7 +1086,7 @@
     <value>Usar expresiones regulares</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Alternar entre buscar y reemplazar modos</value>
+    <value>Alternar entre modos de buscar y reemplazar</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
     <value>Cerrar</value>
@@ -1119,7 +1119,7 @@
     <value>Integrar con explorador de Windows</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Orden (necesitada reiniciar)</value>
+    <value>Aviso (necesitada reiniciar)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
     <value>Con un solo clic expande los nodos</value>
@@ -1128,7 +1128,7 @@
     <value>Resaltado de sintaxis</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
-    <value>Tipografía</value>
+    <value>Fuente</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
     <value>Editor de texto</value>
@@ -1167,7 +1167,7 @@
     <value>Comprimir las líneas en blanco</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Comprimir las líneas que no tienen ninguna caracteres alfanuméricos</value>
+    <value>Comprimir las líneas que no tienen algún caracteres alfanuméricos</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
     <value>Margen del indicador</value>
@@ -1188,7 +1188,7 @@
     <value>Altura de línea</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Ver procedimiento de separadores de línea</value>
+    <value>Mostrar procedimiento separador de líneas</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
     <value>Márgenes</value>
@@ -1236,10 +1236,10 @@
     <value>Todos los archivos soportados</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>Net sólo</value>
+    <value>.Net Solamentre</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>Todos los archivos han sido filtrados. Filtro se puede cambiar en opciones del explorador de la Asamblea.</value>
+    <value>Todos los archivos han sido filtrados. El filtro se puede cambiar en opciones de explorador de ensamblado.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
     <value>Línea de trazos</value>
@@ -1281,10 +1281,10 @@
     <value>Ninguno</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Mostrar columna separadores de línea</value>
+    <value>Mostrar separadores de línea de columna</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
-    <value>Desplazamiento</value>
+    <value>D_esplazamiento</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
     <value>Ir al Offset</value>
@@ -1296,7 +1296,7 @@
     <value>_Inicio</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Seleccionar</value>
+    <value>Selecciona</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
     <value>Valor no válido</value>
@@ -1328,7 +1328,7 @@
     <value>Borrar Bytes seleccionados</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copie la matriz C #</value>
+    <value>Copie la matriz C#</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
     <value>Copiar Offset</value>
@@ -1346,10 +1346,10 @@
     <value>Copiar cadena UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Copia de matriz de Visual Basic</value>
+    <value>Copia de matriz Visual Basic</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Rellenar la selección con el octeto...</value>
+    <value>Rellenar la selección con el Byte...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Byte</value>
@@ -1500,7 +1500,7 @@
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Refrescar</value>
+    <value>Refresco</value>
   </data>
   <data name="TextEditor" xml:space="preserve">
     <value>Editor de texto</value>
@@ -1551,10 +1551,10 @@
     <value>Big Endian</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>Copiar {0}</value>
+    <value>Copia {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Copia absoluta de Offset</value>
+    <value>Copia Offset absoluto</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
     <value>Copia archivo Offset</value>
@@ -1599,7 +1599,7 @@
     <value>Ctrl + 4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>_Seleccionar a nueva posición</value>
+    <value>_Seleccionar nueva posición</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>Ctrl+O</value>
@@ -1632,7 +1632,7 @@
     <value>Cuerpo del método</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Token de metadatos</value>
+    <value>Token de metadato</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_Indice</value>
@@ -1644,7 +1644,7 @@
     <value>Ctrl+F12</value>
   </data>
   <data name="HexEditorSelectFileCommand" xml:space="preserve">
-    <value>Seleccionar archivo</value>
+    <value>Selecciona archivo</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
     <value>Seleccione Archivo anidado</value>
@@ -1659,16 +1659,16 @@
     <value>Ctrl + E, Ctrl + N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Seleccionar estructura</value>
+    <value>Selecciona estructura</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl + E, Ctrl + S</value>
   </data>
   <data name="HexEditFieldCommand" xml:space="preserve">
-    <value>Editar campo</value>
+    <value>Edita campo</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
-    <value>Colorear el texto</value>
+    <value>Colorea el texto</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
     <value>Alt + flecha derecha</value>
@@ -1734,7 +1734,7 @@
     <value>Nombre</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>No hay marcadores coinciden con el filtro de búsqueda.</value>
+    <value>No hay marcadores coincidentes con el filtro de búsqueda.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
     <value>Buscar</value>
@@ -1746,7 +1746,7 @@
     <value>Ventana _Bookmark</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Exportar todos los favoritos con el actual criterio de búsqueda</value>
+    <value>Exportar todos los marcadores con el actual criterio de búsqueda</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
     <value>Mueva el cursor al marcador seleccionado.</value>

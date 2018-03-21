@@ -136,7 +136,7 @@
     <value>Tabs verwenden</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
-    <value>Disassembliere BAML</value>
+    <value>BAML disassemblieren</value>
   </data>
   <data name="Error_AttachedEvent" xml:space="preserve">
     <value>Ereignis '{0}' angehängt.</value>

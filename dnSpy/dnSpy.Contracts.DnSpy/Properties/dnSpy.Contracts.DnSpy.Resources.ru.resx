@@ -183,7 +183,7 @@
     <value>Столбец поиска: {0}</value>
   </data>
   <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
-    <value>Use '{0}' to invert the match, eg. {1}</value>
+    <value>Используйте '{0}' для инвертирования совпадения, например {1}</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Значение должно быть типа {0}.

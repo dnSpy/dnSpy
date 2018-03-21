@@ -1381,7 +1381,7 @@ ERROR: {1}</value>
     <value>&lt; desconocido &gt;</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Refrescar</value>
+    <value>Refresco</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
     <value>Agrupar parámetros y locales</value>

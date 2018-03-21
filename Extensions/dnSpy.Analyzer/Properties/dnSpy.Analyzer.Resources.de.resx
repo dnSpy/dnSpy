@@ -208,7 +208,7 @@
     <value>Entf</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Tokens anzeigen</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Syntax hervorheben</value>

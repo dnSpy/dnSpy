@@ -2411,10 +2411,10 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Aviso</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Adicionar Referência de Assembly (CTRL + O)</value>
+    <value>Add Assembly Reference</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Adicionar Referência de Assembly (GAC) (CTRL + Shift + O)</value>
+    <value>Add Assembly Reference (GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
     <value>Não foi possível adicionar referências de assembly.</value>
@@ -2505,5 +2505,23 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   </data>
   <data name="ParamDef_Flags_Retval" xml:space="preserve">
     <value>Retval</value>
+  </data>
+  <data name="AddDocumentsToolTip" xml:space="preserve">
+    <value>Add Source Code</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>CTRL + O</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>CTRL + Shift + A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl + Shift + O</value>
+  </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>Add Class Members</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>Add Class Members ({0})...</value>
   </data>
 </root>

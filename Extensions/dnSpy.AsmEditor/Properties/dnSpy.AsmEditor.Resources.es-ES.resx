@@ -130,19 +130,19 @@
     <value>Habilitar el seguimiento de la compilación _JIT</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
-    <value>Proc_sador Arch especificado</value>
+    <value>Arquitectura Proc_esador especificado</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>Clave pública</value>
+    <value>_Clave pública</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
     <value>_Retargetable</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>Tipo de contenido</value>
+    <value>_Tipo de contenido</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
-    <value>Cultura</value>
+    <value>C_ultura</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
     <value>Versión de.NET</value>
@@ -157,10 +157,10 @@
     <value>Arquitectura de procesador</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
-    <value>Clave pública</value>
+    <value>Clave _Pública</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
-    <value>Versión</value>
+    <value>_Versión</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
     <value>Añadir</value>
@@ -175,10 +175,10 @@
     <value>Eliminar</value>
   </data>
   <data name="Button_Edit" xml:space="preserve">
-    <value>Editar...</value>
+    <value>_Editar...</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>Aceptar</value>
+    <value>_Aceptar</value>
   </data>
   <data name="Button_Remove" xml:space="preserve">
     <value>_Eliminar</value>
@@ -187,7 +187,7 @@
     <value>Restablecer</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
     <value>Propiedad/Tipo de campo</value>
@@ -211,10 +211,10 @@
     <value>Constructor de argumentos</value>
   </data>
   <data name="CopyAsTextCommand" xml:space="preserve">
-    <value>Copiar como texto</value>
+    <value>Copiar como te_xto</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Copiar</value>
+    <value>Cop_ia</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
     <value>Copiar bytes IL</value>
@@ -223,7 +223,7 @@
     <value>Ctrl+B</value>
   </data>
   <data name="CouldNotResolveType" xml:space="preserve">
-    <value>No se pudo resolver tipo. Asegúrese que su ensamblado haya sido cargado.</value>
+    <value>No se pudo resolver el tipo. Asegúrese que su ensamblado haya sido cargado.</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
     <value>Crear ensamblado...</value>
@@ -2405,10 +2405,10 @@
     <value>Advertencia</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Agregar la referencia de ensamblado (Ctrl + O)</value>
+    <value>Agregar la referencia de ensamblado</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Agregar la referencia de ensamblado (GAC) (Ctrl + Mayús + O)</value>
+    <value>Agregar la referencia de ensamblado(GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
     <value>No se pudieron agregar las referencias de ensamblaje.</value>
@@ -2499,5 +2499,23 @@
   </data>
   <data name="ParamDef_Flags_Retval" xml:space="preserve">
     <value>Retval</value>
+  </data>
+  <data name="AddDocumentsToolTip" xml:space="preserve">
+    <value>Añadir código fuente</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Mayús+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Mayús+O</value>
+  </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>Añadir miembros a la clase</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>Agregar a miembros a la clase ({0})...</value>
   </data>
 </root>
