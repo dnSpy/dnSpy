@@ -154,12 +154,26 @@ namespace dnSpy.AsmEditor.SaveModule {
 				default:						throw new InvalidOperationException();
 				}
 				fileProgress = null;
+				if (!StringComparer.OrdinalIgnoreCase.Equals(state.File.OriginalFileName, state.File.FileName))
+					SaveAppConfig(state.File.OriginalFileName, state.File.FileName);
 
 				OnWritingFile?.Invoke(this, new ModuleSaverWriteEventArgs(state.File, false));
 			}
 
 			fileIndex = filesToSave.Length;
 			OnProgressUpdated?.Invoke(this, EventArgs.Empty);
+		}
+
+		void SaveAppConfig(string origFilename, string newFilename) {
+			var origAppConfig = origFilename + ".config";
+			var newAppConfig = newFilename + ".config";
+			if (StringComparer.OrdinalIgnoreCase.Equals(origAppConfig, newAppConfig))
+				return;
+			if (!File.Exists(origAppConfig))
+				return;
+			if (File.Exists(newAppConfig))
+				File.Delete(newAppConfig);
+			File.Copy(origAppConfig, newAppConfig);
 		}
 
 		void Save(SaveModuleOptionsVM vm) {

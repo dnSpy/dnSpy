@@ -26,6 +26,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public abstract SaveOptionsType Type { get; }
 		public abstract object UndoDocument { get; }
 
+		public string OriginalFileName { get; set; }
+
 		public string FileName {
 			get => filename;
 			set {

@@ -31,12 +31,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public SaveHexOptionsVM(HexBuffer buffer) {
 			this.buffer = buffer;
 			FileName = buffer.Name ?? string.Empty;
+			OriginalFileName = FileName;
 		}
 
 		public SaveHexOptionsVM Clone() => CopyTo(new SaveHexOptionsVM(buffer));
 
 		public SaveHexOptionsVM CopyTo(SaveHexOptionsVM other) {
 			other.FileName = FileName;
+			other.OriginalFileName = OriginalFileName;
 			return other;
 		}
 

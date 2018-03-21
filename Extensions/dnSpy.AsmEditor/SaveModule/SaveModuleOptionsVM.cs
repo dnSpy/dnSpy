@@ -170,6 +170,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void Reinitialize() {
 			FileName = Module.Location;
+			OriginalFileName = Module.Location;
 			if (UseMixedMode == IsMixedModeModule)
 				ReinitializeModuleWriterOptions();
 			else
@@ -217,6 +218,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {
 			other.FileName = FileName;
+			other.OriginalFileName = OriginalFileName;
 			other.UseMixedMode = UseMixedMode;
 			other.InitializeFrom(CreateWriterOptions());
 			return other;
