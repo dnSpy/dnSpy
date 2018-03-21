@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var importer = new ModuleImporter(module);
 			try {
-				importer.Import(result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
+				importer.Import(module.Context.AssemblyResolver, result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
 			}
 			catch (Exception ex) {
 				Contracts.App.MsgBox.Instance.Show(ex);

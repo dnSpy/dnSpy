@@ -157,9 +157,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new ModuleImporterAbortedException();
 		}
 
-		ModuleDefMD LoadModule(byte[] rawGeneratedModule, in DebugFileResult debugFile) {
+		ModuleDefMD LoadModule(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile) {
 			var opts = new ModuleCreationOptions();
 			opts.TryToLoadPdbFromDisk = false;
+			opts.Context = new ModuleContext(assemblyResolver, new Resolver(assemblyResolver));
 
 			switch (debugFile.Format) {
 			case DebugFileFormat.None:
@@ -336,11 +337,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Imports everything into the target module. All global members are merged and possibly renamed.
 		/// All non-nested types are renamed if a type with the same name exists in the target module.
 		/// </summary>
+		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="options">Options</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
-			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+		public void Import(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
+			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
 
 			AddGlobalTypeMembers(sourceModule.GlobalType);
 			foreach (var type in sourceModule.Types) {
@@ -385,15 +387,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Imports all new types and methods. Members that only exist in <paramref name="targetType"/>
 		/// are considered deleted. Members that exist in both types are merged.
 		/// </summary>
+		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void Import(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
 				throw new ArgumentException("Type must not be nested");
-			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
 
 			var newType = FindSourceType(targetType);
 			if (newType.DeclaringType != null)
@@ -427,15 +430,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <summary>
 		/// Imports all new types and members. Nothing is removed.
 		/// </summary>
+		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void ImportNewMembers(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void ImportNewMembers(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
 				throw new ArgumentException("Type must not be nested");
-			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
 
 			var newType = FindSourceType(targetType);
 			if (newType.DeclaringType != null)
@@ -628,13 +632,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// exists in both modules is assumed to be the original member stub.
 		/// All the instructions in the edited method are imported, and its impl attributes. Nothing else is imported.
 		/// </summary>
+		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetMethod">Original method that was edited</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
+		public void Import(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
-			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
+			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
 
 			var newMethod = FindSourceMethod(targetMethod);
 			var newMethodNonNestedDeclType = newMethod.DeclaringType;
@@ -1509,8 +1514,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool IsSource(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, sourceModule.Name);
 		bool IsTarget(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, targetModule.Name);
 
-		TypeDef ImportTypeDef(TypeDef type) => type == null ? null : oldTypeToNewType[type].TargetType;
-		MethodDef ImportMethodDef(MethodDef method) => method == null ? null : oldMethodToNewMethod[method].TargetMember;
+		TypeDef TryImportTypeDef(TypeDef type) => type != null && oldTypeToNewType.TryGetValue(type, out var importedType) ? importedType.TargetType : type;
+		MethodDef TryImportMethodDef(MethodDef method) => method != null && oldMethodToNewMethod.TryGetValue(method, out var importedMethod) ? importedMethod.TargetMember : method;
 
 		TypeSig Import(TypeSig type) {
 			if (type == null)
@@ -1540,11 +1545,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			case ElementType.ByRef:		result = new ByRefSig(Import(type.Next)); break;
 			case ElementType.ValueType: result = CreateClassOrValueType((type as ClassOrValueTypeSig).TypeDefOrRef, true); break;
 			case ElementType.Class:		result = CreateClassOrValueType((type as ClassOrValueTypeSig).TypeDefOrRef, false); break;
-			case ElementType.Var:		result = new GenericVar((type as GenericVar).Number, ImportTypeDef((type as GenericVar).OwnerType)); break;
+			case ElementType.Var:		result = new GenericVar((type as GenericVar).Number, TryImportTypeDef((type as GenericVar).OwnerType)); break;
 			case ElementType.ValueArray:result = new ValueArraySig(Import(type.Next), (type as ValueArraySig).Size); break;
 			case ElementType.FnPtr:		result = new FnPtrSig(Import((type as FnPtrSig).Signature)); break;
 			case ElementType.SZArray:	result = new SZArraySig(Import(type.Next)); break;
-			case ElementType.MVar:		result = new GenericMVar((type as GenericMVar).Number, ImportMethodDef((type as GenericMVar).OwnerMethod)); break;
+			case ElementType.MVar:		result = new GenericMVar((type as GenericMVar).Number, TryImportMethodDef((type as GenericMVar).OwnerMethod)); break;
 			case ElementType.CModReqd:	result = new CModReqdSig(Import((type as ModifierSig).Modifier), Import(type.Next)); break;
 			case ElementType.CModOpt:	result = new CModOptSig(Import((type as ModifierSig).Modifier), Import(type.Next)); break;
 			case ElementType.Module:	result = new ModuleSig((type as ModuleSig).Index, Import(type.Next)); break;
