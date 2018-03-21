@@ -102,10 +102,9 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 							break;
 
 						case 2:
-							// The tables can only grow in size so it's not possible for a column to change
-							// from 4 bytes in size to 2 bytes in size. Since this column is 2 bytes in size,
-							// the old column is also 2 bytes in size.
-							Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
+							// The old and new sizes should match, unless the metadata writer used eg. BigStrings
+							// when it wasn't needed.
+							//Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
 							Debug.Assert(value <= ushort.MaxValue);
 							destination[destinationIndex++] = (byte)value;
 							destination[destinationIndex++] = (byte)(value >> 8);
@@ -139,7 +138,9 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 							break;
 
 						case 2:
-							Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
+							// The old and new sizes should match, unless the metadata writer used eg. BigStrings
+							// when it wasn't needed.
+							//Debug.Assert(newColumns[i].Size == oldColumns[i].Size);
 							destination[destinationIndex++] = *p++;
 							destination[destinationIndex++] = *p++;
 							break;

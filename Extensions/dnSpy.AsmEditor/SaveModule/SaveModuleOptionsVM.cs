@@ -193,7 +193,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return options;
 			}
 			else {
-				var options = new ModuleWriterOptions();
+				var options = new ModuleWriterOptions(Module);
 				CopyTo(options);
 				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;

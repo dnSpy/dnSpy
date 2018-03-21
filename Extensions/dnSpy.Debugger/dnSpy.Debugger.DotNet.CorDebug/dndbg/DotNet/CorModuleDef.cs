@@ -373,7 +373,7 @@ namespace dndbg.DotNet {
 				else if ((peKind & CorPEKind.pe32BitPreferred) != 0)
 					Cor20HeaderFlags |= ComImageFlags.Bit32Required | ComImageFlags.Bit32Preferred;
 
-				if (mach == Machine.AMD64 || mach == Machine.ARM64 || mach == Machine.IA64 || (peKind & CorPEKind.pe32BitRequired) == 0)
+				if (mach.Value.Is64Bit() || (peKind & CorPEKind.pe32BitRequired) == 0)
 					Characteristics |= Characteristics.LargeAddressAware;
 				else
 					Characteristics |= Characteristics.Bit32Machine;
