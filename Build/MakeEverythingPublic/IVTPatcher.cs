@@ -121,7 +121,7 @@ namespace MakeEverythingPublic {
 				return false;
 			if (!reader.ReadCompressedUInt32(out uint len) || (ulong)reader.Position + len >= end)
 				return false;
-			var s = reader.ReadString((int)len, Encoding.UTF8);
+			var s = reader.ReadUtf8String((int)len);
 			const string PublicKeyPattern = "PublicKey=";
 			int index = s.IndexOf(PublicKeyPattern, StringComparison.OrdinalIgnoreCase);
 			if (index >= 0)
