@@ -168,6 +168,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					if (GetValue(value, out l))
 						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
 				}
+				if ((type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) && targetType.IsPointer) {
+					if (GetValue(value, out l))
+						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
+				}
 				break;
 			}
 

@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 							else
 								newValue = new IntPtr(ci.Value64);
 						}
-						else if (type == type.AppDomain.System_UIntPtr) {
+						else if (type == type.AppDomain.System_UIntPtr || type.IsPointer || type.IsFunctionPointer) {
 							if (PointerSize == 4)
 								newValue = new UIntPtr(ci.UnsignedValue32);
 							else
