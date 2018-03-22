@@ -145,7 +145,13 @@
                                                 mbody:ComboBoxAttachedProps.SelectionBoxItemTemplate="{StaticResource OperandDataTemplate}"
                                                 ItemsSource="{Binding CodeVM.Items}"
                                                 SelectedIndex="{Binding CodeVM.SelectedIndex}"
-                                                VerticalContentAlignment="Center"/>
+                                                VerticalContentAlignment="Center">
+                                                <ComboBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <VirtualizingStackPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ComboBox.ItemsPanel>
+                                            </ComboBox>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
