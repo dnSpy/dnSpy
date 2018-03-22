@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -99,8 +100,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		string GetRequiredAssemblyFilename(DbgRuntime runtime) =>
 			"Microsoft.CSharp.dll";
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options) =>
-			CreateValueNode(evalInfo, false, getDynamicViewValue.Type, getDynamicViewValue, index, options, dynamicViewProxyExpression);
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
+			CreateValueNode(evalInfo, false, getDynamicViewValue.Type, getDynamicViewValue, index, options, dynamicViewProxyExpression, formatSpecifiers);
 
 		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, in DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -60,7 +61,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => arrayCount;
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			DbgDotNetValueResult newValue = default;
 			try {
@@ -101,11 +102,11 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 								newValue.Value.Dispose();
 								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.DebugViewPropertyName, info.name));
 								expression = valueNodeFactory.GetFieldExpression(expression, info.valueField.Name, null, false);
-								newNode = valueNodeFactory.Create(evalInfo, name, info.value, null, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false);
+								newNode = valueNodeFactory.Create(evalInfo, name, info.value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false);
 							}
 						}
 						if (newNode == null)
-							newNode = valueNodeFactory.Create(evalInfo, name, newValue.Value, null, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false);
+							newNode = valueNodeFactory.Create(evalInfo, name, newValue.Value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false);
 					}
 					newValue = default;
 					res[i] = newNode;

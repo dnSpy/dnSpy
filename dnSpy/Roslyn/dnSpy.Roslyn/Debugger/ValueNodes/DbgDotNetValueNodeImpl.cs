@@ -42,13 +42,14 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override string ImageName { get; }
 		public override bool IsReadOnly { get; }
 		public override bool CausesSideEffects { get; }
-		public override ReadOnlyCollection<string> FormatSpecifiers { get; }
+		public override ReadOnlyCollection<string> FormatSpecifiers => formatSpecifiers;
 		public override bool? HasChildren => childNodeProvider?.HasChildren ?? false;
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetValueNodeProvider childNodeProvider;
 		readonly DbgDotNetValueNodeInfo nodeInfo;
 		readonly DbgDotNetText valueText;
+		ReadOnlyCollection<string> formatSpecifiers;
 		readonly ColumnFormatter columnFormatter;
 
 		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, in DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, in DbgDotNetText valueText, ReadOnlyCollection<string> formatSpecifiers, ColumnFormatter columnFormatter) {
@@ -67,9 +68,11 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			ActualType = actualType;
 			ErrorMessage = errorMessage;
 			this.valueText = valueText;
-			FormatSpecifiers = formatSpecifiers;
+			this.formatSpecifiers = formatSpecifiers;
 			this.columnFormatter = columnFormatter;
 		}
+
+		internal void SetFormatSpecifiers(ReadOnlyCollection<string> formatSpecifiers) => this.formatSpecifiers = formatSpecifiers;
 
 		public override bool FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			if (columnFormatter?.FormatName(evalInfo, output, formatter, options, cultureInfo) == true)
@@ -124,7 +127,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
 			if (childNodeProvider == null)
 				return Array.Empty<DbgDotNetValueNode>();
-			return childNodeProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options);
+			return childNodeProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options, FormatSpecifiers);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

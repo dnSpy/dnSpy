@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
@@ -169,8 +170,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options) =>
-			CreateValueNode(evalInfo, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression);
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
+			CreateValueNode(evalInfo, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, formatSpecifiers);
 
 		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, in DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -50,7 +51,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => (uint)tupleFields.Length;
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			var valueResults = new List<DbgDotNetValueResult>();
@@ -93,9 +94,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					if (errorMessage != null)
 						newNode = valueNodeFactory.CreateError(evalInfo, name, errorMessage, expression, false);
 					else if (valueIsException)
-						newNode = valueNodeFactory.Create(evalInfo, name, objValue, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
+						newNode = valueNodeFactory.Create(evalInfo, name, objValue, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
 					else
-						newNode = valueNodeFactory.Create(evalInfo, name, objValue, null, options, expression, imageName, isReadOnly, false, expectedType, false);
+						newNode = valueNodeFactory.Create(evalInfo, name, objValue, formatSpecifiers, options, expression, imageName, isReadOnly, false, expectedType, false);
 
 					foreach (var vr in valueResults)
 						vr.Value?.Dispose();

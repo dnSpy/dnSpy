@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
@@ -45,7 +46,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options) {
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult valueResult = default;
 			try {
@@ -90,9 +91,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				if (valueResult.HasError)
 					newNode = valueNodeFactory.CreateError(evalInfo, info.Name, valueResult.ErrorMessage, expression, false);
 				else if (valueResult.ValueIsException)
-					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, null, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
+					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
 				else
-					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, null, options, expression, imageName, isReadOnly, false, expectedType, false);
+					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, formatSpecifiers, options, expression, imageName, isReadOnly, false, expectedType, false);
 
 				valueResult = default;
 				return (newNode, true);

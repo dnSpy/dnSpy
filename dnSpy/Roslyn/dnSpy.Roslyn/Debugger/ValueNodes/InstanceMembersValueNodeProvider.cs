@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -40,7 +41,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			this.imageName = imageName;
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options) =>
-			CreateValueNode(evalInfo, addParens, slotType, value, index, options, Expression);
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
+			CreateValueNode(evalInfo, addParens, slotType, value, index, options, Expression, formatSpecifiers);
 	}
 }
