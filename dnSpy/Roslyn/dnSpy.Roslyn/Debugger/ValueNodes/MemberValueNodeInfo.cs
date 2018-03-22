@@ -24,12 +24,14 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	readonly struct MemberValueNodeInfoCollection {
-		public static readonly MemberValueNodeInfoCollection Empty = new MemberValueNodeInfoCollection(Array.Empty<MemberValueNodeInfo>(), false);
+		public static readonly MemberValueNodeInfoCollection Empty = new MemberValueNodeInfoCollection(Array.Empty<MemberValueNodeInfo>(), false, false);
 		public readonly MemberValueNodeInfo[] Members;
 		public readonly bool HasHideRoot;
-		public MemberValueNodeInfoCollection(MemberValueNodeInfo[] members, bool hasHideRoot) {
+		public readonly bool HasShowNever;
+		public MemberValueNodeInfoCollection(MemberValueNodeInfo[] members, bool hasHideRoot, bool hasShowNever) {
 			Members = members;
 			HasHideRoot = hasHideRoot;
+			HasShowNever = hasShowNever;
 		}
 	}
 

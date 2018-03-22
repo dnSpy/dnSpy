@@ -310,6 +310,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var staticMembersList = new List<MemberValueNodeInfo>();
 				bool instanceHasHideRoot = false;
 				bool staticHasHideRoot = false;
+				bool instanceHasShowNever = false;
+				bool staticHasShowNever = false;
 
 				byte inheritanceLevel;
 				DmdType currentType;
@@ -328,10 +330,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					var nodeInfo = new MemberValueNodeInfo(field, inheritanceLevel);
 					if (field.IsStatic) {
 						staticHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						staticHasShowNever |= nodeInfo.HasDebuggerBrowsableState_Never;
 						staticMembersList.Add(nodeInfo);
 					}
 					else {
 						instanceHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						instanceHasShowNever |= nodeInfo.HasDebuggerBrowsableState_Never;
 						instanceMembersList.Add(nodeInfo);
 					}
 				}
@@ -354,10 +358,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					var nodeInfo = new MemberValueNodeInfo(property, inheritanceLevel);
 					if (getter.IsStatic) {
 						staticHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						staticHasShowNever |= nodeInfo.HasDebuggerBrowsableState_Never;
 						staticMembersList.Add(nodeInfo);
 					}
 					else {
 						instanceHasHideRoot |= nodeInfo.HasDebuggerBrowsableState_RootHidden;
+						instanceHasShowNever |= nodeInfo.HasDebuggerBrowsableState_Never;
 						instanceMembersList.Add(nodeInfo);
 					}
 				}
@@ -365,8 +371,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var instanceMembersArray = InitializeOverloadedMembers(instanceMembersList.ToArray());
 				var staticMembersArray = InitializeOverloadedMembers(staticMembersList.ToArray());
 
-				instanceMembers = instanceMembersList.Count == 0 ? MemberValueNodeInfoCollection.Empty : new MemberValueNodeInfoCollection(instanceMembersArray, instanceHasHideRoot);
-				staticMembers = staticMembersList.Count == 0 ? MemberValueNodeInfoCollection.Empty : new MemberValueNodeInfoCollection(staticMembersArray, staticHasHideRoot);
+				instanceMembers = instanceMembersList.Count == 0 ? MemberValueNodeInfoCollection.Empty : new MemberValueNodeInfoCollection(instanceMembersArray, instanceHasHideRoot, instanceHasShowNever);
+				staticMembers = staticMembersList.Count == 0 ? MemberValueNodeInfoCollection.Empty : new MemberValueNodeInfoCollection(staticMembersArray, staticHasHideRoot, staticHasShowNever);
 
 				Array.Sort(instanceMembers.Members, MemberValueNodeInfoEqualityComparer.Instance);
 				Array.Sort(staticMembers.Members, MemberValueNodeInfoEqualityComparer.Instance);
@@ -534,7 +540,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 			if (!forceRawView && (creationOptions & CreationOptions.NoExtraRawView) == 0) {
 				GetMemberCollections(state, evalOptions, out var instanceMembersInfos, out var staticMembersInfos);
-				if (instanceMembersInfos.HasHideRoot) {
+				if (instanceMembersInfos.HasHideRoot || instanceMembersInfos.HasShowNever) {
 					AddProviders(providers, state, nodeInfo.Expression, addParens, slotType, nodeInfo.Value, evalOptions, isRawView: false);
 					AddProvidersOneChildNode(providers, state, nodeInfo.Expression, addParens, slotType, nodeInfo.Value, evalOptions, isRawView: true);
 					return;
@@ -632,6 +638,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		static MemberValueNodeInfoCollection Filter(in MemberValueNodeInfoCollection infos, bool isRawView, bool hideCompilerGeneratedMembers, bool respectHideMemberAttributes, bool publicMembers, bool hideDeprecatedError) {
 			bool hasHideRoot = false;
+			bool hasShowNever = false;
 			var members = infos.Members.Where(a => {
 				Debug.Assert(a.Member.MemberType == DmdMemberTypes.Field || a.Member.MemberType == DmdMemberTypes.Property);
 				if (publicMembers && !a.IsPublic)
@@ -643,9 +650,10 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				if (hideDeprecatedError && a.DeprecatedError)
 					return false;
 				hasHideRoot |= a.HasDebuggerBrowsableState_RootHidden;
+				hasShowNever |= a.HasDebuggerBrowsableState_Never;
 				return true;
 			}).ToArray();
-			return new MemberValueNodeInfoCollection(members, hasHideRoot);
+			return new MemberValueNodeInfoCollection(members, hasHideRoot, hasShowNever);
 		}
 	}
 
