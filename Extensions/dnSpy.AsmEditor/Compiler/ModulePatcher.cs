@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						new MDWriter(moduleData, mdEditor, stream).Write();
 						NativeMemoryRawModuleBytes newRawData = null;
 						try {
-							newRawData = new NativeMemoryRawModuleBytes((int)stream.Length);
+							newRawData = new NativeMemoryRawModuleBytes((int)stream.Length, isFileLayout: true);
 							stream.CopyTo((IntPtr)newRawData.Pointer, newRawData.Size);
 							moduleData = newRawData;
 						}

@@ -449,8 +449,10 @@ namespace dnSpy.AsmEditor.Compiler {
 				compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(caughtException) };
 			}
 			else if (result?.Success == true) {
+				ModuleImporterAssemblyResolver asmResolver = null;
 				try {
-					importer = new ModuleImporter(sourceModule);
+					asmResolver = new ModuleImporterAssemblyResolver(assemblyReferenceResolver.GetReferences());
+					importer = new ModuleImporter(sourceModule, asmResolver);
 					Import(importer, result.Value);
 					compilerDiagnostics = importer.Diagnostics;
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
@@ -464,6 +466,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				catch (Exception ex) {
 					compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(ex) };
 					importer = null;
+				}
+				finally {
+					asmResolver?.Dispose();
 				}
 			}
 

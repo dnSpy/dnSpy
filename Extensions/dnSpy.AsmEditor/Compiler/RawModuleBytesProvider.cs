@@ -26,7 +26,7 @@ using dnlib.IO;
 
 namespace dnSpy.AsmEditor.Compiler {
 	abstract class RawModuleBytesProvider {
-		public abstract (RawModuleBytes rawData, bool isFileLayout) GetRawModuleBytes(ModuleDef module);
+		public abstract RawModuleBytes GetRawModuleBytes(ModuleDef module);
 	}
 
 	[Export(typeof(RawModuleBytesProvider))]
@@ -36,13 +36,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		[ImportingConstructor]
 		RawModuleBytesProviderImpl() => buffer = new byte[0x2000];
 
-		public override (RawModuleBytes rawData, bool isFileLayout) GetRawModuleBytes(ModuleDef module) {
+		public override RawModuleBytes GetRawModuleBytes(ModuleDef module) {
 			// Try to use the latest changes the user has saved to disk.
 
 			// Try the file, if it still exists
-			var info = TryReadFile(module.Location);
-			if (info.rawData != null)
-				return info;
+			var rawData = TryReadFile(module.Location);
+			if (rawData != null)
+				return rawData;
 
 			// If there's no file, use the in-memory data
 			if (module is ModuleDefMD m)
@@ -51,11 +51,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			return default;
 		}
 
-		(RawModuleBytes rawData, bool isFileLayout) TryReadFile(string filename) {
+		RawModuleBytes TryReadFile(string filename) {
 			if (File.Exists(filename)) {
 				try {
 					using (var stream = File.OpenRead(filename))
-						return TryReadStream(stream);
+						return TryReadStream(stream, isFileLayout: true);
 				}
 				catch {
 				}
@@ -63,19 +63,19 @@ namespace dnSpy.AsmEditor.Compiler {
 			return default;
 		}
 
-		(RawModuleBytes rawData, bool isFileLayout) TryReadStream(Stream stream) {
+		RawModuleBytes TryReadStream(Stream stream, bool isFileLayout) {
 			RawModuleBytes rawModuleBytes = null;
 			bool error = true;
 			try {
 				if (stream.Length > int.MaxValue)
 					return default;
-				rawModuleBytes = new NativeMemoryRawModuleBytes((int)stream.Length);
+				rawModuleBytes = new NativeMemoryRawModuleBytes((int)stream.Length, isFileLayout);
 				var p = (byte*)rawModuleBytes.Pointer;
 				for (;;) {
 					int bytesLeft = (int)(stream.Length - stream.Position);
 					if (bytesLeft == 0) {
 						error = false;
-						return (rawModuleBytes, true);
+						return rawModuleBytes;
 					}
 					if (bytesLeft > buffer.Length)
 						bytesLeft = buffer.Length;
@@ -92,21 +92,21 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		(RawModuleBytes rawData, bool isFileLayout) TryReadModule(ModuleDefMD module) {
+		RawModuleBytes TryReadModule(ModuleDefMD module) {
 			var reader = module.Metadata.PEImage.CreateReader();
 			return TryReadStream(ref reader, module.Metadata.PEImage.IsFileImageLayout);
 		}
 
-		(RawModuleBytes rawData, bool isFileLayout) TryReadStream(ref DataReader reader, bool isFileLayout) {
+		RawModuleBytes TryReadStream(ref DataReader reader, bool isFileLayout) {
 			RawModuleBytes rawModuleBytes = null;
 			bool error = true;
 			try {
 				if (reader.Length > int.MaxValue)
 					return default;
-				rawModuleBytes = new NativeMemoryRawModuleBytes((int)reader.Length);
+				rawModuleBytes = new NativeMemoryRawModuleBytes((int)reader.Length, isFileLayout);
 				reader.ReadBytes(rawModuleBytes.Pointer, rawModuleBytes.Size);
 				error = false;
-				return (rawModuleBytes, isFileLayout);
+				return rawModuleBytes;
 			}
 			finally {
 				if (error)

@@ -171,6 +171,7 @@
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
     <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
+    <Compile Include="Compiler\ModuleImporterAssemblyResolver.cs" />
     <Compile Include="Compiler\ModulePatcher.cs" />
     <Compile Include="Compiler\NativeMemoryAllocator.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />

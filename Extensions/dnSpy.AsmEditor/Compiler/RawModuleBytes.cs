@@ -24,6 +24,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	abstract unsafe class RawModuleBytes {
 		public abstract void* Pointer { get; }
 		public abstract int Size { get; }
+		public abstract bool IsFileLayout { get; }
 
 		~RawModuleBytes() {
 			Debug.Assert(Environment.HasShutdownStarted);
@@ -41,15 +42,17 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed unsafe class NativeMemoryRawModuleBytes : RawModuleBytes {
 		public override unsafe void* Pointer => pointer;
 		public override int Size => size;
+		public override bool IsFileLayout { get; }
 
 		void* pointer;
 		int size;
 
-		public NativeMemoryRawModuleBytes(int size) {
+		public NativeMemoryRawModuleBytes(int size, bool isFileLayout) {
 			if (size < 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
 			pointer = size == 0 ? null : NativeMemoryAllocator.Allocate(size);
 			this.size = size;
+			IsFileLayout = isFileLayout;
 		}
 
 		protected override void Dispose(bool disposing) {

@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef editedModule;
 		readonly TypeDef nonNestedEditedTypeOrNull;
-		readonly List<RawModuleBytes> rawModuleBytesList;
+		readonly List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)> rawModuleBytesList;
 
 		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
 			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == editedModule);
@@ -39,14 +39,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.tempAssembly = tempAssembly;
 			this.editedModule = editedModule;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
-			rawModuleBytesList = new List<RawModuleBytes>();
+			rawModuleBytesList = new List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)>();
 		}
+
+		internal (RawModuleBytes rawData, CompilerMetadataReference mdRef)[] GetReferences() => rawModuleBytesList.ToArray();
 
 		CompilerMetadataReference? Save(in (RawModuleBytes rawData, CompilerMetadataReference mdRef) info) {
 			if (info.rawData == null)
 				return null;
 			try {
-				rawModuleBytesList.Add(info.rawData);
+				rawModuleBytesList.Add(info);
 			}
 			catch {
 				info.rawData.Dispose();
@@ -68,17 +70,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		public CompilerMetadataReference? Create(ModuleDef module) => Save(CreateRef(module));
 
 		unsafe (RawModuleBytes rawData, CompilerMetadataReference mdRef) CreateRef(ModuleDef module) {
-			var info = rawModuleBytesProvider.GetRawModuleBytes(module);
-			var moduleData = info.rawData;
+			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
 			if (moduleData == null)
 				return default;
 			bool error = true;
 			try {
 				// Only file layout is supported by CompilerMetadataReference
-				if (!info.isFileLayout)
+				if (!moduleData.IsFileLayout)
 					return default;
 
-				var patcher = new ModulePatcher(moduleData, info.isFileLayout, tempAssembly, editedModule, nonNestedEditedTypeOrNull);
+				var patcher = new ModulePatcher(moduleData, moduleData.IsFileLayout, tempAssembly, editedModule, nonNestedEditedTypeOrNull);
 				if (!patcher.Patch(module, out var newModuleData))
 					return default;
 				if (moduleData != newModuleData) {
@@ -102,8 +103,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Dispose() {
-			foreach (var rawData in rawModuleBytesList)
-				rawData.Dispose();
+			foreach (var info in rawModuleBytesList)
+				info.rawData.Dispose();
 			rawModuleBytesList.Clear();
 		}
 	}

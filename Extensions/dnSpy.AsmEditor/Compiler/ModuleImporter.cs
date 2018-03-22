@@ -75,6 +75,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public Resource[] NewResources { get; private set; }
 
 		readonly ModuleDef targetModule;
+		readonly IAssemblyResolver assemblyResolver;
 		readonly List<CompilerDiagnostic> diagnostics;
 		readonly List<NewImportedType> newNonNestedImportedTypes;
 		readonly List<MergedImportedType> nonNestedMergedImportedTypes;
@@ -128,8 +129,9 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		const SigComparerOptions SIG_COMPARER_OPTIONS = SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
 
-		public ModuleImporter(ModuleDef targetModule) {
+		public ModuleImporter(ModuleDef targetModule, IAssemblyResolver assemblyResolver) {
 			this.targetModule = targetModule;
+			this.assemblyResolver = assemblyResolver;
 			diagnostics = new List<CompilerDiagnostic>();
 			newNonNestedImportedTypes = new List<NewImportedType>();
 			nonNestedMergedImportedTypes = new List<MergedImportedType>();
@@ -157,7 +159,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new ModuleImporterAbortedException();
 		}
 
-		ModuleDefMD LoadModule(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile) {
+		ModuleDefMD LoadModule(byte[] rawGeneratedModule, in DebugFileResult debugFile) {
 			var opts = new ModuleCreationOptions();
 			opts.TryToLoadPdbFromDisk = false;
 			opts.Context = new ModuleContext(assemblyResolver, new Resolver(assemblyResolver));
@@ -337,12 +339,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Imports everything into the target module. All global members are merged and possibly renamed.
 		/// All non-nested types are renamed if a type with the same name exists in the target module.
 		/// </summary>
-		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="options">Options</param>
-		public void Import(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
-			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
+		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			AddGlobalTypeMembers(sourceModule.GlobalType);
 			foreach (var type in sourceModule.Types) {
@@ -387,16 +388,15 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Imports all new types and methods. Members that only exist in <paramref name="targetType"/>
 		/// are considered deleted. Members that exist in both types are merged.
 		/// </summary>
-		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void Import(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
 				throw new ArgumentException("Type must not be nested");
-			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			var newType = FindSourceType(targetType);
 			if (newType.DeclaringType != null)
@@ -430,16 +430,15 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <summary>
 		/// Imports all new types and members. Nothing is removed.
 		/// </summary>
-		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void ImportNewMembers(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void ImportNewMembers(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
 				throw new ArgumentException("Type must not be nested");
-			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			var newType = FindSourceType(targetType);
 			if (newType.DeclaringType != null)
@@ -632,14 +631,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// exists in both modules is assumed to be the original member stub.
 		/// All the instructions in the edited method are imported, and its impl attributes. Nothing else is imported.
 		/// </summary>
-		/// <param name="assemblyResolver">Assembly resolver</param>
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetMethod">Original method that was edited</param>
-		public void Import(IAssemblyResolver assemblyResolver, byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
+		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
-			SetSourceModule(LoadModule(assemblyResolver, rawGeneratedModule, debugFile));
+			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			var newMethod = FindSourceMethod(targetMethod);
 			var newMethodNonNestedDeclType = newMethod.DeclaringType;
