@@ -111,7 +111,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			dbgManager = evalInfo.Runtime.Process.DbgManager;
 			if (errorMessage != null)
 				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, 1, 0) };
-			else if ((evalOptions & DbgValueNodeEvaluationOptions.NoHideRoots) != 0 || !membersCollection.HasHideRoot || membersCollection.Members.Length == 0)
+			else if ((evalOptions & DbgValueNodeEvaluationOptions.NoHideRoots) != 0 || !membersCollection.HasHideRoot || (evalOptions & DbgValueNodeEvaluationOptions.RawView) != 0 || membersCollection.Members.Length == 0)
 				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, (uint)membersCollection.Members.Length, 0) };
 			else {
 				DbgDotNetValueNode valueNode = null;
