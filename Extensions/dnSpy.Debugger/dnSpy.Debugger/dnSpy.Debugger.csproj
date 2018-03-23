@@ -97,10 +97,12 @@
     <Compile Include="Code\GoToInMemoryModuleStatement.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationService.cs" />
     <Compile Include="DbgUI\CurrentStatementUpdater.cs" />
+    <Compile Include="DbgUI\DbgProcessStarterService.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
     <Compile Include="DbgUI\DebugMenu.cs" />
     <Compile Include="DbgUI\DebugMenuCommands.cs" />
+    <Compile Include="DbgUI\DefaultDbgProcessStarter.cs" />
     <Compile Include="DbgUI\DocumentViewerCommands.cs" />
     <Compile Include="DbgUI\KeyboardShortcutCommands.cs" />
     <Compile Include="DbgUI\PortableExecutableFileHelpers.cs" />

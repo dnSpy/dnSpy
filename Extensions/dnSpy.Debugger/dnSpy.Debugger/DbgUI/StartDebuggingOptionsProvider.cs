@@ -37,13 +37,15 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<StartDebuggingOptionsPageProvider>[] startDebuggingOptionsPageProviders;
+		readonly Lazy<DbgProcessStarterService> dbgProcessStarterService;
 		readonly Lazy<GenericDebugEngineGuidProvider, IGenericDebugEngineGuidProviderMetadata>[] genericDebugEngineGuidProviders;
 		readonly StartDebuggingOptionsMru mru;
 
 		[ImportingConstructor]
-		StartDebuggingOptionsProvider(IAppWindow appWindow, IDocumentTabService documentTabService, [ImportMany] IEnumerable<Lazy<StartDebuggingOptionsPageProvider>> startDebuggingOptionsPageProviders, [ImportMany] IEnumerable<Lazy<GenericDebugEngineGuidProvider, IGenericDebugEngineGuidProviderMetadata>> genericDebugEngineGuidProviders) {
+		StartDebuggingOptionsProvider(IAppWindow appWindow, IDocumentTabService documentTabService, Lazy<DbgProcessStarterService> dbgProcessStarterService, [ImportMany] IEnumerable<Lazy<StartDebuggingOptionsPageProvider>> startDebuggingOptionsPageProviders, [ImportMany] IEnumerable<Lazy<GenericDebugEngineGuidProvider, IGenericDebugEngineGuidProviderMetadata>> genericDebugEngineGuidProviders) {
 			this.appWindow = appWindow;
 			this.documentTabService = documentTabService;
+			this.dbgProcessStarterService = dbgProcessStarterService;
 			this.startDebuggingOptionsPageProviders = startDebuggingOptionsPageProviders.ToArray();
 			this.genericDebugEngineGuidProviders = genericDebugEngineGuidProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			mru = new StartDebuggingOptionsMru();
@@ -148,6 +150,18 @@ namespace dnSpy.Debugger.DbgUI {
 					break;
 			}
 			return firstResult;
+		}
+
+		public bool CanStartWithoutDebugging {
+			get {
+				var filename = GetCurrentFilename();
+				return File.Exists(filename) && dbgProcessStarterService.Value.CanStart(filename);
+			}
+		}
+
+		public bool StartWithoutDebugging(out string error) {
+			var filename = GetCurrentFilename();
+			return dbgProcessStarterService.Value.TryStart(filename, out error);
 		}
 	}
 }

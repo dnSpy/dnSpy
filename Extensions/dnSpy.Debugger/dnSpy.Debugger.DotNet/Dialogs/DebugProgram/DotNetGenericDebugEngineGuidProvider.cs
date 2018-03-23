@@ -29,6 +29,8 @@ namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {
 		public override Guid? GetEngineGuid(string filename) {
 			if (!File.Exists(filename))
 				return null;
+			if (!PortableExecutableFileHelpers.IsExecutable(filename))
+				return null;
 			try {
 				using (var peImage = new PEImage(filename)) {
 					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)

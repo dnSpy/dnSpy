@@ -167,6 +167,7 @@
     <Compile Include="References\DbgLoadModuleReferenceHandler.cs" />
     <Compile Include="RuntimeId.cs" />
     <Compile Include="StartDebuggingOptions.cs" />
+    <Compile Include="StartDebugging\DbgProcessStarter.cs" />
     <Compile Include="StartDebugging\Dialog\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
     <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPage.cs" />
     <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageContext.cs" />

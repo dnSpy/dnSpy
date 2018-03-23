@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 	sealed class DotNetCoreStartDebuggingOptionsPage : DotNetStartDebuggingOptionsPage {

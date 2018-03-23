@@ -94,17 +94,12 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
 
-		public override bool CanStartWithoutDebugging => GetCurrentExecutableFilename() != null;
+		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.CanStartWithoutDebugging;
 		public override void StartWithoutDebugging() {
-			var filename = GetCurrentExecutableFilename();
-			if (!File.Exists(filename))
+			if (!CanStartWithoutDebugging)
 				return;
-			try {
-				Process.Start(filename);
-			}
-			catch (Exception ex) {
-				messageBoxService.Value.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, filename, ex.Message));
-			}
+			if (!startDebuggingOptionsProvider.Value.StartWithoutDebugging(out var error))
+				messageBoxService.Value.Show(error);
 		}
 
 		public override bool CanDebugProgram => !showingDebugProgramDlgBox;

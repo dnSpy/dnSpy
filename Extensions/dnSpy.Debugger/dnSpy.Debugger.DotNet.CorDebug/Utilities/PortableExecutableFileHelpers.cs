@@ -19,7 +19,7 @@
 
 using System.IO;
 
-namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
+namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class PortableExecutableFileHelpers {
 		public static bool IsExecutable(string file) {
 			if (!File.Exists(file))
@@ -36,6 +36,32 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 					f.Position += 0x12;
 					var flags = r.ReadUInt16();
 					return (flags & 0x2000) == 0;
+				}
+			}
+			catch {
+			}
+			return false;
+		}
+
+		public static bool IsGuiApp(string file) {
+			if (!File.Exists(file))
+				return false;
+			try {
+				using (var f = File.OpenRead(file)) {
+					var r = new BinaryReader(f);
+					if (r.ReadUInt16() != 0x5A4D)
+						return false;
+					f.Position = 0x3C;
+					f.Position = r.ReadUInt32();
+					if (r.ReadUInt32() != 0x4550)
+						return false;
+					f.Position += 0x14;
+					ushort magic = r.ReadUInt16();
+					if (magic != 0x010B && magic != 0x020B)
+						return false;
+					r.BaseStream.Position += 0x42;
+					const ushort WindowsGui = 2;
+					return r.ReadUInt16() == WindowsGui;
 				}
 			}
 			catch {

@@ -65,7 +65,6 @@
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="dndbg\COM\CorDebug.cs" />
     <Compile Include="dndbg\COM\MetaData.cs" />
@@ -183,6 +182,7 @@
     <Compile Include="Impl\DnModuleIdExtensions.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
+    <Compile Include="Impl\DotNetCoreDbgProcessStarter.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\Evaluation\CordbgErrorHelper.cs" />
     <Compile Include="Impl\Evaluation\CreateCorValueResult.cs" />
@@ -208,7 +208,6 @@
     <Compile Include="Impl\ModuleCreator.cs" />
     <Compile Include="Impl\ModuleIdExtensions.cs" />
     <Compile Include="Impl\PathUtils.cs" />
-    <Compile Include="Impl\PortableExecutableFileHelpers.cs" />
     <Compile Include="Impl\ReflectionTypeCreator.cs" />
     <Compile Include="Impl\ThreadProperties.cs" />
     <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
@@ -229,6 +228,7 @@
     <Compile Include="UI\UIDispatcher.cs" />
     <Compile Include="Utilities\DotNetAssemblyUtilities.cs" />
     <Compile Include="Utilities\DotNetCoreHelpers.cs" />
+    <Compile Include="Utilities\PortableExecutableFileHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj">
