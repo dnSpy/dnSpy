@@ -1349,6 +1349,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsEquivalentTo(Type other) => IsEquivalentTo(DmdTypeUtilities.ToDmdType(other, AppDomain));
 
 		/// <summary>
+		/// true if this is a by-ref like value type
+		/// </summary>
+		public bool IsByRefLike =>
+			//TODO: Only tested with .NET Core 2.1 preview, it's possible that this will fail on .NET Framework with certain types,
+			// eg. ArgIterator, ByReference<T>, RuntimeArgumentHandle, TypedReference
+			CustomAttributesHelper.IsDefined(this, "System.Runtime.CompilerServices.IsByRefLikeAttribute", inherit: false);
+
+		/// <summary>
 		/// Checks if a custom attribute is present
 		/// </summary>
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>

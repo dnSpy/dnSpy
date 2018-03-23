@@ -91,6 +91,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract bool IsMetadataReference { get; }
 
 		/// <summary>
+		/// Checks if this instance and <paramref name="other"/> have the same metadata definition
+		/// </summary>
+		/// <param name="other">Other member</param>
+		/// <returns></returns>
+		public bool HasSameMetadataDefinitionAs(DmdMemberInfo other) {
+			if ((object)other == null)
+				throw new ArgumentNullException(nameof(other));
+			return other.Module == Module && other.MetadataToken == MetadataToken && MetadataToken != 0;
+		}
+
+		/// <summary>
 		/// Gets the security attributes
 		/// </summary>
 		public ReadOnlyCollection<DmdCustomAttributeData> SecurityAttributes => GetSecurityAttributesData();
