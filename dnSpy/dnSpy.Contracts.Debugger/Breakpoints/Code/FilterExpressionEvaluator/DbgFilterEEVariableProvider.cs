@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// Process id
 		/// </summary>
-		public abstract ulong ProcessId { get; }
+		public abstract int ProcessId { get; }
 
 		/// <summary>
 		/// Process name

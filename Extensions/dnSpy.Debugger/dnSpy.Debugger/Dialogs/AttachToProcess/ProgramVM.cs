@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	sealed class ProgramVM : ViewModelBase {
 		public AttachProgramOptions AttachProgramOptions { get; }
 
-		public ulong Id => attachableProcessInfo.ProcessId;
+		public int Id => attachableProcessInfo.ProcessId;
 		public string RuntimeName => attachableProcessInfo.RuntimeName;
 		public string Name => attachableProcessInfo.Name;
 		public string Title => attachableProcessInfo.Title;

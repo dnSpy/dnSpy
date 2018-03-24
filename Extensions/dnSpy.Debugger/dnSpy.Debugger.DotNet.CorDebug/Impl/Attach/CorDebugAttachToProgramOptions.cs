@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <summary>
 		/// Gets the process id
 		/// </summary>
-		public ulong ProcessId { get; set; }
+		public int ProcessId { get; set; }
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/>

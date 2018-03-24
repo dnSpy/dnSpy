@@ -28,8 +28,8 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	abstract class MemoryWindowService {
-		public abstract void Show(ulong pid, HexSpan span);
-		public abstract void Show(ulong pid, HexSpan span, int windowIndex);
+		public abstract void Show(int pid, HexSpan span);
+		public abstract void Show(int pid, HexSpan span, int windowIndex);
 	}
 
 	[Export(typeof(MemoryWindowService))]
@@ -45,14 +45,14 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			this.processHexBufferProvider = processHexBufferProvider;
 		}
 
-		public override void Show(ulong pid, HexSpan span) {
+		public override void Show(int pid, HexSpan span) {
 			var mc = GetMemoryToolWindowContent(span);
 			if (mc == null)
 				mc = memoryToolWindowContentProvider.Value.Contents[0].Content;
 			ShowInMemoryWindow(pid, mc, span);
 		}
 
-		public override void Show(ulong pid, HexSpan span, int windowIndex) {
+		public override void Show(int pid, HexSpan span, int windowIndex) {
 			var mc = GetMemoryToolWindowContent(windowIndex);
 			Debug.Assert(mc != null);
 			if (mc == null)
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			ShowInMemoryWindow(pid, mc, span);
 		}
 
-		void ShowInMemoryWindow(ulong pid, MemoryToolWindowContent mc, HexSpan span) {
+		void ShowInMemoryWindow(int pid, MemoryToolWindowContent mc, HexSpan span) {
 			processHexBufferProvider.Value.SetProcessStream(mc.HexView.Buffer, pid);
 			MakeSureAddressCanBeShown(mc, span);
 			toolWindowService.Show(mc);

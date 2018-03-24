@@ -752,7 +752,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.VMStart:
 					expectedSuspendPolicy = SuspendPolicy.All;
 					processWasRunningOnAttach = spolicy == SuspendPolicy.None;
-					SendMessage(new DbgMessageConnected((uint)vmPid, GetMessageFlags()));
+					SendMessage(new DbgMessageConnected(vmPid, GetMessageFlags()));
 					break;
 
 				case EventType.VMDeath:

@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Process id
 		/// </summary>
-		public abstract ulong Id { get; }
+		public abstract int Id { get; }
 
 		/// <summary>
 		/// Gets all runtimes

@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = Native.NativeMethods.OpenProcess(Native.NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				SendMessage(new DbgMessageConnected((uint)cp.CorProcess.ProcessId, GetMessageFlags()));
+				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId, GetMessageFlags()));
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 

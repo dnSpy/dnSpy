@@ -26,7 +26,7 @@ using SR = System.Reflection;
 using SRE = System.Reflection.Emit;
 
 namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
-	delegate bool EvalDelegate(string machineName, ulong processId, string processName, ulong threadId, string threadName);
+	delegate bool EvalDelegate(string machineName, int processId, string processName, ulong threadId, string threadName);
 
 	[Serializable]
 	sealed class EvalDelegateCreatorException : Exception { }

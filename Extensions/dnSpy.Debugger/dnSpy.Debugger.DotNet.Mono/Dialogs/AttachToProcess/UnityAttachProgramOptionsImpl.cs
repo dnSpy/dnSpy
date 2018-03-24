@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Mono.Impl.Attach;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 	sealed class UnityAttachProgramOptionsImpl : AttachProgramOptions {
-		public override ulong ProcessId { get; }
+		public override int ProcessId { get; }
 		public override RuntimeId RuntimeId { get; }
 		public override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetUnity_Guid;
 		public override Guid RuntimeKindGuid => PredefinedDbgRuntimeKindGuids.DotNet_Guid;
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 		readonly ushort port;
 
 		public UnityAttachProgramOptionsImpl(int pid, string address, ushort port, string name) {
-			ProcessId = (uint)pid;
+			ProcessId = pid;
 			RuntimeId = new DotNetMonoRuntimeId() {
 				Address = address,
 				Port = port,

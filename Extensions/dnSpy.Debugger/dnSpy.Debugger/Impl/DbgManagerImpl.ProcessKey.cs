@@ -23,17 +23,17 @@ using dnSpy.Contracts.Debugger;
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
 		readonly struct ProcessKey : IEquatable<ProcessKey> {
-			readonly ulong pid;
+			readonly int pid;
 			readonly RuntimeId rid;
 
-			public ProcessKey(ulong pid, RuntimeId rid) {
+			public ProcessKey(int pid, RuntimeId rid) {
 				this.pid = pid;
 				this.rid = rid ?? throw new ArgumentNullException(nameof(rid));
 			}
 
 			public bool Equals(ProcessKey other) => pid == other.pid && rid.Equals(other.rid);
 			public override bool Equals(object obj) => obj is ProcessKey other && Equals(other);
-			public override int GetHashCode() => pid.GetHashCode() ^ rid.GetHashCode();
+			public override int GetHashCode() => pid ^ rid.GetHashCode();
 		}
 	}
 }

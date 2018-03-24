@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Process id
 		/// </summary>
-		public abstract ulong ProcessId { get; }
+		public abstract int ProcessId { get; }
 
 		/// <summary>
 		/// Runtime id

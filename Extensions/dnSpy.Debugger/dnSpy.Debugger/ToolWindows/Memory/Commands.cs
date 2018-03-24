@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		string GetProcessHeader(Process process, ulong pid) {
+		string GetProcessHeader(Process process, int pid) {
 			try {
 				if (process != null) {
 					var title = Filter(process.MainWindowTitle, 200);

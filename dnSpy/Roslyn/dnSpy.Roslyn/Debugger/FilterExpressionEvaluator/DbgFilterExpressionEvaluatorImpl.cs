@@ -200,7 +200,7 @@ namespace System {
 		(string exprSource, int exprOffset) CreateFilterClassSource(string expr) {
 			var filterText = @"
 static class " + FilterExpressionClassName + @" {
-	public static bool " + EvalMethodName + @"(string MachineName, ulong ProcessId, string ProcessName, ulong ThreadId, string ThreadName) =>
+	public static bool " + EvalMethodName + @"(string MachineName, int ProcessId, string ProcessName, ulong ThreadId, string ThreadName) =>
 #line 1
 " + expr + @";
 }
