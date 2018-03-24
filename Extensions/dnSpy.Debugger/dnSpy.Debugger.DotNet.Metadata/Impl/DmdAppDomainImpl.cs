@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
 			assemblyNameToAssembly = new Dictionary<IDmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
-			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
+			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.CompareDeclaringType | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleTypeDictIgnoreCase = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleExportedTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeRef>>();

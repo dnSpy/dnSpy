@@ -29,7 +29,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
 			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<IDmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
-		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers are ignored.
+		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers and
+		/// MD arrays' lower bounds and sizes are ignored.
 		/// </summary>
 		public static readonly DmdMemberInfoEqualityComparer DefaultType = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Should be used when comparing member signatures or when comparing types in member signatures.
 		/// Custom modifiers are compared and types are checked for equivalence.
 		/// </summary>
-		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CheckTypeEquivalence);
+		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.CompareDeclaringType | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CheckTypeEquivalence);
 
 		/// <summary>
 		/// Should be used when comparing parameters
@@ -57,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the default options used by <see cref="DefaultType"/>
 		/// </summary>
-		public const DmdSigComparerOptions DefaultTypeOptions = DmdSigComparerOptions.CompareDeclaringType;
+		public const DmdSigComparerOptions DefaultTypeOptions = DmdSigComparerOptions.CompareDeclaringType | DmdSigComparerOptions.IgnoreMultiDimensionalArrayLowerBoundsAndSizes;
 
 		/// <summary>
 		/// Gets the options

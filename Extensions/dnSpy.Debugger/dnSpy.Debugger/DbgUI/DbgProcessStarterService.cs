@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DbgUI {
 					return lz.Value.TryStart(filename, out error);
 			}
 
-			Debug.Fail("Shouldn't be here, since " + nameof(TryStart) + "() should be called first");
+			Debug.Fail("Shouldn't be here, since " + nameof(CanStart) + "() should be called before " + nameof(TryStart) + "()");
 			error = "<Could not start the process>";
 			return false;
 		}

@@ -71,6 +71,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Compare generic type/method parameter's declaring member
 		/// </summary>
 		CompareGenericParameterDeclaringMember = 0x80,
+
+		/// <summary>
+		/// When comparing types, don't compare a multi-dimensional array's lower bounds and sizes
+		/// </summary>
+		IgnoreMultiDimensionalArrayLowerBoundsAndSizes = 0x100,
 	}
 
 	/// <summary>
@@ -101,6 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool CheckTypeEquivalence => (options & DmdSigComparerOptions.CheckTypeEquivalence) != 0;
 		bool CompareCustomModifiers => (options & DmdSigComparerOptions.CompareCustomModifiers) != 0;
 		bool CompareGenericParameterDeclaringMember => (options & DmdSigComparerOptions.CompareGenericParameterDeclaringMember) != 0;
+		bool IgnoreMultiDimensionalArrayLowerBoundsAndSizes => (options & DmdSigComparerOptions.IgnoreMultiDimensionalArrayLowerBoundsAndSizes) != 0;
 
 		/// <summary>
 		/// Constructor
@@ -232,8 +238,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 				case DmdTypeSignatureKind.MDArray:
 					result = a.GetArrayRank() == b.GetArrayRank() &&
-						Equals(a.GetArraySizes(), b.GetArraySizes()) &&
-						Equals(a.GetArrayLowerBounds(), b.GetArrayLowerBounds()) &&
+						(IgnoreMultiDimensionalArrayLowerBoundsAndSizes ||
+						(Equals(a.GetArraySizes(), b.GetArraySizes()) &&
+						Equals(a.GetArrayLowerBounds(), b.GetArrayLowerBounds()))) &&
 						Equals(a.GetElementType(), b.GetElementType());
 					break;
 
@@ -577,8 +584,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			case DmdTypeSignatureKind.MDArray:
 				hc ^= HASHCODE_MAGIC_ET_ARRAY;
 				hc ^= a.GetArrayRank();
-				hc ^= GetHashCode(a.GetArraySizes());
-				hc ^= GetHashCode(a.GetArrayLowerBounds());
+				if (!IgnoreMultiDimensionalArrayLowerBoundsAndSizes) {
+					hc ^= GetHashCode(a.GetArraySizes());
+					hc ^= GetHashCode(a.GetArrayLowerBounds());
+				}
 				hc ^= GetHashCode(a.GetElementType());
 				break;
 
