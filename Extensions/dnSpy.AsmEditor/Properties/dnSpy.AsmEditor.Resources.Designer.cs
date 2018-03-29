@@ -5860,6 +5860,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy Unkno_wn Metadata Streams.
+        /// </summary>
+        public static string SaveModule_PreserveOtherMetadataStreams {
+            get {
+                return ResourceManager.GetString("SaveModule_PreserveOtherMetadataStreams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to P_reserve All MD Tokens.
         /// </summary>
         public static string SaveModule_PreserveTokens {

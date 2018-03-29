@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -38,6 +39,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public bool CanSaveMixedModeModule => Module is ModuleDefMD;
 		public bool IsMixedModeModule => CanSaveMixedModeModule && !Module.IsILOnly;
+		public bool CanPreserveOtherMetadataStreams => Module is ModuleDefMD;
 
 		public bool UseMixedMode {
 			get => useMixedMode;
@@ -191,6 +193,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				CopyTo(options);
 				options.KeepExtraPEData = KeepExtraPEData;
 				options.KeepWin32Resources = KeepWin32Resources;
+				AddOtherStreams(options);
 				return options;
 			}
 			else {
@@ -198,8 +201,17 @@ namespace dnSpy.AsmEditor.SaveModule {
 				CopyTo(options);
 				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
+				AddOtherStreams(options);
 				return options;
 			}
+		}
+
+		ModuleWriterOptionsBase AddOtherStreams(ModuleWriterOptionsBase options) {
+			if (MetadataOptions.PreserveOtherMetadataStreams && Module is ModuleDefMD module) {
+				var otherStreams = module.Metadata.AllStreams.Where(a => a.GetType() == typeof(DotNetStream)).Select(a => new DataReaderHeap(a));
+				options.MetadataOptions.OtherHeapsEnd.AddRange(otherStreams);
+			}
+			return options;
 		}
 
 		void CopyTo(ModuleWriterOptionsBase options) {
@@ -899,6 +911,17 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get => GetFlagValue(MetadataFlags.AlwaysCreateBlobHeap);
 			set => SetFlagValue(MetadataFlags.AlwaysCreateBlobHeap, value, nameof(AlwaysCreateBlobHeap));
 		}
+
+		public bool PreserveOtherMetadataStreams {
+			get => preserveOtherMetadataStreams;
+			set {
+				if (preserveOtherMetadataStreams != value) {
+					preserveOtherMetadataStreams = value;
+					OnPropertyChanged(nameof(PreserveOtherMetadataStreams));
+				}
+			}
+		}
+		bool preserveOtherMetadataStreams;
 
 		bool GetFlagValue(MetadataFlags flag) => (Flags & flag) != 0;
 

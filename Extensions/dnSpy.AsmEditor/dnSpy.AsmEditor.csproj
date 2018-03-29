@@ -530,6 +530,7 @@
     <Compile Include="Resources\ResourceVM.cs" />
     <Compile Include="Resources\UserTypeVM.cs" />
     <Compile Include="SaveModule\CharacteristicsHelper.cs" />
+    <Compile Include="SaveModule\DataReaderHeap.cs" />
     <Compile Include="SaveModule\DocumentSaver.cs" />
     <Compile Include="SaveModule\MmapDisabler.cs" />
     <Compile Include="SaveModule\ModuleSaver.cs" />
