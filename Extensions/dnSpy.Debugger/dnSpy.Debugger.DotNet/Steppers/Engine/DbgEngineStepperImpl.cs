@@ -48,6 +48,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		ReturnToAwaiterState returnToAwaiterState;
 		StepIntoState stepIntoState;
 
+		//TODO: Return false if the current decompiler language doesn't support base wrapper methods (i.e., it's not a high level language such as C# or VB)
+		bool IgnoreBaseWrapperMethods => true;
+		//TODO: Return false if the decompiler doesn't decompile iterator state machines
+		bool AreIteratorsDecompiled => true;
+
 		sealed class ReturnToAwaiterState {
 			public DbgDotNetStepperBreakpoint breakpoint;
 			public TaskCompletionSource<DbgThread> taskCompletionSource;
@@ -371,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (result.DebugInfoOrNull != null) {
 				if (!frame.TryGetLocation(out var module, out var token, out var offset))
 					throw new InvalidOperationException();
-				bool skipMethod = offset == 0 && IsIgnoredIteratorStateMachineMethod(result.DebugInfoOrNull.Method);
+				bool skipMethod = offset == 0 && AreIteratorsDecompiled && CompilerUtils.IsIgnoredIteratorStateMachineMethod(result.DebugInfoOrNull.Method);
 				if (!skipMethod) {
 					var currentStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
 					if (currentStatement == null) {
@@ -391,39 +396,6 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 			return Task.FromResult(thread);
 		}
-
-		//TODO: This method should return false if iterator methods aren't decompiled (eg. option is disabled or language doesn't support it, eg. IL)
-		static bool IsIgnoredIteratorStateMachineMethod(MethodDef method) {
-			var declType = method.DeclaringType;
-			if (declType.DeclaringType == null)
-				return false;
-			if (!declType.IsDefined(utf8System_Runtime_CompilerServices, utf8CompilerGeneratedAttribute))
-				return false;
-
-			bool result = false;
-			foreach (var ii in declType.Interfaces) {
-				if (ii.Interface.FullName == "System.Collections.IEnumerator") {
-					result = true;
-					break;
-				}
-			}
-			if (!result)
-				return false;
-
-			if (method.IsVirtual) {
-				// Ignore everything except MoveNext
-				if (method.Name == utf8MoveNext)
-					return false;
-				foreach (var ovr in method.Overrides) {
-					if (ovr.MethodDeclaration.Name == utf8MoveNext)
-						return false;
-				}
-			}
-			return true;
-		}
-		static readonly UTF8String utf8MoveNext = new UTF8String("MoveNext");
-		static readonly UTF8String utf8System_Runtime_CompilerServices = new UTF8String("System.Runtime.CompilerServices");
-		static readonly UTF8String utf8CompilerGeneratedAttribute = new UTF8String("CompilerGeneratedAttribute");
 
 		sealed class MethodILSpanState {
 			public ILSpan[] BodyRange;
@@ -546,6 +518,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					return thread;
 				if (!frame.TryGetLocation(out var module, out var token, out uint offset))
 					throw new InvalidOperationException();
+
+				bool isBaseWrapperMethod = IgnoreBaseWrapperMethods && CompilerUtils.IsBaseWrapperMethod(module, token);
+				if (isBaseWrapperMethod)
+					continue;
 
 				// If we're at the start of the method we may need to skip the first hidden instructions.
 				// If it's an async kickoff method, we need to set a BP in MoveNext() and continue the process.
@@ -713,6 +689,27 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		async Task<DbgThread> StepOverCoreAsync(DbgDotNetEngineStepperFrameInfo frame) {
+			DbgThread thread;
+			for (;;) {
+				thread = await StepOverCore2Async(frame);
+				bool keepLooping = false;
+				if (IgnoreBaseWrapperMethods) {
+					frame = stepper.TryGetFrameInfo(thread);
+					Debug.Assert(frame != null);
+					if (frame == null)
+						return thread;
+					if (!frame.TryGetLocation(out var module, out var token, out uint offset))
+						throw new InvalidOperationException();
+
+					keepLooping = CompilerUtils.IsBaseWrapperMethod(module, token);
+				}
+				if (!keepLooping)
+					break;
+			}
+			return thread;
+		}
+
+		async Task<DbgThread> StepOverCore2Async(DbgDotNetEngineStepperFrameInfo frame) {
 			runtime.Dispatcher.VerifyAccess();
 			Debug.Assert(stepper.Session != null);
 
@@ -1010,6 +1007,27 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		async Task<DbgThread> StepOutCoreAsync(DbgDotNetEngineStepperFrameInfo frame) {
+			DbgThread thread;
+			for (;;) {
+				thread = await StepOutCore2Async(frame);
+				bool keepLooping = false;
+				if (IgnoreBaseWrapperMethods) {
+					frame = stepper.TryGetFrameInfo(thread);
+					Debug.Assert(frame != null);
+					if (frame == null)
+						return thread;
+					if (!frame.TryGetLocation(out var module, out var token, out uint offset))
+						throw new InvalidOperationException();
+
+					keepLooping = CompilerUtils.IsBaseWrapperMethod(module, token);
+				}
+				if (!keepLooping)
+					break;
+			}
+			return thread;
+		}
+
+		async Task<DbgThread> StepOutCore2Async(DbgDotNetEngineStepperFrameInfo frame) {
 			runtime.Dispatcher.VerifyAccess();
 			Debug.Assert(stepper.Session != null);
 

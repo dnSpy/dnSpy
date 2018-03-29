@@ -155,6 +155,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Debugger.DotNet.Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Steppers\Engine\CompilerUtils.cs" />
     <Compile Include="Steppers\Engine\DbgEngineStepperFactoryImpl.cs" />
     <Compile Include="Steppers\Engine\DbgEngineStepperImpl.cs" />
     <Compile Include="Steppers\Engine\TaskEvalUtils.cs" />
