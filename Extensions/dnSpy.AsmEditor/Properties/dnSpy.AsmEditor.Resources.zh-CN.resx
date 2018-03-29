@@ -2521,4 +2521,7 @@
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
     <value>添加类成员 ({0})...</value>
   </data>
+  <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
+    <value>Copy Unkno_wn Metadata Streams</value>
+  </data>
 </root>

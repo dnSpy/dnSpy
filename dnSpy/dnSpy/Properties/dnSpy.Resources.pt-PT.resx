@@ -1917,6 +1917,6 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Administrador</value>
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
-    <value>Allow more than one instance (restart required)</value>
+    <value>Permitir mais do que uma instância (necessário reiniciar)</value>
   </data>
 </root>

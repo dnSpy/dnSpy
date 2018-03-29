@@ -331,8 +331,7 @@
     <value>Não é possível avaliar quando uma exceção não tratada ocorreu</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>Could not start '{0}'
-ERROR: {1}</value>
+    <value>Não foi possível iniciar o '{0}' ERRO: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Configurações de Exceção</value>
@@ -1465,13 +1464,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Dar foco ao processo depurado</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
-    <value>Open All Modules</value>
+    <value>Abrir todos os módulos</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>Hide deprecated members in variables windows</value>
+    <value>Ocultar membros descontinuados nas janelas de variáveis</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>Show return values</value>
+    <value>Mostrar valores de retorno</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
     <value>Redirect GUI applications' console output to the Output window</value>
@@ -1480,7 +1479,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Making an Image Easier to Debug</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>Public Members</value>
+    <value>Membros públicos</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
     <value>Show raw locals</value>

@@ -211,7 +211,7 @@
     <value>Propriedades</value>
   </data>
   <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
-    <value>Only Enumerable types can have Results View</value>
+    <value>Apenas tipos enumeráveis podem ter uma vista de resultados</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
     <value>Snippets</value>
@@ -223,6 +223,6 @@
     <value>A Vista de Resultados requer que {0} seja referenciado</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
-    <value>Type '{0}' doesn't exist in assembly '{1}'</value>
+    <value>Tipo '{0}' não existe no assembly '{1}'</value>
   </data>
 </root>

@@ -208,7 +208,7 @@
     <value>This runtime doesn't support calling generic methods</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>It's not possible to write to 'this'</value>
+    <value>Não é possível escrever para 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
     <value>Member can't be accessed due to runtime limitations</value>

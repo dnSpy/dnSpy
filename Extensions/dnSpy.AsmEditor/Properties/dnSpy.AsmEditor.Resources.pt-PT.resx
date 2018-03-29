@@ -2507,7 +2507,7 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Retval</value>
   </data>
   <data name="AddDocumentsToolTip" xml:space="preserve">
-    <value>Add Source Code</value>
+    <value>Adicionar código fonte</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>CTRL + O</value>
@@ -2519,9 +2519,12 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
     <value>Ctrl + Shift + O</value>
   </data>
   <data name="EditCodeAddClassMembers" xml:space="preserve">
-    <value>Add Class Members</value>
+    <value>Adicionar membros de class</value>
   </data>
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
     <value>Add Class Members ({0})...</value>
+  </data>
+  <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
+    <value>Copy Unkno_wn Metadata Streams</value>
   </data>
 </root>
