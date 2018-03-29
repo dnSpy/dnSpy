@@ -171,7 +171,7 @@
     <Compile Include="Documents\AssemblyResolver.cs" />
     <Compile Include="Documents\DefaultDsDocumentLoader.cs" />
     <Compile Include="Documents\DefaultDsDocumentProvider.cs" />
-    <Compile Include="Documents\DotNetCorePaths.cs" />
+    <Compile Include="Documents\DotNetCorePathProvider.cs" />
     <Compile Include="Documents\DsDocumentLoader.cs" />
     <Compile Include="Documents\DsDocumentService.cs" />
     <Compile Include="Documents\DsDocumentServiceAppSettingsModifiedListener.cs" />

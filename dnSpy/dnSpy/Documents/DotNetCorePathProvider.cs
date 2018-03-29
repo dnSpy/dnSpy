@@ -21,74 +21,95 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using dnlib.DotNet;
 
 namespace dnSpy.Documents {
-	sealed class DotNetCorePaths {
-		readonly FrameworkPath[] netcorePaths;
+	sealed class DotNetCorePathProvider {
+		readonly FrameworkPaths[] netcorePaths;
 
-		public DotNetCorePaths() {
+		public DotNetCorePathProvider() {
 			var list = new List<FrameworkPath>();
 			foreach (var info in GetDotNetCoreBaseDirs())
 				list.AddRange(GetDotNetCorePaths(info.path, info.bitness));
-			list.Sort();
-			netcorePaths = list.ToArray();
+
+			var paths = from p in list
+						group p by new { Path = Path.GetDirectoryName(p.Path).ToUpperInvariant(), p.Bitness, p.Version } into g
+						select new FrameworkPaths(g.ToArray());
+			var array = paths.ToArray();
+			Array.Sort(array);
+			netcorePaths = array;
 		}
 
-		public string TryGetDotNetCorePath(Version version, int bitness) {
+		public string[] TryGetDotNetCorePaths(Version version, int bitness) {
 			Debug.Assert(bitness == 32 || bitness == 64);
 			int bitness2 = bitness ^ 0x60;
-			FrameworkPath info;
+			FrameworkPaths info;
 
-			info = TryGetDotNetCorePathCore(version.Major, version.Minor, bitness) ??
-				TryGetDotNetCorePathCore(version.Major, version.Minor, bitness2);
+			info = TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness) ??
+				TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness2);
 			if (info != null)
-				return info.Path;
+				return info.Paths;
 
-			info = TryGetDotNetCorePathCore(version.Major, bitness) ??
-				TryGetDotNetCorePathCore(version.Major, bitness2);
+			info = TryGetDotNetCorePathsCore(version.Major, bitness) ??
+				TryGetDotNetCorePathsCore(version.Major, bitness2);
 			if (info != null)
-				return info.Path;
+				return info.Paths;
 
-			info = TryGetDotNetCorePathCore(bitness) ??
-				TryGetDotNetCorePathCore(bitness2);
+			info = TryGetDotNetCorePathsCore(bitness) ??
+				TryGetDotNetCorePathsCore(bitness2);
 			if (info != null)
-				return info.Path;
+				return info.Paths;
 
 			return null;
 		}
 
-		FrameworkPath TryGetDotNetCorePathCore(int major, int minor, int bitness) {
-			FrameworkPath fpMajor = null;
+		FrameworkPaths TryGetDotNetCorePathsCore(int major, int minor, int bitness) {
+			FrameworkPaths fpMajor = null;
+			FrameworkPaths fpMajorMinor = null;
 			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
 				var info = netcorePaths[i];
 				if (info.Bitness == bitness && info.Version.Major == major) {
 					if (fpMajor == null)
 						fpMajor = info;
-					if (info.Version.Minor == minor)
+					if (info.Version.Minor == minor) {
+						if (info.HasDotNetCoreAppPath)
+							return info;
+						if (fpMajorMinor == null)
+							fpMajorMinor = info;
+					}
+				}
+			}
+			return fpMajorMinor ?? fpMajor;
+		}
+
+		FrameworkPaths TryGetDotNetCorePathsCore(int major, int bitness) {
+			FrameworkPaths fpMajor = null;
+			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
+				var info = netcorePaths[i];
+				if (info.Bitness == bitness && info.Version.Major == major) {
+					if (info.HasDotNetCoreAppPath)
 						return info;
+					if (fpMajor == null)
+						fpMajor = info;
 				}
 			}
 			return fpMajor;
 		}
 
-		FrameworkPath TryGetDotNetCorePathCore(int major, int bitness) {
+		FrameworkPaths TryGetDotNetCorePathsCore(int bitness) {
+			FrameworkPaths best = null;
 			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
 				var info = netcorePaths[i];
-				if (info.Bitness == bitness && info.Version.Major == major)
-					return info;
+				if (info.Bitness == bitness) {
+					if (info.HasDotNetCoreAppPath)
+						return info;
+					if (best == null)
+						best = info;
+				}
 			}
-			return null;
-		}
-
-		FrameworkPath TryGetDotNetCorePathCore(int bitness) {
-			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
-				var info = netcorePaths[i];
-				if (info.Bitness == bitness)
-					return info;
-			}
-			return null;
+			return best;
 		}
 
 		const string DotNetExeName = "dotnet.exe";
@@ -123,21 +144,24 @@ namespace dnSpy.Documents {
 		static IEnumerable<FrameworkPath> GetDotNetCorePaths(string basePath, int bitness) {
 			if (!Directory.Exists(basePath))
 				yield break;
-			var versionsDir = Path.Combine(basePath, "shared", "Microsoft.NETCore.App");
-			if (!Directory.Exists(versionsDir))
+			var sharedDir = Path.Combine(basePath, "shared");
+			if (!Directory.Exists(sharedDir))
 				yield break;
-			foreach (var dir in GetDirectories(versionsDir)) {
-				var name = Path.GetFileName(dir);
-				var m = Regex.Match(name, @"^(\d+)\.(\d+)\.(\d+)$");
-				if (m.Groups.Count == 4) {
-					var g = m.Groups;
-					yield return new FrameworkPath(dir, bitness, ToFrameworkVersion(g[1].Value, g[2].Value, g[3].Value, string.Empty));
-				}
-				else {
-					m = Regex.Match(name, @"^(\d+)\.(\d+)\.(\d+)-(.*)$");
-					if (m.Groups.Count == 5) {
+			// Known dirs: Microsoft.NETCore.App, Microsoft.AspNetCore.All, Microsoft.AspNetCore.App
+			foreach (var versionsDir in GetDirectories(sharedDir)) {
+				foreach (var dir in GetDirectories(versionsDir)) {
+					var name = Path.GetFileName(dir);
+					var m = Regex.Match(name, @"^(\d+)\.(\d+)\.(\d+)$");
+					if (m.Groups.Count == 4) {
 						var g = m.Groups;
-						yield return new FrameworkPath(dir, bitness, ToFrameworkVersion(g[1].Value, g[2].Value, g[3].Value, g[4].Value));
+						yield return new FrameworkPath(dir, bitness, ToFrameworkVersion(g[1].Value, g[2].Value, g[3].Value, string.Empty));
+					}
+					else {
+						m = Regex.Match(name, @"^(\d+)\.(\d+)\.(\d+)-(.*)$");
+						if (m.Groups.Count == 5) {
+							var g = m.Groups;
+							yield return new FrameworkPath(dir, bitness, ToFrameworkVersion(g[1].Value, g[2].Value, g[3].Value, g[4].Value));
+						}
 					}
 				}
 			}
