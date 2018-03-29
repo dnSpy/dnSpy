@@ -25,8 +25,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// </summary>
 	public readonly struct DbgDotNetValueResult {
 		/// <summary>
-		/// Gets the value or null if there was an error (<see cref="ErrorMessage"/>) or if the method didn't
-		/// return a value. If <see cref="ValueIsException"/> is true, this is the thrown exception value.
+		/// Gets the value or null if there was an error (<see cref="ErrorMessage"/>).
+		/// If <see cref="ValueIsException"/> is true, this is the thrown exception value.
 		/// </summary>
 		public DbgDotNetValue Value { get; }
 
