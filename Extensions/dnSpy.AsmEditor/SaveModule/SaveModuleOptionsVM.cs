@@ -227,8 +227,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 			other.FileName = FileName;
 			other.OriginalFileName = OriginalFileName;
 			other.UseMixedMode = UseMixedMode;
-			other.InitializeFrom(CreateWriterOptions());
 			other.MetadataOptions.PreserveOtherMetadataStreams = MetadataOptions.PreserveOtherMetadataStreams;
+			other.InitializeFrom(CreateWriterOptions());
 			return other;
 		}
 
