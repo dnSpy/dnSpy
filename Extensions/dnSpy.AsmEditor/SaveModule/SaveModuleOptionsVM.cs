@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -121,13 +120,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool keepWin32Resources;
 
-		internal static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(dnlib.DotNet.ModuleKind));
+		internal static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(ModuleKind));
 
 		public EnumListVM ModuleKind { get; }
 
 		public string Extension {
 			get {
-				switch ((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem) {
+				switch ((ModuleKind)ModuleKind.SelectedItem) {
 				case dnlib.DotNet.ModuleKind.Console:
 				case dnlib.DotNet.ModuleKind.Windows:
 				default:
@@ -149,7 +148,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			Module = document.ModuleDef;
 			PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
 			Cor20HeaderOptions = new Cor20HeaderOptionsVM();
-			MetadataOptions = new MetadataOptionsVM();
+			MetadataOptions = new MetadataOptionsVM(Module);
 
 			PEHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 			Cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
@@ -157,8 +156,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged(nameof(Extension));
-				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
-				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
+				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((ModuleKind)ModuleKind.SelectedItem);
+				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (ModuleKind)ModuleKind.SelectedItem);
 			});
 
 			Reinitialize();
@@ -193,24 +192,20 @@ namespace dnSpy.AsmEditor.SaveModule {
 				CopyTo(options);
 				options.KeepExtraPEData = KeepExtraPEData;
 				options.KeepWin32Resources = KeepWin32Resources;
-				AddOtherStreams(options);
-				return options;
+				return AddOtherOptions(options);
 			}
 			else {
 				var options = new ModuleWriterOptions(Module);
 				CopyTo(options);
 				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
-				AddOtherStreams(options);
-				return options;
+				return AddOtherOptions(options);
 			}
 		}
 
-		ModuleWriterOptionsBase AddOtherStreams(ModuleWriterOptionsBase options) {
-			if (MetadataOptions.PreserveOtherMetadataStreams && Module is ModuleDefMD module) {
-				var otherStreams = module.Metadata.AllStreams.Where(a => a.GetType() == typeof(DotNetStream)).Select(a => new DataReaderHeap(a));
-				options.MetadataOptions.OtherHeapsEnd.AddRange(otherStreams);
-			}
+		ModuleWriterOptionsBase AddOtherOptions(ModuleWriterOptionsBase options) {
+			if (MetadataOptions.PreserveOtherMetadataStreams)
+				options.MetadataOptions.PreserveHeapOrder(Module, addCustomHeaps: true);
 			return options;
 		}
 
@@ -223,7 +218,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.ShareMethodBodies = ShareMethodBodies;
 			options.AddCheckSum = AddCheckSum;
 			options.Win32Resources = Win32Resources;
-			options.ModuleKind = (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem;
+			options.ModuleKind = (ModuleKind)ModuleKind.SelectedItem;
 		}
 
 		public SaveModuleOptionsVM Clone() => CopyTo(new SaveModuleOptionsVM(document));
@@ -759,7 +754,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 	}
 
 	sealed class MetadataOptionsVM : ViewModelBase {
-		public MetadataOptionsVM() {
+		readonly ModuleDef module;
+
+		public MetadataOptionsVM(ModuleDef module) {
+			this.module = module;
 			MetadataHeaderOptions = new MetadataHeaderOptionsVM();
 			TablesHeapOptions = new TablesHeapOptionsVM();
 
@@ -918,6 +916,16 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (preserveOtherMetadataStreams != value) {
 					preserveOtherMetadataStreams = value;
 					OnPropertyChanged(nameof(PreserveOtherMetadataStreams));
+					if (preserveOtherMetadataStreams && module is ModuleDefMD mod) {
+						if (mod.Metadata.GuidStream.StartOffset != 0)
+							AlwaysCreateGuidHeap = true;
+						if (mod.Metadata.StringsStream.StartOffset != 0)
+							AlwaysCreateStringsHeap = true;
+						if (mod.Metadata.USStream.StartOffset != 0)
+							AlwaysCreateUSHeap = true;
+						if (mod.Metadata.BlobStream.StartOffset != 0)
+							AlwaysCreateBlobHeap = true;
+					}
 				}
 			}
 		}
@@ -950,6 +958,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			MetadataHeaderOptions.InitializeFrom(options.MetadataHeaderOptions);
 			TablesHeapOptions.InitializeFrom(options.TablesHeapOptions);
 			Flags = options.Flags;
+			PreserveOtherMetadataStreams = false;
 			OnFlagsChanged();
 		}
 
