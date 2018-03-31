@@ -43,19 +43,9 @@ namespace dndbg.Engine {
 			throw new NotImplementedException();
 		}
 
-		public override sbyte ReadSByte(uint offset) {
-			reader.Position = basePos + offset;
-			return reader.ReadSByte();
-		}
-
 		public override byte ReadByte(uint offset) {
 			reader.Position = basePos + offset;
 			return reader.ReadByte();
-		}
-
-		public override short ReadInt16(uint offset) {
-			reader.Position = basePos + offset;
-			return reader.ReadInt16();
 		}
 
 		public override ushort ReadUInt16(uint offset) {
@@ -63,19 +53,9 @@ namespace dndbg.Engine {
 			return reader.ReadUInt16();
 		}
 
-		public override int ReadInt32(uint offset) {
-			reader.Position = basePos + offset;
-			return reader.ReadInt32();
-		}
-
 		public override uint ReadUInt32(uint offset) {
 			reader.Position = basePos + offset;
 			return reader.ReadUInt32();
-		}
-
-		public override long ReadInt64(uint offset) {
-			reader.Position = basePos + offset;
-			return reader.ReadInt64();
 		}
 
 		public override ulong ReadUInt64(uint offset) {

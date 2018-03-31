@@ -91,7 +91,7 @@ namespace MakeEverythingPublic {
 				if (blobOffset + ivtBlob.Length > blobStream.Length)
 					continue;
 				blobStream.Position = blobOffset;
-				if (!blobStream.ReadCompressedUInt32(out uint len))
+				if (!blobStream.TryReadCompressedUInt32(out uint len))
 					continue;
 				var compressedSize = blobStream.Position - blobOffset;
 				if (compressedSize + len < ivtBlob.Length)
@@ -119,7 +119,7 @@ namespace MakeEverythingPublic {
 				return false;
 			if (reader.ReadUInt16() != 1)
 				return false;
-			if (!reader.ReadCompressedUInt32(out uint len) || (ulong)reader.Position + len >= end)
+			if (!reader.TryReadCompressedUInt32(out uint len) || (ulong)reader.Position + len >= end)
 				return false;
 			var s = reader.ReadUtf8String((int)len);
 			const string PublicKeyPattern = "PublicKey=";
