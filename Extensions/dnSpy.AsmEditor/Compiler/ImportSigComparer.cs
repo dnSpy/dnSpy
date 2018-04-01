@@ -98,7 +98,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		RecursionCounter recursionCounter;
 		SigComparerOptions options;
 		readonly ImportSigComparerOptions importOptions;
-		GenericArguments genericArguments;
 		readonly ModuleDef sourceModule;
 
 		bool DontCompareTypeScope => (options & SigComparerOptions.DontCompareTypeScope) != 0;
@@ -111,7 +110,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool CompareAssemblyLocale => (options & SigComparerOptions.CompareAssemblyLocale) != 0;
 		bool TypeRefCanReferenceGlobalType => (options & SigComparerOptions.TypeRefCanReferenceGlobalType) != 0;
 		bool DontCompareReturnType => (options & SigComparerOptions.DontCompareReturnType) != 0;
-		bool SubstituteGenericParameters => (options & SigComparerOptions.SubstituteGenericParameters) != 0;
 		bool CaseInsensitiveTypeNamespaces => (options & SigComparerOptions.CaseInsensitiveTypeNamespaces) != 0;
 		bool CaseInsensitiveTypeNames => (options & SigComparerOptions.CaseInsensitiveTypeNames) != 0;
 		bool CaseInsensitiveMethodFieldNames => (options & SigComparerOptions.CaseInsensitiveMethodFieldNames) != 0;
@@ -131,7 +129,6 @@ namespace dnSpy.AsmEditor.Compiler {
 			recursionCounter = new RecursionCounter();
 			this.options = options;
 			this.importOptions = importOptions ?? throw new ArgumentNullException(nameof(importOptions));
-			genericArguments = null;
 			this.sourceModule = sourceModule;
 		}
 
@@ -196,25 +193,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		int GetHashCode_EventName(UTF8String a) => GetHashCode_Name(CaseInsensitiveEventNames, UTF8String.ToSystemStringOrEmpty(a));
 
 		int GetHashCode_EventName(string a) => GetHashCode_Name(CaseInsensitiveEventNames, a);
-
-		SigComparerOptions ClearOptions(SigComparerOptions flags) {
-			var old = options;
-			options &= ~flags;
-			return old;
-		}
-
-		SigComparerOptions SetOptions(SigComparerOptions flags) {
-			var old = options;
-			options |= flags;
-			return old;
-		}
-
-		void RestoreOptions(SigComparerOptions oldFlags) => options = oldFlags;
-
-		void InitializeGenericArguments() {
-			if (genericArguments == null)
-				genericArguments = new GenericArguments();
-		}
 
 		static GenericInstSig GetGenericInstanceType(IMemberRefParent parent) {
 			var ts = parent as TypeSpec;
@@ -1185,9 +1163,6 @@ namespace dnSpy.AsmEditor.Compiler {
 				return 0;
 			int hash;
 
-			if (genericArguments != null)
-				a = genericArguments.Resolve(a);
-
 			switch (a.ElementType) {
 			case ElementType.Void:
 			case ElementType.Boolean:
@@ -1255,14 +1230,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			case ElementType.GenericInst:
 				var gia = (GenericInstSig)a;
 				hash = HASHCODE_MAGIC_ET_GENERICINST;
-				if (SubstituteGenericParameters) {
-					InitializeGenericArguments();
-					genericArguments.PushTypeArgs(gia.GenericArguments);
-					hash += GetHashCode(gia.GenericType);
-					genericArguments.PopTypeArgs();
-				}
-				else
-					hash += GetHashCode(gia.GenericType);
+				hash += GetHashCode(gia.GenericType);
 				hash += GetHashCode(gia.GenericArguments);
 				break;
 
@@ -1747,15 +1715,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return 0;
 
 			int hash = GetHashCode_MethodFieldName(a.Name);
-			GenericInstSig git;
-			if (SubstituteGenericParameters && (git = GetGenericInstanceType(a.Class)) != null) {
-				InitializeGenericArguments();
-				genericArguments.PushTypeArgs(git.GenericArguments);
-				hash += GetHashCode(a.Signature);
-				genericArguments.PopTypeArgs();
-			}
-			else
-				hash += GetHashCode(a.Signature);
+			hash += GetHashCode(a.Signature);
 			if (CompareMethodFieldDeclaringType)
 				hash += GetHashCode(a.Class);
 
@@ -1783,17 +1743,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!recursionCounter.Increment())
 				return 0;
 
-			// We must do this or it won't get the same hash code as some MethodInfos
-			var oldOptions = SetOptions(SigComparerOptions.SubstituteGenericParameters);
-			var gim = a.GenericInstMethodSig;
-			if (gim != null) {
-				InitializeGenericArguments();
-				genericArguments.PushMethodArgs(gim.GenericArguments);
-			}
 			int hash = GetHashCode(a.Method);
-			if (gim != null)
-				genericArguments.PopMethodArgs();
-			RestoreOptions(oldOptions);
 
 			recursionCounter.Decrement();
 			return hash;

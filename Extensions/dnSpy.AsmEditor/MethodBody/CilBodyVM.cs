@@ -571,7 +571,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		static MethodSig GetMethodSig(object operand) {
+		static MethodBaseSig GetMethodSig(object operand) {
 			if (operand is MethodSig msig)
 				return msig;
 
@@ -593,7 +593,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return null;
 		}
 
-		static MethodSig GetMethodSig(ITypeDefOrRef type, MethodSig msig, IList<TypeSig> methodGenArgs) {
+		static MethodBaseSig GetMethodSig(ITypeDefOrRef type, MethodSig msig, IList<TypeSig> methodGenArgs) {
 			IList<TypeSig> typeGenArgs = null;
 			if (type is TypeSpec ts) {
 				var genSig = ts.TypeSig.ToGenericInstSig();
