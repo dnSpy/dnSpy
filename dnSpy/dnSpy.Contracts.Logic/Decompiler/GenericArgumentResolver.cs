@@ -116,7 +116,7 @@ namespace dnSpy.Contracts.Decompiler {
 				result = new ByRefSig(ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.Var:
-				result = new GenericVar((typeSig as GenericVar).Number);
+				result = new GenericVar((typeSig as GenericVar).Number, (typeSig as GenericVar).OwnerType);
 				break;
 			case ElementType.ValueArray:
 				result = new ValueArraySig(ResolveGenericArgs(typeSig.Next), (typeSig as ValueArraySig).Size);
@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Decompiler {
 				result = new SZArraySig(ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.MVar:
-				result = new GenericMVar((typeSig as GenericMVar).Number);
+				result = new GenericMVar((typeSig as GenericMVar).Number, (typeSig as GenericMVar).OwnerMethod);
 				break;
 			case ElementType.CModReqd:
 				result = new CModReqdSig((typeSig as ModifierSig).Modifier, ResolveGenericArgs(typeSig.Next));
