@@ -5444,6 +5444,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Run NGEN.exe if this assembly is installed in the GAC.
+        /// </summary>
+        public static string RerunNgenIfGacAssembly {
+            get {
+                return ResourceManager.GetString("RerunNgenIfGacAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color _Depth.
         /// </summary>
         public static string Resource_ColorDepth {
