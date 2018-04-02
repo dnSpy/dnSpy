@@ -75,7 +75,7 @@ namespace MakeEverythingPublic {
 			ivtBlobDataOffset = 0;
 			foundIVT = false;
 			uint otherIVTBlobOffset = uint.MaxValue;
-			var blobStream = md.BlobStream.GetReader();
+			var blobStream = md.BlobStream.CreateReader();
 			var tbl = md.TablesStream.CustomAttributeTable;
 			uint baseOffset = (uint)tbl.StartOffset;
 			var columnType = tbl.Columns[1];

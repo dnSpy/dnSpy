@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var resolutionScopeCodedTokenCache = new Dictionary<uint, bool>();
 			var md = mdEditor.RealMetadata;
-			var stringsStream = md.StringsStream.GetReader();
+			var stringsStream = md.StringsStream.CreateReader();
 			var table = md.TablesStream.TypeRefTable;
 			var p = peFile + (int)table.StartOffset;
 			int rowSize = (int)table.RowSize;
@@ -541,7 +541,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		static readonly byte[] ivtCtorSigBlob = new byte[] { 0x20, 0x01, 0x01, 0x0E };
 
 		bool GetCorLibToken(out MDToken corlibToken) {
-			var stringsStream = mdEditor.RealMetadata.StringsStream.GetReader();
+			var stringsStream = mdEditor.RealMetadata.StringsStream.CreateReader();
 
 			// Check if we have any assembly refs to the corlib
 			{
