@@ -200,7 +200,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					}
 				}
 				else {
-					using (var md = MetadataCreator.CreateMetadata(peImage)) {
+					using (var md = MetadataFactory.CreateMetadata(peImage)) {
 						if (!md.TablesStream.TryReadAssemblyRow(1, out var row))
 							assemblySimpleName = null;
 						else

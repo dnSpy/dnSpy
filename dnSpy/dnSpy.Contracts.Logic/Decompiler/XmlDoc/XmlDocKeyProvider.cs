@@ -166,7 +166,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					b.Append(typeRef.Name);
 				}
 				else {
-					FullNameCreator.FullNameSB(type, false, null, null, null, b);
+					FullNameFactory.FullNameSB(type, false, null, null, null, b);
 				}
 			}
 		}
@@ -182,7 +182,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 			else {
 				int len = b.Length;
-				FullNameCreator.NamespaceSB(type, true, b);
+				FullNameFactory.NamespaceSB(type, true, b);
 				if (len != b.Length)
 					b.Append('.');
 			}

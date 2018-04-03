@@ -103,7 +103,7 @@ namespace MakeEverythingPublic {
 					var data = File.ReadAllBytes(filename);
 					try {
 						using (var peImage = new PEImage(data, filename, ImageLayout.File, verify: true)) {
-							using (var md = MetadataCreator.CreateMetadata(peImage, verify: true)) {
+							using (var md = MetadataFactory.CreateMetadata(peImage, verify: true)) {
 								var result = new IVTPatcher(data, md, ivtBlob).Patch();
 								if (result != IVTPatcherResult.OK) {
 									string errMsg;

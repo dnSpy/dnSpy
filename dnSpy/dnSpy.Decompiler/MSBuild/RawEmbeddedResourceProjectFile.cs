@@ -37,7 +37,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public override void Create(DecompileContext ctx) {
 			using (var stream = File.Create(Filename))
-				embeddedResource.GetReader().CopyTo(stream);
+				embeddedResource.CreateReader().CopyTo(stream);
 		}
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.IO;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -47,13 +46,13 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public override string ToString(CancellationToken token, bool canDecompile) {
 			if (Resource is EmbeddedResource er)
-				return ResourceUtilities.TryGetString(er.GetReader().AsStream());
+				return ResourceUtilities.TryGetString(er.CreateReader().AsStream());
 			return null;
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			if (Resource is EmbeddedResource er)
-				return ResourceUtilities.Decompile(context, er.GetReader().AsStream(), er.Name);
+				return ResourceUtilities.Decompile(context, er.CreateReader().AsStream(), er.Name);
 			return false;
 		}
 	}

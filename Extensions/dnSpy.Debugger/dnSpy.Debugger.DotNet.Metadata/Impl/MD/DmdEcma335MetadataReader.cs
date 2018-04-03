@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Create(module, File.ReadAllBytes(filename), isFileLayout);
 
 		static DmdEcma335MetadataReader Create(DmdModuleImpl module, IPEImage peImage) {
-			var metadata = MetadataCreator.CreateMetadata(peImage);
+			var metadata = MetadataFactory.CreateMetadata(peImage);
 			return new DmdEcma335MetadataReader(module, metadata);
 		}
 

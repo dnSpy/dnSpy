@@ -762,10 +762,10 @@ namespace dnSpy_Console {
 			return module.GetTypes().FirstOrDefault(a => {
 				sb.Clear();
 				string s1, s2;
-				if (comparer.Equals(s1 = FullNameCreator.FullName(a, false, null, sb), name))
+				if (comparer.Equals(s1 = FullNameFactory.FullName(a, false, null, sb), name))
 					return true;
 				sb.Clear();
-				if (comparer.Equals(s2 = FullNameCreator.FullName(a, true, null, sb), name))
+				if (comparer.Equals(s2 = FullNameFactory.FullName(a, true, null, sb), name))
 					return true;
 				sb.Clear();
 				if (comparer.Equals(CleanTypeName(s1), name))
@@ -780,10 +780,10 @@ namespace dnSpy_Console {
 			return module.GetTypes().FirstOrDefault(a => {
 				sb.Clear();
 				string s1, s2;
-				if (comparer.Equals(s1 = FullNameCreator.Name(a, false, sb), name))
+				if (comparer.Equals(s1 = FullNameFactory.Name(a, false, sb), name))
 					return true;
 				sb.Clear();
-				if (comparer.Equals(s2 = FullNameCreator.Name(a, true, sb), name))
+				if (comparer.Equals(s2 = FullNameFactory.Name(a, true, sb), name))
 					return true;
 				sb.Clear();
 				if (comparer.Equals(CleanTypeName(s1), name))

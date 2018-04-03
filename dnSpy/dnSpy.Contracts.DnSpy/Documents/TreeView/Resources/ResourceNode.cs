@@ -112,7 +112,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (module == null)
 				return null;
 
-			fileOffset = (FileOffset)er.GetReader().StartOffset;
+			fileOffset = (FileOffset)er.CreateReader().StartOffset;
 			return module;
 		}
 
@@ -192,7 +192,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <returns></returns>
 		protected virtual IEnumerable<ResourceData> GetSerializedData() {
 			if (Resource is EmbeddedResource er)
-				yield return new ResourceData(Resource.Name, token => er.GetReader().AsStream());
+				yield return new ResourceData(Resource.Name, token => er.CreateReader().AsStream());
 		}
 
 		/// <inheritdoc/>

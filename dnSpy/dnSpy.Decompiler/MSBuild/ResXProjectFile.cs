@@ -109,7 +109,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var list = new List<ResXDataNode>();
 			int errors = 0;
 			try {
-				using (var reader = new ResourceReader(embeddedResource.GetReader().AsStream())) {
+				using (var reader = new ResourceReader(embeddedResource.CreateReader().AsStream())) {
 					var iter = reader.GetEnumerator();
 					while (iter.MoveNext()) {
 						ctx.CancellationToken.ThrowIfCancellationRequested();

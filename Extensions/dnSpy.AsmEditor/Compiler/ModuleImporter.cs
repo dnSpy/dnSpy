@@ -284,7 +284,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		EmbeddedResource Import(EmbeddedResource resource) =>
-			new EmbeddedResource(resource.Name, resource.GetReader().ToArray(), resource.Attributes);
+			new EmbeddedResource(resource.Name, resource.CreateReader().ToArray(), resource.Attributes);
 
 		AssemblyLinkedResource Import(AssemblyLinkedResource resource) =>
 			new AssemblyLinkedResource(resource.Name, resource.Assembly?.ToAssemblyRef(), resource.Attributes);

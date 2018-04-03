@@ -47,7 +47,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (dir.Data.Count == 0)
 				return null;
 
-			var reader = dir.Data[0].GetReader();
+			var reader = dir.Data[0].CreateReader();
 			return new ApplicationManifest(filenameCreator.CreateName("app.manifest"), ref reader);
 		}
 
