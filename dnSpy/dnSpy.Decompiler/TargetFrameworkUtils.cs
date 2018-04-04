@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Decompiler.Properties;
@@ -32,7 +33,7 @@ namespace dnSpy.Decompiler {
 			if (module == null)
 				return "???";
 
-			if (module.Machine == Machine.I386) {
+			if (module.Machine.IsI386()) {
 				// See https://github.com/dotnet/coreclr/blob/master/src/inc/corhdr.h
 				int c = (module.Is32BitRequired ? 2 : 0) + (module.Is32BitPreferred ? 1 : 0);
 				switch (c) {
@@ -58,13 +59,19 @@ namespace dnSpy.Decompiler {
 		/// <param name="machine">Machine</param>
 		/// <returns></returns>
 		public static string GetArchString(Machine machine) {
-			switch (machine) {
-			case Machine.I386:		return "x86";
-			case Machine.AMD64:		return "x64";
-			case Machine.IA64:		return "IA-64";
-			case Machine.ARMNT:		return "ARM";
-			case Machine.ARM64:		return "ARM64";
-			default:				return machine.ToString();
+			if (machine.IsI386())
+				return "x86";
+			else if (machine.IsAMD64())
+				return "x64";
+			else if (machine == Machine.IA64)
+				return "IA-64";
+			else if (machine.IsARMNT())
+				return "ARM";
+			else if (machine.IsARM64())
+				return "ARM64";
+			else {
+				Debug.Fail("Unknown machine");
+				return machine.ToString();
 			}
 		}
 	}

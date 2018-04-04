@@ -292,8 +292,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string GetPlatformString() {
-			switch (project.Module.Machine) {
-			case Machine.I386:
+			var machine = project.Module.Machine;
+			if (machine.IsI386()) {
 				int c = (project.Module.Is32BitRequired ? 2 : 0) + (project.Module.Is32BitPreferred ? 1 : 0);
 				switch (c) {
 				case 0: // no special meaning, MachineType and ILONLY flag determine image requirements
@@ -308,13 +308,18 @@ namespace dnSpy.Decompiler.MSBuild {
 					return "AnyCPU";
 				}
 				return "AnyCPU";
-			case Machine.AMD64:			return "x64";
-			case Machine.IA64:			return "Itanium";
-			case Machine.ARMNT:			return "ARM";
-			case Machine.ARM64:			return "ARM64";
-			default:
+			}
+			else if (machine.IsAMD64())
+				return "x64";
+			else if (machine == Machine.IA64)
+				return "Itanium";
+			else if (machine.IsARMNT())
+				return "ARM";
+			else if (machine.IsARM64())
+				return "ARM64";
+			else {
 				Debug.Fail("Unknown machine");
-				return project.Module.Machine.ToString();
+				return machine.ToString();
 			}
 		}
 

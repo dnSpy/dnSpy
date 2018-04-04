@@ -51,5 +51,10 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// ARM
 		/// </summary>
 		Arm,
+
+		/// <summary>
+		/// ARM64
+		/// </summary>
+		Arm64,
 	}
 }

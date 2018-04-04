@@ -34,6 +34,7 @@ namespace dnSpy.Roslyn.Compiler {
 			case TargetPlatform.Itanium:				return Platform.Itanium;
 			case TargetPlatform.AnyCpu32BitPreferred:	return Platform.AnyCpu32BitPreferred;
 			case TargetPlatform.Arm:					return Platform.Arm;
+			case TargetPlatform.Arm64:					return Platform.Arm;//TODO: Fix this when Roslyn supports ARM64
 			default:
 				Debug.Fail($"Unknown platform: {platform}");
 				return Platform.AnyCpu;
