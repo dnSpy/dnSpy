@@ -177,7 +177,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public override void OnAdded() {
 			if (loadedSymbols)
-				LoadSymbols(ModuleDef.Location);
+				LoadSymbols();
 			base.OnAdded();
 		}
 
@@ -197,9 +197,7 @@ namespace dnSpy.Contracts.Documents {
 			return moduleCtx;
 		}
 
-		void LoadSymbols(string dotNetFilename) {
-			if (!File.Exists(dotNetFilename))
-				return;
+		void LoadSymbols() {
 			// Happens if a module has been removed but then the exact same instance
 			// was re-added.
 			if (ModuleDef.PdbState != null)
@@ -209,9 +207,7 @@ namespace dnSpy.Contracts.Documents {
 			if (m == null)
 				return;
 			try {
-				var pdbFilename = Path.Combine(Path.GetDirectoryName(dotNetFilename), Path.GetFileNameWithoutExtension(dotNetFilename) + ".pdb");
-				// Don't check if the file exists, it could be an embedded portable PDB file
-				m.LoadPdb(pdbFilename);
+				m.LoadPdb();
 			}
 			catch {
 			}
