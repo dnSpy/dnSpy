@@ -305,7 +305,6 @@
     <Compile Include="Documents\Tabs\NavigationCommands.cs" />
     <Compile Include="Documents\Tabs\NodeDecompiler.cs" />
     <Compile Include="Documents\Tabs\NodeReferenceDocumentTabContentProvider.cs" />
-    <Compile Include="Documents\Tabs\NodeTabSaver.cs" />
     <Compile Include="Documents\Tabs\NullObjects.cs" />
     <Compile Include="Documents\Tabs\RedecompileTabs.cs" />
     <Compile Include="Documents\Tabs\RefreshResourcesCommand.cs" />

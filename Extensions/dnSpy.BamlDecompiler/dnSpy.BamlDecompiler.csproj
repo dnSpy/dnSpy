@@ -54,7 +54,6 @@
     <Compile Include="BamlResourceElementNode.cs" />
     <Compile Include="BamlResourceNodeProvider.cs" />
     <Compile Include="BamlSettings.cs" />
-    <Compile Include="BamlTabSaver.cs" />
     <Compile Include="BamlToolTipProvider.cs" />
     <Compile Include="Baml\BamlContext.cs" />
     <Compile Include="Baml\BamlDocument.cs" />

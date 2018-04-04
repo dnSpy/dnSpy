@@ -793,15 +793,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Save Code....
-        /// </summary>
-        public static string Button_SaveCode {
-            get {
-                return ResourceManager.GetString("Button_SaveCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Yes.
         /// </summary>
         public static string Button_Yes {
@@ -3446,15 +3437,6 @@ namespace dnSpy.Properties {
         public static string SaveResourceButton {
             get {
                 return ResourceManager.GetString("SaveResourceButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Saving....
-        /// </summary>
-        public static string SavingCode {
-            get {
-                return ResourceManager.GetString("SavingCode", resourceCulture);
             }
         }
         

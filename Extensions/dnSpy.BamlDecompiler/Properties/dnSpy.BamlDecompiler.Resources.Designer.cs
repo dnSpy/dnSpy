@@ -19,7 +19,7 @@ namespace dnSpy.BamlDecompiler.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_BamlDecompiler_Resources {
@@ -57,24 +57,6 @@ namespace dnSpy.BamlDecompiler.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to All Files.
-        /// </summary>
-        public static string AllFiles {
-            get {
-                return ResourceManager.GetString("AllFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to BAML File.
-        /// </summary>
-        public static string BAMLFile {
-            get {
-                return ResourceManager.GetString("BAMLFile", resourceCulture);
             }
         }
         
@@ -165,42 +147,6 @@ namespace dnSpy.BamlDecompiler.Properties {
         public static string Plugin_ShortDescription {
             get {
                 return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Save BAML....
-        /// </summary>
-        public static string SaveBAML {
-            get {
-                return ResourceManager.GetString("SaveBAML", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Save XAML....
-        /// </summary>
-        public static string SaveXAML {
-            get {
-                return ResourceManager.GetString("SaveXAML", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Saving....
-        /// </summary>
-        public static string Saving {
-            get {
-                return ResourceManager.GetString("Saving", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to XAML File.
-        /// </summary>
-        public static string XAMLFile {
-            get {
-                return ResourceManager.GetString("XAMLFile", resourceCulture);
             }
         }
     }
