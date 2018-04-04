@@ -162,9 +162,6 @@
   <data name="Button_Save" xml:space="preserve">
     <value>_Speichern...</value>
   </data>
-  <data name="Button_SaveCode" xml:space="preserve">
-    <value>Code _speichern...</value>
-  </data>
   <data name="Button_Yes" xml:space="preserve">
     <value>_Ja</value>
   </data>
@@ -506,9 +503,6 @@
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
     <value>Speichern</value>
-  </data>
-  <data name="SavingCode" xml:space="preserve">
-    <value>Speichern...</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
     <value>Suche abgebrochen, mehr als {0:n0} Ergebnisse gefunden.</value>

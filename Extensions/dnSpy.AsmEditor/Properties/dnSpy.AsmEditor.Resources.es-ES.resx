@@ -2516,9 +2516,12 @@
     <value>Añadir miembros a la clase</value>
   </data>
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
-    <value>Agregar a miembros a la clase ({0})...</value>
+    <value>Agregar miembros a la clase ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
-    <value>Copy Unkno_wn Metadata Streams</value>
+    <value>Copiar secuencias de metadatos desconocida</value>
+  </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>Ejecuta NGEN.exe si este ensamblado está instalado en el GAC</value>
   </data>
 </root>

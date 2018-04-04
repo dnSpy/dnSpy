@@ -136,10 +136,10 @@
     <value>Descompilar métodos asincrónicos (async/await)</value>
   </data>
   <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
-    <value>Descompilar eventos automáticos</value>
+    <value>Descompilar eventos automáticamente</value>
   </data>
   <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
-    <value>Descompilar propiedades automáticas</value>
+    <value>Descompilar propiedades automáticamente</value>
   </data>
   <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
     <value>Descompilar enumeradores (retornos yield)</value>
@@ -151,7 +151,7 @@
     <value>Descompilar declaraciones foreach</value>
   </data>
   <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
-    <value>Descompilar declaraciones lock</value>
+    <value>Descompilar declaraciones de bloqueo</value>
   </data>
   <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
     <value>Descompilar expresiones de consulta</value>
@@ -169,16 +169,16 @@
     <value>Añadir un espacio de nombres a los tipos con el mismo nombre</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
-    <value>Uso de incremento y decremento operadores</value>
+    <value>Uso de incremento y decremento de operadores</value>
   </data>
   <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
-    <value>Asignación de expresiones tales como en mientras que ((cuenta = Do())! = 0);</value>
+    <value>Asignación de expresiones tales como while ((cuenta = Do())! = 0);</value>
   </data>
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Número máximo de elementos de matriz para mostrar</value>
   </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
-    <value>Añadir 'private' modificador para los miembros de tipo</value>
+    <value>Añadir el modificador 'private' para miembros type</value>
   </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Descompilar a los inicializadores de objeto o colección</value>
@@ -196,13 +196,13 @@
     <value>Mostrar los tipos y métodos ocultos generados por el compilador</value>
   </data>
   <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Mostrar los oomentarios de opcpde IL</value>
+    <value>Mostrar los comentarios de opcode IL</value>
   </data>
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
     <value>Mostrar instrucciones bytes IL</value>
   </data>
   <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
-    <value>Mostrar números de línea y nombres de archivos si está disponible</value>
+    <value>Mostrar números de línea y nombres de archivos si están disponibles</value>
   </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
     <value>Mostrar fichas, RVAs y compensaciones de archivo</value>
@@ -217,7 +217,7 @@
     <value>Ordenar los métodos, campos, propiedades, eventos y tipos</value>
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Coloque las directivas 'System' primero al ordenar usos</value>
+    <value>Coloque la directiva 'System' primero al ordenar los using</value>
   </data>
   <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
     <value>Agregue el modificador 'internal' a tipos</value>

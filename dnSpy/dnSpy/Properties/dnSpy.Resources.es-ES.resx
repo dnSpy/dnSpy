@@ -145,7 +145,7 @@
     <value>Ctrl+Alt+L</value>
   </data>
   <data name="AssemblyExplorerTitle" xml:space="preserve">
-    <value>Explorador de ensamblado</value>
+    <value>Explorador de ensamblados</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
     <value>Tipo base e Interfaces</value>
@@ -162,9 +162,6 @@
   <data name="Button_Save" xml:space="preserve">
     <value>_Guardar...</value>
   </data>
-  <data name="Button_SaveCode" xml:space="preserve">
-    <value>_Guardar código...</value>
-  </data>
   <data name="Button_Yes" xml:space="preserve">
     <value>_Sí</value>
   </data>
@@ -172,7 +169,7 @@
     <value>No se puede convertir la entrada para el tipo deseado: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Cerca de todos los grupos de pestaña pero esto</value>
+    <value>Cerca de todos los grupos de pestaña menos este</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
     <value>Cierre _Todas Menos Esta</value>
@@ -280,7 +277,7 @@
     <value>Ctrl+D</value>
   </data>
   <data name="GoToToken_CouldNotResolve" xml:space="preserve">
-    <value>No podría resolver símbolo de referencia de miembro: 0x{0:X8}</value>
+    <value>No se pudo resolver el token de referencia del miembro: 0x{0: X8}</value>
   </data>
   <data name="GoToToken_InvalidToken" xml:space="preserve">
     <value>Token de metadatos inválido: 0x{0:X8}</value>
@@ -394,7 +391,7 @@
     <value>_Abrir carpeta contenedora</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
-    <value>Abierto emsamblados _GAC...</value>
+    <value>Abrir emsamblados _GAC...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
     <value>Creado por:</value>
@@ -506,9 +503,6 @@
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
     <value>Guardar</value>
-  </data>
-  <data name="SavingCode" xml:space="preserve">
-    <value>Guardando...</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
     <value>Búsqueda abortada, más de {0:n0} resultados encontrado.</value>

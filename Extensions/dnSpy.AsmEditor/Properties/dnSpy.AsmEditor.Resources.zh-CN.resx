@@ -2524,4 +2524,7 @@
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
     <value>Copy Unkno_wn Metadata Streams</value>
   </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>Run NGEN.exe if this assembly is installed in the GAC</value>
+  </data>
 </root>

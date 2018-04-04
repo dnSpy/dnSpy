@@ -2526,6 +2526,9 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
     <value>Osztálytagok ({0}) hozzáadása...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
-    <value>Copy Unkno_wn Metadata Streams</value>
+    <value>Isme_retlen metaadat folyamok másolása</value>
+  </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>NGEN.exe futtatása, ha ez a szerelvény a GAC-ba van telepítve</value>
   </data>
 </root>

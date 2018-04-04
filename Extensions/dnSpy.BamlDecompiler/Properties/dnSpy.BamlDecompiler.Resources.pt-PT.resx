@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
-  </data>
-  <data name="BAMLFile" xml:space="preserve">
-    <value>Ficheiro BAML</value>
-  </data>
   <data name="BamlOptionDlgTab" xml:space="preserve">
     <value>Descompilador BAML</value>
   </data>
@@ -152,17 +146,5 @@
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Descompilador BAML</value>
-  </data>
-  <data name="SaveBAML" xml:space="preserve">
-    <value>Guardar BAML...</value>
-  </data>
-  <data name="SaveXAML" xml:space="preserve">
-    <value>Guardar XAML...</value>
-  </data>
-  <data name="Saving" xml:space="preserve">
-    <value>Guardando...</value>
-  </data>
-  <data name="XAMLFile" xml:space="preserve">
-    <value>Ficheiro XAML</value>
   </data>
 </root>

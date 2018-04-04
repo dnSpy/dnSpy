@@ -190,7 +190,7 @@
     <value>Palabras Claves</value>
   </data>
   <data name="LocalsAndParametersToolTip" xml:space="preserve">
-    <value>Locales y los parámetros</value>
+    <value>Locales y parámetros</value>
   </data>
   <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
     <value>{0} devuelto</value>
@@ -211,7 +211,7 @@
     <value>Propiedades</value>
   </data>
   <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
-    <value>Sólo tipos enumerables pueden tener vista de resultados</value>
+    <value>Sólo los tipos enumerables pueden tener vista de resultados</value>
   </data>
   <data name="SnippetsToolTip" xml:space="preserve">
     <value>Fragmento</value>
@@ -220,7 +220,7 @@
     <value>Estructuras</value>
   </data>
   <data name="SystemCoreDllNotLoaded" xml:space="preserve">
-    <value>Resultados de la visión requiere {0} para hacer referencia a</value>
+    <value>La Vista de resultados requiere que se haga referencia a {0}</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
     <value>Tipo '{0}' no existe en el ensamblado '{1}'</value>
