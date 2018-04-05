@@ -11,3 +11,4 @@ _ReSharper*/
 *.tmp_proj
 *_wpftmp.csproj
 project.lock.json
+dnSpy.nuget.props

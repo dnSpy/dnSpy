@@ -1381,6 +1381,12 @@
   <ItemGroup>
     <Resource Include="Images\dnSpy.ico" />
   </ItemGroup>
+  <!-- TODO: We don't need the arm binary. Once we switch from project.json to PackageReference, we probably won't need this hack -->
+  <Target Name="DnSpyRemoveArmBinaries" DependsOnTargets="ResolveNuGetPackageAssets" AfterTargets="ResolveNuGetPackageAssets">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="$(NuGetPackageRoot)**\Microsoft.DiaSymReader.Native.arm.dll" />
+    </ItemGroup>
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\EmbedInteropTypes.targets" />
   <ItemGroup>

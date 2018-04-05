@@ -3,6 +3,7 @@
 		"Microsoft.VisualStudio.Composition": "15.6.36",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.5.27130",
 		"Microsoft.VisualStudio.Language.Intellisense": "15.5.27130",
+		"Microsoft.DiaSymReader.Native": "1.7.0",
 		"Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime": "15.0.25726-Preview5"
 	},
 	"frameworks": {
