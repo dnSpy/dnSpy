@@ -155,6 +155,8 @@ namespace dnSpy.Debugger.Evaluation {
 			if (Runtime.IsClosed || value.IsClosed)
 				return null;
 			lock (lockObj) {
+				if (objectIds.Count == 0)
+					return null;
 				if (objectIds.TryGetValue(value, out var objectId))
 					return objectId;
 				return null;

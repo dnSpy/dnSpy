@@ -1068,8 +1068,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			public EquatableValue(ObjectMirror value) {
 				if (value == null)
 					Address = 0;
-				else
-					Address = (ulong)value.Address;
+				else {
+					try {
+						Address = (ulong)value.Address;
+					}
+					catch (ObjectCollectedException) {
+						Address = 0;
+					}
+				}
 				this.value = value;
 			}
 
