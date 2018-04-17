@@ -16,6 +16,14 @@
     <Prefer32Bit>false</Prefer32Bit>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
+    <!-- TODO:
+      We have to explicitly disable this because it will be enabled by default when we
+      target .NET Framework 4.7.2 or later.
+      We can't enable it because we'll get two different *.config files for dnSpy.exe
+      and dnSpy-x86.exe. Eg. dnSpy-x86.exe gets System.IO.Compression=4.1.1.0 and
+      dnSpy.exe gets System.IO.Compression=4.1.2.0
+    -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

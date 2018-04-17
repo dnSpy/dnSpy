@@ -16,6 +16,8 @@
     <Prefer32Bit>true</Prefer32Bit>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
+    <!-- See dnSpy.csproj for more info -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
