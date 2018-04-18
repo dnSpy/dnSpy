@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public IDsDocument Document { get; }
 		public ModuleId Id { get; }
 		public bool IsActive { get; }
-		public DocumentInfo(IDsDocument document, in ModuleId id, bool isActive) {
+		public DocumentInfo(IDsDocument document, ModuleId id, bool isActive) {
 			Document = document ?? throw new ArgumentNullException(nameof(document));
 			Id = id;
 			IsActive = isActive;

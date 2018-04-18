@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				refreshedVersion = module.RefreshedVersion;
 			}
 
-			public DbgLanguageDebugInfoKey(in ModuleId moduleId, uint token) {
+			public DbgLanguageDebugInfoKey(ModuleId moduleId, uint token) {
 				this.token = token;
 				this.moduleId = moduleId;
 				module = null;

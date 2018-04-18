@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		internal (RawModuleBytes rawData, CompilerMetadataReference mdRef)[] GetReferences() => rawModuleBytesList.ToArray();
 
-		CompilerMetadataReference? Save(in (RawModuleBytes rawData, CompilerMetadataReference mdRef) info) {
+		CompilerMetadataReference? Save((RawModuleBytes rawData, CompilerMetadataReference mdRef) info) {
 			if (info.rawData == null)
 				return null;
 			try {

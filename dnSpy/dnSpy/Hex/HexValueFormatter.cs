@@ -66,7 +66,7 @@ namespace dnSpy.Hex {
 		/// <param name="valueIndex">Index of value in <paramref name="hexBytes"/></param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags);
+		public abstract int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags);
 
 		protected int WriteInvalid(StringBuilder dest) {
 			dest.Append('?', FormattedLength);
@@ -535,7 +535,7 @@ namespace dnSpy.Hex {
 			: base(1, "FF".Length, HexValuesDisplayFormat.HexByte) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
 			int b = hexBytes.TryReadByte(valueIndex);
 			if (b < 0)
 				return WriteInvalid(dest);
@@ -552,7 +552,7 @@ namespace dnSpy.Hex {
 			: base(2, "FFFF".Length, HexValuesDisplayFormat.HexUInt16) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt16(dest, flags, hexBytes.TryReadUInt16(valueIndex));
 
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
@@ -573,7 +573,7 @@ namespace dnSpy.Hex {
 			: base(4, "FFFFFFFF".Length, HexValuesDisplayFormat.HexUInt32) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt32(dest, flags, hexBytes.TryReadUInt32(valueIndex));
 
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
@@ -594,7 +594,7 @@ namespace dnSpy.Hex {
 			: base(8, "FFFFFFFFFFFFFFFF".Length, HexValuesDisplayFormat.HexUInt64) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt64(dest, flags, hexBytes.TryReadUInt64(valueIndex));
 
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
@@ -615,7 +615,7 @@ namespace dnSpy.Hex {
 			: base(1, "-80".Length, HexValuesDisplayFormat.HexSByte) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexSByte(dest, flags, hexBytes.TryReadSByte(valueIndex));
 
 		public override bool CanEdit => true;
@@ -627,7 +627,7 @@ namespace dnSpy.Hex {
 			: base(2, "-8000".Length, HexValuesDisplayFormat.HexInt16) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt16(dest, flags, hexBytes.TryReadInt16(valueIndex));
 
 		public override bool CanEdit => true;
@@ -639,7 +639,7 @@ namespace dnSpy.Hex {
 			: base(4, "-80000000".Length, HexValuesDisplayFormat.HexInt32) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt32(dest, flags, hexBytes.TryReadInt32(valueIndex));
 
 		public override bool CanEdit => true;
@@ -651,7 +651,7 @@ namespace dnSpy.Hex {
 			: base(8, "-8000000000000000".Length, HexValuesDisplayFormat.HexInt64) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt64(dest, flags, hexBytes.TryReadInt64(valueIndex));
 
 		public override bool CanEdit => true;
@@ -664,7 +664,7 @@ namespace dnSpy.Hex {
 			: base(1, MAX_LENGTH, HexValuesDisplayFormat.DecimalByte) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
 			int b = hexBytes.TryReadByte(valueIndex);
 			if (b < 0)
 				return WriteInvalid(dest);
@@ -678,7 +678,7 @@ namespace dnSpy.Hex {
 			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt16) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalUInt16(dest, flags, hexBytes.TryReadUInt16(valueIndex));
 	}
 
@@ -688,7 +688,7 @@ namespace dnSpy.Hex {
 			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt32) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalUInt32(dest, flags, hexBytes.TryReadUInt32(valueIndex));
 	}
 
@@ -698,7 +698,7 @@ namespace dnSpy.Hex {
 			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt64) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalUInt64(dest, flags, hexBytes.TryReadUInt64(valueIndex));
 	}
 
@@ -708,7 +708,7 @@ namespace dnSpy.Hex {
 			: base(1, MAX_LENGTH, HexValuesDisplayFormat.DecimalSByte) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalSByte(dest, flags, hexBytes.TryReadSByte(valueIndex));
 	}
 
@@ -718,7 +718,7 @@ namespace dnSpy.Hex {
 			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt16) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalInt16(dest, flags, hexBytes.TryReadInt16(valueIndex));
 	}
 
@@ -728,7 +728,7 @@ namespace dnSpy.Hex {
 			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt32) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalInt32(dest, flags, hexBytes.TryReadInt32(valueIndex));
 	}
 
@@ -738,7 +738,7 @@ namespace dnSpy.Hex {
 			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt64) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalInt64(dest, flags, hexBytes.TryReadInt64(valueIndex));
 	}
 
@@ -747,7 +747,7 @@ namespace dnSpy.Hex {
 			: base(4, MaxSingleFormattedLength, HexValuesDisplayFormat.Single) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatSingle(dest, flags, hexBytes.TryReadSingle(valueIndex));
 	}
 
@@ -756,7 +756,7 @@ namespace dnSpy.Hex {
 			: base(8, MaxDoubleFormattedLength, HexValuesDisplayFormat.Double) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDouble(dest, flags, hexBytes.TryReadDouble(valueIndex));
 	}
 
@@ -765,7 +765,7 @@ namespace dnSpy.Hex {
 			: base(1, "11111111".Length, HexValuesDisplayFormat.Bit8) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) {
 			int b = hexBytes.TryReadByte(valueIndex);
 			if (b < 0)
 				return WriteInvalid(dest);
@@ -783,7 +783,7 @@ namespace dnSpy.Hex {
 			: base(2, "FFFF".Length, HexValuesDisplayFormat.HexUInt16BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt16(dest, flags, hexBytes.TryReadUInt16BigEndian(valueIndex));
 
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
@@ -804,7 +804,7 @@ namespace dnSpy.Hex {
 			: base(4, "FFFFFFFF".Length, HexValuesDisplayFormat.HexUInt32BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt32(dest, flags, hexBytes.TryReadUInt32BigEndian(valueIndex));
 
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
@@ -825,7 +825,7 @@ namespace dnSpy.Hex {
 			: base(8, "FFFFFFFFFFFFFFFF".Length, HexValuesDisplayFormat.HexUInt64BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexUInt64(dest, flags, hexBytes.TryReadUInt64BigEndian(valueIndex));
 
 		public override HexBufferSpan GetBufferSpan(HexBufferSpan bufferSpan, int cellPosition) {
@@ -846,7 +846,7 @@ namespace dnSpy.Hex {
 			: base(2, "-8000".Length, HexValuesDisplayFormat.HexInt16BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt16(dest, flags, hexBytes.TryReadInt16BigEndian(valueIndex));
 
 		public override bool CanEdit => true;
@@ -858,7 +858,7 @@ namespace dnSpy.Hex {
 			: base(4, "-80000000".Length, HexValuesDisplayFormat.HexInt32BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt32(dest, flags, hexBytes.TryReadInt32BigEndian(valueIndex));
 
 		public override bool CanEdit => true;
@@ -870,7 +870,7 @@ namespace dnSpy.Hex {
 			: base(8, "-8000000000000000".Length, HexValuesDisplayFormat.HexInt64BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatHexInt64(dest, flags, hexBytes.TryReadInt64BigEndian(valueIndex));
 
 		public override bool CanEdit => true;
@@ -883,7 +883,7 @@ namespace dnSpy.Hex {
 			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt16BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalUInt16(dest, flags, hexBytes.TryReadUInt16BigEndian(valueIndex));
 	}
 
@@ -893,7 +893,7 @@ namespace dnSpy.Hex {
 			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt32BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalUInt32(dest, flags, hexBytes.TryReadUInt32BigEndian(valueIndex));
 	}
 
@@ -903,7 +903,7 @@ namespace dnSpy.Hex {
 			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalUInt64BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalUInt64(dest, flags, hexBytes.TryReadUInt64BigEndian(valueIndex));
 	}
 
@@ -913,7 +913,7 @@ namespace dnSpy.Hex {
 			: base(2, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt16BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalInt16(dest, flags, hexBytes.TryReadInt16BigEndian(valueIndex));
 	}
 
@@ -923,7 +923,7 @@ namespace dnSpy.Hex {
 			: base(4, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt32BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalInt32(dest, flags, hexBytes.TryReadInt32BigEndian(valueIndex));
 	}
 
@@ -933,7 +933,7 @@ namespace dnSpy.Hex {
 			: base(8, MAX_LENGTH, HexValuesDisplayFormat.DecimalInt64BigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDecimalInt64(dest, flags, hexBytes.TryReadInt64BigEndian(valueIndex));
 	}
 
@@ -942,7 +942,7 @@ namespace dnSpy.Hex {
 			: base(4, MaxSingleFormattedLength, HexValuesDisplayFormat.SingleBigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatSingle(dest, flags, hexBytes.TryReadSingleBigEndian(valueIndex));
 	}
 
@@ -951,7 +951,7 @@ namespace dnSpy.Hex {
 			: base(8, MaxDoubleFormattedLength, HexValuesDisplayFormat.DoubleBigEndian) {
 		}
 
-		public override int FormatValue(StringBuilder dest, in HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
+		public override int FormatValue(StringBuilder dest, HexBytes hexBytes, long valueIndex, HexValueFormatterFlags flags) =>
 			FormatDouble(dest, flags, hexBytes.TryReadDoubleBigEndian(valueIndex));
 	}
 }

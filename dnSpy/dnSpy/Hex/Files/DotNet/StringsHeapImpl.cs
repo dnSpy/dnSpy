@@ -47,7 +47,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly struct StringInfo {
 			public StringZ String { get; }
 			public uint[] Tokens { get; }
-			public StringInfo(in StringZ span, uint[] tokens) {
+			public StringInfo(StringZ span, uint[] tokens) {
 				String = span;
 				Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 			}

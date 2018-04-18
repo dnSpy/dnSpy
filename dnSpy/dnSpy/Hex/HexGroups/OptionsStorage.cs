@@ -48,7 +48,7 @@ namespace dnSpy.Hex.HexGroups {
 		readonly struct OptionKey : IEquatable<OptionKey> {
 			readonly SubGroupKey subGroupKey;
 			readonly string name;
-			public OptionKey(in SubGroupKey subGroupKey, string name) {
+			public OptionKey(SubGroupKey subGroupKey, string name) {
 				this.subGroupKey = subGroupKey;
 				this.name = name;
 			}

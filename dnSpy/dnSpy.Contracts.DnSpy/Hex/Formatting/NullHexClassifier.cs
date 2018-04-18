@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 				remove { }
 			}
 
-			public override void GetClassificationSpans(List<HexClassificationSpan> result, in HexClassificationContext context) { }
+			public override void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context) { }
 		}
 	}
 }

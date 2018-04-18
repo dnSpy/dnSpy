@@ -254,7 +254,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		public abstract HexCellCollection AsciiCells { get; }
 
-		TextAndHexSpan Create(in HexCellCollection collection, HexCell first, HexCell last, HexBufferSpan bufferSpan) {
+		TextAndHexSpan Create(HexCellCollection collection, HexCell first, HexCell last, HexBufferSpan bufferSpan) {
 			var firstCellSpan = first.FullSpan;
 			var lastCellSpan = last.FullSpan;
 			var startPos = HexPosition.MaxEndPosition;
@@ -507,7 +507,7 @@ namespace dnSpy.Contracts.Hex {
 			}
 		}
 
-		static (HexCell cell, int cellPosition)? GetVisible(in HexCellCollection collection, HexCell cell) {
+		static (HexCell cell, int cellPosition)? GetVisible(HexCellCollection collection, HexCell cell) {
 			if (cell.HasData)
 				throw new ArgumentException();
 			for (int i = cell.Index + 1; i < collection.Count; i++) {

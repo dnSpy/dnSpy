@@ -51,7 +51,7 @@ namespace dndbg.Engine {
 		internal DnCodeBreakpointError Error => error;
 		DnCodeBreakpointError error;
 
-		internal DnCodeBreakpoint(in DnModuleId module, uint token, uint offset) {
+		internal DnCodeBreakpoint(DnModuleId module, uint token, uint offset) {
 			Module = module;
 			Token = token;
 			Offset = offset;
@@ -59,7 +59,7 @@ namespace dndbg.Engine {
 			error = DnCodeBreakpointError.OtherError;
 		}
 
-		internal DnCodeBreakpoint(in DnModuleId module, CorCode code, uint offset) {
+		internal DnCodeBreakpoint(DnModuleId module, CorCode code, uint offset) {
 			Module = module;
 			var func = code.Function;
 			Token = func?.Token ?? 0;

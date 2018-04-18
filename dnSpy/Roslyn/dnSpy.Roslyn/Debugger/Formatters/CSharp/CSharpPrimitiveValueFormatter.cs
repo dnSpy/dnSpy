@@ -73,7 +73,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			OutputWrite(CommentBegin + FormatHexInt32(metadataToken) + CommentEnd, BoxedTextColor.Comment);
 		}
 
-		public bool TryFormat(DmdType type, in DbgDotNetRawValue rawValue) {
+		public bool TryFormat(DmdType type, DbgDotNetRawValue rawValue) {
 			if (!rawValue.HasRawValue)
 				return false;
 

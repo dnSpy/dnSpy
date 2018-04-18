@@ -342,7 +342,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		LineElement FindLineElement(in BlockStructureData info) {
+		LineElement FindLineElement(BlockStructureData info) {
 			foreach (var lineElement in lineElements) {
 				if (BlockStructureDataComparer.Instance.Equals(lineElement.BlockStructureData, info))
 					return lineElement;
@@ -422,7 +422,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		double GetLineXPosition(in BlockStructureData data) => xPosCache.GetXPosition(data);
+		double GetLineXPosition(BlockStructureData data) => xPosCache.GetXPosition(data);
 		void ClearXPosCache() => xPosCache.Clear();
 		readonly XPosCache xPosCache;
 
@@ -437,7 +437,7 @@ namespace dnSpy.Text.Editor {
 				toXPosDict = new Dictionary<int, double>();
 			}
 
-			public double GetXPosition(in BlockStructureData data) {
+			public double GetXPosition(BlockStructureData data) {
 				TryUpdateState();
 				var topPoint = data.Top.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative);
 				if (toXPosDict.TryGetValue(topPoint.Position, out double x))
@@ -524,7 +524,7 @@ done:
 			double bottom;
 			Pen pen;
 
-			public LineElement(in BlockStructureData info) => BlockStructureData = info;
+			public LineElement(BlockStructureData info) => BlockStructureData = info;
 
 			protected override void OnRender(DrawingContext drawingContext) {
 				base.OnRender(drawingContext);

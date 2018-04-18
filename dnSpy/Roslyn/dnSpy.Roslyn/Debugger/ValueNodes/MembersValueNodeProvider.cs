@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		protected MembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, in DbgDotNetText name, string expression, in MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions) {
+		protected MembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions) {
 			this.valueNodeFactory = valueNodeFactory;
 			Name = name;
 			Expression = expression;
@@ -244,7 +244,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, in DbgDotNetValueResult valueResult) => (null, false);
+		protected virtual (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) => (null, false);
 
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {

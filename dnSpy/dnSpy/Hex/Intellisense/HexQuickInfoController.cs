@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Intellisense {
 			quickInfoBroker.TriggerQuickInfo(hexView, triggerPoint, trackMouse: true);
 		}
 
-		bool Intersects(in HexBufferSpanSelection span, in HexCellPosition point) {
+		bool Intersects(HexBufferSpanSelection span, HexCellPosition point) {
 			if (span.IsDefault)
 				return false;
 			if (point.BufferPosition.Buffer != span.BufferSpan.Buffer)

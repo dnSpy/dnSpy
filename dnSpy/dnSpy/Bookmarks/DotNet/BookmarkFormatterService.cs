@@ -60,7 +60,7 @@ namespace dnSpy.Bookmarks.DotNet {
 		public override DotNetBookmarkLocationFormatter Create(DotNetTokenBookmarkLocationImpl location) =>
 			new DotNetTokenBookmarkLocationFormatterImpl(this, location);
 
-		internal TDef GetDefinition<TDef>(in ModuleId module, uint token) where TDef : class {
+		internal TDef GetDefinition<TDef>(ModuleId module, uint token) where TDef : class {
 			var md = dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
 			return md?.ResolveToken(token) as TDef;
 		}

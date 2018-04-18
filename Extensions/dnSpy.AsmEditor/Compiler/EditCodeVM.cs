@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected readonly ModuleDef sourceModule;
 		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(in EditCodeVMOptions options, TypeDef typeToEditOrNull) {
+		protected EditCodeVM(EditCodeVMOptions options, TypeDef typeToEditOrNull) {
 			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
 			openFromGAC = options.OpenFromGAC;
 			openAssembly = options.OpenAssembly;
@@ -487,7 +487,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			CommandManager.InvalidateRequerySuggested();
 		}
 
-		protected abstract void Import(ModuleImporter importer, in CompilationResult result);
+		protected abstract void Import(ModuleImporter importer, CompilationResult result);
 
 		static CompilerDiagnostic ToCompilerDiagnostic(Exception ex) =>
 			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null, null);

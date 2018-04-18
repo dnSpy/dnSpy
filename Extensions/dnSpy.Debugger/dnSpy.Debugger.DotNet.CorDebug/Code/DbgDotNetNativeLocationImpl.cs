@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 
 		readonly DbgDotNetNativeCodeLocationFactoryImpl owner;
 
-		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactoryImpl owner, DbgModule module, in ModuleId moduleId, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, ulong nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactoryImpl owner, DbgModule module, ModuleId moduleId, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, ulong nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Module = moduleId;
 			Token = token;

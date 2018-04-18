@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		protected override BufferField[] Fields { get; }
 
-		public DotNetMultiFileResourceHeaderDataImpl(HexBufferSpan span, in Bit7String? resourceTypeSpan, in Bit7String? resourceSetTypeSpan, HexPosition versionPosition, HexSpan paddingSpan, Bit7String[] typeNames, int numResources)
+		public DotNetMultiFileResourceHeaderDataImpl(HexBufferSpan span, Bit7String? resourceTypeSpan, Bit7String? resourceSetTypeSpan, HexPosition versionPosition, HexSpan paddingSpan, Bit7String[] typeNames, int numResources)
 			: base(span) {
 			var buffer = span.Buffer;
 			var pos = span.Start.Position;

@@ -73,7 +73,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				TupleFields = Array.Empty<TupleField>();
 			}
 
-			public TypeState(DmdType type, string typeExpression, in MemberValueNodeInfoCollection instanceMembers, in MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
+			public TypeState(DmdType type, string typeExpression, MemberValueNodeInfoCollection instanceMembers, MemberValueNodeInfoCollection staticMembers, TupleField[] tupleFields) {
 				Type = type;
 				EnumerableType = GetEnumerableType(type);
 				Flags = GetFlags(type, tupleFields);
@@ -625,7 +625,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_RawView));
 
-		static MemberValueNodeInfoCollection Filter(in MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
+		static MemberValueNodeInfoCollection Filter(MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
 			bool isRawView = (evalOptions & DbgValueNodeEvaluationOptions.RawView) != 0;
 			bool hideCompilerGeneratedMembers = (evalOptions & DbgValueNodeEvaluationOptions.HideCompilerGeneratedMembers) != 0;
 			bool respectHideMemberAttributes = (evalOptions & DbgValueNodeEvaluationOptions.RespectHideMemberAttributes) != 0;
@@ -636,7 +636,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return Filter(infos, isRawView, hideCompilerGeneratedMembers, respectHideMemberAttributes, publicMembers, hideDeprecatedError);
 		}
 
-		static MemberValueNodeInfoCollection Filter(in MemberValueNodeInfoCollection infos, bool isRawView, bool hideCompilerGeneratedMembers, bool respectHideMemberAttributes, bool publicMembers, bool hideDeprecatedError) {
+		static MemberValueNodeInfoCollection Filter(MemberValueNodeInfoCollection infos, bool isRawView, bool hideCompilerGeneratedMembers, bool respectHideMemberAttributes, bool publicMembers, bool hideDeprecatedError) {
 			bool hasHideRoot = false;
 			bool hasShowNever = false;
 			var members = infos.Members.Where(a => {

@@ -84,7 +84,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override ReadOnlyCollection<string> FormatSpecifiers => null;
 		public override bool? HasChildren => false;
 
-		public TypeVariableValueNode(LanguageValueNodeFactory valueNodeFactory, in DbgDotNetTypeVariableInfo info) {
+		public TypeVariableValueNode(LanguageValueNodeFactory valueNodeFactory, DbgDotNetTypeVariableInfo info) {
 			ExpectedType = info.GenericArgumentType;
 			Value = new TypeVariableValue(info.GenericArgumentType);
 			var paramType = info.GenericParameterType;

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
 	static class SpanDataReferenceInfoExtensions {
-		public static bool CompareReferences(in ReferenceInfo refInfoA, in ReferenceInfo refInfoB) {
+		public static bool CompareReferences(ReferenceInfo refInfoA, ReferenceInfo refInfoB) {
 			if (refInfoA.Reference == null || refInfoB.Reference == null)
 				return false;
 			if (refInfoA.Reference.Equals(refInfoB.Reference))

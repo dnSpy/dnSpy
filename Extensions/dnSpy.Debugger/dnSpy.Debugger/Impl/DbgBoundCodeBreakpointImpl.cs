@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Impl {
 		ulong address;
 		DbgBoundCodeBreakpointMessage message;
 
-		public DbgBoundCodeBreakpointImpl(DbgRuntimeImpl runtime, DbgCodeBreakpoint breakpoint, DbgModule module, ulong address, in DbgBoundCodeBreakpointMessage message) {
+		public DbgBoundCodeBreakpointImpl(DbgRuntimeImpl runtime, DbgCodeBreakpoint breakpoint, DbgModule module, ulong address, DbgBoundCodeBreakpointMessage message) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void UpdateMessage_DbgThread(in DbgBoundCodeBreakpointMessage message) {
+		internal void UpdateMessage_DbgThread(DbgBoundCodeBreakpointMessage message) {
 			Dispatcher.VerifyAccess();
 			bool raiseEvent;
 			lock (lockObj) {

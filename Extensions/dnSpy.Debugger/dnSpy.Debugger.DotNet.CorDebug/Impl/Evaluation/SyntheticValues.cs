@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public override DmdType Type { get; }
 		readonly DbgDotNetRawValue rawValue;
 
-		public SyntheticValue(DmdType type, in DbgDotNetRawValue rawValue) {
+		public SyntheticValue(DmdType type, DbgDotNetRawValue rawValue) {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			this.rawValue = rawValue;
 		}

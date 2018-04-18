@@ -375,7 +375,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return builder.ToImmutableArray();
 		}
 
-		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, in DbgDotNetText name) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, DbgDotNetText name) {
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);
 			Debug.Assert(compileResult != null);

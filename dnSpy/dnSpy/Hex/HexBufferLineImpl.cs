@@ -43,7 +43,7 @@ namespace dnSpy.Hex {
 		readonly VST.Span fullAsciiSpan;
 		readonly VST.Span visibleAsciiSpan;
 
-		public HexBufferLineImpl(HexBufferLineFormatter hexBufferLineFormatter, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, in HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, in HexCellCollection valueCells, in HexCellCollection asciiCells, VST.Span offsetSpan, VST.Span fullValuesSpan, VST.Span visibleValuesSpan, VST.Span fullAsciiSpan, VST.Span visibleAsciiSpan) {
+		public HexBufferLineImpl(HexBufferLineFormatter hexBufferLineFormatter, HexPosition lineNumber, ReadOnlyCollection<HexColumnType> columnOrder, HexBufferSpan bufferSpan, HexBytes hexBytes, string text, bool isOffsetColumnPresent, bool isValuesColumnPresent, bool isAsciiColumnPresent, HexPosition logicalOffset, HexCellCollection valueCells, HexCellCollection asciiCells, VST.Span offsetSpan, VST.Span fullValuesSpan, VST.Span visibleValuesSpan, VST.Span fullAsciiSpan, VST.Span visibleAsciiSpan) {
 			if (bufferSpan.IsDefault)
 				throw new ArgumentException();
 			if (hexBytes.IsDefault)

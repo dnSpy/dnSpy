@@ -27,10 +27,10 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
 	abstract class DbgExceptionFormatterService {
-		public abstract void WriteName(ITextColorWriter writer, in DbgExceptionDefinition definition, bool includeDescription);
-		public abstract void WriteName(ITextColorWriter writer, in DbgExceptionId id, bool includeDescription);
+		public abstract void WriteName(ITextColorWriter writer, DbgExceptionDefinition definition, bool includeDescription);
+		public abstract void WriteName(ITextColorWriter writer, DbgExceptionId id, bool includeDescription);
 
-		public string ToString(in DbgExceptionId id, bool includeDescription = true) {
+		public string ToString(DbgExceptionId id, bool includeDescription = true) {
 			var writer = new StringBuilderTextColorOutput();
 			WriteName(writer, id, includeDescription);
 			return writer.ToString();
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Exceptions {
 				toFormatters[kv.Key] = kv.Value.ToArray();
 		}
 
-		public override void WriteName(ITextColorWriter writer, in DbgExceptionDefinition definition, bool includeDescription) {
+		public override void WriteName(ITextColorWriter writer, DbgExceptionDefinition definition, bool includeDescription) {
 			if (writer == null)
 				throw new ArgumentNullException(nameof(writer));
 			if (definition.Id.Category == null)
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		void WriteNameCore(ITextColorWriter writer, in DbgExceptionDefinition definition) {
+		void WriteNameCore(ITextColorWriter writer, DbgExceptionDefinition definition) {
 			if (!definition.Id.IsDefaultId && toFormatters.TryGetValue(definition.Id.Category, out var formatters)) {
 				foreach (var formatter in formatters) {
 					if (formatter.Value.WriteName(writer, definition))
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Exceptions {
 			DefaultWriteName(writer, definition);
 		}
 
-		void DefaultWriteName(ITextColorWriter output, in DbgExceptionDefinition definition) {
+		void DefaultWriteName(ITextColorWriter output, DbgExceptionDefinition definition) {
 			switch (definition.Id.Kind) {
 			case DbgExceptionIdKind.DefaultId:
 				if (exceptionSettingsService.Value.TryGetCategoryDefinition(definition.Id.Category, out var categoryDef))
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		void WriteDescription(ITextColorWriter writer, in DbgExceptionDefinition definition) {
+		void WriteDescription(ITextColorWriter writer, DbgExceptionDefinition definition) {
 			if (definition.Description == null)
 				return;
 			writer.Write(BoxedTextColor.Comment, "(");
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		void WriteError(ITextColorWriter output) => output.Write(BoxedTextColor.Error, "???");
 
-		public override void WriteName(ITextColorWriter writer, in DbgExceptionId id, bool includeDescription) {
+		public override void WriteName(ITextColorWriter writer, DbgExceptionId id, bool includeDescription) {
 			if (!exceptionSettingsService.Value.TryGetDefinition(id, out var def))
 				def = new DbgExceptionDefinition(id, DbgExceptionDefinitionFlags.None, description: null);
 			WriteName(writer, def, includeDescription);

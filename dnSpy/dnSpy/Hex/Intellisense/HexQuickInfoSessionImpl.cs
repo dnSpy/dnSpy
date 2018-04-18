@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Intellisense {
 		HexQuickInfoSource[] quickInfoSources;
 		HexIntellisensePresenter quickInfoPresenter;
 
-		public HexQuickInfoSessionImpl(HexView hexView, in HexCellPosition triggerPoint, bool trackMouse, HexIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<HexQuickInfoSourceProvider, VSUTIL.IOrderable>[] quickInfoSourceProviders) {
+		public HexQuickInfoSessionImpl(HexView hexView, HexCellPosition triggerPoint, bool trackMouse, HexIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<HexQuickInfoSourceProvider, VSUTIL.IOrderable>[] quickInfoSourceProviders) {
 			if (triggerPoint.IsDefault)
 				throw new ArgumentException();
 			QuickInfoContent = new VSLI.BulkObservableCollection<object>();

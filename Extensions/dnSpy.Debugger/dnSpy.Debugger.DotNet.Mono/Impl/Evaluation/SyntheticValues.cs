@@ -23,18 +23,6 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	sealed class SyntheticValue : DbgDotNetValue {
-		public override DmdType Type { get; }
-		readonly DbgDotNetRawValue rawValue;
-
-		public SyntheticValue(DmdType type, in DbgDotNetRawValue rawValue) {
-			Type = type ?? throw new ArgumentNullException(nameof(type));
-			this.rawValue = rawValue;
-		}
-
-		public override DbgDotNetRawValue GetRawValue() => rawValue;
-	}
-
 	sealed class SyntheticNullValue : DbgDotNetValue {
 		public override DmdType Type { get; }
 		public override bool IsNull => true;

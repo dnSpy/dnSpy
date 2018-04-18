@@ -50,13 +50,13 @@ namespace dnSpy.Hex.Classification {
 			public int Compare(HexClassificationSpan x, HexClassificationSpan y) => x.Span.Start - y.Span.Start;
 		}
 
-		public override void GetClassificationSpans(List<HexClassificationSpan> result, in HexClassificationContext context) =>
+		public override void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context) =>
 			GetClassificationSpansCore(result, context, null);
 
-		public override void GetClassificationSpans(List<HexClassificationSpan> result, in HexClassificationContext context, CancellationToken cancellationToken) =>
+		public override void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context, CancellationToken cancellationToken) =>
 			GetClassificationSpansCore(result, context, cancellationToken);
 
-		void GetClassificationSpansCore(List<HexClassificationSpan> result, in HexClassificationContext context, CancellationToken? cancellationToken) {
+		void GetClassificationSpansCore(List<HexClassificationSpan> result, HexClassificationContext context, CancellationToken? cancellationToken) {
 			if (context.IsDefault)
 				throw new ArgumentException();
 			var textSpan = context.LineSpan;

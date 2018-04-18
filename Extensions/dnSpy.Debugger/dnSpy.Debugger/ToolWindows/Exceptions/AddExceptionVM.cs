@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		sealed class ExceptionCategoryVM : ViewModelBase {
 			public string DisplayName => Definition.ShortDisplayName;
 			public DbgExceptionCategoryDefinition Definition { get; }
-			public ExceptionCategoryVM(in DbgExceptionCategoryDefinition definition) => Definition = definition;
+			public ExceptionCategoryVM(DbgExceptionCategoryDefinition definition) => Definition = definition;
 		}
 
 		public AddExceptionVM(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {

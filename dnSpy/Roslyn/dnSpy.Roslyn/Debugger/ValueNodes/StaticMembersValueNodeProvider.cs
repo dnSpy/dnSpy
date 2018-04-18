@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 
-		public StaticMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, in DbgDotNetText name, string expression, in MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions)
+		public StaticMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions)
 			: base(valueNodeFactory, name, expression, membersCollection, evalOptions) {
 			this.valueNodeProviderFactory = valueNodeProviderFactory;
 		}

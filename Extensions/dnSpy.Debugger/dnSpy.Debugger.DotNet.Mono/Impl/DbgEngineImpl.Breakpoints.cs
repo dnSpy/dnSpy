@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public ModuleId Module { get; }
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
-			public BoundBreakpointData(DbgEngineImpl engine, in ModuleId module) {
+			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module) {
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Module = module;
 			}
@@ -264,7 +264,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			state.OnTypeLoaded(monoType);
 		}
 
-		(BreakpointEventRequest bp, DbgEngineBoundCodeBreakpointMessage error) CreateBreakpoint(DmdModule module, in ModuleId moduleId, uint token, uint offset) {
+		(BreakpointEventRequest bp, DbgEngineBoundCodeBreakpointMessage error) CreateBreakpoint(DmdModule module, ModuleId moduleId, uint token, uint offset) {
 			DmdMethodBase method;
 			MethodMirror monoMethod;
 			try {
@@ -288,7 +288,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		static string GetFunctionName(in ModuleId module, uint token) => $"0x{token:X8} ({module.ModuleName})";
+		static string GetFunctionName(ModuleId module, uint token) => $"0x{token:X8} ({module.ModuleName})";
 
 		Dictionary<ModuleId, List<BoundBreakpointData>> CreateBoundBreakpointsDictionary(DbgBoundCodeBreakpoint[] boundBreakpoints) {
 			var dict = new Dictionary<ModuleId, List<BoundBreakpointData>>();

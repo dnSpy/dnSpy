@@ -69,7 +69,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		readonly GacFileInfo gacFileInfo;
 
-		public GACFileVM(OpenFromGACVM owner, in GacFileInfo gacFileInfo) {
+		public GACFileVM(OpenFromGACVM owner, GacFileInfo gacFileInfo) {
 			Owner = owner;
 			this.gacFileInfo = gacFileInfo;
 		}

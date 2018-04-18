@@ -168,7 +168,7 @@ namespace dnSpy.Search {
 			SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 		}
 
-		void Add(SearchType searchType, string name, in ImageReference icon, string toolTip, VisibleMembersFlags flags) =>
+		void Add(SearchType searchType, string name, ImageReference icon, string toolTip, VisibleMembersFlags flags) =>
 			SearchTypeVMs.Add(new SearchTypeVM(searchType, name, toolTip, icon, flags));
 		void DelayStartSearch() => Restart();
 

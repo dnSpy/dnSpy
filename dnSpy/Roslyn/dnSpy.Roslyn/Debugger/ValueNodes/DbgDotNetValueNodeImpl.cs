@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		ReadOnlyCollection<string> formatSpecifiers;
 		readonly ColumnFormatter columnFormatter;
 
-		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, in DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, in DbgDotNetText valueText, ReadOnlyCollection<string> formatSpecifiers, ColumnFormatter columnFormatter) {
+		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, DmdType actualType, string errorMessage, DbgDotNetText valueText, ReadOnlyCollection<string> formatSpecifiers, ColumnFormatter columnFormatter) {
 			if (name.Parts == null && columnFormatter == null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));

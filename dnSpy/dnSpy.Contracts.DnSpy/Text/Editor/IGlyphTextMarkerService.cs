@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of method</param>
 		/// <param name="ilOffset">Method offset</param>
-		public DotNetMethodBodyGlyphTextMarkerLocationInfo(in ModuleId module, uint token, uint ilOffset) {
+		public DotNetMethodBodyGlyphTextMarkerLocationInfo(ModuleId module, uint token, uint ilOffset) {
 			Module = module;
 			Token = token;
 			ILOffset = ilOffset;
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of method</param>
 		/// <param name="ilOffset">Method offset</param>
-		public DotNetMethodBodyGlyphTextMarkerLocationInfo(in ModuleId module, int token, uint ilOffset) {
+		public DotNetMethodBodyGlyphTextMarkerLocationInfo(ModuleId module, int token, uint ilOffset) {
 			Module = module;
 			Token = (uint)token;
 			ILOffset = ilOffset;
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of definition (type, method, field, property, event)</param>
-		public DotNetTokenGlyphTextMarkerLocationInfo(in ModuleId module, uint token) {
+		public DotNetTokenGlyphTextMarkerLocationInfo(ModuleId module, uint token) {
 			Module = module;
 			Token = token;
 		}
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of definition (type, method, field, property, event)</param>
-		public DotNetTokenGlyphTextMarkerLocationInfo(in ModuleId module, int token) {
+		public DotNetTokenGlyphTextMarkerLocationInfo(ModuleId module, int token) {
 			Module = module;
 			Token = (uint)token;
 		}
@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="handler">Glyph handler or null</param>
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
-		IGlyphTextMethodMarker AddMarker(in ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
+		IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
 
 		/// <summary>
 		/// Adds a marker
@@ -278,7 +278,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="token">Token of method</param>
 		/// <param name="ilOffset">IL offset</param>
 		/// <returns></returns>
-		Span? ToSpan(in ModuleId module, uint token, uint ilOffset);
+		Span? ToSpan(ModuleId module, uint token, uint ilOffset);
 
 		/// <summary>
 		/// Converts a .NET module + token to a <see cref="Span"/> or returns null if the definition isn't present in the document
@@ -286,7 +286,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of definition (type, method, field, property, event)</param>
 		/// <returns></returns>
-		Span? ToSpan(in ModuleId module, uint token);
+		Span? ToSpan(ModuleId module, uint token);
 	}
 
 	/// <summary>
@@ -375,7 +375,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="imageReference">Image reference (<see cref="IGlyphTextMarker.GlyphImageReference"/>)</param>
 		/// <param name="zIndex">Z-index (<see cref="IGlyphTextMarker.ZIndex"/>)</param>
-		public GlyphTextMarkerGlyphTag(in ImageReference imageReference, int zIndex) {
+		public GlyphTextMarkerGlyphTag(ImageReference imageReference, int zIndex) {
 			ImageReference = imageReference;
 			ZIndex = zIndex;
 		}

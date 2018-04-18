@@ -504,7 +504,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return result;
 		}
 
-		static int GetPriority(in DbgBreakInfo info) {
+		static int GetPriority(DbgBreakInfo info) {
 			const int defaultPrio = int.MaxValue - 1;
 			if (info.Kind == DbgBreakInfoKind.Message) {
 				var e = (DbgMessageEventArgs)info.Data;

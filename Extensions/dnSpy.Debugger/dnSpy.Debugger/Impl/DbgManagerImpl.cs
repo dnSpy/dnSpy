@@ -1057,7 +1057,7 @@ namespace dnSpy.Debugger.Impl {
 			DbgThread(() => DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(e));
 
 		public override event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;
-		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(in ModulesRefreshedEventArgs e) {
+		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(ModulesRefreshedEventArgs e) {
 			Dispatcher.VerifyAccess();
 			foreach (var module in e.Modules)
 				((DbgModuleImpl)module).RaiseRefreshed();

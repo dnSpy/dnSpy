@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="activeColumn">Active column</param>
 		/// <param name="valuePosition">Position in the values column</param>
 		/// <param name="asciiPosition">Position in the ASCII column</param>
-		public HexColumnPosition(HexColumnType activeColumn, in HexCellPosition valuePosition, in HexCellPosition asciiPosition) {
+		public HexColumnPosition(HexColumnType activeColumn, HexCellPosition valuePosition, HexCellPosition asciiPosition) {
 			if (activeColumn != HexColumnType.Values && activeColumn != HexColumnType.Ascii)
 				throw new ArgumentOutOfRangeException(nameof(activeColumn));
 			if (valuePosition.IsDefault || valuePosition.Column != HexColumnType.Values)

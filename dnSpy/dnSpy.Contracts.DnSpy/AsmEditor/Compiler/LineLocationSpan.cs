@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="startLinePosition">Start line position</param>
 		/// <param name="endLinePosition">End line position</param>
-		public LineLocationSpan(in LineLocation startLinePosition, in LineLocation endLinePosition) {
+		public LineLocationSpan(LineLocation startLinePosition, LineLocation endLinePosition) {
 			StartLinePosition = startLinePosition;
 			EndLinePosition = endLinePosition;
 		}

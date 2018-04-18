@@ -41,7 +41,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 
 		static readonly object thisInstanceKey = new object();
 
-		public QuickInfoSession(in QuickInfoState state, SnapshotPoint triggerPoint, bool trackMouse, IQuickInfoBroker quickInfoBroker, ITextView textView) {
+		public QuickInfoSession(QuickInfoState state, SnapshotPoint triggerPoint, bool trackMouse, IQuickInfoBroker quickInfoBroker, ITextView textView) {
 			if (state.QuickInfoService == null)
 				throw new ArgumentException();
 			if (triggerPoint.Snapshot != state.Snapshot)

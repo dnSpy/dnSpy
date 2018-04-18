@@ -93,7 +93,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			}
 		}
 
-		void OnBookmarksAdded_UI(in CollectionChangedEventArgs<Bookmark> e) {
+		void OnBookmarksAdded_UI(CollectionChangedEventArgs<Bookmark> e) {
 			uiDispatcher.VerifyAccess();
 			if (!e.Added)
 				throw new InvalidOperationException();

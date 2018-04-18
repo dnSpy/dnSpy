@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				refreshedVersion = module.RefreshedVersion;
 			}
 
-			public MethodDebugInfoResultKey(in ModuleId moduleId, uint token) {
+			public MethodDebugInfoResultKey(ModuleId moduleId, uint token) {
 				this.token = token;
 				this.moduleId = moduleId;
 				module = null;

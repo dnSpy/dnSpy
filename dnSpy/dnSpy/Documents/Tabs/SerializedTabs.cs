@@ -369,7 +369,7 @@ namespace dnSpy.Documents.Tabs {
 			return new NodePathName(id, name);
 		}
 
-		public static void Save(ISettingsSection section, in NodePathName name) {
+		public static void Save(ISettingsSection section, NodePathName name) {
 			section.Attribute(ID_ATTR, name.Guid);
 			if (!string.IsNullOrEmpty(name.Name))
 				section.Attribute(NAME_ATTR, name.Name);

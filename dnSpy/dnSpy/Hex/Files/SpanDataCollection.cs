@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files {
 			return lo < list.Count ? lo : -1;
 		}
 
-		public void Add(in SpanData<TData> data) {
+		public void Add(SpanData<TData> data) {
 			spanDataList.Add(data);
 			SortList();
 		}

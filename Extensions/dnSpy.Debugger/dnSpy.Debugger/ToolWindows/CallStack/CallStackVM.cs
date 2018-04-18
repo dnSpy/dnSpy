@@ -364,7 +364,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// UI thread
-		void UpdateFrames_UI(in DbgCallStackFramesInfo framesInfo, DbgThread thread) {
+		void UpdateFrames_UI(DbgCallStackFramesInfo framesInfo, DbgThread thread) {
 			callStackContext.UIDispatcher.VerifyAccess();
 
 			ClearUsedBreakpoints_UI();

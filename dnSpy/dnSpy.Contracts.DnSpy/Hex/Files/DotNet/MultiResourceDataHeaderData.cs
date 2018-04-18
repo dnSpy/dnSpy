@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="resourceProvider">Owner</param>
 		/// <param name="resourceInfo">Resource info</param>
 		/// <param name="span">Span</param>
-		protected MultiResourceDataHeaderData(DotNetMultiFileResources resourceProvider, in MultiResourceInfo resourceInfo, HexBufferSpan span)
+		protected MultiResourceDataHeaderData(DotNetMultiFileResources resourceProvider, MultiResourceInfo resourceInfo, HexBufferSpan span)
 			: base(NAME, span) {
 			ResourceProvider = resourceProvider ?? throw new ArgumentNullException(nameof(resourceProvider));
 			ResourceInfo = resourceInfo;
@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="resourceInfo">Resource info</param>
 		/// <param name="span">Span</param>
 		/// <param name="dataPosition">Position of data which immediately follows the 7-bit encoded type code</param>
-		public MultiResourceSimplDataHeaderData(DotNetMultiFileResources resourceProvider, in MultiResourceInfo resourceInfo, HexBufferSpan span, HexPosition dataPosition)
+		public MultiResourceSimplDataHeaderData(DotNetMultiFileResources resourceProvider, MultiResourceInfo resourceInfo, HexBufferSpan span, HexPosition dataPosition)
 			: base(resourceProvider, resourceInfo, span) {
 			// Don't use Contains() since data length could be 0
 			if (dataPosition < span.Start || dataPosition > span.End)
@@ -223,7 +223,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="span">Span</param>
 		/// <param name="lengthSpan">Span of 7-bit encoded string length</param>
 		/// <param name="stringSpan">Span of string data (UTF-8)</param>
-		public MultiResourceStringDataHeaderData(DotNetMultiFileResources resourceProvider, in MultiResourceInfo resourceInfo, HexBufferSpan span, HexSpan lengthSpan, HexSpan stringSpan)
+		public MultiResourceStringDataHeaderData(DotNetMultiFileResources resourceProvider, MultiResourceInfo resourceInfo, HexBufferSpan span, HexSpan lengthSpan, HexSpan stringSpan)
 			: base(resourceProvider, resourceInfo, span) {
 			if (!span.Span.Contains(lengthSpan))
 				throw new ArgumentOutOfRangeException(nameof(lengthSpan));
@@ -264,7 +264,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="resourceInfo">Resource info</param>
 		/// <param name="span">Span</param>
 		/// <param name="lengthPosition">Position of 32-bit content length which immediately follows the 7-bit encoded type code</param>
-		public MultiResourceArrayDataHeaderData(DotNetMultiFileResources resourceProvider, in MultiResourceInfo resourceInfo, HexBufferSpan span, HexPosition lengthPosition)
+		public MultiResourceArrayDataHeaderData(DotNetMultiFileResources resourceProvider, MultiResourceInfo resourceInfo, HexBufferSpan span, HexPosition lengthPosition)
 			: base(resourceProvider, resourceInfo, span) {
 			var typeCodeSpan = new HexBufferSpan(span.Buffer, HexSpan.FromBounds(span.Start, lengthPosition));
 			TypeCode = new StructField<ResourceTypeCodeData>("TypeCode", ResourceTypeCodeData.Create(typeCodeSpan));

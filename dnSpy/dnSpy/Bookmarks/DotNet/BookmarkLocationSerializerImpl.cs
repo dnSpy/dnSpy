@@ -78,9 +78,9 @@ namespace dnSpy.Bookmarks.DotNet {
 			return DeserializeCore(section, moduleId, token.Value);
 		}
 
-		protected abstract BookmarkLocation DeserializeCore(ISettingsSection section, in ModuleId module, uint token);
+		protected abstract BookmarkLocation DeserializeCore(ISettingsSection section, ModuleId module, uint token);
 
-		string GetTokenAsString(in ModuleId moduleId, uint token) {
+		string GetTokenAsString(ModuleId moduleId, uint token) {
 			var module = dbgMetadataService.Value.TryGetMetadata(moduleId, DbgLoadModuleOptions.AutoLoaded);
 			return (module?.ResolveToken(token) as IMemberDef)?.ToString();
 		}
@@ -98,7 +98,7 @@ namespace dnSpy.Bookmarks.DotNet {
 			section.Attribute("Offset", loc.Offset);
 		}
 
-		protected override BookmarkLocation DeserializeCore(ISettingsSection section, in ModuleId module, uint token) {
+		protected override BookmarkLocation DeserializeCore(ISettingsSection section, ModuleId module, uint token) {
 			var offset = section.Attribute<uint?>("Offset");
 			if (offset == null)
 				return null;
@@ -115,7 +115,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		protected override void SerializeCore(ISettingsSection section, BookmarkLocation location) { }
 
-		protected override BookmarkLocation DeserializeCore(ISettingsSection section, in ModuleId module, uint token) =>
+		protected override BookmarkLocation DeserializeCore(ISettingsSection section, ModuleId module, uint token) =>
 			dotNetBookmarkLocationFactory.Value.CreateTokenLocation(module, token);
 	}
 }

@@ -353,7 +353,7 @@ namespace dnSpy.Menus {
 			return menuItem;
 		}
 
-		static void Add16x16Image(MenuItem menuItem, in ImageReference imageReference, bool? enable = null) {
+		static void Add16x16Image(MenuItem menuItem, ImageReference imageReference, bool? enable = null) {
 			var image = new DsImage { ImageReference = imageReference };
 			menuItem.Icon = image;
 			if (enable == false)

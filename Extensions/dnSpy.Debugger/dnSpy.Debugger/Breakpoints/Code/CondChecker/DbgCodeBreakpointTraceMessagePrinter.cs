@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointTraceMessagePrinter {
-		public abstract void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointTrace trace);
+		public abstract void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace);
 	}
 
 	[Export(typeof(DbgCodeBreakpointTraceMessagePrinter))]
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			this.tracepointMessageListeners = tracepointMessageListeners.ToArray();
 		}
 
-		public override void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointTrace trace) {
+		public override void Print(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
 			if (tracepointMessageListeners.Length != 0) {
 				var message = tracepointMessageCreator.Create(boundBreakpoint, thread, trace);
 				foreach (var lz in tracepointMessageListeners)

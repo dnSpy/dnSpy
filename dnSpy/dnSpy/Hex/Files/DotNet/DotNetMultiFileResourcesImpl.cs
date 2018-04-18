@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		DotNetMultiFileResourcesImpl(HexBufferFile file, in Bit7String? resourceTypeSpan, in Bit7String? resourceSetTypeSpan, HexPosition versionPosition, HexSpan paddingSpan, Bit7String[] typeNames, int numResources, HexPosition dataSectionPosition, HexPosition nameSectionPosition)
+		DotNetMultiFileResourcesImpl(HexBufferFile file, Bit7String? resourceTypeSpan, Bit7String? resourceSetTypeSpan, HexPosition versionPosition, HexSpan paddingSpan, Bit7String[] typeNames, int numResources, HexPosition dataSectionPosition, HexPosition nameSectionPosition)
 			: base(file) {
 			DataSectionPosition = dataSectionPosition;
 			var headerSpan = new HexBufferSpan(file.Buffer, HexSpan.FromBounds(file.Span.Start, nameSectionPosition));
@@ -137,7 +137,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			public void SetData(ResData newData) => resData = newData;
 			ResData resData;
 
-			public ResourceInfo(int index, in Bit7String unicodeName, HexPosition dataPos) {
+			public ResourceInfo(int index, Bit7String unicodeName, HexPosition dataPos) {
 				Index = index;
 				UnicodeName = unicodeName;
 				DataStart = dataPos;
@@ -208,7 +208,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		sealed class StringResData : ResData {
 			public Bit7String Utf8StringValue { get; }
-			public StringResData(ResourceTypeCode typeCode, HexSpan codeSpan, HexSpan dataSpan, in Bit7String utf8StringValue)
+			public StringResData(ResourceTypeCode typeCode, HexSpan codeSpan, HexSpan dataSpan, Bit7String utf8StringValue)
 				: base(typeCode, codeSpan, dataSpan, utf8StringValue.StringSpan) => Utf8StringValue = utf8StringValue;
 		}
 
@@ -220,7 +220,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		sealed class TypeResData : ResData {
 			public Bit7String Utf8TypeName { get; }
-			public TypeResData(ResourceTypeCode typeCode, HexSpan codeSpan, HexSpan dataSpan, in Bit7String utf8TypeName)
+			public TypeResData(ResourceTypeCode typeCode, HexSpan codeSpan, HexSpan dataSpan, Bit7String utf8TypeName)
 				: base(typeCode, codeSpan, dataSpan, dataSpan) => Utf8TypeName = utf8TypeName;
 		}
 

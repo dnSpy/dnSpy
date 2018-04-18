@@ -61,7 +61,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		EntityNode HandleSpecialMethodNode(MethodDef method, in SourceRef? sourceRef) {
+		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
 			if (property != null)
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };

@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return dnValue;
 		}
 
-		object GetValueThrow(in DbgDotNetValueResult result) {
+		object GetValueThrow(DbgDotNetValueResult result) {
 			if (result.ErrorMessage != null)
 				throw new DmdEvaluatorException(result.ErrorMessage);
 			if (result.ValueIsException) {

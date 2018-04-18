@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="id">Id of existing exception</param>
 		/// <param name="settings">New settings</param>
-		public void Modify(in DbgExceptionId id, in DbgExceptionSettings settings) =>
+		public void Modify(DbgExceptionId id, DbgExceptionSettings settings) =>
 			Modify(new[] { new DbgExceptionIdAndSettings(id, settings) });
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Exception id</param>
 		/// <param name="definition">Updated with the exception definition if the method returns true</param>
 		/// <returns></returns>
-		public abstract bool TryGetDefinition(in DbgExceptionId id, out DbgExceptionDefinition definition);
+		public abstract bool TryGetDefinition(DbgExceptionId id, out DbgExceptionDefinition definition);
 
 		/// <summary>
 		/// Returns exception settings or false if the exception doesn't exist in the collection
@@ -93,14 +93,14 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Id of exception</param>
 		/// <param name="settings">Updated with the exception settings if the method returns true</param>
 		/// <returns></returns>
-		public abstract bool TryGetSettings(in DbgExceptionId id, out DbgExceptionSettings settings);
+		public abstract bool TryGetSettings(DbgExceptionId id, out DbgExceptionSettings settings);
 
 		/// <summary>
 		/// Returns exception settings. If the exception doesn't exist in the collection, the default exception settings is returned
 		/// </summary>
 		/// <param name="id">Id of exception</param>
 		/// <returns></returns>
-		public abstract DbgExceptionSettings GetSettings(in DbgExceptionId id);
+		public abstract DbgExceptionSettings GetSettings(DbgExceptionId id);
 
 		/// <summary>
 		/// Gets the category definition if it exists
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="definition">Exception definition</param>
 		/// <param name="settings">Exception settings</param>
-		public DbgExceptionSettingsInfo(in DbgExceptionDefinition definition, in DbgExceptionSettings settings) {
+		public DbgExceptionSettingsInfo(DbgExceptionDefinition definition, DbgExceptionSettings settings) {
 			if (definition.Id.Category == null)
 				throw new ArgumentException();
 			if (settings.Conditions == null)
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="id">Exception id</param>
 		/// <param name="settings">Settings</param>
-		public DbgExceptionIdAndSettings(in DbgExceptionId id, in DbgExceptionSettings settings) {
+		public DbgExceptionIdAndSettings(DbgExceptionId id, DbgExceptionSettings settings) {
 			if (id.Category == null)
 				throw new ArgumentException();
 			if (settings.Conditions == null)

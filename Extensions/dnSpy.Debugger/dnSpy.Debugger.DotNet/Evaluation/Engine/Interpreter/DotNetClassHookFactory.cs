@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			WellKnownType = null;
 		}
 
-		public DotNetClassHookInfo(DotNetClassHook hook, in DmdTypeName typeName) {
+		public DotNetClassHookInfo(DotNetClassHook hook, DmdTypeName typeName) {
 			Hook = hook ?? throw new ArgumentNullException(nameof(hook));
 			TypeName = typeName;
 			WellKnownType = null;

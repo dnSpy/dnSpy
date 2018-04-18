@@ -105,31 +105,31 @@ namespace dnSpy.Hex.Operations {
 			public HexBufferPoint ActivePoint { get; }
 			public HexBufferPoint CaretPosition { get; }
 
-			public SelectionInfo(in HexBufferPoint anchorPoint, in HexBufferPoint activePoint, in HexBufferPoint caretPosition) {
+			public SelectionInfo(HexBufferPoint anchorPoint, HexBufferPoint activePoint, HexBufferPoint caretPosition) {
 				AnchorPoint = anchorPoint;
 				ActivePoint = activePoint;
 				CaretPosition = caretPosition;
 			}
 		}
 
-		SelectionInfo GetSelectionInfoToCaret(in HexBufferPoint anchorPoint, in HexBufferPoint caretPosition) {
+		SelectionInfo GetSelectionInfoToCaret(HexBufferPoint anchorPoint, HexBufferPoint caretPosition) {
 			if (caretPosition < anchorPoint)
 				return new SelectionInfo(TryInc(anchorPoint), caretPosition, caretPosition);
 			return new SelectionInfo(anchorPoint, TryInc(caretPosition), caretPosition);
 		}
 
-		HexBufferPoint TryInc(in HexBufferPoint anchorPoint) {
+		HexBufferPoint TryInc(HexBufferPoint anchorPoint) {
 			if (anchorPoint == BufferLines.BufferEnd)
 				return anchorPoint;
 			return anchorPoint + 1;
 		}
 
-		void SelectToCaret(in HexBufferPoint anchorPoint) {
+		void SelectToCaret(HexBufferPoint anchorPoint) {
 			var info = GetSelectionInfoToCaret(anchorPoint, ActiveCaretBufferPosition);
 			Selection.Select(info.AnchorPoint, info.ActivePoint, alignPoints: true);
 		}
 
-		void MoveCaretToSelection(in HexBufferPoint anchorPoint, in HexBufferPoint activePoint) {
+		void MoveCaretToSelection(HexBufferPoint anchorPoint, HexBufferPoint activePoint) {
 			if (activePoint <= anchorPoint)
 				Caret.MoveTo(activePoint);
 			else
@@ -471,7 +471,7 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		bool InsertTextValues(in HexCellPosition cellPosition, string text) {
+		bool InsertTextValues(HexCellPosition cellPosition, string text) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (text.Length == 0)
@@ -503,7 +503,7 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		bool InsertTextAscii(in HexCellPosition cellPosition, string text) {
+		bool InsertTextAscii(HexCellPosition cellPosition, string text) {
 			if (text == null)
 				throw new ArgumentNullException(nameof(text));
 			if (text.Length == 0)
@@ -856,14 +856,14 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		bool PasteValues(in HexCellPosition cellPosition) {
+		bool PasteValues(HexCellPosition cellPosition) {
 			var data = ClipboardUtils.GetData(canBeEmpty: false);
 			if (data == null)
 				return false;
 			return PasteData(cellPosition, data);
 		}
 
-		bool PasteData(in HexCellPosition cellPosition, byte[] data) {
+		bool PasteData(HexCellPosition cellPosition, byte[] data) {
 			var line = BufferLines.GetLineFromPosition(cellPosition.BufferPosition);
 			var cells = cellPosition.Column == HexColumnType.Values ? line.ValueCells : line.AsciiCells;
 			var cell = cells.GetCell(cellPosition.BufferPosition);
@@ -886,7 +886,7 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		bool PasteAscii(in HexCellPosition cellPosition) {
+		bool PasteAscii(HexCellPosition cellPosition) {
 			var text = ClipboardUtils.GetText(canBeEmpty: false);
 			if (text == null)
 				return false;

@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public EditMethodCodeVM(in EditCodeVMOptions options, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+		public EditMethodCodeVM(EditCodeVMOptions options, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
 			: base(options, methodToEdit.DeclaringType) {
 			this.methodToEdit = methodToEdit;
 			methodSourceStatement = statementsInMethodToEdit.Count == 0 ? (MethodSourceStatement?)null : statementsInMethodToEdit[0];
@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Task.FromResult(result);
 		}
 
-		protected override void Import(ModuleImporter importer, in CompilationResult result) =>
+		protected override void Import(ModuleImporter importer, CompilationResult result) =>
 			importer.Import(result.RawFile, result.DebugFile, methodToEdit);
 	}
 }

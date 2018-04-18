@@ -29,7 +29,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		public DotNetBookmarkLocationFormatter Formatter { get; set; }
 
-		public DotNetTokenBookmarkLocationImpl(in ModuleId module, uint token) {
+		public DotNetTokenBookmarkLocationImpl(ModuleId module, uint token) {
 			Module = module;
 			Token = token;
 		}

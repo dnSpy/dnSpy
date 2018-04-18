@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Operations {
 			readonly HexFindOptions options;
 			/*readonly*/ CancellationToken cancellationToken;
 
-			public FindAllCoreEnumerable(ByteHexSearchService owner, HexBufferSpan searchRange, in HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
+			public FindAllCoreEnumerable(ByteHexSearchService owner, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
 				this.owner = owner;
 				this.searchRange = searchRange;
 				this.startingPosition = startingPosition;

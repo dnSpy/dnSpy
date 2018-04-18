@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Commands {
 		protected void AddSeparator() => contextMenuHandlers.Add(null);
 		protected void Add(ContextMenuHandler handler) => contextMenuHandlers.Add(handler);
 
-		protected void AddStandardMenuHandlers(in ImageReference? addNewItemIcon = null) {
+		protected void AddStandardMenuHandlers(ImageReference? addNewItemIcon = null) {
 			AddAddNewItemHandlers(addNewItemIcon);
 			AddSeparator();
 			AddMoveItemHandlers();
@@ -96,7 +96,7 @@ namespace dnSpy.AsmEditor.Commands {
 		protected abstract string RemovePluralMessage { get; }
 		protected abstract string RemoveAllMessage { get; }
 
-		protected void AddAddNewItemHandlers(in ImageReference? addNewItemIcon = null) {
+		protected void AddAddNewItemHandlers(ImageReference? addNewItemIcon = null) {
 			if (!coll.CanCreateNewItems)
 				return;
 			Add(new ContextMenuHandler {
@@ -257,7 +257,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		protected static void Add16x16Image(MenuItem menuItem, in ImageReference imageReference, bool? enable = null) {
+		protected static void Add16x16Image(MenuItem menuItem, ImageReference imageReference, bool? enable = null) {
 			var image = new DsImage { ImageReference = imageReference };
 			menuItem.Icon = image;
 			if (enable == false)

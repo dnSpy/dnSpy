@@ -26,7 +26,7 @@ namespace dnSpy.Commands {
 		public ICommandInfoProvider Provider { get; }
 		public CommandInfo Command { get; }
 
-		public ProviderAndCommand(ICommandInfoProvider provider, in CommandInfo cmd) {
+		public ProviderAndCommand(ICommandInfoProvider provider, CommandInfo cmd) {
 			Provider = provider ?? throw new ArgumentNullException(nameof(provider));
 			Command = cmd;
 		}

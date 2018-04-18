@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 
 		readonly ImageReference imgRef;
 
-		public MessageNodeImpl(ITreeNodeGroup treeNodeGroup, Guid guid, in ImageReference imgRef, string msg) {
+		public MessageNodeImpl(ITreeNodeGroup treeNodeGroup, Guid guid, ImageReference imgRef, string msg) {
 			TreeNodeGroup = treeNodeGroup;
 			Guid = guid;
 			this.imgRef = imgRef;

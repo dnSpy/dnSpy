@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Exceptions {
 			return true;
 		}
 
-		bool CheckConditions(in DbgExceptionConditionSettings settings, DbgException exception) {
+		bool CheckConditions(DbgExceptionConditionSettings settings, DbgException exception) {
 			Debug.Assert(settings.Condition != null);
 			if (settings.Condition == null)
 				return false;
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		bool ModuleNameEquals(in DbgExceptionConditionSettings settings, DbgException exception) =>
+		bool ModuleNameEquals(DbgExceptionConditionSettings settings, DbgException exception) =>
 			CompareStrings(exception.Module?.Name, settings.Condition);
 
 		bool CompareStrings(string s, string wildcardString) {

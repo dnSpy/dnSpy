@@ -159,7 +159,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new ModuleImporterAbortedException();
 		}
 
-		ModuleDefMD LoadModule(byte[] rawGeneratedModule, in DebugFileResult debugFile) {
+		ModuleDefMD LoadModule(byte[] rawGeneratedModule, DebugFileResult debugFile) {
 			var opts = new ModuleCreationOptions();
 			opts.TryToLoadPdbFromDisk = false;
 			opts.Context = new ModuleContext(assemblyResolver, new Resolver(assemblyResolver));
@@ -342,7 +342,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="options">Options</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, ModuleImporterOptions options) {
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			AddGlobalTypeMembers(sourceModule.GlobalType);
@@ -391,7 +391,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
@@ -433,7 +433,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void ImportNewMembers(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void ImportNewMembers(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
@@ -634,7 +634,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetMethod">Original method that was edited</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));

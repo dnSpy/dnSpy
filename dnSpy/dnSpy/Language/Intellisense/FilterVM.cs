@@ -55,7 +55,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly CompletionPresenter owner;
 		readonly IIntellisenseFilter filter;
 
-		public FilterVM(IIntellisenseFilter filter, CompletionPresenter owner, in ImageReference imageReference) {
+		public FilterVM(IIntellisenseFilter filter, CompletionPresenter owner, ImageReference imageReference) {
 			this.filter = filter ?? throw new ArgumentNullException(nameof(filter));
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			ImageReference = imageReference;

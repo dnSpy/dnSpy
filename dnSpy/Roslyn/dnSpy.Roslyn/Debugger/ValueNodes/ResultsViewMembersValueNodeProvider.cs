@@ -173,7 +173,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
 			CreateValueNode(evalInfo, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, formatSpecifiers);
 
-		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, in DbgDotNetValueResult valueResult) {
+		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);
 			if (noResultsNode != null) {
 				valueResult.Value?.Dispose();

@@ -77,7 +77,7 @@ namespace dnSpy.Documents {
 		public readonly string Path;
 		public readonly int Bitness;
 		public readonly FrameworkVersion Version;
-		public FrameworkPath(string path, int bitness, in FrameworkVersion version) {
+		public FrameworkPath(string path, int bitness, FrameworkVersion version) {
 			Path = path ?? throw new ArgumentNullException(nameof(path));
 			Bitness = bitness;
 			Version = version;

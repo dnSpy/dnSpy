@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.Impl {
 			return engineThread;
 		}
 
-		public override DbgException CreateException<T>(in DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags, T data, Action<DbgException> onCreated) {
+		public override DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags, T data, Action<DbgException> onCreated) {
 			if (id.IsDefaultId)
 				throw new ArgumentException();
 			var exception = new DbgExceptionImpl(runtime, id, flags, message, thread, module);

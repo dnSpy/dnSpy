@@ -163,7 +163,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 		static readonly List<HexLinePart> emptyLineParts = new List<HexLinePart>();
 
-		void Add(List<HexLinePart> list, int column, in HexClassificationSpan cspan, VST.Span lineExtent) {
+		void Add(List<HexLinePart> list, int column, HexClassificationSpan cspan, VST.Span lineExtent) {
 			if (cspan.Span.Length == 0)
 				return;
 			int startOffs = lineExtent.Start;

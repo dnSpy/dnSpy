@@ -537,7 +537,7 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 		}
 
-		HexCell[] WriteValues(in HexBytes hexBytes, in HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
+		HexCell[] WriteValues(HexBytes hexBytes, HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
 			Debug.Assert(showValues);
 			cellList.Clear();
 			int fullStart = CurrentTextIndex;
@@ -598,7 +598,7 @@ namespace dnSpy.Hex {
 			return cellList.ToArray();
 		}
 
-		HexCell[] WriteAscii(in HexBytes hexBytes, in HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
+		HexCell[] WriteAscii(HexBytes hexBytes, HexSpan visibleBytesSpan, out VST.Span fullSpan, out VST.Span visibleSpan) {
 			Debug.Assert(showAscii);
 			cellList.Clear();
 			int fullStart = CurrentTextIndex;

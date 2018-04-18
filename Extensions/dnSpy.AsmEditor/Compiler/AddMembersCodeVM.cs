@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public AddMembersCodeVM(in EditCodeVMOptions options, IMemberDef defToEdit)
+		public AddMembersCodeVM(EditCodeVMOptions options, IMemberDef defToEdit)
 			: base(options, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedType = defToEdit as TypeDef ?? defToEdit.DeclaringType;
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Task.FromResult(result);
 		}
 
-		protected override void Import(ModuleImporter importer, in CompilationResult result) =>
+		protected override void Import(ModuleImporter importer, CompilationResult result) =>
 			importer.ImportNewMembers(result.RawFile, result.DebugFile, nonNestedType);
 	}
 }

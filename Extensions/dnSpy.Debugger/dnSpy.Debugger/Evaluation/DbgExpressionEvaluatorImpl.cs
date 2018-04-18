@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineExpressionEvaluator = engineExpressionEvaluator ?? throw new ArgumentNullException(nameof(engineExpressionEvaluator));
 		}
 
-		DbgEvaluationResult CreateResult(DbgRuntime runtime, in DbgEngineEvaluationResult result) {
+		DbgEvaluationResult CreateResult(DbgRuntime runtime, DbgEngineEvaluationResult result) {
 			if (result.Error != null)
 				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.FormatSpecifiers, result.Flags);
 			try {
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		DbgEEAssignmentResult CreateResult(in DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
+		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
 
 		public override object CreateExpressionEvaluatorState() => engineExpressionEvaluator.CreateExpressionEvaluatorState();
 

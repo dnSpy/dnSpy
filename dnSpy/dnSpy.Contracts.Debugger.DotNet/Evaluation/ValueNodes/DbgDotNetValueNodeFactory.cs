@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <param name="expectedType">Expected type</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
+		public abstract DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="expression">Expression</param>
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateError(DbgEvaluationInfo evalInfo, in DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects);
+		public abstract DbgDotNetValueNode CreateError(DbgEvaluationInfo evalInfo, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects);
 
 		/// <summary>
 		/// Creates type variables value node

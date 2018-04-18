@@ -172,7 +172,7 @@ namespace dnSpy.Commands {
 			ExecuteCommand(cmd, e);
 		}
 
-		void ExecuteCommand(in CommandInfo cmd, RoutedEventArgs e) {
+		void ExecuteCommand(CommandInfo cmd, RoutedEventArgs e) {
 			if (CommandTarget.CanExecute(cmd.Group, cmd.ID) != CommandTargetStatus.Handled)
 				return;
 

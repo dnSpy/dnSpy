@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 	abstract class DotNetReferenceNavigator : ReferenceNavigator {
 		public const uint EPILOG = 0xFFFFFFFF;
 		public const uint PROLOG = 0xFFFFFFFE;
-		public abstract void GoToLocation(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool newTab);
+		public abstract void GoToLocation(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool newTab);
 	}
 
 	[ExportReferenceNavigator]
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return true;
 		}
 
-		public override void GoToLocation(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool newTab) {
+		public override void GoToLocation(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool newTab) {
 			bool specialIpOffset;
 			if (offset == EPILOG) {
 				specialIpOffset = true;
@@ -160,25 +160,24 @@ namespace dnSpy.Debugger.DotNet.Code {
 			GoToLocationCore(tab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: true);
 		}
 
-		void GoToLocationCore(IDocumentTab tab, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab, bool canRefreshMethods) {
+		void GoToLocationCore(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab, bool canRefreshMethods) {
 			uiDispatcher.VerifyAccess();
 			if (tab == null || method == null)
 				return;
 
-			var moduleTmp = module;
 			// The file could've been added lazily to the list so add a short delay before we select it
 			uiDispatcher.UIBackground(() => {
 				tab.FollowReference(method, newTab, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, moduleTmp, offset, specialIpOffset, canRefreshMethods, newTab: false);
+						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, module, offset, specialIpOffset, canRefreshMethods, newTab: false);
 						e.HasMovedCaret = true;
 					}
 				});
 			});
 		}
 
-		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
+		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
 			if (documentViewer == null)
 				return false;
 			if (MoveCaretTo(documentViewer, module, offset))
@@ -191,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return false;
 		}
 
-		static bool MoveCaretTo(IDocumentViewer documentViewer, in ModuleTokenId module, uint offset) {
+		static bool MoveCaretTo(IDocumentViewer documentViewer, ModuleTokenId module, uint offset) {
 			if (documentViewer == null)
 				return false;
 
@@ -206,12 +205,12 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return true;
 		}
 
-		static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, in ModuleTokenId token, out IMethodDebugService methodDebugService) {
+		static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId token, out IMethodDebugService methodDebugService) {
 			methodDebugService = documentViewer.GetMethodDebugService();
 			return methodDebugService.TryGetMethodDebugInfo(token) != null;
 		}
 
-		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, in ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab) {
+		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab) {
 			// If it's in the prolog/epilog, ignore it
 			if (specialIpOffset)
 				return;

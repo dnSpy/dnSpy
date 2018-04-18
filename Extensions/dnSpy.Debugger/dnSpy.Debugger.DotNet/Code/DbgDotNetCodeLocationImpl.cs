@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 		readonly DbgDotNetCodeLocationFactoryImpl factory;
 
-		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, in ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) {
+		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) {
 			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 			Module = module;
 			Token = token;

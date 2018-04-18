@@ -30,11 +30,11 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetEngineValueNodeFactory {
-		public abstract DbgEngineValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
+		public abstract DbgEngineValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 		public abstract DbgEngineValueNode CreateException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options);
 		public abstract DbgEngineValueNode CreateStowedException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options);
 		public abstract DbgEngineValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method);
-		public abstract DbgEngineValueNode CreateError(DbgEvaluationInfo evalInfo, in DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects);
+		public abstract DbgEngineValueNode CreateError(DbgEvaluationInfo evalInfo, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects);
 		public abstract DbgEngineValueNode CreateTypeVariables(DbgEvaluationInfo evalInfo, DbgDotNetTypeVariableInfo[] typeVariableInfos);
 	}
 
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		internal DbgEngineValueNode Create(DbgDotNetValueNode node) => new DbgEngineValueNodeImpl(this, node);
 
-		public override DbgEngineValueNode Create(DbgEvaluationInfo evalInfo, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
+		public override DbgEngineValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType) =>
 			new DbgEngineValueNodeImpl(this, factory.Create(evalInfo, name, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, expectedType));
 
 		public override DbgEngineValueNode CreateException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options) =>
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateReturnValue(evalInfo, id, value, formatSpecifiers, options, method));
 
-		public override DbgEngineValueNode CreateError(DbgEvaluationInfo evalInfo, in DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects) =>
+		public override DbgEngineValueNode CreateError(DbgEvaluationInfo evalInfo, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects) =>
 			new DbgEngineValueNodeImpl(this, factory.CreateError(evalInfo, name, errorMessage, expression, causesSideEffects));
 
 		public override DbgEngineValueNode CreateTypeVariables(DbgEvaluationInfo evalInfo, DbgDotNetTypeVariableInfo[] typeVariableInfos) =>

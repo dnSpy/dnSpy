@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.Steppers {
 		void DbgEngineStepper_StepComplete(object sender, DbgEngineStepCompleteEventArgs e) =>
 			Dispatcher.BeginInvoke(() => DbgEngineStepper_StepComplete_DbgThread(e));
 
-		void DbgEngineStepper_StepComplete_DbgThread(in DbgEngineStepCompleteEventArgs e) {
+		void DbgEngineStepper_StepComplete_DbgThread(DbgEngineStepCompleteEventArgs e) {
 			Dispatcher.VerifyAccess();
 			bool wasStepping;
 			lock (lockObj) {

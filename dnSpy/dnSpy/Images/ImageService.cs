@@ -145,7 +145,7 @@ namespace dnSpy.Images {
 
 		static Size Round(Size size) => new Size(Math.Round(size.Width), Math.Round(size.Height));
 
-		public BitmapSource GetImage(in ImageReference imageReference, ImageOptions options) {
+		public BitmapSource GetImage(ImageReference imageReference, ImageOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			if (imageReference.Name == null)

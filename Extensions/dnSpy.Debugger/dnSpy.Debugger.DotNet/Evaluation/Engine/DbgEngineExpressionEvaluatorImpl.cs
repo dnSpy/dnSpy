@@ -391,7 +391,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public readonly string ImageName;
 		public readonly DmdType Type;
 
-		public EvaluateImplResult(string error, in DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags, string imageName, DmdType type) {
+		public EvaluateImplResult(string error, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags, string imageName, DmdType type) {
 			Error = error;
 			Name = name;
 			Value = value;

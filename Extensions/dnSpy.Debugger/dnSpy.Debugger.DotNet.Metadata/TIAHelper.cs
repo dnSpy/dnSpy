@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				Identifier = identifier;
 			}
 
-			public bool Equals(in Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
+			public bool Equals(Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
 		}
 
 		static Info? GetInfo(DmdType td) {

@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	abstract class DbgModuleIdProviderService {
 		public abstract ModuleId? GetModuleId(DbgModule module);
-		public abstract DbgModule GetModule(in ModuleId moduleId);
+		public abstract DbgModule GetModule(ModuleId moduleId);
 	}
 
 	[Export(typeof(DbgModuleIdProviderService))]
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		sealed class CachedModuleId {
 			public ModuleId? Id { get; }
-			public CachedModuleId(in ModuleId? id) => Id = id;
+			public CachedModuleId(ModuleId? id) => Id = id;
 		}
 
 		public override ModuleId? GetModuleId(DbgModule module) {
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return null;
 		}
 
-		public override DbgModule GetModule(in ModuleId moduleId) {
+		public override DbgModule GetModule(ModuleId moduleId) {
 			foreach (var p in dbgManager.Processes) {
 				foreach (var r in p.Runtimes) {
 					foreach (var m in r.Modules) {

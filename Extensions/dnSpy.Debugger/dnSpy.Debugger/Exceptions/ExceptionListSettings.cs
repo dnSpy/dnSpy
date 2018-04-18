@@ -255,7 +255,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 		bool ignoreSave;
 
-		static void AddSettings(ISettingsSection section, in DbgExceptionSettings settings) {
+		static void AddSettings(ISettingsSection section, DbgExceptionSettings settings) {
 			section.Attribute("Flags", settings.Flags);
 			foreach (var cond in settings.Conditions) {
 				var condSect = section.CreateSection("Conditions");
@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.Exceptions {
 				yield return (DiffType.Remove, def, default);
 		}
 
-		static bool Compare(in DbgExceptionSettings settings, in DbgExceptionDefinition def) {
+		static bool Compare(DbgExceptionSettings settings, DbgExceptionDefinition def) {
 			if (settings.Conditions.Count != 0)
 				return false;
 			return settings.Flags == def.Flags;

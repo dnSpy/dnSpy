@@ -96,7 +96,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			readonly Lazy<BookmarksService> bookmarksService;
 			readonly List<BookmarkLocation> allLocations;
 
-			public LocationsResult(Lazy<BookmarksService> bookmarksService, in TextViewBookmarkLocationResult? locRes, List<BookmarkLocation> allLocations) {
+			public LocationsResult(Lazy<BookmarksService> bookmarksService, TextViewBookmarkLocationResult? locRes, List<BookmarkLocation> allLocations) {
 				this.bookmarksService = bookmarksService;
 				this.locRes = locRes;
 				this.allLocations = allLocations;
@@ -136,7 +136,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			return new LocationsResult(bookmarksService, res, allLocations);
 		}
 
-		Bookmark[] GetBookmarks(in TextViewBookmarkLocationResult locations) {
+		Bookmark[] GetBookmarks(TextViewBookmarkLocationResult locations) {
 			var list = new List<Bookmark>();
 			foreach (var bm in bookmarksService.Value.Bookmarks) {
 				var loc = locations.Location;

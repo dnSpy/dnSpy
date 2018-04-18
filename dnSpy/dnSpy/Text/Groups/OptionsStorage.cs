@@ -48,7 +48,7 @@ namespace dnSpy.Text.Groups {
 		readonly struct OptionKey : IEquatable<OptionKey> {
 			readonly ContentTypeKey contentTypeKey;
 			readonly string name;
-			public OptionKey(in ContentTypeKey contentTypeKey, string name) {
+			public OptionKey(ContentTypeKey contentTypeKey, string name) {
 				this.contentTypeKey = contentTypeKey;
 				this.name = name;
 			}

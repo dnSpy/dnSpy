@@ -286,7 +286,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			throw new InvalidOperationException();
 		}
 
-		internal ILValue CreateILValue(in DbgDotNetValueResult result) {
+		internal ILValue CreateILValue(DbgDotNetValueResult result) {
 			if (result.HasError)
 				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException)
@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return CreateILValue(dnValue);
 		}
 
-		internal DbgDotNetValue RecordValue(in DbgDotNetValueResult result) {
+		internal DbgDotNetValue RecordValue(DbgDotNetValueResult result) {
 			if (result.HasError)
 				throw new InterpreterMessageException(result.ErrorMessage);
 			if (result.ValueIsException)

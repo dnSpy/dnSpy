@@ -254,7 +254,7 @@ namespace dnSpy.Hex.Intellisense {
 			return TryCreateToolTipInfoCollection(position, tagAggregator.GetTags(new HexBufferSpan(position, 1)).ToArray());
 		}
 
-		HexToolTipInfoCollection TryCreateToolTipInfoCollection(in HexBufferPoint position, IHexTagSpan<HexToolTipStructureSpanTag>[] tagSpans) {
+		HexToolTipInfoCollection TryCreateToolTipInfoCollection(HexBufferPoint position, IHexTagSpan<HexToolTipStructureSpanTag>[] tagSpans) {
 			if (tagSpans.Length == 0)
 				return null;
 			var toolTipInfos = new List<HexToolTipInfo>(tagSpans.Length);

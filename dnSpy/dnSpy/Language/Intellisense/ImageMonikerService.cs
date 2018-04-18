@@ -54,7 +54,7 @@ namespace dnSpy.Language.Intellisense {
 			imageMonikerId = 1;
 		}
 
-		public ImageMoniker ToImageMoniker(in ImageReference imageReference) {
+		public ImageMoniker ToImageMoniker(ImageReference imageReference) {
 			if (imageReference.IsDefault)
 				return default;
 			lock (lockObj) {
@@ -69,7 +69,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		public ImageReference ToImageReference(in ImageMoniker imageMoniker) {
+		public ImageReference ToImageReference(ImageMoniker imageMoniker) {
 			if (imageMoniker.Id == 0 && imageMoniker.Guid == Guid.Empty)
 				return default;
 			lock (lockObj) {

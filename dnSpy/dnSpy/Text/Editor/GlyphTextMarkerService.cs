@@ -78,17 +78,17 @@ namespace dnSpy.Text.Editor {
 			GlyphTextMarkerMouseProcessorProviders = Orderer.Order(glyphTextMarkerMouseProcessorProviders).ToArray();
 		}
 
-		IGlyphTextMethodMarker IGlyphTextMarkerService.AddMarker(in ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) =>
+		IGlyphTextMethodMarker IGlyphTextMarkerService.AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) =>
 			AddMarker(tokenId.Module, tokenId.Token, ilOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 
-		IGlyphTextMethodMarker AddMarker(in ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+		IGlyphTextMethodMarker AddMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 			var marker = new GlyphTextMethodMarker(module, token, ilOffset, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 			glyphTextMarkers.Add(marker);
 			MarkerAdded?.Invoke(this, new GlyphTextMarkerAddedEventArgs(marker));
 			return marker;
 		}
 
-		IGlyphTextDotNetTokenMarker AddMarker(in ModuleId module, uint token, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+		IGlyphTextDotNetTokenMarker AddMarker(ModuleId module, uint token, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 			var marker = new GlyphTextDotNetTokenMarker(module, token, glyphImage, markerTypeName, selectedMarkerTypeName, classificationType, zIndex, tag, handler, textViewFilter);
 			glyphTextMarkers.Add(marker);
 			MarkerAdded?.Invoke(this, new GlyphTextMarkerAddedEventArgs(marker));
@@ -128,7 +128,7 @@ namespace dnSpy.Text.Editor {
 			public ModuleTokenId Method { get; }
 			public uint ILOffset { get; }
 
-			public GlyphTextMethodMarker(in ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+			public GlyphTextMethodMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 				Method = new ModuleTokenId(module, token);
 				ILOffset = ilOffset;
 				GlyphImageReference = glyphImage == null || glyphImage.Value.IsDefault ? null : glyphImage;
@@ -155,7 +155,7 @@ namespace dnSpy.Text.Editor {
 			public ModuleId Module { get; }
 			public uint Token { get; }
 
-			public GlyphTextDotNetTokenMarker(in ModuleId module, uint token, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
+			public GlyphTextDotNetTokenMarker(ModuleId module, uint token, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag, IGlyphTextMarkerHandler handler, Func<ITextView, bool> textViewFilter) {
 				Module = module;
 				Token = token;
 				GlyphImageReference = glyphImage == null || glyphImage.Value.IsDefault ? null : glyphImage;

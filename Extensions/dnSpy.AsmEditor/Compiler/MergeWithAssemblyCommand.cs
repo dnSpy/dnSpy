@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public IAssembly Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
-			public ModuleResult(IAssembly assembly, byte[] bytes, in DebugFileResult debugFile) {
+			public ModuleResult(IAssembly assembly, byte[] bytes, DebugFileResult debugFile) {
 				Assembly = assembly;
 				RawBytes = bytes;
 				DebugFile = debugFile;

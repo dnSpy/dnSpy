@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static IDsDocumentNameKey CreateKey(DbgModule module) => new DocKey(module);
 		public override bool IsActive => !DbgModule.IsClosed;
 
-		public DynamicModuleDefDocument(in ModuleId moduleId, DbgModule module, ModuleDef moduleDef, bool loadSyms)
+		public DynamicModuleDefDocument(ModuleId moduleId, DbgModule module, ModuleDef moduleDef, bool loadSyms)
 			: base(moduleDef, loadSyms) {
 			ModuleId = moduleId;
 			DbgModule = module;

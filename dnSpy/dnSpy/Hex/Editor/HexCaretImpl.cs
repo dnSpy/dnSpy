@@ -164,7 +164,7 @@ namespace dnSpy.Hex.Editor {
 			return new HexColumnPosition(activeColumn, newValuePosition, newAsciiPosition);
 		}
 
-		static bool CanReUse(in HexCellPosition oldPos, in HexCellPosition newPos, HexCell cell) {
+		static bool CanReUse(HexCellPosition oldPos, HexCellPosition newPos, HexCell cell) {
 			if (oldPos.IsDefault)
 				return false;
 			if (oldPos.IsDefault != newPos.IsDefault)
@@ -347,7 +347,7 @@ namespace dnSpy.Hex.Editor {
 			return IntPtr.Zero;
 		}
 
-		static int? GetLinePosition(HexBufferLine line, in HexColumnPosition position) {
+		static int? GetLinePosition(HexBufferLine line, HexColumnPosition position) {
 			HexCell cell;
 			switch (position.ActiveColumn) {
 			case HexColumnType.Values:
@@ -424,13 +424,13 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		HexColumnPosition Filter(in HexColumnPosition position) =>
+		HexColumnPosition Filter(HexColumnPosition position) =>
 			new HexColumnPosition(position.ActiveColumn, Filter(position.ValuePosition), Filter(position.AsciiPosition));
 
-		HexCellPosition Filter(in HexCellPosition position) =>
+		HexCellPosition Filter(HexCellPosition position) =>
 			new HexCellPosition(position.Column, hexView.BufferLines.FilterAndVerify(position.BufferPosition), position.CellPosition);
 
-		void SetExplicitPosition(in HexColumnPosition position) {
+		void SetExplicitPosition(HexColumnPosition position) {
 			var oldPos = Position;
 			SetPositionCore(position);
 			var newPos = Position;
@@ -541,7 +541,7 @@ namespace dnSpy.Hex.Editor {
 			return Position;
 		}
 
-		HexColumnPosition CreateColumnPosition(in HexCellPosition position) {
+		HexColumnPosition CreateColumnPosition(HexCellPosition position) {
 			switch (position.Column) {
 			case HexColumnType.Values:
 				var asciiPosition = new HexCellPosition(HexColumnType.Ascii, position.BufferPosition, 0);
@@ -733,7 +733,7 @@ namespace dnSpy.Hex.Editor {
 			return MoveTo(textLine, preferredXCoordinate, HexMoveToFlags.None, false);
 		}
 
-		HexViewLine GetLine(in HexColumnPosition position) =>
+		HexViewLine GetLine(HexColumnPosition position) =>
 			hexView.GetHexViewLineContainingBufferPosition(position.ActivePosition.BufferPosition);
 
 		internal void Dispose() {

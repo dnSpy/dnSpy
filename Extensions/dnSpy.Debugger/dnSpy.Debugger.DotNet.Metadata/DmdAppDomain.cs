@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="assemblyInfo">Assembly info</param>
 		/// <returns></returns>
-		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, in DmdCreateAssemblyInfo assemblyInfo);
+		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo);
 
 		/// <summary>
 		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)

@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		[ImportingConstructor]
 		DbgDotNetCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
 
-		public override DbgDotNetCodeLocation Create(in ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) =>
+		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) =>
 			new DbgDotNetCodeLocationImpl(this, module, token, offset, ilOffsetMapping);
 	}
 }

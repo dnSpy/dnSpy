@@ -53,8 +53,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	}
 
 	abstract class TracepointMessageCreator {
-		public abstract string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointTrace trace);
-		public abstract void Write(ITextColorWriter output, in DbgCodeBreakpointTrace trace);
+		public abstract string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace);
+		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointTrace trace);
 	}
 
 	[Export(typeof(TracepointMessageCreator))]
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		public override string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointTrace trace) {
+		public override string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
 			if (boundBreakpoint == null)
 				throw new ArgumentNullException(nameof(boundBreakpoint));
 			var text = trace.Message;
@@ -339,7 +339,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		void Write(string s) => output.Append(s);
 		void WriteError() => Write("???");
 
-		public override void Write(ITextColorWriter output, in DbgCodeBreakpointTrace trace) {
+		public override void Write(ITextColorWriter output, DbgCodeBreakpointTrace trace) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			var msg = trace.Message ?? string.Empty;

@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="helpUri">Help URI or null if none</param>
 		/// <param name="filename">Filename</param>
 		/// <param name="lineLocationSpan">Line location or null</param>
-		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string helpUri, string filename, in LineLocationSpan? lineLocationSpan) {
+		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string helpUri, string filename, LineLocationSpan? lineLocationSpan) {
 			Severity = severity;
 			Description = description ?? string.Empty;
 			Id = id ?? string.Empty;

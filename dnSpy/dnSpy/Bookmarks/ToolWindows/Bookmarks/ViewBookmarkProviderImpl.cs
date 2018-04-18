@@ -64,7 +64,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) =>
 			// Add an extra UI() so it's guaranteed to be called after BookmarksVM's handler
 			UI(() => UI(() => BookmarksService_BookmarksChanged_UI(e)));
-		void BookmarksService_BookmarksChanged_UI(in CollectionChangedEventArgs<Bookmark> e) => UpdateBookmarks_UI();
+		void BookmarksService_BookmarksChanged_UI(CollectionChangedEventArgs<Bookmark> e) => UpdateBookmarks_UI();
 
 		void UpdateBookmarks_UI() {
 			uiDispatcher.VerifyAccess();

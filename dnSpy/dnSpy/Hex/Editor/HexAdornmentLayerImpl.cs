@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexLayerKind layerKind;
 		readonly Canvas canvas;
 
-		public HexAdornmentLayerImpl(WpfHexView hexView, HexLayerKind layerKind, in MetadataAndOrder<IAdornmentLayersMetadata> info) {
+		public HexAdornmentLayerImpl(WpfHexView hexView, HexLayerKind layerKind, MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			canvas = new Canvas();
 			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			this.layerKind = layerKind;

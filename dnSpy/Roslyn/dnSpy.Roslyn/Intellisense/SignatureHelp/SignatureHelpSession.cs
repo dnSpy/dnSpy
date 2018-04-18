@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			cancellationTokenSource = null;
 		}
 
-		void Start(in SignatureHelpInfo info, SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo) {
+		void Start(SignatureHelpInfo info, SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo) {
 			CancelFetchItems();
 			Debug.Assert(cancellationTokenSource == null);
 			cancellationTokenSource = new CancellationTokenSource();

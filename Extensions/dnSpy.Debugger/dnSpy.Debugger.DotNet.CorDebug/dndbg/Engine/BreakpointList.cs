@@ -31,19 +31,19 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public TBP[] GetBreakpoints(in DnModuleId module) {
+		public TBP[] GetBreakpoints(DnModuleId module) {
 			if (!dict.TryGetValue(module, out var list))
 				return Array.Empty<TBP>();
 			return list.ToArray();
 		}
 
-		public void Add(in DnModuleId module, TBP bp) {
+		public void Add(DnModuleId module, TBP bp) {
 			if (!dict.TryGetValue(module, out var list))
 				dict.Add(module, list = new List<TBP>());
 			list.Add(bp);
 		}
 
-		public bool Remove(in DnModuleId module, TBP bp) {
+		public bool Remove(DnModuleId module, TBP bp) {
 			if (!dict.TryGetValue(module, out var list))
 				return false;
 			return list.Remove(bp);

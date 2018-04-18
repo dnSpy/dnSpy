@@ -23,16 +23,16 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Bookmarks.DotNet {
 	abstract class DotNetBookmarkLocationFactory {
-		public abstract DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(in ModuleId module, uint token, uint offset);
-		public abstract DotNetTokenBookmarkLocation CreateTokenLocation(in ModuleId module, uint token);
+		public abstract DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(ModuleId module, uint token, uint offset);
+		public abstract DotNetTokenBookmarkLocation CreateTokenLocation(ModuleId module, uint token);
 	}
 
 	[Export(typeof(DotNetBookmarkLocationFactory))]
 	sealed class DotNetBookmarkLocationFactoryImpl : DotNetBookmarkLocationFactory {
-		public override DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(in ModuleId module, uint token, uint offset) =>
+		public override DotNetMethodBodyBookmarkLocation CreateMethodBodyLocation(ModuleId module, uint token, uint offset) =>
 			new DotNetMethodBodyBookmarkLocationImpl(module, token, offset);
 
-		public override DotNetTokenBookmarkLocation CreateTokenLocation(in ModuleId module, uint token) =>
+		public override DotNetTokenBookmarkLocation CreateTokenLocation(ModuleId module, uint token) =>
 			new DotNetTokenBookmarkLocationImpl(module, token);
 	}
 }

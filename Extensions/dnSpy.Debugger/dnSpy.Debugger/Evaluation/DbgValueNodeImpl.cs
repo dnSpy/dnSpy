@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueNode.Format(evalInfo, options, cultureInfo);
 		}
 
-		DbgValueNodeAssignmentResult CreateResult(in DbgEngineValueNodeAssignmentResult result) {
+		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {
 			if (result.Error != null) {
 				if (engineValueNode.Value != value?.EngineValue)
 					throw new InvalidOperationException();

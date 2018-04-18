@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="writer">Writer</param>
 		/// <param name="definition">Exception definition</param>
 		/// <returns></returns>
-		public virtual bool WriteName(ITextColorWriter writer, in DbgExceptionDefinition definition) => false;
+		public virtual bool WriteName(ITextColorWriter writer, DbgExceptionDefinition definition) => false;
 	}
 
 	/// <summary>Metadata</summary>

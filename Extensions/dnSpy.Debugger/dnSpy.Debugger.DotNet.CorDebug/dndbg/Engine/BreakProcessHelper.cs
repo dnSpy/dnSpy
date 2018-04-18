@@ -80,7 +80,7 @@ namespace dndbg.Engine {
 		bool IsOurModule(CorModule module) => IsModule(module, filename);
 		static bool IsModule(CorModule module, string filename) => module != null && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
-		void SetILBreakpoint(in DnModuleId moduleId, uint token) {
+		void SetILBreakpoint(DnModuleId moduleId, uint token) {
 			Debug.Assert(token != 0 && breakpoint == null);
 			DnBreakpoint bp = null;
 			bp = debugger.CreateBreakpoint(moduleId, token, 0, ctx2 => {

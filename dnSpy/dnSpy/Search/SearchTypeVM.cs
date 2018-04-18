@@ -29,7 +29,7 @@ namespace dnSpy.Search {
 		public SearchType SearchType { get; }
 		public VisibleMembersFlags Flags { get; }
 
-		public SearchTypeVM(SearchType searchType, string name, string toolTip, in ImageReference imageReference, VisibleMembersFlags flags) {
+		public SearchTypeVM(SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
 			SearchType = searchType;
 			Name = name;
 			ToolTip = toolTip;
