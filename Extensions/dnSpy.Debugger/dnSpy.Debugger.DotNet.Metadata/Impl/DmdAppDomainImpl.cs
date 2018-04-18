@@ -89,11 +89,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			wellKnownMemberResolver = new WellKnownMemberResolver(this);
 			assemblyLoadedListeners = new List<AssemblyLoadedListener>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
-			metadataReaderFactory = CreateDmdMetadataReader;
+			metadataReaderFactory = CreateMetadataReader;
 			Id = id;
 		}
 
-		DmdMetadataReader CreateDmdMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
+		DmdMetadataReader CreateMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (lzmd == null)
@@ -984,7 +984,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		internal DmdTypeDef TryLookup(DmdAssemblyImpl assembly, DmdTypeRef typeRef, bool ignoreCase) =>
 			Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
-
 
 		internal DmdTypeDef TryLookup(DmdModuleImpl module, DmdTypeRef typeRef, bool ignoreCase) =>
 			Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);

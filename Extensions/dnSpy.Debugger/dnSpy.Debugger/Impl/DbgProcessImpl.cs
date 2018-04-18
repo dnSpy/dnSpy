@@ -278,6 +278,10 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void ReadMemory(ulong address, void* destination, int size) {
+			if (destination == null && size != 0)
+				throw new ArgumentNullException(nameof(destination));
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
 			var dest = (byte*)destination;
 			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue)) {
 				Clear(dest, size);

@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
@@ -572,7 +571,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		public override unsafe bool ReadMemory(uint rva, void* destination, int size) {
-			if (destination == null)
+			if (destination == null && size != 0)
 				throw new ArgumentNullException(nameof(destination));
 			if (size < 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
