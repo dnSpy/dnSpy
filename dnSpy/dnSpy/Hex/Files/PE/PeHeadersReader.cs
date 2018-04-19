@@ -59,7 +59,8 @@ namespace dnSpy.Hex.Files.PE {
 			pos = file.Span.Start + ntHeaderOffset;
 			if (pos + 4 > file.Span.End)
 				return false;
-			if (file.Buffer.ReadUInt32(pos) != 0x4550)
+			// Mono only checks the low 2 bytes
+			if ((ushort)file.Buffer.ReadUInt32(pos) != 0x4550)
 				return false;
 			pos += 4;
 			FileHeader = PeFileHeaderDataImpl.TryCreate(file, pos);
@@ -72,6 +73,11 @@ namespace dnSpy.Hex.Files.PE {
 				return false;
 			pos = OptionalHeader.Span.Span.Start + sizeOfOptionalHeader;
 			int sects = FileHeader.NumberOfSections.Data.ReadValue();
+			if (sects > 0 && file.Span.Contains(pos + 0x28 - 1)) {
+				// Mono doesn't verify the section count
+				uint firstSectionOffset = file.Buffer.ReadUInt32(pos + 0x14);
+				sects = Math.Min(sects, (int)((firstSectionOffset - pos).ToUInt64() / 0x28));
+			}
 			Sections = CreateSections(pos, sects);
 			if (Sections == null)
 				return false;
@@ -145,8 +151,9 @@ namespace dnSpy.Hex.Files.PE {
 				return null;
 			var dataDir = OptionalHeader.DataDirectory.Data[14];
 			var rva = dataDir.Data.VirtualAddress.Data.ReadValue();
-			var size = dataDir.Data.Size.Data.ReadValue();
-			if (rva == 0 || size < 0x48)
+			// Mono doesn't check that the Size field is >= 0x48
+			//var size = dataDir.Data.Size.Data.ReadValue();
+			if (rva == 0 /*|| size < 0x48*/)
 				return null;
 
 			bool mem = CheckDotNet(rva, MemoryLayout_ToBufferPosition);

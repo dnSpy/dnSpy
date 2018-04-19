@@ -375,7 +375,8 @@ namespace dnSpy.Documents {
 					peImage = new PEImage(File.ReadAllBytes(filename), filename);
 
 				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
+				// Mono doesn't check that the Size field is >= 0x48
+				bool isDotNet = dotNetDir.VirtualAddress != 0 /*&& dotNetDir.Size >= 0x48*/;
 				if (isDotNet) {
 					try {
 						var options = new ModuleCreationOptions(DsDotNetDocumentBase.CreateModuleContext(AssemblyResolver));

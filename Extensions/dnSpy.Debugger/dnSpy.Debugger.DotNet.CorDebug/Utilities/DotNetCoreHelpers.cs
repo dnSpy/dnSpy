@@ -89,8 +89,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 				using (var peImage = new PEImage(filename)) {
 					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
 						return false;
-					if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories.Length <= 14)
-						return false;
 					var dd = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 					if (dd.VirtualAddress == 0 || dd.Size < 0x48)
 						return false;

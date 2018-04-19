@@ -53,16 +53,18 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (peHeaders != null) {
 				if (peHeaders.OptionalHeader.DataDirectory.Data.FieldCount < 15)
 					return false;
-				var cor20Span = Read(peHeaders, peHeaders.OptionalHeader.DataDirectory.Data[14].Data);
+				// Mono ignores the size field
+				var cor20Span = Read(peHeaders, peHeaders.OptionalHeader.DataDirectory.Data[14].Data, allowZeroSize: true);
 				if (cor20Span == null)
 					return false;
 				cor20 = DotNetCor20DataImpl.TryCreate(file, cor20Span.Value.Start);
 				if (cor20 == null)
 					return false;
 
-				var mdSpan = Read(peHeaders, cor20.Metadata.Data);
-				resourcesSpan = Read(peHeaders, cor20.Resources.Data);
-				var snSpan = Read(peHeaders, cor20.StrongNameSignature.Data);
+				// Mono ignores the size field
+				var mdSpan = Read(peHeaders, cor20.Metadata.Data, allowZeroSize: true);
+				resourcesSpan = Read(peHeaders, cor20.Resources.Data, allowZeroSize: false);
+				var snSpan = Read(peHeaders, cor20.StrongNameSignature.Data, allowZeroSize: false);
 
 				ReadDotNetMetadataHeader(peHeaders, mdSpan);
 				ReadStrongNameSignature(peHeaders, snSpan);
@@ -82,10 +84,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			return cor20 != null || !metadataSpan.IsEmpty;
 		}
 
-		HexSpan? Read(PeHeaders peHeaders, DataDirectoryData dir) {
+		HexSpan? Read(PeHeaders peHeaders, DataDirectoryData dir, bool allowZeroSize) {
 			uint rva = dir.VirtualAddress.Data.ReadValue();
 			uint size = dir.Size.Data.ReadValue();
-			if (rva == 0 || size == 0)
+			if (rva == 0 || (!allowZeroSize && size == 0))
 				return null;
 			var position = peHeaders.RvaToBufferPosition(rva);
 			var end = position + size;
@@ -100,7 +102,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		void ReadDotNetMetadataHeader(PeHeaders peHeaders, HexSpan? dir) {
 			if (dir == null)
 				return;
-			ReadDotNetMetadataHeader(dir.Value);
+			// Mono ignores the size field so pass in the full size
+			ReadDotNetMetadataHeader(HexSpan.FromBounds(dir.Value.Start, file.Span.End));
 		}
 
 		void ReadDotNetMetadataHeader(HexSpan span) {

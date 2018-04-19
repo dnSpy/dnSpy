@@ -25,7 +25,7 @@ using dnSpy.Contracts.Hex.Files;
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetMetadataHeaderReader {
 		readonly HexBufferFile file;
-		public HexSpan MetadataSpan { get; }
+		public HexSpan MetadataSpan { get; private set; }
 		public HexSpan MetadataHeaderSpan { get; private set; }
 		public HexSpan StorageSignatureSpan { get; private set; }
 		public HexSpan VersionStringSpan { get; private set; }
@@ -64,14 +64,17 @@ namespace dnSpy.Hex.Files.DotNet {
 			StorageStreamHeaders = new StorageStreamHeader[StreamCount];
 			pos = StorageHeaderSpan.End;
 			var sb = new StringBuilder();
+			var lastStreamOffset = MetadataSpan.Start;
 			for (int i = 0; i < StorageStreamHeaders.Length; i++) {
 				var stream = ReadStorageStreamHeader(pos, sb);
 				if (stream == null)
 					return false;
 				StorageStreamHeaders[i] = stream.Value;
 				pos = stream.Value.Span.End;
+				lastStreamOffset = HexPosition.Max(lastStreamOffset, stream.Value.DataSpan.End);
 			}
 			MetadataHeaderSpan = HexSpan.FromBounds(MetadataSpan.Start, pos);
+			MetadataSpan = HexSpan.FromBounds(MetadataSpan.Start, lastStreamOffset);
 			return true;
 		}
 
@@ -82,8 +85,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			uint size = file.Buffer.ReadUInt32(position + 4);
 			var startPos = MetadataSpan.Start + offset;
 			var endPos = startPos + size;
-			if (endPos > MetadataSpan.End)
-				return null;
+			if (startPos < MetadataSpan.Start || startPos >= MetadataSpan.End || endPos > MetadataSpan.End) {
+				startPos = MetadataSpan.Start;
+				endPos = MetadataSpan.Start;
+			}
 			int stringLength = GetStorageStreamStringLength(position + 8, 32);
 			if (stringLength < 0)
 				return null;
@@ -113,8 +118,6 @@ namespace dnSpy.Hex.Files.DotNet {
 				if (b == 0)
 					break;
 			}
-			if (i == maxLen)
-				return -1;
 			return (i + 1 + 3) & ~3;
 		}
 	}
