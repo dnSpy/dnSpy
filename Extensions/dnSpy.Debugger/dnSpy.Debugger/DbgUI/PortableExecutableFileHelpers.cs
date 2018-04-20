@@ -31,7 +31,8 @@ namespace dnSpy.Debugger.DbgUI {
 						return false;
 					f.Position = 0x3C;
 					f.Position = r.ReadUInt32();
-					if (r.ReadUInt32() != 0x4550)
+					// Mono only checks the low 2 bytes
+					if ((ushort)r.ReadUInt32() != 0x4550)
 						return false;
 					f.Position += 0x12;
 					var flags = r.ReadUInt16();
