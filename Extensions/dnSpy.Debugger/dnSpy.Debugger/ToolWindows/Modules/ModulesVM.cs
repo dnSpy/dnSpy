@@ -42,6 +42,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		ObservableCollection<ModuleVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		void ApplySortDescr(SortDescription descr);
 	}
 
 	[Export(typeof(IModulesVM))]
@@ -434,7 +435,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// UI thread
 		int GetInsertionIndex_UI(ModuleVM vm) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
-			var comparer = ModuleVMComparer.Instance;
+			var comparer = SortListComparer;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
@@ -459,7 +460,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			moduleContext.SearchMatcher.SetSearchText(filterText);
 
 			var newList = new List<ModuleVM>(GetFilteredItems_UI(filterText, selectedProcess));
-			newList.Sort(ModuleVMComparer.Instance);
+			newList.Sort(SortListComparer);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText, selectedProcess);
 		}
@@ -467,11 +468,6 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
 		void InitializeNothingMatched(string filterText, SimpleProcessVM selectedProcess) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process == null);
-
-		sealed class ModuleVMComparer : IComparer<ModuleVM> {
-			public static readonly IComparer<ModuleVM> Instance = new ModuleVMComparer();
-			public int Compare(ModuleVM x, ModuleVM y) => x.Order - y.Order;
-		}
 
 		// UI thread
 		IEnumerable<ModuleVM> GetFilteredItems_UI(string filterText, SimpleProcessVM selectedProcess) {
@@ -697,6 +693,32 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			moduleContext.UIDispatcher.VerifyAccess();
 			FilterText = string.Empty;
 			SelectedProcess = processes.FirstOrDefault();
+		}
+
+		// UI thread
+		public void SortList_UI() {
+			moduleContext.UIDispatcher.VerifyAccess();
+			var newList = new List<ModuleVM>(AllItems);
+			newList.Sort(SortListComparer);
+			AllItems.Reset(newList);
+		}
+		private ModuleVMComparer sortListComparer;
+		public ModuleVMComparer SortListComparer {
+			get {
+				if (sortListComparer == null) sortListComparer = ModuleVMComparer.Instance;
+				return sortListComparer;
+			}
+			set {
+				if (value == null) value = sortListComparer = ModuleVMComparer.Instance;
+				sortListComparer = value;
+
+				OnPropertyChanged(nameof(SortListComparer));
+				SortList_UI();
+			}
+		}
+
+		public void ApplySortDescr(SortDescription descr) {
+			SortListComparer = new ModuleVMComparer(descr.PropertyName, descr.Direction);
 		}
 	}
 }

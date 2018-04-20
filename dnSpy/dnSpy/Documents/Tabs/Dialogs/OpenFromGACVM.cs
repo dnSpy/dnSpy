@@ -106,7 +106,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			TextElementProvider = textElementProvider;
 			gacFileList = new ObservableCollection<GACFileVM>();
 			collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
-			collectionView.CustomSort = new GACFileVM_Comparer();
+			collectionView.CustomSort = new GACFileVM_Comparer(new SortDescription());
 			cancellationTokenSource = new CancellationTokenSource();
 			cancellationToken = cancellationTokenSource.Token;
 			searchingGAC = true;
@@ -168,6 +168,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 		static readonly char[] sep = new char[] { ' ' };
 
+		public void ApplySort(SortDescription descr) {
+			collectionView.CustomSort = new GACFileVM_Comparer(descr);
+		}
+
 		public void Dispose() {
 			if (disposed)
 				return;
@@ -201,16 +205,34 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	}
 
 	sealed class GACFileVM_Comparer : System.Collections.IComparer {
+		public readonly SortDescription SortDescription;
+	
+		public GACFileVM_Comparer(SortDescription sortDescription) {
+			SortDescription = sortDescription;
+		}
+
 		public int Compare(object x, object y) {
-			var a = x as GACFileVM;
-			var b = y as GACFileVM;
+			var c = doCompare(x as GACFileVM, y as GACFileVM);
+			if (SortDescription.Direction == ListSortDirection.Descending)
+				return c * -1;
+			else
+				return c;
+		}
+
+		private int doCompare(GACFileVM a, GACFileVM b) {
 			if (a == b)
 				return 0;
 			if (a == null)
 				return -1;
 			if (b == null)
 				return 1;
-			return new AssemblyNameComparer(AssemblyNameComparerFlags.All).CompareTo(a.Assembly, b.Assembly);
+			
+			switch (SortDescription.PropertyName ) {
+			case "VersionObject":
+				return Comparer<Version>.Default.Compare(a.Version, b.Version);
+			default:
+				return new AssemblyNameComparer(AssemblyNameComparerFlags.All).CompareTo(a.Assembly, b.Assembly);
+			}
 		}
 	}
 }

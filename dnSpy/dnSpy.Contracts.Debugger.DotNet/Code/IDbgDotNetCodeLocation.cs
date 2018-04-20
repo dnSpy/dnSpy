@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Code {

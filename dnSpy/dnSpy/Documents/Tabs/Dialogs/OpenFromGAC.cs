@@ -50,6 +50,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var vm = new OpenFromGACVM(syntaxHighlight, classificationFormatMap, textElementProvider);
 			win.DataContext = vm;
 			win.Owner = ownerWindow ?? appWindow.MainWindow;
+			win.ApplySort += vm.ApplySort;
+
 			if (win.ShowDialog() != true)
 				return Array.Empty<string>();
 			return win.SelectedItems.Select(a => a.Path).ToArray();

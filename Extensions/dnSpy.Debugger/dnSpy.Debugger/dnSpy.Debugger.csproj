@@ -235,6 +235,7 @@
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsToolWindowContent.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointsVM.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointVM.cs" />
+    <Compile Include="ToolWindows\CodeBreakpoints\CodeBreakpointVMComparer.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\Commands.cs" />
     <Compile Include="ToolWindows\CodeBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\Commands.cs" />
@@ -258,6 +259,7 @@
     <Compile Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointVM.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\ModuleBreakpoints\TextViewTaggers.cs" />
+    <Compile Include="ToolWindows\Modules\ModuleVMComparer.cs" />
     <Compile Include="ToolWindows\Modules\SearchTextClassifierProvider.cs" />
     <Compile Include="ToolWindows\SimpleProcessVM.cs" />
     <Compile Include="ToolWindows\TextView\DebuggerCommandConstants.cs" />
@@ -280,6 +282,7 @@
     <Compile Include="ToolWindows\Watch\WpfMemLeakWorkaround.cs" />
     <Compile Include="UI\BulkObservableCollection.cs" />
     <Compile Include="UI\FormatterObject.cs" />
+    <Compile Include="UI\FormatterObjectVMComparer.cs" />
     <Compile Include="UI\Wpf\ITextBlockContentInfoFactory.cs" />
     <Compile Include="UI\Wpf\SmartTextBlock.cs" />
     <Compile Include="UI\Wpf\TextBlockContentInfo.cs" />

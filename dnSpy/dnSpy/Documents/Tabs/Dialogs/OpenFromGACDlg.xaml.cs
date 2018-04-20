@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
@@ -35,6 +36,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			});
 			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
+			ListViewGridSortableBehavior.EnableSort(listView, x => ApplySort(x));
 		}
 
 		public IEnumerable<GACFileVM> SelectedItems {
@@ -56,5 +58,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				return;
 			ClickOK();
 		}
+
+		public Action<SortDescription> ApplySort;
 	}
 }

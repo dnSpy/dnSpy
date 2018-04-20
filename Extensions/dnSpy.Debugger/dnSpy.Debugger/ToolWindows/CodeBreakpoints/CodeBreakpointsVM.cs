@@ -44,6 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		ObservableCollection<CodeBreakpointVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		void ApplySortDescr(SortDescription descr);
 	}
 
 	[Export(typeof(ICodeBreakpointsVM))]
@@ -391,7 +392,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		int GetInsertionIndex_UI(CodeBreakpointVM vm) {
 			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
-			var comparer = CodeBreakpointVMComparer.Instance;
+			var comparer = SortListComparer;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
@@ -416,19 +417,14 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			codeBreakpointContext.SearchMatcher.SetSearchText(filterText);
 
 			var newList = new List<CodeBreakpointVM>(GetFilteredItems_UI(filterText));
-			newList.Sort(CodeBreakpointVMComparer.Instance);
+			newList.Sort(SortListComparer);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText);
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText);
 		void InitializeNothingMatched(string filterText) =>
-			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
-
-		sealed class CodeBreakpointVMComparer : IComparer<CodeBreakpointVM> {
-			public static readonly IComparer<CodeBreakpointVM> Instance = new CodeBreakpointVMComparer();
-			public int Compare(CodeBreakpointVM x, CodeBreakpointVM y) => x.Order - y.Order;
-		}
+			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);		
 
 		// UI thread
 		IEnumerable<CodeBreakpointVM> GetFilteredItems_UI(string filterText) {
@@ -542,6 +538,30 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public void ResetSearchSettings() {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			FilterText = string.Empty;
+		}
+
+		// UI thread
+		void SortList_UI() {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			var newList = new List<CodeBreakpointVM>(AllItems);
+			newList.Sort(SortListComparer);
+			AllItems.Reset(newList);
+		}
+		private CodeBreakpointVMComparer sortListComparer;
+		public CodeBreakpointVMComparer SortListComparer {
+			get {
+				if (sortListComparer == null) sortListComparer = CodeBreakpointVMComparer.Instance;
+				return sortListComparer;
+			}
+			set {
+				if (value == null) value = sortListComparer = CodeBreakpointVMComparer.Instance;
+				sortListComparer = value;
+				SortList_UI();
+			}
+		}
+
+		public void ApplySortDescr(SortDescription descr) {
+			SortListComparer = new CodeBreakpointVMComparer(descr.PropertyName, descr.Direction);
 		}
 	}
 }
