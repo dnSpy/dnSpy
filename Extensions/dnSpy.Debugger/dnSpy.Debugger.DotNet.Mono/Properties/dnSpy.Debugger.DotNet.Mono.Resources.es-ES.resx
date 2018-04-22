@@ -211,7 +211,7 @@
     <value>No es posible escribir a 'esto'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
+    <value>El miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>No se pudo establecer la siguiente instrucción.</value>

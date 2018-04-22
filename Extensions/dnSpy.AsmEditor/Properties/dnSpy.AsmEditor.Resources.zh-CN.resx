@@ -2522,9 +2522,9 @@
     <value>添加类成员 ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
-    <value>Copy Unkno_wn Metadata Streams</value>
+    <value>复制 Unkno_wn 元数据流</value>
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
-    <value>Run NGEN.exe if this assembly is installed in the GAC</value>
+    <value>如果在 GAC 中安装了此程序集，则运行 NGEN.exe</value>
   </data>
 </root>

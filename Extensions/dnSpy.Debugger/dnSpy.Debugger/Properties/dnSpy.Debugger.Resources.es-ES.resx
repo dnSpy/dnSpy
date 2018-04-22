@@ -133,7 +133,7 @@
     <value>Depurando</value>
   </data>
   <data name="AskDeleteAllBreakpoints" xml:space="preserve">
-    <value>¿Quieres eliminar todos tus archivos de seguridad guardados?</value>
+    <value>¿Quieres eliminar todos puntos de ruptura guardados?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
     <value>Adjuntar a _Proceso...</value>
@@ -1408,7 +1408,7 @@ ERROR: {1}</value>
     <value>Atributos de respeto que esconden a los miembros de</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Error de depurador interno</value>
+    <value>Error interno de depurador</value>
   </data>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
     <value>La evaluación de la función requiere todos los subprocesos para ejecutar.</value>
