@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						}
 					}
 				}
-				var kickoffMethodName = GetKickoffMethodName(method.DeclaringType);
+				var kickoffMethodName = (object)type == null ? null : GetKickoffMethodName(method.DeclaringType);
 				if (!string.IsNullOrEmpty(kickoffMethodName)) {
 					DmdMethodBase possibleKickoffMethod = null;
 					int methodGenArgs = method.ReflectedType.GetGenericArguments().Count - type.GetGenericArguments().Count;
