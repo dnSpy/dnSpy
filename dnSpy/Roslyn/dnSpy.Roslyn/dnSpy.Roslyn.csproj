@@ -269,6 +269,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Roslyn.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Roslyn.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Intellisense\QuickInfo\InformationQuickInfoContentControl.xaml">

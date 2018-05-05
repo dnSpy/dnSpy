@@ -617,6 +617,8 @@
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

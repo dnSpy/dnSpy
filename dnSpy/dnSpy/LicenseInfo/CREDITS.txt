@@ -58,3 +58,14 @@ Hungarian:
 
 	Gábor Mizda
 	Krisztián Szilágyi
+
+French:
+
+	Kévin Drapel
+	Adwelean
+
+Italian:
+
+	debugasm
+	andreabr
+	Marco Fornaro

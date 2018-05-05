@@ -117,115 +117,154 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
-    <value>Añadir declaraciones using</value>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>A_rguments</value>
   </data>
-  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
-    <value>Permiten a inicializadores de campo</value>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>_Assembly</value>
   </data>
-  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Genere siempre variables de excepción en bloques catch a menos que el tipo sea Object</value>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>_S'arrêter à</value>
   </data>
-  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
-    <value>Orden de descompilación</value>
+  <data name="DbgAsm_Host" xml:space="preserve">
+    <value>_Hôte</value>
   </data>
-  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
-    <value>Descompilar métodos anónimos/lambdas</value>
+  <data name="DbgAsm_HostArgs" xml:space="preserve">
+    <value>Arguments de l'_hôte</value>
   </data>
-  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
-    <value>Descompilar métodos asincrónicos (async/await)</value>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>Répertoire de _travail</value>
   </data>
-  <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
-    <value>Descompilar eventos automáticamente</value>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>CreateProcess</value>
   </data>
-  <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
-    <value>Descompilar propiedades automáticamente</value>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>Ne pas s'arrêter</value>
   </data>
-  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
-    <value>Descompilar enumeradores (retorno yield)</value>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>Point d’entrée</value>
   </data>
-  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
-    <value>Descompilar árboles de expresión</value>
+  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
+    <value>Impossible de trouver l'hôte .NET Core "{0}"</value>
   </data>
-  <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
-    <value>Descompilar declaraciones foreach</value>
+  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
+    <value>N'a pas pu démarrer le débogueur. {0}</value>
   </data>
-  <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
-    <value>Descompilar declaraciones de bloqueo</value>
+  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
+    <value>N'a pas pu démarrer le débogueur. Assurez-vous que vous avez accès au fichier "{0}" Erreur : {1}</value>
   </data>
-  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
-    <value>Descompilar expresiones de consulta</value>
+  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
+    <value>N'a pas pu démarrer le débogueur. Le programme débogué requiert des privilèges d’administrateur. Redémarrez dnSpy avec les droits d’administrateur, puis réessayez.</value>
   </data>
-  <data name="DecompilerSettings_DecompileSwitchOnString" xml:space="preserve">
-    <value>Descompilar interruptor de cadena</value>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>Le fichier n’existe pas</value>
   </data>
-  <data name="DecompilerSettings_DecompileUsingStatements" xml:space="preserve">
-    <value>Descompilar sentencias using</value>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Nom de fichier manquant</value>
   </data>
-  <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
-    <value>Agregar espacios de nombre a todos los tipos</value>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Débogueur ({0})</value>
   </data>
-  <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
-    <value>Añadir un espacio de nombre a los tipos con el mismo nombre</value>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Arrière plan</value>
   </data>
-  <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
-    <value>Uso de incremento y decremento de operadores</value>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Arrêté</value>
   </data>
-  <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
-    <value>Asignación de expresiones tales como while ((Count = Do())! = 0);</value>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>StopRequested</value>
   </data>
-  <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
-    <value>Número máximo de elementos de matriz para mostrar</value>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Suspendu</value>
   </data>
-  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
-    <value>Añadir el modificador 'private' para miembros type</value>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>SuspendRequested</value>
   </data>
-  <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
-    <value>Descompilar los inicializadores de objeto o colección</value>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>ThreadPool</value>
   </data>
-  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
-    <value>Mostrar un atributo personalizado por línea</value>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
   </data>
-  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
-    <value>Quitar los constructores predeterminados de vacío</value>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Non démarré</value>
   </data>
-  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
-    <value>Reemplazar 'delegate-class(xxx) nuevo' con 'xxx'</value>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
   </data>
-  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Mostrar los tipos y métodos ocultos generados por el compilador</value>
+  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
+    <value>DnSpy-x86.exe permet de déboguer des applications 32 bits.</value>
   </data>
-  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Mostrar los comentarios de opcode IL</value>
+  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
+    <value>DnSpy.exe permet de déboguer des applications 64 bits.</value>
   </data>
-  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Mostrar las instrucciones bytes IL</value>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>« &lt;no message exception&gt; »</value>
   </data>
-  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
-    <value>Mostrar números de línea y nombres de archivos si están disponibles</value>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>Ne peut pas démarrer le débogueur. Erreur : {0}</value>
   </data>
-  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
-    <value>Mostrar fichas, RVAs y compensaciones de archivo</value>
+  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
+    <value>Impossible de s'attacher au processus {0}</value>
   </data>
-  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
-    <value>Mostrar la documentación XML en código descompilado</value>
+  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
+    <value>Un autre processus débogue déjà le processus {0}</value>
   </data>
-  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Ordenar atributos personalizados</value>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Frame native {0}</value>
   </data>
-  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
-    <value>Ordenar los métodos, campos, propiedades, eventos y tipos</value>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>Transition d'AppDomain</value>
   </data>
-  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Colocar la directiva 'using System' en primer al ordenar los using´s</value>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Initialisation de classe</value>
   </data>
-  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
-    <value>Agregue el modificador 'internal' a tipos</value>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>Exception</value>
   </data>
-  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
-    <value>Utilice nombres de variables de símbolos de depuración, si está disponible</value>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Évaluation de la fonction</value>
   </data>
-  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Ordene miembros en orden de código fuente</value>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Appel interne</value>
+  </data>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>Frame interne {0}</value>
+  </data>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>Compilation JIT</value>
+  </data>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Fonction légère</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Passage de managé à natif</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Passage de natif à managé</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Sécurité</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>Offset IL {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>ligne {0} caractère {1}</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>adresse {0}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Impossible de définir l'instruction suivante.</value>
+  </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>Impossible d'arrêter le processus. Erreur : 0x{0:X8}</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Erreur interne de débogueur</value>
+  </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>Une erreur du débogueur CLR s'est produite. Terminez le processus débogué et réessayez. HR : 0x{0:X8} Erreur : 0x{1:X8}</value>
   </data>
 </root>

@@ -118,204 +118,204 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error1" xml:space="preserve">
-    <value>ERROR: {0}</value>
+    <value>ERRORE: {0}</value>
   </data>
   <data name="FileOrDirDoesNotExist" xml:space="preserve">
-    <value>Archivo/directorio '{0}' no existe</value>
+    <value>File/directory '{0}' non esiste</value>
   </data>
   <data name="InvalidOption" xml:space="preserve">
-    <value>Opción no válida: {0}</value>
+    <value>Opzione non valida: {0}</value>
   </data>
   <data name="InvalidSolutionName" xml:space="preserve">
-    <value>sln name ({0}) debe ser relativo al directorio del proyecto</value>
+    <value>il nome .sln ({0}) deve essere relativo alla directory del progetto</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
-    <value>Token de metadatos no válido</value>
+    <value>Token di metadati non validi</value>
   </data>
   <data name="InvalidVSVersion" xml:space="preserve">
-    <value>Versión no válida de Visual Studio: {0}</value>
+    <value>Versione di Visual Studio non valida {0}</value>
   </data>
   <data name="LanguageDoesNotExist" xml:space="preserve">
-    <value>Lenguaje '{0}' no existe</value>
+    <value>Il linguaggio '{0}' non esiste</value>
   </data>
   <data name="Languages" xml:space="preserve">
-    <value>Idiomas:</value>
+    <value>Linguaggi:</value>
   </data>
   <data name="LanguageXDoesNotExist" xml:space="preserve">
-    <value>Lenguaje '{0}' no existe</value>
+    <value>Il linguaggio {0} non esiste</value>
   </data>
   <data name="MissingAsmSearchPath" xml:space="preserve">
-    <value>Falta ruta de búsqueda de Asamblea</value>
+    <value>Percorso di ricerca degli assembly mancante</value>
   </data>
   <data name="MissingDotNetFilename" xml:space="preserve">
-    <value>Falta nombre de archivo .NET</value>
+    <value>Nome file .NET mancante</value>
   </data>
   <data name="MissingLanguageName" xml:space="preserve">
-    <value>Falta nombre del idioma</value>
+    <value>Nome del linguaggio mancante</value>
   </data>
   <data name="MissingMDToken" xml:space="preserve">
-    <value>Falta símbolo de metadato</value>
+    <value>Token metadato mancante</value>
   </data>
   <data name="MissingNumberOfThreads" xml:space="preserve">
-    <value>No se encuentra el número de subprocesos</value>
+    <value>Numero di thread mancante</value>
   </data>
   <data name="MissingOptions" xml:space="preserve">
-    <value>Opción no especificada</value>
+    <value>Nessuna opzione specificata</value>
   </data>
   <data name="MissingOutputDir" xml:space="preserve">
-    <value>Falta directorio de salida</value>
+    <value>Directory di output mancante</value>
   </data>
   <data name="MissingSolutionName" xml:space="preserve">
-    <value>Falta el nombre del archivo .sln</value>
+    <value>Nome file .sln mancante</value>
   </data>
   <data name="MissingVSVersion" xml:space="preserve">
-    <value>Falta versión de Visual Studio</value>
+    <value>Versione di Visual Studio mancante</value>
   </data>
   <data name="NoLanguagesFound" xml:space="preserve">
-    <value>No se encontraron idiomas. Asegúrese de que los archivos dll de idioma existan en la misma carpeta que de este programa.</value>
+    <value>Nessun linguaggio trovato. Assicurati che la dll del linguaggio esista nella stessa directory di questo programma.</value>
   </data>
   <data name="NotDotNetFile" xml:space="preserve">
-    <value>{0} no es un archivo .NET</value>
+    <value>{0} non è un file .NET</value>
   </data>
   <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
-    <value>Solo un archivo se puede descompilar al usar --md</value>
+    <value>Solo un file può essere decompilato usando --md</value>
   </data>
   <data name="MissingUserGacPath" xml:space="preserve">
-    <value>Falta ruta de usuario GAC</value>
+    <value>Path della GAC utente mancante</value>
   </data>
   <data name="InvalidMemberToDecompile" xml:space="preserve">
-    <value>Sólo tipos, métodos, campos, propiedades y eventos pueden ser descompilados</value>
+    <value>Solo tipi, metodi, campi, eventi e proprietà possono essere decompilati</value>
   </data>
   <data name="CouldNotFindTypeX" xml:space="preserve">
-    <value>No se encuentra el tipo tipo {0}</value>
+    <value>Impossibile trovare il tipo {0}</value>
   </data>
   <data name="CouldNotResolveGacFileX" xml:space="preserve">
-    <value>No se puede resolver el Cache de Ensamblado Global GAC '{0}'</value>
+    <value>Impossibile risolvere l'assembly '{0}' dalla GAC</value>
   </data>
   <data name="MissingGacFile" xml:space="preserve">
-    <value>Falta el nombre del cache de ensamblado global GAC</value>
+    <value>Nome dell'assembly GAC mancante</value>
   </data>
   <data name="MissingTypeName" xml:space="preserve">
-    <value>Falta el nombre completo del tipo</value>
+    <value>Nome completo del tipo mancante</value>
   </data>
   <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
-    <value>Language {0} no soporta crear archivos de proyecto</value>
+    <value>Il linguaggio {0} non supporta la creazione dei file di progetto</value>
   </data>
   <data name="LanguageOptions" xml:space="preserve">
-    <value>Opciones de idioma:</value>
+    <value>Opzioni del linguaggio:</value>
   </data>
   <data name="LanguageOptionsDesc" xml:space="preserve">
-    <value>Todas las opciones de tipo boolean pueden desactivarse mediante el uso de 'no-' o ' dont-', por ejemplo. --dont-sort-members</value>
+    <value>Tutte le opzioni booleane possono essere disabilitate usando 'no-' o 'dont-', es. --dont-sort-members</value>
   </data>
   <data name="MissingOptionArgument" xml:space="preserve">
-    <value>Falta argumento de opción</value>
+    <value>Opzione dell'argomento mancante</value>
   </data>
   <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID no válido</value>
+    <value>GUID invalida</value>
   </data>
   <data name="CmdLineAssembly" xml:space="preserve">
-    <value>asamblea</value>
+    <value>assembly</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
-    <value>ruta de búsqueda de conjunto. Las rutas se pueden separar con '{0}' o puede usar múltiples --asm-path's</value>
+    <value>percorso di ricerca degli assembly. I percorsi possono essere separati con '{0}' o puoi usare più --asm-path</value>
   </data>
   <data name="CmdLineDescription_GACFile" xml:space="preserve">
-    <value>descompilar un ensamblaje del GAC. Use el nombre completo del ensamblaje para usar una versión exacta.</value>
+    <value>decompila un assembly dalla GAC. Usa l'assembly name completo per usare una versione precisa.</value>
   </data>
   <data name="CmdLineDescription_Language" xml:space="preserve">
-    <value>establecer el idioma, el valor predeterminado es C #. Guids puede ser usado.</value>
+    <value>imposta il linguaggio, C# è il default. Possono essere usati Guids.</value>
   </data>
   <data name="CmdLineDescription_MDToken" xml:space="preserve">
-    <value>descompilar al miembro con el token de metadatos N a stdout</value>
+    <value>decompila il membro con token metadato N su stdout</value>
   </data>
   <data name="CmdLineDescription_NoBAML" xml:space="preserve">
-    <value>no descompilar baml de xaml</value>
+    <value>non decompilare da baml a xaml</value>
   </data>
   <data name="CmdLineDescription_NoGAC" xml:space="preserve">
-    <value>no utilizar el GAC para ver montajes. Útil con--no-stdlib</value>
+    <value>non usare la GAC per cercare gli assembly. Utile con --no-stdlib</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
-    <value>no Desempaque recursos</value>
+    <value>non spacchettare le risorse</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
-    <value>no crear archivos .resx</value>
+    <value>non creare file .resx</value>
   </data>
   <data name="CmdLineDescription_NoSLN" xml:space="preserve">
-    <value>no crear un fichero .sln</value>
+    <value>non creare file .sln</value>
   </data>
   <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
-    <value>los proyectos no hacen referencia a mscorlib</value>
+    <value>i progetti non referenziano mscorlib</value>
   </data>
   <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
-    <value>número de subprocesos de trabajo. Por defecto es utilizar un hilo por núcleo del CPU</value>
+    <value>numero di worker thread. Il default è di usare un thread per core</value>
   </data>
   <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
-    <value>directorio de salida</value>
+    <value>directory di output</value>
   </data>
   <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
-    <value>guid del proyecto</value>
+    <value>guid progetto</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>búsqueda recursiva de archivos de .NET descompilar</value>
+    <value>ricerca ricorsivamente file .NET da decompilare</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
-    <value>nombre del archivo .sln</value>
+    <value>nome del file .sln</value>
   </data>
   <data name="CmdLineDescription_Type1" xml:space="preserve">
-    <value>descompilar el tipo con el nombre especificado a stdout. Namespace.Name o nombre, mayúsculas y minúsculas</value>
+    <value>decompila il tipo con il nome specificato su stdout. Il nome può essere Namespace.Name o Name, case insensitive</value>
   </data>
   <data name="CmdLineDescription_Type2" xml:space="preserve">
-    <value>igual a -t</value>
+    <value>come -t</value>
   </data>
   <data name="CmdLineDescription_UserGAC" xml:space="preserve">
-    <value>ruta de búsqueda de conjunto. Las rutas se pueden separar con '{0}' o puede usar múltiples --asm-path's</value>
+    <value>percorso GAC utente. I percorsi possono essere separati con '{0}' oppure puoi usare più --user-gac</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Versión Visual Studio, 2005, 2008,... {0}</value>
+    <value>Versione Visual studio, 2005, 2008, ..., {0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
-    <value>lang</value>
+    <value>lingua</value>
   </data>
   <data name="CmdLineName" xml:space="preserve">
-    <value>nombre</value>
+    <value>nome</value>
   </data>
   <data name="CmdLineOutputDir" xml:space="preserve">
-    <value>outdir</value>
+    <value>directory di output</value>
   </data>
   <data name="CmdLinePath" xml:space="preserve">
-    <value>ruta de acceso</value>
+    <value>percorso</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
-    <value>Descompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+    <value>Decompila tutti i file .NET nella directory di sopra e salva i file in C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
-    <value>Descompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+    <value>Decompila tutti i file .NET nella directory di sopra e tutte le sotto-directory</value>
   </data>
   <data name="ExampleDescription3" xml:space="preserve">
-    <value>Decompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+    <value>Decompila tutti i file .NET *.dll nella directory di sopra e salva i file in C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>Descompiles el miembro con token 0x06000123</value>
+    <value>Decompila il membro con token 0x06000123</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
-    <value>Decompiles System.Int32 de mscorlib</value>
+    <value>Decompila System.Int32 da mscorlib</value>
   </data>
   <data name="ExamplesHeader" xml:space="preserve">
-    <value>Ejemplos:</value>
+    <value>Esempi:</value>
   </data>
   <data name="UsageHeader" xml:space="preserve">
     <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
   </data>
   <data name="CmdLineDescription_NoColor" xml:space="preserve">
-    <value>no colorear el texto</value>
+    <value>non colorare il testo</value>
   </data>
   <data name="CmdLineDescription_Spaces" xml:space="preserve">
-    <value>Tamaño de una ficha en espacios o 0 para usar una ficha</value>
+    <value>Dimensione del tab negli spazi o 0 per non usare tab</value>
   </data>
   <data name="InvalidSpacesArgument" xml:space="preserve">
-    <value>La fecha debe estar entre {0} y {1}</value>
+    <value>Il numero di spazi dev'essere tra {0} e {1}</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
-    <value>Falta de argumento</value>
+    <value>Argomento mancante</value>
   </data>
 </root>

@@ -117,115 +117,106 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
-    <value>Añadir declaraciones using</value>
+  <data name="AnalyzeCommand" xml:space="preserve">
+    <value>Analyser</value>
   </data>
-  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
-    <value>Permiten a inicializadores de campo</value>
+  <data name="AnalyzerWindowTitle" xml:space="preserve">
+    <value>Analyser</value>
   </data>
-  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Genere siempre variables de excepción en bloques catch a menos que el tipo sea Object</value>
+  <data name="AppliedToTreeNode" xml:space="preserve">
+    <value>Appliqué à</value>
   </data>
-  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
-    <value>Orden de descompilación</value>
+  <data name="AssignedByTreeNode" xml:space="preserve">
+    <value>Assigné par</value>
   </data>
-  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
-    <value>Descompilar métodos anónimos/lambdas</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Copier</value>
   </data>
-  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
-    <value>Descompilar métodos asincrónicos (async/await)</value>
+  <data name="DoubleClick" xml:space="preserve">
+    <value>Double clique</value>
   </data>
-  <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
-    <value>Descompilar eventos automáticamente</value>
+  <data name="EventAdderTreeNodeName" xml:space="preserve">
+    <value>Ajouter</value>
   </data>
-  <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
-    <value>Descompilar propiedades automáticamente</value>
+  <data name="EventRemoverTreeNodeName" xml:space="preserve">
+    <value>supprimer</value>
   </data>
-  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
-    <value>Descompilar enumeradores (retorno yield)</value>
+  <data name="ExposedByTreeNode" xml:space="preserve">
+    <value>Exposés par</value>
   </data>
-  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
-    <value>Descompilar árboles de expresión</value>
+  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
+    <value>Méthodes d'extension</value>
   </data>
-  <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
-    <value>Descompilar declaraciones foreach</value>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Aller à la référence</value>
   </data>
-  <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
-    <value>Descompilar declaraciones de bloqueo</value>
+  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
+    <value>Voir la référence à la méthode</value>
   </data>
-  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
-    <value>Descompilar expresiones de consulta</value>
+  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
+    <value>Montrer les références dans les méthodes(Nouvelle page)</value>
   </data>
-  <data name="DecompilerSettings_DecompileSwitchOnString" xml:space="preserve">
-    <value>Descompilar interruptor de cadena</value>
+  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
+    <value>Aller à la référence(Nouvelle page)</value>
   </data>
-  <data name="DecompilerSettings_DecompileUsingStatements" xml:space="preserve">
-    <value>Descompilar sentencias using</value>
+  <data name="HidesParent" xml:space="preserve">
+    <value>masqué</value>
   </data>
-  <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
-    <value>Agregar espacios de nombre a todos los tipos</value>
+  <data name="ImplementedByTreeNode" xml:space="preserve">
+    <value>Mis en œuvre par</value>
   </data>
-  <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
-    <value>Añadir un espacio de nombre a los tipos con el mismo nombre</value>
+  <data name="InstantiatedByTreeNode" xml:space="preserve">
+    <value>Instancié par</value>
   </data>
-  <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
-    <value>Uso de incremento y decremento de operadores</value>
+  <data name="OverriddenByTreeNode" xml:space="preserve">
+    <value>Substitué par</value>
   </data>
-  <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
-    <value>Asignación de expresiones tales como while ((Count = Do())! = 0);</value>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Surcharge</value>
   </data>
-  <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
-    <value>Número máximo de elementos de matriz para mostrar</value>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Analyser les Assembly</value>
   </data>
-  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
-    <value>Añadir el modificador 'private' para miembros type</value>
+  <data name="PropertyGetterTreeNode" xml:space="preserve">
+    <value>Récupérer</value>
   </data>
-  <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
-    <value>Descompilar los inicializadores de objeto o colección</value>
+  <data name="PropertySetterTreeNode" xml:space="preserve">
+    <value>Fixer</value>
   </data>
-  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
-    <value>Mostrar un atributo personalizado por línea</value>
+  <data name="RaisedByTreeNode" xml:space="preserve">
+    <value>Déclenché par</value>
   </data>
-  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
-    <value>Quitar los constructores predeterminados de vacío</value>
+  <data name="ReadByTreeNode" xml:space="preserve">
+    <value>Lu par</value>
   </data>
-  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
-    <value>Reemplazar 'delegate-class(xxx) nuevo' con 'xxx'</value>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>_Supprimer</value>
   </data>
-  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Mostrar los tipos y métodos ocultos generados por el compilador</value>
+  <data name="Searching" xml:space="preserve">
+    <value>Recherche en cours...</value>
   </data>
-  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Mostrar los comentarios de opcode IL</value>
+  <data name="ShiftDoubleClick" xml:space="preserve">
+    <value>Shit + Double clique</value>
   </data>
-  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Mostrar las instrucciones bytes IL</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl + C</value>
   </data>
-  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
-    <value>Mostrar números de línea y nombres de archivos si están disponibles</value>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Ctrl+Maj+R</value>
   </data>
-  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
-    <value>Mostrar fichas, RVAs y compensaciones de archivo</value>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Effacer</value>
   </data>
-  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
-    <value>Mostrar la documentación XML en código descompilado</value>
+  <data name="ShowMetadataTokensCommand" xml:space="preserve">
+    <value>Motrer les tokens</value>
   </data>
-  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Ordenar atributos personalizados</value>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Coloration syntaxique</value>
   </data>
-  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
-    <value>Ordenar los métodos, campos, propiedades, eventos y tipos</value>
+  <data name="UsedByTreeNode" xml:space="preserve">
+    <value>Utilisé par</value>
   </data>
-  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Colocar la directiva 'using System' en primer al ordenar los using´s</value>
-  </data>
-  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
-    <value>Agregue el modificador 'internal' a tipos</value>
-  </data>
-  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
-    <value>Utilice nombres de variables de símbolos de depuración, si está disponible</value>
-  </data>
-  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Ordene miembros en orden de código fuente</value>
+  <data name="UsesTreeNode" xml:space="preserve">
+    <value>Utilise</value>
   </data>
 </root>

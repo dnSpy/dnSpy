@@ -117,115 +117,112 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
-    <value>Añadir declaraciones using</value>
+  <data name="ClassesToolTip" xml:space="preserve">
+    <value>Classes</value>
   </data>
-  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
-    <value>Permiten a inicializadores de campo</value>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>Tout</value>
   </data>
-  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Genere siempre variables de excepción en bloques catch a menos que el tipo sea Object</value>
+  <data name="ConstantsToolTip" xml:space="preserve">
+    <value>Constantes</value>
   </data>
-  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
-    <value>Orden de descompilación</value>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>L'expression a été évaluée et n’a aucune valeur</value>
   </data>
-  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
-    <value>Descompilar métodos anónimos/lambdas</value>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>Membres statiques</value>
   </data>
-  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
-    <value>Descompilar métodos asincrónicos (async/await)</value>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>Vue dynamique</value>
   </data>
-  <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
-    <value>Descompilar eventos automáticamente</value>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>Erreur</value>
   </data>
-  <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
-    <value>Descompilar propiedades automáticamente</value>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>Étendre la vue dynamique affichera les membres dynamiques de l’objet</value>
   </data>
-  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
-    <value>Descompilar enumeradores (retorno yield)</value>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>Ouvrir les résultats va énumérer le IEnumerable</value>
   </data>
-  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
-    <value>Descompilar árboles de expresión</value>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>Membres d’instance</value>
   </data>
-  <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
-    <value>Descompilar declaraciones foreach</value>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>Vue brute</value>
   </data>
-  <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
-    <value>Descompilar declaraciones de bloqueo</value>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>Résultats</value>
   </data>
-  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
-    <value>Descompilar expresiones de consulta</value>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>Membres partagés</value>
   </data>
-  <data name="DecompilerSettings_DecompileSwitchOnString" xml:space="preserve">
-    <value>Descompilar interruptor de cadena</value>
+  <data name="DelegatesToolTip" xml:space="preserve">
+    <value>Delegates</value>
   </data>
-  <data name="DecompilerSettings_DecompileUsingStatements" xml:space="preserve">
-    <value>Descompilar sentencias using</value>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>L'affichage dynamique requiert {0} pour être référencé</value>
   </data>
-  <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
-    <value>Agregar espacios de nombre a todos los tipos</value>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>Seulement COM ou les objets dynamiques peuvent avoir vue dynamique</value>
   </data>
-  <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
-    <value>Añadir un espacio de nombre a los tipos con el mismo nombre</value>
+  <data name="EnumsToolTip" xml:space="preserve">
+    <value>Enums</value>
   </data>
-  <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
-    <value>Uso de incremento y decremento de operadores</value>
+  <data name="EventsToolTip" xml:space="preserve">
+    <value>Events</value>
   </data>
-  <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
-    <value>Asignación de expresiones tales como while ((Count = Do())! = 0);</value>
+  <data name="ExtensionMethodsToolTip" xml:space="preserve">
+    <value>Méthodes d'extension</value>
   </data>
-  <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
-    <value>Número máximo de elementos de matriz para mostrar</value>
+  <data name="FieldsToolTip" xml:space="preserve">
+    <value>Champs</value>
   </data>
-  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
-    <value>Añadir el modificador 'private' para miembros type</value>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>L'Expression compilée a levé une exception : {0}</value>
   </data>
-  <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
-    <value>Descompilar los inicializadores de objeto o colección</value>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>L'Expression n’est pas valide</value>
   </data>
-  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
-    <value>Mostrar un atributo personalizado por línea</value>
+  <data name="InterfacesToolTip" xml:space="preserve">
+    <value>Interfaces</value>
   </data>
-  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
-    <value>Quitar los constructores predeterminados de vacío</value>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>Mots Clefs</value>
   </data>
-  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
-    <value>Reemplazar 'delegate-class(xxx) nuevo' con 'xxx'</value>
+  <data name="LocalsAndParametersToolTip" xml:space="preserve">
+    <value>Paramètres et variables locales</value>
   </data>
-  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Mostrar los tipos y métodos ocultos generados por el compilador</value>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} retourné</value>
   </data>
-  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Mostrar los comentarios de opcode IL</value>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>Gestion des variables</value>
   </data>
-  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Mostrar las instrucciones bytes IL</value>
+  <data name="MethodsToolTip" xml:space="preserve">
+    <value>Méthodes</value>
   </data>
-  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
-    <value>Mostrar números de línea y nombres de archivos si están disponibles</value>
+  <data name="ModulesToolTip" xml:space="preserve">
+    <value>Modules</value>
   </data>
-  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
-    <value>Mostrar fichas, RVAs y compensaciones de archivo</value>
+  <data name="NamespacesToolTip" xml:space="preserve">
+    <value>Espaces de nommage</value>
   </data>
-  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
-    <value>Mostrar la documentación XML en código descompilado</value>
+  <data name="PropertiesToolTip" xml:space="preserve">
+    <value>Propriétés</value>
   </data>
-  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Ordenar atributos personalizados</value>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>Seuls les types énumérables peuvent être affichés dans les résultats</value>
   </data>
-  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
-    <value>Ordenar los métodos, campos, propiedades, eventos y tipos</value>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>Blocs de texte</value>
   </data>
-  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Colocar la directiva 'using System' en primer al ordenar los using´s</value>
+  <data name="StructuresToolTip" xml:space="preserve">
+    <value>Structures</value>
   </data>
-  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
-    <value>Agregue el modificador 'internal' a tipos</value>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>Vue des résultats nécessite {0} d’être référencé</value>
   </data>
-  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
-    <value>Utilice nombres de variables de símbolos de depuración, si está disponible</value>
-  </data>
-  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Ordene miembros en orden de código fuente</value>
+  <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
+    <value>Le type "{0}" n’existe pas dans l'assembly "{1}" </value>
   </data>
 </root>

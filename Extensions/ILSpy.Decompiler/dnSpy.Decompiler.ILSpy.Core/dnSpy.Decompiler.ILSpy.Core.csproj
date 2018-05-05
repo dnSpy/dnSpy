@@ -118,6 +118,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.it.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

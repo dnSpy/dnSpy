@@ -117,157 +117,193 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+  <data name="CompilationAdditionalError" xml:space="preserve">
+    <value>+ Errore ulteriore {0}</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamblado</value>
+  <data name="CompilationAdditionalErrors" xml:space="preserve">
+    <value>+ Errori ulteriori {0}</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>_Romper en</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Cop_ia</value>
   </data>
-  <data name="DbgAsm_Host" xml:space="preserve">
-    <value>_Host</value>
+  <data name="CutCommand" xml:space="preserve">
+    <value>_Taglia</value>
   </data>
-  <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Ar_gumentos de Hots</value>
+  <data name="HelpAltDown" xml:space="preserve">
+    <value>Visualizza il comando successivo</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Directorio de _Trabajo</value>
+  <data name="HelpAltUp" xml:space="preserve">
+    <value>Visualizza il comando precedente</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Crear Proceso</value>
+  <data name="HelpCtrlA" xml:space="preserve">
+    <value>Seleziona testo inserito. Premere nuovamente per selezionare tutto il testo</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>No romper</value>
+  <data name="HelpCtrlAltDown" xml:space="preserve">
+    <value>Visualizza il comando successivo che corrisponde al testo inserito</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+  <data name="HelpCtrlAltUp" xml:space="preserve">
+    <value>Visualizza il comando precedente che corrisponde al testo inserito</value>
   </data>
-  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>No pudo encontrar base net host '{0}'</value>
+  <data name="HelpCtrlEnter" xml:space="preserve">
+    <value>Eseguire il comando</value>
   </data>
-  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>No se puede iniciar al depurador. {0}</value>
+  <data name="HelpEnter" xml:space="preserve">
+    <value>Eseguire il comando</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>No se puede iniciar al depurador. Asegúrese de tener acceso al archivo '{0}'
-
-Error: {1}</value>
+  <data name="HelpEscape" xml:space="preserve">
+    <value>Cancella immissione corrente</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>No se puede iniciar al depurador. El programa depurado requiere privilegios de administrador. Reinicie dnSpy con derechos de administrador e inténtelo de nuevo.</value>
+  <data name="HelpKeyboardShortcuts" xml:space="preserve">
+    <value>Scorciatoie tastiera:</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>El archivo no existe</value>
+  <data name="HelpReplCommands" xml:space="preserve">
+    <value>Comandi REPL:</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Falta Nombre de archivo</value>
+  <data name="HelpScriptDirectives" xml:space="preserve">
+    <value>Direttive di script:</value>
+  </data>
+  <data name="HelpScriptDirective_load" xml:space="preserve">
+    <value>Caricare ed eseguire uno script, #load "myscript.csx"</value>
+  </data>
+  <data name="HelpScriptDirective_r" xml:space="preserve">
+    <value>Aggiungere un riferimento, un assembly o un percorso di un file su disco o un percorso relativo a dnSpy o la directory utente, #r "MyFile. dll"</value>
+  </data>
+  <data name="HelpShiftEnter" xml:space="preserve">
+    <value>Inserire una nuova riga</value>
+  </data>
+  <data name="HelpString" xml:space="preserve">
+    <value>Digitare "#help" per ulteriori informazioni.</value>
+  </data>
+  <data name="LoadingContextFromFile" xml:space="preserve">
+    <value>Caricamento contesto da '{0}'.</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Incolla</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+    <value>Creazione di script</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Fondo</value>
+  <data name="ResettingExecutionEngine" xml:space="preserve">
+    <value>Riavvia il motore di esecuzione.</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Detenido</value>
+  <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
+    <value>Pulisci lo schermo</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>DetenciónRequerida</value>
+  <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
+    <value>Storia successiva</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspendido</value>
+  <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
+    <value>Storia precedente</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspensión requerida</value>
+  <data name="Script_ToolTip_Reset" xml:space="preserve">
+    <value>Reset</value>
   </data>
-  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>Grupo de hilos</value>
+  <data name="ShortCutKeyAltDown" xml:space="preserve">
+    <value>Alt+Freccia giù</value>
   </data>
-  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>Punto no seguro</value>
+  <data name="ShortCutKeyAltUp" xml:space="preserve">
+    <value>Alt+Freccia sù</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Sin comenzar</value>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
+    <value>Ctrl+Alt+Freccia giù</value>
   </data>
-  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Utilice dnSpy-x86.exe para depurar aplicaciones de 32 bits.</value>
+  <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
+    <value>Ctrl+Alt+N</value>
   </data>
-  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Utilice dnSpy.exe para depurar aplicaciones de 64 bits.</value>
+  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
+    <value>Ctrl+Alt+Freccia sù</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; ningún mensaje de la excepción &gt;"</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
   </data>
-  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>No se puede iniciar el depurador. Error: {0}</value>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl+Enter</value>
   </data>
-  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>No se puede adjuntar al proceso {0}</value>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
   </data>
-  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Ya hay otro proceso depurando este proceso {0}</value>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>Ctrl+X</value>
   </data>
-  <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Marco nativo {0}</value>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
   </data>
-  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Transición de AppDomain</value>
+  <data name="ShortCutKeyEscape" xml:space="preserve">
+    <value>Esc</value>
   </data>
-  <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Inicio de clase</value>
+  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
+    <value>Shift+Enter</value>
   </data>
-  <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Excepción</value>
+  <data name="Window_CSharp" xml:space="preserve">
+    <value>C# Interactive</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Evaluación de la función</value>
+  <data name="HelpClearDescription" xml:space="preserve">
+    <value>Cancella l'editor degli script</value>
   </data>
-  <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Llamada interna</value>
+  <data name="HelpHelpDescription" xml:space="preserve">
+    <value>Visualizzare la guida</value>
   </data>
-  <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Estructura interna ({0})</value>
+  <data name="HelpResetDescription" xml:space="preserve">
+    <value>Reimpostare l'ambiente di esecuzione</value>
   </data>
-  <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>Compilación JIT</value>
+  <data name="ClearScreenCommand" xml:space="preserve">
+    <value>Pulisci lo schermo</value>
   </data>
-  <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Función ligera</value>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>Ctrl+L</value>
   </data>
-  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Se Logró transición nativa</value>
+  <data name="Window_VisualBasic" xml:space="preserve">
+    <value>Visual Basic Interactive</value>
   </data>
-  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Paso de transición administrada a Nativa</value>
+  <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
+    <value>Ctrl+Alt+I</value>
   </data>
-  <data name="StackFrame_Security" xml:space="preserve">
-    <value>Seguridad</value>
+  <data name="CopyCodeCommand" xml:space="preserve">
+    <value>Copia codice</value>
   </data>
-  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL {0} offset</value>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
   </data>
-  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>línea {0} carácter {1}</value>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
   </data>
-  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>dirección {0}</value>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Visualizza i numeri di riga</value>
   </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>No se pudo establecer la siguiente instrucción.</value>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>_A capo automatico</value>
   </data>
-  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>No se pudo interrumpir el proceso. Error: 0x{0:X8}</value>
+  <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
+    <value>Inverti a capo automatico</value>
   </data>
-  <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Error interno de depurador</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Tutti i file</value>
   </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ha producido un error de depurador CLR. Termine el proceso depurado e inténtelo de nuevo. HR: 0 x{0:X8}
-Error: 0 x{1:X8}</value>
+  <data name="Repl_Save_ToolTip" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>File di testo</value>
+  </data>
+  <data name="SaveCodeCommand" xml:space="preserve">
+    <value>Salva il codice...</value>
+  </data>
+  <data name="SaveCommand" xml:space="preserve">
+    <value>Salva...</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
+    <value>Ctrl+Shift+S</value>
+  </data>
+  <data name="CSharpScriptFiles" xml:space="preserve">
+    <value>File di C# Script</value>
+  </data>
+  <data name="VisualBasicScriptFiles" xml:space="preserve">
+    <value>File di Visual Basic Script</value>
   </data>
 </root>

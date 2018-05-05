@@ -118,362 +118,362 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppendObject" xml:space="preserve">
-    <value>Adjuntar objeto</value>
+    <value>Aggiungi oggetto</value>
   </data>
   <data name="AppendType" xml:space="preserve">
-    <value>Adjuntar tipo</value>
+    <value>Aggiungi tipo</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>_Deshabilitar la optimización de la compilación JIT</value>
+    <value>_Disabilita JIT Compile Optimizer</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>Habilitar el seguimiento de la compilación _JIT</value>
+    <value>Attiva _JIT Compile Tracking</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
-    <value>Arquitectura Proc_esador especificado</value>
+    <value>Specifica architettura processore</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>_Clave pública</value>
+    <value>_Chiave pubblica</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>_Retargetable</value>
+    <value>_Reindirizzabile</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>_Tipo de contenido</value>
+    <value>_Tipo di contenuto</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
     <value>C_ultura</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
-    <value>Versión de.NET</value>
+    <value>_Versione .NET</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>Algoritmo Hash</value>
+    <value>_Algoritmo hash</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
-    <value>Arquitectura de procesador</value>
+    <value>Architettura proce_ssore</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
-    <value>Clave _Pública</value>
+    <value>_Chiave Pubblica</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
-    <value>_Versión</value>
+    <value>_Versione</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
-    <value>Añadir</value>
+    <value>_Aggiungi</value>
   </data>
   <data name="Button_Add2" xml:space="preserve">
-    <value>Añadir...</value>
+    <value>_Aggiungi...</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>_Annulla</value>
   </data>
   <data name="Button_Delete" xml:space="preserve">
-    <value>Eliminar</value>
+    <value>_Cancella</value>
   </data>
   <data name="Button_Edit" xml:space="preserve">
-    <value>_Editar...</value>
+    <value>_Modifica...</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>_Aceptar</value>
+    <value>_OK</value>
   </data>
   <data name="Button_Remove" xml:space="preserve">
-    <value>_Eliminar</value>
+    <value>_Rimuovi</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Restablecer</value>
+    <value>Reset</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
-    <value>_Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
-    <value>Propiedad/Tipo de campo</value>
+    <value>Tipo Property/Field</value>
   </data>
   <data name="ClearCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Borrar objetos</value>
+    <value>Cancella Objects</value>
   </data>
   <data name="ClearTypesCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="ClearTypesCharacter_ToolTip" xml:space="preserve">
-    <value>Borrar tipos</value>
+    <value>Cancella Types</value>
   </data>
   <data name="ConstantDlg_Constant" xml:space="preserve">
-    <value>Constante</value>
+    <value>Costante</value>
   </data>
   <data name="ConstructorArguments" xml:space="preserve">
-    <value>Constructor de argumentos</value>
+    <value>Argomenti del costruttore</value>
   </data>
   <data name="CopyAsTextCommand" xml:space="preserve">
-    <value>Copiar como te_xto</value>
+    <value>Copia come Te_sto</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Cop_ia</value>
+    <value>_Copia</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
-    <value>Copiar bytes IL</value>
+    <value>Copia IL byte</value>
   </data>
   <data name="CopyILBytesKey" xml:space="preserve">
-    <value>Ctrl+B</value>
+    <value>Ctrl + B</value>
   </data>
   <data name="CouldNotResolveType" xml:space="preserve">
-    <value>No se pudo resolver el tipo. Asegúrese que su ensamblado haya sido cargado.</value>
+    <value>Non è possibile risolvere il tipo. Assicurarsi che l'assembly sia già stato caricato.</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
-    <value>Crear ensamblado...</value>
+    <value>Creare Assembly...</value>
   </data>
   <data name="CreateAssemblyCommand2" xml:space="preserve">
-    <value>Crear ensamblado</value>
+    <value>Creare Assembly</value>
   </data>
   <data name="CreateConstant_Title" xml:space="preserve">
-    <value>Crear constante</value>
+    <value>Creare una costante</value>
   </data>
   <data name="CreateCustomAttribute" xml:space="preserve">
-    <value>Crear atributo personalzado</value>
+    <value>Creare un attributo personalizzato</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
-    <value>Crear evento...</value>
+    <value>Crea Event...</value>
   </data>
   <data name="CreateEventCommand2" xml:space="preserve">
-    <value>Crear evento</value>
+    <value>Crea Event</value>
   </data>
   <data name="CreateFieldCommand" xml:space="preserve">
-    <value>Crear campo...</value>
+    <value>Crea Field...</value>
   </data>
   <data name="CreateFieldCommand2" xml:space="preserve">
-    <value>Crear campo</value>
+    <value>Crea Field</value>
   </data>
   <data name="CreateFieldTypeSig" xml:space="preserve">
-    <value>Crear campo TypeSig</value>
+    <value>Crea Field TypeSig</value>
   </data>
   <data name="CreateFnPtrMethodSignature" xml:space="preserve">
-    <value>Crear firma de método FnPtr</value>
+    <value>Crea FnPtr Method Signature</value>
   </data>
   <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
-    <value>Crear Instancia genérica tipo Argumentos</value>
+    <value>Crea Generic Instance Type Arguments</value>
   </data>
   <data name="CreateGenericParameter" xml:space="preserve">
-    <value>Crear parámetro genérico</value>
+    <value>Crea Generic Parameter</value>
   </data>
   <data name="CreateGenericParameterConstraint" xml:space="preserve">
-    <value>Crear restricción de parámetro genérico</value>
+    <value>Crea un vincolo di parametro generico</value>
   </data>
   <data name="CreateMethodOverride" xml:space="preserve">
-    <value>Crear sobrecarga de método</value>
+    <value>Crea Method Override</value>
   </data>
   <data name="CreateMethodSignature" xml:space="preserve">
-    <value>Crear firma de método</value>
+    <value>Crea Method Signature</value>
   </data>
   <data name="CreateParameter" xml:space="preserve">
-    <value>Crear Parámetro</value>
+    <value>Crea Parameter</value>
   </data>
   <data name="CreatePropertySignature" xml:space="preserve">
-    <value>Crear firma de propiedad</value>
+    <value>Crea Property Signature</value>
   </data>
   <data name="CreateReturnType" xml:space="preserve">
-    <value>Crear tipo de retorno</value>
+    <value>Crea Return Type</value>
   </data>
   <data name="CreateSecurityAttribute" xml:space="preserve">
-    <value>Crear atributo de seguridad</value>
+    <value>Crea Security Attribute</value>
   </data>
   <data name="CreateSecurityDeclaration" xml:space="preserve">
-    <value>Crear la declaración de seguridad</value>
+    <value>Crea Security Declaration</value>
   </data>
   <data name="CreateType" xml:space="preserve">
-    <value>Crear un tipo</value>
+    <value>Crea un Type</value>
   </data>
   <data name="CreateTypeSig" xml:space="preserve">
-    <value>Crear Tipo de firma</value>
+    <value>Crea TypeSig</value>
   </data>
   <data name="CreateTypeSpec" xml:space="preserve">
-    <value>Crear Tipo de especificación</value>
+    <value>Crea TypeSpec</value>
   </data>
   <data name="Create_N_TypeSigs" xml:space="preserve">
-    <value>Crear {0} Tipo de firma</value>
+    <value>Crea {0} TypeSigs</value>
   </data>
   <data name="Create_TypeSig" xml:space="preserve">
-    <value>Crear {0} Tipo de firma</value>
+    <value>Crea un TypeSig</value>
   </data>
   <data name="Create_TypeSigs" xml:space="preserve">
-    <value>Crear Tipo de firma</value>
+    <value>Crea TypeSig</value>
   </data>
   <data name="Create_TypeSigs_N_Left" xml:space="preserve">
-    <value>{0} Tipo de firma izquierda</value>
+    <value>{0} TypeSigs rimasti</value>
   </data>
   <data name="Create_TypeSigs_OneLeft" xml:space="preserve">
-    <value>Un Tipo de firma Izquierda</value>
+    <value>Un TypeSig rimasto</value>
   </data>
   <data name="CustomAttributesTab" xml:space="preserve">
-    <value>Atributos personalizado</value>
+    <value>Attrs personalizzato</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
-    <value>Cor_tar</value>
+    <value>_Taglia</value>
   </data>
   <data name="DeleteCommandKey" xml:space="preserve">
-    <value>Eliminar</value>
+    <value>Canc</value>
     <comment>the delete key</comment>
   </data>
   <data name="DeleteEventCommand" xml:space="preserve">
-    <value>Eliminar evento</value>
+    <value>Elimina Event</value>
   </data>
   <data name="DeleteEvents" xml:space="preserve">
-    <value>Eliminar{0} eventos</value>
+    <value>Elimina {0} eventi</value>
   </data>
   <data name="DeleteFieldCommand" xml:space="preserve">
-    <value>Eliminar campo</value>
+    <value>Elimina Field</value>
   </data>
   <data name="DeleteFieldsCommand" xml:space="preserve">
-    <value>Eliminar {0} acampos</value>
+    <value>Eliminare i campi {0}</value>
   </data>
   <data name="DeleteX" xml:space="preserve">
-    <value>Eliminar {0}</value>
+    <value>Eliminare {0}</value>
   </data>
   <data name="DisableMMapIOCommand" xml:space="preserve">
-    <value>Deshabilitar la E / S asignada de memoria</value>
+    <value>Disattivare I/O mappati in memoria</value>
   </data>
   <data name="EditAssemblyCommand" xml:space="preserve">
-    <value>Editar ensamblado...</value>
+    <value>Modifica Assembly...</value>
   </data>
   <data name="EditAssemblyCommand2" xml:space="preserve">
-    <value>Editar ensamblado</value>
+    <value>Modificare Assembly</value>
   </data>
   <data name="EditCustomAttribute" xml:space="preserve">
-    <value>Editar atributo personalizado</value>
+    <value>Modificare attributo personalizzato</value>
   </data>
   <data name="EditEventCommand" xml:space="preserve">
-    <value>Editar evento...</value>
+    <value>Modifica Event...</value>
   </data>
   <data name="EditEventCommand2" xml:space="preserve">
-    <value>Editar evento</value>
+    <value>Modifica Event</value>
   </data>
   <data name="EditFieldCommand" xml:space="preserve">
-    <value>Editar campo...</value>
+    <value>Modifica Field...</value>
   </data>
   <data name="EditFieldCommand2" xml:space="preserve">
-    <value>Editar campo</value>
+    <value>Modifica Field</value>
   </data>
   <data name="EditGenericParameter" xml:space="preserve">
-    <value>Editar parámetro genérico</value>
+    <value>Modifica parametro generico</value>
   </data>
   <data name="EditGenericParameterConstraint" xml:space="preserve">
-    <value>Editar restricción de parámetro genérico</value>
+    <value>Modifica vincolo parametro generico</value>
   </data>
   <data name="EditMemberRef" xml:space="preserve">
-    <value>Editar referencia de miembro</value>
+    <value>Modifica MemberRef</value>
   </data>
   <data name="EditMethodOverride" xml:space="preserve">
-    <value>Editar método reemplazado</value>
+    <value>Modifica Override del metodo</value>
   </data>
   <data name="EditMethodSpec" xml:space="preserve">
-    <value>Editar Método de especificación</value>
+    <value>Modifica MethodSpec</value>
   </data>
   <data name="EditParamDef" xml:space="preserve">
-    <value>Editar definición del parámentro</value>
+    <value>Modifica ParamDef</value>
   </data>
   <data name="EditParameter" xml:space="preserve">
-    <value>Editar parámetro</value>
+    <value>Modifica i parametri</value>
   </data>
   <data name="EditSecurityAttribute" xml:space="preserve">
-    <value>Editar atributo de seguridad</value>
+    <value>Modificare l'attributo di sicurezza</value>
   </data>
   <data name="EditSecurityDeclaration" xml:space="preserve">
-    <value>Editar declaración de seguridad</value>
+    <value>Modificare la dichiarazione di sicurezza</value>
   </data>
   <data name="EnumType" xml:space="preserve">
     <value>Enum: {0}</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>&lt; error de&gt;</value>
+    <value>&lt; errore &gt;</value>
   </data>
   <data name="EventType" xml:space="preserve">
-    <value>Tipo de evento: {0}</value>
+    <value>Event Type: {0}</value>
   </data>
   <data name="Event_ClearCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="Event_ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Establecer como nulo</value>
+    <value>Imposta a null</value>
   </data>
   <data name="Event_InvokeMethod" xml:space="preserve">
-    <value>_Invocar...</value>
+    <value>_Invocare...</value>
   </data>
   <data name="Event_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="Event_RemoveMethod" xml:space="preserve">
-    <value>_Eliminar...</value>
+    <value>_Rimuovi...</value>
   </data>
   <data name="Event_RTSpecialName" xml:space="preserve">
-    <value>Nombre espacial _RTS</value>
+    <value>_RTSpecialName</value>
   </data>
   <data name="Event_SpecialName" xml:space="preserve">
-    <value>Nombre _Especial</value>
+    <value>_SpecialName</value>
   </data>
   <data name="FieldAccess_Assembly" xml:space="preserve">
-    <value>Ensamblado</value>
+    <value>Assembly</value>
   </data>
   <data name="FieldAccess_Family" xml:space="preserve">
-    <value>Familia</value>
+    <value>Family</value>
   </data>
   <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>Familia y Ensamblado</value>
+    <value>Family e Assembly</value>
   </data>
   <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>Familia o Ensamblado</value>
+    <value>Family o Assembly</value>
   </data>
   <data name="FieldAccess_Private" xml:space="preserve">
-    <value>Privado</value>
+    <value>Private</value>
   </data>
   <data name="FieldAccess_PrivateScope" xml:space="preserve">
-    <value>Ámbito privado</value>
+    <value>PrivateScope</value>
   </data>
   <data name="FieldAccess_Public" xml:space="preserve">
-    <value>Público</value>
+    <value>Public</value>
   </data>
   <data name="FieldType" xml:space="preserve">
-    <value>Tipo campo: {0}</value>
+    <value>Field Type: {0}</value>
   </data>
   <data name="Field_Access" xml:space="preserve">
-    <value>Acceso</value>
+    <value>_Accesso</value>
   </data>
   <data name="Field_DefaultValueInfo" xml:space="preserve">
-    <value>Valor por defecto para este campo</value>
+    <value>Valore predefinito per questo campo</value>
   </data>
   <data name="Field_Flags" xml:space="preserve">
-    <value>Banderas</value>
+    <value>Flags</value>
   </data>
   <data name="Field_Flags_InitOnly" xml:space="preserve">
-    <value>Solo iniciar</value>
+    <value>_InitOnly</value>
   </data>
   <data name="Field_Flags_Literal" xml:space="preserve">
-    <value>Literal</value>
+    <value>_Literal</value>
   </data>
   <data name="Field_Flags_NotSerialized" xml:space="preserve">
-    <value>No serializado</value>
+    <value>NotSeriali_zed</value>
   </data>
   <data name="Field_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_T Nombre especial</value>
+    <value>R_TSpecialName</value>
   </data>
   <data name="Field_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre especial</value>
+    <value>S_pecialName</value>
   </data>
   <data name="Field_Flags_Static" xml:space="preserve">
-    <value>Estático</value>
+    <value>_Static</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
-    <value>Valor inicial</value>
+    <value>Initial_Value</value>
   </data>
   <data name="Field_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="Field_Offset" xml:space="preserve">
-    <value>Desplazamiento</value>
+    <value>O_ffset</value>
   </data>
   <data name="Field_RVA" xml:space="preserve">
     <value>_RVA</value>
@@ -482,160 +482,160 @@
     <value>gparam({0})</value>
   </data>
   <data name="GP_Class" xml:space="preserve">
-    <value>Clase</value>
+    <value>C_lass</value>
   </data>
   <data name="GP_Constraints" xml:space="preserve">
-    <value>Restricciones</value>
+    <value>Constraints</value>
   </data>
   <data name="GP_DefaultConstructor" xml:space="preserve">
-    <value>Ctor _Predeterminado</value>
+    <value>_Default ctor</value>
   </data>
   <data name="GP_Kind" xml:space="preserve">
     <value>Tipo</value>
   </data>
   <data name="GP_Kind_ToolTip" xml:space="preserve">
-    <value>Solo se usa si la versión del encabezado MD es 1.1 (0x0101). Nunca es 1.1, así que ignora el tipo</value>
+    <value>Utilizzato solo se intestazione MD ha versione 1.1 (0x0101). Se non è 1.1 ignorare tipo</value>
   </data>
   <data name="GP_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="GP_Number" xml:space="preserve">
-    <value>N_úmero</value>
+    <value>N_umber</value>
   </data>
   <data name="GP_Struct" xml:space="preserve">
-    <value>_Estructura</value>
+    <value>_Struct</value>
   </data>
   <data name="GP_Variance" xml:space="preserve">
-    <value>_Varianza</value>
+    <value>_Variance</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
-    <value>Preferido 32 bits</value>
+    <value>Preferito a 32-bit</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitReqd" xml:space="preserve">
-    <value>Preferido 32-bit</value>
+    <value>Richiesto a 32-bit</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_ILLibrary" xml:space="preserve">
-    <value>Biblioteca de IL</value>
+    <value>Libreria IL</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_IL_Only" xml:space="preserve">
-    <value>IL sólo</value>
+    <value>Solo IL</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_NativeEntryPoint" xml:space="preserve">
-    <value>Punto de entrada nativo</value>
+    <value>Punto di ingresso nativo</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_StrongNameSigned" xml:space="preserve">
-    <value>Firma de Nombre fuerte</value>
+    <value>Strong Name Signed</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_TrackDebugData" xml:space="preserve">
-    <value>Datos de depuración de la pista</value>
+    <value>Track Debug Data</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
-    <value>Cabecera de Cor20</value>
+    <value>Intestazione Cor20</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>Cabecera de DOS</value>
+    <value>Intestazione DOS</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>Cabeceras de fichero</value>
+    <value>Intestazione del file</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Encabezado opcional (32-bit)</value>
+    <value>Intestazione facoltativa (32-bit)</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
-    <value>Encabezado opcional (64 bits)</value>
+    <value>Intestazione facoltativa (64-bit)</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
-    <value>Implementación de Mapa</value>
+    <value>ImplMap</value>
   </data>
   <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>El _Mejor ajustet</value>
+    <value>_BestFit</value>
   </data>
   <data name="ImplMap_CallingConvention" xml:space="preserve">
-    <value>Llamada con_vencional</value>
+    <value>CallCon_v</value>
   </data>
   <data name="ImplMap_CharacterSet" xml:space="preserve">
-    <value>Juego de C_arácteres</value>
+    <value>C_harSet</value>
   </data>
   <data name="ImplMap_Enable" xml:space="preserve">
-    <value>_Habilitado</value>
+    <value>_Attiva</value>
   </data>
   <data name="ImplMap_Module" xml:space="preserve">
-    <value>Mó_dulo</value>
+    <value>Mo_dule</value>
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="ImplMap_NoMangle" xml:space="preserve">
-    <value>Sin _Mutilación</value>
+    <value>No_Mangle</value>
   </data>
   <data name="ImplMap_SupportsLastError" xml:space="preserve">
-    <value>Soporta el _ultimo error</value>
+    <value>Supports_LastError</value>
   </data>
   <data name="ImplMap_ThrowOn_SHORT" xml:space="preserve">
-    <value>_Lanzar...</value>
+    <value>_ThrowOn...</value>
   </data>
   <data name="ImplMap_ThrowOn_ToolTip" xml:space="preserve">
-    <value>Lanzar un carácter inmaterial</value>
+    <value>ThrowOnUnmappableChar</value>
   </data>
   <data name="MainTab" xml:space="preserve">
-    <value>Principal</value>
+    <value>Main</value>
   </data>
   <data name="MarshalType" xml:space="preserve">
-    <value>Tipo de Mariscal: {0}</value>
+    <value>Marshal Type: {0}</value>
   </data>
   <data name="MarshalTypeTab" xml:space="preserve">
-    <value>Tipo de Mariscal</value>
+    <value>Marshal Type</value>
   </data>
   <data name="MarshalType_Array" xml:space="preserve">
-    <value>_Matriz</value>
+    <value>_Array</value>
   </data>
   <data name="MarshalType_ByRef" xml:space="preserve">
     <value>_ByRef</value>
   </data>
   <data name="MarshalType_Cookie" xml:space="preserve">
-    <value>Coo_kie (archivo pequeño)</value>
+    <value>Coo_kie</value>
   </data>
   <data name="MarshalType_Data" xml:space="preserve">
     <value>_Data</value>
   </data>
   <data name="MarshalType_ElemType" xml:space="preserve">
-    <value>_Tipo de elemento</value>
+    <value>Elem_Type</value>
   </data>
   <data name="MarshalType_Enable" xml:space="preserve">
-    <value>_Habilitado</value>
+    <value>_Attiva</value>
   </data>
   <data name="MarshalType_EnumNotInitialized" xml:space="preserve">
-    <value>&lt; no inicializado &gt;</value>
+    <value>&lt; Non inizializzato &gt;</value>
   </data>
   <data name="MarshalType_Flags" xml:space="preserve">
-    <value>_Banderas</value>
+    <value>_Flags</value>
   </data>
   <data name="MarshalType_GUID" xml:space="preserve">
     <value>_GUID</value>
   </data>
   <data name="MarshalType_NativeType" xml:space="preserve">
-    <value>Tipo _Native</value>
+    <value>_NativeType</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
-    <value>nada</value>
+    <value>niente</value>
   </data>
   <data name="MarshalType_NumElems" xml:space="preserve">
-    <value>_Número de elementos</value>
+    <value>_NumElems</value>
   </data>
   <data name="MarshalType_ParamIndex" xml:space="preserve">
-    <value>Índice de parámetros</value>
+    <value>ParamIndex</value>
   </data>
   <data name="MarshalType_ParamIndex2" xml:space="preserve">
-    <value>ïndice de _Parámetros</value>
+    <value>_ParamIndex</value>
   </data>
   <data name="MarshalType_ParamNum" xml:space="preserve">
-    <value>Número de _Parámentros</value>
+    <value>_ParamNum</value>
   </data>
   <data name="MarshalType_Reserved" xml:space="preserve">
-    <value>_Reservado</value>
+    <value>_Reserved</value>
   </data>
   <data name="MarshalType_Size" xml:space="preserve">
-    <value>_Tamaño</value>
+    <value>_Size</value>
   </data>
   <data name="MarshalType_Vector" xml:space="preserve">
     <value>Vec_tor</value>
@@ -644,202 +644,202 @@
     <value>_VT</value>
   </data>
   <data name="MemberRef_Class" xml:space="preserve">
-    <value>Clase</value>
+    <value>Class</value>
   </data>
   <data name="MemberRef_ClassTab" xml:space="preserve">
-    <value>Clase</value>
+    <value>Class</value>
   </data>
   <data name="MemberRef_FieldSigTab" xml:space="preserve">
-    <value>Campo de firma</value>
+    <value>FieldSig</value>
   </data>
   <data name="MemberRef_InitFromField" xml:space="preserve">
-    <value>Inicializar de campo...</value>
+    <value>Inizializza da Field...</value>
   </data>
   <data name="MemberRef_InitFromMethod" xml:space="preserve">
-    <value>Inicializar el método...</value>
+    <value>Inizializza dal Method...</value>
   </data>
   <data name="MemberRef_MethodDef" xml:space="preserve">
-    <value>Definición de _Método</value>
+    <value>_MethodDef</value>
   </data>
   <data name="MemberRef_MethodDef_ToolTip" xml:space="preserve">
-    <value>Inicializar la clase a un Método</value>
+    <value>Inizializza una Class a MethodDef</value>
   </data>
   <data name="MemberRef_MethodSigTab" xml:space="preserve">
-    <value>Método firma</value>
+    <value>MethodSig</value>
   </data>
   <data name="MemberRef_ModuleRef" xml:space="preserve">
-    <value>Mó_dulo referencia</value>
+    <value>Mo_duleRef</value>
   </data>
   <data name="MemberRef_ModuleRef_ToolTip" xml:space="preserve">
-    <value>Inicializar la clase a un Módulo referencia</value>
+    <value>Inizializza una Class a ModuleRef</value>
   </data>
   <data name="MemberRef_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="MemberRef_Type" xml:space="preserve">
-    <value>_Tipo</value>
+    <value>_Type</value>
   </data>
   <data name="MemberRef_TypeSpec" xml:space="preserve">
-    <value>Tipo_Especificación</value>
+    <value>Type_Spec</value>
   </data>
   <data name="MemberRef_TypeSpec_ToolTip" xml:space="preserve">
-    <value>Inicializar la clase a un Módulo referencia</value>
+    <value>Inizializza Class a TypeSpec</value>
   </data>
   <data name="MemberRef_Type_ToolTip" xml:space="preserve">
-    <value>Inicializar la clase a un Tipo</value>
+    <value>Inizializza Class a Type</value>
   </data>
   <data name="MethodCantBeNull" xml:space="preserve">
-    <value>El método no puede ser nulo</value>
+    <value>Metodo non può essere null</value>
   </data>
   <data name="MethodInstantiationTypesTab" xml:space="preserve">
-    <value>Tipos de instanciación del método</value>
+    <value>Tipi Metodo di un'istanza</value>
   </data>
   <data name="MethodSig_CallingConv" xml:space="preserve">
-    <value>Ll_amada convencional</value>
+    <value>Ca_lling Conv</value>
   </data>
   <data name="MethodSig_ExplicitThis" xml:space="preserve">
-    <value>E_xplicitar esto</value>
+    <value>E_xplicitThis</value>
   </data>
   <data name="MethodSig_HasThis" xml:space="preserve">
-    <value>_Tiene esto</value>
+    <value>_HasThis</value>
   </data>
   <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
-    <value>Tipos de parámetro de método</value>
+    <value>Tipi di parametro del metodo</value>
   </data>
   <data name="MethodSig_MethodVarArgParameterTypes" xml:space="preserve">
-    <value>Tipos de argumentos variables parámetro de método</value>
+    <value>Metodo VarArg tipi di parametro</value>
   </data>
   <data name="MethodSig_NumGenerics" xml:space="preserve">
-    <value># Genérico_s</value>
+    <value># Generic_o</value>
   </data>
   <data name="MethodSig_ReturnType" xml:space="preserve">
-    <value>Tipo de Ret_urn...</value>
+    <value>Tipo di rit_orno...</value>
   </data>
   <data name="MethodSpec_Method" xml:space="preserve">
-    <value>_Método</value>
+    <value>_Metodo</value>
   </data>
   <data name="MethodsTab" xml:space="preserve">
-    <value>Métodos</value>
+    <value>Metodi</value>
   </data>
   <data name="MoveDownCommand" xml:space="preserve">
-    <value>Mover hacia _abajo</value>
+    <value>Spostare in _Basso</value>
   </data>
   <data name="MoveDown_ToolTip" xml:space="preserve">
-    <value>Mover hacia abajo</value>
+    <value>Spostare in Basso</value>
   </data>
   <data name="MoveUpCommand" xml:space="preserve">
-    <value>Mover hacia _Arriba</value>
+    <value>Spostare in _Alto</value>
   </data>
   <data name="MoveUp_ToolTip" xml:space="preserve">
-    <value>Mover hacia arriba</value>
+    <value>Spostare in Alto</value>
   </data>
   <data name="NamedArguments" xml:space="preserve">
-    <value>Nombre de Argumentos</value>
+    <value>Argomenti con nome</value>
   </data>
   <data name="NoName" xml:space="preserve">
-    <value>&lt;&lt; sin nombre &gt;&gt;</value>
+    <value>&lt;&lt;senza nome&gt;&gt;</value>
   </data>
   <data name="NotGenericType" xml:space="preserve">
-    <value>{0} no es un tipo genérico</value>
+    <value>{0} non è un tipo generico</value>
   </data>
   <data name="OtherMethodsTab" xml:space="preserve">
-    <value>Otros métodos</value>
+    <value>Altri metodi</value>
   </data>
   <data name="ParamDef_Flags" xml:space="preserve">
-    <value>Banderas</value>
+    <value>Flags</value>
   </data>
   <data name="ParamDef_Flags_In" xml:space="preserve">
-    <value>_En</value>
+    <value>_In</value>
   </data>
   <data name="ParamDef_Flags_Optional" xml:space="preserve">
-    <value>O_pcional</value>
+    <value>F_acoltativo</value>
   </data>
   <data name="ParamDef_Flags_Out" xml:space="preserve">
-    <value>S_alida</value>
+    <value>O_ut</value>
   </data>
   <data name="ParamDef_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="ParamDef_Sequence" xml:space="preserve">
-    <value>_Secuencia</value>
+    <value>_Sequenza</value>
   </data>
   <data name="ParamDef_Sequence_ToolTip" xml:space="preserve">
-    <value>Secuencia 0 es parámetro de retorno, secuencia 1 es el primer parámetro, etcetera</value>
+    <value>Sequenza 0 è il parametro restituito, sequenza 1 è il primo parametro, ecc</value>
   </data>
   <data name="ParameterNumber" xml:space="preserve">
-    <value>param({0})</value>
+    <value>paramtero({0})</value>
   </data>
   <data name="ParameterReturn" xml:space="preserve">
-    <value>param(Return)</value>
+    <value>paramtero(Ritorno)</value>
   </data>
   <data name="Parameter_DefaultValueInfo" xml:space="preserve">
-    <value>Valor predeterminado para este parámetro</value>
+    <value>Valore predefinito per questo parametro</value>
   </data>
   <data name="PasteAfterSelectionCommand" xml:space="preserve">
-    <value>Pegar después de Se_lección</value>
+    <value>Incolla dopo Se_lezione</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Pegar</value>
+    <value>_Incolla</value>
   </data>
   <data name="PickMember_OpenAsmToolTip" xml:space="preserve">
-    <value>Abrir ensamblado o móduloNet</value>
+    <value>Apri Assembly o NetModule</value>
   </data>
   <data name="PickMember_Search" xml:space="preserve">
-    <value>_Buscar</value>
+    <value>_Ricerca</value>
   </data>
   <data name="PickMember_SelectCorrectNode" xml:space="preserve">
-    <value>Debe seleccionar un nodo correcto</value>
+    <value>È necessario selezionare un nodo corretto</value>
   </data>
   <data name="PickMember_TypeMustBeSelected" xml:space="preserve">
-    <value>Se debe seleccionar un tipo.</value>
+    <value>Un tipo deve essere selezionato.</value>
   </data>
   <data name="Pick_Constructor" xml:space="preserve">
-    <value>Elegir un Constructor</value>
+    <value>Scegliere un costruttore</value>
   </data>
   <data name="Pick_EnumType" xml:space="preserve">
-    <value>Escoger un tipo Enum</value>
+    <value>Scegliere un tipo Enum</value>
   </data>
   <data name="Pick_Type" xml:space="preserve">
-    <value>Elija un tipo</value>
+    <value>Selezionare un tipo</value>
   </data>
   <data name="RawCustomAttributeBlob" xml:space="preserve">
     <value>Raw Blob</value>
   </data>
   <data name="RawCustomAttributeBlob2" xml:space="preserve">
-    <value>&lt; raw blob &gt;</value>
+    <value>&lt;raw blob&gt;</value>
   </data>
   <data name="RemoveAssembliesCommand" xml:space="preserve">
-    <value>Retire los ensamblados {0}</value>
+    <value>Rimuovi gli assembly {0}</value>
   </data>
   <data name="RemoveAssemblyCommand" xml:space="preserve">
-    <value>Quite el ensamblado</value>
+    <value>Rimuovi Assembly</value>
   </data>
   <data name="RemoveCharacter" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="RemoveCharacter_ToolTip" xml:space="preserve">
-    <value>Eliminar el último objeto</value>
+    <value>Rimuovi l'ultimo oggetto</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>Eliminar {0}</value>
+    <value>Rimuovi {0}</value>
   </data>
   <data name="RemoveLastTypeCharacter" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="RemoveLastTypeCharacter_ToolTip" xml:space="preserve">
-    <value>Eliminar último tipo</value>
+    <value>Rimuovi l'ultimo tipo</value>
   </data>
   <data name="ReturnTypeRequired" xml:space="preserve">
-    <value>Se requiere un tipo de valor devuelto</value>
+    <value>È necessario un tipo restituito</value>
   </data>
   <data name="SecurityDeclarationsTab" xml:space="preserve">
-    <value>Sec Decis</value>
+    <value>Sec Decls</value>
   </data>
   <data name="ShortCutKeyA" xml:space="preserve">
     <value>A</value>
   </data>
   <data name="ShortcutKeyAltEnter" xml:space="preserve">
-    <value>Alt + Enter</value>
+    <value>Alt+Enter</value>
   </data>
   <data name="ShortCutKeyC" xml:space="preserve">
     <value>C</value>
@@ -851,7 +851,7 @@
     <value>Ctrl+C</value>
   </data>
   <data name="ShortCutKeyCtrlDel" xml:space="preserve">
-    <value>Ctrl + Supr</value>
+    <value>Ctrl+Del</value>
   </data>
   <data name="ShortCutKeyCtrlT" xml:space="preserve">
     <value>Ctrl+T</value>
@@ -875,718 +875,719 @@
     <value>Tipo: {0}</value>
   </data>
   <data name="TypeMustBeGeneric" xml:space="preserve">
-    <value>El tipo debe ser un tipo genérico</value>
+    <value>Il tipo deve essere un tipo generico</value>
   </data>
   <data name="TypeSigCreator_Array" xml:space="preserve">
-    <value>Matri_x</value>
+    <value>Arra_y</value>
   </data>
   <data name="TypeSigCreator_Array_LowerBounds" xml:space="preserve">
-    <value>Límites In_ferioriores</value>
+    <value>Limiti inferio_ri</value>
   </data>
   <data name="TypeSigCreator_Array_LowerBounds_ToolTip" xml:space="preserve">
-    <value>Lista separada por comas de matriz inferior límites (firmados enteros)</value>
+    <value>Elenco separato da virgole dei limiti inferiori della matrice (intero con segno)</value>
   </data>
   <data name="TypeSigCreator_Array_Rank" xml:space="preserve">
     <value>Ran_go</value>
   </data>
   <data name="TypeSigCreator_Array_Sizes" xml:space="preserve">
-    <value>T_amaño</value>
+    <value>T_aglie</value>
   </data>
   <data name="TypeSigCreator_Array_Sizes_ToolTip" xml:space="preserve">
-    <value>Lista separada por comas de tamaños de matriz (enteros sin signo)</value>
+    <value>Elenco separato da virgole delle dimensioni della matrice (intero seza segno)</value>
   </data>
   <data name="TypeSigCreator_Array_ToolTip" xml:space="preserve">
-    <value>Convertir texto en una matriz multidimensional</value>
+    <value>Convertire il tipo di una matrice multidimensionale</value>
   </data>
   <data name="TypeSigCreator_ByRef" xml:space="preserve">
     <value>_ByRef</value>
   </data>
   <data name="TypeSigCreator_ByRef_ToolTip" xml:space="preserve">
-    <value>Convertir texto en una referencia</value>
+    <value>Convertire tipo in un riferimento</value>
   </data>
   <data name="TypeSigCreator_Clear" xml:space="preserve">
-    <value>B_orrar</value>
+    <value>Pul_ire</value>
   </data>
   <data name="TypeSigCreator_Clear_ToolTip" xml:space="preserve">
-    <value>Borrar Byte</value>
+    <value>Pulire tipo</value>
   </data>
   <data name="TypeSigCreator_CModOpt" xml:space="preserve">
     <value>CModOp_t</value>
   </data>
   <data name="TypeSigCreator_CModOpt_ToolTip" xml:space="preserve">
-    <value>Añadir un modificador opcional de C</value>
+    <value>Aggiungi un modificatore C opzionale</value>
   </data>
   <data name="TypeSigCreator_CModReqd" xml:space="preserve">
     <value>C_ModReqd</value>
   </data>
   <data name="TypeSigCreator_CModReqd_ToolTip" xml:space="preserve">
-    <value>Añadir un modificador C requiere</value>
+    <value>Aggiungi un modificatore C richiesto</value>
   </data>
   <data name="TypeSigCreator_FnPtr" xml:space="preserve">
     <value>_FnPtr</value>
   </data>
   <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
-    <value>Añadir un puntero a función</value>
+    <value>Aggiungi un puntatore a funzione</value>
   </data>
   <data name="TypeSigCreator_GenericInst" xml:space="preserve">
     <value>_GenericInst</value>
   </data>
   <data name="TypeSigCreator_GenericInst_ToolTip" xml:space="preserve">
-    <value>Agregar un tipo de instancia genérico</value>
+    <value>Aggiungi un tipo di istanza generica</value>
   </data>
   <data name="TypeSigCreator_GenericsCount" xml:space="preserve">
     <value>#</value>
   </data>
   <data name="TypeSigCreator_GenericsCount_ToolTip" xml:space="preserve">
-    <value>Número variable genérico de método de tipo</value>
+    <value>Tipo/metodo numero variabile generico</value>
   </data>
   <data name="TypeSigCreator_MultidimensionalArray" xml:space="preserve">
-    <value>Matriz multidimensional</value>
+    <value>Array multidimensionali</value>
   </data>
   <data name="TypeSigCreator_MVar" xml:space="preserve">
     <value>_MVar</value>
   </data>
   <data name="TypeSigCreator_MVar_ToolTip" xml:space="preserve">
-    <value>Agregue una variable genérica de método</value>
+    <value>Aggiungi una variabile metodo generica</value>
   </data>
   <data name="TypeSigCreator_Pinned" xml:space="preserve">
-    <value>Pi_nned</value>
+    <value>Bl_occato</value>
   </data>
   <data name="TypeSigCreator_Pinned_ToolTip" xml:space="preserve">
-    <value>Convertirlo en una variable fijada</value>
+    <value>Trasforma in una variabile bloccata</value>
   </data>
   <data name="TypeSigCreator_Pointer" xml:space="preserve">
-    <value>_Puntero</value>
+    <value>_Puntatore</value>
   </data>
   <data name="TypeSigCreator_Pointer_ToolTip" xml:space="preserve">
-    <value>Convertir texto en un puntero</value>
+    <value>Converti un tipo in puntatore</value>
   </data>
   <data name="TypeSigCreator_Remove_ToolTip" xml:space="preserve">
-    <value>Eliminar último tipo agregado</value>
+    <value>Rimuovi l'ultimo tipo aggiunto</value>
   </data>
   <data name="TypeSigCreator_SZArray" xml:space="preserve">
-    <value>S_Z matriz</value>
+    <value>S_Z Array</value>
   </data>
   <data name="TypeSigCreator_SZArray_ToolTip" xml:space="preserve">
-    <value>Convertir texto en una sola dimensión, cero matriz de límite inferior</value>
+    <value>Convertire il tipo in una matrice a dimensione singola, con limite inferiore a zero</value>
   </data>
   <data name="TypeSigCreator_Type" xml:space="preserve">
-    <value>_Tipo</value>
+    <value>_Type</value>
   </data>
   <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
-    <value>Agregar un tipo</value>
+    <value>Aggiungi un tipo</value>
   </data>
   <data name="TypeSigCreator_Var" xml:space="preserve">
     <value>_Var</value>
   </data>
   <data name="TypeSigCreator_Var_ToolTip" xml:space="preserve">
-    <value>Agregue una variable de tipo genérico</value>
+    <value>Aggiungi una variabile di tipo generico</value>
   </data>
   <data name="TypeTab" xml:space="preserve">
     <value>Tipo</value>
   </data>
   <data name="Unknown" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Sconosciuto</value>
   </data>
   <data name="UnknownBytesMsg" xml:space="preserve">
-    <value>Algunos de los bytes copiados son desconocidos porque el método ha sido editado. Nuevas fichas y los desvíos de la cadena sólo se conocen una vez que el archivo ha sido guardado en el disco y volver a abrir.</value>
+    <value>Alcuni dei byte copiati sono sconosciuti perché il metodo è stato modificato. Il nuovo token a l'offset della stringa sono validi solo dopo aver salvato e riaperto il file.</value>
   </data>
   <data name="UnknownEnum" xml:space="preserve">
-    <value>Enum desconocido</value>
+    <value>Enum sconosciuto</value>
   </data>
   <data name="Value" xml:space="preserve">
-    <value>_Valor</value>
+    <value>_Valore</value>
   </data>
   <data name="ValueType_ToolTip" xml:space="preserve">
-    <value>Tipo de valor</value>
+    <value>Tipo di valore</value>
   </data>
   <data name="XML" xml:space="preserve">
     <value>_XML</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Añadir NetModule existente al ensamblado...</value>
+    <value>Aggiungi NetModule esistente ad un Assembly...</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>Añadir NetModule existente al ensamblado</value>
+    <value>Aggiungi NetModule esistente ad un Assembly</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Añadir nuevo NetModule al ensamblado...</value>
+    <value>Aggiungi nuovo NetModule ad un Assembly...</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>Añadir nuevo NetModule al ensamblado</value>
+    <value>Aggiungi nuovo NetModule ad un Assembly</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>Todos los archivos</value>
+    <value>Tutti i file</value>
   </data>
   <data name="AskCancelSave" xml:space="preserve">
-    <value>¿Seguro que quieres cancelar?</value>
+    <value>Vuoi annullare il salvataggio?</value>
   </data>
   <data name="AskCancelSaveCloseWindow" xml:space="preserve">
-    <value>Está intentando cancelar. ¿Está seguro que desea cerrar la ventana?</value>
+    <value>Il salvataggio verrà cancellato.
+Sei sicuro di volere uscire?</value>
   </data>
   <data name="AskDeleteField" xml:space="preserve">
-    <value>Puede haber código en un ensamblado que hace referencia a este campo. ¿Está seguro que desea eliminar el campo?</value>
+    <value>Potrebbe esserci del codice assembly che fa riferimento a questo campo. Sicuro di volerlo eliminare?</value>
   </data>
   <data name="AskDeleteMethod" xml:space="preserve">
-    <value>Puede haber código en un ensamblado que hace referencia a este método. ¿Está seguro que desea eliminar el método?</value>
+    <value>Potrebbe esserci del codice assembly che fa riferimento a questo metodo. Sicuro di volerlo eliminare?</value>
   </data>
   <data name="AskDeleteType" xml:space="preserve">
-    <value>Puede haber código en un ensamblado que hace referencia a este tipo. ¿Está seguro que desea eliminar el tipo?</value>
+    <value>Potrebbe esserci del codice assembly che fa riferimento a questo tipo. Sicuro di volerlo eliminare?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>Hay un archivo no guardado. ¿Desea guardar antes de salir?</value>
+    <value>C'è un file non salvato. Vuoi salvarlo prima di uscire?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>Hay {0} sin guardar los archivos. ¿Desea guardar antes de salir?</value>
+    <value>Ci sono {0} file non salvati. Vuoi salvarli prima di uscire?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
-    <value>¿Está seguro que desea cargar los nuevos ensamblados y perder todos los cambios?</value>
+    <value>Sicuro di volere caricare un nuovo assembly e perdere tutte le modifiche?</value>
   </data>
   <data name="AskReloadAssembliesLoseChanges" xml:space="preserve">
-    <value>¿Está seguro que desea volver a cargar todos los ensamblados y perder todos los cambios?</value>
+    <value>Sicuro di voler ricaricare tutti gli assembly e perdere tutte le modifiche?</value>
   </data>
   <data name="AskSaveFile" xml:space="preserve">
-    <value>El archivo no ha sido guardado todavía. ¿Desea guardar antes de continuar?</value>
+    <value>Il file non è stato ancora salvato. Si desidera salvarlo prima di continuare?</value>
   </data>
   <data name="AskSaveFiles" xml:space="preserve">
-    <value>Los archivos no han sido aún no ha guardado. ¿Desea guardar antes de continuar?</value>
+    <value>I file non sono stati ancora salvati. Si desidera salvarli prima di continuare?</value>
   </data>
   <data name="BaseTypeTab" xml:space="preserve">
-    <value>Tipo base</value>
+    <value>Tipo di base</value>
   </data>
   <data name="BaseTypeX" xml:space="preserve">
-    <value>Tipo base: {0}</value>
+    <value>Tipo di base: {0}</value>
   </data>
   <data name="Button_Append" xml:space="preserve">
-    <value>A_djuntar</value>
+    <value>A_ggiungere</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
-    <value>Ensamblado</value>
+    <value>Assembly</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
-    <value>Convertir ensamblado en NetMódulo</value>
+    <value>Convertire Assembly a NetModule</value>
   </data>
   <data name="ConvertUncondBranchCommand" xml:space="preserve">
-    <value>Convertir a _Rama Incondicional</value>
+    <value>Convertire a Unconditional _Branch</value>
   </data>
   <data name="ConvertUncondBranchesCommand" xml:space="preserve">
-    <value>Convertir a _Ramas incondicionales</value>
+    <value>Convertire a Unconditional _Branches</value>
   </data>
   <data name="ConvNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Añadir NetMódulo a ensamblado</value>
+    <value>Convertire NetModule ad Assembly</value>
   </data>
   <data name="CopyAsTextCommand2" xml:space="preserve">
-    <value>Copiar como _Text</value>
+    <value>Copia come _Testo</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Copia archivo Offset</value>
+    <value>Copia il File Offset</value>
   </data>
   <data name="CopyFileOffsetsCommand" xml:space="preserve">
-    <value>Copia archivo Offset</value>
+    <value>Copia i File Offset</value>
   </data>
   <data name="CopyMetaDataToken" xml:space="preserve">
-    <value>Copiar Token _MD</value>
+    <value>Copia _MD Token</value>
   </data>
   <data name="CopyMetaDataTokens" xml:space="preserve">
-    <value>Copiar Tokens _MD</value>
+    <value>Copia gli _MD Token</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>C_opiar RVA</value>
+    <value>C_opia RVA</value>
   </data>
   <data name="CopyRVAsCommand" xml:space="preserve">
-    <value>Copiar RVAs</value>
+    <value>C_opia gli RVA</value>
   </data>
   <data name="CreateAnExceptionCatchType" xml:space="preserve">
-    <value>Crear un tipo de excepción de la captura</value>
+    <value>Creare un Exception Catch Type</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>Crear ensamblado vinculado a recursos...</value>
+    <value>Crea Assembly Linked Resource...</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
-    <value>Crear ensamblado vinculado a recursos</value>
+    <value>Crea Assembly Linked Resource</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
-    <value>Crear el recurso System.Data.Bitmap/Icon...</value>
+    <value>Crea System.Data.Bitmap/Icon Resource...</value>
   </data>
   <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
-    <value>Crear el recurso System.Data.Bitmap/Icon</value>
+    <value>Crea System.Data.Bitmap/Icon Resource</value>
   </data>
   <data name="CreateByteArrayResourceCommand" xml:space="preserve">
-    <value>Crear recursos de matriz de bytes...</value>
+    <value>Crea Byte Array Resource...</value>
   </data>
   <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
-    <value>Crear recursos de matriz de bytes</value>
+    <value>Crea Byte Array Resource</value>
   </data>
   <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
-    <value>Crear recurso vinculado a un archivo...</value>
+    <value>Crea File Linked Resource...</value>
   </data>
   <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
-    <value>Crear el archivo vinculado a recursos</value>
+    <value>Crea File Linked Resource</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
-    <value>Crear archivo de recursos...</value>
+    <value>Crea File Resource...</value>
   </data>
   <data name="CreateFileResourceCommand2" xml:space="preserve">
-    <value>Crear archivo de recursos</value>
+    <value>Crea File Resource</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
-    <value>Crear el recurso System.Windows.Forms.ImageListStreamer...</value>
+    <value>Crea System.Windows.Forms.ImageListStreamer Resource...</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
-    <value>Crear recursos de System.Windows.Forms.ImageListStreamer</value>
+    <value>Crea System.Windows.Forms.ImageListStreamer Resource</value>
   </data>
   <data name="CreateInterfaceImpl" xml:space="preserve">
-    <value>Crear interface Implementación</value>
+    <value>Crea Interface Impl</value>
   </data>
   <data name="CreateLocalType" xml:space="preserve">
-    <value>Crear un tipo Local</value>
+    <value>Crea Local Type</value>
   </data>
   <data name="CreateMethodCommand" xml:space="preserve">
-    <value>Crear el método...</value>
+    <value>Crea Method...</value>
   </data>
   <data name="CreateMethodCommand2" xml:space="preserve">
-    <value>Crear método</value>
+    <value>Crea Method</value>
   </data>
   <data name="CreateMethodSig" xml:space="preserve">
-    <value>Crear firma Método</value>
+    <value>Crea MethodSig</value>
   </data>
   <data name="CreateMultiFileResourceCommand" xml:space="preserve">
-    <value>Crear múltiples archivos de recursos...</value>
+    <value>Crea Multi File Resource...</value>
   </data>
   <data name="CreateMultiFileResourceCommand2" xml:space="preserve">
-    <value>Crear múltiples archivo de recursos</value>
+    <value>Crea Multi File Resource</value>
   </data>
   <data name="CreateNestedTypeCommand" xml:space="preserve">
-    <value>Crear el tipo anidado...</value>
+    <value>Crea Nested Type...</value>
   </data>
   <data name="CreateNestedTypeCommand2" xml:space="preserve">
-    <value>Crear tipo anidado</value>
+    <value>Crea Nested Type</value>
   </data>
   <data name="CreateNetModuleCommand" xml:space="preserve">
-    <value>Crear NetMódulo...</value>
+    <value>Crea NetModule...</value>
   </data>
   <data name="CreateNetModuleCommand2" xml:space="preserve">
-    <value>Crear NetMódulo</value>
+    <value>Crea NetModule</value>
   </data>
   <data name="CreatePropertyCommand" xml:space="preserve">
-    <value>Editar propiedad...</value>
+    <value>Crea Property...</value>
   </data>
   <data name="CreatePropertyCommand2" xml:space="preserve">
-    <value>Crear propiedad</value>
+    <value>Crea proprietà</value>
   </data>
   <data name="CreateResourceCommand" xml:space="preserve">
-    <value>Crear recurso...</value>
+    <value>Crea risorsa...</value>
   </data>
   <data name="CreateResourceCommand2" xml:space="preserve">
-    <value>Crear Recurso</value>
+    <value>Crea risorsa</value>
   </data>
   <data name="CreateStreamResourceCommand" xml:space="preserve">
-    <value>Crear recurso de transmisión de E / S del sistema...</value>
+    <value>Crea risorsa System.IO.Stream...</value>
   </data>
   <data name="CreateStreamResourceCommand2" xml:space="preserve">
-    <value>Crear recurso de secuencia de E / S del sistema</value>
+    <value>Crea risorsa System.IO.Stream</value>
   </data>
   <data name="CreateTypeCommand" xml:space="preserve">
-    <value>Crear el tipo...</value>
+    <value>Crea tipo...</value>
   </data>
   <data name="CreateTypeCommand2" xml:space="preserve">
-    <value>Crear un tipo</value>
+    <value>Crea tipo</value>
   </data>
   <data name="DeleteMethodCommand" xml:space="preserve">
-    <value>Método Delete</value>
+    <value>Elimino metodo</value>
   </data>
   <data name="DeleteMethodsCommand" xml:space="preserve">
-    <value>Eliminar métodos de {0}</value>
+    <value>Elimino {0} metodi</value>
   </data>
   <data name="DeleteNamespaceCommand" xml:space="preserve">
-    <value>Eliminar Espacio de Nombre</value>
+    <value>Elimino lo spazio nomi</value>
   </data>
   <data name="DeleteNamespacesCommand" xml:space="preserve">
-    <value>Eliminar {0} espacios de nombres</value>
+    <value>Elimina spazi dei nomi {0}</value>
   </data>
   <data name="DeletePropertiesCommand" xml:space="preserve">
-    <value>Eliminar {0} propiedades</value>
+    <value>Elimina proprietà {0}</value>
   </data>
   <data name="DeletePropertyCommand" xml:space="preserve">
-    <value>Eliminar la propiedad</value>
+    <value>Elimina proprietà</value>
   </data>
   <data name="DeleteResourceCommand" xml:space="preserve">
-    <value>Eliminar recursos</value>
+    <value>Elimina risorsa</value>
   </data>
   <data name="DeleteResourcesCommand" xml:space="preserve">
-    <value>Eliminar {0} recursos</value>
+    <value>Elimina risorse {0}</value>
   </data>
   <data name="DeleteTypeCommand" xml:space="preserve">
-    <value>Eliminar tipo</value>
+    <value>Elimina tipo</value>
   </data>
   <data name="DeleteTypesCommand" xml:space="preserve">
-    <value>Eliminar {0} tipos</value>
+    <value>Elimina tipi {0}</value>
   </data>
   <data name="EditFieldMemberRef" xml:space="preserve">
-    <value>Editar campo MemberRef</value>
+    <value>Modifica il campo MemberRef</value>
   </data>
   <data name="EditILInstructionsCommand" xml:space="preserve">
-    <value>Editar Instructione_s IL...</value>
+    <value>Modifica Istruzion_i IL...</value>
   </data>
   <data name="EditInterfaceImpl" xml:space="preserve">
-    <value>Editar interface de Implementación</value>
+    <value>Modifica Interfaccia Impl</value>
   </data>
   <data name="EditMethodBodyCommand" xml:space="preserve">
-    <value>Editar el cuerpo del método...</value>
+    <value>Modifica il corpo del Metodo...</value>
   </data>
   <data name="EditMethodBodyCommand2" xml:space="preserve">
-    <value>Editar el cuerpo del método</value>
+    <value>Modifica il corpo del Metodo</value>
   </data>
   <data name="EditMethodCommand" xml:space="preserve">
-    <value>Editar el método...</value>
+    <value>Modifica Metodo...</value>
   </data>
   <data name="EditMethodCommand2" xml:space="preserve">
-    <value>Editar método</value>
+    <value>Modifica Metodo</value>
   </data>
   <data name="EditMethodMemberRef" xml:space="preserve">
-    <value>Editar método MemberRef</value>
+    <value>Modifica Metodo MemberRef</value>
   </data>
   <data name="EditModuleCommand" xml:space="preserve">
-    <value>Editar módulo...</value>
+    <value>Modifica Modulo...</value>
   </data>
   <data name="EditModuleCommand2" xml:space="preserve">
-    <value>Editar módulo</value>
+    <value>Modifica Modulo</value>
   </data>
   <data name="EditNamespace" xml:space="preserve">
-    <value>Editar Espacio de Nombre</value>
+    <value>Modifica Namespace</value>
   </data>
   <data name="EditOperand_Field" xml:space="preserve">
     <value>_Campo...</value>
   </data>
   <data name="EditOperand_Field_MemberRef" xml:space="preserve">
-    <value>C_ampo MiembroRef...</value>
+    <value>C_ampo MemberRef...</value>
   </data>
   <data name="EditOperand_Method" xml:space="preserve">
-    <value>_Método...</value>
+    <value>_Metodo...</value>
   </data>
   <data name="EditOperand_MethodSpec" xml:space="preserve">
     <value>Met_hodSpec...</value>
   </data>
   <data name="EditOperand_Method_MemberRef" xml:space="preserve">
-    <value>M_étodo Miembro referencia...</value>
+    <value>M_erodo MemberRef...</value>
   </data>
   <data name="EditOperand_Type" xml:space="preserve">
     <value>_Tipo...</value>
   </data>
   <data name="EditOperand_TypeSpec" xml:space="preserve">
-    <value>Type_Especificación...</value>
+    <value>Type_Spec...</value>
   </data>
   <data name="EditPropertyCommand" xml:space="preserve">
-    <value>Editar propiedad...</value>
+    <value>Modifica Proprietà...</value>
   </data>
   <data name="EditPropertyCommand2" xml:space="preserve">
-    <value>Editar propiedad</value>
+    <value>Modifica Proprietà</value>
   </data>
   <data name="EditResourceCommand" xml:space="preserve">
-    <value>Editar recursos...</value>
+    <value>Modifica Risorsa...</value>
   </data>
   <data name="EditResourceCommand2" xml:space="preserve">
-    <value>Editar recursos</value>
+    <value>Modifica Risorsa</value>
   </data>
   <data name="EditResource_ContainsNoMetadata" xml:space="preserve">
-    <value>_No contiene metadatos</value>
+    <value>Non contiene metadati</value>
   </data>
   <data name="EditResource_File" xml:space="preserve">
-    <value>_Archivo</value>
+    <value>_File</value>
   </data>
   <data name="EditResource_Hash" xml:space="preserve">
-    <value>_Picadillo</value>
+    <value>_Hash</value>
   </data>
   <data name="EditSwitchInstructionOperand" xml:space="preserve">
-    <value>Editar operando conmutador</value>
+    <value>Modifica Operando Switch</value>
   </data>
   <data name="EditTypeCommand" xml:space="preserve">
-    <value>Editar tipo...</value>
+    <value>Modifica Tipo...</value>
   </data>
   <data name="EditTypeCommand2" xml:space="preserve">
-    <value>Editar tipo</value>
+    <value>Modifica Tipo</value>
   </data>
   <data name="EH_Command1" xml:space="preserve">
-    <value>Añadir un nuevo controlador de excepción An_tes de la selección</value>
+    <value>Aggiungi nuovo gestore eccezioni p_rima selezione</value>
   </data>
   <data name="EH_Command2" xml:space="preserve">
-    <value>Agregar el nuevo controlador de excepción después de la Sele_cción</value>
+    <value>Aggiungi nuovo gestore eccezioni successiva sele_zione</value>
   </data>
   <data name="EH_Command3" xml:space="preserve">
-    <value>_Adjuntar nuevo controlador de excepción</value>
+    <value>_Aggiungi nuovo Exception Handler</value>
   </data>
   <data name="EH_Command4" xml:space="preserve">
-    <value>_Eliminar controlador de excepciones</value>
+    <value>_Rimuovi Exception Handler</value>
   </data>
   <data name="EH_Command5" xml:space="preserve">
-    <value>_Eliminar controladores de excepciones</value>
+    <value>_Rimuovi Exception Handlers</value>
   </data>
   <data name="EH_Command6" xml:space="preserve">
-    <value>Elimin_ar todos los controladores de excepción</value>
+    <value>Rimuo_vi tutti i gestori di eccezioni</value>
   </data>
   <data name="EmptyFilename" xml:space="preserve">
-    <value>&lt; nombre de archivo vacío &gt;</value>
+    <value>&lt;nome del file vuoto&gt;</value>
   </data>
   <data name="Error_AssemblyFieldMustNotBeEmpty" xml:space="preserve">
-    <value>El nombre de ensamblado no debe de estar vacio.</value>
+    <value>Assembly non deve essere vuoto.</value>
   </data>
   <data name="Error_CouldNotFindMethod" xml:space="preserve">
-    <value>No se pudo encontrar método: {0}</value>
+    <value>Impossibile trovare il metodo: {0}</value>
   </data>
   <data name="Error_CouldNotFindTypeOrItsAssembly" xml:space="preserve">
-    <value>No se pudo encontrar el tipo o su ensamblado.</value>
+    <value>Impossibile trovare il tipo o il suo assembly.</value>
   </data>
   <data name="Error_CouldNotLoadType" xml:space="preserve">
-    <value>No se pudo cargar el tipo '{0}': {1}</value>
+    <value>Impossibile caricare il tipo '{0}': {1}</value>
   </data>
   <data name="Error_CouldNotSerializeImages" xml:space="preserve">
-    <value>No se pudo serializar las imágenes. Error: {0}</value>
+    <value>Impossibile serializzare le immagini. Errore: {0}</value>
   </data>
   <data name="Error_DeSerializationDisabledInSettings" xml:space="preserve">
-    <value>La (De)serialización está deshabilitada en la configuración.</value>
+    <value>La (de)serializzazione è disattivata nelle impostazioni.</value>
   </data>
   <data name="Error_EmptyImageList" xml:space="preserve">
-    <value>No es posible crear una lista de imágenes vacías</value>
+    <value>Non è possibile creare un elenco di immagini vuote</value>
   </data>
   <data name="Error_Filename_ContainsInvalidPathCharacter" xml:space="preserve">
-    <value>Nombre de archivo contiene al menos un carácter no válido ruta de acceso.</value>
+    <value>Il nome del file contiene almeno un carattere di percorso non valido.</value>
   </data>
   <data name="Error_Filename_Empty" xml:space="preserve">
-    <value>Nombre de archivo no puede estar vacío.</value>
+    <value>Il nome del file non può essere vuoto.</value>
   </data>
   <data name="Error_Filename_FolderDoesNotExist" xml:space="preserve">
-    <value>La Carpeta '{0}' no existe.</value>
+    <value>La cartella '{0}' non esiste.</value>
   </data>
   <data name="Error_Filename_FolderExists" xml:space="preserve">
-    <value>Ya existe una carpeta con el mismo nombre que el nombre de archivo.</value>
+    <value>Esiste già una cartella con lo stesso nome del nome file.</value>
   </data>
   <data name="Error_Filename_OnlyWhitespace" xml:space="preserve">
-    <value>Nombre de archivo no puede contener espacio en blanco sólo</value>
+    <value>Il nome del file non può contenere solo lo spazio</value>
   </data>
   <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
-    <value>El nombre de archivo es un archivo reservado de sistema operativo y no puede utilizarse.</value>
+    <value>Il nome file è riservato al sistema operativo e non può essere utilizzato.</value>
   </data>
   <data name="Error_Filename_TooLong" xml:space="preserve">
-    <value>Nombre del archivo es demasiado largo.</value>
+    <value>Il nome del file è troppo lungo.</value>
   </data>
   <data name="Error_InstrHasBeenRemoved" xml:space="preserve">
-    <value>La Instrucción se ha eliminado</value>
+    <value>L'istruzione è stata rimossa</value>
   </data>
   <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>El objetivo de instrucción se ha eliminado</value>
+    <value>La destinazione dell'istruzione è stata rimossa</value>
   </data>
   <data name="Error_InvalidResourceData" xml:space="preserve">
-    <value>No puede utilizar estos datos: {0}</value>
+    <value>Impossibile utilizzare questi dati: {0}</value>
   </data>
   <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
-    <value>Local se ha eliminado</value>
+    <value>Il locale è stato rimosso</value>
   </data>
   <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
-    <value>Nuevos datos deben ser una imagen. Error: {0}</value>
+    <value>I nuovi dati devono essere un'immagine. Errore: {0}</value>
   </data>
   <data name="Error_NotNetModule" xml:space="preserve">
-    <value>{0} no es un NetMódulo</value>
+    <value>{0} non è un NetModule</value>
   </data>
   <data name="Error_NotSNKFile" xml:space="preserve">
-    <value>'{0}' no es un archivo de clave de nombre seguro (snk)</value>
+    <value>'{0}' non è un file chiave con nome sicuro (snk)</value>
   </data>
   <data name="Error_OnlyInstrsCanBeSelected" xml:space="preserve">
-    <value>Sólo pueden seleccionarse las instrucciones</value>
+    <value>Solo le istruzioni possono essere selezionate</value>
   </data>
   <data name="Error_OpenFile" xml:space="preserve">
-    <value>Error al abrir el archivo: {0}</value>
+    <value>Errore apertura file: {0}</value>
   </data>
   <data name="Error_OpenImage" xml:space="preserve">
-    <value>No se pudo abrir archivo o no es una imagen. Error: {0}</value>
+    <value>Impossibile aprire il file o non è un'immagine. Errore: {0}</value>
   </data>
   <data name="Error_OpMustBeField" xml:space="preserve">
-    <value>El operando debe ser un campo</value>
+    <value>L'operando deve essere un campo</value>
   </data>
   <data name="Error_OpMustBeInstr" xml:space="preserve">
-    <value>El operando debe ser una instrucción</value>
+    <value>L'operando deve essere un'istruzione</value>
   </data>
   <data name="Error_OpMustBeListInstrs" xml:space="preserve">
-    <value>El operando debe ser una lista de instrucciones</value>
+    <value>L'operando deve essere un elenco di istruzioni</value>
   </data>
   <data name="Error_OpMustBeLocal" xml:space="preserve">
-    <value>El operando debe ser un local</value>
+    <value>L'operando deve essere un locale</value>
   </data>
   <data name="Error_OpMustBeMethod" xml:space="preserve">
-    <value>El operando debe ser un método</value>
+    <value>L'operando deve essere un metodo</value>
   </data>
   <data name="Error_OpMustBeMethodSig" xml:space="preserve">
-    <value>Operando debe ser una firma de método</value>
+    <value>L'operando deve essere una firma di metodo</value>
   </data>
   <data name="Error_OpMustBeParam" xml:space="preserve">
-    <value>El operando debe ser un parámetro</value>
+    <value>L'operando deve essere un parametro</value>
   </data>
   <data name="Error_OpMustBeType" xml:space="preserve">
-    <value>El operando debe ser un tipo</value>
+    <value>L'operando deve essere un tipo</value>
   </data>
   <data name="Error_OpMustBeTypeMethodField" xml:space="preserve">
-    <value>El operando debe ser un tipo, método, campo</value>
+    <value>L'operando deve essere un tipo, un metodo, un campo</value>
   </data>
   <data name="Error_ReadingFiles" xml:space="preserve">
-    <value>Error de lectura de archivos: {0}</value>
+    <value>Errore di lettura dei file: {0}</value>
   </data>
   <data name="Error_SwitchInstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>El objetivo de instrucción se ha eliminado</value>
+    <value>La destinazione dell'istruzione Switch è stata rimossa</value>
   </data>
   <data name="Error_VersionStringTooLong" xml:space="preserve">
-    <value>La Cadena de versión es demasiado larga</value>
+    <value>La stringa della versione è troppo lunga</value>
   </data>
   <data name="ExceptionHandlersTab" xml:space="preserve">
-    <value>Controladores de excepciones</value>
+    <value>Gestore Exception Handlers</value>
   </data>
   <data name="GenericParametersTab" xml:space="preserve">
-    <value>Parámetros genéricos</value>
+    <value>Params generico</value>
   </data>
   <data name="GoToMetaDataTableRowCommand" xml:space="preserve">
-    <value>Ir a la fila de la tabla de MD ({0:X8})</value>
+    <value>Vai alla riga della tabella MD ({0:X8})</value>
   </data>
   <data name="GoToMetaDataTableRowCommand2" xml:space="preserve">
-    <value>Ir a la fila de la tabla de MD...</value>
+    <value>Vai alla riga della tabella MD...</value>
   </data>
   <data name="GoToMetaDataTableRowTitle" xml:space="preserve">
-    <value>Ir a la fila de la tabla de MD</value>
+    <value>Vai alla riga della tabella MD</value>
   </data>
   <data name="GoToMetaDataTableRow_InvalidMetadataToken" xml:space="preserve">
-    <value>Token de metadatos inválido: 0x{0:X8}</value>
+    <value>Token di metadati non valido: 0x{0:X8}</value>
   </data>
   <data name="GoToMetaDataTableRow_MetadataToken" xml:space="preserve">
-    <value>Token de metadatos</value>
+    <value>Token di _Metadata</value>
   </data>
   <data name="GoToMetaDataTableRow_TokenDoesNotExist" xml:space="preserve">
-    <value>{0:X8} token no existe en los metadatos</value>
+    <value>Il Token {0:X8} non esiste nei metadati</value>
   </data>
   <data name="GoToRowIdentifierCommand" xml:space="preserve">
-    <value>_Ir para librar...</value>
+    <value>_Vai a RID...</value>
   </data>
   <data name="GoToRowIdentifier_InvalidRowIdentifier" xml:space="preserve">
-    <value>Inválido RID {0}</value>
+    <value>RID invalido: {0}</value>
   </data>
   <data name="GoToRowIdentifier_Title" xml:space="preserve">
-    <value>Ir al RID</value>
+    <value>Vai a RID</value>
   </data>
   <data name="HexCopyMethodBodyCommand" xml:space="preserve">
-    <value>Copiar el cuerpo del método hexadecimal</value>
+    <value>Copia il corpo del metodo in Hex</value>
   </data>
   <data name="HexNode_PE" xml:space="preserve">
     <value>PE</value>
   </data>
   <data name="HexNode_PE_Section" xml:space="preserve">
-    <value>Sección</value>
+    <value>Sezione</value>
   </data>
   <data name="HexNode_StorageHeader" xml:space="preserve">
-    <value>Encabezado de almacenamiento</value>
+    <value>Conserva intestazione</value>
   </data>
   <data name="HexNode_StorageSignature" xml:space="preserve">
-    <value>Firma de almacenaje</value>
+    <value>Conserva Firma</value>
   </data>
   <data name="HexNode_StorageStream" xml:space="preserve">
-    <value>Secuencia del almacenamiento de información</value>
+    <value>Conserva Flusso</value>
   </data>
   <data name="HexNode_TablesStream" xml:space="preserve">
-    <value>Tablas de flujo</value>
+    <value>Tabelle di Flusso</value>
   </data>
   <data name="HexPasteMethodBodyCommand" xml:space="preserve">
-    <value>Pegar el cuerpo del método hexadecimal</value>
+    <value>Inserisci il corpo del metodo in Hex</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
-    <value>Escribir cuerpo vacío en hexadecimal</value>
+    <value>Scrivi il corpo vouto in Hex</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
-    <value>Escribir el cuerpo 'return false' en hexadecimal</value>
+    <value>Scrittura Hex del Corpo 'return false'</value>
   </data>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
-    <value>Escribir el cuerpo 'return false' en hexadecimal</value>
+    <value>Scrittura Hex del Corpo 'return true'</value>
   </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
-    <value>Insertar Bytes</value>
+    <value>Inserire byte</value>
   </data>
   <data name="Images" xml:space="preserve">
-    <value>Imágenes</value>
+    <value>Immagini</value>
   </data>
   <data name="Index" xml:space="preserve">
-    <value>Índice</value>
+    <value>Indice</value>
   </data>
   <data name="Info" xml:space="preserve">
-    <value>Información</value>
+    <value>Info</value>
   </data>
   <data name="InstructionOperand" xml:space="preserve">
     <value>Operando</value>
   </data>
   <data name="Instr_Command1" xml:space="preserve">
-    <value>Añadir nuevas instrucciones An_tes de la selección</value>
+    <value>Aggiungere nuove istruzioni prima della selezione</value>
   </data>
   <data name="Instr_Command2" xml:space="preserve">
-    <value>Añadir nueva instrucción después de la Sele_cción</value>
+    <value>Aggiungere nuove istruzioni dopo la selezione</value>
   </data>
   <data name="Instr_Command3" xml:space="preserve">
-    <value>_Adjuntar nueva instrucción</value>
+    <value>_Appendi nuova istruzione</value>
   </data>
   <data name="Instr_Command4" xml:space="preserve">
-    <value>_Eliminar instrucción</value>
+    <value>_Rimuovi istruzione</value>
   </data>
   <data name="Instr_Command5" xml:space="preserve">
-    <value>_Eliminar instrucciones</value>
+    <value>_Rimuovi istruzioni</value>
   </data>
   <data name="Instr_Command6" xml:space="preserve">
-    <value>Remo_ve todas las instrucciones</value>
+    <value>Rimuo_vi tutte le istruzioni</value>
   </data>
   <data name="InterfacesTab" xml:space="preserve">
-    <value>Interfaces</value>
+    <value>Interfacce</value>
   </data>
   <data name="InvertBranchCommand" xml:space="preserve">
-    <value>_Invertir rama</value>
+    <value>_Inverti diramazione</value>
   </data>
   <data name="InvertBranchesCommand" xml:space="preserve">
-    <value>_Invertir ramas</value>
+    <value>_Inverti diramazioni</value>
   </data>
   <data name="LocalName" xml:space="preserve">
-    <value>Nombre</value>
+    <value>Nome</value>
   </data>
   <data name="LocalsTab" xml:space="preserve">
-    <value>Locales</value>
+    <value>Locali</value>
   </data>
   <data name="LocalType" xml:space="preserve">
     <value>Tipo</value>
   </data>
   <data name="Local_Command1" xml:space="preserve">
-    <value>Agregar nuevo local An_tes de la selección</value>
+    <value>Aggiungere nuova Locale prima della selezione</value>
   </data>
   <data name="Local_Command2" xml:space="preserve">
-    <value>Añadir a nuevo Local después de Sele_cción</value>
+    <value>Aggiungere nuova Locale dopo la selezione</value>
   </data>
   <data name="Local_Command3" xml:space="preserve">
-    <value>_Adjuntarnuevo Local</value>
+    <value>_Appendi nuova Locale</value>
   </data>
   <data name="Local_Command4" xml:space="preserve">
-    <value>_Eliminar local</value>
+    <value>Rimuovi Locale</value>
   </data>
   <data name="Local_Command5" xml:space="preserve">
-    <value>_Eliminar locales</value>
+    <value>Rimuovi Locali</value>
   </data>
   <data name="Local_Command6" xml:space="preserve">
-    <value>Elimin_ar todos los locales</value>
+    <value>Rimuovi tutte le Locali</value>
   </data>
   <data name="Local_CompilerGenerated_Character" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="Local_CompilerGenerated_Character_ToolTip" xml:space="preserve">
-    <value>Generado por el compilador</value>
+    <value>La compilazione è stata generata</value>
   </data>
   <data name="Local_Pinned_Character" xml:space="preserve">
     <value>P</value>
   </data>
   <data name="Local_Pinned_Character_ToolTip" xml:space="preserve">
-    <value>Fijado</value>
+    <value>Bloccato</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
-    <value>Opciones de escritor MD</value>
+    <value>Opzioni di scrittura MD</value>
   </data>
   <data name="MetadataTab" xml:space="preserve">
-    <value>Metadatos</value>
+    <value>Metadati</value>
   </data>
   <data name="MethodBodyType_IL" xml:space="preserve">
     <value>IL</value>
@@ -1595,160 +1596,160 @@
     <value>Nativo</value>
   </data>
   <data name="MethodBodyType_None" xml:space="preserve">
-    <value>Ninguno</value>
+    <value>Nessuno</value>
   </data>
   <data name="MethodBody_CodeType" xml:space="preserve">
-    <value>Tipo de Cód_igo</value>
+    <value>Tipo di codice</value>
   </data>
   <data name="MethodBody_HeaderOffset" xml:space="preserve">
-    <value>Cabecera O_ffset</value>
+    <value>Intestazione O_ffset</value>
   </data>
   <data name="MethodBody_HeaderRVA" xml:space="preserve">
-    <value>Cabecera _RVA</value>
+    <value>Intestazione _RVA</value>
   </data>
   <data name="MethodBody_InitLocals" xml:space="preserve">
-    <value>_Init Locales</value>
+    <value>_Inizializzazione Locali</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
-    <value>_Mantenga el MaxStack antiguo</value>
+    <value>Mantieni vecchio MaxStack</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
-    <value>No calcular el valor de MaxStack al guardar el archivo</value>
+    <value>Non ricalcolare il valore di MaxStack quando si salva il file</value>
   </data>
   <data name="MethodBody_LocalVariableSignatureToken" xml:space="preserve">
     <value>_LocalVarSigTok</value>
   </data>
   <data name="MethodBody_MaxStack" xml:space="preserve">
-    <value>_Máxima Pila</value>
+    <value>_MaxStack</value>
   </data>
   <data name="MethodBody_RVA" xml:space="preserve">
     <value>_RVA</value>
   </data>
   <data name="MethodBody_Type" xml:space="preserve">
-    <value>Tipo de _Cuerpo</value>
+    <value>Tipo di _Body</value>
   </data>
   <data name="MethodOverridesTab" xml:space="preserve">
-    <value>Reemplaza</value>
+    <value>Sostituzioni</value>
   </data>
   <data name="MethodParametersTab" xml:space="preserve">
-    <value>Parámetros</value>
+    <value>Parametri</value>
   </data>
   <data name="MethodSignatureTab" xml:space="preserve">
     <value>Firma</value>
   </data>
   <data name="Method_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="Module_DotNetVersion" xml:space="preserve">
-    <value>Versión de.NET</value>
+    <value>_Versione .NET</value>
   </data>
   <data name="Module_EntryPoint" xml:space="preserve">
-    <value>Punto de entrada</value>
+    <value>Punto di ingresso</value>
   </data>
   <data name="Module_EntryPoint_Managed" xml:space="preserve">
-    <value>Mana_ged</value>
+    <value>Gestito</value>
   </data>
   <data name="Module_EntryPoint_Native" xml:space="preserve">
     <value>Nativo</value>
   </data>
   <data name="Module_EntryPoint_None" xml:space="preserve">
-    <value>Ninguno</value>
+    <value>Nessuno</value>
   </data>
   <data name="Module_GUIDs" xml:space="preserve">
     <value>GUIDs</value>
   </data>
   <data name="Module_Metadata" xml:space="preserve">
-    <value>Metadatos</value>
+    <value>Metadati</value>
   </data>
   <data name="Module_ModuleType" xml:space="preserve">
-    <value>_Tipo de Módulo</value>
+    <value>Modulo _Type</value>
   </data>
   <data name="Module_Name" xml:space="preserve">
-    <value>N_ombre</value>
+    <value>N_ome</value>
   </data>
   <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
-    <value>Mover tipos al espacio de nombres vacío</value>
+    <value>Spostare i tipi a spazio di nome vuoto</value>
   </data>
   <data name="Namespace_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="NetModule_DotNetVersion" xml:space="preserve">
-    <value>Versión de.NET</value>
+    <value>_Versione .NET</value>
   </data>
   <data name="NetModule_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="NodesUseHexEditorMsg" xml:space="preserve">
-    <value>Todos los nodos de árbol abajo usan el editor hexadecimal para modificar el archivo PE</value>
+    <value>Tutti i nodi della struttura sottostante utilizzano l'editor esadecimale per modificare il file PE</value>
   </data>
   <data name="NopInstrCommand" xml:space="preserve">
-    <value>Instrucción _NOP</value>
+    <value>Istruzione _NOP</value>
   </data>
   <data name="NopInstrsCommand" xml:space="preserve">
-    <value>Instrucciones _NOP</value>
+    <value>Istruzioni _NOP</value>
   </data>
   <data name="Offset" xml:space="preserve">
     <value>Offset</value>
   </data>
   <data name="OpenHexEditorCommand" xml:space="preserve">
-    <value>Abrir el editor He_x</value>
+    <value>Apri editor He_x</value>
   </data>
   <data name="OptimizeAllInstructionsCommand" xml:space="preserve">
-    <value>Optimi_ce todas las instrucciones</value>
+    <value>Ottimi_zza tutte le istruzioni</value>
   </data>
   <data name="Padding" xml:space="preserve">
-    <value>almohadilla</value>
+    <value>riempi</value>
   </data>
   <data name="PasteRecordsCommand" xml:space="preserve">
-    <value>_Pegar {0} registros @ {1:X8}, {2} RID</value>
+    <value>Incolla {0} records @ {1:X8}, RID {2}</value>
   </data>
   <data name="PropertyX" xml:space="preserve">
-    <value>Propiedad: {0}</value>
+    <value>Proprietà: {0}</value>
   </data>
   <data name="Property_DefaultValue" xml:space="preserve">
-    <value>Valor predeterminado para esta propiedad</value>
+    <value>Valore predefinito per questa proprietà</value>
   </data>
   <data name="Property_GetterMethods" xml:space="preserve">
-    <value>Getters</value>
+    <value>Getter</value>
   </data>
   <data name="Property_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="Property_OtherMethods" xml:space="preserve">
-    <value>Otros métodos</value>
+    <value>Altri metodi</value>
   </data>
   <data name="Property_SetterMethods" xml:space="preserve">
-    <value>Setters</value>
+    <value>Setter</value>
   </data>
   <data name="Property_Signature" xml:space="preserve">
     <value>Firma</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
-    <value>Guardar sin procesar {0}</value>
+    <value>Salva in RAW {0}</value>
   </data>
   <data name="RawSaveResourcesCommand" xml:space="preserve">
-    <value>Guardar sin procesar {0} recursos</value>
+    <value>Salva in RAW le risorse {0}</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>Guardar sin procesar {0} recursos, utilizar subdirectorios</value>
+    <value>Salva in RAW le risorse {0}, utilizzando una directory</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>Rehacer</value>
+    <value>Ripristina</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Rehacer</value>
+    <value>Ripristina</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
-    <value>E_liminar y agregar Pops</value>
+    <value>R_imuovi e aggiungi Pops</value>
   </data>
   <data name="RemoveNetModuleCommand" xml:space="preserve">
-    <value>Eliminar NetMódulo del ensamblado</value>
+    <value>Rimuovere NetModule dall'Assembly</value>
   </data>
   <data name="RenameNamespaceCommand" xml:space="preserve">
-    <value>Eliminar Espacio de Nombre</value>
+    <value>Rinominare il Namespace</value>
   </data>
   <data name="Resource_ColorDepth" xml:space="preserve">
-    <value>_Profundidad de color</value>
+    <value>Profondità di Colore</value>
   </data>
   <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
     <value>16-bit</value>
@@ -1769,148 +1770,148 @@
     <value>_Data</value>
   </data>
   <data name="Resource_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="Resource_Size" xml:space="preserve">
-    <value>_Tamaño</value>
+    <value>_Size</value>
   </data>
   <data name="Resource_TransparentColor" xml:space="preserve">
-    <value>Color _Transparent</value>
+    <value>Colore _Trasparente</value>
   </data>
   <data name="Resource_Type" xml:space="preserve">
-    <value>_Tipo</value>
+    <value>_Type</value>
   </data>
   <data name="Resource_Value" xml:space="preserve">
-    <value>_Valor</value>
+    <value>_Valore</value>
   </data>
   <data name="RowIdentifier" xml:space="preserve">
-    <value>Eliminar</value>
+    <value>RID</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>_Guardar...</value>
+    <value>_Salva...</value>
   </data>
   <data name="SaveAllCommand" xml:space="preserve">
-    <value>Guardar T_odos...</value>
+    <value>Salva T_utto...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Guardar todos</value>
+    <value>Salva Tutto</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
-    <value>Guardar _Module...</value>
+    <value>Salva _Modulo...</value>
   </data>
   <data name="SaveModuleCommand2" xml:space="preserve">
-    <value>Guarde módulo</value>
+    <value>Salva Modulo</value>
   </data>
   <data name="SaveModulesCommand" xml:space="preserve">
-    <value>Guardar _Módulos...</value>
+    <value>Salva _Moduli...</value>
   </data>
   <data name="SaveModules_CancelingSave" xml:space="preserve">
-    <value>Cancelando el guardado Por favor espera...</value>
+    <value>Annullare il salvataggio. Attendere prego...</value>
   </data>
   <data name="SaveModules_Close" xml:space="preserve">
-    <value>_Cerrar</value>
+    <value>_Chiudi</value>
   </data>
   <data name="SaveModules_ErrorsInLog" xml:space="preserve">
-    <value>Hay errores en el registro de:</value>
+    <value>Ci sono errori nel registro:</value>
   </data>
   <data name="SaveModules_FileHasErrors" xml:space="preserve">
-    <value>Archivo #{0} ({1}) tiene errores</value>
+    <value>Il file #{0} ({1}) presenta errori</value>
   </data>
   <data name="SaveModules_Log_AccessError" xml:space="preserve">
-    <value>Error de acceso: {0}</value>
+    <value>Errore di accesso: {0}</value>
   </data>
   <data name="SaveModules_Log_AllFilesWritten" xml:space="preserve">
-    <value>Todos los archivos escritos en disco.</value>
+    <value>Tutti i file sono stati scritti sul disco.</value>
   </data>
   <data name="SaveModules_Log_Exception" xml:space="preserve">
-    <value>{0} produjo una excepción</value>
+    <value>Si è verificata un'eccezione {0}</value>
   </data>
   <data name="SaveModules_Log_FileError" xml:space="preserve">
-    <value>Error de archivo: {0}</value>
+    <value>Errore di file: {0}</value>
   </data>
   <data name="SaveModules_Log_SaveWasCanceled" xml:space="preserve">
-    <value>Guardar fue cancelado por el usuario.</value>
+    <value>Il salvataggio è stato annullato dall'utente.</value>
   </data>
   <data name="SaveModules_Log_WritingFile" xml:space="preserve">
-    <value>Escritura {0}...</value>
+    <value>Scrittura {0}...</value>
   </data>
   <data name="SaveModules_Options" xml:space="preserve">
-    <value>_Opciones...</value>
+    <value>_Opzioni...</value>
   </data>
   <data name="SaveModules_SaveAll" xml:space="preserve">
-    <value>_Guardar todos</value>
+    <value>_Salva Tutto</value>
   </data>
   <data name="SaveModules_SavedFiles" xml:space="preserve">
-    <value>Archivos que se guardarán:</value>
+    <value>File che verranno salvati:</value>
   </data>
   <data name="SaveModules_Title" xml:space="preserve">
-    <value>Guardar los módulos</value>
+    <value>Salvare i moduli</value>
   </data>
   <data name="SaveModule_AddPECheckSum" xml:space="preserve">
-    <value>_Add PE Checksum</value>
+    <value>_Aggiungi PE Checksum</value>
   </data>
   <data name="SaveModule_CreateHeapEvenIfEmpty" xml:space="preserve">
-    <value>Crear montón incluso si está vacío</value>
+    <value>Creare Heap anche se vuoto</value>
   </data>
   <data name="SaveModule_Filename" xml:space="preserve">
-    <value>_Nombre de archivo</value>
+    <value>_Filename</value>
   </data>
   <data name="SaveModule_KeepOldMaxStack" xml:space="preserve">
-    <value>_Manten el valor máximo de la pila anterior</value>
+    <value>_Mantieni vecchio valore MaxStack </value>
   </data>
   <data name="SaveModule_KeepOldMaxStack_ToolTip" xml:space="preserve">
-    <value>Utilice el valor de MaxStack desde el método en lugar de calcular un nuevo valor de MaxStack. Si los métodos son todavía ofuscados</value>
+    <value>Utilizzare il valore di MaxStack del metodo invece di calcolare un nuovo valore di MaxStack. Necessario se i metodi sono ancora offuscati</value>
   </data>
   <data name="SaveModule_MetadataHeaderOptions" xml:space="preserve">
-    <value>Opciones del encabezado de metadatos</value>
+    <value>Opzioni intestazione di metadati</value>
   </data>
   <data name="SaveModule_MiscOptions" xml:space="preserve">
-    <value>Opciones Misc</value>
+    <value>Opzioni varie</value>
   </data>
   <data name="SaveModule_ModuleType" xml:space="preserve">
-    <value>_Tipo de Módulo</value>
+    <value>Modulo _Type</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
-    <value>Conservar datos de la firma de E_xtra</value>
+    <value>Conservare i dati aggiuntivi della firma</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData_ToolTip" xml:space="preserve">
-    <value>Preservar cualquier dato adicional después de las firmas. Algunos ofuscadores ponen los datos allí</value>
+    <value>Conservare tutti i dati aggiuntivi dopo la firma. Alcuni offuscatori mettono dati qui</value>
   </data>
   <data name="SaveModule_PreserveHeapOffsets" xml:space="preserve">
-    <value>Preservar montón Offsers</value>
+    <value>Preservare gli offset Heap</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>P_reserve todos los Tokens de MD</value>
+    <value>P_reservare tutti i token di MD</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
-    <value>Si el archivo es todavía ofuscado, RIDs deba preservarse</value>
+    <value>Se il file è ancora offuscato, potrebbe essere necessario conservare RID </value>
   </data>
   <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
-    <value>Compartido cuerpo de Método</value>
+    <value>Corpo Metdodo Condiviso</value>
   </data>
   <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
-    <value>Métodos de.NET que tienen el mismo código exacto compartir cuerpos de método. El archivo de salida será un poco menor</value>
+    <value>I metodi .NET che hanno lo stesso esatto codice condivideranno il corpo di un metodo. Il file di output sarà un pò più piccolo</value>
   </data>
   <data name="SaveModule_Title" xml:space="preserve">
-    <value>Guarde módulo</value>
+    <value>Salva Modulo</value>
   </data>
   <data name="SaveModule_UseMixedMode" xml:space="preserve">
-    <value>Módulo de modo _Mixto</value>
+    <value>Modulo in _Mixed-Mode</value>
   </data>
   <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
-    <value>Debe comprobarse si es un módulo de modo mixto (por ejemplo. C + +. NET). Más opciones se vuelve a inicializar cuando se hace clic en esta casilla de verificación</value>
+    <value>Dovrebbe essere controllato se è un modulo misto (es. C++ .NET). La maggior parte delle opzioni verrà re-inizializzato quando viene fatto clic su questa casella di controllo</value>
   </data>
   <data name="SaveModule_WritePdb" xml:space="preserve">
-    <value>Guardar archivo _PDB</value>
+    <value>Salvare File _PDB</value>
   </data>
   <data name="SaveResourceCommand" xml:space="preserve">
-    <value>Guardar {0}</value>
+    <value>Salva {0}</value>
   </data>
   <data name="SaveResourcesCommand" xml:space="preserve">
-    <value>Guardar {0} recursos</value>
+    <value>Salva risorse {0}</value>
   </data>
   <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>Guardar {0} recursos, usar subdirectorios</value>
+    <value>Salva risorse {0}, utilizzando una directory</value>
   </data>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
@@ -1928,16 +1929,16 @@
     <value>Ctrl+R</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
-    <value>Ctrl+Mayús+C</value>
+    <value>Ctrl+Shift+C</value>
   </data>
   <data name="ShortCutKeyCtrlShiftD" xml:space="preserve">
-    <value>Ctrl+Mayús+D</value>
+    <value>Ctrl+Shift+D</value>
   </data>
   <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
-    <value>Ctrl+Mayús+S</value>
+    <value>Ctrl+Shift+S</value>
   </data>
   <data name="ShortCutKeyCtrlShiftT" xml:space="preserve">
-    <value>Ctrl+Mayús+T</value>
+    <value>Ctrl+Shift+T</value>
   </data>
   <data name="ShortCutKeyCtrlY" xml:space="preserve">
     <value>Ctrl+Y</value>
@@ -1946,7 +1947,7 @@
     <value>Ctrl+Z</value>
   </data>
   <data name="ShortCutKeyI" xml:space="preserve">
-    <value>l</value>
+    <value>I</value>
   </data>
   <data name="ShortCutKeyN" xml:space="preserve">
     <value>N</value>
@@ -1961,157 +1962,157 @@
     <value>S</value>
   </data>
   <data name="ShortCutKeyShiftAltR" xml:space="preserve">
-    <value>Mayús + Alt + R</value>
+    <value>Shift+Alt+R</value>
   </data>
   <data name="ShowDataInHexEditorCommand" xml:space="preserve">
-    <value>Mostrar datos en el Editor de He_x</value>
+    <value>Visualizza dati nell'editor He_x</value>
   </data>
   <data name="ShowInHexEditorCommand" xml:space="preserve">
-    <value>Mostrar datos en el Editor de He_x</value>
+    <value>Visualizza nell'editor He_x</value>
   </data>
   <data name="ShowInHexEditorCommand2" xml:space="preserve">
-    <value>Mostrar en el Editor hexadecimal</value>
+    <value>Visualizza nell'editor Hex</value>
   </data>
   <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
-    <value>Mostrar el valor inicial en Hex Editor</value>
+    <value>Visualizza il valore iniziale nell'editor Hex</value>
   </data>
   <data name="ShowInstrsInHexEditorCommand" xml:space="preserve">
-    <value>Ver instrucciones en el Editor de He_x</value>
+    <value>Visualizza le istruzioni nell'editor He_x</value>
   </data>
   <data name="ShowMethodBodyInHexEditorCommand" xml:space="preserve">
-    <value>Mostrar el cuerpo del método en Hex Editor</value>
+    <value>Visualizza il corpo del metodo nell'editor Hex</value>
   </data>
   <data name="SimplifyAllInstructionsCommand" xml:space="preserve">
-    <value>_Simplificar todas las instrucciones</value>
+    <value>_Semplifica tutte le istruzioni</value>
   </data>
   <data name="SortMetadataTableCommand" xml:space="preserve">
-    <value>_Ordenar la Tabla</value>
+    <value>Ordina Tabella</value>
   </data>
   <data name="SortSelectionCommand" xml:space="preserve">
-    <value>O_rdenar la Selección</value>
+    <value>Ordina selezione</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
-    <value>Opciones de montón de tablas</value>
+    <value>Opzioni della tabella Heap</value>
   </data>
   <data name="Token" xml:space="preserve">
     <value>Token</value>
   </data>
   <data name="TooManyBytesSelected" xml:space="preserve">
-    <value>Usted ha seleccionado muchos bytes de datos</value>
+    <value>Hai selezionato troppi byte di dati</value>
   </data>
   <data name="Type_ClassSize" xml:space="preserve">
-    <value>Tamaño de la C_lase</value>
+    <value>Dimensioni C_lass</value>
   </data>
   <data name="Type_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nome</value>
   </data>
   <data name="Type_Namespace" xml:space="preserve">
-    <value>Espacio de N_ombre</value>
+    <value>N_amespace</value>
   </data>
   <data name="Type_PackingSize" xml:space="preserve">
-    <value>Empaquetando Ta_maño</value>
+    <value>Dimensione Impacchettamento</value>
   </data>
   <data name="UndoCommand" xml:space="preserve">
-    <value>Undo</value>
+    <value>Ripristina</value>
   </data>
   <data name="UndoToolBarToolTip" xml:space="preserve">
-    <value>Undo</value>
+    <value>Ripristina</value>
   </data>
   <data name="UnsavedFile" xml:space="preserve">
-    <value>Hay un archivo no guardado.</value>
+    <value>C'è un file non salvato.</value>
   </data>
   <data name="UnsavedFiles" xml:space="preserve">
-    <value>Hay {0} sin guardar los archivos.</value>
+    <value>Ci sono file {0} non salvati.</value>
   </data>
   <data name="XBytes" xml:space="preserve">
-    <value>{0} bytes</value>
+    <value>{0} byte</value>
   </data>
   <data name="AddAfterSelInstr_ToolTip" xml:space="preserve">
-    <value>Agregue la instrucción después de la instrucción seleccionada</value>
+    <value>Aggiungere l'istruzione dopo l'istruzione selezionata</value>
   </data>
   <data name="InstructionsTab" xml:space="preserve">
-    <value>Instrucciones</value>
+    <value>Istruzioni</value>
   </data>
   <data name="Module_NewGuid1" xml:space="preserve">
-    <value>_Nuevo</value>
+    <value>_Nuovo</value>
   </data>
   <data name="Module_NewGuid2" xml:space="preserve">
-    <value>N_uevo</value>
+    <value>N_uovo</value>
   </data>
   <data name="Module_NewGuid3" xml:space="preserve">
-    <value>Nu_evo</value>
+    <value>Nu_ovo</value>
   </data>
   <data name="NetModule_NewGuid1" xml:space="preserve">
-    <value>Nu_evo</value>
+    <value>Nu_ovo</value>
   </data>
   <data name="Pick_Assembly" xml:space="preserve">
-    <value>Escoger un ensamblado</value>
+    <value>Scegliere un Assembly</value>
   </data>
   <data name="Pick_EntryPoint" xml:space="preserve">
-    <value>Escoger un punto de entrada</value>
+    <value>Scegliere un punto di ingresso</value>
   </data>
   <data name="Pick_Field" xml:space="preserve">
-    <value>Elegir un campo</value>
+    <value>Scegliere un campo</value>
   </data>
   <data name="Pick_GenericType" xml:space="preserve">
-    <value>Escoger un tipo genérico</value>
+    <value>Scegliere un tipo generico</value>
   </data>
   <data name="Pick_Method" xml:space="preserve">
-    <value>Elegir un método</value>
+    <value>Scegliere un metodo</value>
   </data>
   <data name="Pick_Module" xml:space="preserve">
-    <value>Elegir un módulo</value>
+    <value>Scegliere un modulo</value>
   </data>
   <data name="ExceptionHandler_Column_CatchType" xml:space="preserve">
-    <value>Captura Tipo</value>
+    <value>CatchType</value>
   </data>
   <data name="ExceptionHandler_Column_FilterStart" xml:space="preserve">
-    <value>Filtro Inicio</value>
+    <value>FilterStart</value>
   </data>
   <data name="ExceptionHandler_Column_HandlerEnd" xml:space="preserve">
-    <value>Terminar ell manejador</value>
+    <value>HandlerEnd</value>
   </data>
   <data name="ExceptionHandler_Column_HandlerStart" xml:space="preserve">
-    <value>Iniciar el manejador</value>
+    <value>HandlerStart</value>
   </data>
   <data name="ExceptionHandler_Column_TryEnd" xml:space="preserve">
-    <value>Terminar clausula Try</value>
+    <value>TryEnd</value>
   </data>
   <data name="ExceptionHandler_Column_TryStart" xml:space="preserve">
-    <value>Iniciar clausula Try</value>
+    <value>TryStart</value>
   </data>
   <data name="ExceptionHandler_Column_Type" xml:space="preserve">
     <value>Tipo</value>
   </data>
   <data name="Flags" xml:space="preserve">
-    <value>Banderas</value>
+    <value>Flags</value>
   </data>
   <data name="MethodBody_Column_OpCode" xml:space="preserve">
-    <value>Código de operación</value>
+    <value>OpCode</value>
   </data>
   <data name="Column_Metadata_RID" xml:space="preserve">
-    <value>Eliminar</value>
+    <value>RID</value>
   </data>
   <data name="EditResource_Visibility" xml:space="preserve">
-    <value>_Visibilidad</value>
+    <value>_Visibilità</value>
   </data>
   <data name="GP_GenericParamConstraints" xml:space="preserve">
-    <value>Restricciones</value>
+    <value>Constraints</value>
   </data>
   <data name="Metadata_Sorted_Rows" xml:space="preserve">
-    <value>Ordenados</value>
+    <value>Ordinato</value>
   </data>
   <data name="Metadata_Valid_Rows" xml:space="preserve">
-    <value>Válido</value>
+    <value>Valido</value>
   </data>
   <data name="Method_Access" xml:space="preserve">
-    <value>Acceso</value>
+    <value>Accesso</value>
   </data>
   <data name="Method_CodeType" xml:space="preserve">
-    <value>Tipo de Cód_igo</value>
+    <value>Cod_eType</value>
   </data>
   <data name="Method_Flags_Abstract" xml:space="preserve">
-    <value>_Abstracto</value>
+    <value>_Abstract</value>
   </data>
   <data name="Method_Flags_CheckAccessOnOverride" xml:space="preserve">
     <value>Chec_kAccessOnOverride</value>
@@ -2126,16 +2127,16 @@
     <value>Re_quireSecObject</value>
   </data>
   <data name="Method_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_T Nombre especial</value>
+    <value>R_TSpecialName</value>
   </data>
   <data name="Method_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre especial</value>
+    <value>S_pecialName</value>
   </data>
   <data name="Method_Flags_Static" xml:space="preserve">
-    <value>Estático</value>
+    <value>_Static</value>
   </data>
   <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
-    <value>E_xportación no administrada</value>
+    <value>UnmanagedE_xport</value>
   </data>
   <data name="Method_Flags_Virtual" xml:space="preserve">
     <value>_Virtual</value>
@@ -2174,7 +2175,7 @@
     <value>Cor20</value>
   </data>
   <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
-    <value>Versión _Runtime</value>
+    <value>Versione _Runtime</value>
   </data>
   <data name="Module_EncBaseId" xml:space="preserve">
     <value>Enc_BaseId</value>
@@ -2183,28 +2184,28 @@
     <value>EncI_d</value>
   </data>
   <data name="Module_Flags_Bit32Preferred" xml:space="preserve">
-    <value>_Preferidos 32 bits</value>
+    <value>Preferito a 32-bit</value>
   </data>
   <data name="Module_Flags_Bit32Required" xml:space="preserve">
-    <value>Requeridos _32 bits</value>
+    <value>Richiesto a 32-bit</value>
   </data>
   <data name="Module_Flags_ILLibrary" xml:space="preserve">
     <value>_Libreria IL</value>
   </data>
   <data name="Module_Flags_ILOnly" xml:space="preserve">
-    <value>_IL sólo</value>
+    <value>Solo _IL</value>
   </data>
   <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_Una firma nombre fuerte</value>
+    <value>_Strong Name Signed</value>
   </data>
   <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>Datos de depuración de la pista</value>
+    <value>_Track Debug Data</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
-    <value>_Encabezamiento de las versión</value>
+    <value>Versione _Header</value>
   </data>
   <data name="Module_Metadata_VersionString" xml:space="preserve">
-    <value>Cadena de la _Versión</value>
+    <value>_VersionString</value>
   </data>
   <data name="Module_Mvid" xml:space="preserve">
     <value>_Mvid</value>
@@ -2213,241 +2214,241 @@
     <value>PE</value>
   </data>
   <data name="Module_PE_Machine" xml:space="preserve">
-    <value>_Máquina</value>
+    <value>_Machine</value>
   </data>
   <data name="NetModule_Mvid" xml:space="preserve">
     <value>_Mvid</value>
   </data>
   <data name="PE_Header_Characteristics" xml:space="preserve">
-    <value>Características</value>
+    <value>Caratteristiche</value>
   </data>
   <data name="PE_Header_DllCharacteristics" xml:space="preserve">
-    <value>Carasterísticas de la Dll</value>
+    <value>Caratteristiche Dll</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
-    <value>Nombre espacial _RTS</value>
+    <value>_RTSpecialName</value>
   </data>
   <data name="Property_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre _Especial</value>
+    <value>_SpecialName</value>
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
-    <value>Punto de _Entry</value>
+    <value>Punto di ingresso</value>
   </data>
   <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
-    <value>_Preferidos 32 bits</value>
+    <value>Preferito a 32-bit</value>
   </data>
   <data name="SaveModule_Cor20_Flags_Bit32Required" xml:space="preserve">
-    <value>Requeridos _32 bits</value>
+    <value>Richiesto a 32-bit</value>
   </data>
   <data name="SaveModule_Cor20_Flags_ILLibrary" xml:space="preserve">
     <value>_Libreria IL</value>
   </data>
   <data name="SaveModule_Cor20_Flags_ILOnly" xml:space="preserve">
-    <value>_IL sólo</value>
+    <value>Solo _IL</value>
   </data>
   <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_Una firma nombre fuerte</value>
+    <value>_Strong Name Signed</value>
   </data>
   <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>Datos de depuración de la pista</value>
+    <value>_Track Debug Data</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
-    <value>_Mayor Versión RT</value>
+    <value>_Major RT Ver</value>
   </data>
   <data name="SaveModule_Cor20_MinorRuntimeVersion" xml:space="preserve">
-    <value>Versíón RT Meno_r RT</value>
+    <value>Mino_r RT Ver</value>
   </data>
   <data name="SaveModule_Metadata_MajorVersion" xml:space="preserve">
-    <value>Versión _Principal</value>
+    <value>_MajorVersion</value>
   </data>
   <data name="SaveModule_Metadata_MinorVersion" xml:space="preserve">
-    <value>Ve_rsión Menor</value>
+    <value>MinorVe_rsion</value>
   </data>
   <data name="SaveModule_Metadata_Reserved1" xml:space="preserve">
-    <value>Reservado_1</value>
+    <value>Reserved_1</value>
   </data>
   <data name="SaveModule_Metadata_Reserved2" xml:space="preserve">
-    <value>Reservado_2</value>
+    <value>Reserved_2</value>
   </data>
   <data name="SaveModule_Metadata_Signature" xml:space="preserve">
-    <value>_Firma</value>
+    <value>_Signature</value>
   </data>
   <data name="SaveModule_Metadata_StorageFlags" xml:space="preserve">
-    <value>Banderas de A_lmacenamiento</value>
+    <value>S_torageFlags</value>
   </data>
   <data name="SaveModule_Metadata_VersionString" xml:space="preserve">
-    <value>Cadena de la _Versión</value>
+    <value>_VersionString</value>
   </data>
   <data name="SaveModule_PE_Machine" xml:space="preserve">
-    <value>_Máquina</value>
+    <value>_Machine</value>
   </data>
   <data name="SaveModule_PE_Subsystem" xml:space="preserve">
-    <value>_Subsystema</value>
+    <value>_Subsystem</value>
   </data>
   <data name="SaveModule_TablesHeap_ExtraData" xml:space="preserve">
-    <value>_Datos extra</value>
+    <value>Extra_Data</value>
   </data>
   <data name="SaveModule_TablesHeap_HasDeletedRows" xml:space="preserve">
-    <value>_Has eliminado filas</value>
+    <value>_HasDeletedRows</value>
   </data>
   <data name="SaveModule_TablesHeap_MajorVersion" xml:space="preserve">
-    <value>Version P_rincipal</value>
+    <value>M_ajorVersion</value>
   </data>
   <data name="SaveModule_TablesHeap_MinorVersion" xml:space="preserve">
-    <value>Reserv_ado1</value>
+    <value>Reserv_ed1</value>
   </data>
   <data name="SaveModule_TablesHeap_Reserved1" xml:space="preserve">
-    <value>Reserv_ado1</value>
+    <value>Reserv_ed1</value>
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
-    <value>_Use #-mesa</value>
+    <value>_Use #- Table</value>
   </data>
   <data name="Type_Flags_Abstract" xml:space="preserve">
-    <value>A_bstracto</value>
+    <value>A_bstract</value>
   </data>
   <data name="Type_Flags_Accessibility" xml:space="preserve">
-    <value>Accessibilida_d</value>
+    <value>Accessibilit_y</value>
   </data>
   <data name="Type_Flags_BeforeFieldInit" xml:space="preserve">
-    <value>Antes de inicia_r campo</value>
+    <value>BeforeFieldIni_t</value>
   </data>
   <data name="Type_Flags_Custom" xml:space="preserve">
-    <value>Perso_nalizado</value>
+    <value>Custo_m</value>
   </data>
   <data name="Type_Flags_Forwarder" xml:space="preserve">
-    <value>_Promotor</value>
+    <value>_Forwarder</value>
   </data>
   <data name="Type_Flags_Import" xml:space="preserve">
-    <value>_Importar</value>
+    <value>_Import</value>
   </data>
   <data name="Type_Flags_Kind" xml:space="preserve">
-    <value>_Tipo</value>
+    <value>_Kind</value>
   </data>
   <data name="Type_Flags_Layout" xml:space="preserve">
-    <value>Dise_ño</value>
+    <value>Layo_ut</value>
   </data>
   <data name="Type_Flags_RTSpecialName" xml:space="preserve">
-    <value>Nombre espacial _RTS</value>
+    <value>_RTSpecialName</value>
   </data>
   <data name="Type_Flags_Sealed" xml:space="preserve">
-    <value>Sellad_o</value>
+    <value>Seale_d</value>
   </data>
   <data name="Type_Flags_Semantics" xml:space="preserve">
-    <value>_Semánticas</value>
+    <value>_Semantics</value>
   </data>
   <data name="Type_Flags_Serializable" xml:space="preserve">
     <value>S_erializable</value>
   </data>
   <data name="Type_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre especial</value>
+    <value>S_pecialName</value>
   </data>
   <data name="Type_Flags_String" xml:space="preserve">
-    <value>Caden_a</value>
+    <value>Strin_g</value>
   </data>
   <data name="Type_Flags_Visibility" xml:space="preserve">
-    <value>Visibilida_d</value>
+    <value>Visibilit_y</value>
   </data>
   <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
-    <value>Tiempo de ejecución de _Windows</value>
+    <value>_WindowsRuntime</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
     <value>Campo</value>
   </data>
   <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
-    <value>Propiedad</value>
+    <value>Proprietà</value>
   </data>
   <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
-    <value>--Corregir los errores por las opciones de edición.</value>
+    <value>-- Correggi gli errori modificando le opzioni.</value>
   </data>
   <data name="GoToMetaDataTableRow_RID" xml:space="preserve">
-    <value>_Eliminar</value>
+    <value>_RID</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Editor de ensamblado</value>
+    <value>Editor di Assembly</value>
   </data>
   <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
-    <value>Ctrl+Mayús+E</value>
+    <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Editar método ({0})...</value>
+    <value>Modifica Metodo ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
-    <value>Editar código</value>
+    <value>Modifica Codice</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Descompilando...</value>
+    <value>Decompilazione...</value>
   </data>
   <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
-    <value>Código</value>
+    <value>Codice</value>
   </data>
   <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
-    <value>Descripción</value>
+    <value>Descrizione</value>
   </data>
   <data name="CompileDiagnostics_Header_File" xml:space="preserve">
-    <value>Archivo</value>
+    <value>File</value>
   </data>
   <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
-    <value>Línea</value>
+    <value>Linea</value>
   </data>
   <data name="Button_Compile" xml:space="preserve">
-    <value>Compilar</value>
+    <value>Compilazione</value>
   </data>
   <data name="StatusError" xml:space="preserve">
-    <value>Error</value>
+    <value>Errore</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
-    <value>Oculto</value>
+    <value>Nascosta</value>
   </data>
   <data name="StatusInfo" xml:space="preserve">
-    <value>Información</value>
+    <value>Info</value>
   </data>
   <data name="StatusWarning" xml:space="preserve">
-    <value>Advertencia</value>
+    <value>Avviso</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Agregar la referencia de ensamblado</value>
+    <value>Aggiungi riferimento all'Assembly</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Agregar la referencia de ensamblado(GAC)</value>
+    <value>Aggiungi riferimento all'Assembly (GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>No se pudieron agregar las referencias de ensamblaje.</value>
+    <value>Impossibile aggiungere i riferimenti agli assembly.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
-    <value>Editar el código del método</value>
+    <value>Modificare il codice del metodo</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>Agregar o quitar 'estática' o 'Compartida' de métodos editados no es compatible: {0}</value>
+    <value>Aggiungere o rimuovere 'static' o 'Shared' dai metodi non supportati: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>No podía encontrar el método editado. Asegúrese de no agregar o quitar 'estática' o 'Compartida' o cambiar los tipos de parámetro, tipo o nombre del método: {0}</value>
+    <value>Impossibile trovare il metodo modificato. Assicurarsi di non aggiungere o rimuovere "static" o "Shared" oppure modificare i tipi di parametri, il tipo di ritorno o il nome del metodo: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
-    <value>No se puede encontrar el campo: {0}</value>
+    <value>Impossibile trovare il campo: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
-    <value>No podía encontrar método: {0}</value>
+    <value>Impossibile trovare il metodo: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
-    <value>No se puede encontrar el tipo de método editado: {0}</value>
+    <value>Impossibile trovare il tipo del metodo modificato: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
-    <value>No podía encontrar tipo: {0}</value>
+    <value>Impossibile trovare il tipo: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
-    <value>Cambio de nombre de eventos virtuales no es compatible: {0}</value>
+    <value>Ridenominazione di eventi virtuali non è supportata: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
-    <value>Cambiar el nombre de métodos virtuales no es compatible: {0}</value>
+    <value>Ridenominazione dei metodi virtuali non è supportata: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
-    <value>Cambio de nombre de propiedades virtuales no es compatible: {0}</value>
+    <value>Ridenominazione di proprietà virtuali non è supportata: {0}</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>Buscar</value>
+    <value>Trovare</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Búsqueda incremental</value>
+    <value>Ricerca incrementale</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
@@ -2456,43 +2457,43 @@
     <value>F6</value>
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Annulla</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>Editar atributos de ensamblado</value>
+    <value>Modificare gli attributi dell'Assembly</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
-    <value>Agregar clase</value>
+    <value>Aggiungere Classe</value>
   </data>
   <data name="MergeWithAssemblyCommand" xml:space="preserve">
-    <value>Combinar con el ensamblado...</value>
+    <value>Fondere con Assembly...</value>
   </data>
   <data name="MergeWithAssemblyCommand2" xml:space="preserve">
-    <value>Combinar con el ensamblado</value>
+    <value>Fondere con Assembly</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>Editar atributos de ensamblado ({0})...</value>
+    <value>Modifica degli attributi dell'Assembly ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
-    <value>Agregar clase ({0})...</value>
+    <value>Aggiungere Classe ({0})...</value>
   </data>
   <data name="EditCodeEditClass" xml:space="preserve">
-    <value>Editar la clase</value>
+    <value>Modificare Classe</value>
   </data>
   <data name="EditCodeEditClass2" xml:space="preserve">
-    <value>Editar clases ({0})...</value>
+    <value>Modificare Classe ({0})...</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
-    <value>No se puede encontrar el tipo de edición: {0}</value>
+    <value>Impossibile trovare il tipo modificato: {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>Cierre de módulos antiguos en la memoria</value>
+    <value>Chiudere i vecchi moduli In memoria</value>
   </data>
   <data name="CloseAllMissingFilesCommand" xml:space="preserve">
-    <value>Cierre todos los archivos que faltan</value>
+    <value>Chiudere tutti i file mancanti</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
-    <value>Severidad</value>
+    <value>Livello di gravità</value>
   </data>
   <data name="ParamDef_Flags_Lcid" xml:space="preserve">
     <value>Lcid</value>
@@ -2501,27 +2502,27 @@
     <value>Retval</value>
   </data>
   <data name="AddDocumentsToolTip" xml:space="preserve">
-    <value>Añadir código fuente</value>
+    <value>Aggiungi codice sorgente</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>Ctrl+O</value>
   </data>
   <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
-    <value>Ctrl+Mayús+A</value>
+    <value>Ctrl+Shift+A</value>
   </data>
   <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
-    <value>Ctrl+Mayús+O</value>
+    <value>Ctrl+Shift+O</value>
   </data>
   <data name="EditCodeAddClassMembers" xml:space="preserve">
-    <value>Añadir miembros a la clase</value>
+    <value>Aggiungi membri della classe</value>
   </data>
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
-    <value>Agregar miembros a la clase ({0})...</value>
+    <value>Aggiungi i membri della Classe ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
-    <value>Copiar secuencias de metadatos desconocida</value>
+    <value>Copia Streams Metadata sconosciu_ti</value>
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
-    <value>Ejecuta NGEN.exe si este ensamblado está instalado en el GAC</value>
+    <value>Esegui NGEN.exe se questo assembly è installato nella Global Assembly Cache</value>
   </data>
 </root>

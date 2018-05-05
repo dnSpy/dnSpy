@@ -123,6 +123,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

@@ -127,10 +127,10 @@
     <value>Constantes</value>
   </data>
   <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
-    <value>Expresión ha sido evaluado y no tiene ningún valor</value>
+    <value>La expresión ha sido evaluado y no tiene ningún valor</value>
   </data>
   <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
-    <value>Miembros compartidos</value>
+    <value>Miembros estáticos</value>
   </data>
   <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
     <value>Vista dinámica</value>

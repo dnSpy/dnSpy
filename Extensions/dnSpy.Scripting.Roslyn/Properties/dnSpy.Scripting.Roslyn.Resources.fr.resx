@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CompilationAdditionalError" xml:space="preserve">
+    <value>+ erreur {0} supplémentaires</value>
+  </data>
+  <data name="CompilationAdditionalErrors" xml:space="preserve">
+    <value>+ erreurs {0} supplémentaires</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="CutCommand" xml:space="preserve">
+    <value>Couper</value>
+  </data>
+  <data name="HelpAltDown" xml:space="preserve">
+    <value>Afficher la prochaine commande</value>
+  </data>
+  <data name="HelpAltUp" xml:space="preserve">
+    <value>Afficher la commande précédente</value>
+  </data>
+  <data name="HelpCtrlA" xml:space="preserve">
+    <value>Sélectionnez le texte d’entrée. Appuyez de nouveau pour sélectionner tout le texte</value>
+  </data>
+  <data name="HelpCtrlAltDown" xml:space="preserve">
+    <value>Voir la prochaine commande correspondant à la saisie de texte actuel</value>
+  </data>
+  <data name="HelpCtrlAltUp" xml:space="preserve">
+    <value>Voir la commande précédente correspondant à la saisie de texte actuel</value>
+  </data>
+  <data name="HelpCtrlEnter" xml:space="preserve">
+    <value>Exécuter la commande</value>
+  </data>
+  <data name="HelpEnter" xml:space="preserve">
+    <value>Exécuter la commande</value>
+  </data>
+  <data name="HelpEscape" xml:space="preserve">
+    <value>Effacer l'entrée actuelle</value>
+  </data>
+  <data name="HelpKeyboardShortcuts" xml:space="preserve">
+    <value>Raccourcis clavier:</value>
+  </data>
+  <data name="HelpReplCommands" xml:space="preserve">
+    <value>Commandes REPL :</value>
+  </data>
+  <data name="HelpScriptDirectives" xml:space="preserve">
+    <value>Directives de script :</value>
+  </data>
+  <data name="HelpScriptDirective_load" xml:space="preserve">
+    <value>Charger et exécuter un script, #load "myscript.csx"</value>
+  </data>
+  <data name="HelpScriptDirective_r" xml:space="preserve">
+    <value>Ajouter une référence, une assembly ou un chemin d’accès vers un fichier sur le disque ou un chemin relatif à dnSpy ou le répertoire de l’utilisateur, #r « monfichier.dll »</value>
+  </data>
+  <data name="HelpShiftEnter" xml:space="preserve">
+    <value>Insérer une nouvelle ligne</value>
+  </data>
+  <data name="HelpString" xml:space="preserve">
+    <value>Tapez "#help" pour plus d’informations.</value>
+  </data>
+  <data name="LoadingContextFromFile" xml:space="preserve">
+    <value>Chargement du contexte depuis '{0}'.</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Coller</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Écriture de scripts</value>
+  </data>
+  <data name="ResettingExecutionEngine" xml:space="preserve">
+    <value>Réinitialisation du moteur d’exécution.</value>
+  </data>
+  <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
+    <value>Effacer l'écran</value>
+  </data>
+  <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
+    <value>Historique Suivant</value>
+  </data>
+  <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
+    <value>Historique Précédent</value>
+  </data>
+  <data name="Script_ToolTip_Reset" xml:space="preserve">
+    <value>Restaurer</value>
+  </data>
+  <data name="ShortCutKeyAltDown" xml:space="preserve">
+    <value>Alt+flèche bas</value>
+  </data>
+  <data name="ShortCutKeyAltUp" xml:space="preserve">
+    <value>Alt+flèche haut</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
+    <value>Ctrl+Alt+flèche bas</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
+    <value>Ctrl+Alt+N</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
+    <value>Ctrl+Alt+flèche haut</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl+Entrée</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>Ctrl+X</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Entrée</value>
+  </data>
+  <data name="ShortCutKeyEscape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
+    <value>Maj+Entrée</value>
+  </data>
+  <data name="Window_CSharp" xml:space="preserve">
+    <value>C# Interactif</value>
+  </data>
+  <data name="HelpClearDescription" xml:space="preserve">
+    <value>Effacer le contenu de l’éditeur de script</value>
+  </data>
+  <data name="HelpHelpDescription" xml:space="preserve">
+    <value>Afficher l’aide</value>
+  </data>
+  <data name="HelpResetDescription" xml:space="preserve">
+    <value>Réinitialiser l’environnement d’exécution</value>
+  </data>
+  <data name="ClearScreenCommand" xml:space="preserve">
+    <value>Effacer l'écran</value>
+  </data>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="Window_VisualBasic" xml:space="preserve">
+    <value>Visual Basic Interactive</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
+    <value>Ctrl+Alt+I</value>
+  </data>
+  <data name="CopyCodeCommand" xml:space="preserve">
+    <value>Copier le Code</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Maj+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Afficher les numéros de ligne</value>
+  </data>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>Retour à la ligne</value>
+  </data>
+  <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
+    <value>Activer/désactiver le retour à la ligne automatique</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Tous les fichiers</value>
+  </data>
+  <data name="Repl_Save_ToolTip" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Fichiers texte</value>
+  </data>
+  <data name="SaveCodeCommand" xml:space="preserve">
+    <value>Enregistrer le Code...</value>
+  </data>
+  <data name="SaveCommand" xml:space="preserve">
+    <value>Enregistrer...</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
+    <value>Ctrl+Maj+S</value>
+  </data>
+  <data name="CSharpScriptFiles" xml:space="preserve">
+    <value>Fichiers de Script C#</value>
+  </data>
+  <data name="VisualBasicScriptFiles" xml:space="preserve">
+    <value>Fichiers de Script Visual Basic</value>
+  </data>
+</root>
