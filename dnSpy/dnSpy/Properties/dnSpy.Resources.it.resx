@@ -271,13 +271,13 @@
     <value>Doppio Click</value>
   </data>
   <data name="GoToTokenCommand" xml:space="preserve">
-    <value>Go to M_D Token...</value>
+    <value>Vai all'M_D Token...</value>
   </data>
   <data name="GoToTokenKey" xml:space="preserve">
     <value>Ctrl+D</value>
   </data>
   <data name="GoToToken_CouldNotResolve" xml:space="preserve">
-    <value>Could not resolve member reference token: 0x{0:X8}</value>
+    <value>Non è possibile risolvere il token di riferimento del membro: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_InvalidToken" xml:space="preserve">
     <value>Token di metadati non valido: 0x{0:X8}</value>
@@ -349,7 +349,7 @@
     <value>Sposta il gruppo di schede prima del precedente gruppo</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
-    <value>Move to Ne_xt Tab Group</value>
+    <value>Sposta al succ_essivo gruppo di schede</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
     <value>_Sposta</value>
@@ -361,7 +361,7 @@
     <value>_Su</value>
   </data>
   <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Move to P_revious Tab Group</value>
+    <value>Sposta al P_recedente gruppo di schede</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
     <value>Spostarsi indietro</value>
@@ -388,10 +388,10 @@
     <value>_Apri...</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>_Open Containing Folder</value>
+    <value>_Apri cartella che contiene il file</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
-    <value>Open from _GAC...</value>
+    <value>Apri da file _GAC...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
     <value>Creato da:</value>
@@ -484,7 +484,7 @@
     <value>Deserializza tipi nelle risorse (non sicuro)</value>
   </data>
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Any assembly could get loaded and executed with data from the resources.</value>
+    <value>Qualsiasi assembly potrebbe essere caricato ed eseguito con i dati dalle risorse.</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Usa memoria I/O mappata</value>
@@ -574,7 +574,7 @@
     <value>Chiudi</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Decompile a member's enclosing class instead of the class member</value>
+    <value>Decompilare la classe interna anziché l'elemento della classe</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
     <value>Evidenziare i riferimenti</value>
@@ -583,7 +583,7 @@
     <value>Ripristinare le schede all'avvio</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Show assembly public key token</value>
+    <value>Mostra l'assembly del token della chiave pubblica</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
     <value>Visualizza la versione dell'assembly</value>
@@ -763,13 +763,13 @@
     <value>Ctrl+Shift+O</value>
   </data>
   <data name="SortAsmsCommand" xml:space="preserve">
-    <value>Sor_t Assemblies</value>
+    <value>Ordin_agli assemblies</value>
   </data>
   <data name="AskReadSettings" xml:space="preserve">
     <value>Vuoi caricare le impostazioni salvate?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>Export to Pro_ject...</value>
+    <value>Esporta nel pro_getto...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
     <value>Esporta progetto</value>
@@ -877,7 +877,7 @@
     <value>_Nuovo</value>
   </data>
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
-    <value>_Project GUID</value>
+    <value>GUID del _progetto</value>
   </data>
   <data name="ShortCutKeyCtrlShiftP" xml:space="preserve">
     <value>Ctrl+Maiusc+P</value>
@@ -943,7 +943,7 @@
     <value>Minimizza</value>
   </data>
   <data name="Window_Restore" xml:space="preserve">
-    <value>Restore Down</value>
+    <value>Ripristina dimensione finestra non massimizzata</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
     <value>Immagine di sfondo</value>
@@ -1180,7 +1180,7 @@
     <value>Altezza della riga</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Show procedure line separators</value>
+    <value>Visualizza procedura separatori di riga</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
     <value>Margini</value>
@@ -1189,7 +1189,7 @@
     <value>Non aggiungere linee extra</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Mouse wheel zoom</value>
+    <value>Zoom con rotellina del mouse</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
     <value>Evidenziare i riferimenti</value>
@@ -1198,10 +1198,10 @@
     <value>Selezione margine</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Show indent guides</value>
+    <value>Mostra guide di rientro</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Show _vertical scroll bar</value>
+    <value>Mostra barra di scorrimento _verticale</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
     <value>Zoom</value>
@@ -1219,7 +1219,7 @@
     <value>REPL</value>
   </data>
   <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
-    <value>Dragged items filter</value>
+    <value>Filtra gli elementi trascinati</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
     <value>Tutti</value>
@@ -1231,8 +1231,7 @@
     <value>Solo .NET</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>All files have been filtered out.
-Filter can be changed in Assembly Explorer options.</value>
+    <value>Tutti i file sono stati filtrati. Il filtro può essere cambiato nelle opzioni dell'Explorer di Assembly.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
     <value>Linee tratteggiate</value>
@@ -1274,7 +1273,7 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Nessuno</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Show column line separators</value>
+    <value>Mostra colonna separatori di riga</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
     <value>O_ffset</value>
@@ -1319,7 +1318,7 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Cancella bytes selezionati</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Copy C# Array</value>
+    <value>Copia la matrice C#</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
     <value>Copia Offset</value>
@@ -1337,10 +1336,10 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Copia la stringa UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Copy Visual Basic Array</value>
+    <value>Copia la matrice Visual Basic</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fill Selection with Byte...</value>
+    <value>Riempi la selezione con Byte...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Byte</value>
@@ -1376,52 +1375,52 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>_8 Bytes</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Fit to Width</value>
+    <value>_Adatta alla larghezza</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Base Offset</value>
+    <value>Offset _base</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
     <value>Questo valore viene aggiunto per avviare l'offset prima che venga visualizzato sullo schermo</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>B_ytes per Line</value>
+    <value>B_ytes per linea</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_End Offset</value>
+    <value>Offset _finale</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Offset Bi_t Size</value>
+    <value>Offset dimensione bi_t</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Sho_w ASCII</value>
+    <value>Mostr_a ASCII</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>S_how Offset</value>
+    <value>M_ostra offset</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Show _Values</value>
+    <value>Mostra _valori</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Start Offset</value>
+    <value>Offset _iniziale</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Local Hex Editor Settings</value>
+    <value>Impostazioni editor esadecimale locale</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Use _Relative Offsets</value>
+    <value>Utilizza offset _relativi</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
     <value>Tutti gli offset sono relativi all'offset iniziale</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>Value _Format</value>
+    <value>_Formato del valore</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>_Incolla</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>Paste (#Blob Data)</value>
+    <value>Incolla (dati #Blob)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
     <value>Incolla speciale</value>
@@ -1617,13 +1616,13 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Ctrl+M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>Invalid offset or metadata token</value>
+    <value>Offset o token di metadati non valido</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>Method Body</value>
+    <value>Corpo del metodo</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Metadata Token</value>
+    <value>Token di Metadata</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_Indice</value>
@@ -1734,31 +1733,31 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Segna_libri</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>_Bookmark Window</value>
+    <value>_Metti segnalibro nella finestra</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
     <value>Esporta tutti i segnalibri corrispondenti al criterio di ricerca corrente</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Move the caret to the selected bookmark.</value>
+    <value>Sposta il cursore al segnalibro selezionato.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark in the current file.</value>
+    <value>Sposta il cursore al successivo segnalibro nel file corrente.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark with the same label.</value>
+    <value>Sposta il cursore al successivo segnalibro con la stessa etichetta.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark.</value>
+    <value>Sposta il cursore al successivo segnalibro.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark in the current file.</value>
+    <value>Sposta il cursore al precedente segnalibro nel file corrente.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark with the same label.</value>
+    <value>Sposta il cursore al precedente segnalibro con la stessa etichetta.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark.</value>
+    <value>Sposta il cursore al precedente segnalibro.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
     <value>Importa segnalibri da un file</value>
@@ -1776,7 +1775,7 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Cerca un segnalibro</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Toggle a bookmark on the current line.</value>
+    <value>Attiva/disattiva un segnalibro nella riga corrente.</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
     <value>Abilita o disabilita tutti i segnalibri corrispondenti ai criteri di ricerca corrente</value>
@@ -1827,16 +1826,16 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Show Declaring Types</value>
+    <value>Visualizza la dichiarazione di tipi</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>Visualizza le parole chiave di tipo intrinseco</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
     <value>Mostra nomi dei _Moduli</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
-    <value>Show Namespaces</value>
+    <value>Visualizza gli spazi dei nomi</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>Visualizza i nomi del _Parametro</value>
@@ -1845,7 +1844,7 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Visualizza i Tipi di parametro</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>Show Return Types</value>
+    <value>Mostra i tipi di return</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
     <value>Mostra Tokens</value>
@@ -1863,22 +1862,22 @@ Filter can be changed in Assembly Explorer options.</value>
     <value>Disabilita _tutti i segnalibri</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Enable _All Bookmarks</value>
+    <value>Abilita _tutti i segnalibri</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
     <value>Abilita segnalibro</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Next _Bookmark</value>
+    <value>_Segnalibro successivo</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>N_ext Bookmark In Document</value>
+    <value>S_uccessivo segnalibro nel documento</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Next Bookmark With Same Label</value>
+    <value>Segnalibro successivo con la stessa etichetta</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Previous Bookmark</value>
+    <value>_Segnalibro precedente</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
     <value>Segnalibro p_recedente nel documento</value>

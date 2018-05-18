@@ -1113,7 +1113,7 @@
     <value>Integrar con explorador de Windows</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Aviso (necesitada reiniciar)</value>
+    <value>Aviso (necesita reiniciar)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
     <value>Con un solo clic expande los nodos</value>

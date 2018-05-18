@@ -364,10 +364,10 @@
     <value>_Vai al modulo</value>
   </data>
   <data name="HexDisplayCommand" xml:space="preserve">
-    <value>_Hexadecimal Display</value>
+    <value>Display _esadecimale</value>
   </data>
   <data name="LocalsAddWatchCommand" xml:space="preserve">
-    <value>Add _Watch</value>
+    <value>Aggiungi _Watch</value>
   </data>
   <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
     <value>_Collassa nodo figlio</value>
@@ -427,7 +427,7 @@
     <value>&lt;nessun indirizzo&gt;</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>_Open Containing Folder</value>
+    <value>_Apri cartella che contiene il file</value>
   </data>
   <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
     <value>Apri modulo dalla memoria</value>
@@ -445,19 +445,19 @@
     <value>Ripristinare le impostazioni Predefinite</value>
   </data>
   <data name="RunToCursorCommand" xml:space="preserve">
-    <value>Ru_n To Cursor</value>
+    <value>Esecuzio_ne fino al cursore</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>Salva Modulo...</value>
   </data>
   <data name="SaveModulesCommand" xml:space="preserve">
-    <value>Save {0} Modules...</value>
+    <value>Salva {0} Moduli...</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>Seleziona_Tutti</value>
   </data>
   <data name="SetNextStatementCommand" xml:space="preserve">
-    <value>Set Ne_xt Statement</value>
+    <value>Imposta istruzione succ_essiva</value>
   </data>
   <data name="ShortCutAltAsterisk" xml:space="preserve">
     <value>Alt+Num *</value>
@@ -562,13 +562,13 @@
     <value>Mostra nomi dei _Moduli</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
-    <value>Show Namespaces</value>
+    <value>Visualizza gli spazi dei nomi</value>
   </data>
   <data name="ShowNextStatementCommand" xml:space="preserve">
-    <value>S_how Next Statement</value>
+    <value>M_ostra istruzione successiva</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Show Declaring Types</value>
+    <value>Visualizza la dichiarazione di tipi</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
     <value>Visualizza i nomi del _Parametro</value>
@@ -580,13 +580,13 @@
     <value>Visualizza i _Valori del parametro</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>Show Return Types</value>
+    <value>Mostra i tipi di return</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
     <value>Mostra Tokens</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>Visualizza le parole chiave di tipo intrinseco</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
     <value>Avvia sen_za debug</value>
@@ -610,13 +610,13 @@
     <value>Interrompere il d_ebug</value>
   </data>
   <data name="SwitchToFrameCommand" xml:space="preserve">
-    <value>_Switch To Frame</value>
+    <value>_Passa al Frame</value>
   </data>
   <data name="SwitchToThreadCommand" xml:space="preserve">
-    <value>_Switch To Thread</value>
+    <value>_Passa al thread</value>
   </data>
   <data name="ThawThreadCommand" xml:space="preserve">
-    <value>_Thaw</value>
+    <value>_Scongela</value>
   </data>
   <data name="ThreadsCommand" xml:space="preserve">
     <value>T_hreads</value>
@@ -628,13 +628,13 @@
     <value>Thread terminato</value>
   </data>
   <data name="ThreadType_ThreadPool" xml:space="preserve">
-    <value>Thread Pool</value>
+    <value>Thread pool</value>
   </data>
   <data name="ThreadType_Unknown" xml:space="preserve">
     <value>Thread sconosciuto</value>
   </data>
   <data name="ThreadType_Worker" xml:space="preserve">
-    <value>Worker Thread</value>
+    <value>Worker thread</value>
   </data>
   <data name="Thread_LocationNotAvailable" xml:space="preserve">
     <value>&lt; non disponibile &gt;</value>
@@ -658,7 +658,7 @@
     <value>Normale</value>
   </data>
   <data name="ToggleBreakpointCommand" xml:space="preserve">
-    <value>To_ggle Breakpoint</value>
+    <value>Attiva/disattiva breakpoint</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
     <value>Interrompi tutto</value>
@@ -751,22 +751,22 @@
     <value>_Messaggi di eccezione</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>Module _Load Messages</value>
+    <value>Modulo di _caricamento messaggi</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>Module _Unload Messages</value>
+    <value>Modulo di _scaricamento messaggi</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
     <value>_Processa i messaggi di uscita</value>
   </data>
   <data name="ShowProgramOutputMessages" xml:space="preserve">
-    <value>Program _Output</value>
+    <value>_Output del programma</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>_Step Filtering Messages</value>
+    <value>_Avanza nella fintrazione dei messaggi</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>_Thread Exit Messages</value>
+    <value>_Processa i messaggi di uscita</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
     <value>Messaggi MDA</value>
@@ -796,7 +796,7 @@
     <value>Scaricato '{0} '.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;no exception message&gt;"</value>
+    <value>"&lt;nessun messaggio di eccezione&gt;"</value>
   </data>
   <data name="GlyphToolTip_Location" xml:space="preserve">
     <value>Ubicazione</value>
@@ -964,7 +964,7 @@
     <value>Rimuovi breakpoint</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
-    <value>Edit AppDomain Name</value>
+    <value>Edita il nome AppDomain</value>
   </data>
   <data name="EditModuleNameCommand" xml:space="preserve">
     <value>Modifica il nome del modulo</value>
@@ -1024,7 +1024,7 @@
     <value>Procedi oltre</value>
   </data>
   <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
-    <value>Steps only the current process</value>
+    <value>Fai avanzare solo il processo corrente</value>
   </data>
   <data name="BreakProcessCommand" xml:space="preserve">
     <value>_Intrerrompi processo</value>
@@ -1198,7 +1198,7 @@
     <value>Il conteggio delle occorrenze è più grande o uguale a {0}</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
-    <value>Log message '{0}', to Output window</value>
+    <value>Messaggio di log {0}', alla finestra di Output</value>
   </data>
   <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
     <value>Disabilita breakpoint</value>
@@ -1312,7 +1312,7 @@
     <value>Inserire _Tracepoint</value>
   </data>
   <data name="UnwindToThisFrameCommand" xml:space="preserve">
-    <value>_Unwind To This Frame</value>
+    <value>_Togli subroutine a questo Frame</value>
   </data>
   <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
     <value>Questa è l'istruzione successiva che verrà eseguita.</value>
@@ -1354,7 +1354,7 @@
     <value>Cancella tutto</value>
   </data>
   <data name="DeleteWatchCommand" xml:space="preserve">
-    <value>_Delete Watch</value>
+    <value>_Cancella watch</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>_Incolla</value>
@@ -1480,7 +1480,7 @@
     <value>Membri pubblici</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>Show raw locals</value>
+    <value>Mostra variabili locali non elaborate</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
     <value>Abilita debug asincrono</value>
