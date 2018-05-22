@@ -71,7 +71,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			this.evalMethodName = evalMethodName;
 		}
 
-		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(ulong), typeof(string), typeof(ulong), typeof(string) };
+		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(int), typeof(string), typeof(ulong), typeof(string) };
 		public EvalDelegate CreateDelegate() {
 			var type = module.Find(evalClassName, isReflectionName: true);
 			Debug.Assert(type != null);
