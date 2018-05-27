@@ -121,10 +121,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool IgnoreModifiers => (options & SigComparerOptions.IgnoreModifiers) != 0;
 		bool MscorlibIsNotSpecial => (options & SigComparerOptions.MscorlibIsNotSpecial) != 0;
 
-		public ImportSigComparer(ImportSigComparerOptions importOptions, SigComparerOptions options)
-			: this(importOptions, options, null) {
-		}
-
 		public ImportSigComparer(ImportSigComparerOptions importOptions, SigComparerOptions options, ModuleDef sourceModule) {
 			recursionCounter = new RecursionCounter();
 			this.options = options;

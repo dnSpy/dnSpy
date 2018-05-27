@@ -58,7 +58,6 @@ namespace dnSpy.Roslyn.Compiler {
 		protected override string TextViewRole => PredefinedDsTextViewRoles.RoslynVisualBasicCodeEditor;
 		protected override string ContentType => ContentTypes.VisualBasicRoslyn;
 		protected override string LanguageName => LanguageNames.VisualBasic;
-		protected override CompilationOptions CompilationOptions => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary, embedVbCoreRuntime: embedVbCoreRuntime);
 		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest);
 		public override string FileExtension => ".vb";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
@@ -68,6 +67,9 @@ namespace dnSpy.Roslyn.Compiler {
 		public VisualBasicLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
 			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
+
+		protected override CompilationOptions CreateCompilationOptions(bool allowUnsafe) =>
+			new VisualBasicCompilationOptions(DefaultOutputKind, embedVbCoreRuntime: embedVbCoreRuntime);
 
 		public override IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule) {
 			var frameworkKind = FrameworkDetector.GetFrameworkKind(editedModule);

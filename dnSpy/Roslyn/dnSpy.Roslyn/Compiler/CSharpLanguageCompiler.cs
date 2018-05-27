@@ -58,7 +58,6 @@ namespace dnSpy.Roslyn.Compiler {
 		protected override string TextViewRole => PredefinedDsTextViewRoles.RoslynCSharpCodeEditor;
 		protected override string ContentType => ContentTypes.CSharpRoslyn;
 		protected override string LanguageName => LanguageNames.CSharp;
-		protected override CompilationOptions CompilationOptions => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: LanguageVersion.Latest);
 		public override string FileExtension => ".cs";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
@@ -66,6 +65,9 @@ namespace dnSpy.Roslyn.Compiler {
 		public CSharpLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
 			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
 		}
+
+		protected override CompilationOptions CreateCompilationOptions(bool allowUnsafe) =>
+			new CSharpCompilationOptions(DefaultOutputKind, allowUnsafe: allowUnsafe);
 
 		public override IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule) => Array.Empty<string>();
 

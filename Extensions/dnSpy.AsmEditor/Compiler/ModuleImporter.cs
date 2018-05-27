@@ -130,8 +130,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		const SigComparerOptions SIG_COMPARER_OPTIONS = SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
 
 		public ModuleImporter(ModuleDef targetModule, IAssemblyResolver assemblyResolver) {
-			this.targetModule = targetModule;
-			this.assemblyResolver = assemblyResolver;
+			this.targetModule = targetModule ?? throw new ArgumentNullException(nameof(targetModule));
+			this.assemblyResolver = assemblyResolver ?? throw new ArgumentNullException(nameof(assemblyResolver));
 			diagnostics = new List<CompilerDiagnostic>();
 			newNonNestedImportedTypes = new List<NewImportedType>();
 			nonNestedMergedImportedTypes = new List<MergedImportedType>();
@@ -182,7 +182,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				break;
 			}
 
-			return ModuleDefMD.Load(rawGeneratedModule, opts);
+			var module = ModuleDefMD.Load(rawGeneratedModule, opts);
+			if (module.Assembly == null && targetModule.Assembly is AssemblyDef targetAsm) {
+				var asm = new AssemblyDefUser(targetAsm.Name, targetAsm.Version, targetAsm.PublicKey, targetAsm.Culture);
+				asm.Attributes = targetAsm.Attributes;
+				asm.HashAlgorithm = targetAsm.HashAlgorithm;
+				asm.Modules.Add(module);
+			}
+			return module;
 		}
 
 		static void RemoveDuplicates(List<CustomAttribute> attributes, string fullName) {
