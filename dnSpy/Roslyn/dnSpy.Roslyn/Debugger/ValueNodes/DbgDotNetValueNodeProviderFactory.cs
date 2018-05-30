@@ -144,7 +144,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					return false;
 
 				// Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView supports COM objects
-				if (type.CanCastTo(type.AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject)))
+				if (type.CanCastTo(type.AppDomain.GetWellKnownType(DmdWellKnownType.System___ComObject, isOptional: true)))
 					return true;
 
 				// Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView supports IDynamicMetaObjectProvider.

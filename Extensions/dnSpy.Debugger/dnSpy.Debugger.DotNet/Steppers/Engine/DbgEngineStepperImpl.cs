@@ -211,12 +211,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			// Step out until we reach user code. We could set a BP too, but it's only supported by the CorDebug code.
 			// We don't mark any code as user code so we can't just step once and let the CLR stepper do the work.
 
-			for (int i = 0; ; i++) {
-				const int MAX_STEP_OUT = 50;
-				Debug.Assert(i < MAX_STEP_OUT);
-				if (i >= MAX_STEP_OUT)
-					break;
-
+			const int MAX_STEP_OUT = 50;
+			for (int i = 0; i < MAX_STEP_OUT; i++) {
 				DbgStackFrame[] frames = null;
 				try {
 					frames = thread.GetFrames(2);

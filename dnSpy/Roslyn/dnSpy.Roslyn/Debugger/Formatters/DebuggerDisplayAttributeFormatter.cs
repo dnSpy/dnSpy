@@ -180,7 +180,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 			// We have special support for formatting KeyValuePair<K, V>, so ignore all DebuggerDisplayAttributes.
 			// (Only Unity and older Mono versions have a DebuggerDisplayAttribute on it)
-			bool forceNoAttr = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2);
+			bool forceNoAttr = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2, isOptional: true);
 			string nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
 			if (!forceNoAttr && (object)ddaType != null) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);

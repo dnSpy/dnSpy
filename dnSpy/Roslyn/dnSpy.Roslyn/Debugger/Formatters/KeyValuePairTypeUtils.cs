@@ -29,7 +29,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			if (!type.IsConstructedGenericType)
 				return false;
 			type = type.GetGenericTypeDefinition();
-			return type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2);
+			return type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2, isOptional: true);
 		}
 
 		public static (DmdFieldInfo keyField, DmdFieldInfo valueField) TryGetFields(DmdType type) {
