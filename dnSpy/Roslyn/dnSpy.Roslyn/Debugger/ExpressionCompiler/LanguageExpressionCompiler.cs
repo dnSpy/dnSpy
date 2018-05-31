@@ -511,14 +511,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		protected static DbgDotNetText CreateErrorName(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, expression));
 
 		protected DbgDotNetText GetExpressionText(string languageName, CompilationOptions compilationOptions, ParseOptions parseOptions, string expression, string documentText, int documentTextExpressionOffset, IEnumerable<MetadataReference> metadataReferences, CancellationToken cancellationToken) {
-			//TODO: Once this API is public (see https://github.com/dotnet/roslyn/pull/24468 ), uncomment the following code and remove the reflection code below:
-			// compilationOptions = compilationOptions.WithMetadataImportOptions(MetadataImportOptions.All);
-			Debug.Assert(typeof(CompilationOptions).GetMethod("WithMetadataImportOptions", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)?.IsPublic != true, "WithMetadataImportOptions is public, update the code");
-			var method = typeof(CompilationOptions).
-				GetProperty("MetadataImportOptions", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)?.
-				GetSetMethod(nonPublic: true);
-			Debug.Assert((object)method != null);
-			method?.Invoke(compilationOptions, new object[] { (byte)2 });
+			compilationOptions = compilationOptions.WithMetadataImportOptions(MetadataImportOptions.All);
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "P", Guid.NewGuid().ToString(), languageName,
 					compilationOptions: compilationOptions,

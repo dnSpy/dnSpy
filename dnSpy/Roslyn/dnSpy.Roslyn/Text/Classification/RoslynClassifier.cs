@@ -262,6 +262,9 @@ the_switch:
 			case SymbolKind.Preprocessing:
 				break;
 
+			case SymbolKind.Discard:
+				break;//TODO:
+
 			default:
 				Debug.WriteLine($"Unknown SymbolKind: {symbol.Kind}");
 				break;
@@ -274,6 +277,27 @@ the_switch:
 			object classificationType;
 			SymbolResult symRes;
 			switch (cspan.ClassificationType) {
+			case ClassificationTypeNames.FieldName:
+			case ClassificationTypeNames.PropertyName:
+			case ClassificationTypeNames.EventName:
+			case ClassificationTypeNames.MethodName:
+				return GetClassificationType2(cspan);
+
+			case ClassificationTypeNames.ConstantName:
+				return roslynClassificationTypes.LiteralField;
+
+			case ClassificationTypeNames.EnumMemberName:
+				return roslynClassificationTypes.EnumField;
+
+			case ClassificationTypeNames.LocalName:
+				return roslynClassificationTypes.Local;
+
+			case ClassificationTypeNames.ParameterName:
+				return roslynClassificationTypes.Parameter;
+
+			case ClassificationTypeNames.ExtensionMethodName:
+				return roslynClassificationTypes.ExtensionMethod;
+
 			case ClassificationTypeNames.ClassName:
 				symRes = GetSymbolResult(cspan.TextSpan);
 				if (symRes.Color != null)
