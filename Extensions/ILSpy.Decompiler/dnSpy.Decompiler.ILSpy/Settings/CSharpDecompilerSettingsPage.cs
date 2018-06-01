@@ -31,7 +31,6 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		readonly DecompilerSettings decompilerSettings;
 
 		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
-		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;
 		public DecompilerSettings Settings => decompilerSettings;
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
 		public override Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
