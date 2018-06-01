@@ -33,7 +33,7 @@ using dnSpy.Roslyn.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace dnSpy.Roslyn.Compiler {
+namespace dnSpy.Roslyn.Compiler.CSharp {
 	[Export(typeof(ILanguageCompilerProvider))]
 	sealed class CSharpLanguageCompilerProvider : RoslynLanguageCompilerProvider {
 		public override ImageReference? Icon => DsImages.CSFileNode;

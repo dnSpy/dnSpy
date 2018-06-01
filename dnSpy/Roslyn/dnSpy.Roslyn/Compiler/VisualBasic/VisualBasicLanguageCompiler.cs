@@ -33,9 +33,9 @@ using dnSpy.Roslyn.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.VisualBasic;
 
-namespace dnSpy.Roslyn.Compiler {
+namespace dnSpy.Roslyn.Compiler.VisualBasic {
 	[Export(typeof(ILanguageCompilerProvider))]
-	sealed class VisualBasicLanguageCompilerCreator : RoslynLanguageCompilerProvider {
+	sealed class VisualBasicLanguageCompilerProvider : RoslynLanguageCompilerProvider {
 		public override ImageReference? Icon => DsImages.VBFileNode;
 		public override Guid Language => DecompilerConstants.LANGUAGE_VISUALBASIC;
 		public override ILanguageCompiler Create(CompilationKind kind) => new VisualBasicLanguageCompiler(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
@@ -46,7 +46,7 @@ namespace dnSpy.Roslyn.Compiler {
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 
 		[ImportingConstructor]
-		VisualBasicLanguageCompilerCreator(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+		VisualBasicLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
 			this.roslynDocumentChangedService = roslynDocumentChangedService;

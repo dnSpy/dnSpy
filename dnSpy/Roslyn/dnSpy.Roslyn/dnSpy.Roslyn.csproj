@@ -43,13 +43,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Compiler\CodeEditorOptionsDefinitions.cs" />
-    <Compile Include="Compiler\CSharpLanguageCompiler.cs" />
+    <Compile Include="Compiler\CSharp\CSharpLanguageCompiler.cs" />
     <Compile Include="Compiler\DiagnosticExtensions.cs" />
     <Compile Include="Compiler\Extensions.cs" />
     <Compile Include="Compiler\FrameworkDetector.cs" />
     <Compile Include="Compiler\RoslynCodeDocument.cs" />
     <Compile Include="Compiler\RoslynLanguageCompiler.cs" />
-    <Compile Include="Compiler\VisualBasicLanguageCompiler.cs" />
+    <Compile Include="Compiler\VisualBasic\VisualBasicLanguageCompiler.cs" />
     <Compile Include="Debugger\AliasConstants.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharp\CSharpExpressionCompiler.cs" />
     <Compile Include="Debugger\ExpressionCompiler\CSharp\GeneratedNames.cs" />
