@@ -113,7 +113,8 @@ namespace dnSpy.Roslyn.Compiler {
 			}
 		}
 
-		protected abstract CompilationOptions CreateCompilationOptions(bool allowUnsafe);
+		protected abstract CompilationOptions CreateCompilationOptions();
+		protected abstract CompilationOptions CreateCompilationOptionsNoAttributes(CompilationOptions compilationOptions);
 
 		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
@@ -124,8 +125,7 @@ namespace dnSpy.Roslyn.Compiler {
 			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
 			var refs = projectInfo.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
 
-			var compilationOptions = CreateCompilationOptions(allowUnsafe: true)
-				.WithOptimizationLevel(OptimizationLevel.Release)
+			var compilationOptions = CreateCompilationOptions()
 				.WithPlatform(GetPlatform(projectInfo.Platform))
 				.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
 			if (projectInfo.PublicKey != null) {
@@ -235,10 +235,13 @@ namespace dnSpy.Roslyn.Compiler {
 			// We allow unsafe code but the compiler tries to add extra attributes to the assembly. Sometimes
 			// the corlib doesn't have the required members and the compiler fails to compile the code.
 			// Let's try again but without unsafe code.
-			var compilation2 = compilation.WithOptions(CreateCompilationOptions(allowUnsafe: false));
-			var result2 = Compile(compilation2, cancellationToken);
-			if (result2.Success)
-				return result2;
+			var noAttrOptions = CreateCompilationOptionsNoAttributes(compilation.Options);
+			if (noAttrOptions != compilation.Options) {
+				var compilation2 = compilation.WithOptions(noAttrOptions);
+				var result2 = Compile(compilation2, cancellationToken);
+				if (result2.Success)
+					return result2;
+			}
 
 			return result;
 		}

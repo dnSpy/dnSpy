@@ -38,15 +38,17 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 	sealed class CSharpLanguageCompilerProvider : RoslynLanguageCompilerProvider {
 		public override ImageReference? Icon => DsImages.CSFileNode;
 		public override Guid Language => DecompilerConstants.LANGUAGE_CSHARP;
-		public override ILanguageCompiler Create(CompilationKind kind) => new CSharpLanguageCompiler(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
+		public override ILanguageCompiler Create(CompilationKind kind) => new CSharpLanguageCompiler(kind, csharpCompilerSettings, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
 
+		readonly CSharpCompilerSettings csharpCompilerSettings;
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 
 		[ImportingConstructor]
-		CSharpLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+		CSharpLanguageCompilerProvider(CSharpCompilerSettings csharpCompilerSettings, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+			this.csharpCompilerSettings = csharpCompilerSettings;
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
@@ -58,16 +60,33 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 		protected override string TextViewRole => PredefinedDsTextViewRoles.RoslynCSharpCodeEditor;
 		protected override string ContentType => ContentTypes.CSharpRoslyn;
 		protected override string LanguageName => LanguageNames.CSharp;
-		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: LanguageVersion.Latest);
+		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: LanguageVersion.Latest, preprocessorSymbols: GetPreprocessorSymbols());
 		public override string FileExtension => ".cs";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
 
-		public CSharpLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
-			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
+		readonly CSharpCompilerSettings csharpCompilerSettings;
+
+		public CSharpLanguageCompiler(CompilationKind kind, CSharpCompilerSettings csharpCompilerSettings, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
+			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) =>
+			this.csharpCompilerSettings = csharpCompilerSettings ?? throw new ArgumentNullException(nameof(csharpCompilerSettings));
+
+		IEnumerable<string> GetPreprocessorSymbols() {
+			foreach (var tmp in csharpCompilerSettings.PreprocessorSymbols.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)) {
+				var s = tmp.Trim();
+				if (string.IsNullOrEmpty(s))
+					continue;
+				yield return s;
+			}
 		}
 
-		protected override CompilationOptions CreateCompilationOptions(bool allowUnsafe) =>
-			new CSharpCompilationOptions(DefaultOutputKind, allowUnsafe: allowUnsafe);
+		protected override CompilationOptions CreateCompilationOptions() =>
+			new CSharpCompilationOptions(DefaultOutputKind,
+				optimizationLevel: csharpCompilerSettings.Optimize ? OptimizationLevel.Release : OptimizationLevel.Debug,
+				checkOverflow: csharpCompilerSettings.CheckOverflow,
+				allowUnsafe: csharpCompilerSettings.AllowUnsafe);
+
+		protected override CompilationOptions CreateCompilationOptionsNoAttributes(CompilationOptions compilationOptions) =>
+			((CSharpCompilationOptions)compilationOptions).WithAllowUnsafe(false);
 
 		public override IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule) => Array.Empty<string>();
 

@@ -38,15 +38,17 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 	sealed class VisualBasicLanguageCompilerProvider : RoslynLanguageCompilerProvider {
 		public override ImageReference? Icon => DsImages.VBFileNode;
 		public override Guid Language => DecompilerConstants.LANGUAGE_VISUALBASIC;
-		public override ILanguageCompiler Create(CompilationKind kind) => new VisualBasicLanguageCompiler(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
+		public override ILanguageCompiler Create(CompilationKind kind) => new VisualBasicLanguageCompiler(kind, visualBasicCompilerSettings, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider);
 
+		readonly VisualBasicCompilerSettings visualBasicCompilerSettings;
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly IRoslynDocumentationProviderFactory docFactory;
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 
 		[ImportingConstructor]
-		VisualBasicLanguageCompilerProvider(ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+		VisualBasicLanguageCompilerProvider(VisualBasicCompilerSettings visualBasicCompilerSettings, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+			this.visualBasicCompilerSettings = visualBasicCompilerSettings;
 			this.codeEditorProvider = codeEditorProvider;
 			this.docFactory = docFactory;
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
@@ -58,23 +60,60 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 		protected override string TextViewRole => PredefinedDsTextViewRoles.RoslynVisualBasicCodeEditor;
 		protected override string ContentType => ContentTypes.VisualBasicRoslyn;
 		protected override string LanguageName => LanguageNames.VisualBasic;
-		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest);
+		protected override ParseOptions ParseOptions => new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest, preprocessorSymbols: GetPreprocessorSymbols());
 		public override string FileExtension => ".vb";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
 
+		readonly VisualBasicCompilerSettings visualBasicCompilerSettings;
 		bool embedVbCoreRuntime;
 
-		public VisualBasicLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
-			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) {
+		public VisualBasicLanguageCompiler(CompilationKind kind, VisualBasicCompilerSettings visualBasicCompilerSettings, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider)
+			: base(kind, codeEditorProvider, docFactory, roslynDocumentChangedService, textViewUndoManagerProvider) =>
+			this.visualBasicCompilerSettings = visualBasicCompilerSettings ?? throw new ArgumentNullException(nameof(visualBasicCompilerSettings));
+
+		IEnumerable<KeyValuePair<string, object>> GetPreprocessorSymbols() {
+			foreach (var tmp in visualBasicCompilerSettings.PreprocessorSymbols.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)) {
+				var s = tmp.Trim();
+				if (string.IsNullOrEmpty(s))
+					continue;
+				var index = s.IndexOf('=');
+				if (index >= 0) {
+					var value = s.Substring(index + 1).Trim();
+					s = s.Substring(0, index).Trim();
+					if (string.IsNullOrEmpty(s))
+						continue;
+					if (bool.TryParse(value, out bool valueBoolean))
+						yield return new KeyValuePair<string, object>(s, valueBoolean);
+					else if (int.TryParse(value, out int valueInt32))
+						yield return new KeyValuePair<string, object>(s, valueInt32);
+					else if (double.TryParse(value, out double valueDouble))
+						yield return new KeyValuePair<string, object>(s, valueDouble);
+					else {
+						if (value.Length >= 2 && value[0] == '"' && value[value.Length - 1] == '"')
+							value = value.Substring(1, value.Length - 2);
+						yield return new KeyValuePair<string, object>(s, value);
+					}
+				}
+				else
+					yield return new KeyValuePair<string, object>(s, true);
+			}
 		}
 
-		protected override CompilationOptions CreateCompilationOptions(bool allowUnsafe) =>
-			new VisualBasicCompilationOptions(DefaultOutputKind, embedVbCoreRuntime: embedVbCoreRuntime);
+		protected override CompilationOptions CreateCompilationOptions() =>
+			new VisualBasicCompilationOptions(DefaultOutputKind,
+				optionStrict: visualBasicCompilerSettings.OptionStrict ? OptionStrict.On : OptionStrict.Off,
+				optionInfer: visualBasicCompilerSettings.OptionInfer,
+				optionExplicit: visualBasicCompilerSettings.OptionExplicit,
+				optionCompareText: !visualBasicCompilerSettings.OptionCompareBinary,
+				embedVbCoreRuntime: embedVbCoreRuntime,
+				optimizationLevel: visualBasicCompilerSettings.Optimize ? OptimizationLevel.Release : OptimizationLevel.Debug);
+
+		protected override CompilationOptions CreateCompilationOptionsNoAttributes(CompilationOptions compilationOptions) => compilationOptions;
 
 		public override IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule) {
 			var frameworkKind = FrameworkDetector.GetFrameworkKind(editedModule);
 			// If we're editing mscorlib, embed the types
-			if (editedModule.Assembly.IsCorLib())
+			if (visualBasicCompilerSettings.EmbedVBRuntime || editedModule.Assembly.IsCorLib())
 				frameworkKind = FrameworkKind.Unknown;
 			switch (frameworkKind) {
 			case FrameworkKind.DotNetFramework2:
