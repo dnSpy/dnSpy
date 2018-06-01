@@ -629,6 +629,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compiler.
+        /// </summary>
+        public static string CompilerDlgTabTitle {
+            get {
+                return ResourceManager.GetString("CompilerDlgTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Constant.
         /// </summary>
         public static string ConstantDlg_Constant {

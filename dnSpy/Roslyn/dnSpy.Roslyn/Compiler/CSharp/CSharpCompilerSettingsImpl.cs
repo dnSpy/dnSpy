@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Roslyn.Compiler.CSharp {
-	abstract class CSharpCompilerSettingsBase : CSharpCompilerSettings {
+	class CSharpCompilerSettingsBase : CSharpCompilerSettings {
 		protected virtual void OnModified() { }
 
 		public override string PreprocessorSymbols {
@@ -72,9 +72,31 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 			}
 		}
 		bool allowUnsafe = true;
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public CSharpCompilerSettingsBase Clone() => CopyTo(new CSharpCompilerSettingsBase());
+
+		/// <summary>
+		/// Copies this to <paramref name="other"/> and returns <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Other instance</param>
+		/// <returns></returns>
+		public CSharpCompilerSettingsBase CopyTo(CSharpCompilerSettingsBase other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			other.PreprocessorSymbols = PreprocessorSymbols;
+			other.Optimize = Optimize;
+			other.CheckOverflow = CheckOverflow;
+			other.AllowUnsafe = AllowUnsafe;
+			return other;
+		}
 	}
 
 	[Export(typeof(CSharpCompilerSettings))]
+	[Export(typeof(CSharpCompilerSettingsImpl))]
 	sealed class CSharpCompilerSettingsImpl : CSharpCompilerSettingsBase {
 		static readonly Guid SETTINGS_GUID = new Guid("F1634589-21AD-42DC-A729-E23CBD7072D2");
 

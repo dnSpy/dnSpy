@@ -2531,4 +2531,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Run NGEN.exe if this assembly is installed in the GAC</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compiler</value>
+  </data>
 </root>

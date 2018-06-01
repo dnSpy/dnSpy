@@ -70,6 +70,87 @@ namespace dnSpy.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow unsafe code.
+        /// </summary>
+        public static string CompilerSettings_AllowUnsafe {
+            get {
+                return ResourceManager.GetString("CompilerSettings_AllowUnsafe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check for arithmetic overflow/underflow.
+        /// </summary>
+        public static string CompilerSettings_CheckOverflow {
+            get {
+                return ResourceManager.GetString("CompilerSettings_CheckOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Embed Visual Basic runtime.
+        /// </summary>
+        public static string CompilerSettings_EmbedVBRuntime {
+            get {
+                return ResourceManager.GetString("CompilerSettings_EmbedVBRuntime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optimize code.
+        /// </summary>
+        public static string CompilerSettings_Optimize {
+            get {
+                return ResourceManager.GetString("CompilerSettings_Optimize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option compare: binary.
+        /// </summary>
+        public static string CompilerSettings_OptionCompareBinary {
+            get {
+                return ResourceManager.GetString("CompilerSettings_OptionCompareBinary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option explicit.
+        /// </summary>
+        public static string CompilerSettings_OptionExplicit {
+            get {
+                return ResourceManager.GetString("CompilerSettings_OptionExplicit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option infer.
+        /// </summary>
+        public static string CompilerSettings_OptionInfer {
+            get {
+                return ResourceManager.GetString("CompilerSettings_OptionInfer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option strict.
+        /// </summary>
+        public static string CompilerSettings_OptionStrict {
+            get {
+                return ResourceManager.GetString("CompilerSettings_OptionStrict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conditional compilation symbols.
+        /// </summary>
+        public static string CompilerSettings_PreprocessorSymbols {
+            get {
+                return ResourceManager.GetString("CompilerSettings_PreprocessorSymbols", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         public static string CompletionSet_All {

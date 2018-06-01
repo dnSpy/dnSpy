@@ -68,8 +68,12 @@ namespace dnSpy.Roslyn.Compiler {
 		public abstract string FileExtension { get; }
 		protected abstract string AppearanceCategory { get; }
 
-		protected OutputKind DefaultOutputKind { get; }
+		protected abstract bool SupportsNetModule { get; }
 
+		protected OutputKind DefaultOutputKind => defaultOutputKind ?? throw new InvalidOperationException("This property was called too early");
+		OutputKind? defaultOutputKind;
+
+		readonly CompilationKind kind;
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
 		readonly IRoslynDocumentationProviderFactory docFactory;
@@ -80,17 +84,20 @@ namespace dnSpy.Roslyn.Compiler {
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+			this.kind = kind;
 			this.codeEditorProvider = codeEditorProvider ?? throw new ArgumentNullException(nameof(codeEditorProvider));
 			this.docFactory = docFactory ?? throw new ArgumentNullException(nameof(docFactory));
 			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider ?? throw new ArgumentNullException(nameof(textViewUndoManagerProvider));
-			DefaultOutputKind = GetDefaultOutputKind(kind);
 			documents = new List<RoslynCodeDocument>();
 			projectId = ProjectId.CreateNewId();
 			loadedDocuments = new HashSet<DocumentId>();
 		}
 
-		static OutputKind GetDefaultOutputKind(CompilationKind kind) {
+		OutputKind GetDefaultOutputKind(CompilationKind kind) {
+			if (!SupportsNetModule)
+				return OutputKind.DynamicallyLinkedLibrary;
+
 			switch (kind) {
 			case CompilationKind.EditAssembly:
 				// We can't use netmodule when editing assembly attributes since the compiler won't add an assembly for obvious reasons
@@ -120,6 +127,8 @@ namespace dnSpy.Roslyn.Compiler {
 
 		public void InitializeProject(CompilerProjectInfo projectInfo) {
 			Debug.Assert(workspace == null);
+
+			defaultOutputKind = GetDefaultOutputKind(kind);
 
 			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
 			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;

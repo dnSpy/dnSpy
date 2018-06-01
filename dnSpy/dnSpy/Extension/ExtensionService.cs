@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using dnSpy.Contracts.Extension;
 
@@ -61,17 +62,23 @@ namespace dnSpy.Extension {
 
 		public void LoadExtensions(Collection<ResourceDictionary> mergedDictionaries) {
 			LoadAutoLoaded(AutoLoadedLoadType.BeforeExtensions);
+			// It's not an extension but it needs to show stuff in the options dialog box
+			AddMergedDictionary(mergedDictionaries, typeof(Roslyn.Text.Classification.RoslynClassifier).Assembly.GetName(), "Themes/wpf.styles.templates.xaml");
 			foreach (var m in extensions) {
 				var extension = m.Value;
 				foreach (var rsrc in extension.MergedResourceDictionaries) {
 					var asm = extension.GetType().Assembly.GetName();
-					var uri = new Uri("pack://application:,,,/" + asm.Name + ";v" + asm.Version + ";component/" + rsrc, UriKind.Absolute);
-					mergedDictionaries.Add(new ResourceDictionary { Source = uri });
+					AddMergedDictionary(mergedDictionaries, asm, rsrc);
 				}
 			}
 			LoadAutoLoaded(AutoLoadedLoadType.AfterExtensions);
 			NotifyExtensions(ExtensionEvent.Loaded, null);
 			LoadAutoLoaded(AutoLoadedLoadType.AfterExtensionsLoaded);
+		}
+
+		void AddMergedDictionary(Collection<ResourceDictionary> mergedDictionaries, AssemblyName asm, string rsrc) {
+			var uri = new Uri("pack://application:,,,/" + asm.Name + ";v" + asm.Version + ";component/" + rsrc, UriKind.Absolute);
+			mergedDictionaries.Add(new ResourceDictionary { Source = uri });
 		}
 
 		void LoadAutoLoaded(AutoLoadedLoadType loadType) {

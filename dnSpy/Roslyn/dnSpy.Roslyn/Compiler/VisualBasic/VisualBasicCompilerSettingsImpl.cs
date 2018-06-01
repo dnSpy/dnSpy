@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Roslyn.Compiler.VisualBasic {
-	abstract class VisualBasicCompilerSettingsBase : VisualBasicCompilerSettings {
+	class VisualBasicCompilerSettingsBase : VisualBasicCompilerSettings {
 		protected virtual void OnModified() { }
 
 		public override string PreprocessorSymbols {
@@ -108,9 +108,34 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 			}
 		}
 		bool embedVBRuntime = false;
+
+		/// <summary>
+		/// Clones this instance
+		/// </summary>
+		/// <returns></returns>
+		public VisualBasicCompilerSettingsBase Clone() => CopyTo(new VisualBasicCompilerSettingsBase());
+
+		/// <summary>
+		/// Copies this to <paramref name="other"/> and returns <paramref name="other"/>
+		/// </summary>
+		/// <param name="other">Other instance</param>
+		/// <returns></returns>
+		public VisualBasicCompilerSettingsBase CopyTo(VisualBasicCompilerSettingsBase other) {
+			if (other == null)
+				throw new ArgumentNullException(nameof(other));
+			other.PreprocessorSymbols = PreprocessorSymbols;
+			other.Optimize = Optimize;
+			other.OptionExplicit = OptionExplicit;
+			other.OptionInfer = OptionInfer;
+			other.OptionStrict = OptionStrict;
+			other.OptionCompareBinary = OptionCompareBinary;
+			other.EmbedVBRuntime = EmbedVBRuntime;
+			return other;
+		}
 	}
 
 	[Export(typeof(VisualBasicCompilerSettings))]
+	[Export(typeof(VisualBasicCompilerSettingsImpl))]
 	sealed class VisualBasicCompilerSettingsImpl : VisualBasicCompilerSettingsBase {
 		static readonly Guid SETTINGS_GUID = new Guid("2366A90D-C708-4A10-81AF-7887976BC3FB");
 

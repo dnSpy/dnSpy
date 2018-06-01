@@ -63,6 +63,7 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 		protected override ParseOptions ParseOptions => new CSharpParseOptions(languageVersion: LanguageVersion.Latest, preprocessorSymbols: GetPreprocessorSymbols());
 		public override string FileExtension => ".cs";
 		protected override string AppearanceCategory => AppearanceCategoryConstants.TextEditor;
+		protected override bool SupportsNetModule => true;
 
 		readonly CSharpCompilerSettings csharpCompilerSettings;
 
