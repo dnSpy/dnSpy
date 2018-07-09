@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Bookmarks.Impl {
-	struct BookmarksSerializer {
+	readonly struct BookmarksSerializer {
 		static readonly Guid SETTINGS_GUID = new Guid("EAA1BE38-7A55-44AF-AD93-5B7EE2327EDD");
 
 		readonly ISettingsService settingsService;

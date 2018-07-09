@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,10 +30,8 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		public ITextView TextView { get; }
 
 		public string SearchString {
-			get { return searchString; }
-			set {
-				searchString = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => searchString;
+			set => searchString = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		string searchString;
 

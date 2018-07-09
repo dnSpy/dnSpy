@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,10 +39,10 @@ namespace dnSpy.Hex.Files {
 	sealed class HexFieldFormatterImpl : HexFieldFormatter {
 		readonly HexTextWriter writer;
 		readonly HexFieldFormatterOptions options;
-		/*readonly*/ NumberFormatter arrayIndexFormatter;
-		/*readonly*/ NumberFormatter numberFormatter;
-		/*readonly*/ NumberFormatter numberFormatterShort;
-		/*readonly*/ NumberFormatter tokenFormatter;
+		readonly NumberFormatter arrayIndexFormatter;
+		readonly NumberFormatter numberFormatter;
+		readonly NumberFormatter numberFormatterShort;
+		readonly NumberFormatter tokenFormatter;
 
 		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, NumberFormatter arrayIndexFormatter, NumberFormatter numberFormatter) {
 			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));

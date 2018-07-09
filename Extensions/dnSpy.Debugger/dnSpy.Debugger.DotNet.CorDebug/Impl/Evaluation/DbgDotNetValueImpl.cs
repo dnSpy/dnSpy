@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
@@ -78,50 +77,53 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
-		public override DbgDotNetValue LoadIndirect() {
-			if (!Type.IsByRef)
-				return null;
-			if (IsNullByRef)
-				return new SyntheticNullValue(Type.GetElementType());
+		public override DbgDotNetValueResult LoadIndirect() {
+			if (!Type.IsByRef && !Type.IsPointer)
+				return base.LoadIndirect();
+			if (IsNullByRef || IsNull)
+				return DbgDotNetValueResult.Create(new SyntheticNullValue(Type.GetElementType()));
 			if (engine.CheckCorDebugThread())
 				return Dereference_CorDebug();
 			return engine.InvokeCorDebugThread(() => Dereference_CorDebug());
 		}
 
-		DbgDotNetValue Dereference_CorDebug() {
-			Debug.Assert(Type.IsByRef && !IsNullByRef);
+		DbgDotNetValueResult Dereference_CorDebug() {
+			Debug.Assert((Type.IsByRef && !IsNullByRef) || (Type.IsPointer && !IsNull));
 			engine.VerifyCorDebugThread();
-			var dereferencedValue = TryGetCorValue()?.DereferencedValue;
-			// We sometimes get 0x80131c49 = CORDBG_E_READVIRTUAL_FAILURE
+			int hr = -1;
+			var dereferencedValue = TryGetCorValue()?.GetDereferencedValue(out hr);
+			// We sometimes get 0x80131C49 = CORDBG_E_READVIRTUAL_FAILURE
 			if (dereferencedValue == null)
-				return new SyntheticNullValue(Type.GetElementType());
-			return engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true);
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
+			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_CorDebug(dereferencedValue, Type.AppDomain, tryCreateStrongHandle: true));
 		}
 
-		public override string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
-			if (!Type.IsByRef)
+		public override string StoreIndirect(DbgEvaluationInfo evalInfo, object value) {
+			if (!Type.IsByRef && !Type.IsPointer)
+				return CordbgErrorHelper.InternalError;
+			if (IsNull)
 				return CordbgErrorHelper.InternalError;
 			if (engine.CheckCorDebugThread())
-				return StoreIndirect_CorDebug(context, frame, value, cancellationToken);
-			return engine.InvokeCorDebugThread(() => StoreIndirect_CorDebug(context, frame, value, cancellationToken));
+				return StoreIndirect_CorDebug(evalInfo, value);
+			return engine.InvokeCorDebugThread(() => StoreIndirect_CorDebug(evalInfo, value));
 		}
 
-		string StoreIndirect_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+		string StoreIndirect_CorDebug(DbgEvaluationInfo evalInfo, object value) {
 			engine.VerifyCorDebugThread();
-			cancellationToken.ThrowIfCancellationRequested();
-			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
-			if (!Type.IsByRef)
+			if (!Type.IsByRef && !Type.IsPointer)
 				return CordbgErrorHelper.InternalError;
 			Func<CreateCorValueResult> createTargetValue = () => {
 				var objValue = TryGetCorValue();
 				if (objValue == null)
 					return new CreateCorValueResult(null, -1);
-				Debug.Assert(objValue.ElementType == CorElementType.ByRef);
-				if (objValue.ElementType == CorElementType.ByRef) {
-					var derefencedValue = objValue.DereferencedValue;
+				Debug.Assert(objValue.ElementType == CorElementType.ByRef || objValue.ElementType == CorElementType.Ptr);
+				if (objValue.ElementType == CorElementType.ByRef || objValue.ElementType == CorElementType.Ptr) {
+					var derefencedValue = objValue.GetDereferencedValue(out int hr);
 					if (derefencedValue == null)
-						return new CreateCorValueResult(null, -1);
+						return new CreateCorValueResult(null, hr);
 					if (!derefencedValue.IsReference) {
 						if (derefencedValue.IsGeneric)
 							return new CreateCorValueResult(derefencedValue, 0, canDispose: true);
@@ -133,10 +135,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				else
 					return new CreateCorValueResult(null, -1);
 			};
-			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
+			return engine.StoreValue_CorDebug(evalInfo, ilFrame, createTargetValue, Type.GetElementType(), value);
 		}
 
-		struct ArrayObjectValue : IDisposable {
+		readonly struct ArrayObjectValue : IDisposable {
 			readonly DbgEngineImpl engine;
 			public readonly CorValue Value;
 			readonly bool ownsValue;
@@ -144,7 +146,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				this.engine = engine;
 				Debug.Assert(!value.IsNull);
 				if (value.IsReference) {
-					Value = value.DereferencedValue;
+					Value = value.GetDereferencedValue(out int hr);
 					ownsValue = true;
 				}
 				else {
@@ -238,40 +240,41 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 		}
 
-		public override DbgDotNetValue GetArrayElementAt(uint index) {
+		public override DbgDotNetValueResult GetArrayElementAt(uint index) {
 			if (!Type.IsArray)
-				return null;
+				return base.GetArrayElementAt(index);
 			if (engine.CheckCorDebugThread())
 				return GetArrayElementAt_CorDebug(index);
 			return engine.InvokeCorDebugThread(() => GetArrayElementAt_CorDebug(index));
 		}
 
-		DbgDotNetValue GetArrayElementAt_CorDebug(uint index) {
+		DbgDotNetValueResult GetArrayElementAt_CorDebug(uint index) {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();
 			if (corValue == null || corValue.IsNull)
-				return null;
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			using (var obj = new ArrayObjectValue(engine, corValue)) {
-				var elemValue = obj.Value?.GetElementAtPosition(index, out int hr);
+				int hr = -1;
+				var elemValue = obj.Value?.GetElementAtPosition(index, out hr);
 				if (elemValue == null)
-					return null;
-				return engine.CreateDotNetValue_CorDebug(elemValue, Type.AppDomain, tryCreateStrongHandle: true);
+					return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
+				return DbgDotNetValueResult.Create(engine.CreateDotNetValue_CorDebug(elemValue, Type.AppDomain, tryCreateStrongHandle: true));
 			}
 		}
 
-		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+		public override string SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object value) {
 			if (!Type.IsArray)
-				return base.SetArrayElementAt(context, frame, index, value, cancellationToken);
+				return base.SetArrayElementAt(evalInfo, index, value);
 			if (engine.CheckCorDebugThread())
-				return SetArrayElementAt_CorDebug(context, frame, index, value, cancellationToken);
-			return engine.InvokeCorDebugThread(() => SetArrayElementAt_CorDebug(context, frame, index, value, cancellationToken));
+				return SetArrayElementAt_CorDebug(evalInfo, index, value);
+			return engine.InvokeCorDebugThread(() => SetArrayElementAt_CorDebug(evalInfo, index, value));
 		}
 
-		string SetArrayElementAt_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+		string SetArrayElementAt_CorDebug(DbgEvaluationInfo evalInfo, uint index, object value) {
 			engine.VerifyCorDebugThread();
-			cancellationToken.ThrowIfCancellationRequested();
-			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame))
 				return CordbgErrorHelper.InternalError;
 			Func<CreateCorValueResult> createTargetValue = () => {
 				var corValue = TryGetCorValue();
@@ -284,40 +287,36 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return new CreateCorValueResult(elemValue, hr);
 				}
 			};
-			return engine.StoreValue_CorDebug(context, frame.Thread, ilFrame, createTargetValue, Type.GetElementType(), value, cancellationToken);
+			return engine.StoreValue_CorDebug(evalInfo, ilFrame, createTargetValue, Type.GetElementType(), value);
 		}
 
-		public override DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public override DbgDotNetValueResult? Box(DbgEvaluationInfo evalInfo) {
 			if (engine.CheckCorDebugThread())
-				return Box_CorDebug(context, frame, cancellationToken);
-			return engine.InvokeCorDebugThread(() => Box_CorDebug(context, frame, cancellationToken));
+				return Box_CorDebug(evalInfo);
+			return engine.InvokeCorDebugThread(() => Box_CorDebug(evalInfo));
 		}
 
-		DbgDotNetValue Box_CorDebug(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		DbgDotNetValueResult? Box_CorDebug(DbgEvaluationInfo evalInfo) {
 			engine.VerifyCorDebugThread();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var corValue = TryGetCorValue();
 			if (corValue == null)
-				return null;
-			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame))
-				return null;
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame))
+				return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 			// Even if it's boxed, box the unboxed value. This code path should only be called if
 			// the compiler thinks it's an unboxed value, so we must make a new boxed value.
 			if (corValue.IsReference) {
-				corValue = corValue.DereferencedValue;
+				corValue = corValue.GetDereferencedValue(out int hr);
 				if (corValue == null)
-					return null;
+					return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 			}
 			if (corValue.IsBox) {
-				corValue = corValue.BoxedValue;
+				corValue = corValue.GetBoxedValue(out int hr);
 				if (corValue == null)
-					return null;
+					return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 			}
-			var res = engine.Box_CorDebug(context, frame.Thread, ilFrame.GetCorAppDomain(), corValue, Type, cancellationToken);
-			if (res.IsNormalResult)
-				return res.Value;
-			res.Value?.Dispose();
-			return null;
+			return engine.Box_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), corValue, Type);
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {
@@ -353,12 +352,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (v.IsReference) {
 				if (v.ElementType == CorElementType.Ptr || v.ElementType == CorElementType.FnPtr)
 					return null;
-				v = v.DereferencedValue;
+				v = v.GetDereferencedValue(out int hr);
 				if (v == null)
 					return null;
 			}
 			if (v.IsBox) {
-				v = v.BoxedValue;
+				v = v.GetBoxedValue(out int hr);
 				if (v == null)
 					return null;
 			}

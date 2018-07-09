@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Debugger.DotNet.Mono</RootNamespace>
     <AssemblyName>dnSpy.Debugger.DotNet.Mono.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -27,7 +27,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -105,6 +106,7 @@
     <Compile Include="Impl\NativeMethods.cs" />
     <Compile Include="Impl\NetUtils.cs" />
     <Compile Include="Impl\ObjectConstants.cs" />
+    <Compile Include="Impl\PortableExecutableFileHelpers.cs" />
     <Compile Include="Impl\PortableExecutableHelper.cs" />
     <Compile Include="Impl\ReflectionTypeCreator.cs" />
     <Compile Include="Impl\ThreadMirrorUtils.cs" />
@@ -119,7 +121,8 @@
       <DependentUpon>dnSpy.Debugger.DotNet.Mono.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steppers\DbgEngineStepperImpl.cs" />
+    <Compile Include="Steppers\DbgDotNetEngineStepperImpl.cs" />
+    <Compile Include="Steppers\DbgDotNetStepperBreakpointImpl.cs" />
     <Compile Include="TheExtension.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +179,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
@@ -187,9 +192,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

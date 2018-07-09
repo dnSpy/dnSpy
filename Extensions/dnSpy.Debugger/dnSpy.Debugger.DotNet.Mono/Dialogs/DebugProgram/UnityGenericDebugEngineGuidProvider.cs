@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			try {
 				using (var peImage = new PEImage(filename)) {
 					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
-						return null;
-					if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories.Length <= 14)
 						return null;
 					var dd = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 					if (dd.VirtualAddress != 0 && dd.Size >= 0x48)

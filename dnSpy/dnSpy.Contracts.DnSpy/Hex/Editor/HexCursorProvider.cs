@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Cursor info
 	/// </summary>
-	public struct HexCursorInfo : IEquatable<HexCursorInfo> {
+	public readonly struct HexCursorInfo : IEquatable<HexCursorInfo> {
 		/// <summary>
 		/// Gets the cursor or null
 		/// </summary>

@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using dnSpy.Roslyn.EditorFeatures.Extensions;
 using dnSpy.Roslyn.Internal.SmartIndent;
-using Microsoft.CodeAnalysis.Internal.Log;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
@@ -19,11 +19,7 @@ namespace dnSpy.Roslyn.EditorFeatures.SmartIndent
 
         public SmartIndent(ITextView textView)
         {
-            if (textView == null)
-            {
-                throw new ArgumentNullException(nameof(textView));
-            }
-            _textView = textView;
+            _textView = textView ?? throw new ArgumentNullException(nameof(textView));
         }
 
         public int? GetDesiredIndentation(ITextSnapshotLine line)
@@ -42,7 +38,7 @@ namespace dnSpy.Roslyn.EditorFeatures.SmartIndent
                 throw new ArgumentNullException(@"line");
             }
 
-            using (Logger.LogBlock(FunctionId.SmartIndentation_Start, cancellationToken))
+            //using (Logger.LogBlock(FunctionId.SmartIndentation_Start, cancellationToken))
             {
                 var document = lineToBeIndented.Snapshot.GetOpenDocumentInCurrentContextWithChanges();
                 var syncService = document?.GetLanguageService<ISynchronousIndentationService>();

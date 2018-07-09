@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Hex.HexGroups {
 		public object DefaultValue => Definition.DefaultValue;
 
 		public object Value {
-			get { return theValue; }
+			get => theValue;
 			set {
 				if (!Equals(theValue, value)) {
 					theValue = value;

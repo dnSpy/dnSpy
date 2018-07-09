@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,8 +54,8 @@ namespace dnSpy.Hex.Editor {
 		internal HexColumnPosition CurrentPosition => currentPosition;
 
 		public override bool IsHidden {
-			get { return hexCaretLayer.IsHidden; }
-			set { hexCaretLayer.IsHidden = value; }
+			get => hexCaretLayer.IsHidden;
+			set => hexCaretLayer.IsHidden = value;
 		}
 
 		public override event EventHandler<HexCaretPositionChangedEventArgs> PositionChanged;

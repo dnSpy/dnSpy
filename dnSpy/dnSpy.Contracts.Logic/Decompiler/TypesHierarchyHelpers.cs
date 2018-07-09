@@ -124,7 +124,7 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 		}
 
-		private static bool MatchMethod(MethodDef mCandidate, MethodSig mCandidateSig, MethodDef mMethod) {
+		private static bool MatchMethod(MethodDef mCandidate, MethodBaseSig mCandidateSig, MethodDef mMethod) {
 			if (mCandidate == null || mCandidateSig == null || mMethod == null)
 				return false;
 
@@ -206,7 +206,7 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 		}
 
-		private static bool MatchProperty(PropertyDef mCandidate, MethodSig mCandidateSig, PropertyDef mProperty) {
+		private static bool MatchProperty(PropertyDef mCandidate, MethodBaseSig mCandidateSig, PropertyDef mProperty) {
 			if (mCandidate == null || mCandidateSig == null || mProperty == null)
 				return false;
 			if (mCandidate.Name != mProperty.Name)
@@ -369,7 +369,7 @@ namespace dnSpy.Contracts.Decompiler {
 			return GenericArgumentResolver.Resolve(type, genericArgs, null);
 		}
 
-		private static MethodSig Resolve(MethodBaseSig method, TypeSig typeContext) {
+		private static MethodBaseSig Resolve(MethodBaseSig method, TypeSig typeContext) {
 			var genericArgs = typeContext is GenericInstSig ? ((GenericInstSig)typeContext).GenericArguments : null;
 			return GenericArgumentResolver.Resolve(method, genericArgs, null);
 		}

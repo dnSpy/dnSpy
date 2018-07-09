@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Themes {
 				return (int)(colorType - ColorType.FirstNR);
 			if (ColorType.FirstUI <= colorType && colorType < ColorType.LastUI)
 				return (int)(colorType - ColorType.FirstUI + ColorType.LastNR - ColorType.FirstNR);
-			Debug.Fail(string.Format("Invalid color: {0}", colorType));
+			Debug.Fail($"Invalid color: {colorType}");
 			return 0;
 		}
 
@@ -45,7 +45,7 @@ namespace dnSpy.Themes {
 				return ColorType.FirstNR + (uint)i;
 			if ((int)(ColorType.LastNR - ColorType.FirstNR) <= i && i < (int)((ColorType.LastNR - ColorType.FirstNR) + (ColorType.LastUI - ColorType.FirstUI)))
 				return ColorType.FirstUI + ((uint)i - (ColorType.LastNR - ColorType.FirstNR));
-			Debug.Fail(string.Format("Invalid color index: {0}", i));
+			Debug.Fail($"Invalid color index: {i}");
 			return 0;
 		}
 
@@ -63,8 +63,8 @@ namespace dnSpy.Themes {
 			for (int i = 0; i < colorInfos.Length; i++) {
 				var colorType = ToColorType(i);
 				if (colorInfos[i] == null) {
-					Debug.Fail(string.Format("Missing info: {0}", colorType));
-					throw new Exception(string.Format("Missing info: {0}", colorType));
+					Debug.Fail($"Missing info: {colorType}");
+					throw new Exception($"Missing info: {colorType}");
 				}
 			}
 		}
@@ -349,7 +349,7 @@ namespace dnSpy.Themes {
 				return brush;
 			}
 			catch {
-				Debug.Fail(string.Format("Couldn't convert color '{0}'", color));
+				Debug.Fail($"Couldn't convert color '{color}'");
 				throw;
 			}
 		}
@@ -357,7 +357,7 @@ namespace dnSpy.Themes {
 		static ColorType ToColorType(string name) {
 			if (nameToColorType.TryGetValue(name, out var type))
 				return type;
-			Debug.Fail(string.Format("Invalid color found: {0}", name));
+			Debug.Fail($"Invalid color found: {name}");
 			return ColorType.LastUI;
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Resources {
 		ResourceTypeCode resourceTypeCode;
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Resources {
 		UTF8String name;
 
 		public byte[] Data {
-			get { return data; }
+			get => data;
 			set {
 				if (data != value) {
 					data = value;

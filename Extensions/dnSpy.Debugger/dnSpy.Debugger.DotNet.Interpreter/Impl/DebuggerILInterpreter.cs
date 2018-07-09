@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -165,6 +165,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 			default:
 				if (targetType == targetType.AppDomain.System_IntPtr || targetType == targetType.AppDomain.System_UIntPtr) {
+					if (GetValue(value, out l))
+						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
+				}
+				if ((object)type != null && (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) && (targetType.IsPointer || targetType.IsFunctionPointer)) {
 					if (GetValue(value, out l))
 						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
 				}

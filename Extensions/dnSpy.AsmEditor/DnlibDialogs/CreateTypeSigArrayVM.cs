@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand AddCommand => new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute());
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		string title;
 
 		public int? RequiredCount {
-			get { return requiredCount; }
+			get => requiredCount;
 			set {
 				if (requiredCount != value) {
 					requiredCount = value;

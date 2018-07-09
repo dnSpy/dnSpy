@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using dnSpy.Contracts.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class DnModuleIdExtensions {
-		public static ModuleId ToModuleId(this DnModuleId moduleId) =>
+		public static ModuleId ToModuleId(in this DnModuleId moduleId) =>
 			new ModuleId(moduleId.AssemblyFullName, moduleId.ModuleName, moduleId.IsDynamic, moduleId.IsInMemory, moduleId.ModuleNameOnly);
 	}
 }

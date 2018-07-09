@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -132,7 +132,7 @@ namespace dnSpy.AsmEditor.Resources {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly ModuleDef OwnerModule;
 				public readonly int Index;
 
@@ -175,7 +175,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerModule.Resources.Insert(info.Index, node.Resource);
 				}
 
@@ -948,7 +948,7 @@ namespace dnSpy.AsmEditor.Resources {
 				ResourceType = ResourceType.Linked,
 				Name = "filelinked",
 				Attributes = ManifestResourceAttributes.Public,
-				File = new FileDefUser("somefile", dnlib.DotNet.FileAttributes.ContainsNoMetaData, Array.Empty<byte>()),
+				File = new FileDefUser("somefile", dnlib.DotNet.FileAttributes.ContainsNoMetadata, Array.Empty<byte>()),
 			};
 			var data = new ResourceVM(options, module);
 			var win = new ResourceDlg();

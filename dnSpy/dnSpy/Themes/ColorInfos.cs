@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -2199,6 +2199,7 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.DebugObjectIdName, ""),
 							new BrushColorInfo(ColorType.DebuggerDisplayAttributeEval, ""),
 							new BrushColorInfo(ColorType.DebuggerNoStringQuotesEval, ""),
+							new BrushColorInfo(ColorType.DebugViewPropertyName, ""),
 						},
 					},
 				},

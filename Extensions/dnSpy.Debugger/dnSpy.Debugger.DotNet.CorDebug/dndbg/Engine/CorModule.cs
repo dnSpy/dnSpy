@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,10 +42,11 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public bool IsManifestModule {
+		public bool IsManifestModule => Assembly?.ManifestModule == this;
+
+		public bool HasAssemblyRow {
 			get {
 				var mdi = GetMetaDataInterface<IMetaDataImport>();
-				// Only the manifest module should have an assembly row
 				return mdi != null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}
@@ -203,6 +204,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorModule other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorModule);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Module] DYN={0} MEM={1} A={2:X8} S={3:X8} {4}", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+		public override string ToString() => $"[Module] DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";
 	}
 }

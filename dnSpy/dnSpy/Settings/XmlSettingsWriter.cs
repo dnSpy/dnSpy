@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
-	struct XmlSettingsWriter {
+	readonly struct XmlSettingsWriter {
 		readonly ISettingsService mgr;
 		readonly string filename;
 
@@ -62,7 +62,7 @@ namespace dnSpy.Settings {
 				if (n == null)
 					continue;
 				bool b = n == XmlSettingsConstants.SECTION_ATTRIBUTE_NAME;
-				Debug.Assert(!b, string.Format("Attribute name '{0}' is reserved for use by the XML writer", XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
+				Debug.Assert(!b, $"Attribute name '{XmlSettingsConstants.SECTION_ATTRIBUTE_NAME}' is reserved for use by the XML writer");
 				if (b)
 					continue;
 				xmlSect.SetAttributeValue(n, XmlUtils.EscapeAttributeValue(attr.Item2));

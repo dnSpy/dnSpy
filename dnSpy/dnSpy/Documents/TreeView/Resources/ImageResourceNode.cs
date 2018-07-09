@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,8 +41,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 			if (er == null)
 				return null;
 
-			er.Data.Position = 0;
-			if (!CouldBeImage(er.Name, er.Data))
+			var reader = er.CreateReader();
+			if (!CouldBeImage(er.Name, ref reader))
 				return null;
 
 			return new ImageResourceNodeImpl(treeNodeGroup, er);
@@ -53,14 +53,14 @@ namespace dnSpy.Documents.TreeView.Resources {
 				return null;
 
 			var data = (byte[])((BuiltInResourceData)resourceElement.ResourceData).Data;
-			var stream = MemoryImageStream.Create(data);
-			if (!CouldBeImage(resourceElement.Name, stream))
+			var reader = ByteArrayDataReaderFactory.CreateReader(data);
+			if (!CouldBeImage(resourceElement.Name, ref reader))
 				return null;
 
 			return new ImageResourceElementNodeImpl(treeNodeGroup, resourceElement);
 		}
 
-		static bool CouldBeImage(string name, IBinaryReader reader) => CouldBeImage(name) || CouldBeImage(reader);
+		static bool CouldBeImage(string name, ref DataReader reader) => CouldBeImage(name) || CouldBeImage(ref reader);
 
 		static readonly string[] fileExtensions = {
 			".png",
@@ -77,7 +77,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			return false;
 		}
 
-		static bool CouldBeImage(IBinaryReader reader) {
+		static bool CouldBeImage(ref DataReader reader) {
 			reader.Position = 0;
 			if (reader.Length < 0x16)
 				return false;
@@ -128,7 +128,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public ImageResourceNodeImpl(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
-			imageData = resource.GetResourceData();
+			imageData = resource.CreateReader().ToArray();
 			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 

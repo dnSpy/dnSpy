@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,15 +29,17 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ITextColorWriter IDbgValueNodeFormatParameters.ActualTypeOutput => actualTypeOutput;
 		ITextColorWriter nameOutput, valueOutput, expectedTypeOutput, actualTypeOutput;
 
-		DbgValueFormatterTypeOptions IDbgValueNodeFormatParameters.ExpectedTypeFormatterOptions => TypeFormatterOptions;
-		DbgValueFormatterTypeOptions IDbgValueNodeFormatParameters.ActualTypeFormatterOptions => TypeFormatterOptions;
+		DbgValueFormatterTypeOptions IDbgValueNodeFormatParameters.ExpectedTypeFormatterOptions => ValueFormatterTypeOptions;
+		DbgValueFormatterTypeOptions IDbgValueNodeFormatParameters.ActualTypeFormatterOptions => ValueFormatterTypeOptions;
 
 		public ClassifiedTextWriter NameOutput { get; }
 		public ClassifiedTextWriter ValueOutput { get; }
 		public ClassifiedTextWriter ExpectedTypeOutput { get; }
 		public ClassifiedTextWriter ActualTypeOutput { get; }
+		public DbgValueFormatterOptions NameFormatterOptions { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
-		public DbgValueFormatterTypeOptions TypeFormatterOptions { get; set; }
+		public DbgValueFormatterOptions TypeFormatterOptions { get; set; }
+		public DbgValueFormatterTypeOptions ValueFormatterTypeOptions { get; set; }
 
 		public DbgValueNodeFormatParameters() {
 			NameOutput = new ClassifiedTextWriter();

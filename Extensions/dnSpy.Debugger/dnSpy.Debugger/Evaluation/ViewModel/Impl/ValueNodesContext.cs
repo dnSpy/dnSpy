@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,6 @@
 
 using System;
 using System.Globalization;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.UI;
@@ -48,9 +47,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ShowMessageBox ShowMessageBox { get; }
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
-		DbgEvaluationContext EvaluationContext { get; }
+		DbgEvaluationInfo EvaluationInfo { get; }
 		Action<string, bool> OnValueNodeAssigned { get; }
-		DbgStackFrame StackFrame { get; }
 		DbgEvaluationOptions EvaluationOptions { get; }
 		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
 		string ExpressionToEdit { get; set; }
@@ -79,9 +77,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public ShowMessageBox ShowMessageBox { get; }
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
-		public DbgEvaluationContext EvaluationContext { get; set; }
+		public DbgEvaluationInfo EvaluationInfo { get; set; }
 		public Action<string, bool> OnValueNodeAssigned { get; }
-		public DbgStackFrame StackFrame { get; set; }
 		public DbgEvaluationOptions EvaluationOptions { get; set; }
 		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
 		public string ExpressionToEdit { get; set; }

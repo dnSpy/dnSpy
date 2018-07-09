@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,48 +52,48 @@ namespace dnSpy.Controls {
 			new FrameworkPropertyMetadata(new Thickness()));
 
 		public Brush GlyphForeground {
-			get { return (Brush)GetValue(GlyphForegroundProperty); }
-			set { SetValue(GlyphForegroundProperty, value); }
+			get => (Brush)GetValue(GlyphForegroundProperty);
+			set => SetValue(GlyphForegroundProperty, value);
 		}
 
 		public Brush HoverBackground {
-			get { return (Brush)GetValue(HoverBackgroundProperty); }
-			set { SetValue(HoverBackgroundProperty, value); }
+			get => (Brush)GetValue(HoverBackgroundProperty);
+			set => SetValue(HoverBackgroundProperty, value);
 		}
 
 		public Brush HoverBorderBrush {
-			get { return (Brush)GetValue(HoverBorderBrushProperty); }
-			set { SetValue(HoverBorderBrushProperty, value); }
+			get => (Brush)GetValue(HoverBorderBrushProperty);
+			set => SetValue(HoverBorderBrushProperty, value);
 		}
 
 		public Brush HoverForeground {
-			get { return (Brush)GetValue(HoverForegroundProperty); }
-			set { SetValue(HoverForegroundProperty, value); }
+			get => (Brush)GetValue(HoverForegroundProperty);
+			set => SetValue(HoverForegroundProperty, value);
 		}
 
 		public Brush PressedBackground {
-			get { return (Brush)GetValue(PressedBackgroundProperty); }
-			set { SetValue(PressedBackgroundProperty, value); }
+			get => (Brush)GetValue(PressedBackgroundProperty);
+			set => SetValue(PressedBackgroundProperty, value);
 		}
 
 		public Brush PressedBorderBrush {
-			get { return (Brush)GetValue(PressedBorderBrushProperty); }
-			set { SetValue(PressedBorderBrushProperty, value); }
+			get => (Brush)GetValue(PressedBorderBrushProperty);
+			set => SetValue(PressedBorderBrushProperty, value);
 		}
 
 		public Brush PressedForeground {
-			get { return (Brush)GetValue(PressedForegroundProperty); }
-			set { SetValue(PressedForegroundProperty, value); }
+			get => (Brush)GetValue(PressedForegroundProperty);
+			set => SetValue(PressedForegroundProperty, value);
 		}
 
 		public Thickness HoverBorderThickness {
-			get { return (Thickness)GetValue(HoverBorderThicknessProperty); }
-			set { SetValue(HoverBorderThicknessProperty, value); }
+			get => (Thickness)GetValue(HoverBorderThicknessProperty);
+			set => SetValue(HoverBorderThicknessProperty, value);
 		}
 
 		public Thickness PressedBorderThickness {
-			get { return (Thickness)GetValue(PressedBorderThicknessProperty); }
-			set { SetValue(PressedBorderThicknessProperty, value); }
+			get => (Thickness)GetValue(PressedBorderThicknessProperty);
+			set => SetValue(PressedBorderThicknessProperty, value);
 		}
 
 		static TabButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(TabButton), new FrameworkPropertyMetadata(typeof(TabButton)));

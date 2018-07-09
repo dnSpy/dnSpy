@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -161,8 +161,8 @@ namespace dnSpy.Text.Editor {
 
 		sealed class LineSeparatorElement : Border {
 			public Brush Brush {
-				get { return BorderBrush; }
-				set { BorderBrush = value; }
+				get => BorderBrush;
+				set => BorderBrush = value;
 			}
 
 			public SnapshotSpan Span { get; }

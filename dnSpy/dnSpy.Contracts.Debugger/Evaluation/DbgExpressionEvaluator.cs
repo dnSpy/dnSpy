@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,7 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
+using System.Collections.ObjectModel;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -38,29 +37,24 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract object CreateExpressionEvaluatorState();
 
 		/// <summary>
-		/// Evaluates an expression. It blocks the current thread until the evaluation is complete.
-		/// The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
+		/// Evaluates an expression. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Expression to evaluate</param>
 		/// <param name="options">Options</param>
-		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="context"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="evalInfo"/>'s context</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken = default);
+		public abstract DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state);
 
 		/// <summary>
-		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.
+		/// Assigns the value of an expression to another expression
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Target expression (lhs)</param>
 		/// <param name="valueExpression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgEEAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options);
 	}
 
 	/// <summary>
@@ -92,6 +86,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Don't create a name/expression (only used by value nodes)
 		/// </summary>
 		NoName						= 0x00000008,
+
+		/// <summary>
+		/// Use only the locals that exist in the metadata. Don't show captured variables, show their display class variables instead
+		/// </summary>
+		RawLocals					= 0x00000010,
 	}
 
 	/// <summary>
@@ -128,11 +127,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Evaluation result
 	/// </summary>
-	public struct DbgEvaluationResult {
+	public readonly struct DbgEvaluationResult {
 		/// <summary>
 		/// Gets the value or null if there was an error
 		/// </summary>
 		public DbgValue Value { get; }
+
+		/// <summary>
+		/// Gets the format specifiers
+		/// </summary>
+		public ReadOnlyCollection<string> FormatSpecifiers { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -149,13 +153,17 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		public string Error { get; }
 
+		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="flags">Flags</param>
-		public DbgEvaluationResult(DbgValue value, DbgEvaluationResultFlags flags) {
+		public DbgEvaluationResult(DbgValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = null;
 		}
@@ -164,9 +172,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Constructor
 		/// </summary>
 		/// <param name="error">Error message</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="flags">Flags</param>
-		public DbgEvaluationResult(string error, DbgEvaluationResultFlags flags = 0) {
+		public DbgEvaluationResult(string error, ReadOnlyCollection<string> formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
@@ -175,6 +185,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Assignment result flags
 	/// </summary>
+	[Flags]
 	public enum DbgEEAssignmentResultFlags {
 		/// <summary>
 		/// No bit is set
@@ -195,7 +206,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Expression evaluator assignment result
 	/// </summary>
-	public struct DbgEEAssignmentResult {
+	public readonly struct DbgEEAssignmentResult {
 		/// <summary>
 		/// Error message or null
 		/// </summary>

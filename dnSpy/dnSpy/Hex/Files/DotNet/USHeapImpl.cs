@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -107,7 +107,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
 	}
 
-	struct USString {
+	readonly struct USString {
 		public HexSpan FullSpan => HexSpan.FromBounds(LengthSpan.Start, TerminalByteSpan.End);
 		public HexSpan LengthSpan { get; }
 		public HexSpan StringSpan { get; }

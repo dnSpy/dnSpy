@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.MainApp {
 		readonly string labelMessage;
 
 		public string Text {
-			get { return text; }
+			get => text;
 			set {
 				if (text != value) {
 					text = value;

@@ -2412,10 +2412,10 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
     <value>Figyelmeztetés</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Szerelvény hivatkozás hozzáadása (Ctrl+O)</value>
+    <value>Szerelvény hivatkozás hozzáadása</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Szerelvény hivatkozás hozzáadása (GAC) (Ctrl+Shift+O)</value>
+    <value>Szerelvény hivatkozás hozzáadása (GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
     <value>A szerelvény referenciákat nem sikerült hozzáadni.</value>
@@ -2506,5 +2506,29 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
   </data>
   <data name="ParamDef_Flags_Retval" xml:space="preserve">
     <value>Retval</value>
+  </data>
+  <data name="AddDocumentsToolTip" xml:space="preserve">
+    <value>Forráskód hozzáadása</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Shift+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Shift+O</value>
+  </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>Osztálytagok hozzáadása</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>Osztálytagok ({0}) hozzáadása...</value>
+  </data>
+  <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
+    <value>Isme_retlen metaadat folyamok másolása</value>
+  </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>NGEN.exe futtatása, ha ez a szerelvény a GAC-ba van telepítve</value>
   </data>
 </root>

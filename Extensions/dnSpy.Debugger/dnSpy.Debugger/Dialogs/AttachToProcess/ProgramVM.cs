@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	sealed class ProgramVM : ViewModelBase {
 		public AttachProgramOptions AttachProgramOptions { get; }
 
-		public ulong Id => attachableProcessInfo.ProcessId;
+		public int Id => attachableProcessInfo.ProcessId;
 		public string RuntimeName => attachableProcessInfo.RuntimeName;
 		public string Name => attachableProcessInfo.Name;
 		public string Title => attachableProcessInfo.Title;

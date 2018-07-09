@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.AsmEditor.Compiler.MDEditor {
-	abstract class MDWriterStream {
+	unsafe abstract class MDWriterStream {
 		public abstract long Position { get; set; }
 		public abstract long Length { get; set; }
 		public abstract void Write(byte value);
@@ -29,6 +29,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public void Write(int value) => Write((uint)value);
 		public abstract void Write(ulong value);
 		public void Write(long value) => Write((ulong)value);
+		public abstract void Write(byte* source, int length);
 		public abstract void Write(byte[] source, int sourceIndex, int length);
 		public void Write(byte[] data) => Write(data, 0, data.Length);
 	}

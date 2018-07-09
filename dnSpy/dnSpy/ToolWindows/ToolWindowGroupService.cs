@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,29 +32,28 @@ namespace dnSpy.ToolWindows {
 		readonly ITabGroupService tabGroupService;
 
 		public event EventHandler<ToolWindowSelectedEventArgs> TabSelectionChanged {
-			add { tabSelectionChanged.Add(value); }
-			remove { tabSelectionChanged.Remove(value); }
+			add => tabSelectionChanged.Add(value);
+			remove => tabSelectionChanged.Remove(value);
 		}
 		readonly WeakEventList<ToolWindowSelectedEventArgs> tabSelectionChanged;
 
 		public event EventHandler<ToolWindowGroupSelectedEventArgs> TabGroupSelectionChanged {
-			add { tabGroupSelectionChanged.Add(value); }
-			remove { tabGroupSelectionChanged.Remove(value); }
+			add => tabGroupSelectionChanged.Add(value);
+			remove => tabGroupSelectionChanged.Remove(value);
 		}
 		readonly WeakEventList<ToolWindowGroupSelectedEventArgs> tabGroupSelectionChanged;
 
 		public event EventHandler<ToolWindowGroupCollectionChangedEventArgs> TabGroupCollectionChanged {
-			add { toolWindowGroupCollectionChanged.Add(value); }
-			remove { toolWindowGroupCollectionChanged.Remove(value); }
+			add => toolWindowGroupCollectionChanged.Add(value);
+			remove => toolWindowGroupCollectionChanged.Remove(value);
 		}
 		readonly WeakEventList<ToolWindowGroupCollectionChangedEventArgs> toolWindowGroupCollectionChanged;
 
 		public object UIObject => tabGroupService.UIObject;
-
 		public IEnumerable<IToolWindowGroup> TabGroups => tabGroupService.TabGroups.Select(a => GetToolWindowGroup(a));
 
 		public IToolWindowGroup ActiveTabGroup {
-			get { return GetToolWindowGroup(tabGroupService.ActiveTabGroup); }
+			get => GetToolWindowGroup(tabGroupService.ActiveTabGroup);
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -64,13 +63,13 @@ namespace dnSpy.ToolWindows {
 		}
 
 		public bool IsHorizontal {
-			get { return tabGroupService.IsHorizontal; }
-			set { tabGroupService.IsHorizontal = value; }
+			get => tabGroupService.IsHorizontal;
+			set => tabGroupService.IsHorizontal = value;
 		}
 
 		public StackedContentState StackedContentState {
-			get { return ((TabGroupService)tabGroupService).StackedContentState; }
-			set { ((TabGroupService)tabGroupService).StackedContentState = value; }
+			get => ((TabGroupService)tabGroupService).StackedContentState;
+			set => ((TabGroupService)tabGroupService).StackedContentState = value;
 		}
 
 		ITabGroup GetTabGroup(IToolWindowGroup g) => tabGroupService.TabGroups.FirstOrDefault(a => a.Tag == g);

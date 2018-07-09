@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Class loaded event args
 	/// </summary>
-	public struct DmdTypeLoadedEventArgs {
+	public readonly struct DmdTypeLoadedEventArgs {
 		/// <summary>
 		/// Gets the metadata token of the type that got loaded
 		/// </summary>

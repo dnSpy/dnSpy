@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,7 +75,7 @@ namespace dnSpy.Controls {
 		public int Count => children.Count;
 
 		public double SplitterLength {
-			get { return splitterLength; }
+			get => splitterLength;
 			set {
 				if (splitterLength != value) {
 					splitterLength = value;
@@ -103,7 +103,7 @@ namespace dnSpy.Controls {
 		readonly List<ChildInfo> children;
 
 		public bool IsHorizontal {
-			get { return isHorizontal; }
+			get => isHorizontal;
 			set {
 				if (isHorizontal != value) {
 					isHorizontal = value;

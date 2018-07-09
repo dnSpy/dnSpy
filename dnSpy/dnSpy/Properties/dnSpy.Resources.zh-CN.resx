@@ -162,9 +162,6 @@
   <data name="Button_Save" xml:space="preserve">
     <value>保存(_S)...</value>
   </data>
-  <data name="Button_SaveCode" xml:space="preserve">
-    <value>保存代码(_S)...</value>
-  </data>
   <data name="Button_Yes" xml:space="preserve">
     <value>是(_Y)</value>
   </data>
@@ -506,9 +503,6 @@
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
     <value>保存</value>
-  </data>
-  <data name="SavingCode" xml:space="preserve">
-    <value>保存中…</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
     <value>搜索中止，找到超过 {0:n0} 个结果。</value>
@@ -1918,5 +1912,8 @@
   </data>
   <data name="User_Administrator" xml:space="preserve">
     <value>管理员</value>
+  </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>允许多个实例 (需要重新启动)</value>
   </data>
 </root>

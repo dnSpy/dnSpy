@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		sealed class DbgFilterEEVariableProviderImpl : DbgFilterEEVariableProvider {
 			public override string MachineName => Environment.MachineName;
-			public override ulong ProcessId => (uint)process.Id;
+			public override int ProcessId => process.Id;
 			public override string ProcessName => process.Filename;
 			public override ulong ThreadId => thread?.Id ?? ulong.MaxValue;
 			public override string ThreadName => thread?.UIName;

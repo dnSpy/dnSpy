@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -470,8 +470,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public string SearchText {
-			get { return searchText ?? (searchText = CurrentInput); }
-			set { searchText = value; }
+			get => searchText ?? (searchText = CurrentInput);
+			set => searchText = value;
 		}
 		string searchText = string.Empty;
 
@@ -646,8 +646,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IReplCommandHandler CommandHandler {
-			get { return replCommandHandler ?? ReplCommandHandler.Null; }
-			set { replCommandHandler = value; }
+			get => replCommandHandler ?? ReplCommandHandler.Null;
+			set => replCommandHandler = value;
 		}
 		IReplCommandHandler replCommandHandler;
 
@@ -696,8 +696,15 @@ namespace dnSpy.Text.Editor {
 		bool IsExecMode => OffsetOfPrompt == null;
 
 		public string GetCode() {
-			int startOffset = 0;
-			int endOffset = wpfTextView.TextSnapshot.Length;
+			int startOffset, endOffset;
+			if (TextView.Selection.IsEmpty) {
+				startOffset = 0;
+				endOffset = wpfTextView.TextSnapshot.Length;
+			}
+			else {
+				startOffset = TextView.Selection.Start.Position;
+				endOffset = TextView.Selection.End.Position;
+			}
 			if (endOffset <= startOffset)
 				return string.Empty;
 
@@ -855,7 +862,7 @@ namespace dnSpy.Text.Editor {
 		}
 	}
 
-	struct CachedTextColorsCollectionBuilder {
+	readonly struct CachedTextColorsCollectionBuilder {
 		readonly ReplEditor owner;
 		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly int totalLength;
@@ -959,7 +966,7 @@ namespace dnSpy.Text.Editor {
 #endif
 	}
 
-	struct SpanAndClassificationType {
+	readonly struct SpanAndClassificationType {
 		public int Offset { get; }
 		public int Length { get; }
 		public IClassificationType ClassificationType { get; }

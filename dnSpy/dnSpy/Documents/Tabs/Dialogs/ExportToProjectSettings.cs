@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		protected virtual void OnModified() { }
 
 		public ProjectVersion ProjectVersion {
-			get { return projectVersion; }
+			get => projectVersion;
 			set {
 				if (projectVersion != value) {
 					projectVersion = value;

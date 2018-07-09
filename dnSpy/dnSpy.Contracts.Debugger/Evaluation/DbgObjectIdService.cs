@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public abstract class DbgObjectIdService {
 		/// <summary>
-		/// Raised when one or more <see cref="DbgObjectId"/>s are created or removed
+		/// Raised when one or more non-hidden <see cref="DbgObjectId"/>s are created or removed
 		/// </summary>
 		public abstract event EventHandler ObjectIdsChanged;
 
@@ -34,33 +34,36 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Returns true if it's possible to create an object id
 		/// </summary>
 		/// <param name="value">Value</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract bool CanCreateObjectId(DbgValue value);
+		public abstract bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options = CreateObjectIdOptions.None);
 
 		/// <summary>
 		/// Creates an object id or returns null
 		/// </summary>
 		/// <param name="value">Value</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public DbgObjectId CreateObjectId(DbgValue value) =>
-			CreateObjectIds(new[] { value ?? throw new ArgumentNullException(nameof(value)) })[0];
+		public DbgObjectId CreateObjectId(DbgValue value, CreateObjectIdOptions options = CreateObjectIdOptions.None) =>
+			CreateObjectIds(new[] { value ?? throw new ArgumentNullException(nameof(value)) }, options)[0];
 
 		/// <summary>
 		/// Creates object ids. The returned array will contain null elements if it wasn't possible to create object ids
 		/// </summary>
 		/// <param name="values">Values</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values);
+		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options = CreateObjectIdOptions.None);
 
 		/// <summary>
-		/// Returns an object id or null if there's none that references <paramref name="value"/>
+		/// Returns an non-hidden object id or null if there's none that references <paramref name="value"/>
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
 		public abstract DbgObjectId GetObjectId(DbgValue value);
 
 		/// <summary>
-		/// Returns an object id or null if there's none
+		/// Returns a non-hidden object id or null if there's none
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="id">Object id</param>
@@ -68,7 +71,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgObjectId GetObjectId(DbgRuntime runtime, uint id);
 
 		/// <summary>
-		/// Gets all object ids
+		/// Gets all non-hidden object ids
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <returns></returns>
@@ -86,5 +89,35 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="objectIds">Object ids to remove and close</param>
 		public abstract void Remove(IEnumerable<DbgObjectId> objectIds);
+
+		/// <summary>
+		/// Checks if an object id and a value refer to the same data
+		/// </summary>
+		/// <param name="objectId">Object id</param>
+		/// <param name="value">Value</param>
+		/// <returns></returns>
+		public abstract bool Equals(DbgObjectId objectId, DbgValue value);
+
+		/// <summary>
+		/// Gets the hash code of an object id
+		/// </summary>
+		/// <param name="objectId">Object id</param>
+		/// <returns></returns>
+		public abstract int GetHashCode(DbgObjectId objectId);
+	}
+
+	/// <summary>
+	/// Object ID options
+	/// </summary>
+	public enum CreateObjectIdOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None			= 0,
+
+		/// <summary>
+		/// Hidden object Id. It's not shown in any of the variables windows.
+		/// </summary>
+		Hidden			= 0x00000001,
 	}
 }

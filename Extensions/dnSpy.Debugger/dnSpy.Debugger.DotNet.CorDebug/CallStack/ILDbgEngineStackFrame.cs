@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,6 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
@@ -112,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(module, moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object.Address, corFrame.NativeFrameIP, corCode);
 			}
 			else
-				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset);
+				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping);
 		}
 
 		sealed class ILFrameState {
@@ -136,12 +135,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			engine.VerifyCorDebugThread();
 			var corFrame = CorFrame;
 			methodMetadataToken = (int)corFrame.Token;
-			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
-			if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
-				throw new InvalidOperationException();
-			var reflectionAppDomain = module.AppDomain;
-			genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
-			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+			var corModule = corFrame.Function?.Module;
+			if (corModule != null) {
+				module = engine.TryGetModule(corModule)?.GetReflectionModule() ?? throw new InvalidOperationException();
+				if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
+					throw new InvalidOperationException();
+				var reflectionAppDomain = module.AppDomain;
+				genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
+				genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+				return;
+			}
+
+			module = null;
+			methodMetadataToken = 0;
+			genericTypeArguments = Array.Empty<DmdType>();
+			genericMethodArguments = Array.Empty<DmdType>();
 		}
 
 		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, CorType[] typeArgs) {

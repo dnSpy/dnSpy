@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.BamlDecompiler</RootNamespace>
     <AssemblyName>dnSpy.BamlDecompiler.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -26,7 +26,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -53,7 +54,6 @@
     <Compile Include="BamlResourceElementNode.cs" />
     <Compile Include="BamlResourceNodeProvider.cs" />
     <Compile Include="BamlSettings.cs" />
-    <Compile Include="BamlTabSaver.cs" />
     <Compile Include="BamlToolTipProvider.cs" />
     <Compile Include="Baml\BamlContext.cs" />
     <Compile Include="Baml\BamlDocument.cs" />
@@ -68,6 +68,7 @@
     <Compile Include="IHandlers.cs" />
     <Compile Include="IRewritePass.cs" />
     <Compile Include="MenuCommands.cs" />
+    <Compile Include="RecursionCounter.cs" />
     <Compile Include="Rewrite\AttributeRewritePass.cs" />
     <Compile Include="Rewrite\ConnectionIdRewritePass.cs" />
     <Compile Include="Rewrite\DocumentRewritePass.cs" />
@@ -162,6 +163,8 @@
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

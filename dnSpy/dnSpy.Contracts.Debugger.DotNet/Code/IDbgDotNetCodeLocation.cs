@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		uint Offset { get; }
 
 		/// <summary>
+		/// Gets the IL offset mapping
+		/// </summary>
+		DbgILOffsetMapping ILOffsetMapping { get; }
+
+		/// <summary>
 		/// Gets the debugger module or null
 		/// </summary>
 		DbgModule DbgModule { get; }
@@ -53,7 +58,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// Native address info
 	/// </summary>
-	public struct DbgDotNetNativeFunctionAddress {
+	public readonly struct DbgDotNetNativeFunctionAddress {
 		/// <summary>
 		/// No address
 		/// </summary>

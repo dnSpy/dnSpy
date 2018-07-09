@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
-		internal bool IsMatch(DbgModuleBreakpointInfo module) {
+		internal bool IsMatch(in DbgModuleBreakpointInfo module) {
 			lock (lockObj) {
 				if (!settings.IsEnabled)
 					return false;

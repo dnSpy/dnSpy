@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Text.Editor {
 		public IEditorOptions GlobalOptions => service.GlobalOptions;
 
 		public IEditorOptions Parent {
-			get { return parent; }
+			get => parent;
 			set {
 				// Check if we're the global options
 				if (parent == null)

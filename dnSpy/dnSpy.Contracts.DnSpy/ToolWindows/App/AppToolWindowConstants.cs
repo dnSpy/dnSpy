@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -16,8 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-using System;
 
 namespace dnSpy.Contracts.ToolWindows.App {
 	/// <summary>
@@ -38,10 +36,6 @@ namespace dnSpy.Contracts.ToolWindows.App {
 
 		/// <summary>Order of debugger watch window</summary>
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_WATCH = 20002;
-
-		/// <summary>Order of debugger breakpoints tool window</summary>
-		[Obsolete("Use " + nameof(DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CODEBREAKPOINTS), true)]
-		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS = 20003;
 
 		/// <summary>Order of debugger breakpoints tool window</summary>
 		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CODEBREAKPOINTS = 20003;

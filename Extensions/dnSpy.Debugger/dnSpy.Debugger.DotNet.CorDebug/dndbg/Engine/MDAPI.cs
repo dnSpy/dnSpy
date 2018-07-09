@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -1678,7 +1678,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	struct MethodOverrideInfo {
+	readonly struct MethodOverrideInfo {
 		public uint BodyToken { get; }
 		public uint DeclToken { get; }
 		public MethodOverrideInfo(uint b, uint d) {

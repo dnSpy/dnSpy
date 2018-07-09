@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler PresentationSpanChanged;
 
 		public ITrackingSpan PresentationSpan {
-			get { return presentationSpan; }
+			get => presentationSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
 					presentationSpan = value;
@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 		ITrackingSpan presentationSpan;
 
 		double IPopupIntellisensePresenter.Opacity {
-			get { return control.Opacity; }
+			get => control.Opacity;
 			set {
 				control.Opacity = value;
 				if (value != 1)
@@ -641,7 +641,7 @@ namespace dnSpy.Language.Intellisense {
 			if (string.IsNullOrEmpty(toolTip))
 				return null;
 			if (!string.IsNullOrEmpty(accessKey))
-				return string.Format("{0} ({1})", toolTip, string.Format(dnSpy_Resources.ShortCutKeyAltPlusAnyKey, accessKey.ToUpper()));
+				return $"{toolTip} ({string.Format(dnSpy_Resources.ShortCutKeyAltPlusAnyKey, accessKey.ToUpper())})";
 			return toolTip;
 		}
 

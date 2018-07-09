@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// <summary>
 	/// Contains text and color
 	/// </summary>
-	public struct DbgDotNetText {
+	public readonly struct DbgDotNetText {
 		/// <summary>
 		/// Gets the empty instance
 		/// </summary>
@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// <summary>
 	/// Color and text
 	/// </summary>
-	public struct DbgDotNetTextPart {
+	public readonly struct DbgDotNetTextPart {
 		/// <summary>
 		/// Gets the color
 		/// </summary>

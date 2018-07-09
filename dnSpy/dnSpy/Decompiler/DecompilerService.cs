@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,8 +60,8 @@ namespace dnSpy.Decompiler {
 		IDecompiler decompiler;
 
 		public event EventHandler<EventArgs> DecompilerChanged {
-			add { decompilerChanged.Add(value); }
-			remove { decompilerChanged.Remove(value); }
+			add => decompilerChanged.Add(value);
+			remove => decompilerChanged.Remove(value);
 		}
 		readonly WeakEventList<EventArgs> decompilerChanged;
 

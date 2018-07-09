@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public BlobMDHeap(MetadataEditor mdEditor, BlobStream blobStream) {
 			this.mdEditor = mdEditor ?? throw new ArgumentNullException(nameof(mdEditor));
 			this.blobStream = blobStream ?? throw new ArgumentNullException(nameof(blobStream));
-			currentOffset = (uint)blobStream.ImageStreamLength;
+			currentOffset = blobStream.StreamLength;
 			newData = new List<byte[]>();
 		}
 

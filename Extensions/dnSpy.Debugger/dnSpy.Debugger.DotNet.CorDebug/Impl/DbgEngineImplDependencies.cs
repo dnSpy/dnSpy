@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,29 +22,30 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
+using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.DAC;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	[Export(typeof(DbgEngineImplDependencies))]
 	sealed class DbgEngineImplDependencies {
-		public DbgDotNetCodeRangeService DotNetCodeRangeService { get; }
 		public DebuggerSettings DebuggerSettings { get; }
 		public Lazy<DbgDotNetNativeCodeLocationFactory> DbgDotNetNativeCodeLocationFactory { get; }
 		public Lazy<DbgDotNetCodeLocationFactory> DbgDotNetCodeLocationFactory { get; }
 		public ClrDacProvider ClrDacProvider { get; }
 		public DbgModuleMemoryRefreshedNotifier2 DbgModuleMemoryRefreshedNotifier { get; }
 		public DbgRawMetadataService RawMetadataService { get; }
+		public DbgEngineStepperFactory EngineStepperFactory { get; }
 
 		[ImportingConstructor]
-		DbgEngineImplDependencies(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgRawMetadataService rawMetadataService) {
-			DotNetCodeRangeService = dbgDotNetCodeRangeService;
+		DbgEngineImplDependencies(DebuggerSettings debuggerSettings, Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, ClrDacProvider clrDacProvider, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgRawMetadataService rawMetadataService, DbgEngineStepperFactory dbgEngineStepperFactory) {
 			DebuggerSettings = debuggerSettings;
 			DbgDotNetNativeCodeLocationFactory = dbgDotNetNativeCodeLocationFactory;
 			DbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			ClrDacProvider = clrDacProvider;
 			DbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
 			RawMetadataService = rawMetadataService;
+			EngineStepperFactory = dbgEngineStepperFactory;
 		}
 	}
 }

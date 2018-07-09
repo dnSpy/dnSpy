@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdAssembly"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Gets the AppDomain
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsSynthetic => ManifestModule.IsSynthetic;
 
 		/// <summary>
-		/// true if the assembly has been added to its app domain
+		/// true if the assembly has been added to its AppDomain
 		/// </summary>
 		public abstract bool IsLoaded { get; }
 

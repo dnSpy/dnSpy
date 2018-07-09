@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,13 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -76,7 +75,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(???)"));
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
 			}
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_NativeAddress, "0x" + location.NativeAddress.IP.ToString("X8")));

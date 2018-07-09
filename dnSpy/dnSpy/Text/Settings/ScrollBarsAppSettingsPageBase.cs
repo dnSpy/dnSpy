@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Text.Settings {
 		public sealed override object UIObject => this;
 
 		public bool HorizontalScrollBar {
-			get { return horizontalScrollBar; }
+			get => horizontalScrollBar;
 			set {
 				if (horizontalScrollBar != value) {
 					horizontalScrollBar = value;
@@ -38,7 +38,7 @@ namespace dnSpy.Text.Settings {
 		bool horizontalScrollBar;
 
 		public bool VerticalScrollBar {
-			get { return verticalScrollBar; }
+			get => verticalScrollBar;
 			set {
 				if (verticalScrollBar != value) {
 					verticalScrollBar = value;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -198,7 +198,7 @@ namespace dnSpy.Hex.Editor {
 		const int PEN_THICKNESS = 2;
 
 		public Brush BackgroundBrush {
-			get { return backgroundBrush; }
+			get => backgroundBrush;
 			set {
 				if (!TWPF.BrushComparer.Equals(backgroundBrush, value)) {
 					backgroundBrush = value;
@@ -209,7 +209,7 @@ namespace dnSpy.Hex.Editor {
 		Brush backgroundBrush;
 
 		public Brush ForegroundBrush {
-			get { return foregroundBrush; }
+			get => foregroundBrush;
 			set {
 				if (!TWPF.BrushComparer.Equals(foregroundBrush, value)) {
 					foregroundBrush = value;

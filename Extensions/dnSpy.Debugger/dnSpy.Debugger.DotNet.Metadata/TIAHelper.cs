@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <c>System.Runtime.InteropServices.TypeIdentifierAttribute</c> helper code used by <see cref="DmdSigComparer"/>
 	/// </summary>
 	static class TIAHelper {
-		struct Info : IEquatable<Info> {
+		readonly struct Info {
 			public readonly string Scope;
 			public readonly string Identifier;
 

@@ -121,7 +121,7 @@
     <value>A_rgumentos</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+    <value>_Ensamblado</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Romper en</value>
@@ -162,7 +162,7 @@ Error: {1}</value>
     <value>El archivo no existe</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nombre de archivo faltante</value>
+    <value>Falta Nombre de archivo</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Depurador ({0})</value>
@@ -174,13 +174,13 @@ Error: {1}</value>
     <value>Detenido</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+    <value>DetenciónRequerida</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
     <value>Suspendido</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+    <value>Suspensión requerida</value>
   </data>
   <data name="Thread_UserState_ThreadPool" xml:space="preserve">
     <value>Grupo de hilos</value>
@@ -195,10 +195,10 @@ Error: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Utilizar dnSpy-x86.exe para depurar aplicaciones de 32 bits.</value>
+    <value>Utilice dnSpy-x86.exe para depurar aplicaciones de 32 bits.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Utilizar dnSpy-x86.exe para depurar aplicaciones de 32 bits.</value>
+    <value>Utilice dnSpy.exe para depurar aplicaciones de 64 bits.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt; ningún mensaje de la excepción &gt;"</value>
@@ -207,10 +207,10 @@ Error: {1}</value>
     <value>No se puede iniciar el depurador. Error: {0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>No podría unir para procesar {0}</value>
+    <value>No se puede adjuntar al proceso {0}</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Otro proceso ya es depurar el proceso {0}</value>
+    <value>Ya hay otro proceso depurando este proceso {0}</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
     <value>Marco nativo {0}</value>
@@ -240,10 +240,10 @@ Error: {1}</value>
     <value>Función ligera</value>
   </data>
   <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Logró transición nativo</value>
+    <value>Se Logró transición nativa</value>
   </data>
   <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Nativo a administrado transición</value>
+    <value>Paso de transición administrada a Nativa</value>
   </data>
   <data name="StackFrame_Security" xml:space="preserve">
     <value>Seguridad</value>
@@ -261,12 +261,13 @@ Error: {1}</value>
     <value>No se pudo establecer la siguiente instrucción.</value>
   </data>
   <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>No se podría romper el proceso. Error: 0x{0:X8}</value>
+    <value>No se pudo interrumpir el proceso. Error: 0x{0:X8}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Error de depurador interno</value>
+    <value>Error interno de depurador</value>
   </data>
   <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ha producido un error de depurador CLR. Terminar el proceso depurado e inténtelo de nuevo.HR: 0x{0:X8} Error: 0x{1:X8}</value>
+    <value>Ha producido un error de depurador CLR. Termine el proceso depurado e inténtelo de nuevo. HR: 0 x{0:X8}
+Error: 0 x{1:X8}</value>
   </data>
 </root>

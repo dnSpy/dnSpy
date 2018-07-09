@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,21 +23,18 @@ using System.Linq;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.TypeSystem;
 
 namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 	sealed class DecompileTypeMethodsTransform : IAstTransform {
 		readonly HashSet<IMemberDef> defsToShow;
 		readonly HashSet<TypeDef> partialTypes;
 		readonly bool showDefinitions;
-		readonly bool makeEverythingPublic;
 		readonly bool showAll;
 
-		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool makeEverythingPublic, bool showAll) {
+		public DecompileTypeMethodsTransform(HashSet<TypeDef> types, HashSet<MethodDef> methods, bool showDefinitions, bool showAll) {
 			defsToShow = new HashSet<IMemberDef>();
 			partialTypes = new HashSet<TypeDef>();
 			this.showDefinitions = showDefinitions;
-			this.makeEverythingPublic = makeEverythingPublic;
 			this.showAll = showAll;
 
 			foreach (var method in methods) {
@@ -69,10 +66,22 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						defsToShow.Add(method);
 				}
 			}
-
+			foreach (var type in types) {
+				if (!type.IsEnum) {
+					defsToShow.Add(type);
+					partialTypes.Add(type);
+				}
+			}
 			foreach (var def in defsToShow) {
 				for (var declType = def.DeclaringType; declType != null; declType = declType.DeclaringType)
 					partialTypes.Add(declType);
+			}
+			foreach (var type in types) {
+				if (type.IsEnum) {
+					defsToShow.Add(type);
+					foreach (var f in type.Fields)
+						defsToShow.Add(f);
+				}
 			}
 		}
 
@@ -83,56 +92,22 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				if (def == null)
 					continue;
 
-				if (makeEverythingPublic) {
-					const Modifiers accessFlags = Modifiers.Private | Modifiers.Internal | Modifiers.Protected | Modifiers.Public;
-					en.Modifiers = (en.Modifiers & ~accessFlags) | Modifiers.Public;
-
-					bool clearModifiers = false;
-
-					var owner = en.Parent as TypeDeclaration;
-					if (owner?.ClassType == ClassType.Enum || owner?.ClassType == ClassType.Interface)
-						clearModifiers = true;
-					else if (en is Accessor) {
-						// If it's a getter/setter/adder/remover, its owner (the property/event) already is public,
-						// so remove the modifier from the accessor
-						clearModifiers = true;
-					}
-					else if (en.SymbolKind == SymbolKind.Destructor)
-						clearModifiers = true;
-					else if (en.SymbolKind == SymbolKind.Constructor && en.HasModifier(Modifiers.Static))
-						clearModifiers = true;
-					else if (en is MethodDeclaration md) {
-						if (!md.PrivateImplementationType.IsNull || (md.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
-							clearModifiers = true;
-					}
-					else if (en is CustomEventDeclaration ed) {
-						if (!ed.PrivateImplementationType.IsNull || (ed.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
-							clearModifiers = true;
-					}
-					else if (en is PropertyDeclaration pd) {
-						if (!pd.PrivateImplementationType.IsNull || (pd.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
-							clearModifiers = true;
-					}
-
-					if (clearModifiers)
-						en.Modifiers &= ~accessFlags;
-
-					// Make sure the comments are still shown before the method and its modifiers
-					var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();
-					foreach (var c in comments) {
-						c.Remove();
-						en.InsertChildAfter(null, c, Roles.Comment);
-					}
-				}
-
 				if (partialTypes.Contains(def)) {
 					var tdecl = en as TypeDeclaration;
 					Debug.Assert(tdecl != null);
 					if (tdecl != null) {
-						tdecl.Modifiers |= Modifiers.Partial;
+						if (tdecl.ClassType != ClassType.Enum)
+							tdecl.Modifiers |= Modifiers.Partial;
 						if (!showDefinitions) {
 							tdecl.BaseTypes.Clear();
 							tdecl.Attributes.Clear();
+						}
+
+						// Make sure the comments are still shown before the method and its modifiers
+						var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();
+						foreach (var c in comments) {
+							c.Remove();
+							en.InsertChildAfter(null, c, Roles.Comment);
 						}
 					}
 				}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -88,6 +88,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorStepper other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorStepper);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Stepper] HC={0:X8} Active={1}", GetHashCode(), IsActive);
+		public override string ToString() => $"[Stepper] HC={GetHashCode():X8} Active={IsActive}";
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -40,11 +38,11 @@ namespace dnSpy.Debugger.Evaluation {
 
 		DbgEvaluationResult CreateResult(DbgRuntime runtime, DbgEngineEvaluationResult result) {
 			if (result.Error != null)
-				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.Flags);
+				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.FormatSpecifiers, result.Flags);
 			try {
 				var value = new DbgValueImpl(runtime, result.Value);
 				runtime.CloseOnContinue(value);
-				return new DbgEvaluationResult(value, result.Flags);
+				return new DbgEvaluationResult(value, result.FormatSpecifiers, result.Flags);
 			}
 			catch {
 				runtime.Process.DbgManager.Close(result.Value);
@@ -56,35 +54,35 @@ namespace dnSpy.Debugger.Evaluation {
 
 		public override object CreateExpressionEvaluatorState() => engineExpressionEvaluator.CreateExpressionEvaluatorState();
 
-		public override DbgEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state) {
+			if (evalInfo == null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
+			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
-			Debug.Assert((context.Options & DbgEvaluationContextOptions.NoMethodBody) == 0, "Missing method debug info");
-			return CreateResult(context.Runtime, engineExpressionEvaluator.Evaluate(context, frame, expression, options, state, cancellationToken));
+			Debug.Assert((evalInfo.Context.Options & DbgEvaluationContextOptions.NoMethodBody) == 0, "Missing method debug info");
+			return CreateResult(evalInfo.Context.Runtime, engineExpressionEvaluator.Evaluate(evalInfo, expression, options, state));
 		}
 
-		public override DbgEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgEEAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options) {
+			if (evalInfo == null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
+			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expression == null)
 				throw new ArgumentNullException(nameof(expression));
 			if (valueExpression == null)
 				throw new ArgumentNullException(nameof(valueExpression));
-			var result = engineExpressionEvaluator.Assign(context, frame, expression, valueExpression, options, cancellationToken);
+			var result = engineExpressionEvaluator.Assign(evalInfo, expression, valueExpression, options);
 			return CreateResult(result);
 		}
 	}

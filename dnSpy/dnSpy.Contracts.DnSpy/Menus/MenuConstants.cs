@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Windows.Controls;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Hex.Editor;
@@ -133,10 +132,6 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Asm editor's hex view</summary>
 		public static readonly string GUIDOBJ_ASMEDITOR_HEXVIEW_GUID = "95F0CEE5-44D0-468A-B214-69F91B76A84C";
-
-		/// <summary><c>HexBox</c>, it's now obsolete</summary>
-		[Obsolete("Use eg. " + nameof(GUIDOBJ_ASMEDITOR_HEXVIEW_GUID) + " instead of this guid", true)]
-		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 
 		/// <summary>Debugger's memory hex view</summary>
 		public static readonly string GUIDOBJ_DEBUGGER_MEMORY_HEXVIEW_GUID = "8AD6778E-015E-4520-8B77-A6A2E23FFCFF";
@@ -276,10 +271,6 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: Debug, Group: Breakpoint commands</summary>
 		public const string GROUP_APP_MENU_DEBUG_BREAKPOINTS = "3000,2684EC1B-45A7-4412-BCBF-81345845FF54";
 
-		/// <summary>Group: App Menu: Debug, Group: Show Debug Windows</summary>
-		[Obsolete("Move debug tool windows to Debug -> Windows", true)]
-		public const string GROUP_APP_MENU_DEBUG_SHOW = "4000,26D43C29-2EDF-4094-8993-10B7CECEAACA";
-
 		/// <summary>Group: App Menu: Debug, Group: Options</summary>
 		public const string GROUP_APP_MENU_DEBUG_OPTIONS = "1000000,F3B4A871-C8D8-40CA-A881-7BEF2328145C";
 
@@ -381,22 +372,6 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: HexView, Group: Find</summary>
 		public const string GROUP_CTX_HEXVIEW_FIND = "101000,8BD504DA-A927-4CBC-9E77-C873560C530F";
-
-		/// <summary>Group: Context Menu, Type: HexBox, Group: Show commands</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_SHOW), true)]
-		public const string GROUP_CTX_HEXBOX_SHOW = "0,D49C0D59-BAC6-476C-B5C7-66E8CE6CBD83";
-
-		/// <summary>Group: Context Menu, Type: HexBox, Group: Edit</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_EDIT), true)]
-		public const string GROUP_CTX_HEXBOX_EDIT = "1000,05719F94-21C1-4C73-8931-929E6A9B6A69";
-
-		/// <summary>Group: Context Menu, Type: HexBox, Group: Options</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_OPTS), true)]
-		public const string GROUP_CTX_HEXBOX_OPTS = "2000,DFE105B4-78B1-4227-8A91-A7C8D4B00495";
-
-		/// <summary>Group: Context Menu, Type: HexBox, Group: Copy</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_COPY), true)]
-		public const string GROUP_CTX_HEXBOX_COPY = "3000,CD7D55BB-5ED8-4E8D-B588-AD19AB771105";
 
 		/// <summary>Group: Context Menu, Type: Tabs, Group: Close/New commands</summary>
 		public const string GROUP_CTX_TABS_CLOSE = "0,FABC0864-6B57-4C49-A1AF-6015F7CFB5F4";
@@ -504,18 +479,6 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_CTX_BOOKMARKS_OPTS = "10000,1D7EEE8F-CD29-4F4E-A4A8-6906680B0601";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_COPY), true)]
-		public const string GROUP_CTX_DBG_BPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_CODE), true)]
-		public const string GROUP_CTX_DBG_BPS_CODE = "1000,5918522A-B51A-430D-8351-561FF0618AB3";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Options</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_OPTS), true)]
-		public const string GROUP_CTX_DBG_BPS_OPTS = "10000,E326374F-8D4F-4CC4-B454-BB3F2C585299";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_CODEBPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
@@ -583,26 +546,6 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Options</summary>
 		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS = "4000,93573019-549D-40EC-8B3C-D515DACB3C47";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Copy</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_COPY), true)]
-		public const string GROUP_CTX_DBG_LOCALS_COPY = "0,28D5E753-B1D0-415A-A8C8-7D8F1AC27592";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Values</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES), true)]
-		public const string GROUP_CTX_DBG_LOCALS_VALUES = "1000,33D69C4B-ACB2-4131-8154-CB413EF9D8BA";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Hex Options</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS), true)]
-		public const string GROUP_CTX_DBG_LOCALS_HEXOPTS = "2000,C8143511-5CEA-47A8-B334-0A83D7C85108";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Tree</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_TREE), true)]
-		public const string GROUP_CTX_DBG_LOCALS_TREE = "3000,A3E4126C-A23C-4902-9033-723C52374ECF";
-
-		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Options</summary>
-		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS), true)]
-		public const string GROUP_CTX_DBG_LOCALS_OPTS = "4000,A599080F-6572-4CB1-B97B-63763D2E2F56";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Modules, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_MODULES_COPY = "0,A43EAAA4-2729-418A-B5B8-39237D2E998D";
@@ -675,10 +618,6 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Code editor, Group: Find</summary>
 		public const string GROUP_CTX_CODEEDITOR_FIND= "6000,CDE742E8-31DA-4D96-A641-73A36CCF0DC0";
-
-		/// <summary>Group: Glyph margin, Type: Debugger, Group: Breakpoints</summary>
-		[Obsolete("Use " + nameof(GROUP_GLYPHMARGIN_DEBUG_CODEBPS_SETTINGS), true)]
-		public const string GROUP_GLYPHMARGIN_DEBUG_BPS = "10000,423F4513-1EAF-43FD-BD46-FDCFB6DFAA04";
 
 		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Settings</summary>
 		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_SETTINGS = "0,FB70F59F-7507-43C1-AD7B-BCBDD60375F6";

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Contracts.Debugger.DotNet</RootNamespace>
     <AssemblyName>dnSpy.Contracts.Debugger.DotNet</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -29,7 +29,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -45,10 +46,11 @@
     <Compile Include="Code\DbgCodeRange.cs" />
     <Compile Include="Code\DbgDotNetCodeLocation.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactory.cs" />
-    <Compile Include="Code\DbgDotNetCodeLocationOptions.cs" />
-    <Compile Include="Code\DbgDotNetCodeRangeService.cs" />
     <Compile Include="Code\DbgDotNetDecompilerGuidProvider.cs" />
     <Compile Include="Code\DbgDotNetDecompilerService.cs" />
+    <Compile Include="Code\DbgDotNetInstructionOffsetConstants.cs" />
+    <Compile Include="Code\DbgILInstruction.cs" />
+    <Compile Include="Code\DbgILOffsetMapping.cs" />
     <Compile Include="Code\IDbgDotNetCodeLocation.cs" />
     <Compile Include="DbgDotNetInternalAppDomain.cs" />
     <Compile Include="DbgDotNetInternalModule.cs" />
@@ -74,7 +76,6 @@
     <Compile Include="Evaluation\Formatters\DbgDotNetFormatter.cs" />
     <Compile Include="Evaluation\Formatters\IDebuggerDisplayAttributeEvaluator.cs" />
     <Compile Include="Evaluation\IDbgDotNetRuntime.cs" />
-    <Compile Include="Evaluation\IDmdEvaluatorContext.cs" />
     <Compile Include="Evaluation\ValueNodes\DbgDotNetValueNode.cs" />
     <Compile Include="Evaluation\ValueNodes\DbgDotNetValueNodeFactory.cs" />
     <Compile Include="Extensions\DbgAppDomainExtensions.cs" />
@@ -96,6 +97,10 @@
     <Compile Include="PredefinedDotNetDbgRuntimeTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtimes\DbgRuntimeDotNetExtensions.cs" />
+    <Compile Include="Steppers\Engine\DbgDotNetEngineStepper.cs" />
+    <Compile Include="Steppers\Engine\DbgDotNetEngineStepperFrameInfo.cs" />
+    <Compile Include="Steppers\Engine\DbgEngineStepperFactory.cs" />
+    <Compile Include="Steppers\Engine\Exceptions.cs" />
     <Compile Include="Text\DbgDotNetText.cs" />
     <Compile Include="Text\DbgDotNetTextOutput.cs" />
   </ItemGroup>
@@ -103,9 +108,6 @@
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

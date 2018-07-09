@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,8 +61,9 @@ namespace dndbg.DotNet {
 		/// </summary>
 		/// <param name="bodyRva">RVA of method body</param>
 		/// <param name="mdToken">Method token</param>
-		/// <returns>A new <see cref="IBinaryReader"/> instance or null if there's no method body</returns>
-		IBinaryReader CreateBodyReader(uint bodyRva, uint mdToken);
+		/// <param name="reader">Method body reader if successful</param>
+		/// <returns></returns>
+		bool TryCreateBodyReader(uint bodyRva, uint mdToken, out DataReader reader);
 
 		/// <summary>
 		/// Returns a field's initial value or null. It's only called if <see cref="FieldAttributes.HasFieldRVA"/> is set
@@ -74,10 +75,13 @@ namespace dndbg.DotNet {
 		byte[] ReadFieldInitialValue(uint fieldRva, uint fdToken, int size);
 
 		/// <summary>
-		/// Creates a resource stream. Returns null if it couldn't be created.
+		/// Creates a resource reader or returns false on failure
 		/// </summary>
 		/// <param name="offset">Offset of resource</param>
+		/// <param name="dataReaderFactory">Data reader factory</param>
+		/// <param name="resourceOffset">Resource offset</param>
+		/// <param name="resourceLength">Resource length</param>
 		/// <returns></returns>
-		IImageStream CreateResourceStream(uint offset);
+		bool TryCreateResourceStream(uint offset, out DataReaderFactory dataReaderFactory, out uint resourceOffset, out uint resourceLength);
 	}
 }

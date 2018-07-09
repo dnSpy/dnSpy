@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,8 +36,8 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Roslyn.Shared.Text;
-using dnSpy.Roslyn.Shared.Text.Classification;
+using dnSpy.Roslyn.Text;
+using dnSpy.Roslyn.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
@@ -58,7 +58,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
 		internal const string CMD_PREFIX = "#";
 
-		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.TextFiles);
+		static readonly string TEXTFILES_FILTER = $"{dnSpy_Scripting_Roslyn_Resources.TextFiles} (*.txt)|*.txt|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected abstract string TextFilenameNoExtension { get; }
 		protected abstract string CodeFilenameNoExtension { get; }
@@ -107,7 +107,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		bool isResetting;
 
 		public bool WordWrap {
-			get { return (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0; }
+			get => (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 			set {
 				if (value)
 					WordWrapStyle |= WordWrapStyles.WordWrap;
@@ -117,7 +117,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		WordWrapStyles WordWrapStyle {
-			get { return ReplEditor.TextView.Options.WordWrapStyle(); }
+			get => ReplEditor.TextView.Options.WordWrapStyle();
 			set {
 				var oldWordWrapStyle = WordWrapStyle;
 				if (value == oldWordWrapStyle)
@@ -131,7 +131,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		bool ShowLineNumbers {
-			get { return ReplEditor.TextView.Options.IsLineNumberMarginEnabled(); }
+			get => ReplEditor.TextView.Options.IsLineNumberMarginEnabled();
 			set {
 				if (ShowLineNumbers == value)
 					return;
@@ -152,7 +152,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		readonly Dispatcher dispatcher;
-		readonly RoslynClassificationTypes2 roslynClassificationTypes;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
 		readonly ReplSettings replSettings;
 
@@ -167,7 +167,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ReplEditor.TextView.Options.OptionChanged += Options_OptionChanged;
 
 			var themeClassificationTypeService = serviceLocator.Resolve<IThemeClassificationTypeService>();
-			roslynClassificationTypes = RoslynClassificationTypes2.GetClassificationTypeInstance(themeClassificationTypeService);
+			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 
 			toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);

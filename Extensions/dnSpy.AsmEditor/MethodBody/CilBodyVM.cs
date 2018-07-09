@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand RemoveInstructionAndAddPopsCommand => new RelayCommand(a => RemoveInstructionAndAddPops((InstructionVM[])a), a => RemoveInstructionAndAddPopsCanExecute((InstructionVM[])a));
 
 		public bool KeepOldMaxStack {
-			get { return keepOldMaxStack; }
+			get => keepOldMaxStack;
 			set {
 				if (keepOldMaxStack != value) {
 					keepOldMaxStack = value;
@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		bool keepOldMaxStack;
 
 		public bool InitLocals {
-			get { return initLocals; }
+			get => initLocals;
 			set {
 				if (initLocals != value) {
 					initLocals = value;
@@ -435,7 +435,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetInstructionPops(a) != null);
 
-		struct InstructionPushPopInfo {
+		readonly struct InstructionPushPopInfo {
 			public readonly int PopCount;
 			public readonly bool Pushes;// Needed in case there's an invalid method sig with a null type
 			public readonly TypeSig PushType;
@@ -571,7 +571,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		static MethodSig GetMethodSig(object operand) {
+		static MethodBaseSig GetMethodSig(object operand) {
 			if (operand is MethodSig msig)
 				return msig;
 
@@ -593,7 +593,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return null;
 		}
 
-		static MethodSig GetMethodSig(ITypeDefOrRef type, MethodSig msig, IList<TypeSig> methodGenArgs) {
+		static MethodBaseSig GetMethodSig(ITypeDefOrRef type, MethodSig msig, IList<TypeSig> methodGenArgs) {
 			IList<TypeSig> typeGenArgs = null;
 			if (type is TypeSpec ts) {
 				var genSig = ts.TypeSig.ToGenericInstSig();

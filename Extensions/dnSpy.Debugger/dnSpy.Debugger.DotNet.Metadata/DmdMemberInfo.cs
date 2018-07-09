@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdMemberInfo"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Resolves a member reference and throws if it doesn't exist
@@ -89,6 +89,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if it's a reference to another type or member, eg. a TypeRef, MemberRef
 		/// </summary>
 		public abstract bool IsMetadataReference { get; }
+
+		/// <summary>
+		/// Checks if this instance and <paramref name="other"/> have the same metadata definition
+		/// </summary>
+		/// <param name="other">Other member</param>
+		/// <returns></returns>
+		public bool HasSameMetadataDefinitionAs(DmdMemberInfo other) {
+			if ((object)other == null)
+				throw new ArgumentNullException(nameof(other));
+			return other.Module == Module && other.MetadataToken == MetadataToken && MetadataToken != 0;
+		}
 
 		/// <summary>
 		/// Gets the security attributes

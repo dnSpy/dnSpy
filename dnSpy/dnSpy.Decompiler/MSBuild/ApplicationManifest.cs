@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,11 +29,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string Description => dnSpy_Decompiler_Resources.MSBuild_CreateAppManifest;
 		public string Filename { get; }
 
-		readonly byte[] data;
+		DataReader reader;
 
-		ApplicationManifest(string filename, byte[] data) {
+		ApplicationManifest(string filename, ref DataReader reader) {
 			Filename = filename;
-			this.data = data;
+			this.reader = reader;
 		}
 
 		public static ApplicationManifest TryCreate(Win32Resources resources, FilenameCreator filenameCreator) {
@@ -47,13 +47,13 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (dir.Data.Count == 0)
 				return null;
 
-			var data = dir.Data[0].Data.ReadAllBytes();
-			return new ApplicationManifest(filenameCreator.CreateName("app.manifest"), data);
+			var reader = dir.Data[0].CreateReader();
+			return new ApplicationManifest(filenameCreator.CreateName("app.manifest"), ref reader);
 		}
 
 		public void Create(DecompileContext ctx) {
 			using (var stream = File.Create(Filename))
-				stream.Write(data, 0, data.Length);
+				reader.CopyTo(stream);
 		}
 	}
 

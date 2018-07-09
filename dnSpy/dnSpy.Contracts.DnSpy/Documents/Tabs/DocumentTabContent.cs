@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// Written by the owner <see cref="IDocumentTab"/> instance
 		/// </summary>
 		public IDocumentTab DocumentTab {
-			get { return documentTab; }
+			get => documentTab;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

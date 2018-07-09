@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -619,8 +619,8 @@ namespace dnSpy.Documents.Tabs {
 			else if (i > 10)
 				s = i.ToString();
 			else
-				s = string.Format("_{0}", i);
-			return string.Format("{0} {1}", s, GetShortMenuItemHeader(tab.Content.Title));
+				s = $"_{i}";
+			return $"{s} {GetShortMenuItemHeader(tab.Content.Title)}";
 		}
 
 		void ShowTabsDlg() {

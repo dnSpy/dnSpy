@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A position in a hex column
 	/// </summary>
-	public struct HexColumnPosition : IEquatable<HexColumnPosition> {
+	public readonly struct HexColumnPosition : IEquatable<HexColumnPosition> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

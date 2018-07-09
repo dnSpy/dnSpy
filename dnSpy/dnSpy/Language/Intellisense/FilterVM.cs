@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Language.Intellisense {
 		public ImageReference ImageReference { get; }
 
 		public bool IsChecked {
-			get { return filter.IsChecked; }
+			get => filter.IsChecked;
 			set {
 				if (filter.IsChecked != value) {
 					filter.IsChecked = value;
@@ -40,7 +40,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public bool IsEnabled {
-			get { return filter.IsEnabled; }
+			get => filter.IsEnabled;
 			set {
 				if (filter.IsEnabled != value) {
 					filter.IsEnabled = value;

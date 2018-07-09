@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<UInt32Data> Cb { get; }
 		public override StructField<UInt16Data> MajorRuntimeVersion { get; }
 		public override StructField<UInt16Data> MinorRuntimeVersion { get; }
-		public override StructField<DataDirectoryData> MetaData { get; }
+		public override StructField<DataDirectoryData> Metadata { get; }
 		public override StructField<UInt32FlagsData> Flags { get; }
 		public override StructField<UInt32Data> EntryPointTokenOrRVA { get; }
 		public override StructField<DataDirectoryData> Resources { get; }
@@ -58,7 +58,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			Cb = new StructField<UInt32Data>("cb", new UInt32Data(buffer, pos));
 			MajorRuntimeVersion = new StructField<UInt16Data>("MajorRuntimeVersion", new UInt16Data(buffer, pos + 4));
 			MinorRuntimeVersion = new StructField<UInt16Data>("MinorRuntimeVersion", new UInt16Data(buffer, pos + 6));
-			MetaData = new StructField<DataDirectoryData>("MetaData", new DataDirectoryData(buffer, pos + 8));
+			Metadata = new StructField<DataDirectoryData>("MetaData", new DataDirectoryData(buffer, pos + 8));
 			Flags = new StructField<UInt32FlagsData>("Flags", new UInt32FlagsData(buffer, pos + 0x10, flagsFlagInfos));
 			EntryPointTokenOrRVA = new StructField<UInt32Data>("EntryPointTokenOrRVA", new UInt32Data(buffer, pos + 0x14));
 			Resources = new StructField<DataDirectoryData>("Resources", new DataDirectoryData(buffer, pos + 0x18));
@@ -71,7 +71,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				Cb,
 				MajorRuntimeVersion,
 				MinorRuntimeVersion,
-				MetaData,
+				Metadata,
 				Flags,
 				EntryPointTokenOrRVA,
 				Resources,

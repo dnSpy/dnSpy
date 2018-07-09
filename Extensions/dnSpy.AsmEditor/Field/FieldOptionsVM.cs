@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -83,53 +83,53 @@ namespace dnSpy.AsmEditor.Field {
 		FieldAttributes attributes;
 
 		public bool Static {
-			get { return GetFlagValue(FieldAttributes.Static); }
-			set { SetFlagValue(FieldAttributes.Static, value); }
+			get => GetFlagValue(FieldAttributes.Static);
+			set => SetFlagValue(FieldAttributes.Static, value);
 		}
 
 		public bool InitOnly {
-			get { return GetFlagValue(FieldAttributes.InitOnly); }
-			set { SetFlagValue(FieldAttributes.InitOnly, value); }
+			get => GetFlagValue(FieldAttributes.InitOnly);
+			set => SetFlagValue(FieldAttributes.InitOnly, value);
 		}
 
 		public bool Literal {
-			get { return GetFlagValue(FieldAttributes.Literal); }
-			set { SetFlagValue(FieldAttributes.Literal, value); }
+			get => GetFlagValue(FieldAttributes.Literal);
+			set => SetFlagValue(FieldAttributes.Literal, value);
 		}
 
 		public bool NotSerialized {
-			get { return GetFlagValue(FieldAttributes.NotSerialized); }
-			set { SetFlagValue(FieldAttributes.NotSerialized, value); }
+			get => GetFlagValue(FieldAttributes.NotSerialized);
+			set => SetFlagValue(FieldAttributes.NotSerialized, value);
 		}
 
 		public bool SpecialName {
-			get { return GetFlagValue(FieldAttributes.SpecialName); }
-			set { SetFlagValue(FieldAttributes.SpecialName, value); }
+			get => GetFlagValue(FieldAttributes.SpecialName);
+			set => SetFlagValue(FieldAttributes.SpecialName, value);
 		}
 
 		public bool PinvokeImpl {
-			get { return GetFlagValue(FieldAttributes.PinvokeImpl); }
-			set { SetFlagValue(FieldAttributes.PinvokeImpl, value); }
+			get => GetFlagValue(FieldAttributes.PinvokeImpl);
+			set => SetFlagValue(FieldAttributes.PinvokeImpl, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(FieldAttributes.RTSpecialName); }
-			set { SetFlagValue(FieldAttributes.RTSpecialName, value); }
+			get => GetFlagValue(FieldAttributes.RTSpecialName);
+			set => SetFlagValue(FieldAttributes.RTSpecialName, value);
 		}
 
 		public bool HasFieldMarshal {
-			get { return GetFlagValue(FieldAttributes.HasFieldMarshal); }
-			set { SetFlagValue(FieldAttributes.HasFieldMarshal, value); }
+			get => GetFlagValue(FieldAttributes.HasFieldMarshal);
+			set => SetFlagValue(FieldAttributes.HasFieldMarshal, value);
 		}
 
 		public bool HasDefault {
-			get { return GetFlagValue(FieldAttributes.HasDefault); }
-			set { SetFlagValue(FieldAttributes.HasDefault, value); }
+			get => GetFlagValue(FieldAttributes.HasDefault);
+			set => SetFlagValue(FieldAttributes.HasDefault, value);
 		}
 
 		public bool HasFieldRVA {
-			get { return GetFlagValue(FieldAttributes.HasFieldRVA); }
-			set { SetFlagValue(FieldAttributes.HasFieldRVA, value); }
+			get => GetFlagValue(FieldAttributes.HasFieldRVA);
+			set => SetFlagValue(FieldAttributes.HasFieldRVA, value);
 		}
 
 		bool GetFlagValue(FieldAttributes flag) => (Attributes & flag) != 0;
@@ -142,7 +142,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -153,8 +153,8 @@ namespace dnSpy.AsmEditor.Field {
 		UTF8String name;
 
 		public TypeSig FieldTypeSig {
-			get { return TypeSigCreator.TypeSig; }
-			set { TypeSigCreator.TypeSig = value; }
+			get => TypeSigCreator.TypeSig;
+			set => TypeSigCreator.TypeSig = value;
 		}
 
 		public string FieldTypeHeader => string.Format(dnSpy_AsmEditor_Resources.FieldType, TypeSigCreator.TypeSigDnlibFullName);
@@ -168,8 +168,8 @@ namespace dnSpy.AsmEditor.Field {
 		public UInt32VM RVA { get; }
 
 		public ImplMap ImplMap {
-			get { return ImplMapVM.ImplMap; }
-			set { ImplMapVM.ImplMap = value; }
+			get => ImplMapVM.ImplMap;
+			set => ImplMapVM.ImplMap = value;
 		}
 
 		public ImplMapVM ImplMapVM { get; }

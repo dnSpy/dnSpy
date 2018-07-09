@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// File and structure
 	/// </summary>
-	public struct FileAndStructure {
+	public readonly struct FileAndStructure {
 		/// <summary>
 		/// Gets the file
 		/// </summary>

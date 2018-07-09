@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (!showOffsetComment)
 				return;
 
-			ulong fo = node.FileOffset;
+			var fo = node.FileOffset;
 			if (fo == 0)
 				return;
 

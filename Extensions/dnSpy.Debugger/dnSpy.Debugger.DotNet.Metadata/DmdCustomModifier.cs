@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A required or optional custom modifier
 	/// </summary>
-	public struct DmdCustomModifier : IEquatable<DmdCustomModifier> {
+	public readonly struct DmdCustomModifier : IEquatable<DmdCustomModifier> {
 		/// <summary>
 		/// true if it's a required C modifier
 		/// </summary>

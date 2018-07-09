@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel {
-	struct GetNodesResult {
+	readonly struct GetNodesResult {
 		/// <summary>
 		/// Gets all nodes
 		/// </summary>
@@ -53,10 +53,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// <param name="evalOptions">Evaluation options</param>
 		/// <param name="nodeEvalOptions">Value node evaluation options</param>
 		/// <returns></returns>
-		public abstract GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions);
+		public abstract GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
 
 		/// <summary>
-		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions)"/> must be called again, eg. the debugged program is paused
+		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions, DbgValueFormatterOptions)"/> must be called again, eg. the debugged program is paused
 		/// </summary>
 		public abstract event EventHandler NodesChanged;
 
@@ -81,13 +81,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract void EditExpression(string id, string expression);
 		public abstract void AddExpressions(string[] expressions);
 
-		public abstract (DbgEvaluationContext context, DbgStackFrame frame) TryGetEvaluationContextInfo();
+		public abstract DbgEvaluationInfo TryGetEvaluationInfo();
 		public abstract DbgStackFrame TryGetFrame();
 
 		public abstract void RefreshAllNodes();
 	}
 
-	struct DbgValueNodeInfo {
+	readonly struct DbgValueNodeInfo {
 		/// <summary>
 		/// null or the id of the value. Should be used if <see cref="DbgValueNode.Expression"/> isn't unique
 		/// or when <see cref="ValueNodesProvider.CanAddRemoveExpressions"/> is true

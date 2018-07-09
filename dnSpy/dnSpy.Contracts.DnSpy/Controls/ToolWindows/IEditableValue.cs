@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 	/// <summary>
 	/// Contains the text to edit
 	/// </summary>
-	public struct EditableValueTextInfo {
+	public readonly struct EditableValueTextInfo {
 		/// <summary>
 		/// Gets the text
 		/// </summary>

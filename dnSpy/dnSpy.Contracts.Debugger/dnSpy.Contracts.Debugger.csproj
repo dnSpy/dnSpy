@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Contracts.Debugger</RootNamespace>
     <AssemblyName>dnSpy.Contracts.Debugger</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -29,7 +29,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -124,6 +125,7 @@
     <Compile Include="Engine\Steppers\DbgEngineStepKind.cs" />
     <Compile Include="Engine\Steppers\DbgEngineStepper.cs" />
     <Compile Include="Evaluation\DbgEvaluationContext.cs" />
+    <Compile Include="Evaluation\DbgEvaluationInfo.cs" />
     <Compile Include="Evaluation\DbgExpressionEvaluationInfo.cs" />
     <Compile Include="Evaluation\DbgExpressionEvaluator.cs" />
     <Compile Include="Evaluation\DbgFormatter.cs" />
@@ -141,6 +143,7 @@
     <Compile Include="Evaluation\DbgValueNodeProvider.cs" />
     <Compile Include="Evaluation\PredefinedDbgLanguageNames.cs" />
     <Compile Include="Evaluation\PredefinedDbgValueNodeImageNames.cs" />
+    <Compile Include="Evaluation\PredefinedFormatSpecifiers.cs" />
     <Compile Include="Exceptions\DbgException.cs" />
     <Compile Include="Exceptions\DbgExceptionCategoryDefinition.cs" />
     <Compile Include="Exceptions\DbgExceptionCategoryDefinitionFlags.cs" />
@@ -164,6 +167,7 @@
     <Compile Include="References\DbgLoadModuleReferenceHandler.cs" />
     <Compile Include="RuntimeId.cs" />
     <Compile Include="StartDebuggingOptions.cs" />
+    <Compile Include="StartDebugging\DbgProcessStarter.cs" />
     <Compile Include="StartDebugging\Dialog\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
     <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPage.cs" />
     <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageContext.cs" />

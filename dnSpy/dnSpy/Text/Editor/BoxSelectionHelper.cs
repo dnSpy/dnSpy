@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
-	struct BoxSelectionHelper {
+	readonly struct BoxSelectionHelper {
 		readonly ITextSelection textSelection;
 		readonly ITextSnapshot textSnapshot;
 		readonly double xLeft, xRight;

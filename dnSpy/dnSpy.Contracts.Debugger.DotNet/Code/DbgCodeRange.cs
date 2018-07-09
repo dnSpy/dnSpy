@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// Code range
 	/// </summary>
-	public struct DbgCodeRange {
+	public readonly struct DbgCodeRange {
 		/// <summary>
 		/// Gets the start offset relative to the start of the method
 		/// </summary>
@@ -50,5 +50,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 			Start = start;
 			End = end;
 		}
+
+		/// <summary>
+		/// Checks whether <paramref name="offset"/> is within this range
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		public bool Contains(uint offset) => Start <= offset && offset < End;
 	}
 }

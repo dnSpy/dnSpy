@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -64,12 +64,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 			int bitness = IntPtr.Size * 8;
 			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(bitness);
 			foreach (var ccInfo in CoreCLRHelper.GetCoreCLRInfos(process.Id, coreclrFilename, dbgShimFilename))
-				yield return new DotNetCoreAttachProgramOptions((uint)process.Id, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo.CoreCLRFilename);
+				yield return new DotNetCoreAttachProgramOptions(process.Id, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo.CoreCLRFilename);
 		}
 	}
 
 	sealed class DotNetCoreAttachProgramOptions : AttachProgramOptions {
-		public override ulong ProcessId { get; }
+		public override int ProcessId { get; }
 		public override RuntimeId RuntimeId { get; }
 		public override string RuntimeName { get; }
 		public override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetCore_Guid;
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 		readonly string clrModuleVersion;
 		readonly string coreCLRFilename;
 
-		public DotNetCoreAttachProgramOptions(ulong pid, string clrModuleVersion, string coreCLRFilename) {
+		public DotNetCoreAttachProgramOptions(int pid, string clrModuleVersion, string coreCLRFilename) {
 			ProcessId = pid;
 			RuntimeId = new DotNetCoreRuntimeId(clrModuleVersion);
 			RuntimeName = "CoreCLR " + clrModuleVersion;

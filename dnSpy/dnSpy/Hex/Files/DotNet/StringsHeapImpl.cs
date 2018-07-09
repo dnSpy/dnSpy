@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		DotNetMetadataHeaders metadata;
 		KnownStringInfo[] knownStringInfos;
 
-		struct KnownStringInfo {
+		readonly struct KnownStringInfo {
 			public HexSpan Span { get; }
 			public uint[] Tokens { get; }
 
@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			: base(span) {
 		}
 
-		struct StringInfo {
+		readonly struct StringInfo {
 			public StringZ String { get; }
 			public uint[] Tokens { get; }
 			public StringInfo(StringZ span, uint[] tokens) {
@@ -53,7 +53,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		struct StringZ {
+		readonly struct StringZ {
 			public bool HasTerminator => StringSpan.End < FullSpan.End;
 			public HexSpan StringSpan { get; }
 			public HexSpan FullSpan { get; }
@@ -173,7 +173,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new TableInitInfo(Table.LocalConstant, 0),// Name
 		};
 
-		struct TableInitInfo {
+		readonly struct TableInitInfo {
 			public Table Table { get; }
 			public byte Column1 { get; }
 			public sbyte Column2 { get; }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -164,7 +164,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 				if (evaluationContext == null)
 					evaluationContext = language.CreateContext(frame, options: DbgEvaluationContextOptions.NoMethodBody, cancellationToken: cancellationToken);
-				language.Formatter.Format(evaluationContext, frame, Context.ClassifiedTextWriter, Context.StackFrameFormatterOptions, Context.ValueFormatterOptions, cultureInfo, cancellationToken);
+				var evalInfo = new DbgEvaluationInfo(evaluationContext, frame, cancellationToken);
+				language.Formatter.FormatFrame(evalInfo, Context.ClassifiedTextWriter, Context.StackFrameFormatterOptions, Context.ValueFormatterOptions, cultureInfo);
 			}
 			return Context.ClassifiedTextWriter.GetClassifiedText();
 		}

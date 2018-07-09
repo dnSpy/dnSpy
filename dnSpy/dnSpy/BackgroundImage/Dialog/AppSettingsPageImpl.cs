@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,7 +65,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public ICommand PickDirectoryCommand => new RelayCommand(a => PickDirectory(), a => CanPickDirectory);
 
 		public Settings CurrentItem {
-			get { return currentItem; }
+			get => currentItem;
 			set {
 				if (currentItem != value) {
 					currentItem = value;
@@ -93,7 +93,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		Settings currentItem;
 
 		public string Images {
-			get { return currentItem.Images; }
+			get => currentItem.Images;
 			set {
 				if (currentItem.Images != value) {
 					currentItem.Images = value;
@@ -103,7 +103,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 
 		public bool IsRandom {
-			get { return currentItem.RawSettings.IsRandom; }
+			get => currentItem.RawSettings.IsRandom;
 			set {
 				if (currentItem.RawSettings.IsRandom != value) {
 					currentItem.RawSettings.IsRandom = value;
@@ -113,7 +113,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 
 		public bool IsEnabled {
-			get { return currentItem.RawSettings.IsEnabled; }
+			get => currentItem.RawSettings.IsEnabled;
 			set {
 				if (currentItem.RawSettings.IsEnabled != value) {
 					currentItem.RawSettings.IsEnabled = value;

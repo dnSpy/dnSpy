@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
@@ -60,9 +61,9 @@ namespace dnSpy.AsmEditor.Assembly {
 
 			var peImage = fileNode.Document.PEImage;
 			if (peImage == null)
-				peImage = (fileNode.Document.ModuleDef as ModuleDefMD)?.MetaData?.PEImage;
+				peImage = (fileNode.Document.ModuleDef as ModuleDefMD)?.Metadata?.PEImage;
 
-			return peImage != null && peImage.IsMemoryMappedIO ? fileNode.Document : null;
+			return (peImage as IInternalPEImage)?.IsMemoryMappedIO == true ? fileNode.Document : null;
 		}
 
 		public override void Execute(IMenuItemContext context) {
@@ -74,11 +75,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				if (file != null)
 					asms.Add(file);
 			}
-			foreach (var asm in asms) {
-				var peImage = asm.PEImage;
-				if (peImage != null)
-					peImage.UnsafeDisableMemoryMappedIO();
-			}
+			foreach (var asm in asms)
+				(asm.PEImage as IInternalPEImage)?.UnsafeDisableMemoryMappedIO();
 		}
 	}
 
@@ -182,13 +180,23 @@ namespace dnSpy.AsmEditor.Assembly {
 		static void FreeAssemblies(IList<DsDocumentNode> nodes) {
 			if (nodes.Count == 0)
 				return;
-			nodes[0].Context.DocumentTreeView.Remove(nodes);
+			var docTreeView = nodes[0].Context.DocumentTreeView;
+			if (nodes.Count == docTreeView.TreeView.Root.Children.Count) {
+				var hash1 = new HashSet<DsDocumentNode>(docTreeView.TreeView.Root.Children.Select(a => (DsDocumentNode)a.Data));
+				var hash2 = new HashSet<DsDocumentNode>(nodes);
+				if (hash1.Count == hash2.Count && hash1.Count == nodes.Count) {
+					docTreeView.TreeView.SelectItems(Array.Empty<TreeNodeData>());
+					docTreeView.DocumentService.Clear();
+					return;
+				}
+			}
+			docTreeView.Remove(nodes);
 		}
 
-		struct UndoRedoInfo {
-			public bool IsInUndo;
-			public bool IsInRedo;
-			public DsDocumentNode Node;
+		readonly struct UndoRedoInfo {
+			public readonly bool IsInUndo;
+			public readonly bool IsInRedo;
+			public readonly DsDocumentNode Node;
 
 			public UndoRedoInfo(DsDocumentNode node, bool isInUndo, bool isInRedo) {
 				IsInUndo = isInUndo;
@@ -298,7 +306,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		readonly AssemblyOptions origOptions;
 		readonly AssemblyRefInfo[] assemblyRefInfos;
 
-		struct AssemblyRefInfo {
+		readonly struct AssemblyRefInfo {
 			public readonly AssemblyRef AssemblyRef;
 			public readonly UTF8String OrigName;
 			public readonly PublicKeyBase OrigPublicKeyOrToken;

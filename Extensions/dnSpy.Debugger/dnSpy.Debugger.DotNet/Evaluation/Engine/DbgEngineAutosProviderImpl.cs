@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,7 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -35,31 +33,31 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineAutosProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return GetNodesCore(context, frame, options, cancellationToken);
-			return GetNodes2(dispatcher, context, frame, options, cancellationToken);
+				return GetNodesCore(evalInfo, options);
+			return GetNodes2(dispatcher, evalInfo, options);
 
-			DbgEngineValueNode[] GetNodes2(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => GetNodesCore(context2, frame2, options2, cancellationToken2));
+			DbgEngineValueNode[] GetNodes2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2) =>
+				dispatcher2.InvokeRethrow(() => GetNodesCore(evalInfo2, options2));
 		}
 
-		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] GetNodesCore(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {
 			//TODO: Show all autos...
 			var res = new DbgEngineValueNode[1];
 			try {
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, "Error"));
-					res[i] = valueNodeFactory.CreateError(context, frame, name, "NYI", "NYI", false, cancellationToken);
+					res[i] = valueNodeFactory.CreateError(evalInfo, name, "NYI", "NYI", false);
 				}
 			}
 			catch (Exception ex) {
-				context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
-				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
+				return valueNodeFactory.CreateInternalErrorResult(evalInfo);
 			}
 			return res;
 		}

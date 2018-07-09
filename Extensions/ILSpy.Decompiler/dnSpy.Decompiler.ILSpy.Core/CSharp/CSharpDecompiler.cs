@@ -356,14 +356,6 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					((ComposedType)astType).PointerRank--;
 			}
 
-			var module = type.Module;
-			if (module == null && type is TypeSpec && ((TypeSpec)type).TypeSig.RemovePinnedAndModifiers() is GenericSig) {
-				var sig = (GenericSig)((TypeSpec)type).TypeSig.RemovePinnedAndModifiers();
-				if (sig.OwnerType != null)
-					module = sig.OwnerType.Module;
-				if (module == null && sig.OwnerMethod != null && sig.OwnerMethod.DeclaringType != null)
-					module = sig.OwnerMethod.DeclaringType.Module;
-			}
 			var ctx = new DecompilerContext(langSettings.Settings.SettingsVersion, type.Module, MetadataTextColorProvider);
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
@@ -489,7 +481,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			try {
 				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => GetDecompiledBodyKind(info, builder, method);
 				state.AstBuilder.AddType(info.Type);
-				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic, info.ShowAll));
+				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Types, info.Methods, !info.DecompileHidden, info.ShowAll));
 			}
 			finally {
 				state.Dispose();

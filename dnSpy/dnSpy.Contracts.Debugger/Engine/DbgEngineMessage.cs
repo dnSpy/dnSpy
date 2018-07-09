@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,14 +61,14 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the process id
 		/// </summary>
-		public ulong ProcessId { get; }
+		public int ProcessId { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="processId">Process id</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageConnected(ulong processId, DbgEngineMessageFlags messageFlags) : base(messageFlags) => ProcessId = processId;
+		public DbgMessageConnected(int processId, DbgEngineMessageFlags messageFlags) : base(messageFlags) => ProcessId = processId;
 
 		/// <summary>
 		/// Constructor
@@ -280,6 +280,37 @@ namespace dnSpy.Contracts.Debugger.Engine {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			FramesInvalidated = framesInvalidated;
 			Error = error;
+		}
+	}
+
+	/// <summary>
+	/// <see cref="DbgEngineMessageKind.AsyncProgramMessage"/> event
+	/// </summary>
+	public sealed class DbgMessageAsyncProgramMessage : DbgEngineMessage {
+		/// <summary>
+		/// Returns <see cref="DbgEngineMessageKind.AsyncProgramMessage"/>
+		/// </summary>
+		public override DbgEngineMessageKind MessageKind => DbgEngineMessageKind.AsyncProgramMessage;
+
+		/// <summary>
+		/// Gets the message source
+		/// </summary>
+		public AsyncProgramMessageSource Source { get; }
+
+		/// <summary>
+		/// Gets the message
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="source">Source</param>
+		/// <param name="message">Message</param>
+		public DbgMessageAsyncProgramMessage(AsyncProgramMessageSource source, string message)
+			: base(DbgEngineMessageFlags.None) {
+			Source = source;
+			Message = message ?? throw new ArgumentNullException(nameof(message));
 		}
 	}
 }

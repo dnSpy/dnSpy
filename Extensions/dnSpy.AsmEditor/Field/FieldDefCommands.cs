@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -108,7 +108,7 @@ namespace dnSpy.AsmEditor.Field {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly TypeDef OwnerType;
 				public readonly int FieldIndex;
 
@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Field {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerType.Fields.Insert(info.FieldIndex, node.FieldDef);
 				}
 
@@ -310,7 +310,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 	}
 
-	struct MemberRefInfo {
+	readonly struct MemberRefInfo {
 		public readonly MemberRef MemberRef;
 		public readonly UTF8String OrigName;
 

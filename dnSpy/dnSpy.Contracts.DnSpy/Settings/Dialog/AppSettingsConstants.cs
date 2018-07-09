@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,6 +47,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of decompiler settings page
 		/// </summary>
 		public const double ORDER_DECOMPILER = 1000;
+
+		/// <summary>
+		/// Order of compiler settings page
+		/// </summary>
+		public const double ORDER_COMPILER = 1500;
 
 		/// <summary>
 		/// Order of debugger settings page
@@ -124,6 +129,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const string GUID_DECOMPILER = "E380FC93-BACB-4125-8AF1-ADFAEA4D1307";
 
 		/// <summary>
+		/// Guid of Compiler settings page
+		/// </summary>
+		public const string GUID_COMPILER = "3ABE6BCF-06FE-4D75-AFA0-1E75577D8BCD";
+
+		/// <summary>
 		/// Guid of Code Editor settings page
 		/// </summary>
 		public const string GUID_CODE_EDITOR = "E1BA254B-C5EA-4305-801A-9336BDFA33FB";
@@ -197,6 +207,16 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of Decompiler / ILSpy IL
 		/// </summary>
 		public const double ORDER_DECOMPILER_SETTINGS_ILSPY_IL = 11000;
+
+		/// <summary>
+		/// Order of Compiler / C#
+		/// </summary>
+		public const double ORDER_COMPILER_SETTINGS_CSHARP = 10000;
+
+		/// <summary>
+		/// Order of Compiler / Visual Basic
+		/// </summary>
+		public const double ORDER_COMPILER_SETTINGS_VISUALBASIC = 11000;
 
 		/// <summary>
 		/// Start of language options

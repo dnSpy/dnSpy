@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Documents.TreeView {
 		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlightDocumentTreeView; }
+			get => syntaxHighlightDocumentTreeView;
 			set {
 				if (syntaxHighlightDocumentTreeView != value) {
 					syntaxHighlightDocumentTreeView = value;
@@ -41,7 +41,7 @@ namespace dnSpy.Documents.TreeView {
 		bool syntaxHighlightDocumentTreeView = true;
 
 		public bool SingleClickExpandsTreeViewChildren {
-			get { return singleClickExpandsTreeViewChildren; }
+			get => singleClickExpandsTreeViewChildren;
 			set {
 				if (singleClickExpandsTreeViewChildren != value) {
 					singleClickExpandsTreeViewChildren = value;
@@ -53,7 +53,7 @@ namespace dnSpy.Documents.TreeView {
 		bool singleClickExpandsTreeViewChildren = true;
 
 		public bool ShowAssemblyVersion {
-			get { return showAssemblyVersion; }
+			get => showAssemblyVersion;
 			set {
 				if (showAssemblyVersion != value) {
 					showAssemblyVersion = value;
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.TreeView {
 		bool showAssemblyVersion = true;
 
 		public bool ShowAssemblyPublicKeyToken {
-			get { return showAssemblyPublicKeyToken; }
+			get => showAssemblyPublicKeyToken;
 			set {
 				if (showAssemblyPublicKeyToken != value) {
 					showAssemblyPublicKeyToken = value;
@@ -77,7 +77,7 @@ namespace dnSpy.Documents.TreeView {
 		bool showAssemblyPublicKeyToken = false;
 
 		public bool ShowToken {
-			get { return showToken; }
+			get => showToken;
 			set {
 				if (showToken != value) {
 					showToken = value;
@@ -89,7 +89,7 @@ namespace dnSpy.Documents.TreeView {
 		bool showToken = true;
 
 		public bool DeserializeResources {
-			get { return deserializeResources; }
+			get => deserializeResources;
 			set {
 				if (deserializeResources != value) {
 					deserializeResources = value;
@@ -101,7 +101,7 @@ namespace dnSpy.Documents.TreeView {
 		bool deserializeResources = true;
 
 		public DocumentFilterType FilterDraggedItems {
-			get { return filterDraggedItems; }
+			get => filterDraggedItems;
 			set {
 				if (filterDraggedItems != value) {
 					filterDraggedItems = value;
@@ -121,28 +121,28 @@ namespace dnSpy.Documents.TreeView {
 		};
 
 		public MemberKind MemberKind0 {
-			get { return memberKinds[0]; }
-			set { SetMemberKind(0, value); }
+			get => memberKinds[0];
+			set => SetMemberKind(0, value);
 		}
 
 		public MemberKind MemberKind1 {
-			get { return memberKinds[1]; }
-			set { SetMemberKind(1, value); }
+			get => memberKinds[1];
+			set => SetMemberKind(1, value);
 		}
 
 		public MemberKind MemberKind2 {
-			get { return memberKinds[2]; }
-			set { SetMemberKind(2, value); }
+			get => memberKinds[2];
+			set => SetMemberKind(2, value);
 		}
 
 		public MemberKind MemberKind3 {
-			get { return memberKinds[3]; }
-			set { SetMemberKind(3, value); }
+			get => memberKinds[3];
+			set => SetMemberKind(3, value);
 		}
 
 		public MemberKind MemberKind4 {
-			get { return memberKinds[4]; }
-			set { SetMemberKind(4, value); }
+			get => memberKinds[4];
+			set => SetMemberKind(4, value);
 		}
 
 		void SetMemberKind(int index, MemberKind newValue) {

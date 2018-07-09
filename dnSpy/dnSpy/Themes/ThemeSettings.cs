@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Themes {
 		readonly ISettingsService settingsService;
 
 		public Guid? ThemeGuid {
-			get { return themeGuid; }
+			get => themeGuid;
 			set {
 				if (themeGuid != value) {
 					themeGuid = value;
@@ -40,7 +40,7 @@ namespace dnSpy.Themes {
 		Guid? themeGuid;
 
 		public bool ShowAllThemes {
-			get { return showAllThemes; }
+			get => showAllThemes;
 			set {
 				if (showAllThemes != value) {
 					showAllThemes = value;

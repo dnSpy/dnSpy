@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -135,6 +135,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				editedProperties[i].Add();
 			for (int i = 0; i < editedEvents.Length; i++)
 				editedEvents[i].Add();
+
+			typeNode.TreeNode.RefreshUI();
+			TypeDefSettingsCommand.InvalidateBaseTypeFolderNode(typeNode);
 		}
 
 		public void Remove() {
@@ -169,6 +172,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			for (int i = deletedTypes.Length - 1; i >= 0; i--)
 				deletedTypes[i].Remove();
 			origTypeDefOptions.CopyTo(targetType, ownerModule);
+
+			typeNode.TreeNode.RefreshUI();
+			TypeDefSettingsCommand.InvalidateBaseTypeFolderNode(typeNode);
 		}
 	}
 }

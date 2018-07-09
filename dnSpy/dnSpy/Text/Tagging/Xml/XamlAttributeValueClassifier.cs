@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		ParameterValue,
 	}
 
-	struct XamlSpan {
+	readonly struct XamlSpan {
 		public SnapshotSpan Span { get; }
 		public XamlKind Kind { get; }
 		public XamlSpan(SnapshotSpan span, XamlKind kind) {
@@ -60,7 +60,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			Period,
 		}
 
-		struct CharSpan {
+		readonly struct CharSpan {
 			public Span Span { get; }
 			public TokenKind Kind { get; }
 			public CharSpan(int start, int end, TokenKind kind) {
@@ -70,11 +70,11 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		// Used for Name or Namespace : Name
-		struct CharSpan3 {
+		readonly struct CharSpan3 {
 			public CharSpan Item1 { get; }
 			public CharSpan? Item2 { get; }
 			public CharSpan? Item3 { get; }
-			public CharSpan3(CharSpan item1, CharSpan? item2 = null, CharSpan? item3 = null) {
+			public CharSpan3(in CharSpan item1, in CharSpan? item2 = null, in CharSpan? item3 = null) {
 				Item1 = item1;
 				Item2 = item2;
 				Item3 = item3;
@@ -182,7 +182,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			snapshot = null;
 		}
 
-		CharSpan3 GetNextName(CharSpan item1) {
+		CharSpan3 GetNextName(in CharSpan item1) {
 			Debug.Assert(item1.Kind == TokenKind.Name);
 			var item2 = GetNextSpan();
 			if (item2 == null || item2.Value.Span.Length != 1 || item2.Value.Kind != TokenKind.Colon) {
@@ -199,7 +199,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			return new CharSpan3(item1, item2, item3);
 		}
 
-		void Undo(CharSpan charSpan) {
+		void Undo(in CharSpan charSpan) {
 			Debug.Assert(nextCharSpan == null);
 			if (nextCharSpan != null)
 				throw new InvalidOperationException();

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using dnSpy.Contracts.Hex.Formatting;
 using VST = Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Hex.Formatting {
-	struct HexLinePart {
+	readonly struct HexLinePart {
 		/// <summary>
 		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="VST.Span.Start"/>
 		/// property unless there's one or more hidden characters before this <see cref="HexLinePart"/> or if there's a <see cref="HexLinePart"/>

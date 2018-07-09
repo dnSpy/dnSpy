@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,7 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -63,36 +61,28 @@ namespace dnSpy.Debugger.Evaluation {
 			return DbgValueNodeUtils.ToValueNodeArray(Language, runtime, result);
 		}
 
-		public override DbgCreateValueNodeResult[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgCreateValueNodeResult[] Create(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions) {
+			if (evalInfo == null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
+			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (expressions == null)
 				throw new ArgumentNullException(nameof(expressions));
-			return CreateResult(frame.Runtime, engineValueNodeFactory.Create(context, frame, expressions, cancellationToken));
+			return CreateResult(evalInfo.Frame.Runtime, engineValueNodeFactory.Create(evalInfo, expressions));
 		}
 
-		public override DbgValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgValueNode[] Create(DbgEvaluationInfo evalInfo, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options) {
+			if (evalInfo == null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime.RuntimeKindGuid != runtimeKindGuid)
+			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
 			if (objectIds == null)
 				throw new ArgumentNullException(nameof(objectIds));
@@ -104,7 +94,7 @@ namespace dnSpy.Debugger.Evaluation {
 			var engineObjectIds = new DbgEngineObjectId[objectIds.Length];
 			for (int i = 0; i < objectIds.Length; i++)
 				engineObjectIds[i] = ((DbgObjectIdImpl)objectIds[i]).EngineObjectId;
-			return CreateResult(runtime, engineValueNodeFactory.Create(context, frame, engineObjectIds, options, cancellationToken), engineObjectIds.Length);
+			return CreateResult(runtime, engineValueNodeFactory.Create(evalInfo, engineObjectIds, options), engineObjectIds.Length);
 		}
 	}
 }

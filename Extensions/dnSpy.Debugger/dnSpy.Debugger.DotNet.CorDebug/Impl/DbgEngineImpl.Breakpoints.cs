@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -193,6 +193,30 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			if (bpsToRemove.Count > 0)
 				bpsToRemove[0].EngineBoundCodeBreakpoint.Remove(bpsToRemove.Select(a => a.EngineBoundCodeBreakpoint).ToArray());
+		}
+
+		internal DnNativeCodeBreakpoint CreateNativeBreakpointForGetReturnValue(CorCode code, uint offset, Action<CorThread> callback) {
+			debuggerThread.VerifyAccess();
+			return dnDebugger.CreateNativeBreakpoint(code, offset, ctx => { callback(ctx.E.CorThread); return false; });
+		}
+
+		internal void RemoveNativeBreakpointForGetReturnValue(DnNativeCodeBreakpoint breakpoint) {
+			debuggerThread.VerifyAccess();
+			dnDebugger.RemoveBreakpoint(breakpoint);
+		}
+
+		internal DnILCodeBreakpoint CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<CorThread, bool> callback) {
+			debuggerThread.VerifyAccess();
+			return dnDebugger.CreateBreakpoint(GetModuleId(module).ToDnModuleId(), token, offset, ctx => {
+				if (callback(ctx.E.CorThread))
+					ctx.E.AddPauseReason(DebuggerPauseReason.AsyncStepperBreakpoint);
+				return false;
+			});
+		}
+
+		internal void RemoveBreakpointForStepper(DnILCodeBreakpoint breakpoint) {
+			debuggerThread.VerifyAccess();
+			dnDebugger.RemoveBreakpoint(breakpoint);
 		}
 	}
 }

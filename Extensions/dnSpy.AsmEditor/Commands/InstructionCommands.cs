@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -115,48 +115,40 @@ namespace dnSpy.AsmEditor.Commands {
 			var sb = new StringBuilder();
 
 			IInstructionBytesReader reader = null;
-			try {
-				MethodDef method = null;
-				int index = 0;
-				foreach (var r in refs) {
-					var ir = (InstructionReference)r.Data.Reference;
-					var instr = ir.Instruction;
-					if (ir.Method != method) {
-						if (reader != null)
-							reader.Dispose();
-						method = ir.Method;
-						reader = InstructionBytesReader.Create(method, methodAnnotations.Value.IsBodyModified(method));
-						index = method.Body.Instructions.IndexOf(instr);
-						if (index < 0)
-							throw new InvalidOperationException();
-						reader.SetInstruction(index, instr.Offset);
-					}
-					else if (index >= method.Body.Instructions.Count)
+			MethodDef method = null;
+			int index = 0;
+			foreach (var r in refs) {
+				var ir = (InstructionReference)r.Data.Reference;
+				var instr = ir.Instruction;
+				if (ir.Method != method) {
+					method = ir.Method;
+					reader = InstructionBytesReader.Create(method, methodAnnotations.Value.IsBodyModified(method));
+					index = method.Body.Instructions.IndexOf(instr);
+					if (index < 0)
 						throw new InvalidOperationException();
-					else if (method.Body.Instructions[index + 1] != ir.Instruction) {
-						index = method.Body.Instructions.IndexOf(instr);
-						if (index < 0)
-							throw new InvalidOperationException();
-						reader.SetInstruction(index, instr.Offset);
+					reader.SetInstruction(index, instr.Offset);
+				}
+				else if (index >= method.Body.Instructions.Count)
+					throw new InvalidOperationException();
+				else if (method.Body.Instructions[index + 1] != ir.Instruction) {
+					index = method.Body.Instructions.IndexOf(instr);
+					if (index < 0)
+						throw new InvalidOperationException();
+					reader.SetInstruction(index, instr.Offset);
+				}
+				else
+					index++;
+
+				int size = instr.GetSize();
+				for (int i = 0; i < size; i++) {
+					int b = reader.ReadByte();
+					if (b < 0) {
+						sb.Append("??");
+						FoundUnknownBytes = true;
 					}
 					else
-						index++;
-
-					int size = instr.GetSize();
-					for (int i = 0; i < size; i++) {
-						int b = reader.ReadByte();
-						if (b < 0) {
-							sb.Append("??");
-							FoundUnknownBytes = true;
-						}
-						else
-							sb.Append(string.Format("{0:X2}", b));
-					}
+						sb.Append(b.ToString("X2"));
 				}
-			}
-			finally {
-				if (reader != null)
-					reader.Dispose();
 			}
 
 			return sb.ToString();

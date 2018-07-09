@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Culture {
 		protected virtual void OnModified() { }
 
 		public string UIName {
-			get { return uiName; }
+			get => uiName;
 			set {
 				if (uiName != value) {
 					uiName = value;

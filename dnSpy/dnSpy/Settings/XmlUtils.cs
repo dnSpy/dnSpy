@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Settings {
 			var sb = new StringBuilder(s.Length);
 			foreach (var c in s) {
 				if (c < ' ' || c == ESCAPE_CHAR)
-					sb.Append(string.Format("{0}{1:X4}", ESCAPE_CHAR, (int)c));
+					sb.Append($"{ESCAPE_CHAR}{(int)c:X4}");
 				else
 					sb.Append(c);
 			}

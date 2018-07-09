@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,7 @@ using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
+using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -59,10 +60,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal DbgObjectFactory ObjectFactory => objectFactory;
 
-		readonly DbgDotNetCodeRangeService dbgDotNetCodeRangeService;
 		readonly DebuggerSettings debuggerSettings;
 		readonly Lazy<DbgDotNetNativeCodeLocationFactory> dbgDotNetNativeCodeLocationFactory;
 		readonly Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory;
+		readonly DbgEngineStepperFactory dbgEngineStepperFactory;
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
 		readonly ClrDacProvider clrDacProvider;
@@ -99,9 +100,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			stackFrameData = new StackFrameData();
 			objectHolders = new HashSet<DnDebuggerObjectHolder>();
 			debuggerSettings = deps.DebuggerSettings;
-			dbgDotNetCodeRangeService = deps.DotNetCodeRangeService;
 			dbgDotNetNativeCodeLocationFactory = deps.DbgDotNetNativeCodeLocationFactory;
 			dbgDotNetCodeLocationFactory = deps.DbgDotNetCodeLocationFactory;
+			dbgEngineStepperFactory = deps.EngineStepperFactory;
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 			dbgModuleMemoryRefreshedNotifier = deps.DbgModuleMemoryRefreshedNotifier;
 			clrDacProvider = deps.ClrDacProvider;
@@ -110,6 +111,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.CallDispatcherRun();
 			dotNetValuesToCloseOnContinue = new List<DbgDotNetValueImpl>();
 			valuesToCloseNow = new List<DbgCorValueHolder>();
+			currentReturnValues = Array.Empty<DbgDotNetReturnValueInfo>();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), IntPtr.Size == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			toDynamicModuleHelper = new Dictionary<CorModule, DmdDynamicModuleHelperImpl>();
 			DmdDispatcher = new DmdDispatcherImpl(this);
@@ -141,7 +143,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			case DebugCallbackKind.CreateProcess:
 				var cp = (CreateProcessDebugCallbackEventArgs)e;
 				hProcess_debuggee = Native.NativeMethods.OpenProcess(Native.NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, (uint)(cp.CorProcess?.ProcessId ?? -1));
-				SendMessage(new DbgMessageConnected((uint)cp.CorProcess.ProcessId, GetMessageFlags()));
+				SendMessage(new DbgMessageConnected(cp.CorProcess.ProcessId, GetMessageFlags()));
 				e.AddPauseReason(DebuggerPauseReason.Other);
 				break;
 
@@ -321,6 +323,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				dnDebugger.OnModuleAdded -= DnDebugger_OnModuleAdded;
 				dnDebugger.OnCorModuleDefCreated -= DnDebugger_OnCorModuleDefCreated;
 				dnDebugger.OnAttachComplete -= DnDebugger_OnAttachComplete;
+				dnDebugger.OnRedirectedOutput -= DnDebugger_OnRedirectedOutput;
 			}
 			hProcess_debuggee?.Close();
 		}
@@ -352,6 +355,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						switch (pauseState.Reason) {
 						case DebuggerPauseReason.Other:
 							// We use this reason when we pause the process, DbgManager already knows that we're paused
+							continue;
+
+						case DebuggerPauseReason.AsyncStepperBreakpoint:
+							// Used by async stepper code. We shouldn't notify DbgManager. The async stepper code will eventually
+							// create a stepper event.
 							continue;
 
 						case DebuggerPauseReason.UserBreak:
@@ -395,6 +403,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					}
 				}
 			}
+		}
+
+		void DnDebugger_OnRedirectedOutput(object sender, RedirectedOutputEventArgs e) {
+			var source = e.IsStandardOutput ? AsyncProgramMessageSource.StandardOutput : AsyncProgramMessageSource.StandardError;
+			SendMessage(new DbgMessageAsyncProgramMessage(source, e.Text));
 		}
 
 		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
@@ -648,11 +661,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				};
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 				dbgOptions.DebugOptions.DebugOptionsProvider = new DebugOptionsProviderImpl(debuggerSettings);
+				if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(options.Filename))
+					dbgOptions.RedirectConsoleOutput = true;
 
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
+				if (dbgOptions.RedirectConsoleOutput)
+					dnDebugger.OnRedirectedOutput += DnDebugger_OnRedirectedOutput;
 				OnDebugProcess(dnDebugger);
-				if (debuggerSettings.DisableManagedDebuggerDetection)
-					DisableSystemDebuggerDetection.Initialize(dnDebugger);
+				if (debuggerSettings.PreventManagedDebuggerDetection)
+					PreventManagedDebuggerDetection.Initialize(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
 			}
@@ -707,8 +724,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dnDebugger.Processes.Length == 0)
 					throw new ErrorException(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotAttachToProcess, $"PID={options.ProcessId.ToString()}"));
 				OnDebugProcess(dnDebugger);
-				if (debuggerSettings.DisableManagedDebuggerDetection)
-					DisableSystemDebuggerDetection.Initialize(dnDebugger);
+				if (debuggerSettings.PreventManagedDebuggerDetection)
+					PreventManagedDebuggerDetection.Initialize(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
 			}
@@ -860,8 +877,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			ClrDacRunning?.Invoke(this, EventArgs.Empty);
 			// We could be func evaluating and get a CreateThread event. The DbgManager will call Run()
 			// but we mustn't dispose of the handles that we're still using.
-			if (!dnDebugger.IsEvaluating)
+			if (!dnDebugger.IsEvaluating) {
+				SetReturnValues(Array.Empty<DbgDotNetReturnValueInfo>());
 				CloseDotNetValues_CorDebug();
+			}
 			dnDebugger.Continue();
 		}
 
@@ -905,9 +924,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			obj.Dispose();
 		}
 
-		public override DbgEngineStepper CreateStepper(DbgThread thread) {
-			var data = thread.GetData<DbgThreadData>();
-			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.DnThread);
-		}
+		public override DbgEngineStepper CreateStepper(DbgThread thread) =>
+			dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this, dnDebugger), thread);
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -226,6 +226,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		internal void RefreshLanguageFields_UI() {
 			locationCachedOutput = default;
+			OnPropertyChanged(nameof(LocationObject));
 		}
 
 		// UI thread
@@ -352,7 +353,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					CancellationToken cancellationToken = default;
 					const CultureInfo cultureInfo = null;
 					context = language.CreateContext(frame, ctxOptions);
-					language.Formatter.Format(context, frame, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo, cancellationToken);
+					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
+					language.Formatter.FormatFrame(evalInfo, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo);
 					return Context.ClassifiedTextWriter.GetClassifiedText();
 				}
 			}

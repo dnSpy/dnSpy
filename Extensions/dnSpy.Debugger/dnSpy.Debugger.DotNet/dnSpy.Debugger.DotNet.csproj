@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Debugger.DotNet</RootNamespace>
     <AssemblyName>dnSpy.Debugger.DotNet.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -27,7 +27,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -59,13 +60,17 @@
     <Compile Include="Code\DbgCodeLocationSerializerImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationFactoryImpl.cs" />
     <Compile Include="Code\DbgDotNetCodeLocationImpl.cs" />
-    <Compile Include="Code\DbgDotNetCodeRangeServiceImpl.cs" />
+    <Compile Include="Code\DbgDotNetDebugInfoService.cs" />
+    <Compile Include="Code\DbgDotNetDebugInfoServiceImpl.cs" />
     <Compile Include="Code\DbgDotNetDecompilerGuidProviderImpl.cs" />
     <Compile Include="Code\DbgDotNetDecompilerServiceImpl.cs" />
+    <Compile Include="Code\DbgMethodDebugInfoProvider.cs" />
     <Compile Include="Code\DotNetReferenceNavigator.cs" />
     <Compile Include="Code\ReferenceConverterImpl.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
+    <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
+    <Compile Include="Evaluation\Engine\DbgAliasProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactory.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactoryExtensions.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
     <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />
+    <Compile Include="Evaluation\Engine\ModuleRefFinder.cs" />
     <Compile Include="Evaluation\Engine\ObjectCache.cs" />
     <Compile Include="Evaluation\Engine\StateWithKey.cs" />
     <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
@@ -149,6 +155,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Debugger.DotNet.Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Steppers\Engine\CompilerUtils.cs" />
+    <Compile Include="Steppers\Engine\DbgEngineStepperFactoryImpl.cs" />
+    <Compile Include="Steppers\Engine\DbgEngineStepperImpl.cs" />
+    <Compile Include="Steppers\Engine\TaskEvalUtils.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>
@@ -177,6 +187,10 @@
       <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
       <Name>dnSpy.Contracts.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
+      <Project>{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}</Project>
+      <Name>dnSpy.Decompiler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
@@ -201,6 +215,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DotNet.ex.xml" />

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 	/// <summary>
 	/// Result of evaluating a filter expression
 	/// </summary>
-	public struct DbgFilterExpressionEvaluatorResult {
+	public readonly struct DbgFilterExpressionEvaluatorResult {
 		/// <summary>
 		/// Result if <see cref="HasError"/> is false
 		/// </summary>

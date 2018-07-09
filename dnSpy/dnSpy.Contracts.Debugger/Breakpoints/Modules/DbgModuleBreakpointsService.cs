@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -90,20 +90,20 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public abstract DbgModuleBreakpoint[] Find(DbgModuleBreakpointInfo module);
+		public abstract DbgModuleBreakpoint[] Find(in DbgModuleBreakpointInfo module);
 
 		/// <summary>
 		/// Checks if <paramref name="module"/> matches at least one breakpoint
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public abstract bool IsMatch(DbgModuleBreakpointInfo module);
+		public abstract bool IsMatch(in DbgModuleBreakpointInfo module);
 	}
 
 	/// <summary>
 	/// Breakpoint and old settings
 	/// </summary>
-	public struct DbgModuleBreakpointAndOldSettings {
+	public readonly struct DbgModuleBreakpointAndOldSettings {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>
@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Breakpoints modified event args
 	/// </summary>
-	public struct DbgBreakpointsModifiedEventArgs {
+	public readonly struct DbgBreakpointsModifiedEventArgs {
 		/// <summary>
 		/// Gets the breakpoints
 		/// </summary>
@@ -145,7 +145,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Breakpoint and settings
 	/// </summary>
-	public struct DbgModuleBreakpointAndSettings {
+	public readonly struct DbgModuleBreakpointAndSettings {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>

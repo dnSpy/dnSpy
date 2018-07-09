@@ -6085,6 +6085,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -6093,11 +6094,12 @@
             <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Resources.GeneralSettings_Theme}" Target="{Binding ElementName=themeComboBox}" />
             <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="themeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ThemesVM}" SelectedItem="{Binding SelectedThemeVM}" VerticalContentAlignment="Center" />
             <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding WindowsExplorerIntegration}" Content="{x:Static p:dnSpy_Resources.IntegrateWithWindowsExplorer}" />
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}" />
-            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DeserializeResources}" Content="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize}" ToolTip="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize_ToolTip}" />
-            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseMemoryMappedIO}" Content="{x:Static p:dnSpy_Resources.Options_Misc_UseMmapdIO}" />
-            <GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0">
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding AllowMoreThanOneInstance}" Content="{x:Static p:dnSpy_Resources.AllowMoreThanOneInstance}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DeserializeResources}" Content="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize}" ToolTip="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize_ToolTip}" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseMemoryMappedIO}" Content="{x:Static p:dnSpy_Resources.Options_Misc_UseMmapdIO}" />
+            <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0">
                 <GroupBox.Header>
                     <CheckBox IsChecked="{Binding UseNewRendererVM.UseNewRenderer}" Content="{x:Static p:dnSpy_Resources.UseNewRendererHeader}" />
                 </GroupBox.Header>
@@ -6119,7 +6121,7 @@
                     <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_DocumentTreeView}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerTitle}" />
                 </Grid>
             </GroupBox>
-            <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.Options_Misc_Button_EnableAllWarnings}" Command="{Binding ClearAllWarningsCommand}" />
+            <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.Options_Misc_Button_EnableAllWarnings}" Command="{Binding ClearAllWarningsCommand}" />
         </Grid>
     </DataTemplate>
 

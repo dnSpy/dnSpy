@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Gets or sets the text tracking span to which this completion applies
 		/// </summary>
 		public override ITrackingSpan ApplicableTo {
-			get { return base.ApplicableTo; }
+			get => base.ApplicableTo;
 			protected set {
 				searchText = null;
 				base.ApplicableTo = value;
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public override void SelectBestMatch() =>
 			SelectionStatus = GetBestMatch() ?? new CompletionSelectionStatus(null, false, false);
 
-		struct MruSelection {
+		readonly struct MruSelection {
 			public Completion Completion { get; }
 			public int Index { get; }
 			public MruSelection(Completion completion, int index) {

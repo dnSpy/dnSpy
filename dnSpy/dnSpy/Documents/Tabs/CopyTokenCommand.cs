@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs {
 		static void ExecuteInternal(uint? token) {
 			if (token != null) {
 				try {
-					Clipboard.SetText(string.Format("0x{0:X8}", token.Value));
+					Clipboard.SetText($"0x{token.Value:X8}");
 				}
 				catch (ExternalException) { }
 			}
@@ -48,6 +48,8 @@ namespace dnSpy.Documents.Tabs {
 					return null;
 				var @ref = context.Find<TextReference>();
 				var realRef = @ref?.Reference;
+				if (realRef is ISourceVariable sv)
+					realRef = sv.Variable;
 				if (realRef is Parameter)
 					realRef = ((Parameter)realRef).ParamDef;
 				if (realRef is IMDTokenProvider)

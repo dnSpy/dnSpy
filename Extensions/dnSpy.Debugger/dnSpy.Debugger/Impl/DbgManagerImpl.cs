@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ using dnSpy.Debugger.Exceptions;
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
 	sealed partial class DbgManagerImpl : DbgManager, IIsRunningProvider {
-		static ulong currentProcessId = (uint)Process.GetCurrentProcess().Id;
+		static int currentProcessId = Process.GetCurrentProcess().Id;
 
 		public override event EventHandler<DbgMessageEventArgs> Message;
 		void RaiseMessage_DbgThread(ref DbgBreakInfoCollectionBuilder builder, DbgMessageEventArgs e) {
@@ -319,6 +319,10 @@ namespace dnSpy.Debugger.Impl {
 				OnSetIPComplete_DbgThread(engine, (DbgMessageSetIPComplete)e);
 				break;
 
+			case DbgEngineMessageKind.AsyncProgramMessage:
+				OnAsyncProgramMessage_DbgThread(engine, (DbgMessageAsyncProgramMessage)e);
+				break;
+
 			default:
 				Debug.Fail($"Unknown message: {e.MessageKind}");
 				break;
@@ -345,7 +349,7 @@ namespace dnSpy.Debugger.Impl {
 				return GetEngineInfo_NoLock(engine).Runtime;
 		}
 
-		DbgProcessImpl GetOrCreateProcess_DbgThread(ulong pid, DbgStartKind startKind, out bool createdProcess) {
+		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid, DbgStartKind startKind, out bool createdProcess) {
 			Dispatcher.VerifyAccess();
 			DbgProcessImpl process;
 			lock (lockObj) {
@@ -674,6 +678,12 @@ namespace dnSpy.Debugger.Impl {
 			Dispatcher.VerifyAccess();
 			var ep = new DbgMessageProgramMessageEventArgs(e.Message, GetRuntime(engine), e.Thread);
 			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, e.MessageFlags);
+		}
+
+		void OnAsyncProgramMessage_DbgThread(DbgEngine engine, DbgMessageAsyncProgramMessage e) {
+			Dispatcher.VerifyAccess();
+			var ep = new DbgMessageAsyncProgramMessageEventArgs(e.Source, e.Message, GetRuntime(engine));
+			OnConditionalBreak_DbgThread(engine, ep, null, e.MessageFlags | DbgEngineMessageFlags.Running);
 		}
 
 		void OnBreakpoint_DbgThread(DbgEngine engine, DbgMessageBreakpoint e) {
@@ -1034,7 +1044,7 @@ namespace dnSpy.Debugger.Impl {
 				RunEngines_DbgThread(engineInfos.ToArray());
 		}
 
-		public override bool CanDebugRuntime(ulong pid, RuntimeId rid) {
+		public override bool CanDebugRuntime(int pid, RuntimeId rid) {
 			if (rid == null)
 				throw new ArgumentNullException(nameof(rid));
 			if (pid == currentProcessId)

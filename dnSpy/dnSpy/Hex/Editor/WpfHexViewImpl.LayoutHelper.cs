@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,7 +60,7 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public HexFormattedLine Line { get; }
 				public double Y { get; }
 				public LineInfo(HexFormattedLine line, double y) {

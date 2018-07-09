@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,10 +25,10 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 
 		public BlobHeapWriter(BlobMDHeap blobHeap) => this.blobHeap = blobHeap;
 
-		public override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
+		public unsafe override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
 			int start = (int)blobHeap.BlobStream.StartOffset;
 			int size = (int)(blobHeap.BlobStream.EndOffset - blobHeap.BlobStream.StartOffset);
-			stream.Write(mdWriter.ModuleData, start, size);
+			stream.Write((byte*)mdWriter.ModuleData.Pointer + start, size);
 			WriteData(stream, blobHeap.NewData, tempBuffer);
 		}
 	}

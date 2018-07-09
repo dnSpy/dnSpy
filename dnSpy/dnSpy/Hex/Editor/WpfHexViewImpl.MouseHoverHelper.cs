@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Editor {
 			readonly DispatcherTimer timer;
 			LinePosition? position;
 
-			struct LinePosition : IEquatable<LinePosition> {
+			readonly struct LinePosition : IEquatable<LinePosition> {
 				public HexBufferLine Line { get; }
 				public int Column { get; }
 				public LinePosition(HexBufferLine line, int column) {

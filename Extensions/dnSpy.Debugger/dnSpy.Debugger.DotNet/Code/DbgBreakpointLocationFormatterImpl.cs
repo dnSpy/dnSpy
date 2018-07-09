@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -27,6 +29,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
 		readonly DbgDotNetCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
+		WeakReference weakMethod;
 
 		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgDotNetCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -62,20 +65,55 @@ namespace dnSpy.Debugger.DotNet.Code {
 				printedToken = true;
 			}
 
-			var method = owner.GetDefinition<MethodDef>(location.Module, location.Token);
+			var method = weakMethod?.Target as MethodDef ?? owner.GetDefinition<MethodDef>(location.Module, location.Token);
 			if (method == null) {
 				if (printedToken)
 					output.Write(BoxedTextColor.Error, "???");
 				else
 					WriteToken(output, location.Token);
 			}
-			else
+			else {
+				if (weakMethod?.Target != method)
+					weakMethod = new WeakReference(method);
 				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
+			}
 
+			switch (location.ILOffsetMapping) {
+			case DbgILOffsetMapping.Exact:
+			case DbgILOffsetMapping.Approximate:
+				output.WriteSpace();
+				output.Write(BoxedTextColor.Operator, "+");
+				output.WriteSpace();
+				if (location.ILOffsetMapping == DbgILOffsetMapping.Approximate)
+					output.Write(BoxedTextColor.Operator, "~");
+				WriteILOffset(output, location.Offset);
+				break;
+
+			case DbgILOffsetMapping.Prolog:
+				WriteText(output, "prolog");
+				break;
+
+			case DbgILOffsetMapping.Epilog:
+				WriteText(output, "epilog");
+				break;
+
+			case DbgILOffsetMapping.Unknown:
+			case DbgILOffsetMapping.NoInfo:
+			case DbgILOffsetMapping.UnmappedAddress:
+				WriteText(output, "???");
+				break;
+
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
+			}
+		}
+
+		static void WriteText(ITextColorWriter output, string text) {
 			output.WriteSpace();
-			output.Write(BoxedTextColor.Operator, "+");
-			output.WriteSpace();
-			WriteILOffset(output, location.Offset);
+			output.Write(BoxedTextColor.Punctuation, "(");
+			output.Write(BoxedTextColor.Text, text);
+			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 
 		FormatterOptions GetFormatterOptions(DbgBreakpointLocationFormatterOptions options) {

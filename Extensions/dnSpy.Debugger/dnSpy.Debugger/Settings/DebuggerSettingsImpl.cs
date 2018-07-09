@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -163,24 +163,24 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool useStringConversionFunction = true;
 
-		public override bool DisableManagedDebuggerDetection {
+		public override bool PreventManagedDebuggerDetection {
 			get {
 				lock (lockObj)
-					return disableManagedDebuggerDetection;
+					return preventManagedDebuggerDetection;
 			}
 			set {
 				bool modified;
 				lock (lockObj) {
-					modified = disableManagedDebuggerDetection != value;
-					disableManagedDebuggerDetection = value;
+					modified = preventManagedDebuggerDetection != value;
+					preventManagedDebuggerDetection = value;
 				}
 				if (modified) {
-					OnPropertyChanged(nameof(DisableManagedDebuggerDetection));
+					OnPropertyChanged(nameof(PreventManagedDebuggerDetection));
 					OnModified();
 				}
 			}
 		}
-		bool disableManagedDebuggerDetection = true;
+		bool preventManagedDebuggerDetection = true;
 
 		public override bool IgnoreBreakInstructions {
 			get {
@@ -486,6 +486,120 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool focusActiveProcess = true;
 
+		public override bool ShowReturnValues {
+			get {
+				lock (lockObj)
+					return showReturnValues;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showReturnValues != value;
+					showReturnValues = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowReturnValues));
+					OnModified();
+				}
+			}
+		}
+		bool showReturnValues = true;
+
+		public override bool RedirectGuiConsoleOutput {
+			get {
+				lock (lockObj)
+					return redirectGuiConsoleOutput;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = redirectGuiConsoleOutput != value;
+					redirectGuiConsoleOutput = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(RedirectGuiConsoleOutput));
+					OnModified();
+				}
+			}
+		}
+		bool redirectGuiConsoleOutput = true;
+
+		public override bool ShowOnlyPublicMembers {
+			get {
+				lock (lockObj)
+					return showOnlyPublicMembers;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showOnlyPublicMembers != value;
+					showOnlyPublicMembers = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowOnlyPublicMembers));
+					OnModified();
+				}
+			}
+		}
+		bool showOnlyPublicMembers = false;
+
+		public override bool ShowRawLocals {
+			get {
+				lock (lockObj)
+					return showRawLocals;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = showRawLocals != value;
+					showRawLocals = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(ShowRawLocals));
+					OnModified();
+				}
+			}
+		}
+		bool showRawLocals = false;
+
+		public override bool AsyncDebugging {
+			get {
+				lock (lockObj)
+					return asyncDebugging;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = asyncDebugging != value;
+					asyncDebugging = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(AsyncDebugging));
+					OnModified();
+				}
+			}
+		}
+		bool asyncDebugging = true;
+
+		public override bool StepOverPropertiesAndOperators {
+			get {
+				lock (lockObj)
+					return stepOverPropertiesAndOperators;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = stepOverPropertiesAndOperators != value;
+					stepOverPropertiesAndOperators = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(StepOverPropertiesAndOperators));
+					OnModified();
+				}
+			}
+		}
+		bool stepOverPropertiesAndOperators = true;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -496,7 +610,7 @@ namespace dnSpy.Debugger.Settings {
 			other.UseMemoryModules = UseMemoryModules;
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = UseStringConversionFunction;
-			other.DisableManagedDebuggerDetection = DisableManagedDebuggerDetection;
+			other.PreventManagedDebuggerDetection = PreventManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.BreakAllProcesses = BreakAllProcesses;
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
@@ -513,6 +627,12 @@ namespace dnSpy.Debugger.Settings {
 			other.SuppressJITOptimization_SystemModules = SuppressJITOptimization_SystemModules;
 			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
 			other.FocusActiveProcess = FocusActiveProcess;
+			other.ShowReturnValues = ShowReturnValues;
+			other.RedirectGuiConsoleOutput = RedirectGuiConsoleOutput;
+			other.ShowOnlyPublicMembers = ShowOnlyPublicMembers;
+			other.ShowRawLocals = ShowRawLocals;
+			other.AsyncDebugging = AsyncDebugging;
+			other.StepOverPropertiesAndOperators = StepOverPropertiesAndOperators;
 			return other;
 		}
 	}
@@ -537,7 +657,7 @@ namespace dnSpy.Debugger.Settings {
 			UseMemoryModules = sect.Attribute<bool?>(nameof(UseMemoryModules)) ?? UseMemoryModules;
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
 			UseStringConversionFunction = sect.Attribute<bool?>(nameof(UseStringConversionFunction)) ?? UseStringConversionFunction;
-			DisableManagedDebuggerDetection = sect.Attribute<bool?>(nameof(DisableManagedDebuggerDetection)) ?? DisableManagedDebuggerDetection;
+			PreventManagedDebuggerDetection = sect.Attribute<bool?>(nameof(PreventManagedDebuggerDetection)) ?? PreventManagedDebuggerDetection;
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
@@ -554,6 +674,12 @@ namespace dnSpy.Debugger.Settings {
 			SuppressJITOptimization_SystemModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_SystemModules)) ?? SuppressJITOptimization_SystemModules;
 			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
 			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
+			ShowReturnValues = sect.Attribute<bool?>(nameof(ShowReturnValues)) ?? ShowReturnValues;
+			RedirectGuiConsoleOutput = sect.Attribute<bool?>(nameof(RedirectGuiConsoleOutput)) ?? RedirectGuiConsoleOutput;
+			ShowOnlyPublicMembers = sect.Attribute<bool?>(nameof(ShowOnlyPublicMembers)) ?? ShowOnlyPublicMembers;
+			ShowRawLocals = sect.Attribute<bool?>(nameof(ShowRawLocals)) ?? ShowRawLocals;
+			AsyncDebugging = sect.Attribute<bool?>(nameof(AsyncDebugging)) ?? AsyncDebugging;
+			StepOverPropertiesAndOperators = sect.Attribute<bool?>(nameof(StepOverPropertiesAndOperators)) ?? StepOverPropertiesAndOperators;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -569,7 +695,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(UseMemoryModules), UseMemoryModules);
 			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
 			sect.Attribute(nameof(UseStringConversionFunction), UseStringConversionFunction);
-			sect.Attribute(nameof(DisableManagedDebuggerDetection), DisableManagedDebuggerDetection);
+			sect.Attribute(nameof(PreventManagedDebuggerDetection), PreventManagedDebuggerDetection);
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
@@ -586,6 +712,12 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(SuppressJITOptimization_SystemModules), SuppressJITOptimization_SystemModules);
 			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
 			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);
+			sect.Attribute(nameof(ShowReturnValues), ShowReturnValues);
+			sect.Attribute(nameof(RedirectGuiConsoleOutput), RedirectGuiConsoleOutput);
+			sect.Attribute(nameof(ShowOnlyPublicMembers), ShowOnlyPublicMembers);
+			sect.Attribute(nameof(ShowRawLocals), ShowRawLocals);
+			sect.Attribute(nameof(AsyncDebugging), AsyncDebugging);
+			sect.Attribute(nameof(StepOverPropertiesAndOperators), StepOverPropertiesAndOperators);
 		}
 	}
 }

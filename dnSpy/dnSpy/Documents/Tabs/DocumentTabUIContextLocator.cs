@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs {
 			strongCachedInstances = new Dictionary<object, object>();
 		}
 
-		struct ReferenceResult<T> where T : class {
+		readonly struct ReferenceResult<T> where T : class {
 			public T Reference { get; }
 			public bool UseStrongReference { get; }
 			public ReferenceResult(T reference, bool useStrongReference) {

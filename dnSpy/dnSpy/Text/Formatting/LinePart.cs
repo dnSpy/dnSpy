@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
-	struct LinePart {
+	readonly struct LinePart {
 		/// <summary>
 		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="Microsoft.VisualStudio.Text.Span.Start"/>
 		/// property unless there's one or more hidden characters before this <see cref="LinePart"/> or if there's a <see cref="LinePart"/>

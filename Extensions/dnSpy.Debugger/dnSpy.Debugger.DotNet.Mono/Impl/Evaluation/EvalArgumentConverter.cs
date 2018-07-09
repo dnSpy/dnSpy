@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	struct EvalArgumentResult {
+	readonly struct EvalArgumentResult {
 		public string ErrorMessage { get; }
 		public Value Value { get; }
 		public EvalArgumentResult(string errorMessage) {
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 	}
 
-	struct EvalArgumentConverter {
+	readonly struct EvalArgumentConverter {
 		readonly DbgEngineImpl engine;
 		readonly FuncEval funcEval;
 		readonly AppDomainMirror appDomain;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,27 +24,25 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.AsmEditor.Compiler {
-	struct MDSigPatcher {
+	unsafe struct MDSigPatcher {
 		readonly List<byte> sigBuilder;
-		readonly Dictionary<uint, uint> remappedTypeTokens;
-		readonly byte[] moduleData;
-		readonly uint startOffset;
-		readonly uint endOffset;
-		uint currOffset;
+		readonly RemappedTypeTokens remappedTypeTokens;
+		readonly byte* startPos;
+		readonly byte* endPos;
+		byte* currPos;
 		bool usingBuilder;
 		int recursionCounter;
 		const int MAX_RECURSION = 100;
 
 		sealed class InvalidSignatureException : Exception { }
 
-		MDSigPatcher(List<byte> sigBuilder, Dictionary<uint, uint> remappedTypeTokens, byte[] moduleData, uint blobOffset, uint sigOffset) {
+		MDSigPatcher(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			this.sigBuilder = sigBuilder;
 			this.remappedTypeTokens = remappedTypeTokens;
-			this.moduleData = moduleData;
-			startOffset = blobOffset + sigOffset;
-			uint size = MDPatcherUtils.ReadCompressedUInt32(moduleData, ref startOffset);
-			endOffset = startOffset + size;
-			currOffset = startOffset;
+			currPos = (byte*)moduleData.Pointer + blobOffset + sigOffset;
+			uint size = MDPatcherUtils.ReadCompressedUInt32(ref currPos, (byte*)moduleData.Pointer + moduleData.Size);
+			startPos = currPos;
+			endPos = currPos + size;
 			usingBuilder = false;
 			recursionCounter = 0;
 		}
@@ -57,16 +55,16 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 			}
 			sigBuilder.Clear();
-			uint end = currOffset - bytesToRemove;
-			for (uint pos = startOffset; pos < end; pos++)
-				sigBuilder.Add(moduleData[pos]);
+			var end = currPos - bytesToRemove;
+			for (var pos = startPos; pos < end; pos++)
+				sigBuilder.Add(*pos);
 			usingBuilder = true;
 		}
 
 		byte ReadByte() {
-			if (currOffset >= endOffset)
+			if (currPos >= endPos)
 				ThrowInvalidSignatureException();
-			byte b = moduleData[currOffset++];
+			byte b = *currPos++;
 			if (usingBuilder)
 				sigBuilder.Add(b);
 			return b;
@@ -123,16 +121,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			else {
 				if (value <= 0x7F)
-					moduleData[currOffset++] = (byte)value;
+					*currPos++ = (byte)value;
 				else if (value <= 0x3FFF) {
-					moduleData[currOffset++] = (byte)((value >> 8) | 0x80);
-					moduleData[currOffset++] = (byte)value;
+					*currPos++ = (byte)((value >> 8) | 0x80);
+					*currPos++ = (byte)value;
 				}
 				else if (value <= 0x1FFFFFFF) {
-					moduleData[currOffset++] = (byte)((value >> 24) | 0xC0);
-					moduleData[currOffset++] = (byte)(value >> 16);
-					moduleData[currOffset++] = (byte)(value >> 8);
-					moduleData[currOffset++] = (byte)value;
+					*currPos++ = (byte)((value >> 24) | 0xC0);
+					*currPos++ = (byte)(value >> 16);
+					*currPos++ = (byte)(value >> 8);
+					*currPos++ = (byte)value;
 				}
 				else
 					ThrowInvalidSignatureException();
@@ -140,13 +138,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		byte[] GetResult() {
-			Debug.Assert(currOffset == endOffset, "We didn't read the full signature or it has garbage bytes");
+			Debug.Assert(currPos == endPos, "We didn't read the full signature or it has garbage bytes");
 			if (!usingBuilder)
 				return null;
 			return sigBuilder.ToArray();
 		}
 
-		public static byte[] PatchTypeSignature(List<byte> sigBuilder, Dictionary<uint, uint> remappedTypeTokens, byte[] moduleData, uint blobOffset, uint sigOffset) {
+		public static byte[] PatchTypeSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			try {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchTypeSignature();
@@ -158,7 +156,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		public static byte[] PatchCallingConventionSignature(List<byte> sigBuilder, Dictionary<uint, uint> remappedTypeTokens, byte[] moduleData, uint blobOffset, uint sigOffset) {
+		public static byte[] PatchCallingConventionSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			try {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchCallingConventionSignature();
@@ -277,9 +275,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void ReadTypeDefOrRef() {
-			uint start = currOffset;
+			var start = currPos;
 			uint codedToken = ReadCompressedUInt32();
-			uint compressedLen = currOffset - start;
+			uint compressedLen = (uint)(currPos - start);
 
 			if (!CodedToken.TypeDefOrRef.Decode(codedToken, out MDToken token))
 				ThrowInvalidSignatureException();
@@ -292,7 +290,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				WriteCompressedUInt32(newCodedToken);
 			}
 			else {
-				currOffset = start;
+				currPos = start;
 				WriteCompressedUInt32(newCodedToken);
 			}
 		}

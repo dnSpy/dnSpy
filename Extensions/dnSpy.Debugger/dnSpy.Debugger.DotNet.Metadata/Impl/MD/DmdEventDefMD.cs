@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
@@ -32,7 +33,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		public DmdEventDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			var row = reader.TablesStream.ReadEventRow(rid);
+			bool b = reader.TablesStream.TryReadEventRow(rid, out var row);
+			Debug.Assert(b);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
 			Attributes = (DmdEventAttributes)row.EventFlags;
 			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
@@ -47,8 +49,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			List<DmdMethodInfo> otherMethodsList = null;
 
 			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Event, Rid);
-			for (uint i = 0; i < ridList.Length; i++) {
-				var row = reader.TablesStream.ReadMethodSemanticsRow(ridList[i]);
+			for (int i = 0; i < ridList.Count; i++) {
+				if (!reader.TablesStream.TryReadMethodSemanticsRow(ridList[i], out var row))
+					continue;
 				var method = ReflectedType.GetMethod(Module, 0x06000000 + (int)row.Method) as DmdMethodInfo;
 				if ((object)method == null)
 					continue;

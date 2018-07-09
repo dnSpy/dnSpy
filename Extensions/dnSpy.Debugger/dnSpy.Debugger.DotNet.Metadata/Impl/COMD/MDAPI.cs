@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,15 +24,6 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
-	struct MethodOverrideInfo {
-		public uint BodyToken { get; }
-		public uint DeclToken { get; }
-		public MethodOverrideInfo(uint b, uint d) {
-			BodyToken = b;
-			DeclToken = d;
-		}
-	}
-
 	static class MDAPI {
 		const int CLDB_E_RECORD_NOTFOUND = unchecked((int)0x80131130);
 		const int CLDB_E_INDEX_NOTFOUND = unchecked((int)0x80131124);

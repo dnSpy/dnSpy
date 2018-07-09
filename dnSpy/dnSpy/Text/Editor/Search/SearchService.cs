@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,8 +86,8 @@ namespace dnSpy.Text.Editor.Search {
 		public bool FoundMatch => foundSomething;
 
 		public string SearchString {
-			get { return searchString; }
-			set { SetSearchString(value); }
+			get => searchString;
+			set => SetSearchString(value);
 		}
 		string searchString;
 
@@ -125,7 +125,7 @@ namespace dnSpy.Text.Editor.Search {
 		public ICommand ToggleFindReplaceCommand => new RelayCommand(a => ToggleFindReplace(), a => CanToggleFindReplace);
 
 		public string ReplaceString {
-			get { return replaceString; }
+			get => replaceString;
 			set {
 				if (replaceString != value) {
 					replaceString = value ?? string.Empty;
@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor.Search {
 		string replaceString;
 
 		public bool MatchCase {
-			get { return matchCase; }
+			get => matchCase;
 			set {
 				if (matchCase != value) {
 					matchCase = value;
@@ -150,7 +150,7 @@ namespace dnSpy.Text.Editor.Search {
 		bool matchCase;
 
 		public bool MatchWholeWords {
-			get { return matchWholeWords; }
+			get => matchWholeWords;
 			set {
 				if (matchWholeWords != value) {
 					matchWholeWords = value;
@@ -163,7 +163,7 @@ namespace dnSpy.Text.Editor.Search {
 		bool matchWholeWords;
 
 		public bool UseRegularExpressions {
-			get { return useRegularExpressions; }
+			get => useRegularExpressions;
 			set {
 				if (useRegularExpressions != value) {
 					useRegularExpressions = value;

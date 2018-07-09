@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public abstract class DbgLanguageService {
 		/// <summary>
-		/// Gets all languages available by a <see cref="DbgRuntime"/>
+		/// Gets all languages
 		/// </summary>
 		/// <param name="runtimeKindGuid">Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <returns></returns>
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Language changed event args
 	/// </summary>
-	public struct DbgLanguageChangedEventArgs {
+	public readonly struct DbgLanguageChangedEventArgs {
 		/// <summary>
 		/// Runtime kind GUID, see <see cref="PredefinedDbgRuntimeKindGuids"/>
 		/// </summary>

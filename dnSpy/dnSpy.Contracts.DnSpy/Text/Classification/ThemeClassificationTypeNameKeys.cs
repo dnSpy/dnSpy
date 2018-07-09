@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -1526,5 +1526,10 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.DebuggerNoStringQuotesEval"/>
 		/// </summary>
 		public const string DebuggerNoStringQuotesEval = nameof(DebuggerNoStringQuotesEval);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugViewPropertyName"/>
+		/// </summary>
+		public const string DebugViewPropertyName = nameof(DebugViewPropertyName);
 	}
 }

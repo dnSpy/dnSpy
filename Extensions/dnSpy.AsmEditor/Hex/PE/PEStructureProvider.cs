@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -123,14 +123,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 						storageStreams[i] = new StorageStreamVM(buffer, heap, ssh, i);
 					}
 
-					var metaDataTables = new MetaDataTableVM[0x40];
+					var metadataTables = new MetadataTableVM[0x40];
 					if (mdHeaders.TablesStream != null) {
-						tablesStream = new TablesStreamVM(buffer, mdHeaders.TablesStream, metaDataTables);
+						tablesStream = new TablesStreamVM(buffer, mdHeaders.TablesStream, metadataTables);
 						var stringsHeapSpan = GetSpan(mdHeaders.StringsStream);
 						var guidHeapSpan = GetSpan(mdHeaders.GUIDStream);
 						foreach (var mdTable in mdHeaders.TablesStream.MDTables) {
 							if (mdTable.Rows != 0)
-								metaDataTables[(int)mdTable.Table] = MetaDataTableVM.Create(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
+								metadataTables[(int)mdTable.Table] = MetadataTableVM.Create(buffer, tablesStream, mdTable, stringsHeapSpan, guidHeapSpan);
 						}
 					}
 				}

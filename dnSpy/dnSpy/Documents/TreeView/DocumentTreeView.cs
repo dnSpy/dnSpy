@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -174,9 +174,9 @@ namespace dnSpy.Documents.TreeView {
 			decompilerService.DecompilerChanged -= DecompilerService_DecompilerChanged;
 			documentTreeViewSettings.PropertyChanged -= DocumentTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
+			TreeView.SelectItems(Array.Empty<TreeNodeData>());
 			DocumentService.Clear();
 			TreeView.Root.Children.Clear();
-			TreeView.SelectItems(Array.Empty<TreeNodeData>());
 			TreeView.Dispose();
 			context.Clear();
 		}
@@ -352,7 +352,7 @@ namespace dnSpy.Documents.TreeView {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown event type: {0}", e.Type));
+				Debug.Fail($"Unknown event type: {e.Type}");
 				break;
 			}
 		}
@@ -436,6 +436,8 @@ namespace dnSpy.Documents.TreeView {
 				return FindNode((PropertyDef)@ref);
 			if (@ref is EventDef)
 				return FindNode((EventDef)@ref);
+			if (@ref is ISourceVariable sv && sv.Variable is Parameter p && p.ParamDef is ParamDef pd)
+				return FindNode(pd.DeclaringMethod);
 			if (@ref is ParamDef)
 				return FindNode(((ParamDef)@ref).DeclaringMethod);
 			if (@ref is NamespaceRef nsRef) {

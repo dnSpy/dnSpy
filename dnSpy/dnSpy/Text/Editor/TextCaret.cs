@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,8 +47,8 @@ namespace dnSpy.Text.Editor {
 		PositionAffinity Affinity { get; set; }
 
 		public bool IsHidden {
-			get { return textCaretLayer.IsHidden; }
-			set { textCaretLayer.IsHidden = value; }
+			get => textCaretLayer.IsHidden;
+			set => textCaretLayer.IsHidden = value;
 		}
 
 		public event EventHandler<CaretPositionChangedEventArgs> PositionChanged;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <see cref="Validate()"/> to check whether it's valid.
 		/// </summary>
 		public string StringValue {
-			get { return stringValue; }
+			get => stringValue;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -178,8 +178,8 @@ namespace dnSpy.Contracts.MVVM {
 		/// Gets/sets the value
 		/// </summary>
 		public override object ObjectValue {
-			get { return Value; }
-			set { Value = (T)value; }
+			get => Value;
+			set => Value = (T)value;
 		}
 
 		/// <summary>
@@ -271,7 +271,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// and null to use decimal or hex depending on what number it is.
 		/// </summary>
 		public bool? UseDecimal {
-			get { return useDecimal; }
+			get => useDecimal;
 			set {
 				if (useDecimal != value) {
 					useDecimal = value;
@@ -286,7 +286,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// Gets/sets the minimum value
 		/// </summary>
 		public U Min {
-			get { return min; }
+			get => min;
 			set {
 				min = value;
 				Revalidate();
@@ -298,7 +298,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// Gets/sets the maximum value
 		/// </summary>
 		public U Max {
-			get { return max; }
+			get => max;
 			set {
 				max = value;
 				Revalidate();
@@ -373,8 +373,8 @@ namespace dnSpy.Contracts.MVVM {
 		/// Gets/sets whether to use upper case hex digits
 		/// </summary>
 		public bool UpperCaseHex {
-			get { return upperCaseHex; }
-			set { upperCaseHex = value; }
+			get => upperCaseHex;
+			set => upperCaseHex = value;
 		}
 		bool upperCaseHex = true;
 

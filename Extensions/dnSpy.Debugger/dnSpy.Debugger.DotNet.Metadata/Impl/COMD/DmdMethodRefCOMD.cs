@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,6 +35,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false));
+		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false));
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs {
 		public bool IsActiveTab => DocumentTabService.ActiveTab == this;
 
 		public DocumentTabContent Content {
-			get { return tabHistory.Current; }
+			get => tabHistory.Current;
 			private set {
 				bool saveCurrent = !(tabHistory.Current is NullDocumentTabContent);
 				tabHistory.SetCurrent(value, saveCurrent);
@@ -51,7 +51,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public DocumentTabUIContext UIContext {
-			get { return uiContext; }
+			get => uiContext;
 			private set {
 				uiContextVersion++;
 				var newValue = value;
@@ -71,7 +71,7 @@ namespace dnSpy.Documents.Tabs {
 		int uiContextVersion;
 
 		public string Title {
-			get { return title; }
+			get => title;
 			set {
 				if (title != value) {
 					title = value;
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs {
 		string title;
 
 		public object ToolTip {
-			get { return toolTip; }
+			get => toolTip;
 			set {
 				if (!object.Equals(toolTip, value)) {
 					toolTip = value;
@@ -93,7 +93,7 @@ namespace dnSpy.Documents.Tabs {
 		object toolTip;
 
 		public object UIObject {
-			get { return uiObject; }
+			get => uiObject;
 			set {
 				if (uiObject != value) {
 					uiObject = value;
@@ -304,8 +304,8 @@ namespace dnSpy.Documents.Tabs {
 		sealed class AsyncShowContext : IAsyncShowContext {
 			public DocumentTabUIContext UIContext => showContext.UIContext;
 			public bool IsRefresh => showContext.IsRefresh;
-			public object Tag { get { return showContext.Tag; } set { showContext.Tag = value; } }
-			public Action<ShowTabContentEventArgs> OnShown { get { return showContext.OnShown; } set { showContext.OnShown = value; } }
+			public object Tag { get => showContext.Tag; set => showContext.Tag = value; }
+			public Action<ShowTabContentEventArgs> OnShown { get => showContext.OnShown; set => showContext.OnShown = value; }
 			public CancellationToken CancellationToken => asyncWorkerContext.CancellationToken;
 
 			readonly IShowContext showContext;

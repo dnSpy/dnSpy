@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Files.ToolTips {
 	sealed class HexToolTipContentCreatorImpl : HexToolTipContentCreator {
 		public override object Image { get; set; }
 
-		struct WriterState {
+		readonly struct WriterState {
 			public HexTextWriterImpl Writer { get; }
 			public HexFieldFormatter Formatter { get; }
 			public WriterState(HexTextWriterImpl writer, HexFieldFormatter formatter) {

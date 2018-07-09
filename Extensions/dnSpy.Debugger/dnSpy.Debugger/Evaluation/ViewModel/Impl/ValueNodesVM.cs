@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,6 @@ using System.Globalization;
 using System.Linq;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -161,12 +160,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		DbgValueNodeInfo EvaluateExpression(DbgEvaluationContext context, string expression) {
+		DbgValueNodeInfo EvaluateExpression(DbgEvaluationInfo evalInfo, string expression) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			var frame = valueNodesProvider.TryGetFrame();
 			if (frame == null)
 				return new DbgValueNodeInfo(expression, expression, dnSpy_Debugger_Resources.ErrorEvaluatingExpression, causesSideEffects: false);
-			var res = context.Language.ValueNodeFactory.Create(context, frame, expression, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.EvaluationOptions, context.Language.ExpressionEvaluator.CreateExpressionEvaluatorState());
+			var res = evalInfo.Context.Language.ValueNodeFactory.Create(evalInfo, expression, valueNodesContext.ValueNodeEvaluationOptions,
+				valueNodesContext.EvaluationOptions, evalInfo.Context.Language.ExpressionEvaluator.CreateExpressionEvaluatorState());
 			return new DbgValueNodeInfo(res.ValueNode, res.CausesSideEffects);
 		}
 
@@ -189,13 +189,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			refreshNameFields = false;
 			Guid? runtimeKindGuid;
 			DbgValueNodeInfo[] nodes;
-			DbgEvaluationContext evalContext;
-			DbgStackFrame frame;
+			DbgEvaluationInfo evalInfo;
 			DbgLanguage language;
 			bool forceRecreateAllNodes;
 			if (isOpen) {
-				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions);
-				(evalContext, frame) = valueNodesProvider.TryGetEvaluationContextInfo();
+				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions);
+				evalInfo = valueNodesProvider.TryGetEvaluationInfo();
 				runtimeKindGuid = valueNodesProvider.Language?.RuntimeKindGuid ?? lastRuntimeKindGuid;
 				// Frame got closed. Don't use the new nodes, we'll get new nodes using the new frame in a little while.
 				if (nodeInfo.FrameClosed)
@@ -205,16 +204,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				forceRecreateAllNodes = nodeInfo.RecreateAllNodes;
 			}
 			else {
-				evalContext = null;
-				frame = null;
+				evalInfo = null;
 				nodes = Array.Empty<DbgValueNodeInfo>();
 				runtimeKindGuid = null;
 				language = null;
 				forceRecreateAllNodes = false;
 			}
-			valueNodesContext.ValueNodeReader.SetEvaluationContext(evalContext, frame);
-			valueNodesContext.EvaluationContext = evalContext;
-			valueNodesContext.StackFrame = frame;
+			valueNodesContext.ValueNodeReader.SetEvaluationInfo(evalInfo);
+			valueNodesContext.EvaluationInfo = evalInfo;
 
 #if DEBUG
 			var origEditNode = TryGetEditNode();
@@ -494,7 +491,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
 			case nameof(DebuggerSettings.UseDigitSeparators):
-				RefreshHexFields_UI();
+			case nameof(DebuggerSettings.UseStringConversionFunction):
+				RefreshAllColumns_UI();
 				break;
 
 			case nameof(DebuggerSettings.SyntaxHighlight):
@@ -507,17 +505,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			case nameof(DebuggerSettings.HideCompilerGeneratedMembers):
 			case nameof(DebuggerSettings.RespectHideMemberAttributes):
 			case nameof(DebuggerSettings.HideDeprecatedError):
+			case nameof(DebuggerSettings.ShowOnlyPublicMembers):
 				UpdateFormatterOptions();
 				UpdateEvaluationOptions();
 				RecreateRootChildren_UI();
-				break;
-
-			case nameof(DebuggerSettings.UseStringConversionFunction):
-				UpdateFormatterOptions();
-				const RefreshNodeOptions options =
-					RefreshNodeOptions.RefreshValue |
-					RefreshNodeOptions.RefreshValueControl;
-				RefreshNodes(options);
 				break;
 
 			case nameof(DebuggerSettings.HighlightChangedVariables):
@@ -538,13 +529,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			case nameof(DbgEvalFormatterSettings.ShowNamespaces):
 			case nameof(DbgEvalFormatterSettings.ShowIntrinsicTypeKeywords):
 			case nameof(DbgEvalFormatterSettings.ShowTokens):
-				UpdateFormatterOptions();
-				const RefreshNodeOptions options =
-					RefreshNodeOptions.RefreshValue |
-					RefreshNodeOptions.RefreshValueControl |
-					RefreshNodeOptions.RefreshType |
-					RefreshNodeOptions.RefreshTypeControl;
-				RefreshNodes(options);
+				RefreshAllColumns_UI();
 				break;
 
 			default:
@@ -564,12 +549,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RefreshHexFields_UI() {
+		void RefreshAllColumns_UI() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			UpdateFormatterOptions();
 			const RefreshNodeOptions options =
+				RefreshNodeOptions.RefreshName |
+				RefreshNodeOptions.RefreshNameControl |
 				RefreshNodeOptions.RefreshValue |
-				RefreshNodeOptions.RefreshValueControl;
+				RefreshNodeOptions.RefreshValueControl |
+				RefreshNodeOptions.RefreshType |
+				RefreshNodeOptions.RefreshTypeControl;
 			RefreshNodes(options);
 		}
 
@@ -583,8 +572,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void UpdateFormatterOptions() {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			valueNodesContext.ValueNodeFormatParameters.ValueFormatterOptions = GetValueFormatterOptions(isDisplay: true);
-			valueNodesContext.ValueNodeFormatParameters.TypeFormatterOptions = GetTypeFormatterOptions();
+			var valueFormatterOptions = GetValueFormatterOptions(isEdit: false);
+			valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions = valueFormatterOptions;
+			valueNodesContext.ValueNodeFormatParameters.ValueFormatterOptions = valueFormatterOptions;
+			valueNodesContext.ValueNodeFormatParameters.TypeFormatterOptions = valueFormatterOptions;
+			valueNodesContext.ValueNodeFormatParameters.ValueFormatterTypeOptions = GetTypeFormatterOptions();
 		}
 
 		// UI thread
@@ -595,10 +587,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			valueNodesContext.ValueNodeReader.SetValueNodeEvaluationOptions(valueNodesContext.ValueNodeEvaluationOptions);
 		}
 
-		DbgValueFormatterOptions GetValueFormatterOptions(bool isDisplay) {
+		DbgValueFormatterOptions GetValueFormatterOptions(bool isEdit) {
 			var options = DbgValueFormatterOptions.None;
-			if (isDisplay)
-				options |= DbgValueFormatterOptions.Display;
+			if (isEdit)
+				options |= DbgValueFormatterOptions.Edit;
 			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.PropertyEvalAndFunctionCalls)
@@ -618,6 +610,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		DbgValueFormatterTypeOptions GetTypeFormatterOptions() {
 			var options = DbgValueFormatterTypeOptions.None;
+			if (!debuggerSettings.UseHexadecimal)
+				options |= DbgValueFormatterTypeOptions.Decimal;
+			if (debuggerSettings.UseDigitSeparators)
+				options |= DbgValueFormatterTypeOptions.DigitSeparators;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterTypeOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
@@ -646,6 +642,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				options |= DbgValueNodeEvaluationOptions.RespectHideMemberAttributes;
 			if (debuggerSettings.HideDeprecatedError)
 				options |= DbgValueNodeEvaluationOptions.HideDeprecatedError;
+			if (debuggerSettings.ShowOnlyPublicMembers)
+				options |= DbgValueNodeEvaluationOptions.PublicMembers;
 			return options;
 		}
 

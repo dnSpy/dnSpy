@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -239,23 +239,14 @@ namespace dnSpy.Debugger.Impl {
 		internal void Thaw(DbgThreadImpl thread) => Engine.Thaw(thread);
 
 		internal DbgStackWalker CreateStackWalker(DbgThreadImpl thread) {
-			var stackWalker = owner.Dispatcher2.Invoke(() => CreateStackWalker_DbgThread(thread));
-			if (stackWalker == null) {
-				// Invoke() returns null if shutdown has started but we can't return null
-				stackWalker = new DbgStackWalkerImpl(thread, new NullDbgEngineStackWalker());
-			}
-			CloseOnContinue(stackWalker);
-			return stackWalker;
-		}
-
-		DbgStackWalker CreateStackWalker_DbgThread(DbgThreadImpl thread) {
-			Dispatcher.VerifyAccess();
 			DbgEngineStackWalker engineStackWalker;
 			if (Engine.IsClosed)
 				engineStackWalker = new NullDbgEngineStackWalker();
 			else
 				engineStackWalker = Engine.CreateStackWalker(thread);
-			return new DbgStackWalkerImpl(thread, engineStackWalker);
+			var stackWalker = new DbgStackWalkerImpl(thread, engineStackWalker);
+			CloseOnContinue(stackWalker);
+			return stackWalker;
 		}
 
 		sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {

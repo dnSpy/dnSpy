@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,9 +18,10 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -28,6 +29,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
 		readonly DbgDotNetNativeCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
+		WeakReference weakMethod;
 
 		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgDotNetNativeCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -63,15 +65,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 				printedToken = true;
 			}
 
-			var method = owner.GetDefinition<MethodDef>(location.Module, location.Token);
+			var method = weakMethod?.Target as MethodDef ?? owner.GetDefinition<MethodDef>(location.Module, location.Token);
 			if (method == null) {
 				if (printedToken)
 					output.Write(BoxedTextColor.Error, "???");
 				else
 					WriteToken(output, location.Token);
 			}
-			else
+			else {
+				if (weakMethod?.Target != method)
+					weakMethod = new WeakReference(method);
 				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
+			}
 
 			switch (location.ILOffsetMapping) {
 			case DbgILOffsetMapping.Exact:
@@ -98,7 +103,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 				WriteText(output, "???");
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
 			}
 
 			output.WriteSpace();

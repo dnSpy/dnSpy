@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public StringsMDHeap(MetadataEditor mdEditor, StringsStream stringsStream) {
 			this.mdEditor = mdEditor ?? throw new ArgumentNullException(nameof(mdEditor));
 			this.stringsStream = stringsStream ?? throw new ArgumentNullException(nameof(stringsStream));
-			currentOffset = (uint)stringsStream.ImageStreamLength;
+			currentOffset = stringsStream.StreamLength;
 			newData = new List<byte[]>();
 		}
 

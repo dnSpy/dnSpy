@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// Line location
 	/// </summary>
-	public struct LineLocation {
+	public readonly struct LineLocation {
 		/// <summary>
 		/// Line, 0-based
 		/// </summary>

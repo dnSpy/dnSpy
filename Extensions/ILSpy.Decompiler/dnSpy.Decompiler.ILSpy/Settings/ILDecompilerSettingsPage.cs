@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,6 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		readonly ILSettings ilSettings;
 
 		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_IL;
-		public string Name => dnSpy_Decompiler_ILSpy_Resources.ILDecompilerSettingsTabName;
 		public ILSettings Settings => ilSettings;
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
 		public override Guid Guid => new Guid("0F8FBD3F-01DA-4AF0-9316-B7B5C8901A74");

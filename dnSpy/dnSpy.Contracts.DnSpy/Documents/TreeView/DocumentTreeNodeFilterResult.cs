@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,16 +21,16 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
 	/// <see cref="IDocumentTreeNodeFilter"/> result
 	/// </summary>
-	public struct DocumentTreeNodeFilterResult {
+	public readonly struct DocumentTreeNodeFilterResult {
 		/// <summary>
 		/// Filter type
 		/// </summary>
-		public FilterType FilterType;
+		public readonly FilterType FilterType;
 
 		/// <summary>
 		/// true if this is a node that can be returned as a result to the user
 		/// </summary>
-		public bool IsMatch;
+		public readonly bool IsMatch;
 
 		/// <summary>
 		/// Constructor

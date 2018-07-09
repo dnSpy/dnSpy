@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,7 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
@@ -34,38 +33,39 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract object CreateExpressionEvaluatorState();
 
 		/// <summary>
-		/// Evaluates an expression. It blocks the current thread until the evaluation is complete.
+		/// Evaluates an expression
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Expression to evaluate</param>
 		/// <param name="options">Options</param>
-		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="context"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="evalInfo"/>'s context</param>
 		/// <returns></returns>
-		public abstract DbgEngineEvaluationResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken);
+		public abstract DbgEngineEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state);
 
 		/// <summary>
-		/// Assigns the value of an expression to another expression. It blocks the current thread until the evaluation is complete.
+		/// Assigns the value of an expression to another expression
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Target expression (lhs)</param>
 		/// <param name="valueExpression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEngineEEAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, string valueExpression, DbgEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgEngineEEAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options);
 	}
 
 	/// <summary>
 	/// Evaluation result
 	/// </summary>
-	public struct DbgEngineEvaluationResult {
+	public readonly struct DbgEngineEvaluationResult {
 		/// <summary>
 		/// Gets the value or null if there was an error
 		/// </summary>
 		public DbgEngineValue Value { get; }
+
+		/// <summary>
+		/// Gets the format specifiers, if any
+		/// </summary>
+		public ReadOnlyCollection<string> FormatSpecifiers { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -77,13 +77,17 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		public string Error { get; }
 
+		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="flags">Flags</param>
-		public DbgEngineEvaluationResult(DbgEngineValue value, DbgEvaluationResultFlags flags) {
+		public DbgEngineEvaluationResult(DbgEngineValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = null;
 		}
@@ -95,6 +99,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="flags">Flags</param>
 		public DbgEngineEvaluationResult(string error, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
+			FormatSpecifiers = emptyFormatSpecifiers;
 			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
@@ -103,7 +108,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
 	/// Expression evaluator assignment result
 	/// </summary>
-	public struct DbgEngineEEAssignmentResult {
+	public readonly struct DbgEngineEEAssignmentResult {
 		/// <summary>
 		/// Error message or null
 		/// </summary>

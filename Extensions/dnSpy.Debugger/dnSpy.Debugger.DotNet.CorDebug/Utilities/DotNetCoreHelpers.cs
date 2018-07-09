@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,8 @@
 using System;
 using System.IO;
 using System.Reflection;
+using dnlib.DotNet;
+using dnlib.PE;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
@@ -76,6 +78,50 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			case 64:	return Path.Combine(basePath, "x64", filename);
 			default:	throw new ArgumentOutOfRangeException(nameof(bitness));
 			}
+		}
+
+		public static bool IsDotNetCoreExecutable(string filename) {
+			if (!File.Exists(filename))
+				return false;
+			if (!PortableExecutableFileHelpers.IsExecutable(filename))
+				return false;
+			try {
+				using (var peImage = new PEImage(filename)) {
+					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
+						return false;
+					var dd = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+					if (dd.VirtualAddress == 0 || dd.Size < 0x48)
+						return false;
+
+					using (var mod = ModuleDefMD.Load(peImage, new ModuleCreationOptions())) {
+						var asm = mod.Assembly;
+						if (asm == null)
+							return false;
+
+						var ca = asm.CustomAttributes.Find("System.Runtime.Versioning.TargetFrameworkAttribute");
+						if (ca == null)
+							return false;
+						if (ca.ConstructorArguments.Count != 1)
+							return false;
+						string s = ca.ConstructorArguments[0].Value as UTF8String;
+						if (s == null)
+							return false;
+
+						// See corclr/src/mscorlib/src/System/Runtime/Versioning/BinaryCompatibility.cs
+						var values = s.Split(new char[] { ',' });
+						if (values.Length >= 2 && values.Length <= 3) {
+							var framework = values[0].Trim();
+							if (framework == ".NETCoreApp")
+								return true;
+						}
+
+						return false;
+					}
+				}
+			}
+			catch {
+			}
+			return false;
 		}
 	}
 }

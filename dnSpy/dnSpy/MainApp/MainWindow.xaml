@@ -1,5 +1,5 @@
 ﻿<!--
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,9 +20,6 @@
         x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:dnSpy.MainApp"
         xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
         xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
         Style="{StaticResource MainWindowStyle}"
@@ -30,7 +27,6 @@
         Title="dnSpy"
         MinWidth="250"
         MinHeight="200"
-        mc:Ignorable="d"
         Height="600" Width="1000">
     <ContentPresenter Name="contentPresenter" />
 </ctrls:MetroWindow>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
 	/// Reference and id. Created from a <see cref="SpanReference"/>
 	/// </summary>
-	public struct ReferenceAndId {
+	public readonly struct ReferenceAndId {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>

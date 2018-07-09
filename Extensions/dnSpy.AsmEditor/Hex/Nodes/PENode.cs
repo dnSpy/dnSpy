@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return true;
 		}
 
-		public MetaDataTableRecordNode FindTokenNode(uint token) {
+		public MetadataTableRecordNode FindTokenNode(uint token) {
 			if ((token & 0x00FFFFFF) == 0)
 				return null;
 			TreeNode.EnsureChildrenLoaded();
@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public HexNode FindNode(HexVM structure, HexField field) {
-			if (structure is MetaDataTableRecordVM mdTblRecord)
+			if (structure is MetadataTableRecordVM mdTblRecord)
 				return FindTokenNode(mdTblRecord.Token.Raw);
 
 			TreeNode.EnsureChildrenLoaded();

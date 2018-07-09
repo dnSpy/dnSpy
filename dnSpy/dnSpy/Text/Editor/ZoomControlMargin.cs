@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		double TextViewZoomLevel {
-			get { return wpfTextViewHost.TextView.ZoomLevel; }
+			get => wpfTextViewHost.TextView.ZoomLevel;
 			set {
 				if (wpfTextViewHost.TextView.Options.IsOptionDefined(DefaultWpfViewOptions.ZoomLevelId, true))
 					wpfTextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.ZoomLevelId, value);

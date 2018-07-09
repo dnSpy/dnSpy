@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			double HexViewZoomLevel {
-				get { return owner.wpfHexViewHost.HexView.ZoomLevel; }
+				get => owner.wpfHexViewHost.HexView.ZoomLevel;
 				set {
 					if (owner.wpfHexViewHost.HexView.Options.IsOptionDefined(DefaultWpfHexViewOptions.ZoomLevelId, true))
 						owner.wpfHexViewHost.HexView.Options.SetOptionValue(DefaultWpfHexViewOptions.ZoomLevelId, value);

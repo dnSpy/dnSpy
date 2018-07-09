@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			CustomDebugInformationValue,
 		}
 
-		struct BlobDataInfo {
+		readonly struct BlobDataInfo {
 			public HexSpan Span { get; }
 			public ReadOnlyCollection<uint> Tokens { get; }
 			public BlobDataKind Kind { get; }
@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		struct BlobDataInfoPosition {
+		readonly struct BlobDataInfoPosition {
 			public HexPosition Position { get; }
 			public List<uint> Tokens { get; }
 			public BlobDataKind Kind { get; }
@@ -193,7 +193,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			new TableInitInfo(Table.CustomDebugInformation, 2, BlobDataKind.CustomDebugInformationValue),// Value
 		};
 
-		struct TableInitInfo {
+		readonly struct TableInitInfo {
 			public Table Table { get; }
 			public byte Column1 { get; }
 			public BlobDataKind Kind1 { get; }

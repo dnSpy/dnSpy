@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using dnlib.DotNet;
-using dnlib.IO;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
@@ -135,7 +134,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
-			var importer = new ModuleImporter(module, EditCodeVM.makeEverythingPublic);
+			var importer = new ModuleImporter(module, module.Context.AssemblyResolver);
 			try {
 				importer.Import(result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
 			}
@@ -157,7 +156,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return false;
 		}
 
-		struct ModuleResult {
+		readonly struct ModuleResult {
 			public IAssembly Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
@@ -174,7 +173,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			try {
 				using (var module = ModuleDefMD.Load(filename)) {
 					// It's a .NET file, return all bytes
-					var bytes = module.MetaData.PEImage.CreateFullStream().ReadAllBytes();
+					var bytes = module.Metadata.PEImage.CreateReader().ToArray();
 					var asm = module.Assembly?.ToAssemblyRef();
 					var debugFile = GetDebugFile(module);
 					return new ModuleResult(asm, bytes, debugFile);

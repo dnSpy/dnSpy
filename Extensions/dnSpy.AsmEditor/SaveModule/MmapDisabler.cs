@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage peImage) {
-			if (peImage != null && filenames.Contains(peImage.FileName))
+			if (peImage != null && filenames.Contains(peImage.Filename))
 				MemoryMappedIOHelper.DisableMemoryMappedIO(peImage);
 		}
 	}

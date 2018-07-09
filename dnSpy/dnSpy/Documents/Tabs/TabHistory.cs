@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.Documents.Tabs {
-	struct TabContentState {
+	readonly struct TabContentState {
 		public DocumentTabContent DocumentTabContent { get; }
 		public object UIState { get; }
 

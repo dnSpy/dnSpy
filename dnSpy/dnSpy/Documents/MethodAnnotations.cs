@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Documents {
 		readonly object lockObj = new object();
 		readonly Dictionary<Key, bool> infos = new Dictionary<Key, bool>();
 
-		struct Key : IEquatable<Key> {
+		readonly struct Key : IEquatable<Key> {
 			public readonly WeakReference method;
 			readonly int hc;
 

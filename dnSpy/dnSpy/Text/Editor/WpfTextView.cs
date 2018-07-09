@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -108,6 +108,7 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly ILineTransformProviderService lineTransformProviderService;
 		readonly Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners;
+		readonly Lazy<ITextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] textViewCreationListeners;
 		readonly AdornmentLayerCollection normalAdornmentLayerCollection;
 		readonly AdornmentLayerCollection overlayAdornmentLayerCollection;
 		readonly AdornmentLayerCollection underlayAdornmentLayerCollection;
@@ -135,7 +136,7 @@ namespace dnSpy.Text.Editor {
 		static readonly AdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners) {
+		public WpfTextView(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, IEditorOptionsFactoryService editorOptionsFactoryService, ICommandService commandService, ISmartIndentationService smartIndentationService, IFormattedTextSourceFactoryService formattedTextSourceFactoryService, IViewClassifierAggregatorService viewClassifierAggregatorService, ITextAndAdornmentSequencerFactoryService textAndAdornmentSequencerFactoryService, IClassificationFormatMapService classificationFormatMapService, IEditorFormatMapService editorFormatMapService, IAdornmentLayerDefinitionService adornmentLayerDefinitionService, ILineTransformProviderService lineTransformProviderService, ISpaceReservationStackProvider spaceReservationStackProvider, IWpfTextViewConnectionListenerServiceProvider wpfTextViewConnectionListenerServiceProvider, IBufferGraphFactoryService bufferGraphFactoryService, Lazy<IWpfTextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] wpfTextViewCreationListeners, Lazy<ITextViewCreationListener, IDeferrableContentTypeAndTextViewRoleMetadata>[] textViewCreationListeners) {
 			if (roles == null)
 				throw new ArgumentNullException(nameof(roles));
 			if (editorOptionsFactoryService == null)
@@ -156,6 +157,8 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(spaceReservationStackProvider));
 			if (wpfTextViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewCreationListeners));
+			if (textViewCreationListeners == null)
+				throw new ArgumentNullException(nameof(textViewCreationListeners));
 			if (wpfTextViewConnectionListenerServiceProvider == null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListenerServiceProvider));
 			if (bufferGraphFactoryService == null)
@@ -170,6 +173,7 @@ namespace dnSpy.Text.Editor {
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService ?? throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			this.lineTransformProviderService = lineTransformProviderService ?? throw new ArgumentNullException(nameof(lineTransformProviderService));
 			this.wpfTextViewCreationListeners = wpfTextViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
+			this.textViewCreationListeners = textViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
 			recreateLineTransformProvider = true;
 			normalAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Normal);
 			overlayAdornmentLayerCollection = new AdornmentLayerCollection(this, LayerKind.Overlay);
@@ -228,6 +232,13 @@ namespace dnSpy.Text.Editor {
 
 		void NotifyTextViewCreated(IContentType newContentType, IContentType oldContentType) {
 			foreach (var lz in wpfTextViewCreationListeners) {
+				if (oldContentType != null && oldContentType.IsOfAnyType(lz.Metadata.ContentTypes))
+					continue;
+				if (!TextDataModel.ContentType.IsOfAnyType(lz.Metadata.ContentTypes))
+					continue;
+				lz.Value.TextViewCreated(this);
+			}
+			foreach (var lz in textViewCreationListeners) {
 				if (oldContentType != null && oldContentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				if (!TextDataModel.ContentType.IsOfAnyType(lz.Metadata.ContentTypes))
@@ -476,7 +487,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public new Brush Background {
-			get { return base.Background; }
+			get => base.Background;
 			set {
 				if (base.Background != value) {
 					base.Background = value;
@@ -487,7 +498,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public double ZoomLevel {
-			get { return zoomLevel; }
+			get => zoomLevel;
 			set {
 				if (IsClosed)
 					return;
@@ -530,7 +541,7 @@ namespace dnSpy.Text.Editor {
 		public double ViewportWidth => ActualWidth;
 		public double ViewportHeight => ActualHeight;
 		public double ViewportLeft {
-			get { return viewportLeft; }
+			get => viewportLeft;
 			set {
 				if (double.IsNaN(value))
 					throw new ArgumentOutOfRangeException(nameof(value));
@@ -911,8 +922,8 @@ namespace dnSpy.Text.Editor {
 			LineTransformProvider.GetLineTransform(line, yPosition, placement);
 
 		public event EventHandler<MouseHoverEventArgs> MouseHover {
-			add { mouseHoverHelper.MouseHover += value; }
-			remove { mouseHoverHelper.MouseHover -= value; }
+			add => mouseHoverHelper.MouseHover += value;
+			remove => mouseHoverHelper.MouseHover -= value;
 		}
 		readonly MouseHoverHelper mouseHoverHelper;
 

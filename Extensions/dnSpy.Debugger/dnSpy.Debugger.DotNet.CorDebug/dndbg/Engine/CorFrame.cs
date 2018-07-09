@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -240,6 +240,14 @@ namespace dndbg.Engine {
 		}
 
 		static int GetCountGenericParameters(IMetaDataImport mdi, uint token) => MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token).Length;
+
+		public CorValue GetReturnValueForILOffset(uint offset) {
+			var ilf3 = obj as ICorDebugILFrame3;
+			if (ilf3 == null)
+				return null;
+			int hr = ilf3.GetReturnValueForILOffset(offset, out var value);
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
 
 		public static bool operator ==(CorFrame a, CorFrame b) {
 			if (ReferenceEquals(a, b))

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,6 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.IO;
-using dnlib.PE;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
@@ -37,16 +36,16 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public MethodBodyOptions(MethodDef method) {
 			CodeType = method.CodeType;
-			if (method.MethodBody is CilBody) {
+			if (method.MethodBody is CilBody cilBody) {
 				var headerRva = method.RVA;
 				var headerFileOffset = (FileOffset)(method.Module.ToFileOffset((uint)headerRva) ?? (uint)headerRva);
-				var rva = (RVA)((uint)headerRva + method.Body.HeaderSize);
-				var fileOffset = (FileOffset)((long)headerFileOffset + method.Body.HeaderSize);
-				CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, headerRva, headerFileOffset, rva, fileOffset);
+				var rva = headerRva + method.Body.HeaderSize;
+				var fileOffset = headerFileOffset + method.Body.HeaderSize;
+				CilBodyOptions = new CilBodyOptions(cilBody, headerRva, headerFileOffset, rva, fileOffset);
 				BodyType = MethodBodyType.Cil;
 			}
-			else if (method.MethodBody is NativeMethodBody) {
-				NativeMethodBodyOptions = new NativeMethodBodyOptions((NativeMethodBody)method.MethodBody);
+			else if (method.MethodBody is NativeMethodBody nativeBody) {
+				NativeMethodBodyOptions = new NativeMethodBodyOptions(nativeBody);
 				BodyType = MethodBodyType.Native;
 			}
 			else

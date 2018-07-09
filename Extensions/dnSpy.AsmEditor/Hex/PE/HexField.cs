@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		public string NameUI => UIUtilities.EscapeMenuItemHeader(Name);
 		public string Name { get; }
-		public string OffsetString => string.Format("0x{0:X8}", Span.Start.ToUInt64());
+		public string OffsetString => $"0x{Span.Start.ToUInt64():X8}";
 		public HexSpan Span { get; }
 		public bool IsVisible { get; set; }
 		public HexPosition Size => Span.Length;
@@ -130,7 +130,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly ByteVM data;
 
-		public override string FormattedValue => string.Format("{0:X2}", ReadData());
+		public override string FormattedValue => $"{ReadData():X2}";
 
 		public ByteHexField(StructField<ByteData> field, bool useDecimal = false)
 			: base(field) => data = new ByteVM(buffer.ReadByte(Span.Start), a => UpdateValue(), useDecimal);
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly Int16VM data;
 
-		public override string FormattedValue => string.Format("{0:X4}", ReadData());
+		public override string FormattedValue => $"{ReadData():X4}";
 
 		public Int16HexField(StructField<Int16Data> field, bool useDecimal = false)
 			: base(field) => data = new Int16VM(buffer.ReadInt16(Span.Start), a => UpdateValue(), useDecimal);
@@ -162,7 +162,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly UInt16VM data;
 
-		public override string FormattedValue => string.Format("{0:X4}", ReadData());
+		public override string FormattedValue => $"{ReadData():X4}";
 
 		public UInt16HexField(StructField<UInt16Data> field, bool useDecimal = false)
 			: base(field) => data = new UInt16VM(buffer.ReadUInt16(Span.Start), a => UpdateValue(), useDecimal);
@@ -181,7 +181,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly Int32VM data;
 
-		public override string FormattedValue => string.Format("{0:X8}", ReadData());
+		public override string FormattedValue => $"{ReadData():X8}";
 
 		public Int32HexField(StructField<Int32Data> field, bool useDecimal = false)
 			: base(field) => data = new Int32VM(buffer.ReadInt32(Span.Start), a => UpdateValue(), useDecimal);
@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly UInt32VM data;
 
-		public override string FormattedValue => string.Format("{0:X8}", ReadData());
+		public override string FormattedValue => $"{ReadData():X8}";
 
 		public static UInt32HexField TryCreate(StructField<UInt32Data> field, bool useDecimal = false) {
 			if (field != null)
@@ -230,7 +230,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly UInt64VM data;
 
-		public override string FormattedValue => string.Format("{0:X16}", ReadData());
+		public override string FormattedValue => $"{ReadData():X16}";
 
 		public UInt64HexField(StructField<UInt64Data> field, bool useDecimal = false)
 			: base(field) => data = new UInt64VM(buffer.ReadUInt64(Span.Start), a => UpdateValue(), useDecimal);
@@ -279,7 +279,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				if (c == 0)
 					sb.Append(@"\0");
 				else if (c < 0x20)
-					sb.Append(string.Format("\\u{0:X4}", (ushort)c));
+					sb.Append($"\\u{(ushort)c:X4}");
 				else
 					sb.Append(c);
 			}
@@ -440,7 +440,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly ByteVM data;
 
-		public override string FormattedValue => string.Format("{0:X2}", ReadData());
+		public override string FormattedValue => $"{ReadData():X2}";
 
 		public ByteFlagsHexField(StructField<ByteFlagsData> field, bool useDecimal = false)
 			: base(field) => data = new ByteVM(buffer.ReadByte(Span.Start), a => UpdateValue(), false);
@@ -454,7 +454,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly UInt16VM data;
 
-		public override string FormattedValue => string.Format("{0:X4}", ReadData());
+		public override string FormattedValue => $"{ReadData():X4}";
 
 		public UInt16FlagsHexField(StructField<UInt16FlagsData> field)
 			: base(field) => data = new UInt16VM(buffer.ReadUInt16(Span.Start), a => UpdateValue(), false);
@@ -474,7 +474,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly UInt32VM data;
 
-		public override string FormattedValue => string.Format("{0:X8}", ReadData());
+		public override string FormattedValue => $"{ReadData():X8}";
 
 		public UInt32FlagsHexField(StructField<UInt32FlagsData> field)
 			: base(field) => data = new UInt32VM(buffer.ReadUInt32(Span.Start), a => UpdateValue(), false);
@@ -491,7 +491,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override DataFieldVM DataFieldVM => data;
 		readonly UInt64VM data;
 
-		public override string FormattedValue => string.Format("{0:X16}", ReadData());
+		public override string FormattedValue => $"{ReadData():X16}";
 
 		public UInt64FlagsHexField(StructField<UInt64FlagsData> field)
 			: base(field) => data = new UInt64VM(buffer.ReadUInt64(Span.Start), a => UpdateValue(), false);
@@ -522,7 +522,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 	sealed class BooleanHexBitField : HexBitField {
 		public bool BitValue {
-			get { return boolean; }
+			get => boolean;
 			set {
 				if (SetBitValue(value))
 					Owner.Updated(this);
@@ -552,7 +552,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	enum IntegerHexBitFieldEnum : ulong {
 	}
 
-	struct IntegerHexBitFieldEnumInfo {
+	readonly struct IntegerHexBitFieldEnumInfo {
 		public readonly ulong Value;
 		public readonly string Name;
 
@@ -606,7 +606,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public UInt32HexField SizeVM { get; }
 
 		public bool IsVisible {
-			get { return isVisible; }
+			get => isVisible;
 			set {
 				if (isVisible != value) {
 					isVisible = value;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,8 +91,8 @@ namespace dnSpy.Bookmarks.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		struct LocationsResult : IDisposable {
-			public TextViewBookmarkLocationResult? locRes;
+		readonly struct LocationsResult : IDisposable {
+			public readonly TextViewBookmarkLocationResult? locRes;
 			readonly Lazy<BookmarksService> bookmarksService;
 			readonly List<BookmarkLocation> allLocations;
 
@@ -180,8 +180,8 @@ namespace dnSpy.Bookmarks.TextEditor {
 
 		struct ToggleCreateBreakpointInfoResult : IDisposable {
 			readonly Lazy<BookmarksService> bookmarksService;
-			public ToggleCreateBookmarkKind kind;
-			public Bookmark[] bookmarks;
+			public readonly ToggleCreateBookmarkKind kind;
+			public readonly Bookmark[] bookmarks;
 			public BookmarkLocation location;
 			public ToggleCreateBreakpointInfoResult(Lazy<BookmarksService> bookmarksService, ToggleCreateBookmarkKind kind, Bookmark[] bookmarks, BookmarkLocation location) {
 				this.bookmarksService = bookmarksService;

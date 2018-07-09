@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Scripting.Roslyn</RootNamespace>
     <AssemblyName>dnSpy.Scripting.Roslyn.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -27,7 +27,8 @@
     <DocumentationFile>..\..\dnSpy\dnSpy\bin\Debug\dnSpy.Scripting.Roslyn.x.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -106,9 +107,9 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dnSpy\Roslyn\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj">
+    <ProjectReference Include="..\..\dnSpy\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj">
       <Project>{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}</Project>
-      <Name>dnSpy.Roslyn.Shared</Name>
+      <Name>dnSpy.Roslyn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +123,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

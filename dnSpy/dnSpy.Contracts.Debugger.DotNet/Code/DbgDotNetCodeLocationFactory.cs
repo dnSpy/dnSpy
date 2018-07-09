@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="offset">IL offset of the location within the method body</param>
 		/// <returns></returns>
 		public DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset) =>
-			Create(module, token, offset, DbgDotNetCodeLocationOptions.None);
+			Create(module, token, offset, DbgILOffsetMapping.Exact);
 
 		/// <summary>
 		/// Creates a new <see cref="DbgDotNetCodeLocation"/> instance
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of a method within the module</param>
 		/// <param name="offset">IL offset of the location within the method body</param>
-		/// <param name="options">Options</param>
+		/// <param name="ilOffsetMapping">IL offset mapping</param>
 		/// <returns></returns>
-		public abstract DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset, DbgDotNetCodeLocationOptions options);
+		public abstract DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping);
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -48,10 +46,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.localsProvider = localsProvider;
 		}
 
-		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken) {
+		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body) {
 			Debug.Assert(extraLocals.Count == 0);
 			localVariables = body.LocalVariables;
-			localsProvider.Initialize(context, frame, method, body, cancellationToken);
+			localsProvider.Initialize(evalInfo, method, body);
 		}
 
 		public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) {
@@ -69,9 +67,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					localValue = runtime.GetDefaultValue(type);
 					extraLocals.Add(index, localValue);
 				}
-				return new DbgDotNetValueResult(localValue, valueIsException: false);
+				return DbgDotNetValueResult.Create(localValue);
 			}
-			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
 		public override string SetVariable(int index, DmdType targetType, object value) {

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -154,13 +154,13 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index">Index</param>
 		/// <returns></returns>
 		public HexBufferSpan this[int index] {
-			get { return new HexBufferSpan(buffer, coll[index]); }
-			set { throw new NotSupportedException(); }
+			get => new HexBufferSpan(buffer, coll[index]);
+			set => throw new NotSupportedException();
 		}
 
 		object IList.this[int index] {
-			get { return this[index]; }
-			set { throw new NotSupportedException(); }
+			get => this[index];
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary>

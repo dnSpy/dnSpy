@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,10 +47,8 @@ namespace dnSpy.BackgroundImage {
 		public TimeSpan Interval { get; set; }
 
 		public string[] Images {
-			get { return images; }
-			set {
-				images = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => images;
+			set => images = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		string[] images;
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	struct DmdMarshalBlobReader : IDisposable {
+	readonly struct DmdMarshalBlobReader : IDisposable {
 		readonly DmdModule module;
 		readonly DmdDataStream reader;
 		readonly IList<DmdType> genericTypeArguments;

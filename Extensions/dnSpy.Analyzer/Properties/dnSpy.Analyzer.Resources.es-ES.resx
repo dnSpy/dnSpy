@@ -130,7 +130,7 @@
     <value>Asignado por</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Copiar Comando</value>
+    <value>Copi_a</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
     <value>Doble Clic</value>
@@ -139,28 +139,28 @@
     <value>añadir</value>
   </data>
   <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>nombre de nodo de árbol eliminador de evento</value>
+    <value>eliminar</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Expuesto por nodo de árbol</value>
+    <value>Expuesto por</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
     <value>Métodos de extensión</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Comando Ir a referencia</value>
+    <value>Ir a referencia</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Comando ir a Referencia en Código</value>
+    <value>Ver Referencia en Método</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Comando Nueva Pestaña Ir a referencia en código</value>
+    <value>Ver Referencia en Método (Nueva Pestaña)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Comando (Nueva Pestaña) Ir a referencia</value>
+    <value>Ir a referencia (Nueva Pestaña)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
-    <value>oculta Padre</value>
+    <value>oculto</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
     <value>Implementado por</value>

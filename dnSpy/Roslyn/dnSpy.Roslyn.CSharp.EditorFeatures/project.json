@@ -1,0 +1,12 @@
+{
+	"dependencies": {
+		"Microsoft.CodeAnalysis.CSharp.Features": "2.8.2",
+		"Microsoft.VisualStudio.Text.UI.Wpf": "15.5.27130"
+	},
+	"frameworks": {
+		"net471": { }
+	},
+	"runtimes": {
+		"win": { }
+	}
+}

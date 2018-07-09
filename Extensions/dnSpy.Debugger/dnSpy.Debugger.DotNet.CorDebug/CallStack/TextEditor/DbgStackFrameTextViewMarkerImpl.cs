@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -70,9 +71,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 					var textSpan = info.Statement.TextSpan;
 					if (textSpan.End > snapshot.Length)
 						yield break;// Old data, but we'll get called again
-					var binSpan = info.Statement.BinSpan;
+					var ilSpan = info.Statement.ILSpan;
 					foreach (uint ilOffset in ilOffsets) {
-						if (ilOffset >= binSpan.Start && ilOffset < binSpan.End)
+						if (ilOffset >= ilSpan.Start && ilOffset < ilSpan.End)
 							yield return new SnapshotSpan(snapshot, textSpan.Start, textSpan.Length);
 					}
 				}
@@ -88,12 +89,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 				switch (frames[i].Location) {
 				case DbgDotNetNativeCodeLocation nativeLoc:
 					switch (nativeLoc.ILOffsetMapping) {
-					case DbgILOffsetMapping.Prolog:
-					case DbgILOffsetMapping.Epilog:
 					case DbgILOffsetMapping.Exact:
 					case DbgILOffsetMapping.Approximate:
 						break;
 
+					case DbgILOffsetMapping.Prolog:
+					case DbgILOffsetMapping.Epilog:
 					case DbgILOffsetMapping.Unknown:
 					case DbgILOffsetMapping.NoInfo:
 					case DbgILOffsetMapping.UnmappedAddress:

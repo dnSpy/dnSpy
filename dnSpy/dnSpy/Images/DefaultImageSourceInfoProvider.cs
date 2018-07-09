@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,11 +51,13 @@ namespace dnSpy.Images {
 			var rsrcName = asmName.Name + ".g.resources";
 			try {
 				var baseUri = "/" + asmName.Name + ";v" + asmName.Version + ";component/";
-				using (var mod = ModuleDefMD.Load(assembly.ManifestModule)) {
+				var options = new ModuleCreationOptions();
+				options.TryToLoadPdbFromDisk = false;
+				using (var mod = ModuleDefMD.Load(assembly.ManifestModule, options)) {
 					var rsrc = mod.Resources.Find(rsrcName) as EmbeddedResource;
 					Debug.Assert(rsrc != null);
 					if (rsrc != null) {
-						var set = ResourceReader.Read(mod, rsrc.Data);
+						var set = ResourceReader.Read(mod, rsrc.CreateReader());
 						foreach (var elem in set.ResourceElements) {
 							const string imagesPrefix = "images/";
 							if (elem.Name != null && elem.Name.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase)) {

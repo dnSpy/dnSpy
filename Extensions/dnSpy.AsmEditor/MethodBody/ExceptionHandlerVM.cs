@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand EditCatchTypeCommand => new RelayCommand(a => EditCatchType());
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ListVM<InstructionVM> HandlerEndVM { get; }
 
 		public ITypeDefOrRef CatchType {
-			get { return catchType; }
+			get => catchType;
 			set {
 				if (catchType != value) {
 					catchType = value;

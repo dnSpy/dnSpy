@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,9 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace dnSpy.AsmEditor.Compiler.MDEditor {
-	sealed class MDWriterMemoryStream : MDWriterStream {
+	unsafe sealed class MDWriterMemoryStream : MDWriterStream {
 		// Use smaller buffers to prevent them from ending up on the LOH
 		const int BUFFER_LENGTH = 8 * 1024;
 		readonly List<byte[]> buffers;
@@ -153,6 +154,25 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			dataLength = Math.Max(position, dataLength);
 		}
 
+		public override void Write(byte* source, int length) {
+			EnsureLength(position + length);
+
+			while (length > 0) {
+				int listIndex = (int)(position / BUFFER_LENGTH);
+				int bufferIndex = (int)(position % BUFFER_LENGTH);
+
+				var buffer = buffers[listIndex];
+				int lengthLeft = buffer.Length - bufferIndex;
+				int copyLen = Math.Min(lengthLeft, length);
+				Marshal.Copy((IntPtr)source, buffer, bufferIndex, copyLen);
+				source += copyLen;
+				length -= copyLen;
+				position += copyLen;
+			}
+
+			dataLength = Math.Max(position, dataLength);
+		}
+
 		public override void Write(byte[] source, int sourceIndex, int length) {
 			EnsureLength(position + length);
 
@@ -172,24 +192,19 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			dataLength = Math.Max(position, dataLength);
 		}
 
-		public byte[] ToArray() {
-			var result = new byte[dataLength];
-			CopyTo(result, 0, result.Length);
-			return result;
-		}
-
-		void CopyTo(byte[] destination, int destinationIndex, int length) {
+		public unsafe void CopyTo(IntPtr destination, int length) {
 			if (length < 0 || length > dataLength)
 				throw new ArgumentOutOfRangeException(nameof(length));
 
+			var dest = (byte*)destination;
 			for (int i = 0; i < buffers.Count; i++) {
 				if (length == 0)
 					break;
 
 				var buffer = buffers[i];
 				int copyLen = Math.Min(buffer.Length, length);
-				Array.Copy(buffer, 0, destination, destinationIndex, copyLen);
-				destinationIndex += copyLen;
+				Marshal.Copy(buffer, 0, (IntPtr)dest, copyLen);
+				dest += copyLen;
 				length -= copyLen;
 			}
 			Debug.Assert(length == 0);

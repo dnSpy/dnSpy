@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,6 +36,8 @@ namespace dnSpy.Decompiler {
 
 		sealed class DummySettings : DecompilerSettingsBase {
 			public override DecompilerSettingsBase Clone() => new DummySettings();
+			public override int Version => 0;
+			public override event EventHandler VersionChanged { add { } remove { } }
 
 			public override IEnumerable<IDecompilerOption> Options {
 				get { yield break; }

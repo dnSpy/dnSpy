@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,8 +35,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public BuilderState(DecompilationContext ctx, BuilderCache cache, MetadataTextColorProvider metadataTextColorProvider) {
 			this.cache = cache;
 			State = cache.AllocateAstBuilderState();
-			State.AstBuilder.Context.CalculateBinSpans = ctx.CalculateBinSpans;
+			State.AstBuilder.Context.CalculateILSpans = ctx.CalculateILSpans;
 			State.AstBuilder.Context.MetadataTextColorProvider = metadataTextColorProvider;
+			State.AstBuilder.Context.AsyncMethodBodyDecompilation = ctx.AsyncMethodBodyDecompilation;
 		}
 
 		public void Dispose() => cache.Free(State);

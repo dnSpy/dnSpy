@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand PickModuleRefCommand => new RelayCommand(a => PickModuleRef());
 
 		public IMemberRefParent Class {
-			get { return @class; }
+			get => @class;
 			set {
 				if (@class != value) {
 					@class = value;
@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;

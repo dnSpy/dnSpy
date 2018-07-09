@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,15 +24,15 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Source statement
 	/// </summary>
-	public struct SourceStatement : IEquatable<SourceStatement> {
+	public readonly struct SourceStatement : IEquatable<SourceStatement> {
 		internal static readonly IComparer<SourceStatement> SpanStartComparer = new SpanStartComparerImpl();
-		readonly BinSpan binSpan;
+		readonly ILSpan ilSpan;
 		readonly TextSpan textSpan;
 
 		/// <summary>
-		/// Binary span
+		/// IL span
 		/// </summary>
-		public BinSpan BinSpan => binSpan;
+		public ILSpan ILSpan => ilSpan;
 
 		/// <summary>
 		/// Text span
@@ -40,16 +40,16 @@ namespace dnSpy.Contracts.Decompiler {
 		public TextSpan TextSpan => textSpan;
 
 		sealed class SpanStartComparerImpl : IComparer<SourceStatement> {
-			public int Compare(SourceStatement x, SourceStatement y) => (int)(x.binSpan.Start - y.binSpan.Start);
+			public int Compare(SourceStatement x, SourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="binSpan">Binary span</param>
+		/// <param name="ilSpan">IL span</param>
 		/// <param name="textSpan">Text span</param>
-		public SourceStatement(BinSpan binSpan, TextSpan textSpan) {
-			this.binSpan = binSpan;
+		public SourceStatement(ILSpan ilSpan, TextSpan textSpan) {
+			this.ilSpan = ilSpan;
 			this.textSpan = textSpan;
 		}
 
@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(SourceStatement other) => binSpan.Equals(other.binSpan) && textSpan.Equals(other.textSpan);
+		public bool Equals(SourceStatement other) => ilSpan.Equals(other.ilSpan) && textSpan.Equals(other.textSpan);
 
 		/// <summary>
 		/// Equals()
@@ -87,12 +87,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => binSpan.GetHashCode() ^ textSpan.GetHashCode();
+		public override int GetHashCode() => ilSpan.GetHashCode() ^ textSpan.GetHashCode();
 
 		/// <summary>
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => "{" + binSpan.ToString() + "," + textSpan.ToString() + "}";
+		public override string ToString() => "{" + ilSpan.ToString() + "," + textSpan.ToString() + "}";
 	}
 }

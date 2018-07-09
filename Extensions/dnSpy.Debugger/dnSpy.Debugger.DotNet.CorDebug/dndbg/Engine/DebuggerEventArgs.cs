@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,6 +86,15 @@ namespace dndbg.Engine {
 		public CorModuleDefCreatedEventArgs(DnModule module, CorModuleDef corModuleDef) {
 			Module = module;
 			CorModuleDef = corModuleDef;
+		}
+	}
+
+	readonly struct RedirectedOutputEventArgs {
+		public string Text { get; }
+		public bool IsStandardOutput { get; }
+		public RedirectedOutputEventArgs(string text, bool isStandardOutput) {
+			Text = text ?? throw new ArgumentNullException(nameof(text));
+			IsStandardOutput = isStandardOutput;
 		}
 	}
 }

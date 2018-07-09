@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	static class BackgroundImageOptionDefinitions {
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_HexEditorDebuggerMemory)]
-		sealed class HexEditorProcessMemory : IBackgroundImageOptionDefinition2 {
+		sealed class HexEditorProcessMemory : IBackgroundImageOptionDefinition {
 			public string Id => "Hex Editor - Memory Window";
 			public string DisplayName => dnSpy_Debugger_Resources.BgImgDisplayName_DebuggerMemory;
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_HexEditorDebuggerMemory;

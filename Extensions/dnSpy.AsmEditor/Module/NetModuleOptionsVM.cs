@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.Module {
 	sealed class NetModuleOptionsVM : ViewModelBase {
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (!value.Equals(name, StringComparison.Ordinal)) {
 					name = value;

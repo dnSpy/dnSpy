@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Compiler.MDEditor {
 	sealed class MDWriter {
-		readonly byte[] moduleData;
+		readonly RawModuleBytes moduleData;
 		readonly MetadataEditor mdEditor;
 		readonly MDWriterStream stream;
 		readonly List<PESection> sections;
@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		long dataDirPosition;
 
 		public MetadataEditor MetadataEditor => mdEditor;
-		public byte[] ModuleData => moduleData;
+		public RawModuleBytes ModuleData => moduleData;
 
 		const uint SectionAlignment = 0x2000;
 		const uint FileAlignment = 0x200;
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			}
 		}
 
-		public MDWriter(byte[] moduleData, MetadataEditor mdEditor, MDWriterStream stream) {
+		public MDWriter(RawModuleBytes moduleData, MetadataEditor mdEditor, MDWriterStream stream) {
 			this.moduleData = moduleData;
 			this.mdEditor = mdEditor;
 			this.stream = stream;

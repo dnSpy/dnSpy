@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,43 +17,95 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.AsmEditor.Compiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class AssemblyReferenceResolver : IAssemblyReferenceResolver {
-		readonly IRawModuleBytesProvider rawModuleBytesProvider;
+		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IAssemblyResolver assemblyResolver;
 		readonly IAssembly tempAssembly;
-		readonly ModuleDef defaultSourceModule;
+		readonly ModuleDef editedModule;
 		readonly TypeDef nonNestedEditedTypeOrNull;
-		readonly bool makeEverythingPublic;
+		readonly List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)> rawModuleBytesList;
 
-		public AssemblyReferenceResolver(IRawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef defaultSourceModule, TypeDef nonNestedEditedTypeOrNull, bool makeEverythingPublic) {
-			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == defaultSourceModule);
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
+			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == editedModule);
 			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.tempAssembly = tempAssembly;
-			this.defaultSourceModule = defaultSourceModule;
+			this.editedModule = editedModule;
 			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
-			this.makeEverythingPublic = makeEverythingPublic;
+			rawModuleBytesList = new List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)>();
+		}
+
+		internal (RawModuleBytes rawData, CompilerMetadataReference mdRef)[] GetReferences() => rawModuleBytesList.ToArray();
+
+		CompilerMetadataReference? Save((RawModuleBytes rawData, CompilerMetadataReference mdRef) info) {
+			if (info.rawData == null)
+				return null;
+			try {
+				rawModuleBytesList.Add(info);
+			}
+			catch {
+				info.rawData.Dispose();
+				throw;
+			}
+			return info.mdRef;
 		}
 
 		public CompilerMetadataReference? Resolve(IAssembly asmRef) {
 			ModuleDef sourceModule = null;
-			var asm = assemblyResolver.Resolve(asmRef, sourceModule ?? defaultSourceModule);
+			var asm = assemblyResolver.Resolve(asmRef, sourceModule ?? editedModule);
 			if (asm == null)
 				return null;
 
-			return CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic);
+			return Save(CreateRef(asm.ManifestModule));
 		}
 
-		public CompilerMetadataReference? Create(AssemblyDef asm) =>
-			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, asm.ManifestModule, nonNestedEditedTypeOrNull, makeEverythingPublic);
+		public CompilerMetadataReference? Create(AssemblyDef asm) => Save(CreateRef(asm.ManifestModule));
+		public CompilerMetadataReference? Create(ModuleDef module) => Save(CreateRef(module));
 
-		public CompilerMetadataReference? Create(ModuleDef module) =>
-			CompilerMetadataReferenceCreator.Create(rawModuleBytesProvider, tempAssembly, module, nonNestedEditedTypeOrNull, makeEverythingPublic);
+		unsafe (RawModuleBytes rawData, CompilerMetadataReference mdRef) CreateRef(ModuleDef module) {
+			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
+			if (moduleData == null)
+				return default;
+			bool error = true;
+			try {
+				// Only file layout is supported by CompilerMetadataReference
+				if (!moduleData.IsFileLayout)
+					return default;
+
+				var patcher = new ModulePatcher(moduleData, moduleData.IsFileLayout, tempAssembly, editedModule, nonNestedEditedTypeOrNull);
+				if (!patcher.Patch(module, out var newModuleData))
+					return default;
+				if (moduleData != newModuleData) {
+					moduleData.Dispose();
+					moduleData = newModuleData;
+				}
+
+				var asmRef = module.Assembly.ToAssemblyRef();
+				CompilerMetadataReference mdRef;
+				if (module.IsManifestModule)
+					mdRef = CompilerMetadataReference.CreateAssemblyReference(moduleData.Pointer, moduleData.Size, asmRef, module.Location);
+				else
+					mdRef = CompilerMetadataReference.CreateModuleReference(moduleData.Pointer, moduleData.Size, asmRef, module.Location);
+				error = false;
+				return (rawData: moduleData, mdRef);
+			}
+			finally {
+				if (error)
+					moduleData.Dispose();
+			}
+		}
+
+		public void Dispose() {
+			foreach (var info in rawModuleBytesList)
+				info.rawData.Dispose();
+			rawModuleBytesList.Clear();
+		}
 	}
 }

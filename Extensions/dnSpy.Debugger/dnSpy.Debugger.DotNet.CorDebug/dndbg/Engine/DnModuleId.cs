@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using System.IO;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	struct DnModuleId : IEquatable<DnModuleId> {
+	readonly struct DnModuleId : IEquatable<DnModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,
@@ -197,8 +197,8 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public override string ToString() {
 			if (ModuleNameOnly)
-				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, ModuleName);
-			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
+				return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} [{ModuleName}]";
+			return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} {AssemblyFullName} [{ModuleName}]";
 		}
 	}
 }

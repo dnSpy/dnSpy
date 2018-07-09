@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -100,7 +100,7 @@ namespace dnSpy.MainApp {
 		public void Show(Exception exception, string msg = null, Window ownerWindow = null) {
 			string msgToShow;
 			if (exception != null) {
-				msgToShow = string.Format("{0}\n\n{1}", msg ?? dnSpy_Resources.ExceptionMessage, exception.ToString());
+				msgToShow = $"{msg ?? dnSpy_Resources.ExceptionMessage}\n\n{exception.ToString()}";
 				const int MAX_LEN = 2048;
 				if (msgToShow.Length > MAX_LEN)
 					msgToShow = msgToShow.Substring(0, MAX_LEN) + "[...]";

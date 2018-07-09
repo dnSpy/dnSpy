@@ -8,18 +8,20 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>dnSpy_Console</RootNamespace>
     <AssemblyName>dnSpy.Console</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Prefer32Bit>false</Prefer32Bit>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
+    <!-- See dnSpy.csproj for more info -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -30,7 +32,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -76,6 +79,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Console.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Console.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Console.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\dnSpy\App.config">
@@ -84,7 +89,6 @@
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
       <Link>Properties\AssemblyInfo.Shared.cs</Link>
     </Compile>
-    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows.Input;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Images;
@@ -35,6 +36,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public string File => GetFilename(Diagnostic.Filename);
 		public string FullPath => Diagnostic.Filename;
 		public string Line => Diagnostic.LineLocationSpan == null ? string.Empty : (Diagnostic.LineLocationSpan.Value.StartLinePosition.Line + 1).ToString();
+		public ICommand ShowHelpCommand => new RelayCommand(a => ShowHelp());
 		public LineLocationSpan? LineLocationSpan => Diagnostic.LineLocationSpan;
 
 		public CompilerDiagnosticVM(CompilerDiagnostic diag, ImageReference imageReference) {
@@ -73,6 +75,17 @@ namespace dnSpy.AsmEditor.Compiler {
 			catch {
 			}
 			return filename;
+		}
+
+		void ShowHelp() {
+			var uri = Diagnostic.HelpUri;
+			if (string.IsNullOrWhiteSpace(uri))
+				return;
+			try {
+				Process.Start(uri);
+			}
+			catch {
+			}
 		}
 	}
 }

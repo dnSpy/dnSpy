@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using dnlib.DotNet;
-using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 
@@ -31,14 +29,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly TypeDef nonNestedTypeToEdit;
 		readonly MethodSourceStatement? methodSourceStatement;
 
-		sealed class EditMethodDecompileCodeState : DecompileCodeState {
+		sealed class EditClassDecompileCodeState : DecompileCodeState {
 			public ReferenceDecompilerOutput MainOutput { get; }
 
-			public EditMethodDecompileCodeState(object referenceToEdit, MethodSourceStatement? methodSourceStatement) => MainOutput = new ReferenceDecompilerOutput(referenceToEdit, methodSourceStatement);
+			public EditClassDecompileCodeState(object referenceToEdit, MethodSourceStatement? methodSourceStatement) {
+				MainOutput = new ReferenceDecompilerOutput(referenceToEdit, methodSourceStatement);
+				DecompilationContext.AsyncMethodBodyDecompilation = true;
+			}
 		}
 
-		public EditClassVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, IMemberDef defToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
-			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, defToEdit.Module, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
+		public EditClassVM(EditCodeVMOptions options, IMemberDef defToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+			: base(options, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedTypeToEdit = defToEdit as TypeDef ?? defToEdit.DeclaringType;
 			while (nonNestedTypeToEdit.DeclaringType != null)
@@ -48,23 +49,22 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
-			new EditMethodDecompileCodeState(defToEdit, methodSourceStatement);
+			new EditClassDecompileCodeState(defToEdit, methodSourceStatement);
 
 		protected override Task<DecompileAsyncResult> DecompileAsync(DecompileCodeState decompileCodeState) {
-			var state = (EditMethodDecompileCodeState)decompileCodeState;
+			var state = (EditClassDecompileCodeState)decompileCodeState;
 			state.CancellationToken.ThrowIfCancellationRequested();
 
-			state.DecompilationContext.CalculateBinSpans = true;
+			state.DecompilationContext.CalculateILSpans = true;
 			var options = new DecompileTypeMethods(state.MainOutput, state.DecompilationContext, nonNestedTypeToEdit);
 			options.DecompileHidden = false;
 			options.ShowAll = true;
-			options.MakeEverythingPublic = makeEverythingPublic;
 			decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 			state.CancellationToken.ThrowIfCancellationRequested();
 
 			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, state.MainOutput.ToString(), state.MainOutput.Span);
+			result.AddDocument(MainCodeName, state.MainOutput.ToString(), state.MainOutput.Span);
 			return Task.FromResult(result);
 		}
 

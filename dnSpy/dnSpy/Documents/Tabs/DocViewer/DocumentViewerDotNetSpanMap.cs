@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -40,11 +39,6 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.moduleIdProvider = moduleIdProvider ?? throw new ArgumentNullException(nameof(moduleIdProvider));
 			this.methodDebugInfos = methodDebugInfos ?? throw new ArgumentNullException(nameof(methodDebugInfos));
 			this.references = references ?? throw new ArgumentNullException(nameof(references));
-		}
-
-		Span? IMethodOffsetSpanMap.ToSpan(ModuleTokenId method, uint ilOffset) {
-			Debug.Fail($"Shouldn't be called");
-			return null;
 		}
 
 		Span? IDotNetSpanMap.ToSpan(ModuleId module, uint token, uint ilOffset) {

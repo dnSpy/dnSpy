@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -153,53 +153,53 @@ namespace dnSpy.AsmEditor.Types {
 		TypeAttributes attributes;
 
 		public bool Abstract {
-			get { return GetFlagValue(TypeAttributes.Abstract); }
-			set { SetFlagValue(TypeAttributes.Abstract, value); }
+			get => GetFlagValue(TypeAttributes.Abstract);
+			set => SetFlagValue(TypeAttributes.Abstract, value);
 		}
 
 		public bool Sealed {
-			get { return GetFlagValue(TypeAttributes.Sealed); }
-			set { SetFlagValue(TypeAttributes.Sealed, value); }
+			get => GetFlagValue(TypeAttributes.Sealed);
+			set => SetFlagValue(TypeAttributes.Sealed, value);
 		}
 
 		public bool SpecialName {
-			get { return GetFlagValue(TypeAttributes.SpecialName); }
-			set { SetFlagValue(TypeAttributes.SpecialName, value); }
+			get => GetFlagValue(TypeAttributes.SpecialName);
+			set => SetFlagValue(TypeAttributes.SpecialName, value);
 		}
 
 		public bool Import {
-			get { return GetFlagValue(TypeAttributes.Import); }
-			set { SetFlagValue(TypeAttributes.Import, value); }
+			get => GetFlagValue(TypeAttributes.Import);
+			set => SetFlagValue(TypeAttributes.Import, value);
 		}
 
 		public bool Serializable {
-			get { return GetFlagValue(TypeAttributes.Serializable); }
-			set { SetFlagValue(TypeAttributes.Serializable, value); }
+			get => GetFlagValue(TypeAttributes.Serializable);
+			set => SetFlagValue(TypeAttributes.Serializable, value);
 		}
 
 		public bool WindowsRuntime {
-			get { return GetFlagValue(TypeAttributes.WindowsRuntime); }
-			set { SetFlagValue(TypeAttributes.WindowsRuntime, value); }
+			get => GetFlagValue(TypeAttributes.WindowsRuntime);
+			set => SetFlagValue(TypeAttributes.WindowsRuntime, value);
 		}
 
 		public bool BeforeFieldInit {
-			get { return GetFlagValue(TypeAttributes.BeforeFieldInit); }
-			set { SetFlagValue(TypeAttributes.BeforeFieldInit, value); }
+			get => GetFlagValue(TypeAttributes.BeforeFieldInit);
+			set => SetFlagValue(TypeAttributes.BeforeFieldInit, value);
 		}
 
 		public bool Forwarder {
-			get { return GetFlagValue(TypeAttributes.Forwarder); }
-			set { SetFlagValue(TypeAttributes.Forwarder, value); }
+			get => GetFlagValue(TypeAttributes.Forwarder);
+			set => SetFlagValue(TypeAttributes.Forwarder, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(TypeAttributes.RTSpecialName); }
-			set { SetFlagValue(TypeAttributes.RTSpecialName, value); }
+			get => GetFlagValue(TypeAttributes.RTSpecialName);
+			set => SetFlagValue(TypeAttributes.RTSpecialName, value);
 		}
 
 		public bool HasSecurity {
-			get { return GetFlagValue(TypeAttributes.HasSecurity); }
-			set { SetFlagValue(TypeAttributes.HasSecurity, value); }
+			get => GetFlagValue(TypeAttributes.HasSecurity);
+			set => SetFlagValue(TypeAttributes.HasSecurity, value);
 		}
 
 		bool GetFlagValue(TypeAttributes flag) => (Attributes & flag) != 0;
@@ -212,7 +212,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		public string Namespace {
-			get { return ns; }
+			get => ns;
 			set {
 				if (ns != value) {
 					ns = value;
@@ -223,7 +223,7 @@ namespace dnSpy.AsmEditor.Types {
 		UTF8String ns;
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -237,8 +237,8 @@ namespace dnSpy.AsmEditor.Types {
 		public NullableUInt32VM ClassSize { get; }
 
 		public TypeSig BaseTypeSig {
-			get { return TypeSigCreator.TypeSig; }
-			set { TypeSigCreator.TypeSig = value; }
+			get => TypeSigCreator.TypeSig;
+			set => TypeSigCreator.TypeSig = value;
 		}
 
 		public string BaseTypeHeader => string.Format(dnSpy_AsmEditor_Resources.BaseTypeX, TypeSigCreator.TypeSigDnlibFullName);

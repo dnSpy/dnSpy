@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.MVVM;
 
@@ -31,7 +30,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ConstantTypeVM ConstantTypeVM { get; }
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -82,7 +81,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly ModuleDef module;
 
 		public TypeSig StorageType {
-			get { return storageType; }
+			get => storageType;
 			set {
 				if (storageType != value) {
 					storageType = value;
@@ -376,7 +375,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (value is IList<object>)
 				return CreateArray(module.CorLibTypes.Object, value);
 
-			Debug.Fail(string.Format("Unknown CA arg: {0}, ownerType: {1}", value, ownerType));
+			Debug.Fail($"Unknown CA arg: {value}, ownerType: {ownerType}");
 			return new CAArgument();
 		}
 
@@ -386,7 +385,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Debug.Assert(list != null || value == null);
 			if (list == null)
 				return new CAArgument(aryType, null);
-			var ary = ThreadSafeListCreator.Create<CAArgument>(list.Count);
+			var ary = new List<CAArgument>(list.Count);
 
 			for (int i = 0; i < list.Count; i++)
 				ary.Add(CreateCAArgument(elemType, list[i]));

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,6 +65,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			var existing = new HashSet<DbgDotNetCodeLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetCodeLocation>());
 			List<DbgObject> objsToClose = null;
 			foreach (var method in methods) {
+				if (method.IsAbstract || method.Body == null)
+					continue;
 				var moduleId = moduleIdProvider.Value.Create(method.Module);
 				var location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, method.MDToken.Raw, 0);
 				if (existing.Contains(location)) {

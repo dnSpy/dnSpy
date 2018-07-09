@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract IDsDocument GetOrAdd(IDsDocument document);
 	}
 
-	struct DocumentInfo {
+	readonly struct DocumentInfo {
 		public IDsDocument Document { get; }
 		public ModuleId Id { get; }
 		public bool IsActive { get; }

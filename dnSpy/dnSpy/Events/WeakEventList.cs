@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Events {
 
 				// Need to add check for cases when there's no 'this' pointer in h.Target
 				bool compilerGenerated = h.Target.GetType().IsDefined(typeof(CompilerGeneratedAttribute), false);
-				Debug.Assert(!compilerGenerated, string.Format("Event handler {0} is compiler generated (probably a lambda expression) and can't be removed from the event", h.Method));
+				Debug.Assert(!compilerGenerated, $"Event handler {h.Method} is compiler generated (probably a lambda expression) and can't be removed from the event");
 				if (compilerGenerated)
 					return new HardRefInfo(h);
 

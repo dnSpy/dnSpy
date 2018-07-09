@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
-using dnlib.IO;
 using dnlib.PE;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Hex;
@@ -163,7 +162,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		HexBuffer GetOrCreate(IPEImage peImage) {
-			var filename = GetFullPath(peImage.FileName);
+			var filename = GetFullPath(peImage.Filename);
 
 			HexBuffer buffer;
 			lock (lockObj) {
@@ -171,11 +170,8 @@ namespace dnSpy.AsmEditor.Hex {
 				if (buffer != null)
 					return buffer;
 
-				using (var stream = peImage.CreateFullStream()) {
-					var data = stream.ReadAllBytes();
-					buffer = hexBufferFactoryService.Create(data, filename, hexBufferFactoryService.DefaultFileTags);
-					filenameToBuffer[filename] = new WeakReference(buffer);
-				}
+				buffer = hexBufferFactoryService.Create(peImage.CreateReader().ToArray(), filename, hexBufferFactoryService.DefaultFileTags);
+				filenameToBuffer[filename] = new WeakReference(buffer);
 			}
 			return NotifyBufferCreated(buffer);
 		}

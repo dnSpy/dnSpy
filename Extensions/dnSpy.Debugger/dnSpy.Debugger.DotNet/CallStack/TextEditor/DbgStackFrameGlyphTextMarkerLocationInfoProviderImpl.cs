@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,20 +22,26 @@ using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
 	[Export(typeof(DbgStackFrameGlyphTextMarkerLocationInfoProvider))]
 	sealed class DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl : DbgStackFrameGlyphTextMarkerLocationInfoProvider {
 		public override GlyphTextMarkerLocationInfo Create(DbgStackFrame frame) {
 			switch (frame.Location) {
-			case DbgDotNetCodeLocationImpl locImpl:
-				if ((locImpl.Options & DbgDotNetCodeLocationOptions.InvalidOffset) != 0)
-					return new DotNetTokenGlyphTextMarkerLocationInfo(locImpl.Module, locImpl.Token);
-				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(locImpl.Module, locImpl.Token, locImpl.Offset);
-
 			case DbgDotNetCodeLocation loc:
-				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.Offset);
+				switch (loc.ILOffsetMapping) {
+				case DbgILOffsetMapping.Exact:
+				case DbgILOffsetMapping.Approximate:
+					return new DotNetMethodBodyGlyphTextMarkerLocationInfo(loc.Module, loc.Token, loc.Offset);
+
+				case DbgILOffsetMapping.Prolog:
+				case DbgILOffsetMapping.Epilog:
+				case DbgILOffsetMapping.Unknown:
+				case DbgILOffsetMapping.NoInfo:
+				case DbgILOffsetMapping.UnmappedAddress:
+				default:
+					return new DotNetTokenGlyphTextMarkerLocationInfo(loc.Module, loc.Token);
+				}
 
 			default:
 				return null;

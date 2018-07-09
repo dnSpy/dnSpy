@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -280,7 +280,7 @@ namespace dnSpy.Debugger.Exceptions {
 					yield return (DiffType.Add, info.Definition, info.Settings);
 			}
 			foreach (var def in defaultDefs.Values)
-				yield return (DiffType.Remove, def, default(DbgExceptionSettings));
+				yield return (DiffType.Remove, def, default);
 		}
 
 		static bool Compare(DbgExceptionSettings settings, DbgExceptionDefinition def) {

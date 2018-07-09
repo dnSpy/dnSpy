@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 	/// <summary>
 	/// Contains all required data to create a bookmark in a .NET method body
 	/// </summary>
-	public struct DotNetMethodBodyBookmarkInfo {
+	public readonly struct DotNetMethodBodyBookmarkInfo {
 		/// <summary>
 		/// Module
 		/// </summary>
@@ -122,7 +122,7 @@ namespace dnSpy.Contracts.Bookmarks.DotNet {
 	/// <summary>
 	/// Contains all required data to create a bookmark that references a definition (type, method, field, property, event)
 	/// </summary>
-	public struct DotNetTokenBookmarkInfo {
+	public readonly struct DotNetTokenBookmarkInfo {
 		/// <summary>
 		/// Module
 		/// </summary>

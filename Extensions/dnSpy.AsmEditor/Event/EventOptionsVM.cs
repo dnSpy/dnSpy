@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Event {
 		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => RemoveMethod != null);
 
 		public EventAttributes Attributes {
-			get { return attributes; }
+			get => attributes;
 			set {
 				if (attributes != value) {
 					attributes = value;
@@ -60,13 +60,13 @@ namespace dnSpy.AsmEditor.Event {
 		EventAttributes attributes;
 
 		public bool SpecialName {
-			get { return GetFlagValue(EventAttributes.SpecialName); }
-			set { SetFlagValue(EventAttributes.SpecialName, value); }
+			get => GetFlagValue(EventAttributes.SpecialName);
+			set => SetFlagValue(EventAttributes.SpecialName, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(EventAttributes.RTSpecialName); }
-			set { SetFlagValue(EventAttributes.RTSpecialName, value); }
+			get => GetFlagValue(EventAttributes.RTSpecialName);
+			set => SetFlagValue(EventAttributes.RTSpecialName, value);
 		}
 
 		bool GetFlagValue(EventAttributes flag) => (Attributes & flag) != 0;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Event {
 		}
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -90,8 +90,8 @@ namespace dnSpy.AsmEditor.Event {
 		UTF8String name;
 
 		public TypeSig EventTypeSig {
-			get { return TypeSigCreator.TypeSig; }
-			set { TypeSigCreator.TypeSig = value; }
+			get => TypeSigCreator.TypeSig;
+			set => TypeSigCreator.TypeSig = value;
 		}
 
 		public string EventTypeHeader => string.Format(dnSpy_AsmEditor_Resources.EventType, TypeSigCreator.TypeSigDnlibFullName);
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Event {
 		static string GetFullName(MethodDef md) => md == null ? "null" : md.FullName;
 
 		public MethodDef AddMethod {
-			get { return addMethod; }
+			get => addMethod;
 			set {
 				if (addMethod != value) {
 					addMethod = value;
@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.Event {
 		MethodDef addMethod;
 
 		public MethodDef InvokeMethod {
-			get { return invokeMethod; }
+			get => invokeMethod;
 			set {
 				if (invokeMethod != value) {
 					invokeMethod = value;
@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Event {
 		MethodDef invokeMethod;
 
 		public MethodDef RemoveMethod {
-			get { return removeMethod; }
+			get => removeMethod;
 			set {
 				if (removeMethod != value) {
 					removeMethod = value;

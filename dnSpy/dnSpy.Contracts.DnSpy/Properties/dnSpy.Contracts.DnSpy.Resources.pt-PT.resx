@@ -180,6 +180,9 @@
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
     <value>Coluna de pesquisa: {0}</value>
   </data>
+  <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
+    <value>Use '{0}' to invert the match, eg. {1}</value>
+  </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Valor deve ser de tipo {0}.
 Erro: {1}</value>

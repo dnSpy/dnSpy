@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,13 +31,14 @@ using dnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextViewMarkerService {
 		IWpfTextView TextView { get; }
-		void SetMethodOffsetSpanMap(IMethodOffsetSpanMap map);
+		void SetDotNetSpanMap(IDotNetSpanMap map);
 	}
 
 	interface IGlyphTextMarkerListener {
@@ -59,16 +60,8 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMap editorFormatMap;
 		readonly List<MarkerElement> markerElements;
 		bool useReducedOpacityForHighContrast;
+		bool isInContrastMode;
 		IGlyphTextMarkerListener glyphTextMarkerListener;
-
-		struct MarkerAndNullableSpan {
-			public Span? Span { get; }
-			public IGlyphTextMarkerImpl Marker { get; }
-			public MarkerAndNullableSpan(Span? span, IGlyphTextMarkerImpl marker) {
-				Span = span;
-				Marker = marker;
-			}
-		}
 
 		sealed class MarkerAndSpanCollection {
 			readonly List<IGlyphTextMarkerImpl> allMarkers;
@@ -79,7 +72,7 @@ namespace dnSpy.Text.Editor {
 			public int CountInDocument => inDocMarkers.Count;
 
 			public int SelectedMarkersInDocumentCount {
-				get { return selectedMarkersInDocumentCount; }
+				get => selectedMarkersInDocumentCount;
 				set {
 					Debug.Assert(value >= 0);
 					if (selectedMarkersInDocumentCount == value)
@@ -205,6 +198,7 @@ namespace dnSpy.Text.Editor {
 			glyphTextViewMarkerGlyphTextMarkerTagTagger = GlyphTextViewMarkerGlyphTextMarkerTagger.GetOrCreate(this);
 			glyphTextViewMarkerClassificationTagTagger = GlyphTextViewMarkerClassificationTagger.GetOrCreate(this);
 			useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
+			isInContrastMode = wpfTextView.Options.IsInContrastMode();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
@@ -322,7 +316,7 @@ namespace dnSpy.Text.Editor {
 			readonly Geometry geometry;
 
 			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+				get => backgroundBrush;
 				set {
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -333,7 +327,7 @@ namespace dnSpy.Text.Editor {
 			Brush backgroundBrush;
 
 			public Pen Pen {
-				get { return pen; }
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;
@@ -469,6 +463,8 @@ namespace dnSpy.Text.Editor {
 			markerLayer.RemoveAllAdornments();
 		}
 
+		bool ShouldUseHighContrastOpacity => useReducedOpacityForHighContrast && isInContrastMode;
+
 		Brush GetBackgroundBrush(ResourceDictionary props) {
 			Color? color;
 			SolidColorBrush scBrush;
@@ -495,7 +491,7 @@ namespace dnSpy.Text.Editor {
 			else
 				return null;
 
-			if (useReducedOpacityForHighContrast && glyphTextMarkerServiceImpl.ThemeService.Theme.IsHighContrast) {
+			if (ShouldUseHighContrastOpacity) {
 				newBrush = newBrush.Clone();
 				newBrush.Opacity = BG_BRUSH_HIGHCONTRAST_OPACITY;
 				if (newBrush.CanFreeze)
@@ -586,7 +582,7 @@ namespace dnSpy.Text.Editor {
 			return service;
 		}
 
-		void IGlyphTextViewMarkerService.SetMethodOffsetSpanMap(IMethodOffsetSpanMap map) {
+		void IGlyphTextViewMarkerService.SetDotNetSpanMap(IDotNetSpanMap map) {
 			if (dotNetSpanMap == map)
 				return;
 			dotNetSpanMap = map as IDotNetSpanMap;
@@ -646,8 +642,15 @@ namespace dnSpy.Text.Editor {
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName) {
+				bool old = ShouldUseHighContrastOpacity;
 				useReducedOpacityForHighContrast = TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-				if (glyphTextMarkerServiceImpl.ThemeService.Theme.IsHighContrast)
+				if (old != ShouldUseHighContrastOpacity)
+					RefreshExistingMarkers();
+			}
+			else if (e.OptionId == DefaultTextViewHostOptions.IsInContrastModeName) {
+				bool old = ShouldUseHighContrastOpacity;
+				isInContrastMode = TextView.Options.IsInContrastMode();
+				if (old != ShouldUseHighContrastOpacity)
 					RefreshExistingMarkers();
 			}
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,8 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -42,20 +40,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public virtual bool IsNull => false;
 
 		/// <summary>
-		/// Gets the referenced value if it's a by-ref
+		/// Gets the referenced value if it's a by-ref or a pointer
 		/// </summary>
 		/// <returns></returns>
-		public virtual DbgDotNetValue LoadIndirect() => null;
+		public virtual DbgDotNetValueResult LoadIndirect() =>
+			DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
-		/// Writes to the referenced valued. The return value is null or an error message.
+		/// Writes to the referenced value (by-ref or pointer). The return value is null or an error message.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) =>
+		public virtual string StoreIndirect(DbgEvaluationInfo evalInfo, object value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
@@ -86,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue GetArrayElementAddressAt(uint index) => null;
+		public virtual DbgDotNetValueResult? GetArrayElementAddressAt(uint index) => null;
 
 		/// <summary>
 		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
@@ -94,30 +91,27 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue GetArrayElementAt(uint index) => null;
+		public virtual DbgDotNetValueResult GetArrayElementAt(uint index) =>
+			DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
 		/// Stores a value at <paramref name="index"/> in the array. This method can be called even if it's
 		/// a multi-dimensional array.
 		/// The return value is null or an error message.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) =>
+		public virtual string SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
 		/// Boxes the value type, returns null on failure
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => null;
+		public virtual DbgDotNetValueResult? Box(DbgEvaluationInfo evalInfo) => null;
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.
@@ -151,7 +145,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains base index and length of an array dimension
 	/// </summary>
-	public struct DbgDotNetArrayDimensionInfo {
+	public readonly struct DbgDotNetArrayDimensionInfo {
 		/// <summary>
 		/// Base index
 		/// </summary>
@@ -176,7 +170,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Raw value
 	/// </summary>
-	public struct DbgDotNetRawValue {
+	public readonly struct DbgDotNetRawValue {
 		/// <summary>
 		/// Type of the value
 		/// </summary>

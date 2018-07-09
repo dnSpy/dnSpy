@@ -216,9 +216,6 @@
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Could not set the next statement.</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>The type has not been loaded yet.</value>
-  </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
     <value>Process is paused and _waiting for the debugger</value>
   </data>
@@ -248,5 +245,8 @@
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
     <value>This is for Unity Debug builds only</value>
+  </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Debugging Unity Games</value>
   </data>
 </root>

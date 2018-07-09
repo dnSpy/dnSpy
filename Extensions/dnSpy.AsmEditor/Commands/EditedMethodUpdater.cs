@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Commands {
 			get { yield return ownerNode; }
 		}
 
-		struct MethodState {
+		readonly struct MethodState {
 			readonly Emit.MethodBody body;
 			readonly MethodDefOptions methodDefOptions;
 			readonly bool isBodyModified;

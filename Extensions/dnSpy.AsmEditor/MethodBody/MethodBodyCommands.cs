@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var win = new MethodBodyDlg();
 			win.DataContext = data;
 			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
+			win.Title = $"{win.Title} - {methodNode.ToString()}";
 
 			if (data.IsCilBody && offsets != null)
 				data.CilBodyVM.Select(offsets);
@@ -163,14 +163,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 
-		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetStatements(context));
+		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
 		static bool IsVisible(IList<MethodSourceStatement> list) =>
 			list != null &&
 			list.Count != 0 &&
 			list[0].Method.Body != null &&
 			list[0].Method.Body.Instructions.Count > 0;
 
-		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context));
+		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
 
 		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
@@ -187,8 +187,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		IList<MethodSourceStatement> GetStatements() {
@@ -198,7 +198,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition);
+			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition, FindByTextPositionOptions.None);
 		}
 
 		void ICommand.Execute(object parameter) => Execute(GetStatements());

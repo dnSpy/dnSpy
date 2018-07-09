@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		int index;
 
 		public uint Offset {
-			get { return offset; }
+			get => offset;
 			set {
 				if (offset != value) {
 					offset = value;
@@ -77,14 +77,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ListVM<Code> CodeVM { get; }
 
 		public Code Code {
-			get { return (Code)CodeVM.SelectedItem; }
-			set { CodeVM.SelectedItem = value; }
+			get => CodeVM.SelectedItem;
+			set => CodeVM.SelectedItem = value;
 		}
 
 		public InstructionOperandVM InstructionOperandVM { get; }
 
 		public SequencePoint SequencePoint {
-			get { return sequencePoint; }
+			get => sequencePoint;
 			set {
 				if (sequencePoint != value) {
 					sequencePoint = value;

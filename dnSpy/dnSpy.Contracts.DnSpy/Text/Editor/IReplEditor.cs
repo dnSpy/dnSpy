@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		void SelectNextCommand();
 
 		/// <summary>
-		/// Gets all code
+		/// Gets all selected code
 		/// </summary>
 		/// <returns></returns>
 		string GetCode();

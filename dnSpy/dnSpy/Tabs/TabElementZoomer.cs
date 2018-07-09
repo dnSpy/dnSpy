@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,6 +37,13 @@ namespace dnSpy.Tabs {
 		public TabElementZoomer() {
 			commandBindings = new List<CommandBinding>();
 			keyBindings = new List<KeyBinding>();
+			ResetBindings();
+		}
+
+		void ResetBindings() {
+			commandBindings.Clear();
+			keyBindings.Clear();
+
 			ICommand cmd;
 			commandBindings.Add(new CommandBinding(cmd = new RoutedCommand("ZoomIncrease", typeof(TabElementZoomer)), (s, e) => ZoomIncrease(), (s, e) => e.CanExecute = true));
 			keyBindings.Add(new KeyBinding(cmd, Key.OemPlus, ModifierKeys.Control));
@@ -91,6 +98,7 @@ namespace dnSpy.Tabs {
 			foreach (var b in keyBindings)
 				zoomElement.InputBindings.Remove(b);
 			zoomElement = null;
+			ResetBindings();
 		}
 
 		void ZoomElement_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
@@ -113,8 +121,8 @@ namespace dnSpy.Tabs {
 		void ZoomReset() => ZoomValue = 1;
 
 		public double ZoomValue {
-			get { return zoomable?.ZoomValue ?? currentZoomValue; }
-			set { SetZoomValue(value, force: false); }
+			get => zoomable?.ZoomValue ?? currentZoomValue;
+			set => SetZoomValue(value, force: false);
 		}
 		double currentZoomValue = 1;
 		MetroWindow metroWindow;

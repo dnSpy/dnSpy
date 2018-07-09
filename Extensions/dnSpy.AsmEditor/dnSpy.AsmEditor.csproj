@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.AsmEditor</RootNamespace>
     <AssemblyName>dnSpy.AsmEditor.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,22 +17,25 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -109,16 +112,16 @@
     <Compile Include="Commands\RootDocumentNodeCreator.cs" />
     <Compile Include="Commands\TypeNodeCreator.cs" />
     <Compile Include="Compiler\AddClassCommands.cs" />
+    <Compile Include="Compiler\AddClassMembersCommands.cs" />
     <Compile Include="Compiler\AddClassVM.cs" />
+    <Compile Include="Compiler\AddMembersCodeVM.cs" />
     <Compile Include="Compiler\AddUpdatedNodesHelper.cs" />
     <Compile Include="Compiler\AssemblyReferenceResolver.cs" />
     <Compile Include="Compiler\CodeEditorCommands.cs" />
     <Compile Include="Compiler\Commands.cs" />
+    <Compile Include="Compiler\CompilerAppSettingsPageContainer.cs" />
     <Compile Include="Compiler\CompilerDiagnosticComparer.cs" />
     <Compile Include="Compiler\CompilerDiagnosticVM.cs" />
-    <Compile Include="Compiler\CompilerMetadataReferenceCreator.cs" />
-    <Compile Include="Compiler\DecompiledCodeResult.cs" />
-    <Compile Include="Compiler\DecompiledDocument.cs" />
     <Compile Include="Compiler\EditAssemblyCommands.cs" />
     <Compile Include="Compiler\EditAssemblyVM.cs" />
     <Compile Include="Compiler\EditClassCommands.cs" />
@@ -134,6 +137,7 @@
     <Compile Include="Compiler\EditCodeIdsExtensions.cs" />
     <Compile Include="Compiler\EditCodeVM.cs" />
     <Compile Include="Compiler\EditCodeVMCreator.cs" />
+    <Compile Include="Compiler\EditCodeVMOptions.cs" />
     <Compile Include="Compiler\EditMethodCodeVM.cs" />
     <Compile Include="Compiler\ExistingTypeNodeUpdater.cs" />
     <Compile Include="Compiler\ImportedType.cs" />
@@ -152,26 +156,32 @@
     <Compile Include="Compiler\MDEditor\MDWriterStream.cs" />
     <Compile Include="Compiler\MDEditor\MetadataEditor.cs" />
     <Compile Include="Compiler\MDEditor\PESectionData.cs" />
+    <Compile Include="Compiler\MDEditor\RawRowColumnReader.cs" />
     <Compile Include="Compiler\MDEditor\SectionSizes.cs" />
     <Compile Include="Compiler\MDEditor\StringsHeapWriter.cs" />
     <Compile Include="Compiler\MDEditor\StringsMDHeap.cs" />
     <Compile Include="Compiler\MDEditor\StrongNameSignatureSectionData.cs" />
     <Compile Include="Compiler\MDEditor\TablesHeapWriter.cs" />
     <Compile Include="Compiler\MDEditor\TablesMDHeap.cs" />
+    <Compile Include="Compiler\MDEditor\TableWriter.cs" />
     <Compile Include="Compiler\MDEditor\UnknownMDHeap.cs" />
     <Compile Include="Compiler\MDEditor\USMDHeap.cs" />
     <Compile Include="Compiler\MDPatcherUtils.cs" />
     <Compile Include="Compiler\MDSigPatcher.cs" />
     <Compile Include="Compiler\MergeWithAssemblyCommand.cs" />
-    <Compile Include="Compiler\MetadataFixer.cs" />
     <Compile Include="Compiler\MetadataReferenceFinder.cs" />
     <Compile Include="Compiler\ModuleImporter.cs" />
     <Compile Include="Compiler\ModuleImporter.MemberLookup.cs" />
+    <Compile Include="Compiler\ModuleImporterAssemblyResolver.cs" />
     <Compile Include="Compiler\ModulePatcher.cs" />
+    <Compile Include="Compiler\NativeMemoryAllocator.cs" />
     <Compile Include="Compiler\PlatformHelper.cs" />
+    <Compile Include="Compiler\RawModuleBytes.cs" />
     <Compile Include="Compiler\RawModuleBytesProvider.cs" />
+    <Compile Include="Compiler\RecursionCounter.cs" />
+    <Compile Include="Compiler\RemappedTypeTokens.cs" />
     <Compile Include="Compiler\ResourceNodeCreator.cs" />
-    <Compile Include="Compiler\StateMachineHelpers.cs" />
+    <Compile Include="Compiler\TIAHelper.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="DnlibDialogs\CAArgumentVM.cs" />
@@ -377,8 +387,8 @@
     <Compile Include="Hex\Nodes\ImageOptionalHeader32Node.cs" />
     <Compile Include="Hex\Nodes\ImageOptionalHeader64Node.cs" />
     <Compile Include="Hex\Nodes\ImageSectionHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
+    <Compile Include="Hex\Nodes\MetadataTableNode.cs" />
+    <Compile Include="Hex\Nodes\MetadataTableRecordNode.cs" />
     <Compile Include="Hex\Nodes\PENode.cs" />
     <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
     <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
@@ -400,8 +410,8 @@
     <Compile Include="Hex\PE\ImageOptionalHeader64VM.cs" />
     <Compile Include="Hex\PE\ImageOptionalHeaderVM.cs" />
     <Compile Include="Hex\PE\ImageSectionHeaderVM.cs" />
-    <Compile Include="Hex\PE\MetaDataTableRecordVM.cs" />
-    <Compile Include="Hex\PE\MetaDataTableVM.cs" />
+    <Compile Include="Hex\PE\MetadataTableRecordVM.cs" />
+    <Compile Include="Hex\PE\MetadataTableVM.cs" />
     <Compile Include="Hex\PE\PEStructureProvider.cs" />
     <Compile Include="Hex\PE\StorageHeaderVM.cs" />
     <Compile Include="Hex\PE\StorageSignatureVM.cs" />
@@ -608,6 +618,8 @@
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

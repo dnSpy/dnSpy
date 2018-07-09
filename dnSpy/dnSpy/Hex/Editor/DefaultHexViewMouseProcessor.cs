@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -196,17 +196,22 @@ namespace dnSpy.Hex.Editor {
 							editorOperations.SelectLine(wpfHexView.Caret.ContainingHexViewLine, false);
 						GetSelectionOrCaretIfNoSelection(out var selStart, out var selEnd);
 
-						HexBufferPoint anchorPoint, activePoint;
+						HexBufferPoint anchorPoint, activePoint, newCaretPoint;
 						if (selStart < mouseLeftDownInfo.Value.Span.Start) {
 							activePoint = selStart;
 							anchorPoint = mouseLeftDownInfo.Value.Span.End;
+							newCaretPoint = activePoint;
 						}
 						else {
 							activePoint = selEnd;
 							anchorPoint = mouseLeftDownInfo.Value.Span.Start;
+							if (mouseLeftDownInfo.Value.Clicks == 2 && selStart + 1 == activePoint)
+								newCaretPoint = selStart;
+							else
+								newCaretPoint = activePoint;
 						}
 						wpfHexView.Selection.Select(anchorPoint, activePoint, alignPoints: true);
-						wpfHexView.Caret.MoveTo(activePoint);
+						wpfHexView.Caret.MoveTo(newCaretPoint);
 						wpfHexView.Caret.EnsureVisible();
 					}
 					else {

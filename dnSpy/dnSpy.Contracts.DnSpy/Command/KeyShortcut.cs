@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-	public struct KeyShortcut : IEquatable<KeyShortcut> {
+	public readonly struct KeyShortcut : IEquatable<KeyShortcut> {
 		public KeyInput KeyInput1 { get; }
 		public KeyInput KeyInput2 { get; }
 

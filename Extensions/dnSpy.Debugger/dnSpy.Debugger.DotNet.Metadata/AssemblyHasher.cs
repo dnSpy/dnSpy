@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System.IO;
 using System.Security.Cryptography;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
-	struct AssemblyHasher : IDisposable {
+	readonly struct AssemblyHasher : IDisposable {
 		readonly HashAlgorithm hasher;
 
 		public AssemblyHasher(DmdAssemblyHashAlgorithm hashAlgo) {

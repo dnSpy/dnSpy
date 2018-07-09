@@ -12,7 +12,7 @@ namespace Example1.Extension {
 		}
 
 		public bool BoolOption1 {
-			get { return boolOption1; }
+			get => boolOption1;
 			set {
 				if (boolOption1 != value) {
 					boolOption1 = value;
@@ -24,7 +24,7 @@ namespace Example1.Extension {
 		bool boolOption1 = true;
 
 		public bool BoolOption2 {
-			get { return boolOption2; }
+			get => boolOption2;
 			set {
 				if (boolOption2 != value) {
 					boolOption2 = value;
@@ -36,7 +36,7 @@ namespace Example1.Extension {
 		bool boolOption2 = false;
 
 		public string StringOption3 {
-			get { return stringOption3; }
+			get => stringOption3;
 			set {
 				if (stringOption3 != value) {
 					stringOption3 = value;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	[Export(typeof(HexEditorOptionDefinition))]
 	sealed class UseReducedOpacityForHighContrastOptionEditorOptionDefinition : WpfHexViewOptionDefinition<bool> {
 		public override VSTE.EditorOptionKey<bool> Key => DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId;
-		public override bool Default => true;
+		public override bool Default => false;
 	}
 
 	[Export(typeof(HexEditorOptionDefinition))]

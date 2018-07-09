@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Search {
 		protected virtual void OnModified() { }
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
@@ -49,7 +49,7 @@ namespace dnSpy.Search {
 		bool syntaxHighlight = true;
 
 		public bool MatchWholeWords {
-			get { return matchWholeWords; }
+			get => matchWholeWords;
 			set {
 				if (matchWholeWords != value) {
 					matchWholeWords = value;
@@ -61,7 +61,7 @@ namespace dnSpy.Search {
 		bool matchWholeWords = false;
 
 		public bool CaseSensitive {
-			get { return caseSensitive; }
+			get => caseSensitive;
 			set {
 				if (caseSensitive != value) {
 					caseSensitive = value;
@@ -73,7 +73,7 @@ namespace dnSpy.Search {
 		bool caseSensitive = false;
 
 		public bool MatchAnySearchTerm {
-			get { return matchAnySearchTerm; }
+			get => matchAnySearchTerm;
 			set {
 				if (matchAnySearchTerm != value) {
 					matchAnySearchTerm = value;
@@ -85,7 +85,7 @@ namespace dnSpy.Search {
 		bool matchAnySearchTerm = false;
 
 		public bool SearchDecompiledData {
-			get { return searchDecompiledData; }
+			get => searchDecompiledData;
 			set {
 				if (searchDecompiledData != value) {
 					searchDecompiledData = value;
@@ -97,7 +97,7 @@ namespace dnSpy.Search {
 		bool searchDecompiledData = true;
 
 		public bool SearchGacAssemblies {
-			get { return searchGacAssemblies; }
+			get => searchGacAssemblies;
 			set {
 				if (searchGacAssemblies != value) {
 					searchGacAssemblies = value;

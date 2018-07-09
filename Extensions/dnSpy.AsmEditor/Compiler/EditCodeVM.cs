@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,18 +47,16 @@ namespace dnSpy.AsmEditor.Compiler {
 	abstract class EditCodeVM : ViewModelBase, IDisposable {
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
+		readonly IPickFilename pickFilename;
 		readonly ILanguageCompiler languageCompiler;
 		protected readonly IDecompiler decompiler;
 		readonly AssemblyReferenceResolver assemblyReferenceResolver;
+		readonly HashSet<string> currentReferences;
 
 		internal MetroWindow OwnerWindow { get; set; }
 
-		// Make all types, methods, fields public so we don't get a compilation error when trying
-		// to reference an internal type or a private method in the original assembly.
-		internal const bool makeEverythingPublic = true;
-
-		protected const string MAIN_CODE_NAME = "main";
-		protected const string MAIN_G_CODE_NAME = "main.g";
+		protected string MainCodeName => "main" + languageCompiler.FileExtension;
+		protected string MainGeneratedCodeName => "main.g" + languageCompiler.FileExtension;
 
 		public ModuleImporter Result { get; set; }
 		public event EventHandler CodeCompiled;
@@ -65,8 +64,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
+		public ICommand AddDocumentsCommand => new RelayCommand(a => AddDocuments(), a => CanAddDocuments);
+		public ImageReference AddDocumentsImage { get; }
 		public ICommand GoToNextDiagnosticCommand => new RelayCommand(a => GoToNextDiagnostic(), a => CanGoToNextDiagnostic);
 		public ICommand GoToPreviousDiagnosticCommand => new RelayCommand(a => GoToPreviousDiagnostic(), a => CanGoToPreviousDiagnostic);
+
+		public string AddAssemblyReferenceToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.AddAssemblyReferenceToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlO);
+		public string AddGacReferenceToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.AddGacReferenceToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftO);
+		public string AddDocumentsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.AddDocumentsToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftA);
 
 		public bool CanCompile {
 			get => canCompile;
@@ -81,7 +86,6 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public sealed class CodeDocument : ViewModelBase {
 			public string Name => codeDocument.Name;
-			public string NameNoExtension => codeDocument.NameNoExtension;
 			public IDsWpfTextView TextView => codeDocument.TextView;
 			public IDsWpfTextViewHost TextViewHost => codeDocument.TextViewHost;
 
@@ -141,13 +145,16 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected readonly ModuleDef sourceModule;
 		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule, TypeDef typeToEditOrNull) {
-			Debug.Assert(decompiler.CanDecompile(DecompilationType.TypeMethods));
-			this.openFromGAC = openFromGAC;
-			this.openAssembly = openAssembly;
-			this.languageCompiler = languageCompiler;
-			this.decompiler = decompiler;
-			this.sourceModule = sourceModule;
+		protected EditCodeVM(EditCodeVMOptions options, TypeDef typeToEditOrNull) {
+			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
+			openFromGAC = options.OpenFromGAC;
+			openAssembly = options.OpenAssembly;
+			pickFilename = options.PickFilename;
+			languageCompiler = options.LanguageCompiler;
+			decompiler = options.Decompiler;
+			sourceModule = options.SourceModule;
+			AddDocumentsImage = options.AddDocumentsImage;
+			currentReferences = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			if (typeToEditOrNull != null) {
 				Debug.Assert(typeToEditOrNull.Module == sourceModule);
 				while (typeToEditOrNull.DeclaringType != null)
@@ -157,12 +164,27 @@ namespace dnSpy.AsmEditor.Compiler {
 				HashAlgId = AssemblyHashAlgorithm.SHA1,
 				Version = new Version(0, 0, 0, 0),
 				Attributes = AssemblyAttributes.None,
-				PublicKeyOrToken = null,
 				Name = Guid.NewGuid().ToString(),
 				Culture = string.Empty,
 			};
-			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull, makeEverythingPublic);
+			if (!PublicKeyBase.IsNullOrEmpty2(sourceModule.Assembly?.PublicKeyOrToken)) {
+				tempAssembly.PublicKeyOrToken = new PublicKey(publicKeyData);
+				tempAssembly.Attributes |= AssemblyAttributes.PublicKey;
+			}
+			assemblyReferenceResolver = new AssemblyReferenceResolver(options.RawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull);
 		}
+		static readonly byte[] publicKeyData = new byte[] {
+			0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00, 0x06, 0x02, 0x00, 0x00,
+			0x00, 0x24, 0x00, 0x00, 0x52, 0x53, 0x41, 0x31, 0x00, 0x04, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+			0x9D, 0xE2, 0xB3, 0x41, 0x2F, 0xA8, 0x0C, 0x88, 0x40, 0x78, 0x7D, 0xBA, 0x09, 0xDB, 0x02, 0x5D,
+			0xFA, 0x33, 0x08, 0xF2, 0xE6, 0x68, 0xC4, 0x87, 0x1C, 0x62, 0xF3, 0xCA, 0xDF, 0x74, 0xC5, 0x4B,
+			0x05, 0x97, 0x73, 0xE1, 0x3B, 0x1B, 0x79, 0x52, 0x86, 0x89, 0x85, 0xD6, 0x58, 0xD3, 0xC6, 0x9E,
+			0x35, 0x7E, 0xF5, 0x41, 0xF8, 0x1C, 0xE2, 0x18, 0x23, 0xB9, 0xDA, 0xDB, 0x32, 0x1F, 0xB2, 0xF3,
+			0x27, 0x3C, 0xE5, 0x76, 0x4E, 0x49, 0x4C, 0x05, 0xD7, 0x91, 0xBA, 0x1E, 0x3F, 0x12, 0xCF, 0x99,
+			0xFC, 0xA1, 0x55, 0x4A, 0x67, 0x4B, 0xB9, 0xD8, 0x4A, 0x77, 0x1D, 0x1E, 0x2A, 0x16, 0x89, 0x3B,
+			0x55, 0x7C, 0x66, 0xCD, 0x00, 0x44, 0x5A, 0x7B, 0xB3, 0xB7, 0xAE, 0x4C, 0xC2, 0xBE, 0x4E, 0x1D,
+			0x5F, 0x28, 0x48, 0x34, 0x5A, 0x63, 0xD3, 0xB3, 0xF7, 0xEA, 0xDD, 0x01, 0xF4, 0x60, 0xF4, 0xBF,
+		};
 
 		protected abstract class AsyncStateBase : IDisposable {
 			readonly CancellationTokenSource cancellationTokenSource;
@@ -229,7 +251,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				if (methodSourceStatement.Value.Method != info.Method)
 					return;
-				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.BinSpan.Start);
+				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.ILSpan.Start);
 				if (stmt == null)
 					return;
 				statementSpan = new Span(stmt.Value.TextSpan.Start, stmt.Value.TextSpan.Length);
@@ -240,6 +262,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public DecompilationContext DecompilationContext { get; }
 			protected DecompileCodeState() => DecompilationContext = new DecompilationContext {
 				CancellationToken = CancellationToken,
+				AsyncMethodBodyDecompilation = false,
 			};
 		}
 		protected DecompileCodeState decompileCodeState;
@@ -253,12 +276,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			Debug.Assert(ex == null);
 		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
-		protected struct SimpleDocument {
-			public string NameNoExtension { get; }
+		protected readonly struct SimpleDocument {
+			public string Name { get; }
 			public string Text { get; }
 			public Span? CaretSpan { get; }
-			public SimpleDocument(string nameNoExtension, string text, Span? caretSpan) {
-				NameNoExtension = nameNoExtension;
+			public SimpleDocument(string name, string text, Span? caretSpan) {
+				Name = name;
 				Text = text;
 				CaretSpan = caretSpan;
 			}
@@ -267,8 +290,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected sealed class DecompileAsyncResult {
 			public List<SimpleDocument> Documents { get; } = new List<SimpleDocument>();
 
-			public void AddDocument(string nameNoExtension, string text, Span? caretSpan) =>
-				Documents.Add(new SimpleDocument(nameNoExtension, text, caretSpan));
+			public void AddDocument(string name, string text, Span? caretSpan) =>
+				Documents.Add(new SimpleDocument(name, text, caretSpan));
 		}
 
 		async Task StartDecompileAsync() {
@@ -286,7 +309,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			catch (Exception ex) {
 				simpleDocuments = new SimpleDocument[] {
-					new SimpleDocument(MAIN_CODE_NAME, ex.ToString(), null)
+					new SimpleDocument(MainCodeName, ex.ToString(), null)
 				};
 			}
 
@@ -294,19 +317,23 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!canceled) {
 				// This helps a little to speed up the code
 				ProfileOptimizationHelper.StartProfile("add-decompiled-code-" + decompiler.UniqueGuid.ToString());
-				var docs = new List<IDecompiledDocument>();
+				var docs = new List<CompilerDocumentInfo>();
 				foreach (var simpleDoc in simpleDocuments)
-					docs.Add(new DecompiledDocument(simpleDoc.Text, simpleDoc.NameNoExtension));
-				codeDocs = languageCompiler.AddDecompiledCode(new DecompiledCodeResult(tempAssembly.Name, docs.ToArray(), assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
+					docs.Add(new CompilerDocumentInfo(simpleDoc.Text, simpleDoc.Name));
+				var publicKeyData = (tempAssembly.PublicKeyOrToken as PublicKey)?.Data;
+				languageCompiler.InitializeProject(new CompilerProjectInfo(tempAssembly.Name, publicKeyData, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
+				foreach (var ar in assemblyReferences) {
+					if (!string.IsNullOrEmpty(ar.Filename))
+						currentReferences.Add(ar.Filename);
+				}
+				codeDocs = languageCompiler.AddDocuments(docs.ToArray());
 			}
 
 			decompileCodeState?.Dispose();
 			decompileCodeState = null;
 
-			foreach (var doc in codeDocs)
-				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
-			Documents.AddRange(codeDocs.Select(a => new CodeDocument(a)));
-			SelectedDocument = Documents.FirstOrDefault(a => a.NameNoExtension == MAIN_CODE_NAME) ?? Documents.FirstOrDefault();
+			AddDocuments(codeDocs, initializeDocs: false);
+			SelectedDocument = Documents.FirstOrDefault(a => a.Name == MainCodeName) ?? Documents.FirstOrDefault();
 			Debug.Assert(Documents.Count == simpleDocuments.Length);
 			for (int i = 0; i < Documents.Count; i++) {
 				var doc = Documents[i];
@@ -321,6 +348,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			HasDecompiled = true;
 			OnPropertyChanged(nameof(HasDecompiled));
 		}
+
+		void AddDocuments(ICodeDocument[] codeDocs, bool initializeDocs) {
+			foreach (var doc in codeDocs)
+				doc.TextView.Properties.AddProperty(editCodeTextViewKey, this);
+			foreach (var codeDoc in codeDocs) {
+				var doc = new CodeDocument(codeDoc);
+				Documents.Add(doc);
+				if (initializeDocs)
+					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
+			}
+		}
+
 		static readonly object editCodeTextViewKey = new object();
 
 		internal static EditCodeVM TryGet(ITextView textView) {
@@ -331,7 +370,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		async Task<(DecompileAsyncResult result, CompilerMetadataReference[] assemblyReferences)> DecompileAndGetRefsAsync() {
 			var result = await DecompileAsync().ConfigureAwait(false);
 			decompileCodeState.CancellationToken.ThrowIfCancellationRequested();
-			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.RequiredAssemblyReferences, decompileCodeState.CancellationToken).ConfigureAwait(false);
+			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.GetRequiredAssemblyReferences(sourceModule), decompileCodeState.CancellationToken).ConfigureAwait(false);
 			return (result, refs);
 		}
 
@@ -403,15 +442,17 @@ namespace dnSpy.AsmEditor.Compiler {
 				// It gets canceled when the dialog box gets closed, or when Roslyn cancels the task
 				// for some unknown reason.
 				compilerDiagnostics = new CompilerDiagnostic[] {
-					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null),
+					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null, null),
 				};
 			}
 			else if (caughtException != null) {
 				compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(caughtException) };
 			}
 			else if (result?.Success == true) {
+				ModuleImporterAssemblyResolver asmResolver = null;
 				try {
-					importer = new ModuleImporter(sourceModule, makeEverythingPublic);
+					asmResolver = new ModuleImporterAssemblyResolver(assemblyReferenceResolver.GetReferences());
+					importer = new ModuleImporter(sourceModule, asmResolver);
 					Import(importer, result.Value);
 					compilerDiagnostics = importer.Diagnostics;
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
@@ -425,6 +466,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				catch (Exception ex) {
 					compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(ex) };
 					importer = null;
+				}
+				finally {
+					asmResolver?.Dispose();
 				}
 			}
 
@@ -446,7 +490,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected abstract void Import(ModuleImporter importer, CompilationResult result);
 
 		static CompilerDiagnostic ToCompilerDiagnostic(Exception ex) =>
-			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null);
+			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null, null);
 
 		Task<CompilationResult> CompileAsync() {
 			Debug.Assert(compileCodeState == null);
@@ -499,6 +543,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		void AddReferences(ModuleDef[] modules) {
 			var mdRefs = new List<CompilerMetadataReference>();
 			foreach (var module in modules) {
+				if (!string.IsNullOrEmpty(module.Location) && currentReferences.Contains(module.Location))
+					continue;
 				CompilerMetadataReference? cmr;
 				if (module.IsManifestModule)
 					cmr = assemblyReferenceResolver.Create(module.Assembly);
@@ -508,6 +554,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					continue;
 
 				mdRefs.Add(cmr.Value);
+				if (!string.IsNullOrEmpty(module.Location))
+					currentReferences.Add(module.Location);
 			}
 			if (mdRefs.Count == 0)
 				return;
@@ -515,6 +563,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			try {
 				if (!languageCompiler.AddMetadataReferences(mdRefs.ToArray()))
 					MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.Error_CouldNotAddAssemblyReferences);
+			}
+			catch (Exception ex) {
+				MsgBox.Instance.Show(ex);
+			}
+		}
+
+		bool CanAddDocuments => true;
+		void AddDocuments() {
+			var files = pickFilename.GetFilenames(null, null);
+			if (files.Length == 0)
+				return;
+			try {
+				var codeDocs = languageCompiler.AddDocuments(files.Select(a => new CompilerDocumentInfo(File.ReadAllText(a), Path.GetFileName(a))).ToArray());
+				AddDocuments(codeDocs, initializeDocs: true);
 			}
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
@@ -591,11 +653,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompileCodeState?.CancelAndDispose();
 			compileCodeState?.CancelAndDispose();
 			languageCompiler.Dispose();
-
-			// Needed unless we want the memory usage to be 1GB+ after some number of edits.
-			// The GC doesn't kick in until it's too late.
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			assemblyReferenceResolver.Dispose();
 		}
 	}
 }

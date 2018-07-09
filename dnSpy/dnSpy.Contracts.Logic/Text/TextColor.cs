@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -326,6 +326,7 @@ namespace dnSpy.Contracts.Text {
 		DebugObjectIdName,
 		DebuggerDisplayAttributeEval,
 		DebuggerNoStringQuotesEval,
+		DebugViewPropertyName,
 
 		/// <summary>
 		/// Must be last
@@ -638,6 +639,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebugObjectIdName = TextColor.DebugObjectIdName;
 		public static readonly object DebuggerDisplayAttributeEval = TextColor.DebuggerDisplayAttributeEval;
 		public static readonly object DebuggerNoStringQuotesEval = TextColor.DebuggerNoStringQuotesEval;
+		public static readonly object DebugViewPropertyName = TextColor.DebugViewPropertyName;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -952,6 +954,7 @@ namespace dnSpy.Contracts.Text {
 			DebugObjectIdName,
 			DebuggerDisplayAttributeEval,
 			DebuggerNoStringQuotesEval,
+			DebugViewPropertyName,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

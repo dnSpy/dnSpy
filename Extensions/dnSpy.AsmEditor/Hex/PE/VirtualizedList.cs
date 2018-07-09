@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,8 +60,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		object IList.this[int index] {
-			get { return this[index]; }
-			set { Debug.Fail("Method shouldn't be called"); }
+			get => this[index];
+			set => Debug.Fail("Method shouldn't be called");
 		}
 
 		public int Count => list.Length;

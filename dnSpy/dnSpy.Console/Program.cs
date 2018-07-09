@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,7 +58,7 @@ namespace dnSpy_Console {
 				return new DnSpyDecompiler().Run(args);
 			}
 			catch (Exception ex) {
-				Console.Error.WriteLine(string.Format("{0}", ex));
+				Console.Error.WriteLine(ex.ToString());
 				return 1;
 			}
 			finally {
@@ -67,7 +67,7 @@ namespace dnSpy_Console {
 		}
 	}
 
-	struct ConsoleColorPair {
+	readonly struct ConsoleColorPair {
 		public ConsoleColor? Foreground { get; }
 		public ConsoleColor? Background { get; }
 		public ConsoleColorPair(ConsoleColor? foreground, ConsoleColor? background) {
@@ -313,7 +313,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		struct UsageInfo {
+		readonly struct UsageInfo {
 			public string Option { get; }
 			public string OptionArgument { get; }
 			public string Description { get; }
@@ -347,7 +347,7 @@ namespace dnSpy_Console {
 			new UsageInfo("-l", dnSpy_Console_Resources.CmdLineLanguage, dnSpy_Console_Resources.CmdLineDescription_Language),
 		};
 
-		struct HelpInfo {
+		readonly struct HelpInfo {
 			public string CommandLine { get; }
 			public string Description { get; }
 			public HelpInfo(string description, string commandLine) {
@@ -730,6 +730,7 @@ namespace dnSpy_Console {
 				if (GetLanguage().ProjectFileExtension == null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotSupportProjects, GetLanguage().UniqueNameUI));
 
+				decompilationContext.AsyncMethodBodyDecompilation = false;
 				var options = new ProjectCreatorOptions(outputDir, decompilationContext.CancellationToken);
 				options.Logger = this;
 				options.ProjectVersion = projectVersion;
@@ -761,10 +762,10 @@ namespace dnSpy_Console {
 			return module.GetTypes().FirstOrDefault(a => {
 				sb.Clear();
 				string s1, s2;
-				if (comparer.Equals(s1 = FullNameCreator.FullName(a, false, null, sb), name))
+				if (comparer.Equals(s1 = FullNameFactory.FullName(a, false, null, sb), name))
 					return true;
 				sb.Clear();
-				if (comparer.Equals(s2 = FullNameCreator.FullName(a, true, null, sb), name))
+				if (comparer.Equals(s2 = FullNameFactory.FullName(a, true, null, sb), name))
 					return true;
 				sb.Clear();
 				if (comparer.Equals(CleanTypeName(s1), name))
@@ -779,10 +780,10 @@ namespace dnSpy_Console {
 			return module.GetTypes().FirstOrDefault(a => {
 				sb.Clear();
 				string s1, s2;
-				if (comparer.Equals(s1 = FullNameCreator.Name(a, false, sb), name))
+				if (comparer.Equals(s1 = FullNameFactory.Name(a, false, sb), name))
 					return true;
 				sb.Clear();
-				if (comparer.Equals(s2 = FullNameCreator.Name(a, true, sb), name))
+				if (comparer.Equals(s2 = FullNameFactory.Name(a, true, sb), name))
 					return true;
 				sb.Clear();
 				if (comparer.Equals(CleanTypeName(s1), name))
@@ -938,7 +939,7 @@ namespace dnSpy_Console {
 
 		ProjectModuleOptions CreateProjectModuleOptions(ModuleDef mod) {
 			mod.EnableTypeDefFindCache = true;
-			moduleContext.AssemblyResolver.AddToCache(mod);
+			((AssemblyResolver)moduleContext.AssemblyResolver).AddToCache(mod);
 			AddSearchPath(Path.GetDirectoryName(mod.Location));
 			var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationContext);
 			proj.DontReferenceStdLib = !addCorlibRef;

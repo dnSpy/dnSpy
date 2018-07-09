@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,23 +22,24 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata.Internal;
+using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	[Export(typeof(DbgEngineImplDependencies))]
 	sealed class DbgEngineImplDependencies {
-		public DbgDotNetCodeRangeService DotNetCodeRangeService { get; }
 		public DebuggerSettings DebuggerSettings { get; }
 		public Lazy<DbgDotNetCodeLocationFactory> DbgDotNetCodeLocationFactory { get; }
 		public DbgModuleMemoryRefreshedNotifier2 DbgModuleMemoryRefreshedNotifier { get; }
 		public DbgRawMetadataService RawMetadataService { get; }
+		public DbgEngineStepperFactory EngineStepperFactory { get; }
 
 		[ImportingConstructor]
-		DbgEngineImplDependencies(DbgDotNetCodeRangeService dbgDotNetCodeRangeService, DebuggerSettings debuggerSettings, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgRawMetadataService rawMetadataService) {
-			DotNetCodeRangeService = dbgDotNetCodeRangeService;
+		DbgEngineImplDependencies(DebuggerSettings debuggerSettings, Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier, DbgRawMetadataService rawMetadataService, DbgEngineStepperFactory dbgEngineStepperFactory) {
 			DebuggerSettings = debuggerSettings;
 			DbgDotNetCodeLocationFactory = dbgDotNetCodeLocationFactory;
 			DbgModuleMemoryRefreshedNotifier = dbgModuleMemoryRefreshedNotifier;
 			RawMetadataService = rawMetadataService;
+			EngineStepperFactory = dbgEngineStepperFactory;
 		}
 	}
 }

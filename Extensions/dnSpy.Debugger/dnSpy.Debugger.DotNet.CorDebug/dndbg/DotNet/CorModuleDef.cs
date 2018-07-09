@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,12 +38,6 @@ using dnlib.IO;
 using dnlib.PE;
 using dnlib.Threading;
 using dnlib.Utils;
-
-#if THREAD_SAFE
-using ThreadSafe = dnlib.Threading.Collections;
-#else
-using ThreadSafe = System.Collections.Generic;
-#endif
 
 namespace dndbg.DotNet {
 	sealed class MemberInfo<TItem> {
@@ -117,8 +111,8 @@ namespace dndbg.DotNet {
 		/// instance can be accessed from other threads other than the main thread.
 		/// </summary>
 		public bool DisableMDAPICalls {
-			get { return disableMDAPICalls; }
-			set { disableMDAPICalls = value; }
+			get => disableMDAPICalls;
+			set => disableMDAPICalls = value;
 		}
 		bool disableMDAPICalls;
 
@@ -313,7 +307,7 @@ namespace dndbg.DotNet {
 
 		internal void InitCustomAttributes(ICorHasCustomAttribute hca, ref CustomAttributeCollection customAttributes, GenericParamContext gpContext) {
 			var tokens = MDAPI.GetCustomAttributeTokens(mdi, hca.OriginalToken.Raw);
-			var tmp = new CustomAttributeCollection(tokens.Length, tokens, (tokens2, index) => ReadCustomAttribute(tokens[index], gpContext));
+			var tmp = new CustomAttributeCollection(tokens.Length, tokens, (tokens2, index) => ReadCustomAttribute(((uint[])tokens2)[index], gpContext));
 			Interlocked.CompareExchange(ref customAttributes, tmp, null);
 		}
 
@@ -325,9 +319,9 @@ namespace dndbg.DotNet {
 			return ca;
 		}
 
-		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref ThreadSafe.IList<DeclSecurity> declSecurities) {
+		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref IList<DeclSecurity> declSecurities) {
 			var tokens = MDAPI.GetPermissionSetTokens(mdi, hds.OriginalToken.Raw);
-			var tmp = new LazyList<DeclSecurity>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens[index]));
+			var tmp = new LazyList<DeclSecurity, uint[]>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens2[index]));
 			Interlocked.CompareExchange(ref declSecurities, tmp, null);
 		}
 
@@ -375,14 +369,14 @@ namespace dndbg.DotNet {
 
 				// Only one of these two bits can be set
 				if ((peKind & CorPEKind.pe32BitRequired) != 0)
-					Cor20HeaderFlags |= ComImageFlags._32BitRequired;
+					Cor20HeaderFlags |= ComImageFlags.Bit32Required;
 				else if ((peKind & CorPEKind.pe32BitPreferred) != 0)
-					Cor20HeaderFlags |= ComImageFlags._32BitRequired | ComImageFlags._32BitPreferred;
+					Cor20HeaderFlags |= ComImageFlags.Bit32Required | ComImageFlags.Bit32Preferred;
 
-				if (mach == Machine.AMD64 || mach == Machine.ARM64 || mach == Machine.IA64 || (peKind & CorPEKind.pe32BitRequired) == 0)
+				if (mach.Value.Is64Bit() || (peKind & CorPEKind.pe32BitRequired) == 0)
 					Characteristics |= Characteristics.LargeAddressAware;
 				else
-					Characteristics |= Characteristics._32BitMachine;
+					Characteristics |= Characteristics.Bit32Machine;
 			}
 
 			if (Kind != ModuleKind.NetModule) {
@@ -488,11 +482,9 @@ namespace dndbg.DotNet {
 
 		CilBody ReadCilBody(IList<Parameter> parameters, uint rva, uint mdToken, GenericParamContext gpContext) {
 			// rva could be 0 if it's a dynamic module so we can't exit early
-			var reader = corModuleDefHelper.CreateBodyReader(rva, mdToken);
-			if (reader == null)
+			if (!corModuleDefHelper.TryCreateBodyReader(rva, mdToken, out var reader))
 				return new CilBody();
-			using (reader)
-				return MethodBodyReader.CreateCilBody(this, reader, parameters, gpContext);
+			return MethodBodyReader.CreateCilBody(this, reader, parameters, gpContext);
 		}
 
 		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken) => ResolveTypeDefOrRef(codedToken, new GenericParamContext());
@@ -954,7 +946,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeTypes() {
 			var list = GetNonNestedClassRids();
-			var tmp = new LazyList<TypeDef>(list.Length, this, list, (list2, index) => ResolveTypeDef(((uint[])list2)[index]));
+			var tmp = new LazyList<TypeDef, uint[]>(list.Length, this, list, (list2, index) => ResolveTypeDef(list2[index]));
 			Interlocked.CompareExchange(ref types, tmp, null);
 		}
 
@@ -1086,7 +1078,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeExportedTypes() {
 			var list = MDAPI.GetExportedTypeRids(MetaDataAssemblyImport);
-			var tmp = new LazyList<ExportedType>(list.Length, list, (list2, i) => ResolveExportedType(((uint[])list2)[i]));
+			var tmp = new LazyList<ExportedType, uint[]>(list.Length, list, (list2, i) => ResolveExportedType(list2[i]));
 			Interlocked.CompareExchange(ref exportedTypes, tmp, null);
 			lastExportedTypeRidInList = list.Length == 0 ? 0 : list.Max();
 		}
@@ -1120,7 +1112,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeResources() {
 			var list = MDAPI.GetManifestResourceRids(MetaDataAssemblyImport);
-			var tmp = new ResourceCollection(list.Length, null, (ctx, i) => CreateResource(i + 1));
+			var tmp = new ResourceCollection(list.Length, null, (ctx, i) => CreateResource((uint)i + 1));
 			Interlocked.CompareExchange(ref resources, tmp, null);
 			lastManifestResourceRidInList = list.Length == 0 ? 0 : list.Max();
 		}
@@ -1152,15 +1144,18 @@ namespace dndbg.DotNet {
 		Resource CreateResource(uint rid) {
 			uint? implementationToken = MDAPI.GetManifestResourceImplementationToken(mdi as IMetaDataAssemblyImport, new MDToken(Table.ManifestResource, rid).Raw);
 			if (implementationToken == null)
-				return new EmbeddedResource(UTF8String.Empty, MemoryImageStream.CreateEmpty(), 0) { Rid = rid };
+				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 			var token = new MDToken(implementationToken.Value);
 
 			var mr = ResolveManifestResource(rid);
 			if (mr == null)
-				return new EmbeddedResource(UTF8String.Empty, MemoryImageStream.CreateEmpty(), 0) { Rid = rid };
+				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 
-			if (token.Rid == 0)
-				return new EmbeddedResource(mr.Name, CreateResourceStream(mr.Offset), mr.Flags) { Rid = rid, Offset = mr.Offset };
+			if (token.Rid == 0) {
+				if (TryCreateResourceStream(mr.Offset, out var dataReaderFactory, out uint resourceOffset, out uint resourceLength))
+					return new EmbeddedResource(mr.Name, dataReaderFactory, resourceOffset, resourceLength, mr.Flags) { Rid = rid, Offset = mr.Offset };
+				return new EmbeddedResource(mr.Name, Array.Empty<byte>(), mr.Flags) { Rid = rid, Offset = mr.Offset };
+			}
 
 			if (mr.Implementation is FileDef file)
 				return new LinkedResource(mr.Name, file, mr.Flags) { Rid = rid, Offset = mr.Offset };
@@ -1168,10 +1163,11 @@ namespace dndbg.DotNet {
 			if (mr.Implementation is AssemblyRef asmRef)
 				return new AssemblyLinkedResource(mr.Name, asmRef, mr.Flags) { Rid = rid, Offset = mr.Offset };
 
-			return new EmbeddedResource(mr.Name, MemoryImageStream.CreateEmpty(), mr.Flags) { Rid = rid, Offset = mr.Offset };
+			return new EmbeddedResource(mr.Name, Array.Empty<byte>(), mr.Flags) { Rid = rid, Offset = mr.Offset };
 		}
 
-		IImageStream CreateResourceStream(uint offset) => corModuleDefHelper.CreateResourceStream(offset) ?? MemoryImageStream.CreateEmpty();
+		bool TryCreateResourceStream(uint offset, out DataReaderFactory dataReaderFactory, out uint resourceOffset, out uint resourceLength) =>
+			corModuleDefHelper.TryCreateResourceStream(offset, out dataReaderFactory, out resourceOffset, out resourceLength);
 
 		/// <summary>
 		/// Add all new types that have been added to the module. Returns true if at least one new

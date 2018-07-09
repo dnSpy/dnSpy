@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -122,6 +122,34 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					var dataObj = new DataObject();
 					dataObj.SetText(s);
 					dataObj.SetData(ClipboardFormats.VARIABLES_WINDOW_EXPRESSIONS, expressions.ToArray());
+					Clipboard.SetDataObject(dataObj);
+				}
+				catch (ExternalException) { }
+			}
+		}
+
+		public override bool CanCopyExpression(IValueNodesVM vm) => CanExecCommands(vm) && HasSelectedNodes(vm);
+		public override void CopyExpression(IValueNodesVM vm) {
+			if (!CanCopyExpression(vm))
+				return;
+
+			var output = new StringBuilder();
+			int count = 0;
+			foreach (var node in SortedSelectedNodes(vm)) {
+				if (node.RawNode.CanEvaluateExpression) {
+					if (count > 0)
+						output.AppendLine();
+					count++;
+					output.Append(node.RawNode.Expression);
+				}
+			}
+			if (count > 1)
+				output.AppendLine();
+			var s = output.ToString();
+			if (s.Length > 0) {
+				try {
+					var dataObj = new DataObject();
+					dataObj.SetText(s);
 					Clipboard.SetDataObject(dataObj);
 				}
 				catch (ExternalException) { }
@@ -551,6 +579,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override bool UseDigitSeparators {
 			get => debuggerSettings.UseDigitSeparators;
 			set => debuggerSettings.UseDigitSeparators = value;
+		}
+
+		public override bool ShowOnlyPublicMembers {
+			get => debuggerSettings.ShowOnlyPublicMembers;
+			set => debuggerSettings.ShowOnlyPublicMembers = value;
 		}
 
 		public override bool ShowNamespaces {

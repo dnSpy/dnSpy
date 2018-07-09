@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,14 +26,14 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
-		struct StepperInfo {
+		readonly struct StepperInfo {
 			public Func<StepCompleteEventArgs, bool> OnStep { get; }
 			public StepperInfo(Func<StepCompleteEventArgs, bool> onStep) => OnStep = onStep;
 		}
 
 		public override DbgEngineStepper CreateStepper(DbgThread thread) {
 			var data = thread.GetData<DbgThreadData>();
-			return new DbgEngineStepperImpl(dbgDotNetCodeRangeService, this, thread, data.MonoThread);
+			return dbgEngineStepperFactory.Create(DotNetRuntime, new DbgDotNetEngineStepperImpl(this), thread);
 		}
 
 		internal StepEventRequest CreateStepRequest(ThreadMirror monoThread, Func<StepCompleteEventArgs, bool> onStep) {
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			// There can be at most one stepper active at a time. This is a limitation of mono.
 			foreach (var kv in toStepper) {
 				kv.Key.Disable();
-				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true));
+				kv.Value.OnStep(new StepCompleteEventArgs(kv.Key, true, false));
 			}
 			toStepper.Clear();
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return false;
 			toStepper.Remove(stepReq);
 			stepReq.Disable();
-			return info.OnStep(new StepCompleteEventArgs(stepReq, false));
+			return info.OnStep(new StepCompleteEventArgs(stepReq, false, false));
 		}
 
 		internal void CancelStepper(StepEventRequest stepReq) {
@@ -73,16 +73,22 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				catch {
 				}
+				if (toStepper.TryGetValue(stepReq, out var info)) {
+					toStepper.Remove(stepReq);
+					info.OnStep(new StepCompleteEventArgs(stepReq, false, true));
+				}
 			}
 		}
 	}
 
-	struct StepCompleteEventArgs {
+	readonly struct StepCompleteEventArgs {
 		public StepEventRequest StepEventRequest { get; }
 		public bool ForciblyCanceled { get; }
-		public StepCompleteEventArgs(StepEventRequest stepEventRequest, bool forciblyCanceled) {
+		public bool Canceled { get; }
+		public StepCompleteEventArgs(StepEventRequest stepEventRequest, bool forciblyCanceled, bool canceled) {
 			StepEventRequest = stepEventRequest;
 			ForciblyCanceled = forciblyCanceled;
+			Canceled = canceled;
 		}
 	}
 }

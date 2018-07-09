@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// Object with a <see cref="System.Guid"/>
 	/// </summary>
-	public struct GuidObject {
+	public readonly struct GuidObject {
 		/// <summary>Object</summary>
 		public object Object { get; }
 

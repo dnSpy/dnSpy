@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,70 +18,74 @@
 */
 
 using System;
-using dnSpy.Text.AvalonEdit;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
-	sealed class TextChange : ITextChange2 {
+	sealed class TextChange : ITextChange3 {
 		readonly int oldOffset;
 		readonly int newOffset;
-		readonly ITextSource oldText;
-		readonly ITextSource newText;
+		readonly string oldText;
+		readonly string newText;
 
-		public int LineCountDelta {
-			get {
-				throw new NotImplementedException();//TODO:
-			}
-		}
+		public int LineCountDelta => throw new NotImplementedException();//TODO:
 
-		public bool IsOpaque => false;//TODO:
+		public bool IsOpaque => oldText.Length > 0 && newText.Length > 0;
 
-		public int Delta => newText.TextLength - oldText.TextLength;
-		public int NewEnd => newOffset + newText.TextLength;
-		public int NewLength => newText.TextLength;
+		public int Delta => newText.Length - oldText.Length;
+		public int NewEnd => newOffset + newText.Length;
+		public int NewLength => newText.Length;
 		public int NewPosition => newOffset;
-		public Span NewSpan => new Span(newOffset, newText.TextLength);
-		public string NewText => newText.Text;
+		public Span NewSpan => new Span(newOffset, newText.Length);
+		public string NewText => newText;
 
-		public int OldEnd => oldOffset + oldText.TextLength;
-		public int OldLength => oldText.TextLength;
+		public int OldEnd => oldOffset + oldText.Length;
+		public int OldLength => oldText.Length;
 		public int OldPosition => oldOffset;
-		public Span OldSpan => new Span(oldOffset, oldText.TextLength);
-		public string OldText => oldText.Text;
+		public Span OldSpan => new Span(oldOffset, oldText.Length);
+		public string OldText => oldText;
 
-		public TextChange(int offset, ITextSource oldText, ITextSource newText) {
+		public TextChange(int offset, string oldText, string newText) {
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException(nameof(offset));
 			oldOffset = offset;
 			newOffset = offset;
 			this.oldText = oldText ?? throw new ArgumentNullException(nameof(oldText));
 			this.newText = newText ?? throw new ArgumentNullException(nameof(newText));
 		}
 
-		public TextChange(int offset, string oldText, string newText) {
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException(nameof(offset));
-			if (oldText == null)
-				throw new ArgumentNullException(nameof(oldText));
-			if (newText == null)
-				throw new ArgumentNullException(nameof(newText));
-			oldOffset = offset;
-			newOffset = offset;
-			this.oldText = new StringTextSource(oldText);
-			this.newText = new StringTextSource(newText);
-		}
-
 		public TextChange(int oldOffset, string oldText, int newOffset, string newText) {
 			if (oldOffset < 0)
 				throw new ArgumentOutOfRangeException(nameof(oldOffset));
-			if (oldText == null)
-				throw new ArgumentNullException(nameof(oldText));
 			if (newOffset < 0)
 				throw new ArgumentOutOfRangeException(nameof(newOffset));
-			if (newText == null)
-				throw new ArgumentNullException(nameof(newText));
 			this.oldOffset = oldOffset;
 			this.newOffset = newOffset;
-			this.oldText = new StringTextSource(oldText);
-			this.newText = new StringTextSource(newText);
+			this.oldText = oldText ?? throw new ArgumentNullException(nameof(oldText));
+			this.newText = newText ?? throw new ArgumentNullException(nameof(newText));
+		}
+
+		public string GetNewText(Span span) {
+			if ((uint)span.End > newText.Length)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			return newText.Substring(span.Start, span.Length);
+		}
+
+		public char GetNewTextAt(int position) {
+			if ((uint)position >= newText.Length)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			return newText[position];
+		}
+
+		public string GetOldText(Span span) {
+			if ((uint)span.End > oldText.Length)
+				throw new ArgumentOutOfRangeException(nameof(span));
+			return oldText.Substring(span.Start, span.Length);
+		}
+
+		public char GetOldTextAt(int position) {
+			if ((uint)position >= oldText.Length)
+				throw new ArgumentOutOfRangeException(nameof(position));
+			return oldText[position];
 		}
 
 		public override string ToString() => $"old={OldSpan}:'{OldText}' new={NewSpan}:'{NewText}'";

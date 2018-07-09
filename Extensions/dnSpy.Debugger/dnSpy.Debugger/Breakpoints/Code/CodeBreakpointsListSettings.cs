@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,10 +20,12 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
 using dnSpy.Debugger.Impl;
+using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	[Export(typeof(IDbgCodeBreakpointsServiceListener))]
@@ -31,16 +33,20 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly ISettingsService settingsService;
 		readonly DbgCodeLocationSerializerService dbgCodeLocationSerializerService;
+		readonly UIDispatcher uiDispatcher;
+		readonly Lazy<IAppWindow> appWindow;
 
 		[ImportingConstructor]
-		CodeBreakpointsListSettingsListener(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService) {
+		CodeBreakpointsListSettingsListener(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService, UIDispatcher uiDispatcher, Lazy<IAppWindow> appWindow) {
 			this.dbgDispatcherProvider = dbgDispatcherProvider;
 			this.settingsService = settingsService;
 			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService;
+			this.uiDispatcher = uiDispatcher;
+			this.appWindow = appWindow;
 		}
 
 		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) =>
-			new CodeBreakpointsListSettings(dbgDispatcherProvider, settingsService, dbgCodeLocationSerializerService, dbgCodeBreakpointsService);
+			new CodeBreakpointsListSettings(dbgDispatcherProvider, settingsService, dbgCodeLocationSerializerService, dbgCodeBreakpointsService, uiDispatcher, appWindow);
 	}
 
 	sealed class CodeBreakpointsListSettings {
@@ -48,12 +54,16 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly ISettingsService settingsService;
 		readonly DbgCodeLocationSerializerService dbgCodeLocationSerializerService;
 		readonly DbgCodeBreakpointsService dbgCodeBreakpointsService;
+		readonly UIDispatcher uiDispatcher;
+		volatile bool saveBreakpoints;
 
-		public CodeBreakpointsListSettings(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService) {
+		public CodeBreakpointsListSettings(DbgDispatcherProvider dbgDispatcherProvider, ISettingsService settingsService, DbgCodeLocationSerializerService dbgCodeLocationSerializerService, DbgCodeBreakpointsService dbgCodeBreakpointsService, UIDispatcher uiDispatcher, Lazy<IAppWindow> appWindow) {
 			this.dbgDispatcherProvider = dbgDispatcherProvider ?? throw new ArgumentNullException(nameof(dbgDispatcherProvider));
 			this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 			this.dbgCodeLocationSerializerService = dbgCodeLocationSerializerService ?? throw new ArgumentNullException(nameof(dbgCodeLocationSerializerService));
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService ?? throw new ArgumentNullException(nameof(dbgCodeBreakpointsService));
+			this.uiDispatcher = uiDispatcher;
+			uiDispatcher.UIBackground(() => appWindow.Value.MainWindowClosed += AppWindow_MainWindowClosed);
 			dbgCodeBreakpointsService.BreakpointsChanged += DbgCodeBreakpointsService_BreakpointsChanged;
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 			dbgDispatcherProvider.Dbg(() => Load());
@@ -66,17 +76,23 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgDispatcherProvider.Dbg(() => ignoreSave = false);
 		}
 
-		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) => Save();
-		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) => Save();
+		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) => BreakpointsModified();
+		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) => BreakpointsModified();
 
-		void Save() {
+		void BreakpointsModified() {
 			dbgDispatcherProvider.VerifyAccess();
 			if (ignoreSave)
+				return;
+			saveBreakpoints = true;
+		}
+		bool ignoreSave;
+
+		void AppWindow_MainWindowClosed(object sender, EventArgs e) {
+			if (!saveBreakpoints)
 				return;
 			// Don't save temporary and hidden BPs. They should only be created by code, not by the user.
 			// The options aren't serialized so don't save any BP that has a non-zero Options prop.
 			new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService).Save(dbgCodeBreakpointsService.Breakpoints.Where(a => a.Options == 0).ToArray());
 		}
-		bool ignoreSave;
 	}
 }

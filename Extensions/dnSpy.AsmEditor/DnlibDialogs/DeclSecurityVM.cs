@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string FullName => SecurityActionEnumList.SelectedItem.ToString();
 
 		public string V1XMLString {
-			get { return v1XMLString; }
+			get => v1XMLString;
 			set {
 				if (v1XMLString != value) {
 					v1XMLString = value;

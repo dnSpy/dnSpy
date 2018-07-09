@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.Module {
 		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef existingModule = null) {
 			var module = CreateModuleDef(name, mvid, clrVersion, existingModule);
 			module.Kind = kind;
-			module.Characteristics = Characteristics._32BitMachine | Characteristics.ExecutableImage;
+			module.Characteristics = Characteristics.Bit32Machine | Characteristics.ExecutableImage;
 			if (kind == ModuleKind.Dll || kind == ModuleKind.NetModule)
 				module.Characteristics |= Characteristics.Dll;
 			module.DllCharacteristics = DllCharacteristics.TerminalServerAware | DllCharacteristics.NoSeh | DllCharacteristics.NxCompat | DllCharacteristics.DynamicBase;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Modules {
 	interface IModuleLoader {
-		void LoadModules(DbgModule[] modules, bool useMemory);
+		void LoadModules(DbgModule[] modules, DbgLoadModuleReferenceHandlerOptions options);
 	}
 
 	[ExportReferenceNavigator]
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Modules {
 			Debug.Fail($"No handler for module {moduleRef.Module.Name}");
 		}
 
-		void IModuleLoader.LoadModules(DbgModule[] modules, bool useMemory) {
+		void IModuleLoader.LoadModules(DbgModule[] modules, DbgLoadModuleReferenceHandlerOptions options) {
 			uiDispatcher.VerifyAccess();
 			if (modules == null)
 				throw new ArgumentNullException(nameof(modules));
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Modules {
 			foreach (var lz in dbgLoadModuleReferenceHandlers) {
 				if (hash.Count == 0)
 					break;
-				var loaded = lz.Value.Load(hash.ToArray(), useMemory);
+				var loaded = lz.Value.Load(hash.ToArray(), options);
 				foreach (var module in loaded)
 					hash.Remove(module);
 			}

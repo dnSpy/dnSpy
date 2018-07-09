@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -123,9 +123,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			// ;)
 			readonly Process process;
 
-			public ProcessState(ulong pid) {
+			public ProcessState(int pid) {
 				try {
-					process = System.Diagnostics.Process.GetProcessById((int)pid);
+					process = System.Diagnostics.Process.GetProcessById(pid);
 				}
 				catch {
 				}

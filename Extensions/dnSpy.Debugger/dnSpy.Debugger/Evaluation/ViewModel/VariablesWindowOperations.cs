@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,6 +24,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 	abstract class VariablesWindowOperations {
 		public abstract bool CanCopy(IValueNodesVM vm);
 		public abstract void Copy(IValueNodesVM vm);
+		public abstract bool CanCopyExpression(IValueNodesVM vm);
+		public abstract void CopyExpression(IValueNodesVM vm);
 		public abstract bool SupportsPaste(IValueNodesVM vm);
 		public abstract bool CanPaste(IValueNodesVM vm);
 		public abstract void Paste(IValueNodesVM vm);
@@ -79,6 +81,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract bool CanToggleUseDigitSeparators { get; }
 		public abstract void ToggleUseDigitSeparators();
 		public abstract bool UseDigitSeparators { get; set; }
+		public abstract bool ShowOnlyPublicMembers { get; set; }
 		public abstract bool ShowNamespaces { get; set; }
 		public abstract bool ShowIntrinsicTypeKeywords { get; set; }
 		public abstract bool ShowTokens { get; set; }

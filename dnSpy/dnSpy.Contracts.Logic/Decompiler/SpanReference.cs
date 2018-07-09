@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Use <see cref="DecompilerOutputExtensions.AddSpanReference(IDecompilerOutput, SpanReference)"/>
 	/// to add an instance.
 	/// </summary>
-	public struct SpanReference {
+	public readonly struct SpanReference {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>

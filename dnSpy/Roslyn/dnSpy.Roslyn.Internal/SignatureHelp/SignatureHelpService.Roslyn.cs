@@ -19,8 +19,12 @@ using SIGHLP = Microsoft.CodeAnalysis.SignatureHelp;
 
 namespace dnSpy.Roslyn.Internal.SignatureHelp {
 	partial class SignatureHelpService {
-		private async Task<Tuple<ISignatureHelpProvider, SignatureHelpItems>> ComputeItemsAsync(
-			IList<ISignatureHelpProvider> providers,
+		/// <summary>
+		/// Returns <code>null</code> if our work was preempted and we want to return the 
+		/// previous model we've computed.
+		/// </summary>
+		private async Task<(ISignatureHelpProvider provider, SignatureHelpItems items)> ComputeItemsAsync(
+			ISignatureHelpProvider[] providers,
 			int caretPosition,
 			SIGHLP.SignatureHelpTriggerInfo triggerInfo,
 			Document document,
@@ -31,6 +35,13 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 			// TODO(cyrusn): We're calling into extensions, we need to make ourselves resilient
 			// to the extension crashing.
 			foreach (var provider in providers) {
+				// If this is a retrigger command, and another retrigger command has already
+				// been issued then we can bail out immediately.
+				//if (IsNonTypeCharRetrigger(triggerInfo) &&
+				//	localRetriggerId != _retriggerId) {
+				//	return null;
+				//}
+
 				cancellationToken.ThrowIfCancellationRequested();
 
 				var currentItems = await provider.GetItemsAsync(document, caretPosition, triggerInfo, cancellationToken).ConfigureAwait(false);
@@ -39,10 +50,10 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 					// start after the last batch of items.  i.e. we want the set of items that
 					// conceptually are closer to where the caret position is.  This way if you have:
 					//
-					//  Foo(new Bar($$
+					//  Goo(new Bar($$
 					//
 					// Then invoking sig help will only show the items for "new Bar(" and not also
-					// the items for "Foo(..."
+					// the items for "Goo(..."
 					if (IsBetter(bestItems, currentItems.ApplicableSpan)) {
 						bestItems = new SignatureHelpItems(currentItems);
 						bestProvider = provider;
@@ -50,7 +61,7 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 				}
 			}
 
-			return Tuple.Create(bestProvider, bestItems);
+			return (bestProvider, bestItems);
 		}
 
 		private bool IsBetter(SignatureHelpItems bestItems, TextSpan currentTextSpan) {
@@ -65,12 +76,13 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 			return currentTextSpan.Start > bestItems.ApplicableSpan.Start;
 		}
 
-		SignatureHelpResult GetSignatureHelpResult(Tuple<ISignatureHelpProvider, SignatureHelpItems> res, Document document) {
+		SignatureHelpResult GetSignatureHelpResult((ISignatureHelpProvider provider, SignatureHelpItems items) res, Document document) {
 			// Code is from the end of ComputeModelInBackgroundAsync()
-			var items = res.Item2;
+			var items = res.items;
 			if (items == null)
 				return null;
-			var selectedItem = GetSelectedItem(items, res.Item1);
+
+			var selectedItem = GetSelectedItem(items, res.provider);
 			var syntaxFactsService = document?.Project?.LanguageServices?.GetService<Microsoft.CodeAnalysis.LanguageServices.ISyntaxFactsService>();
 			var isCaseSensitive = syntaxFactsService == null || syntaxFactsService.IsCaseSensitive;
 			var selection = DefaultSignatureHelpSelector.GetSelection(items.Items,
@@ -96,13 +108,11 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 			return items.Items.First();
 		}
 
-		private static bool DisplayPartsMatch(SignatureHelpItem i1, SignatureHelpItem i2) {
-			return i1.GetAllParts().SequenceEqual(i2.GetAllParts(), CompareParts);
-		}
+		private static bool DisplayPartsMatch(SignatureHelpItem i1, SignatureHelpItem i2)
+			=> i1.GetAllParts().SequenceEqual(i2.GetAllParts(), CompareParts);
 
-		private static bool CompareParts(TaggedText p1, TaggedText p2) {
-			return p1.ToString() == p2.ToString();
-		}
+		private static bool CompareParts(TaggedText p1, TaggedText p2)
+			=> p1.ToString() == p2.ToString();
 
 		internal struct SignatureHelpSelection {
 			private readonly SignatureHelpItem _selectedItem;
@@ -113,9 +123,10 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 				_selectedParameter = selectedParameter;
 			}
 
-			public int? SelectedParameter { get { return _selectedParameter; } }
-			public SignatureHelpItem SelectedItem { get { return _selectedItem; } }
+			public int? SelectedParameter => _selectedParameter;
+			public SignatureHelpItem SelectedItem => _selectedItem;
 		}
+
 		internal static class DefaultSignatureHelpSelector {
 			public static SignatureHelpSelection GetSelection(
 				IList<SignatureHelpItem> items,
@@ -196,7 +207,7 @@ namespace dnSpy.Roslyn.Internal.SignatureHelp {
 					return true;
 				}
 
-				// Also, we special case 0.  that's because if the user has "Foo(" and foo takes no
+				// Also, we special case 0.  that's because if the user has "Goo(" and goo takes no
 				// arguments, then we'll see that it's arg count is 0.  We still want to consider
 				// any item applicable here though.
 				return argumentCount == 0;

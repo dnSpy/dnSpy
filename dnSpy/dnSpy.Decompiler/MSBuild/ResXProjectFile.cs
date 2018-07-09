@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -109,7 +109,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var list = new List<ResXDataNode>();
 			int errors = 0;
 			try {
-				using (var reader = new ResourceReader(embeddedResource.GetResourceStream())) {
+				using (var reader = new ResourceReader(embeddedResource.CreateReader().AsStream())) {
 					var iter = reader.GetEnumerator();
 					while (iter.MoveNext()) {
 						ctx.CancellationToken.ThrowIfCancellationRequested();

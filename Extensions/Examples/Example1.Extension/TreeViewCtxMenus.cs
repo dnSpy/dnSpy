@@ -86,7 +86,7 @@ namespace Example1.Extension {
 			var node = GetTokenNode(context);
 			if (node != null) {
 				try {
-					Clipboard.SetText(string.Format("{0:X8}", node.Reference.MDToken.Raw));
+					Clipboard.SetText($"{node.Reference.MDToken.Raw:X8}");
 				}
 				catch (ExternalException) { }
 			}
@@ -102,7 +102,7 @@ namespace Example1.Extension {
 			var node = GetTokenNode(context);
 			if (node == null)
 				return string.Empty;
-			return string.Format("Copy token {0:X8}", node.Reference.MDToken.Raw);
+			return $"Copy token {node.Reference.MDToken.Raw:X8}";
 		}
 
 		public override bool IsVisible(TVContext context) => GetTokenNode(context) != null;
@@ -114,7 +114,7 @@ namespace Example1.Extension {
 			var instr = GetSecondInstruction(context);
 			if (instr != null) {
 				try {
-					Clipboard.SetText(string.Format("Second instruction: {0}", instr));
+					Clipboard.SetText($"Second instruction: {instr}");
 				}
 				catch (ExternalException) { }
 			}

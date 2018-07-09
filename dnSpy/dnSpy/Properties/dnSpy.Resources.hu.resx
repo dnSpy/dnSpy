@@ -162,9 +162,6 @@
   <data name="Button_Save" xml:space="preserve">
     <value>_Mentés...</value>
   </data>
-  <data name="Button_SaveCode" xml:space="preserve">
-    <value>_Kód mentése...</value>
-  </data>
   <data name="Button_Yes" xml:space="preserve">
     <value>_Igen</value>
   </data>
@@ -506,9 +503,6 @@
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
     <value>Mentés</value>
-  </data>
-  <data name="SavingCode" xml:space="preserve">
-    <value>Mentés...</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
     <value>Keresés megszakadt, több mint {0:n0} találat.</value>
@@ -1919,5 +1913,8 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   </data>
   <data name="User_Administrator" xml:space="preserve">
     <value>Adminisztrátor</value>
+  </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>Több, mint egy példány engedélyezése (újraindítás szükséges)</value>
   </data>
 </root>

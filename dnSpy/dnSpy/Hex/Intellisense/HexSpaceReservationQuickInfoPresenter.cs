@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,13 +34,11 @@ namespace dnSpy.Hex.Intellisense {
 		public event EventHandler PresentationSpanChanged;
 
 		public double Opacity {
-			get { return control.Opacity; }
-			set { control.Opacity = value; }
+			get => control.Opacity;
+			set => control.Opacity = value;
 		}
 
-		public HexBufferSpanSelection PresentationSpan {
-			get { return presentationSpan; }
-		}
+		public HexBufferSpanSelection PresentationSpan => presentationSpan;
 
 		void SetPresentationSpan(HexBufferSpanSelection newValue, HexCellPosition triggerPoint) {
 			// Make sure that the popup is shown in the right column

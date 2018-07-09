@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,8 +24,8 @@ using dnSpy.Contracts.Controls;
 namespace dnSpy.MainApp {
 	sealed partial class MsgBoxDlg : WindowBase {
 		public MsgBoxButton ClickedButton {
-			get { return clickedButton; }
-			set { clickedButton = value; }
+			get => clickedButton;
+			set => clickedButton = value;
 		}
 		MsgBoxButton clickedButton;
 

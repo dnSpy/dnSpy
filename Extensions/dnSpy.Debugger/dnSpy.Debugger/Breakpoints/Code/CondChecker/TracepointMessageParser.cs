@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		// Max methods to show when $CALLSTACK is used (no argument)
 		const int defaultCallStackCount = 50;
 
-		struct KeywordInfo {
+		readonly struct KeywordInfo {
 			public string Name { get; }
 			public TracepointMessageKind Kind { get; }
 			public int Number { get; }
@@ -188,9 +188,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case '{':
 					int pos = textPos + 1;
-					var evalInfo = ReadEvalText(text, ref pos);
+					var expression = ReadEvalText(text, ref pos);
 					FlushPendingText();
-					partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, evalInfo.expression, pos - textPos, evalInfo.flags));
+					partBuilder.Add(new TracepointMessagePart(TracepointMessageKind.WriteEvaluatedExpression, expression, pos - textPos));
 					textPos = pos;
 					break;
 
@@ -215,50 +215,22 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return true;
 		}
 
-		(string expression, TracepointMessageFlags flags) ReadEvalText(string s, ref int pos) {
+		string ReadEvalText(string s, ref int pos) {
 			var sb = tempStringBuilder;
 			sb.Clear();
-			bool seenComma = false;
+			int braceCount = 1;
 			while (pos < s.Length) {
 				var c = s[pos++];
-				if (c == '}')
-					break;
-				if (c == '\\' && pos < s.Length) {
-					c = s[pos++];
-					switch (c) {
-					case '{':
-					case '}':
-					case '\\':
+				if (c == '}') {
+					if (braceCount <= 1)
 						break;
-
-					default:
-						sb.Append('\\');
-						break;
-					}
+					braceCount--;
 				}
-				seenComma |= c == ',';
+				else if (c == '{')
+					braceCount++;
 				sb.Append(c);
 			}
-			if (!seenComma)
-				return (sb.ToString(), 0);
-
-			var info = FormatSpecifiersUtils.GetFormatSpecifiers(sb);
-			var flags = TracepointMessageFlags.None;
-			// https://docs.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-csharp
-			foreach (var fs in info.formatSpecifiers) {
-				switch (fs) {
-				case "d":
-					flags = (flags & ~TracepointMessageFlags.Hexadecimal) | TracepointMessageFlags.Decimal;
-					break;
-				case "h":
-					flags = (flags & ~TracepointMessageFlags.Decimal) | TracepointMessageFlags.Hexadecimal;
-					break;
-				case "nq":
-					flags |= TracepointMessageFlags.NoQuotes;
-					break;
-				}
-			}
-			return (info.expression, flags);
+			return sb.ToString();
 		}
 
 		void AddText(string text, int startIndex, int count) {

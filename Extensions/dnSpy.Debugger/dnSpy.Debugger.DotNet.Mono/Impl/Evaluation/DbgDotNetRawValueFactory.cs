@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	struct DbgDotNetRawValueFactory {
+	readonly struct DbgDotNetRawValueFactory {
 		readonly DbgEngineImpl engine;
 
 		public DbgDotNetRawValueFactory(DbgEngineImpl engine) => this.engine = engine;
@@ -77,10 +77,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 				case ElementType.I:
 				case ElementType.U:
-				case ElementType.Ptr:
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)(long)pv.Value);
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)(long)pv.Value);
+
+				case ElementType.Ptr:
+					ulong pval = (ulong)(long)pv.Value;
+					if (pval == 0)
+						return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
+					if (type.AppDomain.Runtime.PointerSize == 4)
+						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)pval);
+					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, pval);
 
 				case ElementType.Object:
 					// This is a null value
@@ -245,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (fields.Length == 1) {
 				// Newer Mono using .NET Core source code
 
-				if (fields[0].Name != "dateData")
+				if (fields[0].Name != "dateData" && fields[0].Name != "_dateData")
 					return default;
 				if (values[0] is PrimitiveValue pv && pv.Value is ulong) {
 					if (DateTime_ctor_UInt64 != null)

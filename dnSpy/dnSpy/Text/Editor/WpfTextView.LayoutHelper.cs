@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public IFormattedLine Line { get; }
 				public double Y { get; }
 				public LineInfo(IFormattedLine line, double y) {

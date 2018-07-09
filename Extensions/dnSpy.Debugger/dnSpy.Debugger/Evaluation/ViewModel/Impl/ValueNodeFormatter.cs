@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,12 +67,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				if (objectId != null) {
 					output.WriteSpace();
 					output.Write(BoxedTextColor.Punctuation, "{");
-					var evalContext = vmImpl.Context.EvaluationContext;
-					Debug.Assert(evalContext != null);
-					if (evalContext == null)
+					var evalInfo = vmImpl.Context.EvaluationInfo;
+					Debug.Assert(evalInfo != null);
+					if (evalInfo == null)
 						output.Write(BoxedTextColor.Error, "???");
 					else
-						language.Formatter.FormatObjectIdName(evalContext, output, objectId.Id);
+						language.Formatter.FormatObjectIdName(evalInfo.Context, output, objectId.Id);
 					output.Write(BoxedTextColor.Punctuation, "}");
 				}
 			}

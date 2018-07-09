@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,15 +25,29 @@ namespace dnSpy.Debugger.DotNet.Code {
 	sealed class ReferenceConverterImpl : ReferenceConverter {
 		public override void Convert(ref object reference) {
 			switch (reference) {
-			case DbgDotNetCodeLocationImpl locImpl:
-				if ((locImpl.Options & DbgDotNetCodeLocationOptions.InvalidOffset) != 0)
-					reference = new DotNetTokenReference(locImpl.Module, locImpl.Token);
-				else
-					reference = new DotNetMethodBodyReference(locImpl.Module, locImpl.Token, locImpl.Offset);
-				break;
-
 			case DbgDotNetCodeLocation loc:
-				reference = new DotNetMethodBodyReference(loc.Module, loc.Token, loc.Offset);
+				switch (loc.ILOffsetMapping) {
+				case DbgILOffsetMapping.Exact:
+				case DbgILOffsetMapping.Approximate:
+					reference = new DotNetMethodBodyReference(loc.Module, loc.Token, loc.Offset);
+					break;
+
+				case DbgILOffsetMapping.Prolog:
+					reference = new DotNetMethodBodyReference(loc.Module, loc.Token, DotNetMethodBodyReference.PROLOG);
+					break;
+
+				case DbgILOffsetMapping.Epilog:
+					reference = new DotNetMethodBodyReference(loc.Module, loc.Token, DotNetMethodBodyReference.EPILOG);
+					break;
+
+				case DbgILOffsetMapping.Unknown:
+				case DbgILOffsetMapping.NoInfo:
+				case DbgILOffsetMapping.UnmappedAddress:
+				default:
+					// The IL offset isn't known so use a method reference
+					reference = new DotNetTokenReference(loc.Module, loc.Token);
+					break;
+				}
 				break;
 			}
 		}

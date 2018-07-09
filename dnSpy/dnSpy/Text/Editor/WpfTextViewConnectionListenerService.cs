@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using dnSpy.Text.MEF;
@@ -29,32 +30,54 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextView wpfTextView;
 		readonly ListenerInfo[] listenerInfos;
 
-		public WpfTextViewConnectionListenerService(IWpfTextView wpfTextView, Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners) {
+		public WpfTextViewConnectionListenerService(IWpfTextView wpfTextView, Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners, Lazy<ITextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] textViewConnectionListeners) {
 			if (wpfTextViewConnectionListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListeners));
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
-			listenerInfos = wpfTextViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new ListenerInfo(a)).ToArray();
+			var list = new List<ListenerInfo>();
+			list.AddRange(wpfTextViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new WpfTextViewListenerInfo(a)));
+			list.AddRange(textViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new TextViewListenerInfo(a)));
+			listenerInfos = list.ToArray();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			InitializeListeners();
 		}
 
-		sealed class ListenerInfo {
-			public Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata> Lazy { get; }
+		abstract class ListenerInfo {
 			public Collection<ITextBuffer> Buffers { get; }
-			public ListenerInfo(Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata> lazy) {
-				Lazy = lazy;
-				Buffers = new Collection<ITextBuffer>();
-			}
+			public abstract IContentTypeAndTextViewRoleMetadata Metadata { get; }
+			protected ListenerInfo() => Buffers = new Collection<ITextBuffer>();
+			public abstract void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers);
+			public abstract void SubjectBuffersDisconnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers);
+		}
+
+		sealed class WpfTextViewListenerInfo : ListenerInfo {
+			Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata> Lazy { get; }
+			public override IContentTypeAndTextViewRoleMetadata Metadata => Lazy.Metadata;
+			public WpfTextViewListenerInfo(Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata> lazy) => Lazy = lazy;
+			public override void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) =>
+				Lazy.Value.SubjectBuffersConnected(textView, reason, subjectBuffers);
+			public override void SubjectBuffersDisconnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) =>
+				Lazy.Value.SubjectBuffersDisconnected(textView, reason, subjectBuffers);
+		}
+
+		sealed class TextViewListenerInfo : ListenerInfo {
+			Lazy<ITextViewConnectionListener, IContentTypeAndTextViewRoleMetadata> Lazy { get; }
+			public override IContentTypeAndTextViewRoleMetadata Metadata => Lazy.Metadata;
+			public TextViewListenerInfo(Lazy<ITextViewConnectionListener, IContentTypeAndTextViewRoleMetadata> lazy) => Lazy = lazy;
+			public override void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) =>
+				Lazy.Value.SubjectBuffersConnected(textView, reason, subjectBuffers);
+			public override void SubjectBuffersDisconnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) =>
+				Lazy.Value.SubjectBuffersDisconnected(textView, reason, subjectBuffers);
 		}
 
 		void InitializeListeners() {
 			var buffer = wpfTextView.TextBuffer;
 			var contentType = wpfTextView.TextDataModel.ContentType;
 			foreach (var info in listenerInfos) {
-				if (contentType.IsOfAnyType(info.Lazy.Metadata.ContentTypes)) {
+				if (contentType.IsOfAnyType(info.Metadata.ContentTypes)) {
 					info.Buffers.Add(buffer);
-					info.Lazy.Value.SubjectBuffersConnected(wpfTextView, ConnectionReason.TextViewLifetime, info.Buffers);
+					info.SubjectBuffersConnected(wpfTextView, ConnectionReason.TextViewLifetime, info.Buffers);
 				}
 			}
 		}
@@ -63,18 +86,18 @@ namespace dnSpy.Text.Editor {
 			var buffer = wpfTextView.TextBuffer;
 			var coll = new Collection<ITextBuffer> { buffer };
 			foreach (var info in listenerInfos) {
-				var isBefore = e.BeforeContentType.IsOfAnyType(info.Lazy.Metadata.ContentTypes);
-				var isAfter = e.AfterContentType.IsOfAnyType(info.Lazy.Metadata.ContentTypes);
+				var isBefore = e.BeforeContentType.IsOfAnyType(info.Metadata.ContentTypes);
+				var isAfter = e.AfterContentType.IsOfAnyType(info.Metadata.ContentTypes);
 				if ((isAfter && isBefore) || isAfter) {
 					if (!info.Buffers.Contains(buffer)) {
 						info.Buffers.Add(buffer);
-						info.Lazy.Value.SubjectBuffersConnected(wpfTextView, ConnectionReason.ContentTypeChange, coll);
+						info.SubjectBuffersConnected(wpfTextView, ConnectionReason.ContentTypeChange, coll);
 					}
 				}
 				else if (isBefore) {
 					if (info.Buffers.Contains(buffer)) {
 						info.Buffers.Remove(buffer);
-						info.Lazy.Value.SubjectBuffersDisconnected(wpfTextView, ConnectionReason.ContentTypeChange, coll);
+						info.SubjectBuffersDisconnected(wpfTextView, ConnectionReason.ContentTypeChange, coll);
 					}
 				}
 			}
@@ -83,7 +106,7 @@ namespace dnSpy.Text.Editor {
 		void WpfTextView_Closed(object sender, EventArgs e) {
 			foreach (var info in listenerInfos) {
 				if (info.Buffers.Count > 0) {
-					info.Lazy.Value.SubjectBuffersDisconnected(wpfTextView, ConnectionReason.TextViewLifetime, info.Buffers);
+					info.SubjectBuffersDisconnected(wpfTextView, ConnectionReason.TextViewLifetime, info.Buffers);
 					info.Buffers.Clear();
 				}
 			}

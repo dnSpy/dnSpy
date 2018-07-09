@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System.Text;
 using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.Hex.Files {
-	struct NumberFormatter {
+	readonly struct NumberFormatter {
 		public HexNumberOptions Options => options;
 		readonly HexNumberOptions options;
 

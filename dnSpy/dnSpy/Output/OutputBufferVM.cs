@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Output {
 		public string Name { get; }
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -60,13 +60,13 @@ namespace dnSpy.Output {
 		}
 
 		public WordWrapStyles WordWrapStyle {
-			get { return logEditor.WordWrapStyle; }
-			set { logEditor.WordWrapStyle = value; }
+			get => logEditor.WordWrapStyle;
+			set => logEditor.WordWrapStyle = value;
 		}
 
 		public bool ShowLineNumbers {
-			get { return logEditor.ShowLineNumbers; }
-			set { logEditor.ShowLineNumbers = value; }
+			get => logEditor.ShowLineNumbers;
+			set => logEditor.ShowLineNumbers = value;
 		}
 
 		bool ShowTimestamps => logEditor.TextView.Options.GetOptionValue(DefaultOutputOptions.ShowTimestampsId);

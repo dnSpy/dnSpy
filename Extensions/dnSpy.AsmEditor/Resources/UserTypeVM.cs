@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ICommand PickTypeCommand => new RelayCommand(a => PickType());
 
 		public string TypeFullName {
-			get { return typeFullName; }
+			get => typeFullName;
 			set {
 				if (typeFullName != value) {
 					typeFullName = value;
@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Resources {
 		string typeFullName = string.Empty;
 
 		public string StringValue {
-			get { return stringValue; }
+			get => stringValue;
 			set {
 				if (stringValue != value) {
 					stringValue = value;

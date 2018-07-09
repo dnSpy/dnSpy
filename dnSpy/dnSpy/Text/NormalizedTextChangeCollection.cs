@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,8 +27,8 @@ using Microsoft.VisualStudio.Text;
 namespace dnSpy.Text {
 	sealed class NormalizedTextChangeCollection : INormalizedTextChangeCollection {
 		public ITextChange this[int index] {
-			get { return changes[index]; }
-			set { throw new NotSupportedException(); }
+			get => changes[index];
+			set => throw new NotSupportedException();
 		}
 
 		public int Count => changes.Length;

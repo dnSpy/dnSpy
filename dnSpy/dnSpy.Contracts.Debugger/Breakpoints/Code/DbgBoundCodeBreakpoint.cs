@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Bound breakpoint message
 	/// </summary>
-	public struct DbgBoundCodeBreakpointMessage : IEquatable<DbgBoundCodeBreakpointMessage> {
+	public readonly struct DbgBoundCodeBreakpointMessage : IEquatable<DbgBoundCodeBreakpointMessage> {
 		/// <summary>
 		/// No error/warning message
 		/// </summary>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -93,9 +93,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 	}
 
-	struct BracePairResultCollection : IEquatable<BracePairResultCollection> {
-		public BracePairResult First;
-		public BracePairResult? Second;
+	readonly struct BracePairResultCollection : IEquatable<BracePairResultCollection> {
+		public readonly BracePairResult First;
+		public readonly BracePairResult? Second;
 		public BracePairResultCollection(BracePairResult first, BracePairResult? second) {
 			First = first;
 			Second = second;
@@ -107,7 +107,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override string ToString() => Second == null ? First.ToString() : "{" + First.ToString() + "," + Second.Value.ToString() + "}";
 	}
 
-	struct BracePairResult : IEquatable<BracePairResult> {
+	readonly struct BracePairResult : IEquatable<BracePairResult> {
 		public Span Left { get; }
 		public Span Right { get; }
 		public BracePairResult(Span left, Span right) {

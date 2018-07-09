@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -129,7 +129,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var win = new EditCodeDlg();
 			win.DataContext = vm;
 			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", dnSpy_AsmEditor_Resources.EditAssemblyCode, asmNode?.ToString() ?? modNode.ToString());
+			win.Title = $"{dnSpy_AsmEditor_Resources.EditAssemblyCode} - {asmNode?.ToString() ?? modNode.ToString()}";
 
 			if (win.ShowDialog() != true) {
 				vm.Dispose();

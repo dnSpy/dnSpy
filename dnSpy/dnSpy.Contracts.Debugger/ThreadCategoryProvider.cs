@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Thread category info
 	/// </summary>
-	public struct ThreadCategoryInfo {
+	public readonly struct ThreadCategoryInfo {
 		/// <summary>
 		/// Image (an ImageReference struct)
 		/// </summary>

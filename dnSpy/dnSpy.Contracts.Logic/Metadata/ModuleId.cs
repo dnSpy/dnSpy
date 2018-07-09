@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Metadata {
 	/// <summary>
 	/// Module ID
 	/// </summary>
-	public struct ModuleId : IEquatable<ModuleId> {
+	public readonly struct ModuleId : IEquatable<ModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,
@@ -200,8 +200,8 @@ namespace dnSpy.Contracts.Metadata {
 		/// <returns></returns>
 		public override string ToString() {
 			if (ModuleNameOnly)
-				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, ModuleName);
-			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
+				return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} [{ModuleName}]";
+			return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} {AssemblyFullName} [{ModuleName}]";
 		}
 	}
 }

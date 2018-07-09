@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Debugger {
 		Connected,
 
 		/// <summary>
-		/// It broke due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
+		/// It's paused due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
 		/// </summary>
 		Message,
 	}
@@ -156,7 +156,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Break info
 	/// </summary>
-	public struct DbgBreakInfo {
+	public readonly struct DbgBreakInfo {
 		/// <summary>
 		/// Gets the kind
 		/// </summary>

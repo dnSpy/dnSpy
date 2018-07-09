@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ISaveService saveService;
 
 		public TabVM[] SelectedItems {
-			get { return selectedItems; }
+			get => selectedItems;
 			set {
 				selectedItems = value ?? Array.Empty<TabVM>();
 				InitializeSaveText();
@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		TabVM[] selectedItems = Array.Empty<TabVM>();
 
 		public object SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		object selectedItem;
 
 		public string SaveText {
-			get { return saveText; }
+			get => saveText;
 			set {
 				if (saveText != value) {
 					saveText = value;
@@ -120,8 +120,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public TabVM LastActivated {
-			get { return lastActivated; }
-			set { lastActivated = value; }
+			get => lastActivated;
+			set => lastActivated = value;
 		}
 		TabVM lastActivated;
 	}

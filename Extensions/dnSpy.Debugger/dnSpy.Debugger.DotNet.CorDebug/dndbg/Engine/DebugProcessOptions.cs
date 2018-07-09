@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -102,6 +102,11 @@ namespace dndbg.Engine {
 		public bool InheritHandles { get; set; }
 
 		/// <summary>
+		/// Redirect stdout and stderr
+		/// </summary>
+		public bool RedirectConsoleOutput { get; set; }
+
+		/// <summary>
 		/// Process creation flags passed to CreateProcess()
 		/// </summary>
 		public ProcessCreationFlags? ProcessCreationFlags { get; set; }
@@ -135,6 +140,7 @@ namespace dndbg.Engine {
 			other.CommandLine = CommandLine;
 			other.CurrentDirectory = CurrentDirectory;
 			other.InheritHandles = InheritHandles;
+			other.RedirectConsoleOutput = RedirectConsoleOutput;
 			other.ProcessCreationFlags = ProcessCreationFlags;
 			other.DebugMessageDispatcher = DebugMessageDispatcher;
 			other.DebugOptions = DebugOptions == null ? null : DebugOptions.Clone();

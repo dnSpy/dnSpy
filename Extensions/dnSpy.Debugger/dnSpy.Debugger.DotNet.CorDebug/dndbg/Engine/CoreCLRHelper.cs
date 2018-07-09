@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ using dndbg.COM.CorDebug;
 using Microsoft.Win32;
 
 namespace dndbg.Engine {
-	struct CoreCLRInfo {
+	readonly struct CoreCLRInfo {
 		public int ProcessId { get; }
 		public CoreCLRTypeAttachInfo CoreCLRTypeInfo { get; }
 
@@ -205,10 +205,10 @@ namespace dndbg.Engine {
 			return obj as ICorDebug;
 		}
 
-		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string, DnDebugger> createDnDebugger) {
+		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, IntPtr outputHandle, IntPtr errorHandle, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
 			if (dbgShimState == null)
-				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}' . Make sure you use the {1}-bit version", info.DbgShimFilename, IntPtr.Size * 8));
+				throw new Exception($"Could not load dbgshim.dll: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
 
 			var startupEvent = IntPtr.Zero;
 			var hThread = IntPtr.Zero;
@@ -218,23 +218,30 @@ namespace dndbg.Engine {
 			var pi = new PROCESS_INFORMATION();
 			bool error = true, calledSetEvent = false;
 			try {
+				bool inheritHandles = options.InheritHandles;
 				var dwCreationFlags = options.ProcessCreationFlags ?? DebugProcessOptions.DefaultProcessCreationFlags;
 				dwCreationFlags |= ProcessCreationFlags.CREATE_SUSPENDED;
 				var si = new STARTUPINFO();
+				si.hStdOutput = outputHandle;
+				si.hStdError = errorHandle;
+				if (si.hStdOutput != IntPtr.Zero || si.hStdError != IntPtr.Zero) {
+					si.dwFlags |= STARTUPINFO.STARTF_USESTDHANDLES;
+					inheritHandles = true;
+				}
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
 				var cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
 				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment);
 				dwCreationFlags |= ProcessCreationFlags.CREATE_UNICODE_ENVIRONMENT;
 				bool b = NativeMethods.CreateProcess(info.HostFilename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
-							options.InheritHandles, dwCreationFlags, env, options.CurrentDirectory,
+							inheritHandles, dwCreationFlags, env, options.CurrentDirectory,
 							ref si, out pi);
 				hThread = pi.hThread;
 				if (!b)
-					throw new Exception(string.Format("Could not execute '{0}'", options.Filename));
+					throw new Exception($"Could not execute '{options.Filename}'");
 
 				int hr = dbgShimState.GetStartupNotificationEvent(pi.dwProcessId, out startupEvent);
 				if (hr < 0)
-					throw new Exception(string.Format("GetStartupNotificationEvent failed: 0x{0:X8}", hr));
+					throw new Exception($"GetStartupNotificationEvent failed: 0x{hr:X8}");
 
 				NativeMethods.ResumeThread(hThread);
 
@@ -245,13 +252,13 @@ namespace dndbg.Engine {
 						break;
 
 					if (res == NativeMethods.WAIT_FAILED)
-						throw new Exception(string.Format("Error waiting for startup event: 0x{0:X8}", Marshal.GetLastWin32Error()));
+						throw new Exception($"Error waiting for startup event: 0x{Marshal.GetLastWin32Error():X8}");
 					if (res == NativeMethods.WAIT_TIMEOUT) {
 						if (keepWaiting())
 							continue;
 						throw new TimeoutException("Waiting for CoreCLR timed out. Debug 32-bit .NET Core apps with 32-bit dnSpy (dnSpy-x86.exe), and 64-bit .NET Core apps with 64-bit dnSpy (dnSpy.exe).");
 					}
-					Debug.Fail(string.Format("Unknown result from WaitForMultipleObjects: 0x{0:X8}", res));
+					Debug.Fail($"Unknown result from WaitForMultipleObjects: 0x{res:X8}");
 					throw new Exception("Error waiting for startup event");
 				}
 
@@ -265,7 +272,7 @@ namespace dndbg.Engine {
 				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out object obj);
 				var corDebug = obj as ICorDebug;
 				if (corDebug == null)
-					throw new Exception(string.Format("Could not create a ICorDebug: hr=0x{0:X8}", hr));
+					throw new Exception($"Could not create a ICorDebug: hr=0x{hr:X8}");
 				var dbg = createDnDebugger(corDebug, coreclrFilename, pi.dwProcessId, version);
 				for (uint i = 0; i < dwArrayLength; i++)
 					NativeMethods.SetEvent(pha[i]);

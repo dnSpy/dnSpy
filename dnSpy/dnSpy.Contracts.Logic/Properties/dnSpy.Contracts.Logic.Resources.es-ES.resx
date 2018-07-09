@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidBoolean" xml:space="preserve">
-    <value>Valor debe ser un valor booleano (True o False)</value>
+    <value>El valor debe ser un valor booleano (True o False)</value>
   </data>
   <data name="InvalidChar" xml:space="preserve">
     <value>Un carácter debe ir entre comillas simples (')</value>
@@ -133,10 +133,10 @@
     <value>Valor debe ser un número de punto flotante de 64 bits</value>
   </data>
   <data name="InvalidEscapeSequence" xml:space="preserve">
-    <value>Secuencia de escape de carácter desconocido: \{0}</value>
+    <value>Secuencia de escape de carácter desconocida: \{0}</value>
   </data>
   <data name="InvalidEscapeSequence2" xml:space="preserve">
-    <value>Secuencia de escape de cadena desconocido: \{0}</value>
+    <value>Secuencia de escape de cadena desconocida: \{0}</value>
   </data>
   <data name="InvalidHexCharacter" xml:space="preserve">
     <value>Una cadena hexadecimal debe contener sólo dígitos hexadecimales: 0-9 y A-F</value>

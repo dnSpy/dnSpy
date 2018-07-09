@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
 	/// PDB file
 	/// </summary>
-	public struct DebugFileResult {
+	public readonly struct DebugFileResult {
 		/// <summary>
 		/// PDB file or null if it's an embedded PDB file
 		/// </summary>

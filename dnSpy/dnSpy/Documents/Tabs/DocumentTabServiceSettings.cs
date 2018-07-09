@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs {
 		protected virtual void OnModified() { }
 
 		public bool RestoreTabs {
-			get { return restoreTabs; }
+			get => restoreTabs;
 			set {
 				if (restoreTabs != value) {
 					restoreTabs = value;
@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs {
 		bool restoreTabs = true;
 
 		public bool DecompileFullType {
-			get { return decompileFullType; }
+			get => decompileFullType;
 			set {
 				if (decompileFullType != value) {
 					decompileFullType = value;

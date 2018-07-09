@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,8 +37,8 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets the text wrapping
 		/// </summary>
 		public TextWrapping TextWrapping {
-			get { return (TextWrapping)GetValue(TextWrappingProperty); }
-			set { SetValue(TextWrappingProperty, value); }
+			get => (TextWrapping)GetValue(TextWrappingProperty);
+			set => SetValue(TextWrappingProperty, value);
 		}
 
 		/// <summary>
@@ -52,8 +52,8 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets the text trimming
 		/// </summary>
 		public TextTrimming TextTrimming {
-			get { return (TextTrimming)GetValue(TextTrimmingProperty); }
-			set { SetValue(TextTrimmingProperty, value); }
+			get => (TextTrimming)GetValue(TextTrimmingProperty);
+			set => SetValue(TextTrimmingProperty, value);
 		}
 
 		static TextControl() => DefaultStyleKeyProperty.OverrideMetadata(typeof(TextControl), new FrameworkPropertyMetadata(typeof(TextControl)));

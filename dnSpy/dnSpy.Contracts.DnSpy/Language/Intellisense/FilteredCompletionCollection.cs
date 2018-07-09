@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,8 +44,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="index">Index of item</param>
 		/// <returns></returns>
 		public Completion this[int index] {
-			get { return items[index]; }
-			set { throw new NotSupportedException(); }
+			get => items[index];
+			set => throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -111,8 +111,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		bool ICollection.IsSynchronized => false;
 
 		object IList.this[int index] {
-			get { return this[index]; }
-			set { throw new NotSupportedException(); }
+			get => this[index];
+			set => throw new NotSupportedException();
 		}
 
 		void ICollection<Completion>.Add(Completion item) => throw new NotSupportedException();

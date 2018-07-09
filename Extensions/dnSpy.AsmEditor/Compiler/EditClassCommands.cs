@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var win = new EditCodeDlg();
 			win.DataContext = vm;
 			win.Owner = appService.MainWindow;
-			win.Title = string.Format("{0} - {1}", dnSpy_AsmEditor_Resources.EditCodeEditClass, typeNode.ToString());
+			win.Title = $"{dnSpy_AsmEditor_Resources.EditCodeEditClass} - {typeNode.ToString()}";
 
 			if (win.ShowDialog() != true) {
 				vm.Dispose();
@@ -182,7 +182,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override string GetHeader(IMenuItemContext context) => editCodeVMCreator.GetHeader(CompilationKind.EditClass);
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
-		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context));
+		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) =>
 			editCodeVMCreator.CanCreate(CompilationKind.EditClass) &&
 			list != null &&
@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			list[0].Method.Body != null &&
 			list[0].Method.Body.Instructions.Count > 0;
 
-		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context));
+		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 
 		void Execute(IList<MethodSourceStatement> list) {
 			if (list == null)
@@ -213,7 +213,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
-			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition.Position);
+			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition.Position, FindByTextPositionOptions.OuterMostStatement);
 		}
 	}
 }

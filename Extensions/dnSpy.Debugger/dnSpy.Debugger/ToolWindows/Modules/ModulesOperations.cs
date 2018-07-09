@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		void LoadModules(IList<ModuleVM> modules) =>
-			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), useMemory: false);
+			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), DbgLoadModuleReferenceHandlerOptions.None);
 
 		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() != null;
 		public override void ShowInMemoryWindow(int windowIndex) {
@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			if (filename == null)
 				return;
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
-			var args = string.Format("/select,{0}", filename);
+			var args = $"/select,{filename}";
 			try {
 				Process.Start(new ProcessStartInfo("explorer.exe", args));
 			}

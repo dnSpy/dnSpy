@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
-	struct CurrentObject<T> : IEquatable<CurrentObject<T>> where T : DbgObject {
+	readonly struct CurrentObject<T> : IEquatable<CurrentObject<T>> where T : DbgObject {
 		public readonly T Current;
 		public readonly T Break;
 		public CurrentObject(T current, T @break) {

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		string GetProcessHeader(Process process, ulong pid) {
+		string GetProcessHeader(Process process, int pid) {
 			try {
 				if (process != null) {
 					var title = Filter(process.MainWindowTitle, 200);

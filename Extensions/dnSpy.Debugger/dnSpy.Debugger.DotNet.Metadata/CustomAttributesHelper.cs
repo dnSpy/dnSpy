@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return null;
 		}
 
-		struct SecurityAttributeInfo {
+		readonly struct SecurityAttributeInfo {
 			public int Count { get; }
 
 			public SecurityAttributeInfo(ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) => Count = securityAttributes.Count;
@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct SerializableAttributeInfo {
+		readonly struct SerializableAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -225,7 +225,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct ComImportAttributeInfo {
+		readonly struct ComImportAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -246,7 +246,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct MarshalAsAttributeInfo {
+		readonly struct MarshalAsAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -304,7 +304,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct FieldOffsetAttributeInfo {
+		readonly struct FieldOffsetAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 			readonly int offset;
@@ -330,7 +330,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct NonSerializedAttributeInfo {
+		readonly struct NonSerializedAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -351,11 +351,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct DllImportAttributeInfo {
+		readonly struct DllImportAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
-			public DllImportAttributeInfo(DmdMethodInfo method, ref DmdImplMap? implMap) {
+			public DllImportAttributeInfo(DmdMethodInfo method, in DmdImplMap? implMap) {
 				if (implMap != null) {
 					var appDomain = method.AppDomain;
 					var caType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_DllImportAttribute, isOptional: true);
@@ -372,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					ctor = null;
 			}
 
-			public void CopyTo(DmdCustomAttributeData[] destination, ref int index, DmdMethodInfo method, ref DmdImplMap? implMap) {
+			public void CopyTo(DmdCustomAttributeData[] destination, ref int index, DmdMethodInfo method, in DmdImplMap? implMap) {
 				if (Count == 0)
 					return;
 
@@ -417,7 +417,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct PreserveSigAttributeInfo {
+		readonly struct PreserveSigAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -438,7 +438,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct InAttributeInfo {
+		readonly struct InAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -459,7 +459,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct OutAttributeInfo {
+		readonly struct OutAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -480,7 +480,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		struct OptionalAttributeInfo {
+		readonly struct OptionalAttributeInfo {
 			public int Count => (object)ctor != null ? 1 : 0;
 			readonly DmdConstructorInfo ctor;
 
@@ -569,11 +569,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return ReadOnlyCollectionHelpers.Create(customAttributes);
 		}
 
-		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[] customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes, DmdImplMap? implMap) {
+		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[] customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes, in DmdImplMap? implMap) {
 			if (customAttributes == null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
-			var dllImportAttributeInfo = new DllImportAttributeInfo(method, ref implMap);
+			var dllImportAttributeInfo = new DllImportAttributeInfo(method, implMap);
 			var preserveSigAttributeInfo = new PreserveSigAttributeInfo(method);
 			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);
 
@@ -581,7 +581,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (pseudoCount != 0) {
 				var cas = new DmdCustomAttributeData[pseudoCount + customAttributes.Length];
 				int index = 0;
-				dllImportAttributeInfo.CopyTo(cas, ref index, method, ref implMap);
+				dllImportAttributeInfo.CopyTo(cas, ref index, method, implMap);
 				preserveSigAttributeInfo.CopyTo(cas, ref index);
 				securityAttributeInfo.CopyTo(cas, ref index, securityAttributes);
 				if (pseudoCount != index)

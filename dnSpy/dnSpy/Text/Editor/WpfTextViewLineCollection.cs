@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,8 +50,8 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextViewLine this[int index] => lines[index];
 		ITextViewLine IList<ITextViewLine>.this[int index] {
-			get { return this[index]; }
-			set { throw new NotSupportedException(); }
+			get => this[index];
+			set => throw new NotSupportedException();
 		}
 
 		public int Count => lines.Count;

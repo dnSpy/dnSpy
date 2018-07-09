@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,8 +43,8 @@ namespace dnSpy.Tabs {
 		public object Tag { get; set; }
 
 		public event EventHandler<TabContentAttachedEventArgs> TabContentAttached {
-			add { tabContentAttached.Add(value); }
-			remove { tabContentAttached.Remove(value); }
+			add => tabContentAttached.Add(value);
+			remove => tabContentAttached.Remove(value);
 		}
 		readonly WeakEventList<TabContentAttachedEventArgs> tabContentAttached;
 
@@ -52,7 +52,7 @@ namespace dnSpy.Tabs {
 		internal IEnumerable<TabItemImpl> AllTabItemImpls => tabControl.Items.Cast<TabItemImpl>();
 
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			internal set {
 				if (isActive != value) {
 					isActive = value;
@@ -447,7 +447,7 @@ namespace dnSpy.Tabs {
 				if (ti.TabContent == content)
 					return i;
 			}
-			Debug.Fail(string.Format("Couldn't find {0}", content));
+			Debug.Fail($"Couldn't find {content}");
 			return -1;
 		}
 

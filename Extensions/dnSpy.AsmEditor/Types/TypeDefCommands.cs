@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -118,7 +118,7 @@ namespace dnSpy.AsmEditor.Types {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly IList<TypeDef> OwnerList;
 				public readonly int Index;
 
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Types {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerList.Insert(info.Index, node.TypeDef);
 				}
 
@@ -487,7 +487,7 @@ namespace dnSpy.AsmEditor.Types {
 		readonly bool nameChanged;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		struct TypeRefInfo {
+		readonly struct TypeRefInfo {
 			public readonly TypeRef TypeRef;
 			public readonly UTF8String OrigNamespace;
 			public readonly UTF8String OrigName;
@@ -592,7 +592,7 @@ namespace dnSpy.AsmEditor.Types {
 			InvalidateBaseTypeFolderNode(typeNode);
 		}
 
-		void InvalidateBaseTypeFolderNode(TypeNode typeNode) {
+		internal static void InvalidateBaseTypeFolderNode(TypeNode typeNode) {
 			var btNode = (BaseTypeFolderNode)typeNode.TreeNode.DataChildren.FirstOrDefault(a => a is BaseTypeFolderNode);
 			Debug.Assert(btNode != null || typeNode.TreeNode.Children.Count == 0);
 			if (btNode != null)

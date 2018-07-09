@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -76,7 +76,7 @@ namespace dnSpy.Decompiler {
 				if (c >= ' ')
 					sb.Append(c);
 				else
-					sb.Append(string.Format("\\u{0:X4}", (ushort)c));
+					sb.Append($"\\u{(ushort)c:X4}");
 			}
 
 			if (sb.Length > MAX_NAME_LEN)
@@ -104,9 +104,9 @@ namespace dnSpy.Decompiler {
 		public static string GetNumberOfOverloadsString(TypeDef type, string name) {
 			int overloads = TypeFormatterUtils.GetNumberOfOverloads(type, name);
 			if (overloads == 1)
-				return string.Format(" (+ {0})", dnSpy_Decompiler_Resources.ToolTip_OneMethodOverload);
+				return $" (+ {dnSpy_Decompiler_Resources.ToolTip_OneMethodOverload})";
 			else if (overloads > 1)
-				return string.Format(" (+ {0})", string.Format(dnSpy_Decompiler_Resources.ToolTip_NMethodOverloads, overloads));
+				return $" (+ {string.Format(dnSpy_Decompiler_Resources.ToolTip_NMethodOverloads, overloads)})";
 			return null;
 		}
 
@@ -135,8 +135,11 @@ namespace dnSpy.Decompiler {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			if (variable.Variable != null)
-				return $"#{variable.Variable.Index}";
+			if (variable.Variable != null) {
+				if (variable.IsLocal)
+					return "V_" + variable.Variable.Index.ToString();
+				return "A_" + variable.Variable.Index.ToString();
+			}
 			Debug.Fail("Decompiler generated variable without a name");
 			return "???";
 		}
@@ -250,12 +253,33 @@ namespace dnSpy.Decompiler {
 			var td = type.ResolveTypeDef();
 			if (td == null)
 				return false;
-			return IsDeprecated(td.CustomAttributes);
+			bool foundByRefLikeMarker = false;
+			foreach (var ca in td.CustomAttributes) {
+				if (ca.TypeFullName != "System.ObsoleteAttribute")
+					continue;
+				if (ca.ConstructorArguments.Count != 2)
+					return true;
+				if (!(ca.ConstructorArguments[0].Value is UTF8String s && s == ByRefLikeMarker))
+					return true;
+				if (!(ca.ConstructorArguments[1].Value is bool b && b))
+					return true;
+				foundByRefLikeMarker = true;
+			}
+			return foundByRefLikeMarker && !IsByRefLike(td);
 		}
+		static readonly UTF8String ByRefLikeMarker = new UTF8String("Types with embedded references are not supported in this version of your compiler.");
 
 		static bool IsDeprecated(CustomAttributeCollection customAttributes) {
 			foreach (var ca in customAttributes) {
 				if (ca.TypeFullName == "System.ObsoleteAttribute")
+					return true;
+			}
+			return false;
+		}
+
+		public static bool IsByRefLike(TypeDef td) {
+			foreach (var ca in td.CustomAttributes) {
+				if (ca.TypeFullName == "System.Runtime.CompilerServices.IsByRefLikeAttribute")
 					return true;
 			}
 			return false;
@@ -276,13 +300,39 @@ namespace dnSpy.Decompiler {
 			var td = type.Resolve();
 			if (td == null)
 				return false;
-			return IsAwaitableType(td.FullName);
+			return IsAwaitableType(td);
 		}
 
-		static bool IsAwaitableType(string fullName) =>
-			fullName == "System.Threading.Tasks.Task" ||
-			fullName == "System.Threading.Tasks.Task`1" ||
-			fullName == "System.Threading.Tasks.ValueTask`1";
+		static bool IsAwaitableType(TypeDef td) {
+			if (td == null)
+				return false;
+
+			// See (Roslyn): IsCustomTaskType
+
+			if (td.GenericParameters.Count > 1)
+				return false;
+
+			if (td.Namespace == stringSystem_Threading_Tasks) {
+				if (td.Name == stringTask || td.Name == stringTask_1)
+					return true;
+			}
+
+			foreach (var ca in td.CustomAttributes) {
+				if (ca.TypeFullName != "System.Runtime.CompilerServices.AsyncMethodBuilderAttribute")
+					continue;
+				if (ca.ConstructorArguments.Count != 1)
+					continue;
+				if ((ca.ConstructorArguments[0].Type as ClassSig)?.TypeDefOrRef.FullName != "System.Type")
+					continue;
+
+				return true;
+			}
+
+			return false;
+		}
+		static readonly UTF8String stringSystem_Threading_Tasks = new UTF8String("System.Threading.Tasks");
+		static readonly UTF8String stringTask = new UTF8String("Task");
+		static readonly UTF8String stringTask_1 = new UTF8String("Task`1");
 
 		public static MemberSpecialFlags GetMemberSpecialFlags(IMethod method) {
 			var flags = MemberSpecialFlags.None;
@@ -300,26 +350,112 @@ namespace dnSpy.Decompiler {
 		public static MemberSpecialFlags GetMemberSpecialFlags(ITypeDefOrRef type) {
 			var flags = MemberSpecialFlags.None;
 
-			if (IsAwaitableType(type.FullName))
+			if (IsAwaitableType(type.ResolveTypeDef()))
 				flags |= MemberSpecialFlags.Awaitable;
 
 			return flags;
 		}
 
-		public static bool IsDefaultParameter(ParamDef pd) {
-			if (pd == null)
+		public static bool HasConstant(IHasConstant hc, out CustomAttribute constantAttribute) {
+			constantAttribute = null;
+			if (hc == null)
 				return false;
-			if (pd.Constant != null)
+			if (hc.Constant != null)
 				return true;
-			foreach (var ca in pd.CustomAttributes) {
+			foreach (var ca in hc.CustomAttributes) {
 				var type = ca.AttributeType;
 				while (type != null) {
 					var fullName = type.FullName;
 					if (fullName == "System.Runtime.CompilerServices.CustomConstantAttribute" ||
-						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute")
+						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
+						constantAttribute = ca;
 						return true;
+					}
 					type = type.GetBaseType();
 				}
+			}
+			return false;
+		}
+
+		public static bool TryGetConstant(IHasConstant hc, CustomAttribute constantAttribute, out object constant) {
+			if (hc.Constant != null) {
+				constant = hc.Constant.Value;
+				return true;
+			}
+
+			if (constantAttribute != null) {
+				if (constantAttribute.TypeFullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
+					if (TryGetDecimalConstantAttributeValue(constantAttribute, out var decimalValue)) {
+						constant = decimalValue;
+						return true;
+					}
+				}
+			}
+
+			constant = null;
+			return false;
+		}
+
+		static bool TryGetDecimalConstantAttributeValue(CustomAttribute ca, out decimal value) {
+			value = 0;
+			if (ca.ConstructorArguments.Count != 5)
+				return false;
+			if (!(ca.ConstructorArguments[0].Value is byte scale))
+				return false;
+			if (!(ca.ConstructorArguments[1].Value is byte sign))
+				return false;
+			int hi, mid, low;
+			if (ca.ConstructorArguments[2].Value is int) {
+				if (!(ca.ConstructorArguments[2].Value is int))
+					return false;
+				if (!(ca.ConstructorArguments[3].Value is int))
+					return false;
+				if (!(ca.ConstructorArguments[4].Value is int))
+					return false;
+				hi = (int)ca.ConstructorArguments[2].Value;
+				mid = (int)ca.ConstructorArguments[3].Value;
+				low = (int)ca.ConstructorArguments[4].Value;
+			}
+			else if (ca.ConstructorArguments[2].Value is uint) {
+				if (!(ca.ConstructorArguments[2].Value is uint))
+					return false;
+				if (!(ca.ConstructorArguments[3].Value is uint))
+					return false;
+				if (!(ca.ConstructorArguments[4].Value is uint))
+					return false;
+				hi = (int)(uint)ca.ConstructorArguments[2].Value;
+				mid = (int)(uint)ca.ConstructorArguments[3].Value;
+				low = (int)(uint)ca.ConstructorArguments[4].Value;
+			}
+			else
+				return false;
+			try {
+				value = new decimal(low, mid, hi, sign > 0, scale);
+				return true;
+			}
+			catch (ArgumentOutOfRangeException) {
+				return false;
+			}
+		}
+
+		public static bool IsReadOnlyProperty(PropertyDef property) => HasIsReadOnlyAttribute(property.CustomAttributes);
+
+		public static bool IsReadOnlyMethod(MethodDef method) {
+			if (method == null || method.IsConstructor)
+				return false;
+			return HasIsReadOnlyAttribute(method.Parameters.ReturnParameter.ParamDef?.CustomAttributes);
+		}
+
+		public static bool IsReadOnlyParameter(ParamDef pd) => HasIsReadOnlyAttribute(pd?.CustomAttributes);
+		public static bool IsReadOnlyType(TypeDef td) => HasIsReadOnlyAttribute(td?.CustomAttributes);
+
+		static bool HasIsReadOnlyAttribute(CustomAttributeCollection customAttributes) {
+			if (customAttributes == null)
+				return false;
+			for (int i = 0; i < customAttributes.Count; i++) {
+				var ca = customAttributes[i];
+				if (ca.AttributeType?.FullName == "System.Runtime.CompilerServices.IsReadOnlyAttribute" && ca.AttributeType.DeclaringType == null)
+					return true;
 			}
 			return false;
 		}

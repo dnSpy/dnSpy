@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -261,9 +261,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 				}
 				else {
-					using (var md = MetaDataCreator.CreateMetaData(peImage)) {
-						var row = md.TablesStream.ReadAssemblyRow(1);
-						if (row == null)
+					using (var md = MetadataFactory.CreateMetadata(peImage)) {
+						if (!md.TablesStream.TryReadAssemblyRow(1, out var row))
 							assemblySimpleName = null;
 						else
 							assemblySimpleName = md.StringsStream.Read(row.Name);

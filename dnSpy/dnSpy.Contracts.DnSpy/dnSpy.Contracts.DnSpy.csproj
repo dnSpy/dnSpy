@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Contracts</RootNamespace>
     <AssemblyName>dnSpy.Contracts.DnSpy</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -29,7 +29,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -57,13 +58,13 @@
     <Compile Include="AsmEditor\Compiler\CompilationResult.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnostic.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerDiagnosticSeverity.cs" />
+    <Compile Include="AsmEditor\Compiler\CompilerDocumentInfo.cs" />
     <Compile Include="AsmEditor\Compiler\CompilerMetadataReference.cs" />
+    <Compile Include="AsmEditor\Compiler\CompilerProjectInfo.cs" />
     <Compile Include="AsmEditor\Compiler\DebugFileFormat.cs" />
     <Compile Include="AsmEditor\Compiler\DebugFileResult.cs" />
     <Compile Include="AsmEditor\Compiler\IAssemblyReferenceResolver.cs" />
     <Compile Include="AsmEditor\Compiler\ICodeDocument.cs" />
-    <Compile Include="AsmEditor\Compiler\IDecompiledCodeResult.cs" />
-    <Compile Include="AsmEditor\Compiler\IDecompiledDocument.cs" />
     <Compile Include="AsmEditor\Compiler\ILanguageCompiler.cs" />
     <Compile Include="AsmEditor\Compiler\ILanguageCompilerProvider.cs" />
     <Compile Include="AsmEditor\Compiler\LineLocation.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="Hex\Classification\HexClassifierAggregatorService.cs" />
     <Compile Include="Hex\Classification\HexEditorFormatMapService.cs" />
     <Compile Include="Hex\Classification\HexViewClassifierAggregatorService.cs" />
+    <Compile Include="Hex\Editor\DefaultHexEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewHostEditorOptionDefinitions.cs" />
     <Compile Include="Hex\Editor\DefaultHexViewHostOptions.cs" />
@@ -339,6 +341,7 @@
     <Compile Include="Hex\Editor\HexStructureInfoProvider.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProviderAndData.cs" />
     <Compile Include="Hex\Editor\HexStructureInfoProviderFactory.cs" />
+    <Compile Include="Hex\Editor\HexViewCreationListener.cs" />
     <Compile Include="Hex\Editor\PredefinedHexGlyphFactoryProviderNames.cs" />
     <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerNames.cs" />
     <Compile Include="Hex\Editor\PredefinedHexReferenceHandlerTags.cs" />
@@ -933,6 +936,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\ToolWindows\EditValueControl.xaml">

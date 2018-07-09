@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Decompiler.ILSpy</RootNamespace>
     <AssemblyName>dnSpy.Decompiler.ILSpy.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -27,7 +27,8 @@
     <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Debug\dnSpy.Decompiler.ILSpy.x.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -99,6 +100,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// No bit is set
 		/// </summary>
 		None						= 0,
+
+		/// <summary>
+		/// Set if integers are shown in decimal, clear if integers are shown in hexadecimal
+		/// </summary>
+		Decimal						= 0x00000001,
+
+		/// <summary>
+		/// Use digit separators
+		/// </summary>
+		DigitSeparators				= 0x00000002,
 
 		/// <summary>
 		/// Show namespaces

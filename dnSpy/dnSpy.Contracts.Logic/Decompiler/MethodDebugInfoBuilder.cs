@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,12 +27,29 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class MethodDebugInfoBuilder {
 		readonly MethodDef method;
+		readonly MethodDef kickoffMethod;
+		readonly StateMachineKind stateMachineKind;
 		readonly List<SourceStatement> statements;
+
+		/// <summary>
+		/// Compiler name (<see cref="PredefinedCompilerNames"/>) or null
+		/// </summary>
+		public string CompilerName { get; set; }
 
 		/// <summary>
 		/// Gets the scope builder
 		/// </summary>
 		public MethodDebugScopeBuilder Scope { get; }
+
+		/// <summary>
+		/// Gets/sets the parameters
+		/// </summary>
+		public SourceParameter[] Parameters { get; set; }
+
+		/// <summary>
+		/// Async method debug info or null
+		/// </summary>
+		public AsyncMethodDebugInfo AsyncInfo { get; set; }
 
 		/// <summary>
 		/// Start of method (eg. position of the first character of the modifier or return type)
@@ -44,29 +61,43 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public int? EndPosition { get; set; }
 
-		readonly int decompilerOptionsVersion;
+		readonly int decompilerSettingsVersion;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
+		/// <param name="decompilerSettingsVersion">Decompiler settings version number. This version number should get incremented when the settings change.</param>
+		/// <param name="stateMachineKind">State machine kind</param>
 		/// <param name="method">Method</param>
-		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method) {
-			this.decompilerOptionsVersion = decompilerOptionsVersion;
+		/// <param name="kickoffMethod">Kickoff method or null</param>
+		public MethodDebugInfoBuilder(int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod) {
+			this.decompilerSettingsVersion = decompilerSettingsVersion;
+			this.stateMachineKind = stateMachineKind;
 			this.method = method ?? throw new ArgumentNullException(nameof(method));
+			this.kickoffMethod = kickoffMethod;
 			statements = new List<SourceStatement>();
 			Scope = new MethodDebugScopeBuilder();
-			Scope.Span = BinSpan.FromBounds(0, (uint)method.Body.GetCodeSize());
+			Scope.Span = ILSpan.FromBounds(0, (uint)method.Body.GetCodeSize());
+			if (method == kickoffMethod)
+				throw new ArgumentException();
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
+		/// <param name="decompilerSettingsVersion">Decompiler settings version number. This version number should get incremented when the settings change.</param>
+		/// <param name="stateMachineKind">State machine kind</param>
 		/// <param name="method">Method</param>
+		/// <param name="kickoffMethod">Kickoff method or null</param>
 		/// <param name="locals">Locals</param>
-		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method, SourceLocal[] locals)
-			: this(decompilerOptionsVersion, method) => Scope.Locals.AddRange(locals);
+		/// <param name="parameters">Parameters or null</param>
+		/// <param name="asyncInfo">Async method info or null</param>
+		public MethodDebugInfoBuilder(int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod, SourceLocal[] locals, SourceParameter[] parameters, AsyncMethodDebugInfo asyncInfo)
+			: this(decompilerSettingsVersion, stateMachineKind, method, kickoffMethod) {
+			Scope.Locals.AddRange(locals);
+			Parameters = parameters;
+			AsyncInfo = asyncInfo;
+		}
 
 		/// <summary>
 		/// Adds a <see cref="SourceStatement"/>
@@ -84,7 +115,7 @@ namespace dnSpy.Contracts.Decompiler {
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;
-			return new MethodDebugInfo(decompilerOptionsVersion, method, statements.ToArray(), Scope.ToScope(), methodSpan);
+			return new MethodDebugInfo(CompilerName, decompilerSettingsVersion, stateMachineKind, method, kickoffMethod, Parameters, statements.ToArray(), Scope.ToScope(), methodSpan, AsyncInfo);
 		}
 	}
 }

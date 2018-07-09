@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// Adds an exception
 		/// </summary>
 		/// <param name="settings">Exception settings</param>
-		public void Add(DbgExceptionSettingsInfo settings) => Add(new[] { settings });
+		public void Add(in DbgExceptionSettingsInfo settings) => Add(new[] { settings });
 
 		/// <summary>
 		/// Adds exceptions
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Contains the exception definition and exception settings
 	/// </summary>
-	public struct DbgExceptionSettingsInfo {
+	public readonly struct DbgExceptionSettingsInfo {
 		/// <summary>
 		/// Gets the definition
 		/// </summary>
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception id and settings
 	/// </summary>
-	public struct DbgExceptionIdAndSettings {
+	public readonly struct DbgExceptionIdAndSettings {
 		/// <summary>
 		/// Gets the exception id
 		/// </summary>
@@ -177,7 +177,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// <see cref="DbgExceptionSettingsService.ExceptionSettingsModified"/> event args
 	/// </summary>
-	public struct DbgExceptionSettingsModifiedEventArgs {
+	public readonly struct DbgExceptionSettingsModifiedEventArgs {
 		/// <summary>
 		/// Gets the ID and new settings
 		/// </summary>

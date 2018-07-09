@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,11 +18,15 @@
 */
 
 #if DEBUG
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	sealed class ILAstDecompilerSettings : DecompilerSettingsBase {
+		public override int Version => 0;
+		public override event EventHandler VersionChanged { add { } remove { } }
+
 		public ILAstDecompilerSettings() {
 		}
 

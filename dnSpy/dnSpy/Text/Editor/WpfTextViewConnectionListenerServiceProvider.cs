@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,14 +28,18 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IWpfTextViewConnectionListenerServiceProvider))]
 	sealed class WpfTextViewConnectionListenerServiceProvider : IWpfTextViewConnectionListenerServiceProvider {
 		readonly Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners;
+		readonly Lazy<ITextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] textViewConnectionListeners;
 
 		[ImportingConstructor]
-		WpfTextViewConnectionListenerServiceProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> wpfTextViewConnectionListeners) => this.wpfTextViewConnectionListeners = wpfTextViewConnectionListeners.ToArray();
+		WpfTextViewConnectionListenerServiceProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> wpfTextViewConnectionListeners, [ImportMany] IEnumerable<Lazy<ITextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> textViewConnectionListeners) {
+			this.wpfTextViewConnectionListeners = wpfTextViewConnectionListeners.ToArray();
+			this.textViewConnectionListeners = textViewConnectionListeners.ToArray();
+		}
 
 		public void Create(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			new WpfTextViewConnectionListenerService(wpfTextView, wpfTextViewConnectionListeners);
+			new WpfTextViewConnectionListenerService(wpfTextView, wpfTextViewConnectionListeners, textViewConnectionListeners);
 		}
 	}
 }

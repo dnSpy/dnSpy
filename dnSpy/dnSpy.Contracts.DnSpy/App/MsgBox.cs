@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.App {
 		/// Gets the <see cref="IMessageBoxService"/> instance
 		/// </summary>
 		public static IMessageBoxService Instance {
-			get { return messageBoxService; }
+			get => messageBoxService;
 			internal set {
 				if (messageBoxService != null)
 					throw new InvalidOperationException();

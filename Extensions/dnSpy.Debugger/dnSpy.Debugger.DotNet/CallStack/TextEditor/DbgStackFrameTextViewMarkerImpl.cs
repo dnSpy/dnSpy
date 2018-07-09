@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,10 +23,10 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Debugger.DotNet.Code;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -70,9 +70,9 @@ namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
 					var textSpan = info.Statement.TextSpan;
 					if (textSpan.End > snapshot.Length)
 						yield break;// Old data, but we'll get called again
-					var binSpan = info.Statement.BinSpan;
+					var ilSpan = info.Statement.ILSpan;
 					foreach (uint ilOffset in ilOffsets) {
-						if (ilOffset >= binSpan.Start && ilOffset < binSpan.End)
+						if (ilOffset >= ilSpan.Start && ilOffset < ilSpan.End)
 							yield return new SnapshotSpan(snapshot, textSpan.Start, textSpan.Length);
 					}
 				}
@@ -86,11 +86,25 @@ namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
 			// since it's the current statement)
 			for (int i = 1; i < frames.Count; i++) {
 				switch (frames[i].Location) {
-				case DbgDotNetCodeLocationImpl locImpl:
-					var key = new ModuleTokenId(locImpl.Module, locImpl.Token);
+				case DbgDotNetCodeLocation loc:
+					switch (loc.ILOffsetMapping) {
+					case DbgILOffsetMapping.Exact:
+					case DbgILOffsetMapping.Approximate:
+						break;
+
+					case DbgILOffsetMapping.Prolog:
+					case DbgILOffsetMapping.Epilog:
+					case DbgILOffsetMapping.Unknown:
+					case DbgILOffsetMapping.NoInfo:
+					case DbgILOffsetMapping.UnmappedAddress:
+					default:
+						continue;
+					}
+
+					var key = new ModuleTokenId(loc.Module, loc.Token);
 					if (!dict.TryGetValue(key, out var list))
 						dict.Add(key, list = new List<uint>());
-					uint offset = locImpl.Offset;
+					uint offset = loc.Offset;
 					// The list should be small so Contains() should be fast
 					if (!list.Contains(offset))
 						list.Add(offset);

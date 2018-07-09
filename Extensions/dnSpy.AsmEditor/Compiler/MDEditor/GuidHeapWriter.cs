@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,10 +25,10 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 
 		public GuidHeapWriter(GuidMDHeap guidHeap) => this.guidHeap = guidHeap;
 
-		public override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
+		public unsafe override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
 			int start = (int)guidHeap.GuidStream.StartOffset;
 			int size = (int)(guidHeap.GuidStream.EndOffset - guidHeap.GuidStream.StartOffset);
-			stream.Write(mdWriter.ModuleData, start, size);
+			stream.Write((byte*)mdWriter.ModuleData.Pointer + start, size);
 			WriteData(stream, guidHeap.NewData, tempBuffer);
 		}
 	}

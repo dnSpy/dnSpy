@@ -202,7 +202,7 @@
     <value>Вычисление функции</value>
   </data>
   <data name="StackFrame_NativeTransition" xml:space="preserve">
-    <value>Native Transition</value>
+    <value>Переход native</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
     <value>Эта среда выполнения не поддерживает вызов обобщенных методов</value>
@@ -215,9 +215,6 @@
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Не могу установить следующую инструкцию.</value>
-  </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>Тип еще не был загружен.</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
     <value>Процесс приостановлен и в ожидании отладчика</value>
@@ -247,6 +244,9 @@
     <value>_Таймаут (с)</value>
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
-    <value>This is for Unity Debug builds only</value>
+    <value>Только для билдов Unity Debug</value>
+  </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Отладка игр Unity</value>
   </data>
 </root>

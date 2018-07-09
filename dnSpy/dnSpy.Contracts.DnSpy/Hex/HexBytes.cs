@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Contains bytes and information about whether a byte exists in the stream
 	/// </summary>
-	public struct HexBytes {
+	public readonly struct HexBytes {
 		/// <summary>
 		/// Gets the empty instance
 		/// </summary>

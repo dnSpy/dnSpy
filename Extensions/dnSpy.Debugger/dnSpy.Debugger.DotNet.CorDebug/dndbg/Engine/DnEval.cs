@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -110,7 +110,7 @@ namespace dndbg.Engine {
 
 			int hr = thread.CorThread.RawObject.CreateEval(out var ce);
 			if (hr < 0 || ce == null)
-				throw new EvalException(hr, string.Format("Could not create an evaluator, HR=0x{0:X8}", hr));
+				throw new EvalException(hr, $"Could not create an evaluator, HR=0x{hr:X8}");
 			this.thread = thread;
 			eval = new CorEval(ce);
 		}
@@ -132,13 +132,13 @@ namespace dndbg.Engine {
 				return null;
 			}
 			var newObj = res.Value.ResultOrException;
-			var r = newObj.DereferencedValue;
-			var vb = r?.BoxedValue;
+			var r = newObj.GetDereferencedValue(out int hr);
+			var vb = r?.GetBoxedValue(out hr);
 			if (vb == null) {
 				newObj.DisposeHandle();
 				return null;
 			}
-			int hr = vb.WriteGenericValue(value.ReadGenericValue(), thread.CorThread.Process);
+			hr = vb.WriteGenericValue(value.ReadGenericValue(), thread.CorThread.Process);
 			if (hr < 0)
 				return null;
 			return newObj;
@@ -291,7 +291,7 @@ namespace dndbg.Engine {
 			}
 			if (timedOut || forceBreakProcesses) {
 				hr = debugger.TryBreakProcesses();
-				Debug.WriteLineIf(hr != 0, string.Format("Eval timed out and TryBreakProcesses() failed: hr=0x{0:X8}", hr));
+				Debug.WriteLineIf(hr != 0, $"Eval timed out and TryBreakProcesses() failed: hr=0x{hr:X8}");
 				EvalTimedOut = true;
 			}
 			return !timedOut;

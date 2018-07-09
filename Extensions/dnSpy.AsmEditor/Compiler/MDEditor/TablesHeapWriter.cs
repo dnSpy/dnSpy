@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -88,9 +88,9 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			tablesToIgnore[0x3E] = true;
 			tablesToIgnore[0x3F] = true;
 		}
-		static bool[] tablesToIgnore;
+		static readonly bool[] tablesToIgnore;
 
-		public override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
+		public unsafe override void Write(MDWriter mdWriter, MDWriterStream stream, byte[] tempBuffer) {
 			var tblStream = mdWriter.MetadataEditor.RealMetadata.TablesStream;
 			stream.Write(tblStream.Reserved1);
 			stream.Write((byte)(tblStream.Version >> 8));
@@ -142,22 +142,25 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				if (info == null || info.IsEmpty)
 					continue;
 
+				var tableWriter = TableWriter.Create(info);
+				var mdTable = info.MDTable;
+
 				var tbl = tableInfos[i];
 				var columns = tbl.Columns;
-				var rows = info.Rows;
+				var rows = tableWriter.Rows;
 				uint currentRowIndex = 0;
 				var rowSize = (uint)tbl.RowSize;
 				Debug.Assert(tempBuffer.Length >= rowSize, "Temp buffer is too small");
 
 				// If there are no changes in the original metadata or layout, just copy everything
-				uint unmodifiedRows = info.FirstModifiedRowId - 1;
-				if (unmodifiedRows > 0 && Equals(info.MDTable.TableInfo, tbl)) {
+				uint unmodifiedRows = tableWriter.FirstModifiedRowId - 1;
+				if (unmodifiedRows > 0 && Equals(mdTable.TableInfo, tbl)) {
 					if (tempBufferIndex > 0) {
 						stream.Write(tempBuffer, 0, tempBufferIndex);
 						tempBufferIndex = 0;
 					}
 
-					stream.Write(mdWriter.ModuleData, (int)info.MDTable.StartOffset, (int)(unmodifiedRows * info.MDTable.RowSize));
+					stream.Write((byte*)mdWriter.ModuleData.Pointer + (int)mdTable.StartOffset, (int)(unmodifiedRows * mdTable.RowSize));
 
 					Debug.Assert(unmodifiedRows <= rows);
 					rows -= unmodifiedRows;
@@ -177,7 +180,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 					Debug.Assert(maxRows > 0);
 
 					for (uint endRowIndex = currentRowIndex + maxRows; currentRowIndex < endRowIndex; currentRowIndex++, tempBufferIndex += (int)rowSize)
-						info.WriteRow(currentRowIndex, columns, tempBuffer, tempBufferIndex);
+						tableWriter.WriteRow(currentRowIndex, columns, tempBuffer, tempBufferIndex);
 					rows -= maxRows;
 				}
 			}
@@ -193,8 +196,8 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				return false;
 			var ac = a.Columns;
 			var bc = b.Columns;
-			Debug.Assert(ac.Count == bc.Count);
-			for (int i = 0; i < ac.Count; i++) {
+			Debug.Assert(ac.Length == bc.Length);
+			for (int i = 0; i < ac.Length; i++) {
 				if (ac[i].Offset != bc[i].Offset)
 					return false;
 			}

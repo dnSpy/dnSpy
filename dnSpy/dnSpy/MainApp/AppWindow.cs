@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -171,14 +171,14 @@ namespace dnSpy.MainApp {
 		}
 
 		public event EventHandler<CancelEventArgs> MainWindowClosing {
-			add { mainWindowClosing.Add(value); }
-			remove { mainWindowClosing.Remove(value); }
+			add => mainWindowClosing.Add(value);
+			remove => mainWindowClosing.Remove(value);
 		}
 		readonly WeakEventList<CancelEventArgs> mainWindowClosing;
 
 		public event EventHandler<EventArgs> MainWindowClosed {
-			add { mainWindowClosed.Add(value); }
-			remove { mainWindowClosed.Remove(value); }
+			add => mainWindowClosed.Add(value);
+			remove => mainWindowClosed.Remove(value);
 		}
 		readonly WeakEventList<EventArgs> mainWindowClosed;
 
@@ -190,7 +190,7 @@ namespace dnSpy.MainApp {
 		void UpdateTitle() => mainWindow.Title = GetDefaultTitle();
 
 		string GetDefaultTitle() {
-			var t = string.Format("dnSpy {0} ({1})", AssemblyInformationalVersion, string.Join(", ", titleInfos.ToArray()));
+			var t = $"dnSpy {AssemblyInformationalVersion} ({string.Join(", ", titleInfos.ToArray())})";
 			return t;
 		}
 		readonly List<string> titleInfos = new List<string>();

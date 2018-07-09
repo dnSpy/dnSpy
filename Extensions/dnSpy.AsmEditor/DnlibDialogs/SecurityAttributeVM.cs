@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public ITypeDefOrRef AttributeType {
-			get { return attributeType; }
+			get => attributeType;
 			set {
 				if (attributeType != value) {
 					attributeType = value;

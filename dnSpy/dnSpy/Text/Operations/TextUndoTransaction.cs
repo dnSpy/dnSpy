@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,10 +33,8 @@ namespace dnSpy.Text.Operations {
 		public IList<ITextUndoPrimitive> UndoPrimitives => readOnlyUndoPrimitives;
 
 		public string Description {
-			get { return description; }
-			set {
-				description = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => description;
+			set => description = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		string description;
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Position and data
 	/// </summary>
-	public struct PositionAndData {
+	public readonly struct PositionAndData {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>

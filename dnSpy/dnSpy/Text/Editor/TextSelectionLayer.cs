@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,11 +27,12 @@ using dnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelectionLayer {
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			set {
 				if (isActive != value) {
 					isActive = value;
@@ -54,11 +55,11 @@ namespace dnSpy.Text.Editor {
 			textSelection.SelectionChanged += TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged += TextView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
-			UpdateUseReducedOpacityForHighContrastOption();
 			UpdateBackgroundBrush();
 		}
 
 		void UpdateBackgroundBrush() {
+			UpdateIsInContrastModeOption();
 			var newBackgroundBrush = GetBackgroundBrush();
 			if (BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
@@ -75,13 +76,15 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName)
-				UpdateUseReducedOpacityForHighContrastOption();
+			if (e.OptionId == DefaultTextViewHostOptions.IsInContrastModeName)
+				UpdateIsInContrastModeOption();
 		}
 
-		void UpdateUseReducedOpacityForHighContrastOption() {
-			bool reducedOpacity = textSelection.TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-			layer.Opacity = reducedOpacity ? 0.4 : 1;
+		void UpdateIsInContrastModeOption() {
+			bool isInContrastMode = textSelection.TextView.Options.IsInContrastMode();
+			var newValue = isInContrastMode ? 1 : 0.4;
+			if (layer.Opacity != newValue)
+				layer.Opacity = newValue;
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
@@ -188,7 +191,7 @@ namespace dnSpy.Text.Editor {
 			readonly Geometry geometry;
 
 			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+				get => backgroundBrush;
 				set {
 					if (value == null)
 						throw new ArgumentNullException(nameof(value));
@@ -201,7 +204,7 @@ namespace dnSpy.Text.Editor {
 			Brush backgroundBrush;
 
 			public Pen Pen {
-				get { return pen; }
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;

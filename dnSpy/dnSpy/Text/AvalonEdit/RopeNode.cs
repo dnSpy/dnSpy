@@ -44,9 +44,7 @@ namespace dnSpy.Text.AvalonEdit {
 		// The character data. Only non-null for leaf nodes (height=0) that aren't function nodes.
 		internal T[] contents;
 
-		internal int Balance {
-			get { return right.height - left.height; }
-		}
+		internal int Balance => right.height - left.height;
 
 		[Conditional("DATACONSISTENCYTEST")]
 		internal void CheckInvariants() {

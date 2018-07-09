@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Documents {
 		readonly IDsDocumentProvider[] documentProviders;
 
 		// PERF: Must be a struct; class is 9% slower (decompile mscorlib+dnSpy = 83 files)
-		struct DocumentInfo {
+		readonly struct DocumentInfo {
 			readonly List<AssemblyRef> alternativeAssemblyNames;
 			public readonly IDsDocument Document;
 
@@ -375,7 +375,8 @@ namespace dnSpy.Documents {
 					peImage = new PEImage(File.ReadAllBytes(filename), filename);
 
 				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
+				// Mono doesn't check that the Size field is >= 0x48
+				bool isDotNet = dotNetDir.VirtualAddress != 0 /*&& dotNetDir.Size >= 0x48*/;
 				if (isDotNet) {
 					try {
 						var options = new ModuleCreationOptions(DsDotNetDocumentBase.CreateModuleContext(AssemblyResolver));

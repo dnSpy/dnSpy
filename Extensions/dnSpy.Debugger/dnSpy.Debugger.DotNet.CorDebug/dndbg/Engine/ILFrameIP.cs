@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,7 @@
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	struct ILFrameIP {
+	readonly struct ILFrameIP {
 		public uint Offset { get; }
 		public CorDebugMappingResult Mapping { get; }
 
@@ -38,14 +38,14 @@ namespace dndbg.Engine {
 
 		public override string ToString() {
 			if (IsExact)
-				return string.Format("0x{0:X4}", Offset);
+				return $"0x{Offset:X4}";
 			if (IsApproximate)
-				return string.Format("~0x{0:X4}", Offset);
+				return $"~0x{Offset:X4}";
 			if (IsProlog)
 				return "prolog";
 			if (IsEpilog)
 				return "epilog";
-			return string.Format("(0x{0:X4}, {1})", Offset, Mapping);
+			return $"(0x{Offset:X4}, {Mapping})";
 		}
 	}
 }

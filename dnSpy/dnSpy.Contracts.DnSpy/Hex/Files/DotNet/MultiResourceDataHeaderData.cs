@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// Multi file resource element info
 	/// </summary>
-	public struct MultiResourceInfo {
+	public readonly struct MultiResourceInfo {
 		/// <summary>
 		/// Gets the resource name
 		/// </summary>

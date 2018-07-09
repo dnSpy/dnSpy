@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ using dnSpy.Culture;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Extension;
 using dnSpy.Images;
-using dnSpy.Roslyn.Shared.Text.Classification;
+using dnSpy.Roslyn.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
 using Microsoft.VisualStudio.Composition;
@@ -100,8 +100,6 @@ namespace dnSpy.MainApp {
 			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
 			args = new AppCommandLineArgs();
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
-			if (args.SingleInstance)
-				SwitchToOtherInstance();
 
 			AddAppContextFixes();
 			InstallExceptionHandlers();
@@ -192,7 +190,7 @@ namespace dnSpy.MainApp {
 			var parts = discovery.CreatePartsAsync(mefAssemblies).Result;
 			Debug.Assert(parts.ThrowOnErrors() == parts);
 
-			var catalog = ComposableCatalog.Create(resolver).AddParts(parts).WithDesktopSupport();
+			var catalog = ComposableCatalog.Create(resolver).AddParts(parts);
 			var config = CompositionConfiguration.Create(catalog);
 			Debug.Assert(config.ThrowOnErrors() == config);
 
@@ -279,7 +277,7 @@ namespace dnSpy.MainApp {
 			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
 			list.Add(typeof(MetroWindow).Assembly);
-			// dnSpy.Roslyn.Shared
+			// dnSpy.Roslyn
 			list.Add(typeof(RoslynClassifier).Assembly);
 			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)
 			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly);
@@ -289,6 +287,8 @@ namespace dnSpy.MainApp {
 			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly);
 			// dnSpy.Roslyn.EditorFeatures
 			list.Add(typeof(Roslyn.EditorFeatures.Dummy).Assembly);
+			// dnSpy.Roslyn.CSharp.EditorFeatures
+			list.Add(typeof(Roslyn.CSharp.EditorFeatures.Dummy).Assembly);
 			// dnSpy.Roslyn.VisualBasic.EditorFeatures
 			list.Add(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly);
 			foreach (var asm in LoadExtensionAssemblies())
@@ -368,7 +368,7 @@ namespace dnSpy.MainApp {
 
 		bool CanLoadExtension(Assembly asm) {
 			var ourPublicKeyToken = GetType().Assembly.GetName().GetPublicKeyToken();
-			var minimumVersion = new Version(3, 0, 0, 0);
+			var minimumVersion = new Version(5, 0, 0, 0);
 			foreach (var a in asm.GetReferencedAssemblies()) {
 				if (!Equals(ourPublicKeyToken, a.GetPublicKeyToken()))
 					continue;
@@ -503,6 +503,9 @@ namespace dnSpy.MainApp {
 			base.OnStartup(e);
 
 			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
+
+			if (args.SingleInstance && !exportProvider.GetExportedValue<AppSettingsImpl>().AllowMoreThanOneInstance)
+				SwitchToOtherInstance();
 
 			var cultureService = exportProvider.GetExportedValue<CultureService>();
 			cultureService.Initialize(args);

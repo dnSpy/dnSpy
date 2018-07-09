@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				var module = GetCurrentModule(documentTabService);
-				return module == null ? null : module.EntryPoint as MethodDef;
+				return module?.EntryPoint;
 			}
 
 			public override void Execute(IMenuItemContext context) {
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs {
 				var nodes = context.Find<TreeNodeData[]>();
 				var node = nodes == null || nodes.Length == 0 ? null : nodes[0];
 				var module = node.GetModule();
-				return module == null ? null : module.EntryPoint as MethodDef;
+				return module?.EntryPoint;
 			}
 
 			public override void Execute(IMenuItemContext context) {
@@ -102,7 +102,7 @@ namespace dnSpy.Documents.Tabs {
 				if (module == null)
 					return null;
 				var gt = module.GlobalType;
-				return gt == null ? null : gt.FindStaticConstructor();
+				return gt?.FindStaticConstructor();
 			}
 
 			public override void Execute(IMenuItemContext context) {
@@ -130,7 +130,7 @@ namespace dnSpy.Documents.Tabs {
 				if (module == null)
 					return null;
 				var gt = module.GlobalType;
-				return gt == null ? null : gt.FindStaticConstructor();
+				return gt?.FindStaticConstructor();
 			}
 
 			public override void Execute(IMenuItemContext context) {

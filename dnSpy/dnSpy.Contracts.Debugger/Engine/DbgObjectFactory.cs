@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -240,7 +240,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	/// Bound breakpoint info
 	/// </summary>
 	/// <typeparam name="T">Type of data</typeparam>
-	public struct DbgBoundCodeBreakpointInfo<T> where T : class {
+	public readonly struct DbgBoundCodeBreakpointInfo<T> where T : class {
 		/// <summary>
 		/// Value used when the bound breakpoint's address isn't known
 		/// </summary>

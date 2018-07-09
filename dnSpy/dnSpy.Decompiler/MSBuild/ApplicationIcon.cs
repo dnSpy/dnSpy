@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,14 +55,15 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (iconDir == null)
 				return null;
 
-			var iconData = TryCreateIcon(dir.Data[0].Data, iconDir);
+			var reader = dir.Data[0].CreateReader();
+			var iconData = TryCreateIcon(ref reader, iconDir);
 			if (iconData == null)
 				return null;
 
 			return new ApplicationIcon(filenameCreator.CreateName(filenameNoExt + ".ico"), iconData);
 		}
 
-		static byte[] TryCreateIcon(IBinaryReader reader, ResourceDirectory iconDir) {
+		static byte[] TryCreateIcon(ref DataReader reader, ResourceDirectory iconDir) {
 			try {
 				reader.Position = 0;
 				var outStream = new MemoryStream();
@@ -104,11 +105,10 @@ namespace dnSpy.Decompiler.MSBuild {
 					var d = iconDir.Directories.FirstOrDefault(a => a.Name == new ResourceName(e.nID));
 					if (d == null || d.Data.Count == 0)
 						return null;
-					var r = d.Data[0].Data;
+					var r = d.Data[0].CreateReader();
 					Debug.Assert(r.Length == e.dwBytesInRes);
 					if (r.Length < e.dwBytesInRes)
 						return null;
-					r.Position = 0;
 					writer.Write(r.ReadBytes((int)e.dwBytesInRes), 0, (int)e.dwBytesInRes);
 				}
 

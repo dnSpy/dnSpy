@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -37,6 +38,9 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				if (DataContext is AttachToProcessVM vm) {
 					vm.PropertyChanged += AttachToProcessVM_PropertyChanged;
 					vm.AllItems.CollectionChanged += AllItems_CollectionChanged;
+					CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
+						(s2, e2) => vm.Copy(listView.SelectedItems.OfType<ProgramVM>().ToArray()),
+						(s2, e2) => e2.CanExecute = listView.SelectedItems.Count != 0));
 				}
 			};
 			Loaded += OnLoaded;

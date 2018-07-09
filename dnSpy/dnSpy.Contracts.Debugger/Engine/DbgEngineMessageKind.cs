@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,5 +67,11 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// SetIP() is complete
 		/// </summary>
 		SetIPComplete,
+
+		/// <summary>
+		/// Message written by the debugged program. The program is still running.
+		/// This message is sent when a GUI app writes to the console.
+		/// </summary>
+		AsyncProgramMessage,
 	}
 }

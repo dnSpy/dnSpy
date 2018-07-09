@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -109,7 +109,7 @@ namespace dnSpy.Text.Operations {
 			EditorOperationsFactoryService.RemoveFromProperties(this);
 		}
 
-		struct SavedCaretSelection {
+		readonly struct SavedCaretSelection {
 			readonly EditorOperations editorOperations;
 			public VirtualSnapshotPoint AnchorPoint { get; }
 			public VirtualSnapshotPoint ActivePoint { get; }
@@ -428,7 +428,7 @@ namespace dnSpy.Text.Operations {
 			return Span.FromBounds(start, end);
 		}
 
-		struct DeleteHorizontalWhitespaceInfo {
+		readonly struct DeleteHorizontalWhitespaceInfo {
 			public Span Span { get; }
 			public bool AddSpace { get; }
 			public DeleteHorizontalWhitespaceInfo(Span span, bool addSpace) {
@@ -965,7 +965,10 @@ namespace dnSpy.Text.Operations {
 		public bool InsertFile(string filePath) {
 			if (filePath == null)
 				throw new ArgumentNullException(nameof(filePath));
-			return InsertText(File.ReadAllText(filePath), false, false);
+			const bool isProvisional = false;
+			const bool overwriteMode = false;
+			const bool isFullLineData = false;
+			return InsertText(File.ReadAllText(filePath), isProvisional, overwriteMode, isFullLineData);
 		}
 
 		public bool InsertProvisionalText(string text) => InsertText(text, true);
@@ -976,25 +979,36 @@ namespace dnSpy.Text.Operations {
 				overwriteMode = false;
 			if (Caret.InVirtualSpace)
 				overwriteMode = false;
-			return InsertText(text, isProvisional, overwriteMode);
+			const bool isFullLineData = false;
+			return InsertText(text, isProvisional, overwriteMode, isFullLineData);
 		}
 
 		public bool InsertFinalNewLine() => false;//TODO:
 
 		public bool Paste() {
 			string text;
+			bool isFullLineData;
 			try {
-				text = Clipboard.GetText();
+				var dataObj = Clipboard.GetDataObject();
+				if (dataObj == null)
+					return false;
+				text = (string)dataObj.GetData(DataFormats.UnicodeText);
+				var fullLineDataObj = dataObj.GetData(VS_COPY_FULL_LINE_DATA_FORMAT);
+				isFullLineData = fullLineDataObj is bool && (bool)fullLineDataObj;
 			}
 			catch (ExternalException) {
 				return false;
 			}
 			if (text == null)
 				return false;
-			return InsertText(text, false, false);
+			const bool isProvisional = false;
+			const bool overwriteMode = false;
+			if (!Selection.IsEmpty)
+				isFullLineData = false;
+			return InsertText(text, isProvisional, overwriteMode, isFullLineData);
 		}
 
-		bool InsertText(string text, bool isProvisional, bool overwriteMode) {
+		bool InsertText(string text, bool isProvisional, bool overwriteMode, bool isFullLineData) {
 			var spans = Selection.SelectedSpans;
 			Selection.Clear();
 			var caretPos = Caret.Position;
@@ -1006,9 +1020,16 @@ namespace dnSpy.Text.Operations {
 			var newPos = caretPos.VirtualBufferPosition.TranslateTo(Snapshot, PointTrackingMode.Negative);
 
 			if (!overwriteMode) {
-				var spaces = GetWhitespaceForVirtualSpace(newPos);
-				TextBuffer.Insert(newPos.Position, spaces + text);
-				newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
+				if (isFullLineData) {
+					var line = newPos.Position.GetContainingLine();
+					TextBuffer.Insert(line.Start, text);
+					newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
+				}
+				else {
+					var spaces = GetWhitespaceForVirtualSpace(newPos);
+					TextBuffer.Insert(newPos.Position, spaces + text);
+					newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
+				}
 			}
 			else {
 				Debug.Assert(!newPos.IsInVirtualSpace);
@@ -1017,6 +1038,8 @@ namespace dnSpy.Text.Operations {
 				int columnsLeft = line.Length - column;
 				int replaceLength = Math.Min(columnsLeft, text.Length);
 				TextBuffer.Replace(new Span(newPos.Position.Position, replaceLength), text);
+				if (replaceLength != 0)
+					newPos = new VirtualSnapshotPoint(newPos.Position + replaceLength);
 				newPos = new VirtualSnapshotPoint(newPos.Position.TranslateTo(Snapshot, PointTrackingMode.Positive));
 			}
 

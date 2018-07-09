@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -116,6 +116,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexAdornmentLayerDefinitionService adornmentLayerDefinitionService;
 		readonly HexLineTransformProviderService lineTransformProviderService;
 		readonly Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners;
+		readonly Lazy<HexViewCreationListener, IDeferrableTextViewRoleMetadata>[] hexViewCreationListeners;
 		readonly HexAdornmentLayerCollection normalAdornmentLayerCollection;
 		readonly HexAdornmentLayerCollection overlayAdornmentLayerCollection;
 		readonly HexAdornmentLayerCollection underlayAdornmentLayerCollection;
@@ -144,7 +145,7 @@ namespace dnSpy.Hex.Editor {
 		static readonly HexAdornmentLayerDefinition selectionAdornmentLayerDefinition;
 #pragma warning restore 0169
 
-		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineFormatterFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>[] hexCursorProviderFactories) {
+		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineFormatterFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, Lazy<HexViewCreationListener, IDeferrableTextViewRoleMetadata>[] hexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>[] hexCursorProviderFactories) {
 			if (roles == null)
 				throw new ArgumentNullException(nameof(roles));
 			if (hexEditorOptionsFactoryService == null)
@@ -163,6 +164,8 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(spaceReservationStackProvider));
 			if (wpfHexViewCreationListeners == null)
 				throw new ArgumentNullException(nameof(wpfHexViewCreationListeners));
+			if (hexViewCreationListeners == null)
+				throw new ArgumentNullException(nameof(hexViewCreationListeners));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			if (hexCursorProviderFactories == null)
@@ -181,6 +184,7 @@ namespace dnSpy.Hex.Editor {
 			this.adornmentLayerDefinitionService = adornmentLayerDefinitionService ?? throw new ArgumentNullException(nameof(adornmentLayerDefinitionService));
 			this.lineTransformProviderService = lineTransformProviderService ?? throw new ArgumentNullException(nameof(lineTransformProviderService));
 			this.wpfHexViewCreationListeners = wpfHexViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
+			this.hexViewCreationListeners = hexViewCreationListeners.Where(a => roles.ContainsAny(a.Metadata.TextViewRoles)).ToArray();
 			recreateLineTransformProvider = true;
 			normalAdornmentLayerCollection = new HexAdornmentLayerCollection(this, HexLayerKind.Normal);
 			overlayAdornmentLayerCollection = new HexAdornmentLayerCollection(this, HexLayerKind.Overlay);
@@ -319,6 +323,8 @@ namespace dnSpy.Hex.Editor {
 
 		void NotifyHexViewCreated() {
 			foreach (var lz in wpfHexViewCreationListeners)
+				lz.Value.HexViewCreated(this);
+			foreach (var lz in hexViewCreationListeners)
 				lz.Value.HexViewCreated(this);
 		}
 
@@ -529,7 +535,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override Brush Background {
-			get { return canvas.Background; }
+			get => canvas.Background;
 			set {
 				if (canvas.Background != value) {
 					canvas.Background = value;
@@ -540,7 +546,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override double ZoomLevel {
-			get { return zoomLevel; }
+			get => zoomLevel;
 			set {
 				if (IsClosed)
 					return;
@@ -580,7 +586,7 @@ namespace dnSpy.Hex.Editor {
 		public override double ViewportWidth => canvas.ActualWidth;
 		public override double ViewportHeight => canvas.ActualHeight;
 		public override double ViewportLeft {
-			get { return viewportLeft; }
+			get => viewportLeft;
 			set {
 				if (double.IsNaN(value))
 					throw new ArgumentOutOfRangeException(nameof(value));
@@ -1042,8 +1048,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override event EventHandler<HexMouseHoverEventArgs> MouseHover {
-			add { mouseHoverHelper.MouseHover += value; }
-			remove { mouseHoverHelper.MouseHover -= value; }
+			add => mouseHoverHelper.MouseHover += value;
+			remove => mouseHoverHelper.MouseHover -= value;
 		}
 		readonly MouseHoverHelper mouseHoverHelper;
 

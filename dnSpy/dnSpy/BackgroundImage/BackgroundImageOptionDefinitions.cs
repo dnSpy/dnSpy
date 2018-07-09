@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.BackgroundImage {
 	static class BackgroundImageOptionDefinitions {
 		[ExportBackgroundImageOptionDefinition(double.PositiveInfinity)]
-		sealed class Default : IBackgroundImageOptionDefinition2 {
+		sealed class Default : IBackgroundImageOptionDefinition {
 			public string Id => "Default";
 			public string DisplayName => dnSpy_Resources.BgImgDisplayName_Default;
 			public double UIOrder => double.PositiveInfinity;
@@ -44,6 +44,7 @@ namespace dnSpy.BackgroundImage {
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
 			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer);
+			public bool IsSupported(HexView hexView) => false;
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_Repl)]
@@ -54,6 +55,7 @@ namespace dnSpy.BackgroundImage {
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
 			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.ReplEditor);
+			public bool IsSupported(HexView hexView) => false;
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_CodeEditor)]
@@ -64,6 +66,7 @@ namespace dnSpy.BackgroundImage {
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
 			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor);
+			public bool IsSupported(HexView hexView) => false;
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_Logger)]
@@ -74,10 +77,11 @@ namespace dnSpy.BackgroundImage {
 			public bool UserVisible => true;
 			public DefaultImageSettings GetDefaultImageSettings() => null;
 			public bool IsSupported(ITextView textView) => textView.Roles.Contains(PredefinedDsTextViewRoles.LogEditor);
+			public bool IsSupported(HexView hexView) => false;
 		}
 
 		[ExportBackgroundImageOptionDefinition(BackgroundImageOptionDefinitionConstants.AttrOrder_HexEditor)]
-		sealed class HexEditor : IBackgroundImageOptionDefinition2 {
+		sealed class HexEditor : IBackgroundImageOptionDefinition {
 			public string Id => "Hex Editor";
 			public string DisplayName => dnSpy_Resources.BgImgDisplayName_HexEditor;
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_HexEditor;

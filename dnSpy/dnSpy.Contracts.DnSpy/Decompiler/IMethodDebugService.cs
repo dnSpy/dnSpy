@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,9 +38,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Gets <see cref="MethodSourceStatement"/>s
 		/// </summary>
 		/// <param name="textPosition">Text position</param>
-		/// <param name="sameMethod">true to only return statements within the method that contains <paramref name="textPosition"/></param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod = false);
+		IList<MethodSourceStatement> FindByTextPosition(int textPosition, FindByTextPositionOptions options = FindByTextPositionOptions.None);
 
 		/// <summary>
 		/// Gets a code <see cref="MethodSourceStatement"/>
@@ -81,6 +81,27 @@ namespace dnSpy.Contracts.Decompiler {
 	}
 
 	/// <summary>
+	/// Find options
+	/// </summary>
+	public enum FindByTextPositionOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// If set, only return statements within the method that contains the text position
+		/// </summary>
+		SameMethod				= 0x00000001,
+
+		/// <summary>
+		/// If there are nested methods or delegates in the method, return the outer most statement.
+		/// If it's not set, the statement inside the nested method / delegate is returned.
+		/// </summary>
+		OuterMostStatement		= 0x00000002,
+	}
+
+	/// <summary>
 	/// Constants
 	/// </summary>
 	internal static class MethodDebugServiceConstants {
@@ -116,7 +137,7 @@ namespace dnSpy.Contracts.Decompiler {
 			public static readonly EmptyMethodDebugService Instance = new EmptyMethodDebugService();
 
 			int IMethodDebugService.Count => 0;
-			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition, bool sameMethod) => Array.Empty<MethodSourceStatement>();
+			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition, FindByTextPositionOptions options) => Array.Empty<MethodSourceStatement>();
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(ModuleTokenId token, uint codeOffset) => null;
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint codeOffset) => null;
 			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(ModuleTokenId token) => null;

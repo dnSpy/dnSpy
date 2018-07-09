@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -71,31 +71,21 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 	}
 
-	[Flags]
-	enum TracepointMessageFlags : byte {
-		None					= 0,
-		Decimal					= 0x01,
-		Hexadecimal				= 0x02,
-		NoQuotes				= 0x04,
-	}
-
-	struct TracepointMessagePart {
+	readonly struct TracepointMessagePart {
 		public TracepointMessageKind Kind => (TracepointMessageKind)(val1 & 0xFF);
 		public int Number => (int)(val1 >> 8);
 		public string String { get; }
-		public int Length => (int)(val2 >> 3);
-		public TracepointMessageFlags Flags => (TracepointMessageFlags)(val2 & 7);
-		uint val1;
-		uint val2;
+		public int Length => (int)val2;
+		readonly uint val1;
+		readonly uint val2;
 
-		public TracepointMessagePart(TracepointMessageKind kind, string @string, int length, TracepointMessageFlags flags = TracepointMessageFlags.None) {
+		public TracepointMessagePart(TracepointMessageKind kind, string @string, int length) {
 			val1 = (uint)kind;
 			String = @string;
-			val2 = (uint)(length << 3) | (uint)flags;
+			val2 = (uint)length;
 			Debug.Assert(Kind == kind);
 			Debug.Assert(Number == 0);
 			Debug.Assert(Length == length);
-			Debug.Assert(Flags == flags);
 		}
 
 		public TracepointMessagePart(TracepointMessageKind kind, int number, int length) {
@@ -103,11 +93,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			Debug.Assert(0 <= number && number <= 0x00FFFFFF);
 			val1 = (uint)kind | ((uint)number << 8);
 			String = null;
-			val2 = (uint)(length << 3);
+			val2 = (uint)length;
 			Debug.Assert(Kind == kind);
 			Debug.Assert(Number == number);
 			Debug.Assert(Length == length);
-			Debug.Assert(Flags == 0);
 		}
 	}
 

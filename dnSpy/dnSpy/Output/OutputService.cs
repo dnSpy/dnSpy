@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -71,7 +71,7 @@ namespace dnSpy.Output {
 		public string WordWrapToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_WordWrap_ToolTip, dnSpy_Resources.ShortCutKeyCtrlECtrlW);
 
 		public bool WordWrap {
-			get { return (outputWindowOptionsService.Default.WordWrapStyle & WordWrapStyles.WordWrap) != 0; }
+			get => (outputWindowOptionsService.Default.WordWrapStyle & WordWrapStyles.WordWrap) != 0;
 			set {
 				if (WordWrap != value) {
 					if (value)
@@ -83,13 +83,13 @@ namespace dnSpy.Output {
 		}
 
 		public bool ShowLineNumbers {
-			get { return outputWindowOptionsService.Default.LineNumberMargin; }
-			set { outputWindowOptionsService.Default.LineNumberMargin = value; }
+			get => outputWindowOptionsService.Default.LineNumberMargin;
+			set => outputWindowOptionsService.Default.LineNumberMargin = value;
 		}
 
 		public bool ShowTimestamps {
-			get { return outputWindowOptionsService.Default.ShowTimestamps; }
-			set { outputWindowOptionsService.Default.ShowTimestamps = value; }
+			get => outputWindowOptionsService.Default.ShowTimestamps;
+			set => outputWindowOptionsService.Default.ShowTimestamps = value;
 		}
 
 		public object TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
@@ -98,7 +98,7 @@ namespace dnSpy.Output {
 		public double ZoomLevel => SelectedOutputBufferVM?.ZoomLevel ?? 100;
 
 		public OutputBufferVM SelectedOutputBufferVM {
-			get { return selectedOutputBufferVM; }
+			get => selectedOutputBufferVM;
 			set {
 				if (selectedOutputBufferVM != value) {
 					selectedOutputBufferVM = value;
@@ -253,7 +253,7 @@ namespace dnSpy.Output {
 				MsgBox.Instance.Show(ex);
 			}
 		}
-		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Resources.AllFiles, dnSpy_Resources.TextFiles);
+		static readonly string TEXTFILES_FILTER = $"{dnSpy_Resources.TextFiles} (*.txt)|*.txt|{dnSpy_Resources.AllFiles} (*.*)|*.*";
 
 		string GetFilename(OutputBufferVM vm) {
 			// Same as VS2015

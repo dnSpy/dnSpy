@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
-	struct ObjectConstantsFactory {
+	readonly struct ObjectConstantsFactory {
 		const int FuncEvalTimeoutMilliseconds = 5000;
 		readonly DbgProcess process;
 		readonly ThreadMirror thread;

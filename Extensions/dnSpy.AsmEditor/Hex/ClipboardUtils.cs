@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			var sb = new StringBuilder(data.Length * 2);
 			foreach (var b in data)
-				sb.Append(string.Format("{0:X2}", b));
+				sb.Append(b.ToString("X2"));
 			return sb.ToString();
 		}
 

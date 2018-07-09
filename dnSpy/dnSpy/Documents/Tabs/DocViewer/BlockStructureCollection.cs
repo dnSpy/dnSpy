@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		readonly SpanDataCollection<CodeBracesRange[]> coll;
 
-		struct Builder {
+		readonly struct Builder {
 			readonly List<SpanData<CodeBracesRange[]>> infos;
 			readonly List<CodeBracesRange> list;
 			readonly Stack<CodeBracesRange[]> listStack;

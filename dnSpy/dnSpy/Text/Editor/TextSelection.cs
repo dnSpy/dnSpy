@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,12 +43,12 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler SelectionChanged;
 
 		public bool IsActive {
-			get { return textSelectionLayer.IsActive; }
-			set { textSelectionLayer.IsActive = value; }
+			get => textSelectionLayer.IsActive;
+			set => textSelectionLayer.IsActive = value;
 		}
 
 		public bool ActivationTracksFocus {
-			get { return activationTracksFocus; }
+			get => activationTracksFocus;
 			set {
 				if (activationTracksFocus == value)
 					return;
@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public TextSelectionMode Mode {
-			get { return mode; }
+			get => mode;
 			set {
 				if (mode == value)
 					return;

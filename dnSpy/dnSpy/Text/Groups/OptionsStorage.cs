@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Text.Groups {
 		const string OptionNameAttr = "name";
 		const string OptionValueAttr = "value";
 
-		struct ContentTypeKey : IEquatable<ContentTypeKey> {
+		readonly struct ContentTypeKey : IEquatable<ContentTypeKey> {
 			readonly string groupName, contentType;
 			public ContentTypeKey(string groupName, string contentType) {
 				this.groupName = groupName;
@@ -45,8 +45,8 @@ namespace dnSpy.Text.Groups {
 			public override string ToString() => $"({groupName},{contentType})";
 		}
 
-		struct OptionKey : IEquatable<OptionKey> {
-			/*readonly*/ ContentTypeKey contentTypeKey;
+		readonly struct OptionKey : IEquatable<OptionKey> {
+			readonly ContentTypeKey contentTypeKey;
 			readonly string name;
 			public OptionKey(ContentTypeKey contentTypeKey, string name) {
 				this.contentTypeKey = contentTypeKey;

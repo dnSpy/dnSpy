@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using dnlib.DotNet;
-using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 
@@ -40,8 +38,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public EditMethodCodeVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
-			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, methodToEdit.Module, methodToEdit.DeclaringType) {
+		public EditMethodCodeVM(EditCodeVMOptions options, MethodDef methodToEdit, IList<MethodSourceStatement> statementsInMethodToEdit)
+			: base(options, methodToEdit.DeclaringType) {
 			this.methodToEdit = methodToEdit;
 			methodSourceStatement = statementsInMethodToEdit.Count == 0 ? (MethodSourceStatement?)null : statementsInMethodToEdit[0];
 			StartDecompile();
@@ -60,27 +58,25 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			DecompileTypeMethods options;
 
-			state.DecompilationContext.CalculateBinSpans = true;
+			state.DecompilationContext.CalculateILSpans = true;
 			options = new DecompileTypeMethods(state.MainOutput, state.DecompilationContext, type);
 			options.Methods.Add(methodToEdit);
 			options.DecompileHidden = false;
-			options.MakeEverythingPublic = makeEverythingPublic;
 			decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 			state.CancellationToken.ThrowIfCancellationRequested();
 
-			state.DecompilationContext.CalculateBinSpans = false;
+			state.DecompilationContext.CalculateILSpans = false;
 			options = new DecompileTypeMethods(state.HiddenOutput, state.DecompilationContext, type);
 			options.Methods.Add(methodToEdit);
 			options.DecompileHidden = true;
-			options.MakeEverythingPublic = makeEverythingPublic;
 			decompiler.Decompile(DecompilationType.TypeMethods, options);
 
 			state.CancellationToken.ThrowIfCancellationRequested();
 
 			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, state.MainOutput.ToString(), state.MainOutput.Span);
-			result.AddDocument(MAIN_G_CODE_NAME, state.HiddenOutput.ToString(), null);
+			result.AddDocument(MainCodeName, state.MainOutput.ToString(), state.MainOutput.Span);
+			result.AddDocument(MainGeneratedCodeName, state.HiddenOutput.ToString(), null);
 			return Task.FromResult(result);
 		}
 

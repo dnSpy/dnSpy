@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,36 +19,76 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace dnSpy.Documents {
 	// It's a class since very few of these are created
-	[DebuggerDisplay("{Bitness,d}-bit {Version,nq} {Path,nq}")]
-	sealed class FrameworkPath : IComparable<FrameworkPath> {
-		public readonly string Path;
+	[DebuggerDisplay("{Bitness,d}-bit {Version,nq} {DebuggerPaths,nq}")]
+	sealed class FrameworkPaths : IComparable<FrameworkPaths> {
+		public readonly string[] Paths;
 		public readonly int Bitness;
-		public /*readonly*/ FrameworkVersion Version;
-		public FrameworkPath(string path, int bitness, FrameworkVersion version) {
-			Path = path ?? throw new ArgumentNullException(nameof(path));
-			Bitness = bitness;
-			Version = version;
+		public readonly FrameworkVersion Version;
+
+		string DebuggerPaths => string.Join(Path.PathSeparator.ToString(), Paths);
+
+		public FrameworkPaths(FrameworkPath[] paths) {
+			var firstPath = paths[0];
+#if DEBUG
+			for (int i = 1; i < paths.Length; i++) {
+				if (!StringComparer.OrdinalIgnoreCase.Equals(Path.GetDirectoryName(firstPath.Path), Path.GetDirectoryName(paths[i].Path)))
+					throw new ArgumentException();
+				if (firstPath.Bitness != paths[i].Bitness)
+					throw new ArgumentException();
+				if (!firstPath.Version.Equals(paths[i].Version))
+					throw new ArgumentException();
+			}
+#endif
+			Paths = paths.Select(a => a.Path).ToArray();
+			Bitness = firstPath.Bitness;
+			Version = firstPath.Version;
 		}
 
-		public int CompareTo(FrameworkPath other) {
+		public int CompareTo(FrameworkPaths other) {
 			int c = Version.CompareTo(other.Version);
 			if (c != 0)
 				return c;
 			c = Bitness - other.Bitness;
 			if (c != 0)
 				return c;
-			return StringComparer.OrdinalIgnoreCase.Compare(Path, other.Path);
+
+			return StringComparer.OrdinalIgnoreCase.Compare(Path.GetDirectoryName(Paths[0]), Path.GetDirectoryName(other.Paths[0]));
+		}
+
+		internal bool HasDotNetCoreAppPath {
+			get {
+				foreach (var p in Paths) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(p)), "Microsoft.NETCore.App"))
+						return true;
+				}
+				return false;
+			}
 		}
 	}
 
-	struct FrameworkVersion : IComparable<FrameworkVersion> {
-		public int Major;
-		public int Minor;
-		public int Patch;
-		public string Extra;
+	// It's a class since very few of these are created
+	[DebuggerDisplay("{Bitness,d}-bit {Version,nq} {Path,nq}")]
+	sealed class FrameworkPath {
+		public readonly string Path;
+		public readonly int Bitness;
+		public readonly FrameworkVersion Version;
+		public FrameworkPath(string path, int bitness, FrameworkVersion version) {
+			Path = path ?? throw new ArgumentNullException(nameof(path));
+			Bitness = bitness;
+			Version = version;
+		}
+	}
+
+	readonly struct FrameworkVersion : IComparable<FrameworkVersion>, IEquatable<FrameworkVersion> {
+		public readonly int Major;
+		public readonly int Minor;
+		public readonly int Patch;
+		public readonly string Extra;
 		public FrameworkVersion(int major, int minor, int patch, string extra) {
 			Major = major;
 			Minor = minor;
@@ -83,5 +123,14 @@ namespace dnSpy.Documents {
 				return -1;
 			return StringComparer.Ordinal.Compare(a, b);
 		}
+
+		public bool Equals(FrameworkVersion other) =>
+			Major == other.Major &&
+			Minor == other.Minor &&
+			Patch == other.Patch &&
+			StringComparer.Ordinal.Equals(Extra, other.Extra);
+
+		public override bool Equals(object obj) => obj is FrameworkVersion other && Equals(other);
+		public override int GetHashCode() => Major ^ Minor ^ Patch ^ StringComparer.Ordinal.GetHashCode(Extra ?? string.Empty);
 	}
 }

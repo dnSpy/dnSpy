@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,8 +75,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
 		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		struct LocationsResult : IDisposable {
-			public DbgTextViewBreakpointLocationResult? locRes;
+		readonly struct LocationsResult : IDisposable {
+			public readonly DbgTextViewBreakpointLocationResult? locRes;
 			readonly Lazy<DbgManager> dbgManager;
 			readonly List<DbgCodeLocation> allLocations;
 
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (res == null)
 				res = result;
 			else if (useIfSameSpan) {
-				if (result.Value.Span.Start <= res.Value.Span.Start)
+				if (result.Value.Span.Start == res.Value.Span.Start)
 					res = result;
 			}
 			else if (result.Value.Span.Start < res.Value.Span.Start)
@@ -176,11 +176,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public override bool CanToggleCreateBreakpoint => GetToggleCreateBreakpointKind() != ToggleCreateBreakpointKind.None;
 		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
 
-		struct ToggleCreateBreakpointInfoResult : IDisposable {
+		readonly struct ToggleCreateBreakpointInfoResult : IDisposable {
 			readonly Lazy<DbgManager> dbgManager;
-			public ToggleCreateBreakpointKind kind;
-			public DbgCodeBreakpoint[] breakpoints;
-			public DbgCodeLocation[] locations;
+			public readonly ToggleCreateBreakpointKind kind;
+			public readonly DbgCodeBreakpoint[] breakpoints;
+			public readonly DbgCodeLocation[] locations;
 			public ToggleCreateBreakpointInfoResult(Lazy<DbgManager> dbgManager, ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) {
 				this.dbgManager = dbgManager;
 				this.kind = kind;

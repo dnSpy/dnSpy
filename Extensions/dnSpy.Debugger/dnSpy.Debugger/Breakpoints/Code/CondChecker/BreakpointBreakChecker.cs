@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,6 +52,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
+			if (thread == null)
+				return false;
 			var bp = (DbgCodeBreakpointImpl)boundBreakpoint.Breakpoint;
 			if (bp.IsClosed || boundBreakpoint.IsClosed)
 				return false;
@@ -68,7 +70,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (settings.Filter is DbgCodeBreakpointFilter filter) {
 				checkRes = dbgCodeBreakpointFilterChecker.Value.ShouldBreak(boundBreakpoint, thread, filter);
 				if (checkRes.ErrorMessage != null) {
-					thread.Process.DbgManager.ShowError(checkRes.ErrorMessage);
+					boundBreakpoint.Process.DbgManager.ShowError(checkRes.ErrorMessage);
 					return true;
 				}
 				if (!checkRes.ShouldBreak)
@@ -78,7 +80,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (settings.Condition is DbgCodeBreakpointCondition condition) {
 				checkRes = dbgCodeBreakpointConditionChecker.Value.ShouldBreak(boundBreakpoint, thread, condition);
 				if (checkRes.ErrorMessage != null) {
-					thread.Process.DbgManager.ShowError(checkRes.ErrorMessage);
+					boundBreakpoint.Process.DbgManager.ShowError(checkRes.ErrorMessage);
 					return true;
 				}
 				if (!checkRes.ShouldBreak)
@@ -90,7 +92,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (settings.HitCount is DbgCodeBreakpointHitCount hitCount) {
 				checkRes = dbgCodeBreakpointHitCountChecker.Value.ShouldBreak(boundBreakpoint, thread, hitCount, currentHitCount);
 				if (checkRes.ErrorMessage != null) {
-					thread.Process.DbgManager.ShowError(checkRes.ErrorMessage);
+					boundBreakpoint.Process.DbgManager.ShowError(checkRes.ErrorMessage);
 					return true;
 				}
 				if (!checkRes.ShouldBreak)

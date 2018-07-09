@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public static EnumVM[] CreateEnumArray(IEnumerable<ConstantType> constants) => constants.Select(a => typeToEnumVM[a]).ToArray();
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -498,7 +498,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigListDataFieldVM TypeArray { get; }
 
 		public bool ObjectArrayIsNull {
-			get { return objectArrayIsNull; }
+			get => objectArrayIsNull;
 			set {
 				if (objectArrayIsNull != value) {
 					objectArrayIsNull = value;
@@ -511,7 +511,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool objectArrayIsNull;
 
 		public bool BooleanArrayIsNull {
-			get { return booleanArrayIsNull; }
+			get => booleanArrayIsNull;
 			set {
 				if (booleanArrayIsNull != value) {
 					booleanArrayIsNull = value;
@@ -524,7 +524,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool booleanArrayIsNull;
 
 		public bool CharArrayIsNull {
-			get { return charArrayIsNull; }
+			get => charArrayIsNull;
 			set {
 				if (charArrayIsNull != value) {
 					charArrayIsNull = value;
@@ -537,7 +537,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool charArrayIsNull;
 
 		public bool SByteArrayIsNull {
-			get { return sbyteArrayIsNull; }
+			get => sbyteArrayIsNull;
 			set {
 				if (sbyteArrayIsNull != value) {
 					sbyteArrayIsNull = value;
@@ -550,7 +550,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool sbyteArrayIsNull;
 
 		public bool Int16ArrayIsNull {
-			get { return int16ArrayIsNull; }
+			get => int16ArrayIsNull;
 			set {
 				if (int16ArrayIsNull != value) {
 					int16ArrayIsNull = value;
@@ -563,7 +563,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool int16ArrayIsNull;
 
 		public bool Int32ArrayIsNull {
-			get { return int32ArrayIsNull; }
+			get => int32ArrayIsNull;
 			set {
 				if (int32ArrayIsNull != value) {
 					int32ArrayIsNull = value;
@@ -576,7 +576,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool int32ArrayIsNull;
 
 		public bool Int64ArrayIsNull {
-			get { return int64ArrayIsNull; }
+			get => int64ArrayIsNull;
 			set {
 				if (int64ArrayIsNull != value) {
 					int64ArrayIsNull = value;
@@ -589,7 +589,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool int64ArrayIsNull;
 
 		public bool ByteArrayIsNull {
-			get { return byteArrayIsNull; }
+			get => byteArrayIsNull;
 			set {
 				if (byteArrayIsNull != value) {
 					byteArrayIsNull = value;
@@ -602,7 +602,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool byteArrayIsNull;
 
 		public bool UInt16ArrayIsNull {
-			get { return uint16ArrayIsNull; }
+			get => uint16ArrayIsNull;
 			set {
 				if (uint16ArrayIsNull != value) {
 					uint16ArrayIsNull = value;
@@ -615,7 +615,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool uint16ArrayIsNull;
 
 		public bool UInt32ArrayIsNull {
-			get { return uint32ArrayIsNull; }
+			get => uint32ArrayIsNull;
 			set {
 				if (uint32ArrayIsNull != value) {
 					uint32ArrayIsNull = value;
@@ -628,7 +628,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool uint32ArrayIsNull;
 
 		public bool UInt64ArrayIsNull {
-			get { return uint64ArrayIsNull; }
+			get => uint64ArrayIsNull;
 			set {
 				if (uint64ArrayIsNull != value) {
 					uint64ArrayIsNull = value;
@@ -641,7 +641,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool uint64ArrayIsNull;
 
 		public bool SingleArrayIsNull {
-			get { return singleArrayIsNull; }
+			get => singleArrayIsNull;
 			set {
 				if (singleArrayIsNull != value) {
 					singleArrayIsNull = value;
@@ -654,7 +654,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool singleArrayIsNull;
 
 		public bool DoubleArrayIsNull {
-			get { return doubleArrayIsNull; }
+			get => doubleArrayIsNull;
 			set {
 				if (doubleArrayIsNull != value) {
 					doubleArrayIsNull = value;
@@ -667,7 +667,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool doubleArrayIsNull;
 
 		public bool StringArrayIsNull {
-			get { return stringArrayIsNull; }
+			get => stringArrayIsNull;
 			set {
 				if (stringArrayIsNull != value) {
 					stringArrayIsNull = value;
@@ -680,7 +680,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool stringArrayIsNull;
 
 		public bool EnumArrayIsNull {
-			get { return enumArrayIsNull; }
+			get => enumArrayIsNull;
 			set {
 				if (enumArrayIsNull != value) {
 					enumArrayIsNull = value;
@@ -693,7 +693,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool enumArrayIsNull;
 
 		public bool TypeArrayIsNull {
-			get { return typeArrayIsNull; }
+			get => typeArrayIsNull;
 			set {
 				if (typeArrayIsNull != value) {
 					typeArrayIsNull = value;

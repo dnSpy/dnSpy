@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand EditTypeCommand => new RelayCommand(a => EditType());
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		int index;
 
 		public bool IsPinned {
-			get { return Type is PinnedSig; }
+			get => Type is PinnedSig;
 			set {
 				var t = Type;
 				if (t == null)
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public TypeSig Type {
-			get { return type; }
+			get => type;
 			set {
 				if (type != value) {
 					type = value;
@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		TypeSig type;
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -93,7 +93,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		string name;
 
 		public bool DebuggerHidden {
-			get { return (Attributes & PdbLocalAttributes.DebuggerHidden) != 0; }
+			get => (Attributes & PdbLocalAttributes.DebuggerHidden) != 0;
 			set {
 				if (value)
 					Attributes |= PdbLocalAttributes.DebuggerHidden;
@@ -103,7 +103,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public PdbLocalAttributes Attributes {
-			get { return attributes; }
+			get => attributes;
 			set {
 				if (attributes != value) {
 					attributes = value;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -331,6 +331,7 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugObjectIdName),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerDisplayAttributeEval),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerNoStringQuotesEval),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugViewPropertyName),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

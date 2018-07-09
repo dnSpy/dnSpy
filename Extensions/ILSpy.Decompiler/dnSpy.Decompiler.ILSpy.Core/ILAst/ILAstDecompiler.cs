@@ -95,12 +95,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			DecompilerContext context = new DecompilerContext(settingsVersion, method.Module, MetadataTextColorProvider) {
 				CurrentType = method.DeclaringType,
 				CurrentMethod = method,
-				CalculateBinSpans = ctx.CalculateBinSpans,
+				CalculateILSpans = ctx.CalculateILSpans,
 			};
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
+			var stateMachineKind = StateMachineKind.None;
+			MethodDef inlinedMethod = null;
+			AsyncMethodDebugInfo asyncInfo = null;
+			string compilerName = null;
 			if (abortBeforeStep != null) {
-				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
+				var optimizer = new ILAstOptimizer();
+				optimizer.Optimize(context, ilMethod, out stateMachineKind, out inlinedMethod, out asyncInfo, abortBeforeStep.Value);
+				compilerName = optimizer.CompilerName;
 			}
 
 			if (context.CurrentMethodIsYieldReturn) {
@@ -141,7 +147,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
-			var builder = new MethodDebugInfoBuilder(settingsVersion, method, CreateSourceLocals(localVariables));
+			var builder = new MethodDebugInfoBuilder(settingsVersion, stateMachineKind, inlinedMethod ?? method, inlinedMethod != null ? method : null, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
+			builder.CompilerName = compilerName;
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);
 				if (!node.WritesNewLine)
@@ -175,6 +182,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 			var array = sourceLocalsList.ToArray();
 			sourceLocalsList.Clear();
+			return array;
+		}
+
+		readonly List<SourceParameter> sourceParametersList = new List<SourceParameter>();
+		SourceParameter[] CreateSourceParameters(HashSet<ILVariable> variables) {
+			foreach (var v in variables) {
+				if (!v.IsParameter)
+					continue;
+				sourceParametersList.Add(v.GetSourceParameter());
+			}
+			var array = sourceParametersList.ToArray();
+			sourceParametersList.Clear();
 			return array;
 		}
 

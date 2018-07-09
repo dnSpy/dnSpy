@@ -1473,7 +1473,28 @@ Biztosan ki akarja nyitni?</value>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>Az elavult tagok elrejtése a változó ablakban</value>
   </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Visszatérési értékek mutatása</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>GUI-s alkalmazások konzol kimenetének átirányítása a kimeneti ablakba</value>
+  </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Megkönnyíti a futtatható csomag hibakeresését</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Nyilvános tagok</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Nyers helyi változók mutatása</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Aszinkron hibakeresés engedélyezése</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Tulajdonságok és operátorok átlépése</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>_Kifejezés másolása</value>
   </data>
 </root>

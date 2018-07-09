@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.Property {
 		struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo {
+			readonly struct ModelInfo {
 				public readonly TypeDef OwnerType;
 				public readonly int PropertyIndex;
 				public readonly int[] MethodIndexes;
@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Property {
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					var info = infos[i];
+					ref readonly var info = ref infos[i];
 					info.OwnerType.Properties.Insert(info.PropertyIndex, node.PropertyDef);
 
 					for (int j = info.Methods.Length - 1; j >= 0; j--)

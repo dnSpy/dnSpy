@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -79,7 +79,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		IDocumentTab IDocumentTabService.ActiveTab {
-			get { return ActiveTabContentImpl; }
+			get => ActiveTabContentImpl;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));

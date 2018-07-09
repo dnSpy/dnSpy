@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Interop;
 
 namespace dnSpy.Controls {
-	struct Screen {
+	readonly struct Screen {
 		/// <summary>
 		/// true if we managed to get monitor info
 		/// </summary>
@@ -80,7 +80,7 @@ namespace dnSpy.Controls {
 			public int bottom;
 		}
 
-		MONITORINFOEX info;
+		readonly MONITORINFOEX info;
 
 		/// <summary>
 		/// Constructor

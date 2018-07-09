@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,15 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class VariablesProvider {
-		public abstract void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken);
+		public abstract void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body);
 		public abstract DbgDotNetValue GetValueAddress(int index, DmdType targetType);
 		public abstract DbgDotNetValueResult GetVariable(int index);
 		public abstract string SetVariable(int index, DmdType targetType, object value);

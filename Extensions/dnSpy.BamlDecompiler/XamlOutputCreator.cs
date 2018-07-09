@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using System.Xml.Linq;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.BamlDecompiler {
-	struct XamlOutputCreator {
+	readonly struct XamlOutputCreator {
 		readonly XamlOutputOptions options;
 
 		public XamlOutputCreator(XamlOutputOptions options) => this.options = options ?? throw new ArgumentNullException(nameof(options));

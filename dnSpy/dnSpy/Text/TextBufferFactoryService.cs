@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	[Export(typeof(ITextBufferFactoryService))]
-	sealed class TextBufferFactoryService : ITextBufferFactoryService {
+	sealed class TextBufferFactoryService : ITextBufferFactoryService3 {
 		public IContentType InertContentType { get; }
 		public IContentType PlaintextContentType { get; }
 		public IContentType TextContentType { get; }
@@ -59,6 +59,24 @@ namespace dnSpy.Text {
 			var textBuffer = new TextBuffer(contentType, text);
 			TextBufferCreated?.Invoke(this, new TextBufferCreatedEventArgs(textBuffer));
 			return textBuffer;
+		}
+
+		public ITextBuffer CreateTextBuffer(SnapshotSpan span, IContentType contentType) {
+			if (span.Snapshot == null)
+				throw new ArgumentException(nameof(span));
+			return CreateTextBuffer(span.GetText(), contentType);
+		}
+
+		public ITextBuffer CreateTextBuffer(TextReader reader, IContentType contentType, long length, string traceId) {
+			if (reader == null)
+				throw new ArgumentNullException(nameof(reader));
+			throw new NotImplementedException();
+		}
+
+		public ITextBuffer CreateTextBuffer(ITextImage image, IContentType contentType) {
+			if (image == null)
+				throw new ArgumentNullException(nameof(image));
+			return CreateTextBuffer(image.GetText(), contentType);
 		}
 
 		static string ToString(TextReader reader) {

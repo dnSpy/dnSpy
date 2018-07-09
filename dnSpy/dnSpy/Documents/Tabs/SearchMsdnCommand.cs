@@ -222,7 +222,7 @@ namespace dnSpy.Documents.Tabs {
 			if (member.DeclaringType == null)
 				memberName = member.FullName;
 			else
-				memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name.Replace('.', '-'));
+				memberName = $"{member.DeclaringType.FullName}.{member.Name.Replace('.', '-')}";
 
 			return string.Format(searchUrl, memberName.Replace('/', '.').Replace('`', '-'));
 		}
@@ -247,8 +247,12 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static void SearchMsdn(string address) {
-			if (!string.IsNullOrEmpty(address))
-				Process.Start(address);
+			if (!string.IsNullOrEmpty(address)) {
+				try {
+					Process.Start(address);
+				}
+				catch { }
+			}
 		}
 	}
 }

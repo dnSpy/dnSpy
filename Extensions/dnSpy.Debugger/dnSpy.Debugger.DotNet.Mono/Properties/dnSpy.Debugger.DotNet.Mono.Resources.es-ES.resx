@@ -121,7 +121,7 @@
     <value>A_rgumentos</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+    <value>_Ensamblado</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Romper en</value>
@@ -160,7 +160,7 @@
     <value>No se pudo encontrar {0}</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+    <value>No pudo conectarse al proceso de depurado</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
     <value>No se pudo encontrar el proceso depurado</value>
@@ -181,13 +181,13 @@
     <value>Detenido</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+    <value>DetenciónRequerida</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
     <value>Suspendido</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+    <value>Suspensión requerida</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
     <value>Sin comenzar</value>
@@ -208,45 +208,45 @@
     <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
+    <value>No es posible escribir a 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
+    <value>El miembro no puede ser accedido debido a limitaciones de tiempo de ejecución</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>No se pudo establecer la siguiente instrucción.</value>
   </data>
-  <data name="TypeHasNotBeenLoadedYet" xml:space="preserve">
-    <value>El tipo no se ha cargado todavía.</value>
-  </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
+    <value>Proceso se ha detenido y esta _esperando al depurador</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
     <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>Adjuntar a Proceso ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>Editor</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+    <value>Utilice el cuadro de diálogo Adjuntar al proceso (Unity) para adjuntarlo a construcciones de depuración</value>
   </data>
   <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
-    <value>Can't set a breakpoint when the process is paused.</value>
+    <value>No se puede fijar un punto de ruptura cuando el proceso está en pausa.</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
-    <value>E_xecutable</value>
+    <value>E_jecutable</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
-    <value>Make sure you have patched the game's mono.dll file</value>
+    <value>Asegurate de que has parcheado la librería de juegos mono.dll</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
-    <value>_Timeout (s)</value>
+    <value>_Timeout(s)</value>
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
-    <value>This is for Unity Debug builds only</value>
+    <value>Esto es solamente para compilaciones Unity Debug</value>
+  </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Juegos de la unidad de depuración</value>
   </data>
 </root>

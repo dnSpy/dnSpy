@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -16,8 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-using System;
 
 namespace dnSpy.Contracts.Text {
 	/// <summary>
@@ -204,12 +202,6 @@ namespace dnSpy.Contracts.Text {
 		/// Bookmarks window: labels column
 		/// </summary>
 		public const string BookmarksWindowLabels = nameof(BookmarksWindowLabels);
-
-		/// <summary>
-		/// Breakpoints window
-		/// </summary>
-		[Obsolete("Use " + nameof(CodeBreakpointsWindow), true)]
-		public const string BreakpointsWindow = nameof(BreakpointsWindow);
 
 		/// <summary>
 		/// Code breakpoints window

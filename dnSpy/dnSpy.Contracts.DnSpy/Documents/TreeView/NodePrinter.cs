@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
 	/// Node printer
 	/// </summary>
-	public struct NodePrinter {
+	public readonly struct NodePrinter {
 		static bool IsExe(ModuleDef mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
 		static bool IsExe(IPEImage peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				return;
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Operator, "@");
-			output.Write(BoxedTextColor.Number, string.Format("{0:X8}", tok.MDToken.Raw));
+			output.Write(BoxedTextColor.Number, tok.MDToken.Raw.ToString("X8"));
 		}
 
 		/// <summary>

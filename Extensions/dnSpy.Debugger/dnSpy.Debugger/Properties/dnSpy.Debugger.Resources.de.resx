@@ -589,7 +589,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Rückgabetypen anzeigen</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Tokens anzeigen</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>Intrinsische Typschlüsselwörter anzeigen</value>
@@ -1342,7 +1342,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Geänderte Variablen in den Variablenfenstern hervorheben</value>
   </data>
   <data name="MakeObjectIdCommand" xml:space="preserve">
-    <value>Objekt-ID erstellen</value>
+    <value>Objekt-ID e_rstellen</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Sprache</value>
@@ -1473,7 +1473,28 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
     <value>Veraltete Felder im Variablen-Fenster ausblenden</value>
   </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Rückgabewerte anzeigen</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Konsolen-Output von GUI-Applikationen zum Ausgabe-Fenster umleiten</value>
+  </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Erleichtern des Debuggens für ein Abbild</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Public Members</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>RAW locals anzeigen</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Asynchrones Debugging aktivieren</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Eigenschaften und Operatoren überspringen</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Ausdruck kopieren</value>
   </data>
 </root>

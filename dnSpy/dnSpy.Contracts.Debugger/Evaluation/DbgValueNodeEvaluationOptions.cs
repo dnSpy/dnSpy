@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,33 +38,43 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		NoFuncEval					= 0x00000001,
 
 		/// <summary>
-		/// Show the raw view (don't use debugger type proxies). It's enabled if <see cref="DebuggerSettings.ShowRawStructureOfObjects"/> is true
+		/// Show the Results View only
 		/// </summary>
-		RawView						= 0x00000002,
+		ResultsView					= 0x00000002,
+
+		/// <summary>
+		/// Show the Dynamic View only
+		/// </summary>
+		DynamicView					= 0x00000004,
+
+		/// <summary>
+		/// Show the raw view (don't use debugger type proxies)
+		/// </summary>
+		RawView						= 0x00000008,
 
 		/// <summary>
 		/// Hide compiler generated members in variables windows (respect debugger attributes, eg. <see cref="CompilerGeneratedAttribute"/>)
 		/// </summary>
-		HideCompilerGeneratedMembers= 0x00000004,
+		HideCompilerGeneratedMembers= 0x00000010,
 
 		/// <summary>
 		/// Respect attributes that can hide a member, eg. <see cref="DebuggerBrowsableAttribute"/> and <see cref="DebuggerBrowsableState.Never"/>
 		/// </summary>
-		RespectHideMemberAttributes	= 0x00000008,
+		RespectHideMemberAttributes	= 0x00000020,
 
 		/// <summary>
 		/// Only show public members
 		/// </summary>
-		PublicMembers				= 0x00000010,
+		PublicMembers				= 0x00000040,
 
 		/// <summary>
 		/// Roots can't be hidden
 		/// </summary>
-		NoHideRoots					= 0x00000020,
+		NoHideRoots					= 0x00000080,
 
 		/// <summary>
 		/// Hide deprecated members
 		/// </summary>
-		HideDeprecatedError			= 0x00000040,
+		HideDeprecatedError			= 0x00000100,
 	}
 }

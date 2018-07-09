@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex {
 	/// A position in a <see cref="HexBufferStream"/>
 	/// </summary>
 	[TypeConverter(typeof(HexPositionConverter))]
-	public struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
+	public readonly struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
 		/// <summary>
 		/// Gets the value 0
 		/// </summary>

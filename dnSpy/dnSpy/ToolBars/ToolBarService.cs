@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,7 +86,7 @@ namespace dnSpy.ToolBars {
 
 				ownerGuidString = md.Metadata.OwnerGuid ?? ToolBarConstants.APP_TB_GUID;
 				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
-				Debug.Assert(b, string.Format("ToolBarItem: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
+				Debug.Assert(b, $"ToolBarItem: Couldn't parse OwnerGuid property: '{ownerGuidString}'");
 				if (!b)
 					continue;
 
@@ -103,7 +103,7 @@ namespace dnSpy.ToolBars {
 					dict.Add(ownerGuid, groupDict = new Dictionary<string, ToolBarItemGroupMD>());
 				if (!groupDict.TryGetValue(groupName, out var mdGroup))
 					groupDict.Add(groupName, mdGroup = new ToolBarItemGroupMD(groupOrder));
-				Debug.Assert(mdGroup.Order == groupOrder, string.Format("ToolBarItem: Group order is different: {0} vs {1}", mdGroup.Order, groupOrder));
+				Debug.Assert(mdGroup.Order == groupOrder, $"ToolBarItem: Group order is different: {mdGroup.Order} vs {groupOrder}");
 				mdGroup.Items.Add(md);
 			}
 

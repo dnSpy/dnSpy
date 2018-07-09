@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,8 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -57,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			rawValue = new DbgDotNetRawValueFactory(engine).Create(value, Type);
 
 			var flags = ValueFlags.None;
-			if (value is PrimitiveValue pv && pv.Value == null) {
+			if (value is PrimitiveValue pv && (pv.Value == null || ((Type.IsPointer || Type.IsFunctionPointer) && boxed0L.Equals(pv.Value)))) {
 				if (Type.IsByRef)
 					flags |= ValueFlags.IsNullByRef;
 				else
@@ -65,39 +63,40 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 			this.flags = flags;
 		}
+		static readonly object boxed0L = 0L;
 
 		public override IDbgDotNetRuntime TryGetDotNetRuntime() => engine.DotNetRuntime;
 
-		public override DbgDotNetValue LoadIndirect() {
+		public override DbgDotNetValueResult LoadIndirect() {
 			if (!Type.IsByRef)
-				return null;
+				return base.LoadIndirect();
 			if (IsNullByRef)
-				return new SyntheticNullValue(Type.GetElementType());
+				return DbgDotNetValueResult.Create(new SyntheticNullValue(Type.GetElementType()));
 			if (engine.CheckMonoDebugThread())
 				return Dereference_MonoDebug();
 			return engine.InvokeMonoDebugThread(() => Dereference_MonoDebug());
 		}
 
-		DbgDotNetValue Dereference_MonoDebug() {
+		DbgDotNetValueResult Dereference_MonoDebug() {
 			Debug.Assert(Type.IsByRef && !IsNullByRef);
 			engine.VerifyMonoDebugThread();
-			return engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference());
+			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(valueLocation.Dereference()));
 		}
 
-		public override string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+		public override string StoreIndirect(DbgEvaluationInfo evalInfo, object value) {
 			if (!Type.IsByRef)
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			if (engine.CheckMonoDebugThread())
-				return StoreIndirect_MonoDebug(context, frame, value, cancellationToken);
-			return engine.InvokeMonoDebugThread(() => StoreIndirect_MonoDebug(context, frame, value, cancellationToken));
+				return StoreIndirect_MonoDebug(evalInfo, value);
+			return engine.InvokeMonoDebugThread(() => StoreIndirect_MonoDebug(evalInfo, value));
 		}
 
-		string StoreIndirect_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) {
+		string StoreIndirect_MonoDebug(DbgEvaluationInfo evalInfo, object value) {
 			engine.VerifyMonoDebugThread();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (!Type.IsByRef)
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
-			var res = engine.CreateMonoValue_MonoDebug(context, frame, value, Type.GetElementType(), cancellationToken);
+			var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, Type.GetElementType());
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
 			return valueLocation.Store(res.Value);
@@ -164,21 +163,21 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return true;
 		}
 
-		public override DbgDotNetValue GetArrayElementAt(uint index) {
+		public override DbgDotNetValueResult GetArrayElementAt(uint index) {
 			if (!Type.IsArray)
-				return null;
+				return base.GetArrayElementAt(index);
 			if (engine.CheckMonoDebugThread())
 				return GetArrayElementAt_MonoDebug(index);
 			return engine.InvokeMonoDebugThread(() => GetArrayElementAt_MonoDebug(index));
 		}
 
-		DbgDotNetValue GetArrayElementAt_MonoDebug(uint index) {
+		DbgDotNetValueResult GetArrayElementAt_MonoDebug(uint index) {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
 			if (info.errorMessage != null)
-				return null;
-			return engine.CreateDotNetValue_MonoDebug(info.valueLocation);
+				return DbgDotNetValueResult.CreateError(info.errorMessage);
+			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation));
 		}
 
 		(ArrayElementValueLocation valueLocation, string errorMessage) GetArrayElementValueLocation_MonoDebug(uint index) {
@@ -190,47 +189,43 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return (new ArrayElementValueLocation(Type.GetElementType(), arrayMirror, index), null);
 		}
 
-		public override string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+		public override string SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object value) {
 			if (!Type.IsArray)
-				return base.SetArrayElementAt(context, frame, index, value, cancellationToken);
+				return base.SetArrayElementAt(evalInfo, index, value);
 			if (engine.CheckMonoDebugThread())
-				return SetArrayElementAt_MonoDebug(context, frame, index, value, cancellationToken);
-			return engine.InvokeMonoDebugThread(() => SetArrayElementAt_MonoDebug(context, frame, index, value, cancellationToken));
+				return SetArrayElementAt_MonoDebug(evalInfo, index, value);
+			return engine.InvokeMonoDebugThread(() => SetArrayElementAt_MonoDebug(evalInfo, index, value));
 		}
 
-		string SetArrayElementAt_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) {
+		string SetArrayElementAt_MonoDebug(DbgEvaluationInfo evalInfo, uint index, object value) {
 			engine.VerifyMonoDebugThread();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
 			if (info.errorMessage != null)
 				return info.errorMessage;
-			var res = engine.CreateMonoValue_MonoDebug(context, frame, value, info.valueLocation.Type, cancellationToken);
+			var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, info.valueLocation.Type);
 			if (res.ErrorMessage != null)
 				return res.ErrorMessage;
 			return info.valueLocation.Store(res.Value);
 		}
 
-		public override DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public override DbgDotNetValueResult? Box(DbgEvaluationInfo evalInfo) {
 			if (engine.CheckMonoDebugThread())
-				return Box_MonoDebug(context, frame, cancellationToken);
-			return engine.InvokeMonoDebugThread(() => Box_MonoDebug(context, frame, cancellationToken));
+				return Box_MonoDebug(evalInfo);
+			return engine.InvokeMonoDebugThread(() => Box_MonoDebug(evalInfo));
 		}
 
-		DbgDotNetValue Box_MonoDebug(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		DbgDotNetValueResult? Box_MonoDebug(DbgEvaluationInfo evalInfo) {
 			engine.VerifyMonoDebugThread();
-			cancellationToken.ThrowIfCancellationRequested();
+			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			if (!Type.IsValueType)
-				return null;
+				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			var value = this.value;
 			// Even if it's boxed, box the unboxed value. This code path should only be called if
 			// the compiler thinks it's an unboxed value, so we must make a new boxed value.
 			if (value is ObjectMirror)
 				value = ValueUtils.Unbox((ObjectMirror)value, Type);
-			var res = engine.Box_MonoDebug(context, frame.Thread, value, Type, cancellationToken);
-			if (res.IsNormalResult)
-				return res.Value;
-			res.Value?.Dispose();
-			return null;
+			return engine.Box_MonoDebug(evalInfo, value, Type);
 		}
 
 		public override DbgRawAddressValue? GetRawAddressValue(bool onlyDataAddress) {

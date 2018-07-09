@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -121,6 +121,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// The program was paused by the user, or because some other program was paused for some other reason (<see cref="DbgMessageBreakEventArgs"/>)
 		/// </summary>
 		Break,
+
+		/// <summary>
+		/// Message from the debugged program (<see cref="DbgMessageAsyncProgramMessageEventArgs"/>)
+		/// </summary>
+		AsyncProgramMessage,
 	}
 
 	/// <summary>
@@ -728,6 +733,63 @@ namespace dnSpy.Contracts.Debugger {
 		public DbgMessageBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
+		}
+	}
+
+	/// <summary>
+	/// Message source kind
+	/// </summary>
+	public enum AsyncProgramMessageSource {
+		/// <summary>
+		/// Some other source
+		/// </summary>
+		Other,
+
+		/// <summary>
+		/// Standard output text
+		/// </summary>
+		StandardOutput,
+
+		/// <summary>
+		/// Standard error text
+		/// </summary>
+		StandardError,
+	}
+
+	/// <summary>
+	/// Message from the debugged program (<see cref="DbgMessageKind.AsyncProgramMessage"/>)
+	/// </summary>
+	public sealed class DbgMessageAsyncProgramMessageEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.AsyncProgramMessage"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.AsyncProgramMessage;
+
+		/// <summary>
+		/// Gets the message source kind
+		/// </summary>
+		public AsyncProgramMessageSource Source { get; }
+
+		/// <summary>
+		/// Gets the text
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="source">Source</param>
+		/// <param name="message">Message</param>
+		/// <param name="runtime">Runtime</param>
+		public DbgMessageAsyncProgramMessageEventArgs(AsyncProgramMessageSource source, string message, DbgRuntime runtime) {
+			Source = source;
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 		}
 	}
 }

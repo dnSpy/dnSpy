@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,11 +86,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="module">Module</param>
 		/// <param name="rva">RVA</param>
 		/// <returns></returns>
-		public static long? ToFileOffset(this ModuleDef module, uint rva) {
+		public static uint? ToFileOffset(this ModuleDef module, uint rva) {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (m == null)
 				return null;
-			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);
+			return (uint)m.Metadata.PEImage.ToFileOffset((RVA)rva);
 		}
 
 		/// <summary>

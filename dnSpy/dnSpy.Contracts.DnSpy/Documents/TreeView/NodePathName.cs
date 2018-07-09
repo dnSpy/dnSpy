@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
 	/// Node path name
 	/// </summary>
-	public struct NodePathName : IEquatable<NodePathName> {
+	public readonly struct NodePathName : IEquatable<NodePathName> {
 		/// <summary>
 		/// Gets the guid
 		/// </summary>
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public override string ToString() {
 			if (string.IsNullOrEmpty(Name))
 				return Guid.ToString();
-			return string.Format("{0} - {1}", Guid, Name);
+			return $"{Guid} - {Name}";
 		}
 	}
 }

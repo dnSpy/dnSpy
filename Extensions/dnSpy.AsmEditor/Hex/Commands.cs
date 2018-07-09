@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -257,8 +257,8 @@ namespace dnSpy.AsmEditor.Hex {
 			var context = HexMenuCommand.CreateContext(documentTabService);
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				ShowAddressReferenceInHexEditorCommand.ExecuteInternal(documentTabService, context);
-			else if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
-				ShowBinSpanInHexEditorCommand.ExecuteInternal(documentTabService, methodAnnotations, context);
+			else if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+				ShowILSpanInHexEditorCommand.ExecuteInternal(documentTabService, methodAnnotations, context);
 			else if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				ShowHexNodeInHexEditorCommand.ExecuteInternal(documentTabService, methodAnnotations, context);
 			else if (IsVisibleInternal(documentTabService, methodAnnotations, context))
@@ -268,7 +268,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static bool CanExecuteCommand(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations) {
 			var context = HexMenuCommand.CreateContext(documentTabService);
 			return ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context) ||
-				ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
+				ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
 				ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
 				IsVisibleInternal(documentTabService, methodAnnotations, context);
 		}
@@ -291,7 +291,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static DsDocumentNode GetDocumentNode(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
@@ -371,13 +371,13 @@ namespace dnSpy.AsmEditor.Hex {
 			if (mod != null && File.Exists(mod.Location))
 				return mod.Location;
 			var peImage = fileNode.Document.PEImage;
-			if (peImage != null && File.Exists(peImage.FileName))
-				return peImage.FileName;
+			if (peImage != null && File.Exists(peImage.Filename))
+				return peImage.Filename;
 			return null;
 		}
 	}
 
-	static class ShowBinSpanInHexEditorCommand {
+	static class ShowILSpanInHexEditorCommand {
 		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = DsImagesAttribute.Binary, InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_DOCVIEWER_HEX, Order = 20)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IDocumentTabService documentTabService;
@@ -433,11 +433,11 @@ namespace dnSpy.AsmEditor.Hex {
 			if (methodAnnotations.Value.IsBodyModified(method))
 				len = 0;
 			else if (methodStatements.Count == 1) {
-				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.BinSpan.Start;
-				len = methodStatements[0].Statement.BinSpan.End - methodStatements[0].Statement.BinSpan.Start;
+				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.ILSpan.Start;
+				len = methodStatements[0].Statement.ILSpan.End - methodStatements[0].Statement.ILSpan.Start;
 			}
 			else {
-				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.BinSpan.Start;
+				addr += (ulong)method.Body.HeaderSize + methodStatements[0].Statement.ILSpan.Start;
 				len = 0;
 			}
 
@@ -447,7 +447,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static IList<MethodSourceStatement> GetStatements(HexContext context) {
 			if (context.TextPosition == null)
 				return null;
-			return MethodBody.BodyCommandUtils.GetStatements(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value);
+			return MethodBody.BodyCommandUtils.GetStatements(context.CreatorObject.Object as IDocumentViewer, context.TextPosition.Value, FindByTextPositionOptions.None);
 		}
 	}
 
@@ -490,7 +490,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
@@ -546,7 +546,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowBinSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+			if (ShowILSpanInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
@@ -557,7 +557,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var mod = context.Nodes[0].GetModule() as ModuleDefMD;
 			if (mod == null)
 				return null;
-			var pe = mod.MetaData.PEImage;
+			var pe = mod.Metadata.PEImage;
 
 			if (context.Nodes[0] is ImageSectionHeaderNode sectNode) {
 				if (sectNode.SectionNumber >= pe.ImageSectionHeaders.Count)
@@ -567,11 +567,11 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 
 			if (context.Nodes[0] is StorageStreamNode stgNode) {
-				if (stgNode.StreamNumber >= mod.MetaData.MetaDataHeader.StreamHeaders.Count)
+				if (stgNode.StreamNumber >= mod.Metadata.MetadataHeader.StreamHeaders.Count)
 					return null;
-				var sh = mod.MetaData.MetaDataHeader.StreamHeaders[stgNode.StreamNumber];
+				var sh = mod.Metadata.MetadataHeader.StreamHeaders[stgNode.StreamNumber];
 
-				return new AddressReference(mod.Location, false, (ulong)mod.MetaData.MetaDataHeader.StartOffset + sh.Offset, sh.StreamSize);
+				return new AddressReference(mod.Location, false, (ulong)mod.Metadata.MetadataHeader.StartOffset + sh.Offset, sh.StreamSize);
 			}
 
 			return null;
@@ -784,10 +784,10 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	struct LengthAndOffset {
-		public string Filename;
-		public ulong Offset;
-		public ulong Size;
+	readonly struct LengthAndOffset {
+		public readonly string Filename;
+		public readonly ulong Offset;
+		public readonly ulong Size;
 
 		public LengthAndOffset(string filename, ulong offs, ulong size) {
 			Filename = filename;
@@ -1344,7 +1344,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return string.Empty;
 			if (module is ModuleDefMD md) {
 				var mdToken = new MDToken(token);
-				var table = md.MetaData.TablesStream.Get(mdToken.Table);
+				var table = md.Metadata.TablesStream.Get(mdToken.Table);
 				if (table?.IsValidRID(mdToken.Rid) == true)
 					return string.Empty;
 			}

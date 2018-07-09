@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 	}
 
 	[DebuggerDisplay("{FullName}")]
-	struct ECClass {
+	readonly struct ECClass {
 		public readonly string Namespace;
 		public readonly string Name;
 		public readonly ECFunc[] Functions;
@@ -126,7 +126,7 @@ namespace dndbg.Engine {
 	}
 
 	[DebuggerDisplay("{FunctionRVA} {Name}")]
-	struct ECFunc {
+	readonly struct ECFunc {
 		public readonly uint RecordRVA;
 		public readonly uint Flags;
 		public readonly uint FunctionRVA;
@@ -150,7 +150,7 @@ namespace dndbg.Engine {
 
 	struct ECallListReader : IDisposable {
 		readonly PEImage peImage;
-		readonly IImageStream reader;
+		DataReader reader;
 		readonly bool is32bit;
 		readonly uint ptrSize;
 		readonly uint endRva;
@@ -168,7 +168,7 @@ namespace dndbg.Engine {
 
 		public ECallListReader(string filename) {
 			peImage = new PEImage(filename);
-			reader = peImage.CreateFullStream();
+			reader = peImage.CreateReader();
 			is32bit = peImage.ImageNTHeaders.OptionalHeader.Magic == 0x010B;
 			ptrSize = is32bit ? 4U : 8;
 			var last = peImage.ImageSectionHeaders[peImage.ImageSectionHeaders.Count - 1];
@@ -179,7 +179,7 @@ namespace dndbg.Engine {
 		}
 
 		ulong ReadPtr(long pos) {
-			reader.Position = pos;
+			reader.Position = (uint)pos;
 			return is32bit ? reader.ReadUInt32() : reader.ReadUInt64();
 		}
 
@@ -347,8 +347,8 @@ namespace dndbg.Engine {
 		string ReadAsciizId(uint? rva) {
 			if (rva == null || rva.Value == 0)
 				return null;
-			reader.Position = (long)peImage.ToFileOffset((RVA)rva.Value);
-			var bytes = reader.ReadBytesUntilByte(0);
+			reader.Position = (uint)peImage.ToFileOffset((RVA)rva.Value);
+			var bytes = reader.TryReadBytesUntil(0);
 			const int MIN_ID_LEN = 2;
 			const int MAX_ID_LEN = 256;
 			if (bytes == null || bytes.Length < MIN_ID_LEN || bytes.Length > MAX_ID_LEN)

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public const string ContentDataId = "DocumentViewerUIElement-ContentDataId";
 	}
 
-	struct DocumentViewerUIElement {
+	readonly struct DocumentViewerUIElement {
 		public int Position { get; }
 		public Func<UIElement> CreateElement { get; }
 		public DocumentViewerUIElement(int position, Func<UIElement> createElement) {
@@ -51,7 +51,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public static readonly DocumentViewerUIElementCollection Empty = new DocumentViewerUIElementCollection(Array.Empty<DocumentViewerUIElement>());
 
 		public int Count => elements.Length;
-		public DocumentViewerUIElement this[int index] => elements[index];
+		public ref readonly DocumentViewerUIElement this[int index] => ref elements[index];
 
 		readonly DocumentViewerUIElement[] elements;
 

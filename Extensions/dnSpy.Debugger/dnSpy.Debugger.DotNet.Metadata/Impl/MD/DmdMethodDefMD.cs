@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
@@ -49,13 +50,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			DmdImplMap? implMap;
 			if (IsPinvokeImpl) {
-				var row = reader.TablesStream.ReadImplMapRow(reader.Metadata.GetImplMapRid(Table.Method, Rid));
-				if (row == null)
+				if (!reader.TablesStream.TryReadImplMapRow(reader.Metadata.GetImplMapRid(Table.Method, Rid), out var row))
 					implMap = null;
 				else {
 					var name = reader.StringsStream.ReadNoNull(row.ImportName);
-					var modRow = reader.TablesStream.ReadModuleRefRow(row.ImportScope);
-					var module = reader.StringsStream.ReadNoNull(modRow?.Name ?? 0);
+					reader.TablesStream.TryReadModuleRefRow(row.ImportScope, out var modRow);
+					var module = reader.StringsStream.ReadNoNull(modRow.Name);
 					implMap = new DmdImplMap((DmdPInvokeAttributes)row.MappingFlags, name, module);
 				}
 			}
@@ -64,8 +64,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return (cas, sas, implMap);
 		}
 
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) {
-			var row = reader.TablesStream.ReadMethodRow(Rid);
+		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) {
+			bool b = reader.TablesStream.TryReadMethodRow(Rid, out var row);
+			Debug.Assert(b);
 			return reader.ReadMethodSignature(row.Signature, DeclaringType.GetGenericArguments(), genericMethodArguments, isProperty: false);
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -72,6 +72,7 @@ namespace dnSpy.MainApp.Settings {
 		readonly IDocumentTabServiceSettings documentTabServiceSettings;
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 		readonly IDsDocumentServiceSettings documentServiceSettings;
+		readonly AppSettingsImpl appSettings;
 		readonly MessageBoxService messageBoxService;
 
 		public ICommand ClearAllWarningsCommand => new RelayCommand(a => messageBoxService.EnableAllWarnings(), a => messageBoxService.CanEnableAllWarnings);
@@ -79,7 +80,7 @@ namespace dnSpy.MainApp.Settings {
 		public ObservableCollection<ThemeVM> ThemesVM { get; }
 
 		public ThemeVM SelectedThemeVM {
-			get { return selectedThemeVM; }
+			get => selectedThemeVM;
 			set {
 				if (selectedThemeVM != value) {
 					selectedThemeVM = value;
@@ -90,7 +91,7 @@ namespace dnSpy.MainApp.Settings {
 		ThemeVM selectedThemeVM;
 
 		public bool? WindowsExplorerIntegration {
-			get { return windowsExplorerIntegration; }
+			get => windowsExplorerIntegration;
 			set {
 				if (windowsExplorerIntegration != value) {
 					windowsExplorerIntegration = value;
@@ -100,8 +101,19 @@ namespace dnSpy.MainApp.Settings {
 		}
 		bool? windowsExplorerIntegration;
 
+		public bool AllowMoreThanOneInstance {
+			get => allowMoreThanOneInstance;
+			set {
+				if (allowMoreThanOneInstance != value) {
+					allowMoreThanOneInstance = value;
+					OnPropertyChanged(nameof(AllowMoreThanOneInstance));
+				}
+			}
+		}
+		bool allowMoreThanOneInstance;
+
 		public bool DecompileFullType {
-			get { return decompileFullType; }
+			get => decompileFullType;
 			set {
 				if (decompileFullType != value) {
 					decompileFullType = value;
@@ -112,7 +124,7 @@ namespace dnSpy.MainApp.Settings {
 		bool decompileFullType;
 
 		public bool RestoreTabs {
-			get { return restoreTabs; }
+			get => restoreTabs;
 			set {
 				if (restoreTabs != value) {
 					restoreTabs = value;
@@ -123,7 +135,7 @@ namespace dnSpy.MainApp.Settings {
 		bool restoreTabs;
 
 		public bool DeserializeResources {
-			get { return deserializeResources; }
+			get => deserializeResources;
 			set {
 				if (deserializeResources != value) {
 					deserializeResources = value;
@@ -134,7 +146,7 @@ namespace dnSpy.MainApp.Settings {
 		bool deserializeResources;
 
 		public bool UseMemoryMappedIO {
-			get { return useMemoryMappedIO; }
+			get => useMemoryMappedIO;
 			set {
 				if (useMemoryMappedIO != value) {
 					useMemoryMappedIO = value;
@@ -147,13 +159,12 @@ namespace dnSpy.MainApp.Settings {
 		public UseNewRendererVM UseNewRendererVM { get; }
 
 		public GeneralAppSettingsPage(IThemeServiceImpl themeService, IWindowsExplorerIntegrationService windowsExplorerIntegrationService, IDocumentTabServiceSettings documentTabServiceSettings, DocumentTreeViewSettingsImpl documentTreeViewSettings, IDsDocumentServiceSettings documentServiceSettings, AppSettingsImpl appSettings, MessageBoxService messageBoxService) {
-			if (appSettings == null)
-				throw new ArgumentNullException(nameof(appSettings));
 			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
 			this.windowsExplorerIntegrationService = windowsExplorerIntegrationService ?? throw new ArgumentNullException(nameof(windowsExplorerIntegrationService));
 			this.documentTabServiceSettings = documentTabServiceSettings ?? throw new ArgumentNullException(nameof(documentTabServiceSettings));
 			this.documentTreeViewSettings = documentTreeViewSettings ?? throw new ArgumentNullException(nameof(documentTreeViewSettings));
 			this.documentServiceSettings = documentServiceSettings ?? throw new ArgumentNullException(nameof(documentServiceSettings));
+			this.appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
 			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
 
 			ThemesVM = new ObservableCollection<ThemeVM>(themeService.VisibleThemes.Select(a => new ThemeVM(a)));
@@ -163,6 +174,7 @@ namespace dnSpy.MainApp.Settings {
 			Debug.Assert(SelectedThemeVM != null);
 
 			WindowsExplorerIntegration = windowsExplorerIntegrationService.WindowsExplorerIntegration;
+			AllowMoreThanOneInstance = appSettings.AllowMoreThanOneInstance;
 			DecompileFullType = documentTabServiceSettings.DecompileFullType;
 			RestoreTabs = documentTabServiceSettings.RestoreTabs;
 			DeserializeResources = documentTreeViewSettings.DeserializeResources;
@@ -177,6 +189,7 @@ namespace dnSpy.MainApp.Settings {
 			if (SelectedThemeVM != null)
 				themeService.Theme = SelectedThemeVM.Theme;
 			windowsExplorerIntegrationService.WindowsExplorerIntegration = WindowsExplorerIntegration;
+			appSettings.AllowMoreThanOneInstance = AllowMoreThanOneInstance;
 			documentTabServiceSettings.DecompileFullType = DecompileFullType;
 			documentTabServiceSettings.RestoreTabs = RestoreTabs;
 			documentTreeViewSettings.DeserializeResources = DeserializeResources;
@@ -219,7 +232,7 @@ namespace dnSpy.MainApp.Settings {
 		}
 
 		public bool UseNewRenderer_TextEditor {
-			get { return useNewRenderer_TextEditor; }
+			get => useNewRenderer_TextEditor;
 			set {
 				if (useNewRenderer_TextEditor != value) {
 					useNewRenderer_TextEditor = value;
@@ -231,7 +244,7 @@ namespace dnSpy.MainApp.Settings {
 		bool useNewRenderer_TextEditor = false;
 
 		public bool UseNewRenderer_HexEditor {
-			get { return useNewRenderer_HexEditor; }
+			get => useNewRenderer_HexEditor;
 			set {
 				if (useNewRenderer_HexEditor != value) {
 					useNewRenderer_HexEditor = value;
@@ -243,7 +256,7 @@ namespace dnSpy.MainApp.Settings {
 		bool useNewRenderer_HexEditor = false;
 
 		public bool UseNewRenderer_DocumentTreeView {
-			get { return useNewRenderer_DocumentTreeView; }
+			get => useNewRenderer_DocumentTreeView;
 			set {
 				if (useNewRenderer_DocumentTreeView != value) {
 					useNewRenderer_DocumentTreeView = value;

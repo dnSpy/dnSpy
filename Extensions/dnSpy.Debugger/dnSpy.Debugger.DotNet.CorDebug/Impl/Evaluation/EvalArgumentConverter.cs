@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	struct EvalArgumentResult {
+	readonly struct EvalArgumentResult {
 		public string ErrorMessage { get; }
 		public CorValue CorValue { get; }
 		public EvalArgumentResult(string errorMessage) {
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 	}
 
-	struct EvalArgumentConverter {
+	readonly struct EvalArgumentConverter {
 		readonly DbgEngineImpl engine;
 		readonly DnEval dnEval;
 		readonly CorAppDomain appDomain;
@@ -240,8 +240,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 					var av = arrayValue;
-					if (av.IsReference)
-						av = av.DereferencedValue;
+					if (av.IsReference) {
+						av = av.GetDereferencedValue(out hr);
+						if (av == null)
+							return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
+					}
 					if (av?.IsArray != true)
 						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
@@ -282,8 +285,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				Debug.Assert(length > 0);
 				var arrayValue = res.Value.ResultOrException;
-				if (arrayValue.IsReference)
-					arrayValue = arrayValue.DereferencedValue;
+				if (arrayValue.IsReference) {
+					arrayValue = arrayValue.GetDereferencedValue(out hr);
+					if (arrayValue != null)
+						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
+				}
 				Debug.Assert(arrayValue?.IsArray == true);
 				if (arrayValue?.IsArray != true)
 					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -353,7 +359,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		CorValue AddValue(DmdType type, CorValue value) {
 			if (value != null && !value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef)
-				value = value.DereferencedValue?.CreateHandle(CorDebugHandleType.HANDLE_STRONG) ?? value;
+				value = value.GetDereferencedValue(out int hr)?.CreateHandle(CorDebugHandleType.HANDLE_STRONG) ?? value;
 			if (value != null) {
 				try {
 					createdValues.Add(value);

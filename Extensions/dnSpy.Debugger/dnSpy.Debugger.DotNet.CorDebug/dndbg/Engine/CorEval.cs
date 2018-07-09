@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -141,6 +141,6 @@ namespace dndbg.Engine {
 
 		public override bool Equals(object obj) => Equals(obj as CorEval);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("IsActive={0} {1}", IsActive ? 1 : 0, Thread);
+		public override string ToString() => $"IsActive={(IsActive ? 1 : 0)} {Thread}";
 	}
 }

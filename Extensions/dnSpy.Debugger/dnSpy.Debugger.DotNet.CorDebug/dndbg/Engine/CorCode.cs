@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,11 +18,13 @@
 */
 
 using System;
+using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	sealed class CorCode : COMObject<ICorDebugCode>, IEquatable<CorCode> {
 		public bool IsIL { get; }
+		public bool SupportsReturnValues => obj is ICorDebugCode3;
 
 		public uint Size => size;
 		readonly uint size;
@@ -88,6 +90,29 @@ namespace dndbg.Engine {
 					return Array.Empty<CodeChunkInfo>();
 			}
 			return infos;
+		}
+
+		public unsafe uint[] GetReturnValueLiveOffset(uint ilOffset) {
+			var c3 = obj as ICorDebugCode3;
+			if (c3 == null)
+				return Array.Empty<uint>();
+			int hr = c3.GetReturnValueLiveOffset(ilOffset, 0, out uint totalSize, null);
+			// E_UNEXPECTED if it returns void
+			const int E_UNEXPECTED = unchecked((int)0x8000FFFF);
+			// E_FAIL if nothing is found
+			const int E_FAIL = unchecked((int)0x80004005);
+			Debug.Assert(hr == 0 || hr == CordbgErrors.CORDBG_E_INVALID_OPCODE || hr == CordbgErrors.CORDBG_E_UNSUPPORTED || hr == E_UNEXPECTED || hr == E_FAIL);
+			if (hr < 0)
+				return Array.Empty<uint>();
+			if (totalSize == 0)
+				return Array.Empty<uint>();
+			var res = new uint[totalSize];
+			hr = c3.GetReturnValueLiveOffset(ilOffset, (uint)res.Length, out uint fetched, res);
+			if (hr < 0)
+				return Array.Empty<uint>();
+			if (fetched != (uint)res.Length)
+				Array.Resize(ref res, (int)fetched);
+			return res;
 		}
 
 		public static bool operator ==(CorCode a, CorCode b) {

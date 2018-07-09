@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -360,8 +360,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				yield break;
 			}
 
-			er.Data.Position = 0;
-			if (ResourceReader.CouldBeResourcesFile(er.Data)) {
+			if (ResourceReader.CouldBeResourcesFile(er.CreateReader())) {
 				var files = TryCreateResourceFiles(module, resourceNameCreator, er);
 				if (files != null) {
 					foreach (var file in files)
@@ -376,8 +375,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		List<ProjectFile> TryCreateResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) {
 			ResourceElementSet set;
 			try {
-				er.Data.Position = 0;
-				set = ResourceReader.Read(module, er.Data);
+				set = ResourceReader.Read(module, er.CreateReader());
 			}
 			catch {
 				return null;
@@ -493,12 +491,10 @@ namespace dnSpy.Decompiler.MSBuild {
 		static ResourceElementSet TryCreateResourceElementSet(ModuleDef module, EmbeddedResource er) {
 			if (er == null)
 				return null;
-			er.Data.Position = 0;
-			if (!ResourceReader.CouldBeResourcesFile(er.Data))
+			if (!ResourceReader.CouldBeResourcesFile(er.CreateReader()))
 				return null;
 			try {
-				er.Data.Position = 0;
-				return ResourceReader.Read(module, er.Data);
+				return ResourceReader.Read(module, er.CreateReader());
 			}
 			catch {
 				return null;

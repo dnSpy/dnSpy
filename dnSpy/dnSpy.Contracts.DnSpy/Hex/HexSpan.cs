@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,12 +23,8 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// A span in a <see cref="HexBuffer"/>
 	/// </summary>
-	public struct HexSpan : IEquatable<HexSpan> {
-#if DEBUG
-		// readonly will cause all accesses to the field to make a copy of it. Only enable it if it's DEBUG mode.
-		readonly
-#endif
-		HexPosition start, end;
+	public readonly struct HexSpan : IEquatable<HexSpan> {
+		readonly HexPosition start, end;
 
 		/// <summary>
 		/// Gets a <see cref="HexSpan"/> instance that covers everything from 0 to 2^64-1, inclusive

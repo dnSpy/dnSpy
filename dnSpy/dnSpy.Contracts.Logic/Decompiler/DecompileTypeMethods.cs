@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,6 +38,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public HashSet<MethodDef> Methods { get; }
 
 		/// <summary>
+		/// All nested types to show, not including their members
+		/// </summary>
+		public HashSet<TypeDef> Types { get; }
+
+		/// <summary>
 		/// true to decompile everything
 		/// </summary>
 		public bool ShowAll { get; set; }
@@ -49,11 +54,6 @@ namespace dnSpy.Contracts.Decompiler {
 		public bool DecompileHidden { get; set; }
 
 		/// <summary>
-		/// true to make every type, method, field, property, event public
-		/// </summary>
-		public bool MakeEverythingPublic { get; set; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="output">Output</param>
@@ -63,6 +63,7 @@ namespace dnSpy.Contracts.Decompiler {
 			: base(output, ctx) {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			Methods = new HashSet<MethodDef>();
+			Types = new HashSet<TypeDef>();
 			DecompileHidden = false;
 		}
 	}

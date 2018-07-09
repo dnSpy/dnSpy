@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Documents {
 	sealed class AssemblyResolver : IAssemblyResolver {
 		readonly DsDocumentService documentService;
 		readonly FailedAssemblyResolveCache failedAssemblyResolveCache;
-		readonly DotNetCorePaths dotNetCorePaths;
+		readonly DotNetCorePathProvider dotNetCorePathProvider;
 
 		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 		static readonly Version newMscorlibVersion = new Version(4, 0, 0, 0);
@@ -36,7 +36,7 @@ namespace dnSpy.Documents {
 		public AssemblyResolver(DsDocumentService documentService) {
 			this.documentService = documentService;
 			failedAssemblyResolveCache = new FailedAssemblyResolveCache();
-			dotNetCorePaths = new DotNetCorePaths();
+			dotNetCorePathProvider = new DotNetCorePathProvider();
 		}
 
 		// PERF: Sometimes various pieces of code tries to resolve the same assembly and this
@@ -74,9 +74,6 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		bool IAssemblyResolver.AddToCache(AssemblyDef asm) => false;
-		void IAssemblyResolver.Clear() { }
-		bool IAssemblyResolver.Remove(AssemblyDef asm) => false;
 		AssemblyDef IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
 			Resolve(assembly, sourceModule)?.AssemblyDef;
 
@@ -125,7 +122,7 @@ namespace dnSpy.Documents {
 			if (existingDocument != null)
 				return existingDocument;
 
-			var dotNetCoreAppVersion = dotNetCorePaths.TryGetDotNetCoreVersion(sourceModule);
+			var dotNetCoreAppVersion = dotNetCorePathProvider.TryGetDotNetCoreVersion(sourceModule);
 
 			var document = LookupFromSearchPaths(assembly, sourceModule, dotNetCoreAppVersion);
 			if (document != null)
@@ -156,19 +153,21 @@ namespace dnSpy.Documents {
 				}
 
 				int bitness;
-				string dotNetCorePath;
+				string[] dotNetCorePaths;
 				if (dotNetCoreAppVersion != null) {
 					bitness = sourceModule.GetPointerSize(IntPtr.Size) * 8;
-					dotNetCorePath = dotNetCorePaths.TryGetDotNetCorePath(dotNetCoreAppVersion, bitness);
+					dotNetCorePaths = dotNetCorePathProvider.TryGetDotNetCorePaths(dotNetCoreAppVersion, bitness);
 				}
 				else {
 					bitness = -1;
-					dotNetCorePath = null;
+					dotNetCorePaths = null;
 				}
-				if (dotNetCorePath != null) {
-					document = TryFindFromDir(asmName, dirPath: dotNetCorePath);
-					if (document != null)
-						return document;
+				if (dotNetCorePaths != null) {
+					foreach (var path in dotNetCorePaths) {
+						document = TryFindFromDir(asmName, dirPath: path);
+						if (document != null)
+							return document;
+					}
 				}
 
 				if (sourceModuleLocationExists) {
@@ -176,10 +175,12 @@ namespace dnSpy.Documents {
 					if (document != null)
 						return document;
 				}
-				if (dotNetCorePath != null) {
-					document = TryLoadFromDir(asmName, exactCheck: false, dirPath: dotNetCorePath);
-					if (document != null)
-						return document;
+				if (dotNetCorePaths != null) {
+					foreach (var path in dotNetCorePaths) {
+						document = TryLoadFromDir(asmName, exactCheck: false, dirPath: path);
+						if (document != null)
+							return document;
+					}
 				}
 			}
 

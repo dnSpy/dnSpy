@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,20 +21,20 @@ using dnlib.IO;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdDataStreamImpl : DmdDataStream {
-		readonly IImageStream stream;
-		public DmdDataStreamImpl(IImageStream stream) => this.stream = stream;
-		public override byte ReadByte() => stream.ReadByte();
-		public override ushort ReadUInt16() => stream.ReadUInt16();
-		public override uint ReadUInt32() => stream.ReadUInt32();
-		public override ulong ReadUInt64() => stream.ReadUInt64();
-		public override float ReadSingle() => stream.ReadSingle();
-		public override double ReadDouble() => stream.ReadDouble();
-		public override byte[] ReadBytes(int length) => stream.ReadBytes(length);
+		DataReader reader;
+		public DmdDataStreamImpl(ref DataReader reader) => this.reader = reader;
+		public override byte ReadByte() => reader.ReadByte();
+		public override ushort ReadUInt16() => reader.ReadUInt16();
+		public override uint ReadUInt32() => reader.ReadUInt32();
+		public override ulong ReadUInt64() => reader.ReadUInt64();
+		public override float ReadSingle() => reader.ReadSingle();
+		public override double ReadDouble() => reader.ReadDouble();
+		public override byte[] ReadBytes(int length) => reader.ReadBytes(length);
 		public override long Position {
-			get => stream.Position;
-			set => stream.Position = value;
+			get => reader.Position;
+			set => reader.Position = (uint)value;
 		}
-		public override long Length => stream.Length;
-		public override void Dispose() => stream.Dispose();
+		public override long Length => reader.Length;
+		public override void Dispose() { }
 	}
 }

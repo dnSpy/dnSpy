@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,9 +37,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	[Export(typeof(DbgCodeBreakpointConditionChecker))]
 	sealed class DbgCodeBreakpointConditionCheckerImpl : DbgCodeBreakpointConditionChecker {
 		readonly DbgLanguageService dbgLanguageService;
+		readonly DbgObjectIdService dbgObjectIdService;
 
 		[ImportingConstructor]
-		DbgCodeBreakpointConditionCheckerImpl(DbgLanguageService dbgLanguageService) => this.dbgLanguageService = dbgLanguageService;
+		DbgCodeBreakpointConditionCheckerImpl(DbgLanguageService dbgLanguageService, DbgObjectIdService dbgObjectIdService) {
+			this.dbgLanguageService = dbgLanguageService;
+			this.dbgObjectIdService = dbgObjectIdService;
+		}
 
 		sealed class BreakpointState : IDisposable {
 			public DbgLanguage Language;
@@ -75,12 +79,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		abstract class SavedValue {
-			public abstract bool Equals(SavedValue other);
+			public abstract bool Equals(DbgEvaluationInfo evalInfo, SavedValue other);
 			public abstract void Dispose();
 
-			public static SavedValue TryCreateValue(DbgValue value, string valueType) {
+			public static SavedValue TryCreateValue(DbgObjectIdService dbgObjectIdService, DbgValue value, string valueType) {
 				switch (value.ValueType) {
 				case DbgSimpleValueType.Other:
+					if (value.HasRawValue && value.RawValue == null)
+						return new SimpleSavedValue(value.ValueType, value.RawValue, valueType);
+					var objectId = dbgObjectIdService.CreateObjectId(value, CreateObjectIdOptions.Hidden);
+					if (objectId != null)
+						return new ObjectIdSavedValue(dbgObjectIdService, objectId);
 					var addr = value.GetRawAddressValue(onlyDataAddress: false);
 					if (addr != null)
 						return new AddressSavedValue(addr.Value, valueType);
@@ -125,36 +134,58 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					this.valueType = valueType;
 				}
 
-				public override bool Equals(SavedValue other) {
+				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
 					var obj = other as SimpleSavedValue;
 					return obj != null &&
 						obj.type == type &&
 						Equals(obj.value, value) &&
-						obj.valueType == valueType;
+						(value == null || obj.valueType == valueType);
 				}
 
 				public override void Dispose() { }
 			}
 
 			sealed class AddressSavedValue : SavedValue {
-				/*readonly*/ DbgRawAddressValue address;
+				readonly DbgRawAddressValue address;
 				readonly string valueType;
 
-				//TODO: An object id (that's not shown in the locals window) should be used instead since the GC can move the value in memory
 				public AddressSavedValue(DbgRawAddressValue address, string valueType) {
 					this.address = address;
 					this.valueType = valueType;
 				}
 
-				public override bool Equals(SavedValue other) {
-					var obj = other as AddressSavedValue;
-					return obj != null &&
-						obj.address.Address == address.Address &&
-						obj.address.Length == address.Length &&
-						obj.valueType == valueType;
-				}
+				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) =>
+					other is AddressSavedValue obj &&
+					obj.address.Address == address.Address &&
+					obj.address.Length == address.Length &&
+					obj.valueType == valueType;
 
 				public override void Dispose() { }
+			}
+
+			sealed class ObjectIdSavedValue : SavedValue {
+				readonly DbgObjectIdService dbgObjectIdService;
+				readonly DbgObjectId objectId;
+
+				public ObjectIdSavedValue(DbgObjectIdService dbgObjectIdService, DbgObjectId objectId) {
+					this.dbgObjectIdService = dbgObjectIdService;
+					this.objectId = objectId;
+				}
+
+				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
+					var obj = other as ObjectIdSavedValue;
+					if (obj == null)
+						return false;
+					var value = obj.objectId.GetValue(evalInfo);
+					try {
+						return dbgObjectIdService.Equals(objectId, value);
+					}
+					finally {
+						value.Close();
+					}
+				}
+
+				public override void Dispose() => objectId.Remove();
 			}
 		}
 
@@ -174,7 +205,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
 				var cancellationToken = CancellationToken.None;
 				var state = GetState(boundBreakpoint, language, frame, condition, cancellationToken);
-				var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState, cancellationToken);
+				var evalInfo = new DbgEvaluationInfo(state.Context, frame, cancellationToken);
+				var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState);
 				if (evalRes.Error != null)
 					return new DbgCodeBreakpointCheckResult(evalRes.Error);
 				value = evalRes.Value;
@@ -209,10 +241,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					return new DbgCodeBreakpointCheckResult(dnSpy_Debugger_Resources.BreakpointExpressionMustBeABooleanExpression);
 
 				case DbgCodeBreakpointConditionKind.WhenChanged:
-					var newValue = SavedValue.TryCreateValue(value, GetType(state.Context, language, value, cancellationToken));
+					var newValue = SavedValue.TryCreateValue(dbgObjectIdService, value, GetType(evalInfo, language, value));
 					if (newValue == null)
 						return new DbgCodeBreakpointCheckResult(true);
-					bool shouldBreak = !(state.SavedValue?.Equals(newValue) ?? true);
+					bool shouldBreak = !(state.SavedValue?.Equals(evalInfo, newValue) ?? true);
 					state.SavedValue = newValue;
 					return new DbgCodeBreakpointCheckResult(shouldBreak);
 
@@ -228,12 +260,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		string GetType(DbgEvaluationContext context, DbgLanguage language, DbgValue value, CancellationToken cancellationToken) {
+		string GetType(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgValue value) {
 			const DbgValueFormatterTypeOptions options = DbgValueFormatterTypeOptions.IntrinsicTypeKeywords | DbgValueFormatterTypeOptions.Namespaces | DbgValueFormatterTypeOptions.Tokens;
 			const CultureInfo cultureInfo = null;
 			var sb = ObjectCache.AllocStringBuilder();
 			var output = new StringBuilderTextColorOutput(sb);
-			language.Formatter.FormatType(context, output, value, options, cultureInfo, cancellationToken);
+			language.Formatter.FormatType(evalInfo, output, value, options, cultureInfo);
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 

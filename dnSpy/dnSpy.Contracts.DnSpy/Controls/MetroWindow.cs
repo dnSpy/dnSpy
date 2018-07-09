@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -56,8 +56,6 @@ namespace dnSpy.Contracts.Controls {
 			MetroWindowCreated?.Invoke(this, new MetroWindowCreatedEventArgs(this));
 		}
 
-		internal bool DisableDpiScalingAtStartup { get; set; }
-
 		/// <inheritdoc/>
 		protected override void OnSourceInitialized(EventArgs e) {
 			base.OnSourceInitialized(e);
@@ -71,17 +69,6 @@ namespace dnSpy.Contracts.Controls {
 				var w = Width;
 				var h = Height;
 				WindowDpi = GetDpi(hwndSource.Handle) ?? wpfDpi;
-
-				if (!wpfSupportsPerMonitorDpi) {
-					double scale = DisableDpiScalingAtStartup ? 1 : WpfPixelScaleFactor;
-					Width = w * scale;
-					Height = h * scale;
-
-					if (WindowStartupLocation == WindowStartupLocation.CenterOwner || WindowStartupLocation == WindowStartupLocation.CenterScreen) {
-						Left -= (w * scale - w) / 2;
-						Top -= (h * scale - h) / 2;
-					}
-				}
 			}
 
 			WindowUtils.UpdateWin32Style(this);
@@ -125,8 +112,6 @@ namespace dnSpy.Contracts.Controls {
 		static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
 		[DllImport("shcore", SetLastError = true)]
 		static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out int dpiX, out int dpiY);
-		[DllImport("user32", SetLastError = true)]
-		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
 		int WM_DPICHANGED_counter = 0;
 		IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
@@ -142,16 +127,6 @@ namespace dnSpy.Contracts.Controls {
 
 					WindowDpi = new Size(newDpiX, newDpiY);
 
-					if (!wpfSupportsPerMonitorDpi) {
-						const int SWP_NOZORDER = 0x0004;
-						const int SWP_NOACTIVATE = 0x0010;
-						const int SWP_NOOWNERZORDER = 0x0200;
-						var rect = Marshal.PtrToStructure<RECT>(lParam);
-						bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
-						Debug.Assert(b);
-						handled = true;
-					}
-
 					return IntPtr.Zero;
 				}
 				finally {
@@ -162,52 +137,15 @@ namespace dnSpy.Contracts.Controls {
 			return IntPtr.Zero;
 		}
 
-		double SafeWpfPixelScaleFactor {
-			get {
-				if (wpfSupportsPerMonitorDpi)
-					return 1;
-				if (wpfDpi.Width == 0)
-					return 1;
-				return WpfPixelScaleFactor;
-			}
-		}
-
-		double WpfPixelScaleFactor {
-			get {
-				if (wpfSupportsPerMonitorDpi)
-					return 1;
-				Debug.Assert(wpfDpi.Width != 0);
-				if (wpfDpi.Width == 0)
-					return 1;
-				return windowDpi.Width / wpfDpi.Width;
-			}
-		}
-
 		/// <summary>
 		/// Gets the DPI
 		/// </summary>
 		public Size WindowDpi {
-			get { return windowDpi; }
+			get => windowDpi;
 			private set {
 				if (windowDpi != value) {
-					if (wpfSupportsPerMonitorDpi) {
-						windowDpi = value;
-						SetTextFormattingMode(this, WpfPixelScaleFactor);
-					}
-					else {
-						var origScale = SafeWpfPixelScaleFactor;
-						if (origScale == 0)
-							origScale = 1;
-						windowDpi = value;
-						var relScale = WpfPixelScaleFactor / origScale;
-						MinWidth *= relScale;
-						MinHeight *= relScale;
-						MaxWidth *= relScale;
-						MaxHeight *= relScale;
-						UpdateWindowChromeProperties();
-						ScaleWindow(WpfPixelScaleFactor);
-					}
-
+					windowDpi = value;
+					SetTextFormattingMode(this, 1.0);
 					WindowDpiChanged?.Invoke(this, EventArgs.Empty);
 					DsImage.SetDpi(this, windowDpi.Width);
 				}
@@ -220,30 +158,6 @@ namespace dnSpy.Contracts.Controls {
 		/// Raised when the DPI (<see cref="WindowDpi"/>) has changed
 		/// </summary>
 		public event EventHandler WindowDpiChanged;
-
-		void UpdateWindowChromeProperties() {
-			if (wpfSupportsPerMonitorDpi)
-				return;
-			var wc = (WindowChrome)GetValue(WindowChrome.WindowChromeProperty);
-			Debug.Assert(wc != null);
-			if (wc != null) {
-				bool useResizeBorder = !(IsFullScreen || WindowState == WindowState.Maximized || WindowState == WindowState.Minimized);
-				InitializeWindowCaptionAndResizeBorder(wc, useResizeBorder);
-			}
-		}
-
-		void ScaleWindow(double scale) {
-			if (wpfSupportsPerMonitorDpi)
-				return;
-			var border = GetVisualChild(0) as Border;
-			Debug.Assert(border != null);
-			var vc = border == null ? null : VisualTreeHelper.GetChild(border, 0);
-			Debug.Assert(vc != null);
-			if (vc == null)
-				return;
-
-			SetScaleTransform(this, vc, scale);
-		}
 
 		/// <summary>
 		/// Show system menu command
@@ -266,8 +180,8 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets the full screen state
 		/// </summary>
 		public bool IsFullScreen {
-			get { return (bool)GetValue(IsFullScreenProperty); }
-			set { SetValue(IsFullScreenProperty, value); }
+			get => (bool)GetValue(IsFullScreenProperty);
+			set => SetValue(IsFullScreenProperty, value);
 		}
 
 		static void OnIsFullScreenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -292,8 +206,8 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets the system menu image
 		/// </summary>
 		public ImageReference SystemMenuImage {
-			get { return (ImageReference)GetValue(SystemMenuImageProperty); }
-			set { SetValue(SystemMenuImageProperty, value); }
+			get => (ImageReference)GetValue(SystemMenuImageProperty);
+			set => SetValue(SystemMenuImageProperty, value);
 		}
 
 		/// <summary>
@@ -398,8 +312,8 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets whether a resize border should be used
 		/// </summary>
 		public bool UseResizeBorder {
-			get { return (bool)GetValue(UseResizeBorderProperty); }
-			set { SetValue(UseResizeBorderProperty, value); }
+			get => (bool)GetValue(UseResizeBorderProperty);
+			set => SetValue(UseResizeBorderProperty, value);
 		}
 
 		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -436,8 +350,8 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets whether debugging mode is enabled
 		/// </summary>
 		public bool IsDebugging {
-			get { return (bool)GetValue(IsDebuggingProperty); }
-			set { SetValue(IsDebuggingProperty, value); }
+			get => (bool)GetValue(IsDebuggingProperty);
+			set => SetValue(IsDebuggingProperty, value);
 		}
 
 		/// <summary>
@@ -528,96 +442,96 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets the active caption brush
 		/// </summary>
 		public Brush ActiveCaption {
-			get { return (Brush)GetValue(ActiveCaptionProperty); }
-			set { SetValue(ActiveCaptionProperty, value); }
+			get => (Brush)GetValue(ActiveCaptionProperty);
+			set => SetValue(ActiveCaptionProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the active caption text brush
 		/// </summary>
 		public Brush ActiveCaptionText {
-			get { return (Brush)GetValue(ActiveCaptionTextProperty); }
-			set { SetValue(ActiveCaptionTextProperty, value); }
+			get => (Brush)GetValue(ActiveCaptionTextProperty);
+			set => SetValue(ActiveCaptionTextProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the active debugging border brush
 		/// </summary>
 		public Brush ActiveDebuggingBorder {
-			get { return (Brush)GetValue(ActiveDebuggingBorderProperty); }
-			set { SetValue(ActiveDebuggingBorderProperty, value); }
+			get => (Brush)GetValue(ActiveDebuggingBorderProperty);
+			set => SetValue(ActiveDebuggingBorderProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the active default border brush
 		/// </summary>
 		public Brush ActiveDefaultBorder {
-			get { return (Brush)GetValue(ActiveDefaultBorderProperty); }
-			set { SetValue(ActiveDefaultBorderProperty, value); }
+			get => (Brush)GetValue(ActiveDefaultBorderProperty);
+			set => SetValue(ActiveDefaultBorderProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the inactive border brush
 		/// </summary>
 		public Brush InactiveBorder {
-			get { return (Brush)GetValue(InactiveBorderProperty); }
-			set { SetValue(InactiveBorderProperty, value); }
+			get => (Brush)GetValue(InactiveBorderProperty);
+			set => SetValue(InactiveBorderProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the inactive caption brush
 		/// </summary>
 		public Brush InactiveCaption {
-			get { return (Brush)GetValue(InactiveCaptionProperty); }
-			set { SetValue(InactiveCaptionProperty, value); }
+			get => (Brush)GetValue(InactiveCaptionProperty);
+			set => SetValue(InactiveCaptionProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the inactive caption text brush
 		/// </summary>
 		public Brush InactiveCaptionText {
-			get { return (Brush)GetValue(InactiveCaptionTextProperty); }
-			set { SetValue(InactiveCaptionTextProperty, value); }
+			get => (Brush)GetValue(InactiveCaptionTextProperty);
+			set => SetValue(InactiveCaptionTextProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the button inactive border brush
 		/// </summary>
 		public Brush ButtonInactiveBorder {
-			get { return (Brush)GetValue(ButtonInactiveBorderProperty); }
-			set { SetValue(ButtonInactiveBorderProperty, value); }
+			get => (Brush)GetValue(ButtonInactiveBorderProperty);
+			set => SetValue(ButtonInactiveBorderProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/stes the button inactive glyph brush
 		/// </summary>
 		public Brush ButtonInactiveGlyph {
-			get { return (Brush)GetValue(ButtonInactiveGlyphProperty); }
-			set { SetValue(ButtonInactiveGlyphProperty, value); }
+			get => (Brush)GetValue(ButtonInactiveGlyphProperty);
+			set => SetValue(ButtonInactiveGlyphProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the button hover inactive brush
 		/// </summary>
 		public Brush ButtonHoverInactive {
-			get { return (Brush)GetValue(ButtonHoverInactiveProperty); }
-			set { SetValue(ButtonHoverInactiveProperty, value); }
+			get => (Brush)GetValue(ButtonHoverInactiveProperty);
+			set => SetValue(ButtonHoverInactiveProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the button hover inactive border brush
 		/// </summary>
 		public Brush ButtonHoverInactiveBorder {
-			get { return (Brush)GetValue(ButtonHoverInactiveBorderProperty); }
-			set { SetValue(ButtonHoverInactiveBorderProperty, value); }
+			get => (Brush)GetValue(ButtonHoverInactiveBorderProperty);
+			set => SetValue(ButtonHoverInactiveBorderProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets the button hover inactive glyph brush
 		/// </summary>
 		public Brush ButtonHoverInactiveGlyph {
-			get { return (Brush)GetValue(ButtonHoverInactiveGlyphProperty); }
-			set { SetValue(ButtonHoverInactiveGlyphProperty, value); }
+			get => (Brush)GetValue(ButtonHoverInactiveGlyphProperty);
+			set => SetValue(ButtonHoverInactiveGlyphProperty, value);
 		}
 
 		/// <summary>
@@ -652,40 +566,35 @@ namespace dnSpy.Contracts.Controls {
 		/// Gets/sets whether to show the menu button
 		/// </summary>
 		public bool ShowMenuButton {
-			get { return (bool)GetValue(ShowMenuButtonProperty); }
-			set { SetValue(ShowMenuButtonProperty, value); }
+			get => (bool)GetValue(ShowMenuButtonProperty);
+			set => SetValue(ShowMenuButtonProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets whether to show the minimize button
 		/// </summary>
 		public bool ShowMinimizeButton {
-			get { return (bool)GetValue(ShowMinimizeButtonProperty); }
-			set { SetValue(ShowMinimizeButtonProperty, value); }
+			get => (bool)GetValue(ShowMinimizeButtonProperty);
+			set => SetValue(ShowMinimizeButtonProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets whether to show the maximize button
 		/// </summary>
 		public bool ShowMaximizeButton {
-			get { return (bool)GetValue(ShowMaximizeButtonProperty); }
-			set { SetValue(ShowMaximizeButtonProperty, value); }
+			get => (bool)GetValue(ShowMaximizeButtonProperty);
+			set => SetValue(ShowMaximizeButtonProperty, value);
 		}
 
 		/// <summary>
 		/// Gets/sets whether to show the close button
 		/// </summary>
 		public bool ShowCloseButton {
-			get { return (bool)GetValue(ShowCloseButtonProperty); }
-			set { SetValue(ShowCloseButtonProperty, value); }
+			get => (bool)GetValue(ShowCloseButtonProperty);
+			set => SetValue(ShowCloseButtonProperty, value);
 		}
 
-		static MetroWindow() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
-			//TODO: Remove this field when targetting .NET Framework 4.6.2 or later
-			wpfSupportsPerMonitorDpi = typeof(Window).GetEvent("DpiChanged") != null;
-		}
-		static readonly bool wpfSupportsPerMonitorDpi;
+		static MetroWindow() => DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
 
 		// If these get updated, also update the templates if necessary
 		static readonly CornerRadius CornerRadius = new CornerRadius(0, 0, 0, 0);
@@ -734,7 +643,7 @@ namespace dnSpy.Contracts.Controls {
 		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc) => InitializeWindowCaptionAndResizeBorder(wc, UseResizeBorder);
 
 		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc, bool useResizeBorder) {
-			var scale = SafeWpfPixelScaleFactor;
+			var scale = 1.0;
 			if (useResizeBorder) {
 				wc.CaptionHeight = CaptionHeight * scale;
 				wc.ResizeBorderThickness = new Thickness(
@@ -760,10 +669,7 @@ namespace dnSpy.Contracts.Controls {
 			if (win == null)
 				return;
 
-			var mwin = win as MetroWindow;
-			Debug.Assert(mwin != null);
-			var scale = mwin?.WpfPixelScaleFactor ?? 1;
-
+			var scale = 1.0;
 			var p = win.PointToScreen(new Point(0 * scale, GridCaptionHeight.Value * scale));
 			WindowUtils.ShowSystemMenu(win, p);
 		}
@@ -776,7 +682,7 @@ namespace dnSpy.Contracts.Controls {
 		public void SetScaleTransform(DependencyObject target, double scale) => SetScaleTransform(target, target, scale);
 
 		void SetScaleTransform(DependencyObject textObj, DependencyObject vc, double scale) {
-			Debug.Assert(textObj != this || !wpfSupportsPerMonitorDpi);
+			Debug.Assert(textObj != this);
 			if (vc == null || textObj == null)
 				return;
 
@@ -793,10 +699,14 @@ namespace dnSpy.Contracts.Controls {
 
 		void SetTextFormattingMode(DependencyObject textObj, double scale) {
 			if (scale == 1) {
-				if (wpfSupportsPerMonitorDpi || WindowDpi == new Size(96, 96))
+				if (textObj is Window)
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
-				else
-					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
+				else {
+					// Inherit the property. We assume that the root element has TextFormattingMode.Display.
+					// We shouldn't set it to Display since this UI element could be inside a parent that
+					// has been zoomed. We must inherit its Ideal mode, and not force Display mode.
+					textObj.ClearValue(TextOptions.TextFormattingModeProperty);
+				}
 			}
 			else {
 				// We must set it to Ideal or the text will be blurry

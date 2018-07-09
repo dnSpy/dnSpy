@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,8 @@ namespace dnSpy.Contracts.Debugger {
 	/// </summary>
 	public abstract class DbgManager {
 		/// <summary>
-		/// Gets the dispatcher. All debugger events are raised in this thread. <see cref="DbgObject.Close(DbgDispatcher)"/>
-		/// is also called in this thread including disposing of data added by eg. <see cref="DbgObject.GetOrCreateData{T}()"/>.
+		/// Gets the dispatcher. All debugger events are raised on this thread. <see cref="DbgObject.Close(DbgDispatcher)"/>
+		/// is also called on this thread including disposing of data added by eg. <see cref="DbgObject.GetOrCreateData{T}()"/>.
 		/// </summary>
 		public abstract DbgDispatcher Dispatcher { get; }
 
@@ -190,15 +190,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="pid">Process id</param>
 		/// <param name="rid">Runtime id</param>
 		/// <returns></returns>
-		public bool CanDebugRuntime(int pid, RuntimeId rid) => CanDebugRuntime((uint)pid, rid);
-
-		/// <summary>
-		/// Returns true if the runtime can be debugged
-		/// </summary>
-		/// <param name="pid">Process id</param>
-		/// <param name="rid">Runtime id</param>
-		/// <returns></returns>
-		public abstract bool CanDebugRuntime(ulong pid, RuntimeId rid);
+		public abstract bool CanDebugRuntime(int pid, RuntimeId rid);
 
 		/// <summary>
 		/// Closes <paramref name="obj"/>
@@ -250,12 +242,17 @@ namespace dnSpy.Contracts.Debugger {
 		/// An error message that should be shown to the user
 		/// </summary>
 		public const string ErrorUser = nameof(ErrorUser);
+
+		/// <summary>
+		/// Messages by the stepper
+		/// </summary>
+		public const string StepFilter = nameof(StepFilter);
 	}
 
 	/// <summary>
 	/// Message event args
 	/// </summary>
-	public struct DbgManagerMessageEventArgs {
+	public readonly struct DbgManagerMessageEventArgs {
 		/// <summary>
 		/// Gets the message kind, see <see cref="PredefinedDbgManagerMessageKinds"/>
 		/// </summary>
@@ -297,7 +294,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <see cref="DbgCurrentObject{T}"/> changed event args
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public struct DbgCurrentObjectChangedEventArgs<T> where T : DbgObject {
+	public readonly struct DbgCurrentObjectChangedEventArgs<T> where T : DbgObject {
 		/// <summary>
 		/// true if <see cref="DbgCurrentObject{T}.Current"/> changed
 		/// </summary>
@@ -322,7 +319,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Process paused event args
 	/// </summary>
-	public struct ProcessPausedEventArgs {
+	public readonly struct ProcessPausedEventArgs {
 		/// <summary>
 		/// Gets the process
 		/// </summary>

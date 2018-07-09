@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,8 +38,10 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				return Create(context, gp);
 			if (@ref is IMemberRef mr)
 				return Create(context, mr);
-			if (@ref is Parameter p)
-				return Create(context, new SourceParameter(p, p.Name, p.Type));
+			if (@ref is Parameter pd)
+				return Create(context, new SourceParameter(pd, pd.Name, pd.Type, SourceVariableFlags.None));
+			if (@ref is SourceParameter p)
+				return Create(context, p);
 			if (@ref is SourceLocal l)
 				return Create(context, l);
 			if (@ref is OpCode opc)
@@ -186,7 +188,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			var provider = context.Create();
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
-			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
+			string opCodeHex = opCode.Size > 1 ? $"0x{opCode.Value:X4}" : $"0x{opCode.Value:X2}";
 			provider.Output.Write(BoxedTextColor.OpCode, opCode.Name);
 			provider.Output.WriteSpace();
 			provider.Output.Write(BoxedTextColor.Punctuation, "(");

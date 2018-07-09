@@ -2408,10 +2408,10 @@
     <value>警告</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>添加程序集引用 (Ctrl+O)</value>
+    <value>添加程序集引用</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>添加GAC程序集引用 (Ctrl+Shift+O)</value>
+    <value>添加全局程序集引用 (GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
     <value>无法添加程序集引用。</value>
@@ -2502,5 +2502,29 @@
   </data>
   <data name="ParamDef_Flags_Retval" xml:space="preserve">
     <value>Retval</value>
+  </data>
+  <data name="AddDocumentsToolTip" xml:space="preserve">
+    <value>添加源代码</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Shift+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Shift+O</value>
+  </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>添加类成员</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>添加类成员 ({0})...</value>
+  </data>
+  <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
+    <value>复制 Unkno_wn 元数据流</value>
+  </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>如果在 GAC 中安装了此程序集，则运行 NGEN.exe</value>
   </data>
 </root>

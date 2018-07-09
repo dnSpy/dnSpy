@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error1" xml:space="preserve">
+    <value>ERREUR : {0}</value>
+  </data>
+  <data name="FileOrDirDoesNotExist" xml:space="preserve">
+    <value>Le répertoire/fichier '{0}' n’existe pas</value>
+  </data>
+  <data name="InvalidOption" xml:space="preserve">
+    <value>Option invalide : {0}</value>
+  </data>
+  <data name="InvalidSolutionName" xml:space="preserve">
+    <value>Le nom du .sln ({0}) doit être relatif au répertoire de projet</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Token de métadonnées invalide</value>
+  </data>
+  <data name="InvalidVSVersion" xml:space="preserve">
+    <value>Version de Visual Studio invalide : {0}</value>
+  </data>
+  <data name="LanguageDoesNotExist" xml:space="preserve">
+    <value>Le langage '{0}' n’existe pas</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Langages:</value>
+  </data>
+  <data name="LanguageXDoesNotExist" xml:space="preserve">
+    <value>Le langage {0} n’existe pas</value>
+  </data>
+  <data name="MissingAsmSearchPath" xml:space="preserve">
+    <value>Chemin de recherche de l’Assembly manquant</value>
+  </data>
+  <data name="MissingDotNetFilename" xml:space="preserve">
+    <value>Nom de fichier .NET manquant</value>
+  </data>
+  <data name="MissingLanguageName" xml:space="preserve">
+    <value>Nom de langage manquant</value>
+  </data>
+  <data name="MissingMDToken" xml:space="preserve">
+    <value>Token de métadonnées manquant</value>
+  </data>
+  <data name="MissingNumberOfThreads" xml:space="preserve">
+    <value>Nombre de threads manquant</value>
+  </data>
+  <data name="MissingOptions" xml:space="preserve">
+    <value>Pas d’options précisées</value>
+  </data>
+  <data name="MissingOutputDir" xml:space="preserve">
+    <value>Répertoire de sortie manquant</value>
+  </data>
+  <data name="MissingSolutionName" xml:space="preserve">
+    <value>Nom de .sln manquant</value>
+  </data>
+  <data name="MissingVSVersion" xml:space="preserve">
+    <value>Version de Visual Studio manquante</value>
+  </data>
+  <data name="NoLanguagesFound" xml:space="preserve">
+    <value>Pas de langues ont été trouvés. Assurez-vous que les fichiers dll de langue existent dans le même dossier que ce programme.</value>
+  </data>
+  <data name="NotDotNetFile" xml:space="preserve">
+    <value>{0} n’est pas un fichier .NET</value>
+  </data>
+  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
+    <value>Un seul fichier peut être décompilé lorsque vous utilisez --md</value>
+  </data>
+  <data name="MissingUserGacPath" xml:space="preserve">
+    <value>Chemin du GAC utilisateur manquant</value>
+  </data>
+  <data name="InvalidMemberToDecompile" xml:space="preserve">
+    <value>Seuls les types, les méthodes, les champs, les events et les propriétés peuvent être décompilés</value>
+  </data>
+  <data name="CouldNotFindTypeX" xml:space="preserve">
+    <value>Le type {0} est introuvable</value>
+  </data>
+  <data name="CouldNotResolveGacFileX" xml:space="preserve">
+    <value>N’a pas pu résoudre l'Assembly '{0}' dans le GAC</value>
+  </data>
+  <data name="MissingGacFile" xml:space="preserve">
+    <value>Nom de l’Assembly du GAC manquant</value>
+  </data>
+  <data name="MissingTypeName" xml:space="preserve">
+    <value>Nom complet du type manquant</value>
+  </data>
+  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
+    <value>Le langage {0} ne supporte pas la création des fichiers de projet</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>Options des langages:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>Toutes les options booléennes peuvent être désactivées en utilisant 'no-' ou 'dont-', par exemple --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>Argument d'option manquant</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>GUID invalide</value>
+  </data>
+  <data name="CmdLineAssembly" xml:space="preserve">
+    <value>assembly</value>
+  </data>
+  <data name="CmdLineDescription_AsmPath" xml:space="preserve">
+    <value>chemin de recherche des assemblies. Les chemins peuvent être séparés par '{0}' ou vous pouvez utiliser des --asm-path multiples</value>
+  </data>
+  <data name="CmdLineDescription_GACFile" xml:space="preserve">
+    <value>décompiler une assembly du GAC. Utiliser le nom complet de l'assembly pour définir la version exacte.</value>
+  </data>
+  <data name="CmdLineDescription_Language" xml:space="preserve">
+    <value>langage désiré, par défaut C#. Les Guids peuvent être utilisés.</value>
+  </data>
+  <data name="CmdLineDescription_MDToken" xml:space="preserve">
+    <value>décompiler vers stdout le membre avec le token de métadonnées N</value>
+  </data>
+  <data name="CmdLineDescription_NoBAML" xml:space="preserve">
+    <value>ne pas décompiler le baml en xaml</value>
+  </data>
+  <data name="CmdLineDescription_NoGAC" xml:space="preserve">
+    <value>ne pas utiliser le GAC pour chercher les assemblies. Utile avec --no-stdlib</value>
+  </data>
+  <data name="CmdLineDescription_NoResources" xml:space="preserve">
+    <value>ne pas décompresser les ressources</value>
+  </data>
+  <data name="CmdLineDescription_NoResX" xml:space="preserve">
+    <value>ne pas créer les fichiers .resx</value>
+  </data>
+  <data name="CmdLineDescription_NoSLN" xml:space="preserve">
+    <value>ne pas créer le fichier .sln</value>
+  </data>
+  <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
+    <value>les projets ne référencent pas mscorlib</value>
+  </data>
+  <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
+    <value>nombre de threads de travail. La valeur par défaut est d’utiliser un thread par coeur du CPU</value>
+  </data>
+  <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
+    <value>répertoire de sortie</value>
+  </data>
+  <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
+    <value>guid du projet</value>
+  </data>
+  <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
+    <value>recherche récursive sur les fichiers .NET à décompiler</value>
+  </data>
+  <data name="CmdLineDescription_SlnName" xml:space="preserve">
+    <value>nom du fichier .sln</value>
+  </data>
+  <data name="CmdLineDescription_Type1" xml:space="preserve">
+    <value>décompiler le type portant le nom spécifié dans stdout. Soit Namespace.Name, soit Name (insensible à la casse)</value>
+  </data>
+  <data name="CmdLineDescription_Type2" xml:space="preserve">
+    <value>identique à -t</value>
+  </data>
+  <data name="CmdLineDescription_UserGAC" xml:space="preserve">
+    <value>chemin du GAC utilisateur. Les chemins peuvent être séparés par '{0}' ou vous pouvez utiliser des --user-gac multiples</value>
+  </data>
+  <data name="CmdLineDescription_VSVersion" xml:space="preserve">
+    <value>Version de Visual Studio, 2005, 2008, ..., {0}</value>
+  </data>
+  <data name="CmdLineLanguage" xml:space="preserve">
+    <value>lang</value>
+  </data>
+  <data name="CmdLineName" xml:space="preserve">
+    <value>nom</value>
+  </data>
+  <data name="CmdLineOutputDir" xml:space="preserve">
+    <value>chemin de sortie</value>
+  </data>
+  <data name="CmdLinePath" xml:space="preserve">
+    <value>chemin</value>
+  </data>
+  <data name="ExampleDescription1" xml:space="preserve">
+    <value>Décompiler tous les fichiers *.dll .NET dans le répertoire ci-dessus et enregistrer le résultat dans C:\out\path</value>
+  </data>
+  <data name="ExampleDescription2" xml:space="preserve">
+    <value>Décompiler tous les fichiers *.dll .NET dans le répertoire ci-dessus et ses sous-répertoires</value>
+  </data>
+  <data name="ExampleDescription3" xml:space="preserve">
+    <value>Décompiler tous les fichiers *.dll .NET dans le répertoire ci-dessus et enregistrer le résultat dans C:\out\path</value>
+  </data>
+  <data name="ExampleDescription4" xml:space="preserve">
+    <value>Décompiler le membre avec le token 0x06000123</value>
+  </data>
+  <data name="ExampleDescription5" xml:space="preserve">
+    <value>Décompiler System.Int32 à partir de mscorlib</value>
+  </data>
+  <data name="ExamplesHeader" xml:space="preserve">
+    <value>Exemples :</value>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>[options] [fichierOuRépertoire1] [fichierOuRépertoire2] [...]</value>
+  </data>
+  <data name="CmdLineDescription_NoColor" xml:space="preserve">
+    <value>ne pas colorier le texte</value>
+  </data>
+  <data name="CmdLineDescription_Spaces" xml:space="preserve">
+    <value>Largeut de la tabulation en espaces ou 0 pour utiliser une seule tabulation</value>
+  </data>
+  <data name="InvalidSpacesArgument" xml:space="preserve">
+    <value>Le nombre d'espaces doit être compris entre {0} et {1}</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Argument manquant</value>
+  </data>
+</root>

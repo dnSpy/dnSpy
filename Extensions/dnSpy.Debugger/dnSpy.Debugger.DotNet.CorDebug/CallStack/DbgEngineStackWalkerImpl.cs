@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,8 +61,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			continueCounter = dnThread.Debugger.ContinueCounter;
 		}
 
-		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) =>
-			engine.DebuggerThread.Invoke(() => GetNextStackFrames_CorDebug(maxFrames));
+		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) {
+			if (engine.DebuggerThread.CheckAccess())
+				return GetNextStackFrames_CorDebug(maxFrames);
+			return GetNextStackFrames2(maxFrames);
+
+			DbgEngineStackFrame[] GetNextStackFrames2(int maxFrames2) =>
+				engine.DebuggerThread.Invoke(() => GetNextStackFrames_CorDebug(maxFrames2));
+		}
 
 		DbgEngineStackFrame[] GetNextStackFrames_CorDebug(int maxFrames) {
 			engine.DebuggerThread.VerifyAccess();

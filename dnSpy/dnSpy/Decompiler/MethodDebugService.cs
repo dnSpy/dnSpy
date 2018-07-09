@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -83,7 +83,15 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		public IList<MethodSourceStatement> FindByTextPosition(int textPosition, bool sameMethod) {
+		public IList<MethodSourceStatement> FindByTextPosition(int textPosition, FindByTextPositionOptions options) {
+			// We're called by the bookmark and BP code, and they pass in the same input
+			if (resultFindByTextPosition.result == null || resultFindByTextPosition.textPosition != textPosition || resultFindByTextPosition.options != options)
+				resultFindByTextPosition = (FindByTextPositionCore(textPosition, options), textPosition, options);
+			return resultFindByTextPosition.result;
+		}
+		(IList<MethodSourceStatement> result, int textPosition, FindByTextPositionOptions options) resultFindByTextPosition;
+
+		IList<MethodSourceStatement> FindByTextPositionCore(int textPosition, FindByTextPositionOptions options) {
 			if (textPosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(textPosition));
 			if (dict.Count == 0)
@@ -91,26 +99,72 @@ namespace dnSpy.Decompiler {
 
 			if (textPosition > snapshot.Length)
 				return Array.Empty<MethodSourceStatement>();
+
+			if ((options & FindByTextPositionOptions.OuterMostStatement) != 0 && TryGetOuterMostSpan(textPosition, out var outermostSpan))
+				textPosition = outermostSpan.Start;
 			var line = snapshot.GetLineFromPosition(textPosition);
-			var methodStatements = FindByLineAndTextOffset(line.Start.Position, line.End.Position, textPosition);
-			if (methodStatements == null && line.Start.Position != textPosition)
-				methodStatements = FindByLineAndTextOffset(line.Start.Position, line.End.Position, line.Start.Position);
+
+			var scopeSpan = GetScopeSpan(textPosition);
+			var lineStartPos = Math.Max(line.Start.Position, scopeSpan.Start);
+			var lineEndPos = Math.Min(line.End.Position, scopeSpan.End);
+			if (lineStartPos >= lineEndPos)
+				return Array.Empty<MethodSourceStatement>();
+
+			var methodStatements = FindByLineAndTextOffset(scopeSpan, lineStartPos, lineEndPos, textPosition);
+			if (methodStatements == null && lineStartPos != textPosition)
+				methodStatements = FindByLineAndTextOffset(scopeSpan, lineStartPos, lineEndPos, lineStartPos);
 			if (methodStatements != null && methodStatements.Count > 1) {
 				// If there are two methods (get; set;) on the same line, only return one of them
-				var exact = methodStatements.Where(a => a.Statement.TextSpan.Start <= textPosition && textPosition < a.Statement.TextSpan.End).ToList();
+				var exact = methodStatements.Where(a => a.Statement.TextSpan != scopeSpan && a.Statement.TextSpan.Contains(textPosition)).ToList();
 				if (exact.Count != 0)
 					methodStatements = exact;
 				else
 					methodStatements = null;
 			}
 			if (methodStatements == null)
-				methodStatements = GetClosest(line.Start.Position, line.End.Position, textPosition);
+				methodStatements = GetClosest(lineStartPos, lineEndPos, textPosition);
+
+			methodStatements = Filter(methodStatements, textPosition);
 
 			if (methodStatements != null) {
-				if (!sameMethod || IsSameMethod(methodStatements, textPosition))
+				if ((options & FindByTextPositionOptions.SameMethod) == 0 || IsSameMethod(methodStatements, textPosition))
 					return methodStatements;
 			}
 			return Array.Empty<MethodSourceStatement>();
+		}
+
+		TextSpan GetScopeSpan(int textPosition) {
+			int stmtIndex = GetScopeSpanStartIndex(textPosition);
+			if (stmtIndex >= 0) {
+				var scopeSpan = sortedStatements[stmtIndex].Statement.TextSpan;
+				if (scopeSpan.Contains(textPosition))
+					return scopeSpan;
+			}
+			return new TextSpan(0, snapshot.Length);
+		}
+
+		List<MethodSourceStatement> Filter(List<MethodSourceStatement> methodStatements, int textPosition) {
+			if (methodStatements == null || methodStatements.Count <= 1)
+				return methodStatements;
+			var res = new List<MethodSourceStatement>();
+			foreach (var info in methodStatements) {
+				if (info.Statement.TextSpan.Contains(textPosition)) {
+					if (res.Count == 0)
+						res.Add(info);
+					else {
+						var other = res[0];
+						if (other.Statement.TextSpan == info.Statement.TextSpan)
+							res.Add(info);
+						else if (info.Statement.TextSpan.Length < other.Statement.TextSpan.Length) {
+							res.Clear();
+							res.Add(info);
+						}
+					}
+				}
+			}
+			if (res.Count != 0)
+				return res;
+			return methodStatements;
 		}
 
 		bool IsSameMethod(List<MethodSourceStatement> methodStatements, int textPosition) {
@@ -121,42 +175,50 @@ namespace dnSpy.Decompiler {
 			if (methodInfo == null)
 				return false;
 			var methodSpan = methodInfo.Span;
-			if (textPosition >= methodSpan.Start && textPosition < methodSpan.End)
+			if (methodSpan.Contains(textPosition))
 				return true;
 
 			// If it's a field initializer the statement isn't within the method
 			if (methodInfo.Method.IsConstructor) {
 				foreach (var statement in methodInfo.Statements) {
 					// Allow end position too since it's probably at the end of the line
-					if (textPosition >= statement.TextSpan.Start && textPosition <= statement.TextSpan.End)
+					if (statement.TextSpan.Intersects(textPosition))
 						return true;
 				}
 			}
 			return false;
 		}
 
-		List<MethodSourceStatement> FindByLineAndTextOffset(int lineStart, int lineEnd, int textPosition) {
+		List<MethodSourceStatement> FindByLineAndTextOffset(TextSpan scopeSpan, int lineStart, int lineEnd, int textPosition) {
 			List<MethodSourceStatement> list = null;
-			foreach (var info in dict.Values) {
+			foreach (var kv in dict) {
+				var info = kv.Value;
 				var sourceStatement = info.GetSourceStatementByTextOffset(lineStart, lineEnd, textPosition);
-				if (sourceStatement != null) {
+				if (sourceStatement != null && sourceStatement.Value.TextSpan.Start >= scopeSpan.Start && sourceStatement.Value.TextSpan.End <= scopeSpan.End) {
 					if (list == null)
 						list = new List<MethodSourceStatement>();
 					list.Add(new MethodSourceStatement(info.Method, sourceStatement.Value));
 				}
 			}
-			return list == null ? null : list.Distinct().ToList();
+			return list;
 		}
 
 		List<MethodSourceStatement> GetClosest(int lineStart, int lineEnd, int textPosition) {
 			var list = new List<MethodSourceStatement>();
-			foreach (var info in dict.Values) {
+			foreach (var kv in dict) {
+				var info = kv.Value;
 				MethodSourceStatement? methodSourceStatement = null;
 				foreach (var sourceStatement in info.Statements) {
 					if (lineStart >= sourceStatement.TextSpan.End)
 						continue;
-					if (methodSourceStatement == null || sourceStatement.TextSpan.Start < methodSourceStatement.Value.Statement.TextSpan.Start)
+					if (methodSourceStatement == null)
 						methodSourceStatement = new MethodSourceStatement(info.Method, sourceStatement);
+					else {
+						var d1 = GetDist(sourceStatement.TextSpan, textPosition);
+						var d2 = GetDist(methodSourceStatement.Value.Statement.TextSpan, textPosition);
+						if (d1 < d2 || (d1 == d2 && sourceStatement.TextSpan.Start < methodSourceStatement.Value.Statement.TextSpan.Start))
+							methodSourceStatement = new MethodSourceStatement(info.Method, sourceStatement);
+					}
 				}
 				if (methodSourceStatement != null) {
 					if (list.Count == 0)
@@ -172,7 +234,7 @@ namespace dnSpy.Decompiler {
 
 			if (list.Count == 0)
 				return null;
-			return list.Distinct().ToList();
+			return list;
 		}
 
 		static int GetDist(TextSpan span, int textPosition) {
@@ -188,7 +250,7 @@ namespace dnSpy.Decompiler {
 			if (!dict.TryGetValue(token, out var info))
 				return null;
 			foreach (var sourceStatement in info.Statements) {
-				if (sourceStatement.BinSpan.Start <= codeOffset && codeOffset < sourceStatement.BinSpan.End)
+				if (sourceStatement.ILSpan.Start <= codeOffset && codeOffset < sourceStatement.ILSpan.End)
 					return new MethodSourceStatement(info.Method, sourceStatement);
 			}
 			return null;
@@ -203,9 +265,6 @@ namespace dnSpy.Decompiler {
 		}
 
 		public IEnumerable<MethodSourceStatement> GetStatementsByTextSpan(Span span) {
-			if (sortedStatements == null)
-				InitializeSortedStatements();
-
 			int position = span.Start;
 			int end = span.End;
 			int index = GetStartIndex(position);
@@ -216,12 +275,65 @@ namespace dnSpy.Decompiler {
 				var mss = array[index++];
 				if (end < mss.Statement.TextSpan.Start)
 					break;
-				Debug.Assert(mss.Statement.TextSpan.Start <= end && mss.Statement.TextSpan.End >= position);
-				yield return mss;
+				if (mss.Statement.TextSpan.End >= position)
+					yield return mss;
 			}
 		}
 
 		int GetStartIndex(int position) {
+			if (sortedStatements == null)
+				InitializeSortedStatements();
+			return GetStartIndexCore(position);
+		}
+
+		bool TryGetOuterMostSpan(int position, out TextSpan outermostSpan) {
+			outermostSpan = default;
+
+			TextSpan span = default;
+			foreach (var kv in dict) {
+				foreach (var s in kv.Value.Statements) {
+					if (s.TextSpan.Contains(position) && s.TextSpan.Length > span.Length)
+						span = s.TextSpan;
+				}
+			}
+
+			outermostSpan = span;
+			return span.Length > 0;
+		}
+
+		int GetScopeSpanStartIndex(int position) {
+			if (sortedStatements == null)
+				InitializeSortedStatements();
+
+			int index = GetStartIndexCore(position);
+			var array = sortedStatements;
+			if ((uint)index >= (uint)array.Length)
+				return -1;
+			TextSpan span;
+			while ((uint)index < (uint)array.Length) {
+				span = array[index].Statement.TextSpan;
+				if (span.Contains(position))
+					break;
+				index--;
+			}
+			if ((uint)index >= (uint)array.Length)
+				return -1;
+			while ((uint)index < (uint)array.Length) {
+				span = array[index].Statement.TextSpan;
+				if (!span.Contains(position))
+					break;
+				index++;
+			}
+			index--;
+			span = array[index].Statement.TextSpan;
+			if (!span.Contains(position))
+				return -1;
+			while (index - 1 >= 0 && array[index - 1].Statement.TextSpan == span)
+				index--;
+			return index;
+		}
+
+		int GetStartIndexCore(int position) {
 			var array = sortedStatements;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {
@@ -248,7 +360,8 @@ namespace dnSpy.Decompiler {
 			if (sortedStatements != null)
 				return;
 			var list = new List<MethodSourceStatement>();
-			foreach (var info in dict.Values) {
+			foreach (var kv in dict) {
+				var info = kv.Value;
 				foreach (var s in info.Statements)
 					list.Add(new MethodSourceStatement(info.Method, s));
 			}

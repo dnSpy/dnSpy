@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace dnSpy.Decompiler {
-	struct FormatterMethodInfo {
+	readonly struct FormatterMethodInfo {
 		public readonly ModuleDef ModuleDef;
 		public readonly IList<TypeSig> TypeGenericParams;
 		public readonly IList<TypeSig> MethodGenericParams;

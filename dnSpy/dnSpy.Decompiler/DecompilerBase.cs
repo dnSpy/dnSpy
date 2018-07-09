@@ -76,7 +76,7 @@ namespace dnSpy.Decompiler {
 
 		static IPEImage TryGetPEImage(ModuleDef mod) {
 			var m = mod as ModuleDefMD;
-			return m == null ? null : m.MetaData.PEImage;
+			return m == null ? null : m.Metadata.PEImage;
 		}
 
 		protected void WriteAssembly(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
@@ -230,15 +230,6 @@ namespace dnSpy.Decompiler {
 			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
 		public virtual void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
 			new CSharpFormatter(output, flags, null).Write(member);
-
-		protected static string GetName(IVariable variable, string name) {
-			if (!string.IsNullOrWhiteSpace(name))
-				return name;
-			var n = variable.Name;
-			if (!string.IsNullOrWhiteSpace(n))
-				return n;
-			return $"#{variable.Index}";
-		}
 
 		protected virtual void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 	/// <summary>
 	/// Contains all required data to create a breakpoint
 	/// </summary>
-	public struct DbgDotNetBreakpointInfo {
+	public readonly struct DbgDotNetBreakpointInfo {
 		/// <summary>
 		/// Module
 		/// </summary>

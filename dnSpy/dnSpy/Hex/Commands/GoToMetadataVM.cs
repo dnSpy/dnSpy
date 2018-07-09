@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Commands {
 		public ObservableCollection<GoToMetadataKindVM> GoToMetadataCollection { get; }
 
 		public GoToMetadataKindVM SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -107,8 +107,8 @@ namespace dnSpy.Hex.Commands {
 		GoToMetadataKindVM selectedItem;
 
 		public GoToMetadataKind GoToMetadataKind {
-			get { return SelectedItem.Kind; }
-			set { SelectedItem = GoToMetadataCollection.First(a => a.Kind == value); }
+			get => SelectedItem.Kind;
+			set => SelectedItem = GoToMetadataCollection.First(a => a.Kind == value);
 		}
 
 		public object OffsetToken => offsetTokenVM;
@@ -150,7 +150,7 @@ namespace dnSpy.Hex.Commands {
 			}
 
 			public GoToMetadataKind GoToMetadataKind {
-				get { return goToMetadataKind; }
+				get => goToMetadataKind;
 				set {
 					if (goToMetadataKind != value) {
 						goToMetadataKind = value;

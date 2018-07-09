@@ -177,6 +177,12 @@
   <data name="ReturnValueNotAvailable" xml:space="preserve">
     <value>A visszatérési érték jelenleg nem elérhető</value>
   </data>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>Belelépés: '{0}' operátor átlépése.</value>
+  </data>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>Belelépés: '{0}' tulajdonság átlépése.</value>
+  </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>Ismeretlen változó vagy objektum ID</value>
   </data>

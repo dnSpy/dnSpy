@@ -44,8 +44,8 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
                     cancellationToken: cancellationToken).ConfigureAwait(false);
             }
 
-            // Linked files/shared projects: imagine the following when FOO is false
-            // #if FOO
+            // Linked files/shared projects: imagine the following when GOO is false
+            // #if GOO
             // int x = 3;
             // #endif 
             // var y = x$$;
@@ -63,9 +63,9 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             foreach (var link in linkedDocumentIds)
             {
                 var linkedDocument = document.Project.Solution.GetDocument(link);
-                var linkedToken = await FindTokenInLinkedDocument(token, linkedDocument, cancellationToken).ConfigureAwait(false);
+                var linkedToken = await FindTokenInLinkedDocument(token, document, linkedDocument, cancellationToken).ConfigureAwait(false);
 
-                if (linkedToken != default(SyntaxToken))
+                if (linkedToken != default)
                 {
                     // Not in an inactive region, so this file is a candidate.
                     candidateProjects.Add(link.ProjectId);
@@ -104,25 +104,42 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             return await CreateContentAsync(document.Project.Solution.Workspace, token, bestBinding.Item2, bestBinding.Item3, supportedPlatforms, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<SyntaxToken> FindTokenInLinkedDocument(SyntaxToken token, Document linkedDocument, CancellationToken cancellationToken)
+        private async Task<SyntaxToken> FindTokenInLinkedDocument(SyntaxToken token, Document originalDocument, Document linkedDocument, CancellationToken cancellationToken)
         {
             if (!linkedDocument.SupportsSyntaxTree)
             {
-                return default(SyntaxToken);
+                return default;
             }
 
             var root = await linkedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            // Don't search trivia because we want to ignore inactive regions
-            var linkedToken = root.FindToken(token.SpanStart);
-
-            // The new and old tokens should have the same span?
-            if (token.Span == linkedToken.Span)
+            try
             {
-                return linkedToken;
+                // Don't search trivia because we want to ignore inactive regions
+                var linkedToken = root.FindToken(token.SpanStart);
+
+                // The new and old tokens should have the same span?
+                if (token.Span == linkedToken.Span)
+                {
+                    return linkedToken;
+                }
+            }
+            catch
+            {
+                /*
+                // We are seeing linked files with different spans cause FindToken to crash.
+                // Capturing more information for https://devdiv.visualstudio.com/DevDiv/_workitems?id=209299
+                var originalText = await originalDocument.GetTextAsync().ConfigureAwait(false);
+                var linkedText = await linkedDocument.GetTextAsync().ConfigureAwait(false);
+                var linkedFileException = new LinkedFileDiscrepancyException(thrownException, originalText.ToString(), linkedText.ToString());
+
+                // This problem itself does not cause any corrupted state, it just changes the set
+                // of symbols included in QuickInfo, so we report and continue running.
+                FatalError.ReportWithoutCrash(linkedFileException);
+                */
             }
 
-            return default(SyntaxToken);
+            return default;
         }
 
         protected async Task<QuickInfoContent> CreateContentAsync(
@@ -137,16 +154,16 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
 
             var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, token.SpanStart, symbols.AsImmutable(), cancellationToken).ConfigureAwait(false);
 
+
             var mainDescriptionBuilder = new List<TaggedText>();
-            if (sections.ContainsKey(SymbolDescriptionGroups.MainDescription))
+            if (sections.TryGetValue(SymbolDescriptionGroups.MainDescription, out var parts))
             {
-                mainDescriptionBuilder.AddRange(sections[SymbolDescriptionGroups.MainDescription]);
+                mainDescriptionBuilder.AddRange(parts);
             }
 
             var typeParameterMapBuilder = new List<TaggedText>();
-            if (sections.ContainsKey(SymbolDescriptionGroups.TypeParameterMap))
+            if (sections.TryGetValue(SymbolDescriptionGroups.TypeParameterMap, out parts))
             {
-                var parts = sections[SymbolDescriptionGroups.TypeParameterMap];
                 if (!parts.IsDefaultOrEmpty)
                 {
                     typeParameterMapBuilder.AddLineBreak();
@@ -155,9 +172,8 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             }
 
             var anonymousTypesBuilder = new List<TaggedText>();
-            if (sections.ContainsKey(SymbolDescriptionGroups.AnonymousTypes))
+            if (sections.TryGetValue(SymbolDescriptionGroups.AnonymousTypes, out parts))
             {
-                var parts = sections[SymbolDescriptionGroups.AnonymousTypes];
                 if (!parts.IsDefaultOrEmpty)
                 {
                     anonymousTypesBuilder.AddLineBreak();
@@ -166,9 +182,8 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             }
 
             var usageTextBuilder = new List<TaggedText>();
-            if (sections.ContainsKey(SymbolDescriptionGroups.AwaitableUsageText))
+            if (sections.TryGetValue(SymbolDescriptionGroups.AwaitableUsageText, out parts))
             {
-                var parts = sections[SymbolDescriptionGroups.AwaitableUsageText];
                 if (!parts.IsDefaultOrEmpty)
                 {
                     usageTextBuilder.AddRange(parts);
@@ -181,9 +196,8 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             }
 
             var exceptionsTextBuilder = new List<TaggedText>();
-            if (sections.ContainsKey(SymbolDescriptionGroups.Exceptions))
+            if (sections.TryGetValue(SymbolDescriptionGroups.Exceptions, out parts))
             {
-                var parts = sections[SymbolDescriptionGroups.Exceptions];
                 if (!parts.IsDefaultOrEmpty)
                 {
                     exceptionsTextBuilder.AddRange(parts);
@@ -224,10 +238,10 @@ namespace dnSpy.Roslyn.Internal.QuickInfo
             ISyntaxFactsService syntaxFactsService,
             CancellationToken cancellationToken)
         {
-            if (sections.ContainsKey(SymbolDescriptionGroups.Documentation))
+            if (sections.TryGetValue(SymbolDescriptionGroups.Documentation, out var parts))
             {
                 var documentationBuilder = new List<TaggedText>();
-                documentationBuilder.AddRange(sections[SymbolDescriptionGroups.Documentation]);
+                documentationBuilder.AddRange(parts);
                 return CreateClassifiableDeferredContent(documentationBuilder);
             }
             else if (symbols.Any())

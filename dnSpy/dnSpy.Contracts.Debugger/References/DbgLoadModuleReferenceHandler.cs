@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,9 +41,30 @@ namespace dnSpy.Contracts.Debugger.References {
 		/// Loads modules in the treeview. Returns an array of modules that got loaded.
 		/// </summary>
 		/// <param name="modules">Modules to load. Unsupported modules can be ignored.</param>
-		/// <param name="useMemory">true if the modules should be read from memory and not from files on disk</param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgModule[] Load(DbgModule[] modules, bool useMemory);
+		public abstract DbgModule[] Load(DbgModule[] modules, DbgLoadModuleReferenceHandlerOptions options);
+	}
+
+	/// <summary>
+	/// Load module options
+	/// </summary>
+	[Flags]
+	public enum DbgLoadModuleReferenceHandlerOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// The module load was caused by a non-user action
+		/// </summary>
+		AutoLoaded				= 0x00000001,
+
+		/// <summary>
+		/// Always load the module from the process' address space instead of from the module's file on disk
+		/// </summary>
+		ForceMemory				= 0x00000002,
 	}
 
 	/// <summary>Metadata</summary>

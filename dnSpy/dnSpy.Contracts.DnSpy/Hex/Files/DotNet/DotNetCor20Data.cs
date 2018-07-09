@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>IMAGE_COR20_HEADER.MinorRuntimeVersion</summary>
 		public abstract StructField<UInt16Data> MinorRuntimeVersion { get; }
 		/// <summary>IMAGE_COR20_HEADER.MetaData</summary>
-		public abstract StructField<DataDirectoryData> MetaData { get; }
+		public abstract StructField<DataDirectoryData> Metadata { get; }
 		/// <summary>IMAGE_COR20_HEADER.Flags</summary>
 		public abstract StructField<UInt32FlagsData> Flags { get; }
 		/// <summary>IMAGE_COR20_HEADER.EntryPointToken / IMAGE_COR20_HEADER.EntryPointRVA</summary>

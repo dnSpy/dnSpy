@@ -7,30 +7,33 @@
     <ProjectGuid>{8B774E77-C956-4ABC-BBFE-8756CB4111C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Roslyn.VisualBasic.Internal</RootNamespace>
-    <AssemblyName>Roslyn.Services.Editor.VisualBasic.UnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <AssemblyName>dnSpy.Roslyn.VisualBasic.Internal</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\dnSpy.Roslyn.Internal\RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
     <MyType>Windows</MyType>
+    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis;Microsoft.CodeAnalysis.Workspaces;Microsoft.CodeAnalysis.Features;Microsoft.CodeAnalysis.VisualBasic;Microsoft.CodeAnalysis.VisualBasic.Features;Microsoft.CodeAnalysis.VisualBasic.Workspaces;</MakeEverythingPublicAssemblies>
+    <MakeEverythingPublicIVTString>$(AssemblyName), PublicKey=0024000004800000940000000602000000240000525341310004000001000100858d4f2519af95faeca8d359daa2078b20826765450f330daff3c5ec378adf9eb8e168eff8069ba51e15c1992d0d72b73129ed7a014f62863fa80a80dd9b010b8211c4d4c70ed26b9b65370007b0341685c98cc4cd2d16814d9581db82b382fb8ee838e1b8a2bd1c759e43ddda209e35cde530a7ba6a517787c04a3f283ea1b5</MakeEverythingPublicIVTString>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\..\dnSpy\bin\Debug\</OutputPath>
-    <DocumentationFile>..\..\dnSpy\bin\Debug\Roslyn.Services.Editor.VisualBasic.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Debug\dnSpy.Roslyn.VisualBasic.Internal.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>..\..\dnSpy\bin\Release\</OutputPath>
-    <DocumentationFile>..\..\dnSpy\bin\Release\Roslyn.Services.Editor.VisualBasic.UnitTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\dnSpy\bin\Release\dnSpy.Roslyn.VisualBasic.Internal.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -46,10 +49,6 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-  </ItemGroup>
-  <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
@@ -61,9 +60,11 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\EnumerableExtensions2.vb" />
+    <Compile Include="MakeEverythingPublic.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="QuickInfo\SemanticQuickInfoProvider.vb" />
-    <Compile Include="SmartIndent\SpecialFormattingRule.vb" />
+    <Compile Include="SmartIndent\SpecialFormattingOperation.vb" />
     <Compile Include="SmartIndent\VisualBasicIndentationService.Indenter.vb" />
     <Compile Include="SmartIndent\VisualBasicIndentationService.vb" />
   </ItemGroup>
@@ -76,5 +77,6 @@
   <ItemGroup>
     <None Include="project.json" />
   </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\Build\MakeEverythingPublic\MakeEverythingPublic.tasks" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

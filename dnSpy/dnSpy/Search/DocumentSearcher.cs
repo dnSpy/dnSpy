@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,12 +46,12 @@ namespace dnSpy.Search {
 		readonly FilterSearcherOptions filterSearcherOptions;
 
 		public bool SyntaxHighlight {
-			get { return filterSearcherOptions.Context.SyntaxHighlight; }
-			set { filterSearcherOptions.Context.SyntaxHighlight = value; }
+			get => filterSearcherOptions.Context.SyntaxHighlight;
+			set => filterSearcherOptions.Context.SyntaxHighlight = value;
 		}
 
 		public IDecompiler Decompiler {
-			get { return filterSearcherOptions.Context.Decompiler; }
+			get => filterSearcherOptions.Context.Decompiler;
 			set {
 				filterSearcherOptions.Context.Decompiler = value ?? throw new ArgumentNullException(nameof(value));
 			}

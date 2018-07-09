@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the span of this scope
 		/// </summary>
-		public BinSpan Span { get; set; }
+		public ILSpan Span { get; set; }
 
 		/// <summary>
 		/// Gets all child scopes

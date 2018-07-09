@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,7 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
+using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
@@ -32,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 	// interface by using the extension method below.
 
 	public interface IDebuggerDisplayAttributeEvaluator {
-		DbgDotNetEvalResult Evaluate(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state, CancellationToken cancellationToken);
+		DbgDotNetEvalResult Evaluate(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state);
 	}
 
 	public static class IDebuggerDisplayAttributeEvaluatorUtils {
@@ -43,18 +42,22 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 			context.GetData<IDebuggerDisplayAttributeEvaluator>();
 	}
 
-	public struct DbgDotNetEvalResult {
+	public readonly struct DbgDotNetEvalResult {
 		public DbgDotNetValue Value { get; }
+		public ReadOnlyCollection<string> FormatSpecifiers { get; }
 		public DbgEvaluationResultFlags Flags { get; }
 		public bool IsThrownException => (Flags & DbgEvaluationResultFlags.ThrownException) != 0;
 		public string Error { get; }
-		public DbgDotNetEvalResult(string error, DbgEvaluationResultFlags flags = 0) {
+		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
+		public DbgDotNetEvalResult(string error, ReadOnlyCollection<string> formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
-		public DbgDotNetEvalResult(DbgDotNetValue value, DbgEvaluationResultFlags flags) {
+		public DbgDotNetEvalResult(DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
+			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = null;
 		}

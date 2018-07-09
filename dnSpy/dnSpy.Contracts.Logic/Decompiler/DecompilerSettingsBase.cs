@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,6 +31,16 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <returns></returns>
 		public abstract DecompilerSettingsBase Clone();
+
+		/// <summary>
+		/// Version number that gets incremented whenever the options change
+		/// </summary>
+		public abstract int Version { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Version"/> is changed
+		/// </summary>
+		public abstract event EventHandler VersionChanged;
 
 		/// <summary>
 		/// Gets all options

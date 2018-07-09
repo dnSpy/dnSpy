@@ -19,7 +19,7 @@ namespace dnSpy.Contracts.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_Contracts_DnSpy_Resources {
@@ -248,6 +248,15 @@ namespace dnSpy.Contracts.Properties {
         public static string Search_SearchColumnHelpText {
             get {
                 return ResourceManager.GetString("Search_SearchColumnHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use &apos;{0}&apos; to invert the match, eg. {1}.
+        /// </summary>
+        public static string Search_SearchColumnInvertMatchHelpText {
+            get {
+                return ResourceManager.GetString("Search_SearchColumnInvertMatchHelpText", resourceCulture);
             }
         }
         

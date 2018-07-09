@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -141,7 +141,7 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		struct AdornmentElementAndSpan {
+		readonly struct AdornmentElementAndSpan {
 			public Span Span { get; }
 			public AdornmentElement AdornmentElement { get; }
 			public AdornmentElementAndSpan(AdornmentElement adornmentElement, Span span) {

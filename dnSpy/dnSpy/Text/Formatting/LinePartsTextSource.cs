@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -74,7 +74,7 @@ namespace dnSpy.Text.Formatting {
 			public override TextRunProperties Properties { get; }
 			readonly IAdornmentElement adornmentElement;
 
-			public AdornmentTextRun(LinePart linePart) {
+			public AdornmentTextRun(in LinePart linePart) {
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;

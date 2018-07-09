@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach.Dialogs;
@@ -83,7 +85,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				options = new ShowAttachToProcessDialogOptions();
 				options.InfoLink = new AttachToProcessLinkInfo {
 					ToolTipMessage = dnSpy_Debugger_Resources.AttachToProcess_MakingAnImageEasierToDebug,
-					Url = "https://docs.microsoft.com/dotnet/framework/debug-trace-profile/making-an-image-easier-to-debug",
+					Url = "https://github.com/0xd4d/dnSpy/wiki/Making-an-Image-Easier-to-Debug",
 				};
 			}
 			Title = GetTitle(options);
@@ -318,6 +320,38 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			sbOutput.Reset();
 			attachToProcessContext.Formatter.WriteCommandLine(sbOutput, vm);
 			return sbOutput.ToString();
+		}
+
+		public void Copy(ProgramVM[] programs) {
+			if (programs.Length == 0)
+				return;
+
+			var sb = new StringBuilderTextColorOutput();
+			var formatter = attachToProcessContext.Formatter;
+			foreach (var vm in programs) {
+				formatter.WriteProcess(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WritePid(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteTitle(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteType(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteMachine(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WritePath(sb, vm);
+				sb.Write(BoxedTextColor.Text, "\t");
+				formatter.WriteCommandLine(sb, vm);
+				sb.Write(BoxedTextColor.Text, Environment.NewLine);
+			}
+
+			var s = sb.ToString();
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		void ShowInfoLinkPage() {

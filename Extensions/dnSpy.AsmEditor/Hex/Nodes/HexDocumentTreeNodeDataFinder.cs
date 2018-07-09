@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class HexDocumentTreeNodeDataFinder : IDocumentTreeNodeDataFinder {
 		public DocumentTreeNodeData FindNode(IDocumentTreeView documentTreeView, object @ref) => FindNode(documentTreeView, @ref as TokenReference);
 
-		internal static MetaDataTableRecordNode FindNode(IDocumentTreeView documentTreeView, TokenReference tokRef) {
+		internal static MetadataTableRecordNode FindNode(IDocumentTreeView documentTreeView, TokenReference tokRef) {
 			if (tokRef == null)
 				return null;
 

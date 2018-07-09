@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var lv = d as ListView;
 			if (lv == null)
 				return;
-			if (!(lv.DataContext is MetaDataTableVM))
+			if (!(lv.DataContext is MetadataTableVM))
 				return;
 
 			lv.InputBindings.Add(new KeyBinding(new CtxMenuMDTableCommandProxy(documentTabService, new SortMDTableCommand.TheMenuMDTableCommand()), Key.T, ModifierKeys.Shift | ModifierKeys.Control));
@@ -66,16 +66,16 @@ namespace dnSpy.AsmEditor.Hex {
 
 	sealed class MDTableContext {
 		public ListView ListView { get; }
-		public MetaDataTableVM MetaDataTableVM { get; }
-		public MetaDataTableNode Node { get; }
-		public MetaDataTableRecordVM[] Records { get; }
+		public MetadataTableVM MetadataTableVM { get; }
+		public MetadataTableNode Node { get; }
+		public MetadataTableRecordVM[] Records { get; }
 		public bool IsContextMenu { get; }
 
-		public MDTableContext(ListView listView, MetaDataTableVM mdVM, MetaDataTableNode mdNode, bool isContextMenu) {
+		public MDTableContext(ListView listView, MetadataTableVM mdVM, MetadataTableNode mdNode, bool isContextMenu) {
 			ListView = listView;
-			MetaDataTableVM = mdVM;
+			MetadataTableVM = mdVM;
 			Node = mdNode;
-			Records = listView.SelectedItems.Cast<MetaDataTableRecordVM>().OrderBy(a => a.Span.Start).ToArray();
+			Records = listView.SelectedItems.Cast<MetadataTableRecordVM>().OrderBy(a => a.Span.Start).ToArray();
 			IsContextMenu = isContextMenu;
 		}
 
@@ -125,8 +125,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		bool ICommand.CanExecute(object parameter) {
@@ -158,11 +158,11 @@ namespace dnSpy.AsmEditor.Hex {
 		internal static MDTableContext ToMDTableContext(ListView listView, bool isContextMenu) {
 			if (listView == null)
 				return null;
-			var mdVM = listView.DataContext as MetaDataTableVM;
+			var mdVM = listView.DataContext as MetadataTableVM;
 			if (mdVM == null)
 				return null;
 
-			return new MDTableContext(listView, mdVM, (MetaDataTableNode)mdVM.Owner, isContextMenu);
+			return new MDTableContext(listView, mdVM, (MetadataTableNode)mdVM.Owner, isContextMenu);
 		}
 	}
 
@@ -180,9 +180,9 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static void ExecuteInternal(MDTableContext context) =>
-			SortTable(context.MetaDataTableVM, 1, context.MetaDataTableVM.Rows);
+			SortTable(context.MetadataTableVM, 1, context.MetadataTableVM.Rows);
 
-		internal static void SortTable(MetaDataTableVM mdTblVM, uint rid, uint count) {
+		internal static void SortTable(MetadataTableVM mdTblVM, uint rid, uint count) {
 			var buffer = mdTblVM.Buffer;
 			int len = (int)count * mdTblVM.TableInfo.RowSize;
 			var data = new byte[len];
@@ -192,7 +192,7 @@ namespace dnSpy.AsmEditor.Hex {
 			HexBufferWriterHelper.Write(buffer, startOffset, data);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) => TableSorter.CanSort(context.MetaDataTableVM.TableInfo);
+		static bool IsEnabledInternal(MDTableContext context) => TableSorter.CanSort(context.MetadataTableVM.TableInfo);
 	}
 
 	static class SortSelectionMDTableCommand {
@@ -211,11 +211,11 @@ namespace dnSpy.AsmEditor.Hex {
 		static void ExecuteInternal(MDTableContext context) {
 			uint rid = context.Records[0].Token.Rid;
 			uint count = (uint)context.Records.Length;
-			SortMDTableCommand.SortTable(context.MetaDataTableVM, rid, count);
+			SortMDTableCommand.SortTable(context.MetadataTableVM, rid, count);
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) =>
-			TableSorter.CanSort(context.MetaDataTableVM.TableInfo) &&
+			TableSorter.CanSort(context.MetadataTableVM.TableInfo) &&
 			context.Records.Length > 1 &&
 			context.ContiguousRecords();
 	}
@@ -237,16 +237,16 @@ namespace dnSpy.AsmEditor.Hex {
 				UIUtils.ScrollSelectAndSetFocus(context.ListView, recVM);
 		}
 
-		static MetaDataTableRecordVM Ask(string title, MDTableContext context) => MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
-			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
+		static MetadataTableRecordVM Ask(string title, MDTableContext context) => MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
+			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetadataTableVM.Rows, out string error);
 			if (!string.IsNullOrEmpty(error))
 				return null;
-			return context.MetaDataTableVM.Get((int)(rid - 1));
+			return context.MetadataTableVM.Get((int)(rid - 1));
 		}, s => {
-			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out string error);
+			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetadataTableVM.Rows, out string error);
 			if (!string.IsNullOrEmpty(error))
 				return error;
-			if (rid == 0 || rid > context.MetaDataTableVM.Rows)
+			if (rid == 0 || rid > context.MetadataTableVM.Rows)
 				return string.Format(dnSpy_AsmEditor_Resources.GoToRowIdentifier_InvalidRowIdentifier, rid);
 			return string.Empty;
 		});
@@ -291,7 +291,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			var start = context.Records[0].Span.Start;
 			var end = context.Records[context.Records.Length - 1].Span.End;
-			return new AddressReference(context.MetaDataTableVM.Buffer.Name, false, start.ToUInt64(), (end - start).ToUInt64());
+			return new AddressReference(context.MetadataTableVM.Buffer.Name, false, start.ToUInt64(), (end - start).ToUInt64());
 		}
 	}
 
@@ -340,14 +340,14 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
-			var buffer = context.MetaDataTableVM.Buffer;
-			ulong totalSize = (ulong)context.MetaDataTableVM.TableInfo.RowSize * (ulong)context.Records.Length * 2;
+			var buffer = context.MetadataTableVM.Buffer;
+			ulong totalSize = (ulong)context.MetadataTableVM.TableInfo.RowSize * (ulong)context.Records.Length * 2;
 			if (totalSize >= int.MaxValue) {
 				MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.TooManyBytesSelected);
 				return;
 			}
 			var sb = new StringBuilder((int)totalSize);
-			var recData = new byte[context.MetaDataTableVM.TableInfo.RowSize];
+			var recData = new byte[context.MetadataTableVM.TableInfo.RowSize];
 			foreach (var rec in context.Records) {
 				buffer.ReadBytes(rec.Span.Start, recData);
 				foreach (var b in recData)
@@ -385,8 +385,8 @@ namespace dnSpy.AsmEditor.Hex {
 			if (data == null)
 				return;
 
-			var buffer = context.MetaDataTableVM.Buffer;
-			int recs = data.Length / context.MetaDataTableVM.TableInfo.RowSize;
+			var buffer = context.MetadataTableVM.Buffer;
+			int recs = data.Length / context.MetadataTableVM.TableInfo.RowSize;
 			HexBufferWriterHelper.Write(buffer, context.Records[0].Span.Start, data);
 		}
 
@@ -400,11 +400,11 @@ namespace dnSpy.AsmEditor.Hex {
 			if (data == null || data.Length == 0)
 				return null;
 
-			if (data.Length % context.MetaDataTableVM.TableInfo.RowSize != 0)
+			if (data.Length % context.MetadataTableVM.TableInfo.RowSize != 0)
 				return null;
 
-			int recs = data.Length / context.MetaDataTableVM.TableInfo.RowSize;
-			if ((uint)context.Records[0].Index + (uint)recs > context.MetaDataTableVM.Rows)
+			int recs = data.Length / context.MetadataTableVM.TableInfo.RowSize;
+			if ((uint)context.Records[0].Index + (uint)recs > context.MetadataTableVM.Rows)
 				return null;
 
 			return data;
@@ -414,7 +414,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var data = GetPasteData(context);
 			if (data == null)
 				return null;
-			int recs = data.Length / context.MetaDataTableVM.TableInfo.RowSize;
+			int recs = data.Length / context.MetadataTableVM.TableInfo.RowSize;
 			if (recs <= 1)
 				return null;
 			return string.Format(dnSpy_AsmEditor_Resources.PasteRecordsCommand, recs, context.Records[0].Span.Start.ToUInt64(), context.Records[0].Token.Rid);

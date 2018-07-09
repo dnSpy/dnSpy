@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected virtual void OnModified() { }
 
 		public WordWrapStyles WordWrapStyle {
-			get { return wordWrapStyle; }
+			get => wordWrapStyle;
 			set {
 				if (wordWrapStyle != value) {
 					wordWrapStyle = value;
@@ -40,7 +40,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
 
 		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
+			get => showLineNumbers;
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;

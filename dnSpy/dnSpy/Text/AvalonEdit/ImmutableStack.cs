@@ -79,9 +79,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <summary>
 		/// Gets if this stack is empty.
 		/// </summary>
-		public bool IsEmpty {
-			get { return next == null; }
-		}
+		public bool IsEmpty => next == null;
 
 		/// <summary>
 		/// Gets an enumerator that iterates through the stack top-to-bottom.
@@ -98,7 +96,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		/// <inheritdoc/>
 		public override string ToString() {
-			StringBuilder b = new StringBuilder("[Stack");
+			var b = new StringBuilder("[Stack");
 			foreach (T val in this) {
 				b.Append(' ');
 				b.Append(val);

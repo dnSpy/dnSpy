@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Debugger.DotNet.CorDebug</RootNamespace>
     <AssemblyName>dnSpy.Debugger.DotNet.CorDebug.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE;THREAD_SAFE</DefineConstants>
@@ -27,7 +27,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE;THREAD_SAFE</DefineConstants>
@@ -64,7 +65,6 @@
     <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
     <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
     <Compile Include="dndbg\COM\CorDebug.cs" />
     <Compile Include="dndbg\COM\MetaData.cs" />
@@ -134,7 +134,6 @@
     <Compile Include="dndbg\Engine\DebuggerState.cs" />
     <Compile Include="dndbg\Engine\DebugOptions.cs" />
     <Compile Include="dndbg\Engine\DebugProcessOptions.cs" />
-    <Compile Include="dndbg\Engine\DisableSystemDebuggerDetection.cs" />
     <Compile Include="dndbg\Engine\DnAnyDebugEventBreakpoint.cs" />
     <Compile Include="dndbg\Engine\DnAppDomain.cs" />
     <Compile Include="dndbg\Engine\DnAssembly.cs" />
@@ -155,7 +154,9 @@
     <Compile Include="dndbg\Engine\ILFrameIP.cs" />
     <Compile Include="dndbg\Engine\MDAPI.cs" />
     <Compile Include="dndbg\Engine\NativeMethods.cs" />
+    <Compile Include="dndbg\Engine\PreventManagedDebuggerDetection.cs" />
     <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
+    <Compile Include="dndbg\Engine\ProcessDataStream.cs" />
     <Compile Include="dndbg\Engine\StepRange.cs" />
     <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
     <Compile Include="Impl\Attach\CorDebugAttachToProgramOptions.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="Impl\DnModuleIdExtensions.cs" />
     <Compile Include="Impl\DnThreadUtils.cs" />
     <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
+    <Compile Include="Impl\DotNetCoreDbgProcessStarter.cs" />
     <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
     <Compile Include="Impl\Evaluation\CordbgErrorHelper.cs" />
     <Compile Include="Impl\Evaluation\CreateCorValueResult.cs" />
@@ -220,11 +222,13 @@
       <DependentUpon>dnSpy.Debugger.DotNet.CorDebug.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steppers\DbgEngineStepperImpl.cs" />
+    <Compile Include="Steppers\DbgDotNetEngineStepperImpl.cs" />
+    <Compile Include="Steppers\DbgDotNetStepperBreakpointImpl.cs" />
     <Compile Include="TheExtension.cs" />
     <Compile Include="UI\UIDispatcher.cs" />
     <Compile Include="Utilities\DotNetAssemblyUtilities.cs" />
     <Compile Include="Utilities\DotNetCoreHelpers.cs" />
+    <Compile Include="Utilities\PortableExecutableFileHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj">
@@ -281,6 +285,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

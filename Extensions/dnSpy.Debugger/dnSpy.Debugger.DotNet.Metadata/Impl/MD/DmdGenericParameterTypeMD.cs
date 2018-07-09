@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var gpcList = new DmdType[ridList.Count];
 			for (int i = 0; i < ridList.Count; i++) {
 				uint rid = ridList[i];
-				var row = reader.TablesStream.ReadGenericParamConstraintRow(rid);
+				if (!reader.TablesStream.TryReadGenericParamConstraintRow(rid, out var row))
+					return null;
 				if (!CodedToken.TypeDefOrRef.Decode(row.Constraint, out uint token))
 					return null;
 				var type = Module.ResolveType((int)token, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None);

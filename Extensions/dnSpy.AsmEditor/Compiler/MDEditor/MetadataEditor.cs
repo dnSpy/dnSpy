@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,12 +24,12 @@ using dnlib.DotNet.MD;
 
 namespace dnSpy.AsmEditor.Compiler.MDEditor {
 	sealed class MetadataEditor {
-		readonly byte[] moduleData;
-		readonly IMetaData metadata;
+		readonly RawModuleBytes moduleData;
+		readonly Metadata metadata;
 		readonly List<MDHeap> heaps;
 
-		public IMetaData RealMetadata => metadata;
-		public byte[] ModuleData => moduleData;
+		public Metadata RealMetadata => metadata;
+		public RawModuleBytes ModuleData => moduleData;
 
 		public BlobMDHeap BlobHeap { get; }
 		public GuidMDHeap GuidHeap { get; }
@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public USMDHeap USHeap { get; }
 		public TablesMDHeap TablesHeap { get; }
 
-		public MetadataEditor(byte[] moduleData, IMetaData metadata) {
+		public MetadataEditor(RawModuleBytes moduleData, Metadata metadata) {
 			this.moduleData = moduleData ?? throw new ArgumentNullException(nameof(moduleData));
 			this.metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
 
@@ -83,16 +83,14 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 
 		public uint CreateAssemblyRef(IAssembly assembly) {
 			var rid = TablesHeap.AssemblyRefTable.Create();
-			var row = TablesHeap.AssemblyRefTable.Get(rid);
-			row.MajorVersion = (ushort)assembly.Version.Major;
-			row.MinorVersion = (ushort)assembly.Version.Minor;
-			row.BuildNumber = (ushort)assembly.Version.Build;
-			row.RevisionNumber = (ushort)assembly.Version.Revision;
-			row.Flags = (uint)assembly.Attributes;
-			row.PublicKeyOrToken = BlobHeap.Create(GetPublicKeyOrTokenBytes(assembly.PublicKeyOrToken));
-			row.Name = StringsHeap.Create(assembly.Name);
-			row.Locale = StringsHeap.Create(assembly.Culture);
-			row.HashValue = BlobHeap.Create((assembly as AssemblyRef)?.Hash);
+			var row = new RawAssemblyRefRow((ushort)assembly.Version.Major, (ushort)assembly.Version.Minor,
+				(ushort)assembly.Version.Build, (ushort)assembly.Version.Revision,
+				(uint)assembly.Attributes,
+				BlobHeap.Create(GetPublicKeyOrTokenBytes(assembly.PublicKeyOrToken)),
+				StringsHeap.Create(assembly.Name),
+				StringsHeap.Create(assembly.Culture),
+				BlobHeap.Create((assembly as AssemblyRef)?.Hash));
+			TablesHeap.AssemblyRefTable.Set(rid, ref row);
 			return rid;
 		}
 

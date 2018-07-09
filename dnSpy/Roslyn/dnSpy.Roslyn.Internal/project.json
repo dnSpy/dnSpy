@@ -1,11 +1,9 @@
 {
 	"dependencies": {
-		"System.ValueTuple": "4.4.0",
-		"Microsoft.CodeAnalysis.CSharp.Features": "2.4.0",
-		"Microsoft.CodeAnalysis.VisualBasic.Features": "2.4.0"
+		"Microsoft.CodeAnalysis.Features": "2.8.2"
 	},
 	"frameworks": {
-		"net462": { }
+		"net471": { }
 	},
 	"runtimes": {
 		"win": { }

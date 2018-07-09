@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Text span and hex span
 	/// </summary>
-	public struct TextAndHexSpan {
+	public readonly struct TextAndHexSpan {
 		/// <summary>
 		/// Gets the text span
 		/// </summary>

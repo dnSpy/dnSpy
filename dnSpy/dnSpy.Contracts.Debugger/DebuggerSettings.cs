@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -74,9 +74,9 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool UseStringConversionFunction { get; set; }
 
 		/// <summary>
-		/// true to disable detection of managed debuggers
+		/// true to prevent detection of managed debuggers
 		/// </summary>
-		public abstract bool DisableManagedDebuggerDetection { get; set; }
+		public abstract bool PreventManagedDebuggerDetection { get; set; }
 
 		/// <summary>
 		/// true to ignore break instructions and <see cref="System.Diagnostics.Debugger.Break"/> method calls
@@ -161,5 +161,35 @@ namespace dnSpy.Contracts.Debugger {
 		/// Give focus to the active process
 		/// </summary>
 		public abstract bool FocusActiveProcess { get; set; }
+
+		/// <summary>
+		/// Show return values in Locals window
+		/// </summary>
+		public abstract bool ShowReturnValues { get; set; }
+
+		/// <summary>
+		/// Redirect GUI applications' console output to the Output window
+		/// </summary>
+		public abstract bool RedirectGuiConsoleOutput { get; set; }
+
+		/// <summary>
+		/// Show only public members in variables windows
+		/// </summary>
+		public abstract bool ShowOnlyPublicMembers { get; set; }
+
+		/// <summary>
+		/// Show all locals. Captured variables aren't shown, their display classes are shown instead.
+		/// </summary>
+		public abstract bool ShowRawLocals { get; set; }
+
+		/// <summary>
+		/// Async debugging (step over await statements, step out of async methods)
+		/// </summary>
+		public abstract bool AsyncDebugging { get; set; }
+
+		/// <summary>
+		/// Step over properties and operators
+		/// </summary>
+		public abstract bool StepOverPropertiesAndOperators { get; set; }
 	}
 }

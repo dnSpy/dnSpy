@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Editor {
 		public abstract void Dispose();
 	}
 
-	struct WpfHexViewMarginInfo {
+	readonly struct WpfHexViewMarginInfo {
 		public WpfHexViewMarginProvider Provider { get; }
 		public IWpfHexViewMarginMetadata Metadata { get; }
 		public WpfHexViewMargin Margin { get; }

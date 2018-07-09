@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Hex.Editor {
-	struct MetadataAndOrder<TMetadata> {
+	readonly struct MetadataAndOrder<TMetadata> {
 		public TMetadata Metadata { get; }
 		public int Order { get; }
 		public MetadataAndOrder(TMetadata metadata, int order) {

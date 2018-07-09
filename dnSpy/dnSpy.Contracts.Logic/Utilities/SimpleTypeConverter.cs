@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -141,7 +141,7 @@ namespace dnSpy.Contracts.Utilities {
 				return value.ToString();
 			else if (value <= 9)
 				return value.ToString();
-			return string.Format("0x{0:X}", value);
+			return $"0x{value:X}";
 		}
 
 		/// <summary>
@@ -162,8 +162,8 @@ namespace dnSpy.Contracts.Utilities {
 			else if (-9 <= value && value <= 9)
 				return value.ToString();
 			if (value < 0)
-				return string.Format("-0x{0:X}", -value);
-			return string.Format("0x{0:X}", value);
+				return $"-0x{-value:X}";
+			return $"0x{value:X}";
 		}
 
 		/// <summary>

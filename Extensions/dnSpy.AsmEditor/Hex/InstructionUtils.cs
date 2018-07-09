@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,39 +30,38 @@ namespace dnSpy.AsmEditor.Hex {
 				return 0;
 
 			try {
-				using (var reader = mod.MetaData.PEImage.CreateFullStream()) {
-					reader.Position = (long)mod.MetaData.PEImage.ToFileOffset(md.RVA);
-					var start = reader.Position;
-					if (!ReadHeader(reader, out ushort flags, out uint codeSize))
-						return 0;
+				var reader = mod.Metadata.PEImage.CreateReader();
+				reader.Position = (uint)mod.Metadata.PEImage.ToFileOffset(md.RVA);
+				var start = reader.Position;
+				if (!ReadHeader(ref reader, out ushort flags, out uint codeSize))
+					return 0;
 
-					reader.Position += codeSize;
+				reader.Position += codeSize;
 
-					if ((flags & 8) != 0) {
-						reader.Position = (reader.Position + 3) & ~3;
-						byte b = reader.ReadByte();
-						if ((b & 0x3F) != 1)
-							reader.Position--;
-						else if ((b & 0x40) != 0) {
-							reader.Position--;
-							int num = (ushort)((reader.ReadUInt32() >> 8) / 24);
-							reader.Position += num * 24;
-						}
-						else {
-							int num = (ushort)((uint)reader.ReadByte() / 12);
-							reader.Position += 2 + num * 12;
-						}
+				if ((flags & 8) != 0) {
+					reader.Position = (reader.Position + 3) & ~3U;
+					byte b = reader.ReadByte();
+					if ((b & 0x3F) != 1)
+						reader.Position--;
+					else if ((b & 0x40) != 0) {
+						reader.Position--;
+						uint num = (ushort)((reader.ReadUInt32() >> 8) / 24);
+						reader.Position += num * 24;
 					}
-
-					return (ulong)(reader.Position - start);
+					else {
+						uint num = (ushort)((uint)reader.ReadByte() / 12);
+						reader.Position += 2 + num * 12;
+					}
 				}
+
+				return reader.Position - start;
 			}
 			catch {
 				return 0;
 			}
 		}
 
-		static bool ReadHeader(IBinaryReader reader, out ushort flags, out uint codeSize) {
+		static bool ReadHeader(ref DataReader reader, out ushort flags, out uint codeSize) {
 			byte b = reader.ReadByte();
 			switch (b & 7) {
 			case 2:
@@ -78,7 +77,7 @@ namespace dnSpy.AsmEditor.Hex {
 				codeSize = reader.ReadUInt32();
 				uint localVarSigTok = reader.ReadUInt32();
 
-				reader.Position += -12 + headerSize * 4;
+				reader.Position = reader.Position - 12 + headerSize * 4;
 				if (headerSize < 3)
 					flags &= 0xFFF7;
 				return true;

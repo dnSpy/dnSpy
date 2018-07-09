@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Debugger</RootNamespace>
     <AssemblyName>dnSpy.Debugger.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -27,7 +27,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -53,7 +54,6 @@
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointHitCountChecker.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgCodeBreakpointTraceMessagePrinter.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\DbgFilterExpressionEvaluatorService.cs" />
-    <Compile Include="Breakpoints\Code\CondChecker\FormatSpecifiersUtils.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\ListCache.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\ObjectCache.cs" />
     <Compile Include="Breakpoints\Code\CondChecker\ParsedTracepointMessage.cs" />
@@ -97,10 +97,12 @@
     <Compile Include="Code\GoToInMemoryModuleStatement.cs" />
     <Compile Include="Code\TextEditor\DbgTextViewCodeLocationService.cs" />
     <Compile Include="DbgUI\CurrentStatementUpdater.cs" />
+    <Compile Include="DbgUI\DbgProcessStarterService.cs" />
     <Compile Include="DbgUI\Debugger.cs" />
     <Compile Include="DbgUI\DebuggerImpl.cs" />
     <Compile Include="DbgUI\DebugMenu.cs" />
     <Compile Include="DbgUI\DebugMenuCommands.cs" />
+    <Compile Include="DbgUI\DefaultDbgProcessStarter.cs" />
     <Compile Include="DbgUI\DocumentViewerCommands.cs" />
     <Compile Include="DbgUI\KeyboardShortcutCommands.cs" />
     <Compile Include="DbgUI\PortableExecutableFileHelpers.cs" />
@@ -444,6 +446,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.hu.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.it.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

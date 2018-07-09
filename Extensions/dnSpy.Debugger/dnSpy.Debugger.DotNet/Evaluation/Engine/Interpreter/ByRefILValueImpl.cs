@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,17 +32,30 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.byRefValue = byRefValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() {
-			var value = byRefValue.LoadIndirect();
-			if (value != null)
-				return runtime.RecordValue(value);
-			return null;
-		}
-
+		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(byRefValue.LoadIndirect());
 		protected override void WriteValue(object value) => runtime.StoreIndirect(byRefValue, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ByRefILValueImpl addr &&
 			runtime.Equals(byRefValue, addr.byRefValue);
+	}
+
+	sealed class PointerILValue : AddressILValue, IDebuggerRuntimeILValue {
+		public override DmdType Type => pointerValue.Type;
+		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => pointerValue;
+
+		readonly DbgDotNetValue pointerValue;
+
+		public PointerILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue pointerValue)
+			: base(runtime, pointerValue.Type.GetElementType()) {
+			this.pointerValue = pointerValue;
+		}
+
+		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(pointerValue.LoadIndirect());
+		protected override void WriteValue(object value) => runtime.StoreIndirect(pointerValue, value);
+
+		public override bool Equals(AddressILValue other) =>
+			other is PointerILValue addr &&
+			runtime.Equals(pointerValue, addr.pointerValue);
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ListCollectionView collectionView;
 
 		public object SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		object selectedItem;
 
 		public bool SearchingGAC {
-			get { return searchingGAC; }
+			get => searchingGAC;
 			set {
 				if (searchingGAC != value) {
 					searchingGAC = value;
@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool NotSearchingGAC => !SearchingGAC;
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;
@@ -85,7 +85,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string searchText;
 
 		public bool ShowDuplicates {
-			get { return showDuplicates; }
+			get => showDuplicates;
 			set {
 				if (showDuplicates != value) {
 					showDuplicates = value;

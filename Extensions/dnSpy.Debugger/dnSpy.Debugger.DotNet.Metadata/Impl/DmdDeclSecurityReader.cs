@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using System.Security.Permissions;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	struct DmdDeclSecurityReader : IDisposable {
+	readonly struct DmdDeclSecurityReader : IDisposable {
 		readonly DmdDataStream reader;
 		readonly DmdModule module;
 		readonly IList<DmdType> genericTypeArguments;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public GuidMDHeap(MetadataEditor mdEditor, GuidStream guidStream) {
 			this.mdEditor = mdEditor ?? throw new ArgumentNullException(nameof(mdEditor));
 			this.guidStream = guidStream ?? throw new ArgumentNullException(nameof(guidStream));
-			currentOffset = (uint)guidStream.ImageStreamLength;
+			currentOffset = guidStream.StreamLength;
 			newData = new List<byte[]>();
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,11 +20,6 @@
 using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.DotNet;
-
-#if THREAD_SAFE
-#else
-using ThreadSafe = System.Collections.Generic;
-#endif
 
 namespace dndbg.DotNet {
 	sealed class CorEventDef : EventDef, ICorHasCustomAttribute {

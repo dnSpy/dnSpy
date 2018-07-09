@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 	/// <summary>
 	/// Step complete event args
 	/// </summary>
-	public struct DbgEngineStepCompleteEventArgs {
+	public readonly struct DbgEngineStepCompleteEventArgs {
 		/// <summary>
 		/// Gets the thread or null to use the default thread that was used to create the stepper
 		/// </summary>

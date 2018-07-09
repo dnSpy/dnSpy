@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,11 +18,12 @@
 */
 
 using System.Diagnostics;
+using dnSpy.Debugger.DotNet.Mono.Properties;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
 	static class DebuggingUnityGamesHelper {
 		public const string DebuggingUnityGamesUrl = "https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games";
-		public const string DebuggingUnityGamesText = "Debugging Unity Games";
+		public static string DebuggingUnityGamesText => dnSpy_Debugger_DotNet_Mono_Resources.DebuggingUnityGamesText;
 		public static void OpenDebuggingUnityGames() => OpenWebPage(DebuggingUnityGamesUrl);
 
 		static void OpenWebPage(string url) {

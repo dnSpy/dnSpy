@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
@@ -14,25 +13,13 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
     static partial class Extensions2
     {
         public static SourceTextContainer AsTextContainer(this ITextBuffer buffer)
-        {
-            return Shared.Text.Extensions.AsTextContainer(buffer);
-        }
+            => Text.Extensions.AsTextContainer(buffer);
 
         public static ITextBuffer GetTextBuffer(this SourceTextContainer textContainer)
-        {
-            var textBuffer = TryGetTextBuffer(textContainer);
-            if (textBuffer == null)
-            {
-                throw new ArgumentException();
-            }
-
-            return textBuffer;
-        }
+            => TryGetTextBuffer(textContainer) ?? throw new ArgumentException();
 
         public static ITextBuffer TryGetTextBuffer(this SourceTextContainer textContainer)
-        {
-            return Shared.Text.Extensions.TryGetTextBuffer(textContainer);
-        }
+            => Text.Extensions.TryFindEditorTextBuffer(textContainer);
 
         /// <summary>
         /// Returns the ITextSnapshot behind this SourceText, or null if it wasn't created from one.
@@ -42,24 +29,19 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// </summary>
         /// <returns>The underlying ITextSnapshot.</returns>
         public static ITextSnapshot FindCorrespondingEditorTextSnapshot(this SourceText text)
-        {
-            return Shared.Text.Extensions.TryGetTextSnapshot(text);
-        }
+            => Text.Extensions.TryFindEditorSnapshot(text);
+
+        internal static ITextImage TryFindCorrespondingEditorTextImage(this SourceText text)
+            => Text.Extensions.TryFindEditorTextImage(text);
 
         internal static TextLine AsTextLine(this ITextSnapshotLine line)
-        {
-            return line.Snapshot.AsText().Lines[line.LineNumber];
-        }
+            => line.Snapshot.AsText().Lines[line.LineNumber];
 
         public static SourceText AsText(this ITextSnapshot textSnapshot)
-        {
-            return Shared.Text.Extensions.AsText(textSnapshot);
-        }
+            => Text.Extensions.AsText(textSnapshot);
 
         //internal static SourceText AsRoslynText(this ITextSnapshot textSnapshot, Encoding encoding)
-        //{
-        //    return new SnapshotSourceText.ClosedSnapshotSourceText(textSnapshot, encoding);
-        //}
+        //    => new SnapshotSourceText.ClosedSnapshotSourceText(((ITextSnapshot2)textSnapshot).TextImage, encoding);
 
         /// <summary>
         /// Gets the workspace corresponding to the text buffer.
@@ -67,9 +49,7 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         public static Workspace GetWorkspace(this ITextBuffer buffer)
         {
             var container = buffer.AsTextContainer();
-
-            Workspace workspace;
-            if (Workspace.TryGetWorkspace(container, out workspace))
+            if (Workspace.TryGetWorkspace(container, out var workspace))
             {
                 return workspace;
             }
@@ -83,9 +63,7 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// if the file is linked into multiple projects or is part of a Shared Project.
         /// </summary>
         public static IEnumerable<Document> GetRelatedDocumentsWithChanges(this ITextSnapshot text)
-        {
-            return text.AsText().GetRelatedDocumentsWithChanges();
-        }
+            => text.AsText().GetRelatedDocumentsWithChanges();
 
         /// <summary>
         /// Gets the <see cref="Document"/> from the corresponding <see cref="Workspace.CurrentSolution"/> that is associated with the <see cref="ITextSnapshot"/>'s buffer
@@ -94,18 +72,14 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// is responsible for keeping track of which of these <see cref="Document"/>s is in the current project context.
         /// </summary>
         public static Document GetOpenDocumentInCurrentContextWithChanges(this ITextSnapshot text)
-        {
-            return text.AsText().GetOpenDocumentInCurrentContextWithChanges();
-        }
+            => text.AsText().GetOpenDocumentInCurrentContextWithChanges();
 
         /// <summary>
         /// Gets the <see cref="Document"/>s from the corresponding <see cref="Workspace.CurrentSolution"/> that are associated with the <see cref="ITextBuffer"/>.
         /// There may be multiple <see cref="Document"/>s associated with the buffer if it is linked into multiple projects or is part of a Shared Project. 
         /// </summary>
         public static IEnumerable<Document> GetRelatedDocuments(this ITextBuffer buffer)
-        {
-            return buffer.AsTextContainer().GetRelatedDocuments();
-        }
+            => buffer.AsTextContainer().GetRelatedDocuments();
 
         /// <summary>
         /// Tries to get the document corresponding to the text from the current partial solution 
@@ -114,30 +88,15 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// with the specified text's container, or the text's container isn't associated with a workspace,
         /// then the method returns false.
         /// </summary>
-        internal static async Task<Document> GetDocumentWithFrozenPartialSemanticsAsync(this SourceText text, CancellationToken cancellationToken)
+        internal static Document GetDocumentWithFrozenPartialSemantics(this SourceText text, CancellationToken cancellationToken)
         {
             var document = text.GetOpenDocumentInCurrentContextWithChanges();
-
-            if (document != null)
-            {
-                return await document.WithFrozenPartialSemanticsAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            return null;
+            return document?.WithFrozenPartialSemantics(cancellationToken);
         }
 
         internal static bool CanApplyChangeDocumentToWorkspace(this ITextBuffer buffer)
-        {
-            Workspace workspace;
-            if (Workspace.TryGetWorkspace(buffer.AsTextContainer(), out workspace))
-            {
-                return workspace.CanApplyChange(ApplyChangesKind.ChangeDocument);
-            }
-            else
-            {
-                return false;
-            }
-        }
+            => Workspace.TryGetWorkspace(buffer.AsTextContainer(), out var workspace) &&
+               workspace.CanApplyChange(ApplyChangesKind.ChangeDocument);
 
         /// <summary>
         /// Get the encoding used to load this <see cref="ITextBuffer"/> if possible.
@@ -148,14 +107,8 @@ namespace dnSpy.Roslyn.EditorFeatures.Extensions
         /// </para>
         /// </summary>
         internal static Encoding GetEncodingOrUTF8(this ITextBuffer textBuffer)
-        {
-            ITextDocument textDocument;
-            if (textBuffer.Properties.TryGetProperty(typeof(ITextDocument), out textDocument))
-            {
-                return textDocument.Encoding;
-            }
-
-            return Encoding.UTF8;
-        }
+            => textBuffer.Properties.TryGetProperty(typeof(ITextDocument), out ITextDocument textDocument)
+                ? textDocument.Encoding
+                : Encoding.UTF8;
     }
 }

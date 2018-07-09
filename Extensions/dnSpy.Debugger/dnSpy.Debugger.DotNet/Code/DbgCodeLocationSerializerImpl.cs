@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,6 +38,12 @@ namespace dnSpy.Debugger.DotNet.Code {
 			this.dbgMetadataService = dbgMetadataService;
 		}
 
+		// PERF: Getting the serialized name of a method is slow if there are lots of assemblies
+		sealed class SerializedState {
+			public bool Initialized;
+			public string MethodAsString;
+		}
+
 		public override void Serialize(ISettingsSection section, DbgCodeLocation location) {
 			var loc = (DbgDotNetCodeLocation)location;
 			section.Attribute("Token", loc.Token);
@@ -52,9 +58,13 @@ namespace dnSpy.Debugger.DotNet.Code {
 				section.Attribute("ModuleNameOnly", loc.Module.ModuleNameOnly);
 
 			if (!loc.Module.IsInMemory && !loc.Module.IsDynamic) {
-				var s = GetMethodAsString(loc.Module, loc.Token);
-				if (s != null)
-					section.Attribute("Method", s);
+				var state = location.GetOrCreateData<SerializedState>();
+				if (!state.Initialized) {
+					state.MethodAsString = GetMethodAsString(loc.Module, loc.Token);
+					state.Initialized = true;
+				}
+				if (state.MethodAsString != null)
+					section.Attribute("Method", state.MethodAsString);
 			}
 		}
 
@@ -70,13 +80,20 @@ namespace dnSpy.Debugger.DotNet.Code {
 				return null;
 			var moduleId = new ModuleId(assemblyFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
+			var location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, token.Value, offset.Value);
+
 			if (!isInMemory && !isDynamic) {
 				var s = section.Attribute<string>("Method");
-				if (!string.IsNullOrEmpty(s) && s != GetMethodAsString(moduleId, token.Value))
+				if (!string.IsNullOrEmpty(s) && s != GetMethodAsString(moduleId, token.Value)) {
+					location.Close();
 					return null;
+				}
+				var state = location.GetOrCreateData<SerializedState>();
+				state.MethodAsString = s;
+				state.Initialized = true;
 			}
 
-			return dbgDotNetCodeLocationFactory.Value.Create(moduleId, token.Value, offset.Value);
+			return location;
 		}
 
 		string GetMethodAsString(ModuleId moduleId, uint token) {

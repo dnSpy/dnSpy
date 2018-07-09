@@ -19,7 +19,7 @@ namespace dnSpy.AsmEditor.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_AsmEditor_Resources {
@@ -70,11 +70,20 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Assembly Reference (Ctrl+O).
+        ///   Looks up a localized string similar to Add Assembly Reference.
         /// </summary>
         public static string AddAssemblyReferenceToolTip {
             get {
                 return ResourceManager.GetString("AddAssemblyReferenceToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Source Code.
+        /// </summary>
+        public static string AddDocumentsToolTip {
+            get {
+                return ResourceManager.GetString("AddDocumentsToolTip", resourceCulture);
             }
         }
         
@@ -97,7 +106,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Assembly Reference (GAC) (Ctrl+Shift+O).
+        ///   Looks up a localized string similar to Add Assembly Reference (GAC).
         /// </summary>
         public static string AddGacReferenceToolTip {
             get {
@@ -616,6 +625,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string CompileDiagnostics_Header_Severity {
             get {
                 return ResourceManager.GetString("CompileDiagnostics_Header_Severity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compiler.
+        /// </summary>
+        public static string CompilerDlgTabTitle {
+            get {
+                return ResourceManager.GetString("CompilerDlgTabTitle", resourceCulture);
             }
         }
         
@@ -1570,6 +1588,24 @@ namespace dnSpy.AsmEditor.Properties {
         public static string EditCodeAddClass2 {
             get {
                 return ResourceManager.GetString("EditCodeAddClass2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Class Members.
+        /// </summary>
+        public static string EditCodeAddClassMembers {
+            get {
+                return ResourceManager.GetString("EditCodeAddClassMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Class Members ({0})....
+        /// </summary>
+        public static string EditCodeAddClassMembers2 {
+            get {
+                return ResourceManager.GetString("EditCodeAddClassMembers2", resourceCulture);
             }
         }
         
@@ -5417,6 +5453,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Run NGEN.exe if this assembly is installed in the GAC.
+        /// </summary>
+        public static string RerunNgenIfGacAssembly {
+            get {
+                return ResourceManager.GetString("RerunNgenIfGacAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color _Depth.
         /// </summary>
         public static string Resource_ColorDepth {
@@ -5829,6 +5874,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string SaveModule_PreserveHeapOffsets {
             get {
                 return ResourceManager.GetString("SaveModule_PreserveHeapOffsets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Unkno_wn Metadata Streams.
+        /// </summary>
+        public static string SaveModule_PreserveOtherMetadataStreams {
+            get {
+                return ResourceManager.GetString("SaveModule_PreserveOtherMetadataStreams", resourceCulture);
             }
         }
         
@@ -6260,11 +6314,29 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+R.
         /// </summary>
         public static string ShortCutKeyCtrlR {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+A.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftA {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftA", resourceCulture);
             }
         }
         
@@ -6292,6 +6364,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ShortCutKeyCtrlShiftE {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShiftE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftO", resourceCulture);
             }
         }
         

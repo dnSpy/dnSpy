@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -85,7 +85,7 @@ namespace dnSpy.Search {
 			case "selected-type":
 				return SearchLocation.SelectedType;
 			}
-			Debug.Fail(string.Format("Unknown search loc: {0}", searchLocation));
+			Debug.Fail($"Unknown search loc: {searchLocation}");
 			return null;
 		}
 
@@ -175,7 +175,7 @@ namespace dnSpy.Search {
 			case "constant":
 				return SearchType.Literal;
 			}
-			Debug.Fail(string.Format("Unknown search type: {0}", searchType));
+			Debug.Fail($"Unknown search type: {searchType}");
 			return null;
 		}
 	}

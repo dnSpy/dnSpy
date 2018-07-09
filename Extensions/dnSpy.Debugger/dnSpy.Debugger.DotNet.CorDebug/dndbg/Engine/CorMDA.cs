@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -90,6 +90,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorMDA other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorMDA);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("MDA: TID={0} {1}", OSThreadId, Name);
+		public override string ToString() => $"MDA: TID={OSThreadId} {Name}";
 	}
 }

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>dnSpy.Contracts</RootNamespace>
     <AssemblyName>dnSpy.Contracts.Logic</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -28,7 +28,8 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -40,8 +41,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Decompiler\AddressReference.cs" />
+    <Compile Include="Decompiler\AsyncMethodDebugInfo.cs" />
+    <Compile Include="Decompiler\AsyncStepInfo.cs" />
     <Compile Include="Decompiler\BamlDecompilerOptions.cs" />
-    <Compile Include="Decompiler\BinSpan.cs" />
     <Compile Include="Decompiler\CodeBracesRange.cs" />
     <Compile Include="Decompiler\CodeBracesRangeFlags.cs" />
     <Compile Include="Decompiler\DecompilationContext.cs" />
@@ -65,6 +67,7 @@
     <Compile Include="Decompiler\IDecompilerProvider.cs" />
     <Compile Include="Decompiler\IdentifierEscaper.cs" />
     <Compile Include="Decompiler\IInstructionBytesReader.cs" />
+    <Compile Include="Decompiler\ILSpan.cs" />
     <Compile Include="Decompiler\InstructionReference.cs" />
     <Compile Include="Decompiler\ISimpleILPrinter.cs" />
     <Compile Include="Decompiler\ISourceVariable.cs" />
@@ -78,6 +81,7 @@
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
     <Compile Include="Decompiler\MethodStatementReference.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
+    <Compile Include="Decompiler\PredefinedCompilerNames.cs" />
     <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
     <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
@@ -141,9 +145,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.es-ES.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.hu.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.fr.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.it.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

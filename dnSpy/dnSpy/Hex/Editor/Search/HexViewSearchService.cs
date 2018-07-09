@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -109,7 +109,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		public bool FoundMatch {
-			get { return foundMatch; }
+			get => foundMatch;
 			set {
 				if (foundMatch != value) {
 					foundMatch = value;
@@ -120,7 +120,7 @@ namespace dnSpy.Hex.Editor.Search {
 		bool foundMatch;
 
 		public bool Searching {
-			get { return searching; }
+			get => searching;
 			set {
 				if (searching != value) {
 					searching = value;
@@ -131,8 +131,8 @@ namespace dnSpy.Hex.Editor.Search {
 		bool searching;
 
 		public string SearchString {
-			get { return searchString; }
-			set { SetSearchString(value); }
+			get => searchString;
+			set => SetSearchString(value);
 		}
 		string searchString;
 
@@ -169,7 +169,7 @@ namespace dnSpy.Hex.Editor.Search {
 		public ICommand ToggleFindReplaceCommand => new RelayCommand(a => ToggleFindReplace(), a => CanToggleFindReplace);
 
 		public string ReplaceString {
-			get { return replaceString; }
+			get => replaceString;
 			set {
 				if (replaceString != value) {
 					replaceString = value ?? string.Empty;
@@ -181,7 +181,7 @@ namespace dnSpy.Hex.Editor.Search {
 		string replaceString;
 
 		public bool MatchCase {
-			get { return matchCase; }
+			get => matchCase;
 			set {
 				if (matchCase != value) {
 					matchCase = value;
@@ -194,7 +194,7 @@ namespace dnSpy.Hex.Editor.Search {
 		bool matchCase;
 
 		public bool IsBigEndian {
-			get { return isBigEndian; }
+			get => isBigEndian;
 			set {
 				if (isBigEndian != value) {
 					isBigEndian = value;
@@ -207,14 +207,14 @@ namespace dnSpy.Hex.Editor.Search {
 		bool isBigEndian;
 
 		public HexDataKind DataKind {
-			get { return selectedDataKindVM.DataKind; }
-			set { SelectedDataKindVM = dataKinds.First(a => a.DataKind == value); }
+			get => selectedDataKindVM.DataKind;
+			set => SelectedDataKindVM = dataKinds.First(a => a.DataKind == value);
 		}
 
 		public System.Collections.IList DataKinds => dataKinds;
 		readonly ObservableCollection<DataKindVM> dataKinds;
 		public object SelectedDataKindVM {
-			get { return selectedDataKindVM; }
+			get => selectedDataKindVM;
 			set {
 				if (selectedDataKindVM != value) {
 					selectedDataKindVM = (DataKindVM)value;
@@ -241,8 +241,7 @@ namespace dnSpy.Hex.Editor.Search {
 			new DataKindVM(HexDataKind.Single, "Single"),
 			new DataKindVM(HexDataKind.Double, "Double"),
 		};
-		static string GetStringDataKind(string encodingName) =>
-			string.Format("String ({0})", encodingName);
+		static string GetStringDataKind(string encodingName) => $"String ({encodingName})";
 
 		readonly WpfHexView wpfHexView;
 		readonly HexEditorOperations editorOperations;

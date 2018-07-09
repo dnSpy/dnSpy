@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.ToolWindows {
 		public IInputElement FocusedElement => Content.FocusedElement ?? Content.UIObject as IInputElement;
 
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			set {
 				if (isActive != value) {
 					isActive = value;
@@ -74,7 +74,6 @@ namespace dnSpy.ToolWindows {
 							e.Handled = true;
 						}
 					};
-					UpdateZoomElement();
 					contentPresenter.InputBindings.Add(new KeyBinding(CloseCommand, Key.Escape, ModifierKeys.Shift));
 					// Needed if the content already has keyboard focus, eg. happens when moving
 					// the tool window from one side to the other.
@@ -183,6 +182,17 @@ namespace dnSpy.ToolWindows {
 			}
 
 			switch (visEvent) {
+			case TabContentVisibilityEvent.Added:
+				installZoom = true;
+				break;
+
+			case TabContentVisibilityEvent.Visible:
+				if (installZoom) {
+					installZoom = false;
+					UpdateZoomElement();
+				}
+				break;
+
 			case TabContentVisibilityEvent.Removed:
 				elementZoomer.Dispose();
 				RemoveEvents();
@@ -205,6 +215,7 @@ namespace dnSpy.ToolWindows {
 #if DEBUG
 		bool _added, _visible;
 #endif
+		bool installZoom;
 
 		static ToolWindowContentVisibilityEvent? Convert(TabContentVisibilityEvent ev) {
 			switch (ev) {
@@ -215,7 +226,7 @@ namespace dnSpy.ToolWindows {
 			case TabContentVisibilityEvent.GotKeyboardFocus:	return ToolWindowContentVisibilityEvent.GotKeyboardFocus;
 			case TabContentVisibilityEvent.LostKeyboardFocus:	return ToolWindowContentVisibilityEvent.LostKeyboardFocus;
 			default:
-				Debug.Fail(string.Format("Unknown event: {0}", ev));
+				Debug.Fail($"Unknown event: {ev}");
 				return null;
 			}
 		}

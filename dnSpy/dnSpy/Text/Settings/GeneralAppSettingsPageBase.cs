@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Text.Settings {
 		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;
 
 		public bool UseVirtualSpace {
-			get { return useVirtualSpace; }
+			get => useVirtualSpace;
 			set {
 				if (useVirtualSpace != value) {
 					useVirtualSpace = value;
@@ -44,7 +44,7 @@ namespace dnSpy.Text.Settings {
 		bool useVirtualSpace;
 
 		public bool WordWrap {
-			get { return wordWrap; }
+			get => wordWrap;
 			set {
 				if (wordWrap != value) {
 					wordWrap = value;
@@ -57,7 +57,7 @@ namespace dnSpy.Text.Settings {
 		bool wordWrap;
 
 		public bool WordWrapVisualGlyphs {
-			get { return wordWrapVisualGlyphs; }
+			get => wordWrapVisualGlyphs;
 			set {
 				if (wordWrapVisualGlyphs != value) {
 					wordWrapVisualGlyphs = value;
@@ -68,7 +68,7 @@ namespace dnSpy.Text.Settings {
 		bool wordWrapVisualGlyphs;
 
 		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
+			get => showLineNumbers;
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Settings {
 		bool showLineNumbers;
 
 		public bool HighlightCurrentLine {
-			get { return highlightCurrentLine; }
+			get => highlightCurrentLine;
 			set {
 				if (highlightCurrentLine != value) {
 					highlightCurrentLine = value;

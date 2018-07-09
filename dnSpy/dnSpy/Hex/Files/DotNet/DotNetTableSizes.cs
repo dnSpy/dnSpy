@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -83,7 +83,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				case ColumnSize.ResolutionScope:	info = CodedToken.ResolutionScope; break;
 				case ColumnSize.TypeOrMethodDef:	info = CodedToken.TypeOrMethodDef; break;
 				case ColumnSize.HasCustomDebugInformation:info = CodedToken.HasCustomDebugInformation; break;
-				default: throw new InvalidOperationException(string.Format("Invalid ColumnSize: {0}", columnSize));
+				default: throw new InvalidOperationException($"Invalid ColumnSize: {columnSize}");
 				}
 				uint maxRows = 0;
 				foreach (var tableType in info.TableTypes) {
@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				case ColumnSize.Blob:	return bigBlob ? 4 : 2;
 				}
 			}
-			throw new InvalidOperationException(string.Format("Invalid ColumnSize: {0}", columnSize));
+			throw new InvalidOperationException($"Invalid ColumnSize: {columnSize}");
 		}
 
 		/// <summary>

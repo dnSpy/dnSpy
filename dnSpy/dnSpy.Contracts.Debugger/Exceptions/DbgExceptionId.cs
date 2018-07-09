@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception ID
 	/// </summary>
-	public struct DbgExceptionId : IEquatable<DbgExceptionId> {
+	public readonly struct DbgExceptionId : IEquatable<DbgExceptionId> {
 		readonly string category;
 		readonly string name;
 		readonly int code;

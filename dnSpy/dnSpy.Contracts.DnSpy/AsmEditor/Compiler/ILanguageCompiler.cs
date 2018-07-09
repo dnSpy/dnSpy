@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using dnlib.DotNet;
 
 namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// <summary>
@@ -28,18 +29,25 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 	/// </summary>
 	public interface ILanguageCompiler : IDisposable {
 		/// <summary>
+		/// Gets the file extension, including the period, eg. ".cs"
+		/// </summary>
+		string FileExtension { get; }
+
+		/// <summary>
 		/// Assembly references that must be included when compiling the code, even if the
 		/// references aren't part of the edited assembly. This is usually empty unless the
 		/// language uses types from certain language specific assemblies, eg. Visual Basic
 		/// usually needs <c>Microsoft.VisualBasic</c>.
 		/// </summary>
-		IEnumerable<string> RequiredAssemblyReferences { get; }
+		/// <param name="editedModule">The module the user is editing</param>
+		/// <returns></returns>
+		IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
 		/// <summary>
-		/// Called after the code has been decompiled
+		/// Initializes the project
 		/// </summary>
-		/// <param name="decompiledCodeResult">Decompiled code</param>
-		ICodeDocument[] AddDecompiledCode(IDecompiledCodeResult decompiledCodeResult);
+		/// <param name="projectInfo">Project info</param>
+		void InitializeProject(CompilerProjectInfo projectInfo);
 
 		/// <summary>
 		/// Compiles the code
@@ -49,8 +57,14 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		Task<CompilationResult> CompileAsync(CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Adds new metadata references. Called after <see cref="AddDecompiledCode(IDecompiledCodeResult)"/>
-		/// has been called.
+		/// Adds more documents
+		/// </summary>
+		/// <param name="documents">Documents to add to the compilation</param>
+		/// <returns></returns>
+		ICodeDocument[] AddDocuments(CompilerDocumentInfo[] documents);
+
+		/// <summary>
+		/// Adds new metadata references
 		/// </summary>
 		/// <param name="metadataReferences">Metadata references</param>
 		/// <returns></returns>

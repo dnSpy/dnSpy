@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -147,7 +147,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, DotNetCor20Data cor20, HexPosition position) {
 			HexSpan? span;
-			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.MetaData.Data, position)) != null)
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Metadata.Data, position)) != null)
 				return span;
 			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Resources.Data, position)) != null)
 				return span;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,9 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		None						= 0,
 
 		/// <summary>
-		/// Set if it should be formatted for display purposes, clear if it should be formatted so it can be edited
+		/// Set if it should be formatted so it can be edited
 		/// </summary>
-		Display						= 0x00000001,
+		Edit						= 0x00000001,
 
 		/// <summary>
 		/// Set if integers are shown in decimal, clear if integers are shown in hexadecimal
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		ToString					= 0x00000008,
 
 		/// <summary>
-		/// Use digit separators. This flag is ignored if <see cref="Display"/> is not set and the language doesn't support digit separators
+		/// Use digit separators. This flag is ignored if <see cref="Edit"/> is set and the language doesn't support digit separators
 		/// </summary>
 		DigitSeparators				= 0x00000010,
 
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		NoDebuggerDisplay			= 0x00000040,
 
 		/// <summary>
-		/// Show namespaces. Only used if <see cref="Display"/> is set
+		/// Show namespaces. Only used if <see cref="Edit"/> is clear
 		/// </summary>
 		Namespaces					= 0x20000000,
 
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		IntrinsicTypeKeywords		= 0x40000000,
 
 		/// <summary>
-		/// Show tokens. Only used if <see cref="Display"/> is set
+		/// Show tokens. Only used if <see cref="Edit"/> is clear
 		/// </summary>
 		Tokens						= int.MinValue,
 	}

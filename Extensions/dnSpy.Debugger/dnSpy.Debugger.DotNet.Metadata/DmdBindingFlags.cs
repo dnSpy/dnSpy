@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		SuppressChangeType		= 0x00020000,
 		OptionalParamBinding	= 0x00040000,
 		IgnoreReturn			= 0x01000000,
+		Inaccessible			= int.MinValue,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

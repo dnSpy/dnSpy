@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <summary>
 		/// Gets the process id
 		/// </summary>
-		public ulong ProcessId { get; set; }
+		public int ProcessId { get; set; }
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/>

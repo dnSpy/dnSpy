@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -139,6 +139,7 @@ namespace dnSpy.Text.Classification {
 			public IEnumerable<string> ClassificationTypeNames { get; }
 			public string Name { get; }
 			public bool UserVisible { get; }
+			public int Priority { get; }
 			public ClassificationFormatMetadata(string classification) {
 				Name = classification;
 				ClassificationTypeNames = new string[] { classification };

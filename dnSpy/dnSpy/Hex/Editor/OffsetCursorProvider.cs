@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Editor {
 		public event EventHandler CursorInfoChanged;
 
 		public HexCursorInfo CursorInfo {
-			get { return cursorInfo; }
+			get => cursorInfo;
 			set {
 				if (cursorInfo != value) {
 					cursorInfo = value;

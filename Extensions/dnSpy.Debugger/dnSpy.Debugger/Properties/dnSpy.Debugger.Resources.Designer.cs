@@ -898,7 +898,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Arch.
+        ///   Looks up a localized string similar to Architecture.
         /// </summary>
         public static string Column_ProcessArchitecture {
             get {
@@ -1123,6 +1123,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy E_xpression.
+        /// </summary>
+        public static string CopyExpressionCommand {
+            get {
+                return ResourceManager.GetString("CopyExpressionCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Debug engine.
         /// </summary>
         public static string DbgAsm_DebugEngine {
@@ -1137,6 +1146,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DbgAsm_Title {
             get {
                 return ResourceManager.GetString("DbgAsm_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable async debugging.
+        /// </summary>
+        public static string DbgSettings_AsyncDebugging {
+            get {
+                return ResourceManager.GetString("DbgSettings_AsyncDebugging", resourceCulture);
             }
         }
         
@@ -1258,6 +1276,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redirect GUI applications&apos; console output to the Output window.
+        /// </summary>
+        public static string DbgSettings_RedirectGuiConsoleOutput {
+            get {
+                return ResourceManager.GetString("DbgSettings_RedirectGuiConsoleOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Respect attributes that hide members.
         /// </summary>
         public static string DbgSettings_RespectHideMemberAttributes {
@@ -1285,11 +1312,29 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show raw locals.
+        /// </summary>
+        public static string DbgSettings_ShowRawLocals {
+            get {
+                return ResourceManager.GetString("DbgSettings_ShowRawLocals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show raw structure of objects in variables windows.
         /// </summary>
         public static string DbgSettings_ShowRawStructureOfObjects {
             get {
                 return ResourceManager.GetString("DbgSettings_ShowRawStructureOfObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show return values.
+        /// </summary>
+        public static string DbgSettings_ShowReturnValues {
+            get {
+                return ResourceManager.GetString("DbgSettings_ShowReturnValues", resourceCulture);
             }
         }
         
@@ -1308,6 +1353,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DbgSettings_SortParameters {
             get {
                 return ResourceManager.GetString("DbgSettings_SortParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step over properties and operators.
+        /// </summary>
+        public static string DbgSettings_StepOverPropertiesAndOperators {
+            get {
+                return ResourceManager.GetString("DbgSettings_StepOverPropertiesAndOperators", resourceCulture);
             }
         }
         
@@ -3321,6 +3375,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShowNextStatementCommand {
             get {
                 return ResourceManager.GetString("ShowNextStatementCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Public Members.
+        /// </summary>
+        public static string ShowOnlyPublicMembersCommand {
+            get {
+                return ResourceManager.GetString("ShowOnlyPublicMembersCommand", resourceCulture);
             }
         }
         

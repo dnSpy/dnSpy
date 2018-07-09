@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -85,6 +85,8 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void DbgManager_DbgManagerMessage(object sender, DbgManagerMessageEventArgs e) {
 			if (e.MessageKind == PredefinedDbgManagerMessageKinds.Output)
 				UI(() => WriteLine_UI(BoxedTextColor.DebugLogExtensionMessage, e.Message));
+			else if (e.MessageKind == PredefinedDbgManagerMessageKinds.StepFilter && outputLoggerSettings.ShowStepFilteringMessages)
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogStepFiltering, e.Message));
 		}
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
@@ -201,12 +203,14 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				}
 				break;
 
-			case DbgMessageKind.ProcessCreated:
-			case DbgMessageKind.RuntimeCreated:
-			case DbgMessageKind.RuntimeExited:
-			case DbgMessageKind.AppDomainLoaded:
-			case DbgMessageKind.AppDomainUnloaded:
-			case DbgMessageKind.ThreadCreated:
+			case DbgMessageKind.AsyncProgramMessage:
+				if (outputLoggerSettings.ShowProgramOutputMessages) {
+					var ep = (DbgMessageAsyncProgramMessageEventArgs)e;
+					var msg = FilterUserMessage(ep.Message);
+					UI(() => Write_UI(BoxedTextColor.DebugLogProgramOutput, msg));
+				}
+				break;
+
 			default:
 				break;
 			}
@@ -240,7 +244,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			return filename;
 		}
 
-		string GetProcessNameWithPID(DbgProcess process) => $"[0x{process?.Id ?? ulong.MaxValue:X}] {GetProcessName(process)}";
+		string GetProcessNameWithPID(DbgProcess process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";
 		string GetModuleName(DbgModule module) => module?.Name ?? "???";
 
 		string FilterUserMessage(string s) {

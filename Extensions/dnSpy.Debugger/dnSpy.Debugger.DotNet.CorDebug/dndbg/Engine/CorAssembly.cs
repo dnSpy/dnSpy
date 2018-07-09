@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -77,16 +77,18 @@ namespace dndbg.Engine {
 
 		public CorModule ManifestModule {
 			get {
-				CorModule firstModule = null;
+				CorModule moduleWithAssemblyRow = null;
 				foreach (var module in Modules) {
-					if (module.IsManifestModule)
-						return module;
-					if (firstModule == null)
-						firstModule = module;
+					if (module.HasAssemblyRow) {
+						if (moduleWithAssemblyRow == null || (!IsFile(moduleWithAssemblyRow) && IsFile(module)))
+							moduleWithAssemblyRow = module;
+					}
 				}
-				return firstModule;
+				return moduleWithAssemblyRow;
 			}
 		}
+
+		bool IsFile(CorModule module) => !module.IsDynamic && !module.IsInMemory;
 
 		public CorAssembly(ICorDebugAssembly assembly)
 			: base(assembly) => Name = GetName(assembly) ?? string.Empty;
@@ -114,6 +116,6 @@ namespace dndbg.Engine {
 		public bool Equals(CorAssembly other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorAssembly);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Assembly] {0}", Name);
+		public override string ToString() => $"[Assembly] {Name}";
 	}
 }

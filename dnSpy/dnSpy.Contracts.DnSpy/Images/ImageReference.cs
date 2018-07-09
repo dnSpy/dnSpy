@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Images {
 	/// Image reference
 	/// </summary>
 	[TypeConverter(typeof(ImageReferenceConverter))]
-	public struct ImageReference {
+	public readonly struct ImageReference {
 		/// <summary>
 		/// Gets an <see cref="ImageReference"/> which isn't referencing any image
 		/// </summary>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
@@ -194,8 +195,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 						var cancellationToken = CancellationToken.None;
 						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
 						var eeState = state.GetExpressionEvaluatorState(part.String);
-						var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, part.String, DbgEvaluationOptions.Expression, eeState, cancellationToken);
-						Write(state.Context, frame, language, evalRes, part.Flags, cancellationToken);
+						var evalInfo = new DbgEvaluationInfo(state.Context, frame, cancellationToken);
+						var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, part.String, DbgEvaluationOptions.Expression, eeState);
+						Write(evalInfo, language, evalRes);
 					}
 					break;
 
@@ -323,7 +325,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				try {
 					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
 					context = language.CreateContext(frame, options: ctxOptions, cancellationToken: cancellationToken);
-					language.Formatter.Format(context, frame, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo, cancellationToken);
+					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
+					language.Formatter.FormatFrame(evalInfo, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo);
 				}
 				finally {
 					context?.Close();
@@ -420,37 +423,35 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return state;
 		}
 
-		void Write(DbgEvaluationContext context, DbgStackFrame frame, DbgLanguage language, DbgEvaluationResult evalRes, TracepointMessageFlags flags, CancellationToken cancellationToken) {
+		void Write(DbgEvaluationInfo evalInfo, DbgLanguage language, in DbgEvaluationResult evalRes) {
 			if (evalRes.Error != null) {
 				Write("<<<");
 				Write(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(evalRes.Error));
 				Write(">>>");
 			}
 			else {
-				var options = GetValueFormatterOptions(flags, isDisplay: true);
+				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isEdit: false);
 				const CultureInfo cultureInfo = null;
-				language.Formatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
+				language.Formatter.FormatValue(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}
 		}
 
-		DbgValueFormatterOptions GetValueFormatterOptions(TracepointMessageFlags flags, bool isDisplay) {
+		DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string> formatSpecifiers, bool isEdit) {
 			var options = DbgValueFormatterOptions.FuncEval | DbgValueFormatterOptions.ToString;
-			if (isDisplay)
-				options |= DbgValueFormatterOptions.Display;
-			if ((flags & TracepointMessageFlags.Decimal) != 0 || ((flags & TracepointMessageFlags.Hexadecimal) == 0 && !debuggerSettings.UseHexadecimal))
+			if (isEdit)
+				options |= DbgValueFormatterOptions.Edit;
+			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.UseDigitSeparators)
 				options |= DbgValueFormatterOptions.DigitSeparators;
-			if ((flags & TracepointMessageFlags.NoQuotes) != 0)
-				options |= DbgValueFormatterOptions.NoStringQuotes;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
 				options |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
 			if (dbgEvalFormatterSettings.ShowTokens)
 				options |= DbgValueFormatterOptions.Tokens;
-			return options;
+			return PredefinedFormatSpecifiers.GetValueFormatterOptions(formatSpecifiers, options);
 		}
 	}
 }

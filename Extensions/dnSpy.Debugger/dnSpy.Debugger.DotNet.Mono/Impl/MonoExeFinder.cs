@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -105,7 +105,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return -1;
 				f.Position = 0x3C;
 				f.Position = r.ReadUInt32();
-				if (r.ReadUInt32() != 0x4550)
+				// Mono only checks the low 2 bytes
+				if ((ushort)r.ReadUInt32() != 0x4550)
 					return -1;
 				f.Position += 0x14;
 				ushort magic = r.ReadUInt16();

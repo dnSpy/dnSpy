@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
-	struct ClrDacThreadInfo {
+	readonly struct ClrDacThreadInfo {
 		public int ManagedThreadId { get; }
 		public ClrDacThreadFlags Flags { get; }
 		public bool IsFinalizer => (Flags & ClrDacThreadFlags.IsFinalizer) != 0;

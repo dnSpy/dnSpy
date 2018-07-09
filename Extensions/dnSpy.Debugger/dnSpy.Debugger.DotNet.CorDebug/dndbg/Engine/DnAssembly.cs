@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+    Copyright (C) 2014-2018 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -132,6 +132,6 @@ namespace dndbg.Engine {
 		}
 		CorAssemblyDef corAssemblyDef;
 
-		public override string ToString() => string.Format("{0} {1}", UniqueId, Name);
+		public override string ToString() => $"{UniqueId} {Name}";
 	}
 }
