@@ -2524,4 +2524,7 @@
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Ejecuta NGEN.exe si este ensamblado está instalado en el GAC</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compilador</value>
+  </data>
 </root>

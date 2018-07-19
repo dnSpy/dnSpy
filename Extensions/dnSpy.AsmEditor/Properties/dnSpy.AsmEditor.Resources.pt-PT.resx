@@ -2530,4 +2530,7 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Run NGEN.exe if this assembly is installed in the GAC</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compiler</value>
+  </data>
 </root>

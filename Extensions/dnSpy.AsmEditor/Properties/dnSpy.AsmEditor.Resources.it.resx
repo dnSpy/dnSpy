@@ -226,28 +226,28 @@
     <value>Non è possibile risolvere il tipo. Assicurarsi che l'assembly sia già stato caricato.</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
-    <value>Creare Assembly...</value>
+    <value>Crea Assembly...</value>
   </data>
   <data name="CreateAssemblyCommand2" xml:space="preserve">
-    <value>Creare Assembly</value>
+    <value>Crea Assembly</value>
   </data>
   <data name="CreateConstant_Title" xml:space="preserve">
-    <value>Creare una costante</value>
+    <value>Crea una costante</value>
   </data>
   <data name="CreateCustomAttribute" xml:space="preserve">
     <value>Creare un attributo personalizzato</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
-    <value>Crea Event...</value>
+    <value>Crea Evento...</value>
   </data>
   <data name="CreateEventCommand2" xml:space="preserve">
-    <value>Crea Event</value>
+    <value>Crea Evento</value>
   </data>
   <data name="CreateFieldCommand" xml:space="preserve">
-    <value>Crea Field...</value>
+    <value>Crea Campo...</value>
   </data>
   <data name="CreateFieldCommand2" xml:space="preserve">
-    <value>Crea Field</value>
+    <value>Crea Campo</value>
   </data>
   <data name="CreateFieldTypeSig" xml:space="preserve">
     <value>Crea Field TypeSig</value>
@@ -2524,5 +2524,8 @@ Sei sicuro di volere uscire?</value>
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Esegui NGEN.exe se questo assembly è installato nella Global Assembly Cache</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compilatore</value>
   </data>
 </root>

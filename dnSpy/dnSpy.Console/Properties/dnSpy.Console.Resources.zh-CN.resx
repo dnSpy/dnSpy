@@ -133,7 +133,7 @@
     <value>元数据令牌无效</value>
   </data>
   <data name="InvalidVSVersion" xml:space="preserve">
-    <value>Visual Studio 版本无效：{0}</value>
+    <value>无效的 Visual Studio 版本：{0}</value>
   </data>
   <data name="LanguageDoesNotExist" xml:space="preserve">
     <value>语言 '{0}' 不存在</value>

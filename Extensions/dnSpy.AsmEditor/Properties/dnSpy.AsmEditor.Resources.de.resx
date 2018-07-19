@@ -2527,4 +2527,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Starten Sie NGEN.exe, wenn diese Assembly im GAC installiert ist</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compiler</value>
+  </data>
 </root>

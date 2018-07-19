@@ -120,6 +120,33 @@
   <data name="ClassesToolTip" xml:space="preserve">
     <value>Classi</value>
   </data>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>Permetti codice insicuro</value>
+  </data>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>Controlla overflow/underflow aritmetico</value>
+  </data>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>Incorpora runtime di Visual Basic</value>
+  </data>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>Ottimizza il codice</value>
+  </data>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>Option compare: binary</value>
+  </data>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>Option explicit</value>
+  </data>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>Option infer</value>
+  </data>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>Option strict</value>
+  </data>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>Simboli di compilazione condizionale</value>
+  </data>
   <data name="CompletionSet_All" xml:space="preserve">
     <value>Tutti</value>
   </data>
@@ -142,7 +169,7 @@
     <value>Espandendo la visualizzazione dinamica si otterranno i membri dinamici per l'oggetto</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
-    <value>Espandendo la visualizzazione di risultati verrà enumerare l'interfaccia IEnumerable</value>
+    <value>Espandendo la visualizzazione di risultati verrà enumerata l'interfaccia IEnumerable</value>
   </data>
   <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
     <value>Membri di istanza</value>
@@ -208,7 +235,7 @@
     <value>Spazi dei nomi</value>
   </data>
   <data name="PropertiesToolTip" xml:space="preserve">
-    <value>Proprietá</value>
+    <value>Proprietà</value>
   </data>
   <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
     <value>Solo i tipi enumerabili possono avere la visualizzazione dei risultati</value>
@@ -220,7 +247,7 @@
     <value>Strutture</value>
   </data>
   <data name="SystemCoreDllNotLoaded" xml:space="preserve">
-    <value>Visualizzazione dei risultati richiesti{0} a cui si fa riferimento</value>
+    <value>La visualizzazione dei risultati richiede che {0} abbia un riferimento</value>
   </data>
   <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
     <value>Il tipo '{0}' non esiste nell'assembly '{1}'</value>

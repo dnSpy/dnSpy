@@ -2531,4 +2531,7 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>NGEN.exe futtatása, ha ez a szerelvény a GAC-ba van telepítve</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Fordító</value>
+  </data>
 </root>

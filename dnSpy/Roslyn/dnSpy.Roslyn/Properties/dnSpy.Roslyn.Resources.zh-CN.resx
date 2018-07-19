@@ -120,6 +120,33 @@
   <data name="ClassesToolTip" xml:space="preserve">
     <value>类</value>
   </data>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>允许不安全代码</value>
+  </data>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>检查算术溢出/下溢</value>
+  </data>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>嵌入的 Visual Basic runtime</value>
+  </data>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>优化代码</value>
+  </data>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>选项 比较：二进制</value>
+  </data>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>选项 显式</value>
+  </data>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>选项 推断</value>
+  </data>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>选项 严格</value>
+  </data>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>条件编译符号</value>
+  </data>
   <data name="CompletionSet_All" xml:space="preserve">
     <value>全部</value>
   </data>

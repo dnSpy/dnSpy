@@ -2525,4 +2525,7 @@ La plupart des options seront réinitialisées si cette option est cochée</valu
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Exécuter NGEN.exe si cette assembly est installée dans le GAC</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compilateur</value>
+  </data>
 </root>

@@ -2525,4 +2525,7 @@
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Запустить _NGEN.exe, если эта сборка установлена в GAC</value>
   </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compiler</value>
+  </data>
 </root>
