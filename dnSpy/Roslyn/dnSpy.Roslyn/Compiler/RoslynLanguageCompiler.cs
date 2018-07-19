@@ -70,9 +70,6 @@ namespace dnSpy.Roslyn.Compiler {
 
 		protected abstract bool SupportsNetModule { get; }
 
-		protected OutputKind DefaultOutputKind => defaultOutputKind ?? throw new InvalidOperationException("This property was called too early");
-		OutputKind? defaultOutputKind;
-
 		readonly CompilationKind kind;
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
@@ -120,7 +117,7 @@ namespace dnSpy.Roslyn.Compiler {
 			}
 		}
 
-		protected abstract CompilationOptions CreateCompilationOptions();
+		protected abstract CompilationOptions CreateCompilationOptions(OutputKind outputKind);
 		protected abstract CompilationOptions CreateCompilationOptionsNoAttributes(CompilationOptions compilationOptions);
 
 		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
@@ -128,13 +125,11 @@ namespace dnSpy.Roslyn.Compiler {
 		public void InitializeProject(CompilerProjectInfo projectInfo) {
 			Debug.Assert(workspace == null);
 
-			defaultOutputKind = GetDefaultOutputKind(kind);
-
 			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
 			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
 			var refs = projectInfo.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
 
-			var compilationOptions = CreateCompilationOptions()
+			var compilationOptions = CreateCompilationOptions(GetDefaultOutputKind(kind))
 				.WithPlatform(GetPlatform(projectInfo.Platform))
 				.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
 			if (projectInfo.PublicKey != null) {

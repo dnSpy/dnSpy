@@ -170,13 +170,13 @@ namespace dnSpy.Roslyn.Debugger {
 			var body = new CilBody();
 			method.Body = body;
 			body.InitLocals = true;
-			if (sourceMethod.Body != null) {
-				foreach (var l in sourceMethod.Body.Variables)
+			if (sourceMethod.Body is CilBody sourceBody) {
+				foreach (var l in sourceBody.Variables)
 					body.Variables.Add(new Local(generatedModule.Import(l.Type), l.Name));
 			}
 			body.Instructions.Add(CreateLoadVariable(method, body.Variables, index, isLocal));
 			if (type.RemovePinnedAndModifiers().GetElementType() == ElementType.ByRef)
-				body.Instructions.Add(LoadIndirect(type.RemovePinnedAndModifiers().Next.RemovePinnedAndModifiers()));
+				body.Instructions.Add(LoadIndirect(type.RemovePinnedAndModifiers()?.Next.RemovePinnedAndModifiers()));
 			body.Instructions.Add(Instruction.Create(OpCodes.Ret));
 
 			lastMethodSig = methodSig;

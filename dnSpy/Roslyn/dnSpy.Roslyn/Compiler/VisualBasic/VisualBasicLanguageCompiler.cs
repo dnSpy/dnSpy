@@ -101,8 +101,8 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 			}
 		}
 
-		protected override CompilationOptions CreateCompilationOptions() =>
-			new VisualBasicCompilationOptions(DefaultOutputKind,
+		protected override CompilationOptions CreateCompilationOptions(OutputKind outputKind) =>
+			new VisualBasicCompilationOptions(outputKind,
 				optionStrict: visualBasicCompilerSettings.OptionStrict ? OptionStrict.On : OptionStrict.Off,
 				optionInfer: visualBasicCompilerSettings.OptionInfer,
 				optionExplicit: visualBasicCompilerSettings.OptionExplicit,

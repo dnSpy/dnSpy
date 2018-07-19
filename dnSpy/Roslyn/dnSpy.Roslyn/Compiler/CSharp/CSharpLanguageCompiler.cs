@@ -80,8 +80,8 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 			}
 		}
 
-		protected override CompilationOptions CreateCompilationOptions() =>
-			new CSharpCompilationOptions(DefaultOutputKind,
+		protected override CompilationOptions CreateCompilationOptions(OutputKind outputKind) =>
+			new CSharpCompilationOptions(outputKind,
 				optimizationLevel: csharpCompilerSettings.Optimize ? OptimizationLevel.Release : OptimizationLevel.Debug,
 				checkOverflow: csharpCompilerSettings.CheckOverflow,
 				allowUnsafe: csharpCompilerSettings.AllowUnsafe);

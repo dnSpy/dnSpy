@@ -90,8 +90,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="customTypeInfo">Custom type info understood by the EE or null</param>
 		public DbgDotNetAlias(DbgDotNetAliasKind kind, string type, string name, Guid customTypeInfoId, ReadOnlyCollection<byte> customTypeInfo) {
 			Kind = kind;
-			Type = type;
-			Name = name;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 			CustomTypeInfo = customTypeInfo;
 			CustomTypeInfoId = customTypeInfoId;
 		}

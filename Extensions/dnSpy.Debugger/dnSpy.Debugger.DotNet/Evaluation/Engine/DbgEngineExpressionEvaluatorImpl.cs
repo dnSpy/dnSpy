@@ -74,6 +74,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, compRes.ErrorMessage);
 
 				var state = dnILInterpreter.CreateState(compRes.Assembly);
+				Debug.Assert(compRes.CompiledExpressions.Length == 1);
 				ref var exprInfo = ref compRes.CompiledExpressions[0];
 				if (exprInfo.ErrorMessage != null)
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, exprInfo.ErrorMessage);
