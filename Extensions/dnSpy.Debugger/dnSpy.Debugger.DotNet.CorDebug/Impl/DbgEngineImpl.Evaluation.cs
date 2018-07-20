@@ -224,8 +224,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var args = argsCount == 0 ? Array.Empty<CorValue>() : new CorValue[argsCount];
 					w = 0;
 					DmdType origType;
+					var declType = method.DeclaringType;
 					if (hiddenThisArg) {
-						var declType = method.DeclaringType;
 						if (method is DmdMethodInfo m)
 							declType = m.GetBaseDefinition().DeclaringType;
 						var val = converter.Convert(obj, declType, out origType);
@@ -250,7 +250,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						if (!hiddenThisArg)
 							argType = paramTypes[i];
 						else if (i == 0)
-							argType = method.DeclaringType;
+							argType = declType;
 						else
 							argType = paramTypes[i - 1];
 						var arg = args[i];
