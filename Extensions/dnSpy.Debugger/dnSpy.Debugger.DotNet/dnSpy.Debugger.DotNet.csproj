@@ -120,6 +120,7 @@
     <Compile Include="Evaluation\Engine\Interpreter\VariablesProvider.cs" />
     <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
     <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
+    <Compile Include="Evaluation\Engine\MetadataFixer.cs" />
     <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />
     <Compile Include="Evaluation\Engine\ModuleRefFinder.cs" />
     <Compile Include="Evaluation\Engine\ObjectCache.cs" />
