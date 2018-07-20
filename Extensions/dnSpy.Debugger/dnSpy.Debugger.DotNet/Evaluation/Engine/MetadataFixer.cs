@@ -154,7 +154,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return true;
 			if (signatureAlgorithm != 0 && ((signatureAlgorithm >> 13) & 7) != 1)
 				return false;
-			if (hashAlgorithm != 0 && ((hashAlgorithm >> 13) & 7) != 4 || (hashAlgorithm & 0x1FF) < 4)
+			if (hashAlgorithm != 0 && (((hashAlgorithm >> 13) & 7) != 4 || (hashAlgorithm & 0x1FF) < 4))
 				return false;
 
 			return true;
