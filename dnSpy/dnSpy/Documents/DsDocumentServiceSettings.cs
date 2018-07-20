@@ -41,7 +41,7 @@ namespace dnSpy.Documents {
 				}
 			}
 		}
-		bool useMemoryMappedIO = true;
+		bool useMemoryMappedIO = false;
 	}
 
 	[Export, Export(typeof(IDsDocumentServiceSettings))]
