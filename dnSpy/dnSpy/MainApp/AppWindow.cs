@@ -120,6 +120,9 @@ namespace dnSpy.MainApp {
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(sc.UIObject);
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
+#if DEBUG
+			AddTitleInfo("Debug Build");
+#endif
 			if (IsAdministrator())
 				AddTitleInfo(dnSpy_Resources.User_Administrator);
 			wpfCommandService.Add(ControlConstants.GUID_MAINWINDOW, mainWindow);
