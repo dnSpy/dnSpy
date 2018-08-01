@@ -120,7 +120,7 @@ namespace dnSpy.Roslyn.Debugger {
 			if (p.IsHiddenThisParameter)
 				return "this";
 			string name;
-			if (!parameterNames.IsDefault && (uint)p.Index <= (uint)parameterNames.Length) {
+			if (!parameterNames.IsDefault && (uint)p.Index < (uint)parameterNames.Length) {
 				name = parameterNames[p.Index];
 				if (!string.IsNullOrEmpty(name))
 					return name;
