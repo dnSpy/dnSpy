@@ -69,3 +69,7 @@ Italian:
 	debugasm
 	andreabr
 	Marco Fornaro
+
+Ukrainian:
+
+	IamHappy (mrmx2013)

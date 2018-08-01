@@ -218,6 +218,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.hu.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.fr.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.it.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.uk.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DotNet.ex.xml" />

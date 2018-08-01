@@ -938,6 +938,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.hu.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.fr.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.it.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Contracts.DnSpy.Resources.uk.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\ToolWindows\EditValueControl.xaml">

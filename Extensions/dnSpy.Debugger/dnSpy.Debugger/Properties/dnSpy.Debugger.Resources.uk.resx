@@ -118,61 +118,61 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddBreakpointCommand" xml:space="preserve">
-    <value>添加断点(_A)</value>
+    <value>Додати точку зупинки</value>
   </data>
   <data name="AddExceptionCommand" xml:space="preserve">
-    <value>添加异常(_X)</value>
+    <value>Додати Виключення</value>
   </data>
   <data name="AppDomainNotAvailable" xml:space="preserve">
-    <value>&lt; 不可用 &gt;</value>
+    <value>&lt;не доступне&gt;</value>
   </data>
   <data name="AppMenu_Debug" xml:space="preserve">
-    <value>调试(_D)</value>
+    <value>Відлагодження</value>
   </data>
   <data name="AppTitle_Debugging" xml:space="preserve">
-    <value>调试中</value>
+    <value>Відлагодження</value>
   </data>
   <data name="AskDeleteAllBreakpoints" xml:space="preserve">
-    <value>要删除所有的断点吗？</value>
+    <value>Ви бажаєте видалити усі точки зупинки?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
-    <value>附加到进程(_P)...</value>
+    <value>Приєднатись до Процесу...</value>
   </data>
   <data name="Attach_AttachToProcess" xml:space="preserve">
-    <value>附加到进程</value>
+    <value>Приєднатись до Процесу</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>请改用dnSpy.exe来附加到64位进程</value>
+    <value>Використовуйте dnSpy.exe для приєднання до 64-біт процесів</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>请改用dnSpy-x86.exe来附加到32位进程</value>
+    <value>Використовуйте dnSpy-x86.exe для приєднання до 32-біт процесів</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>全部中断(_K)</value>
+    <value>Перервати Усе</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
-    <value>断点(_B)</value>
+    <value>Точки зупинок</value>
   </data>
   <data name="Button_Attach" xml:space="preserve">
-    <value>附加(_A)</value>
+    <value>Приєднатись</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>取消(_C)</value>
+    <value>Відміна</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>_OK</value>
+    <value>Так</value>
   </data>
   <data name="Button_Refresh" xml:space="preserve">
-    <value>刷新(_R)</value>
+    <value>Оновити</value>
   </data>
   <data name="CallStackCommand" xml:space="preserve">
-    <value>调用堆栈(_C)</value>
+    <value>Стек викликів</value>
   </data>
   <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
-    <value>堆栈帧数量已超出dnSpy所支持的最大值。</value>
+    <value>Перевищено максимальна к-сть фреймів стеку, що підтримуються dnSpy</value>
   </data>
   <data name="Column_Address" xml:space="preserve">
-    <value>地址</value>
+    <value>Адреса</value>
   </data>
   <data name="Column_AppDomain" xml:space="preserve">
     <value>AppDomain</value>
@@ -184,289 +184,288 @@
     <value>InMemory</value>
   </data>
   <data name="Column_Module" xml:space="preserve">
-    <value>模块</value>
+    <value>Модуль</value>
   </data>
   <data name="Column_Name" xml:space="preserve">
-    <value>名称</value>
+    <value>Назва</value>
   </data>
   <data name="Column_OptimizedModule" xml:space="preserve">
-    <value>已优化</value>
+    <value>Оптимізовано</value>
   </data>
   <data name="Column_Order" xml:space="preserve">
-    <value>排序</value>
+    <value>Порядок</value>
   </data>
   <data name="Column_Path" xml:space="preserve">
-    <value>路径</value>
+    <value>Шлях</value>
   </data>
   <data name="Column_Process" xml:space="preserve">
-    <value>进程</value>
+    <value>Процес</value>
   </data>
   <data name="Column_ProcessArchitecture" xml:space="preserve">
-    <value>架构</value>
+    <value>Архітектура</value>
   </data>
   <data name="Column_ProcessFilename" xml:space="preserve">
-    <value>文件名</value>
+    <value>Назва файлу</value>
   </data>
   <data name="Column_ProcessID" xml:space="preserve">
     <value>ID</value>
   </data>
   <data name="Column_ProcessTitle" xml:space="preserve">
-    <value>标题</value>
+    <value>Заголовок</value>
   </data>
   <data name="Column_ProcessType" xml:space="preserve">
-    <value>类型</value>
+    <value>Тип</value>
   </data>
   <data name="Column_ThreadAffinityMask" xml:space="preserve">
-    <value>关联掩码</value>
+    <value>Affinity Mask</value>
   </data>
   <data name="Column_ThreadCategory" xml:space="preserve">
-    <value>类别</value>
+    <value>Категорія</value>
   </data>
   <data name="Column_ThreadID" xml:space="preserve">
     <value>ID</value>
   </data>
   <data name="Column_ThreadLocation" xml:space="preserve">
-    <value>位置</value>
+    <value>Розташування</value>
   </data>
   <data name="Column_ThreadManagedId" xml:space="preserve">
-    <value>托管ID</value>
+    <value>Managed ID</value>
   </data>
   <data name="Column_ThreadPriority" xml:space="preserve">
-    <value>优先级</value>
+    <value>Пріоритет</value>
   </data>
   <data name="Column_ThreadState" xml:space="preserve">
-    <value>状态</value>
+    <value>Стан</value>
   </data>
   <data name="Column_ThreadSuspendedCount" xml:space="preserve">
-    <value>挂起项计数</value>
+    <value>Лічильник зупинок</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
-    <value>时间戳</value>
+    <value>Час</value>
   </data>
   <data name="Column_Type" xml:space="preserve">
-    <value>类型</value>
+    <value>Тип</value>
   </data>
   <data name="Column_Value" xml:space="preserve">
-    <value>值</value>
+    <value>Значення</value>
   </data>
   <data name="Column_Version" xml:space="preserve">
-    <value>版本</value>
+    <value>Версія</value>
   </data>
   <data name="ContinueDebuggingCommand" xml:space="preserve">
-    <value>继续(_C)</value>
+    <value>Продовжити</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>复制(_Y)</value>
+    <value>Копіювати</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>调试程序</value>
+    <value>Відлагодження</value>
   </data>
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
-    <value>在调试器启动时显示局部变量窗口</value>
+    <value>Показати вікно локальних змінних при старті дебагера</value>
   </data>
   <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
-    <value>防止代码检测托管调试器</value>
+    <value>Заборонити коду визначати managed debugger</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
-    <value>忽略 Debugger.Break() 和中断指令</value>
+    <value>Ігнорувати Debugger.Break() та інші операції зупинок</value>
   </data>
   <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
-    <value>启用属性计算和其它隐式函数调用</value>
+    <value>Дозволити обчислення властивостей та інші неявні виклики функцій</value>
   </data>
   <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
-    <value>调试从进程内存加载的文件（取消选中以使用磁盘文件）</value>
+    <value>Відлагоджувати файли, завантажені із пам'яті процесу (зніміть прапорець для того, щоб використати файли із диску)</value>
   </data>
   <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
-    <value>在变量窗口中对对象调用字符串转换方法</value>
+    <value>Викликати функцію конвертування стрічок у вікнах змінних</value>
   </data>
   <data name="StartDebugging2" xml:space="preserve">
-    <value>启动调试(_S)...</value>
+    <value>_Запустити відладку...</value>
   </data>
   <data name="DebuggerOptDlgTab" xml:space="preserve">
-    <value>调试器</value>
+    <value>Відладчик</value>
   </data>
   <data name="DebugProgramX" xml:space="preserve">
-    <value>调试 {0} (_D)</value>
+    <value>_Відлагодити {0}</value>
   </data>
   <data name="Debug_EventDescription_Exception" xml:space="preserve">
-    <value>例外</value>
+    <value>Виключення</value>
   </data>
   <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
-    <value>加载模块 DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
   </data>
   <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
-    <value>加载模块 A={0:X8} S={1:X8} {2}</value>
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
   </data>
   <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
-    <value>未处理的异常</value>
+    <value>Необроблене виключення</value>
   </data>
   <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
-    <value>删除所有断点(_A)</value>
+    <value>Видалити усі точки зупинок</value>
   </data>
   <data name="DeleteBreakpointCommand" xml:space="preserve">
-    <value>删除断点(_E)</value>
+    <value>Видалити брейкпоінт</value>
   </data>
   <data name="DetachAllCommand" xml:space="preserve">
-    <value>分离所有(_L)</value>
+    <value>Від'єднатись від усіх</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
-    <value>禁用所有断点(_N)</value>
+    <value>Заборонити усі точки зупинок</value>
   </data>
   <data name="EnableAllBreakpointsCommand" xml:space="preserve">
-    <value>启用所有断点(_N)</value>
+    <value>Включити усі точки зупинок</value>
   </data>
   <data name="EnableBreakpointCommand" xml:space="preserve">
-    <value>启用断点(_E)</value>
+    <value>Ввімкнути точку зупинки</value>
   </data>
   <data name="EnableBreakpointCommand2" xml:space="preserve">
-    <value>启用断点(_L)</value>
+    <value>Ввімкнути точку зупинки</value>
   </data>
   <data name="ErrorOccurredX" xml:space="preserve">
-    <value>发生错误：
+    <value>Трапилась помилка:
 
 {0}</value>
   </data>
   <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
-    <value>除非调试器停止，否则无法计算</value>
+    <value>Не можу вирахувати поки дебагер зупинений</value>
   </data>
   <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
-    <value>当未捕捉异常发生时无法计算</value>
+    <value>Не вдалося оцінити, коли сталася необроблена виняткова ситуація</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>无法启动 '{0}' 
-错误: {1}</value>
+    <value>Не вдалося запустити '{0}' Помилка: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
-    <value>异常设置(_X)</value>
+    <value>Налаштування виключень</value>
   </data>
   <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
-    <value>从列表中删除异常</value>
+    <value>Видалити виключення зі списку</value>
   </data>
   <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
-    <value>恢复列表到默认设置</value>
+    <value>Відновити список параметрів за замовчуванням</value>
   </data>
   <data name="Exceptions_Search" xml:space="preserve">
-    <value>搜索</value>
+    <value>Пошук</value>
   </data>
   <data name="Exceptions_Search_ToolTip" xml:space="preserve">
-    <value>查找异常</value>
+    <value>Пошук виключення</value>
   </data>
   <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
-    <value>仅显示已启用的异常</value>
+    <value>Показати лише ввімкнуті винятки</value>
   </data>
   <data name="FreezeThreadCommand" xml:space="preserve">
-    <value>冻结(_F)</value>
+    <value>Заморозити</value>
   </data>
   <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>转到反汇编</value>
+    <value>До дизасембльованого коду</value>
   </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
-    <value>转到反汇编(_D)</value>
+    <value>До _дизасембльованого коду</value>
   </data>
   <data name="GoToModuleCommand" xml:space="preserve">
-    <value>转到模块(_G)</value>
+    <value>Перейти _до модуля</value>
   </data>
   <data name="HexDisplayCommand" xml:space="preserve">
-    <value>十六进制显示(_H)</value>
+    <value>_Hex відображення</value>
   </data>
   <data name="LocalsAddWatchCommand" xml:space="preserve">
-    <value>添加监视(_W)</value>
+    <value>Додати watch</value>
   </data>
   <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
-    <value>折叠子节点(_C)</value>
+    <value>_Згорнути дочірні вузли</value>
   </data>
   <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
-    <value>折叠父节点(_O)</value>
+    <value>З_горнути батька</value>
   </data>
   <data name="LocalsCommand" xml:space="preserve">
-    <value>局部变量(_L)</value>
+    <value>_Локальні змінні</value>
   </data>
   <data name="LocalsCopyValueCommand" xml:space="preserve">
-    <value>复制值(_L)</value>
+    <value>Копіювати значення</value>
   </data>
   <data name="LocalsEditValueCommand" xml:space="preserve">
-    <value>编辑值(_E)</value>
+    <value>_Змінити значення</value>
   </data>
   <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
-    <value>展开子节点</value>
+    <value>_Розгорнути дочірні вузли</value>
   </data>
   <data name="LocalsSaveCommand" xml:space="preserve">
-    <value>保存(_S)...</value>
+    <value>Зберегти...</value>
   </data>
   <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
-    <value>保存数据到 '{0}' 错误
-错误：{1}</value>
+    <value>Помилка при збереженні даних в '{0}'
+ПОМИЛКА: {1}</value>
   </data>
   <data name="Locals_Ask_TooManyItems" xml:space="preserve">
-    <value>此项目包含有超过 {0} 个子项目。当展开时会限制要显示的项目数量。
+    <value>У цього елементу більше {0} дочірніх елементів, їх відображення буде обмежене.
 
-您确定要展开它？</value>
+Ви переконані, що хочете розгорнути елемент?</value>
   </data>
   <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
-    <value>当线程位于不安全状态时无法计算表达式。按步调试或运行直到触发断点。</value>
+    <value>Не можливо вичислити, коли потік в небезпечному стані. Перейдіть через виклик чи запустіть до точки зупинки.</value>
   </data>
   <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
-    <value>当前无法调用属性和方法</value>
+    <value>Зараз неможливо викликати властивості і методи</value>
   </data>
   <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
-    <value>求值已超时并已被禁用，直到您继续调试为止。</value>
+    <value>Час виконання вийшов. Обчислення буде відключене до тих пір, поки ви не продовжите відладку.</value>
   </data>
   <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
-    <value>求值超时</value>
+    <value>Минув час операції</value>
   </data>
   <data name="MemoryWindowCommand" xml:space="preserve">
-    <value>内存(_M)</value>
+    <value>_Пам'ять</value>
   </data>
   <data name="ModuleCopyFilenameCommand" xml:space="preserve">
-    <value>复制文件名</value>
+    <value>Копіювати ім'я файлу</value>
   </data>
   <data name="ModuleSaveModulesTitle" xml:space="preserve">
-    <value>保存模块</value>
+    <value>Зберегти модулі</value>
   </data>
   <data name="ModuleSaveModuleTitle" xml:space="preserve">
-    <value>保存模块</value>
+    <value>Зберегти модуль</value>
   </data>
   <data name="ModulesCommand" xml:space="preserve">
-    <value>模块(_O)</value>
+    <value>М_одулі</value>
   </data>
   <data name="Module_NoAddress" xml:space="preserve">
-    <value>&lt;无地址&gt;</value>
+    <value>&lt;нема адреси&gt;</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>打开所在文件夹</value>
+    <value>_Відкрити каталог</value>
   </data>
   <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
-    <value>从内存打开模块</value>
+    <value>Відкрити модуль із пам'яті</value>
   </data>
   <data name="RemoveExceptionCommand" xml:space="preserve">
-    <value>删除(_R)</value>
+    <value>_Видалити</value>
   </data>
   <data name="RenameThreadCommand" xml:space="preserve">
-    <value>重命名</value>
+    <value>Перейменувати</value>
   </data>
   <data name="RestartCommand" xml:space="preserve">
-    <value>重新开始(_R)</value>
+    <value>_Рестарт</value>
   </data>
   <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
-    <value>恢复默认值</value>
+    <value>Відновити типові значення</value>
   </data>
   <data name="RunToCursorCommand" xml:space="preserve">
-    <value>运行到光标处(_N)</value>
+    <value>В_иконати до курсору</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
-    <value>保存模块...</value>
+    <value>Зберегти модуль...</value>
   </data>
   <data name="SaveModulesCommand" xml:space="preserve">
-    <value>保存 {0} 模块...</value>
+    <value>Зберегти {0} модулів...</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
-    <value>全选(_A)</value>
+    <value>Вибр_ати усе</value>
   </data>
   <data name="SetNextStatementCommand" xml:space="preserve">
-    <value>设为下一条语句(_X)</value>
+    <value>Встановити на_ступну інструкцію</value>
   </data>
   <data name="ShortCutAltAsterisk" xml:space="preserve">
-    <value>Alt + 数字键 *</value>
+    <value>Alt+Num *</value>
   </data>
   <data name="ShortCutKeyAlt4" xml:space="preserve">
     <value>Alt+4</value>
@@ -529,7 +528,7 @@
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Del</value>
+    <value>Видалити</value>
   </data>
   <data name="ShortCutKeyEnter" xml:space="preserve">
     <value>Enter</value>
@@ -559,442 +558,442 @@
     <value>Shift+F5</value>
   </data>
   <data name="ShowInMemoryWindowCommand" xml:space="preserve">
-    <value>在内存窗口中显示</value>
+    <value>Показати у вікні пам'яті</value>
   </data>
   <data name="ShowInstructionPointerCommand" xml:space="preserve">
-    <value>显示IP</value>
+    <value>Показати IP</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
-    <value>显示模块名称(_M)</value>
+    <value>Показати імена _модулів</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
-    <value>显示命名空间</value>
+    <value>Показати простори імен</value>
   </data>
   <data name="ShowNextStatementCommand" xml:space="preserve">
-    <value>显示下一语句(_H)</value>
+    <value>По_казати наступну інструкцію</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>显示声明类型</value>
+    <value>Показати оголошення типів</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
-    <value>显示参数名称(_P)</value>
+    <value>Показати імена _параметрів</value>
   </data>
   <data name="ShowParameterTypesCommand" xml:space="preserve">
-    <value>显示参数类型(_T)</value>
+    <value>Показати _типи параметрів</value>
   </data>
   <data name="ShowParameterValuesCommand" xml:space="preserve">
-    <value>显示参数值(_V)</value>
+    <value>Показати _значення параметрів</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>显示返回类型</value>
+    <value>Показати тип повернення</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>显示Tokens</value>
+    <value>Показувати токени</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>显示内部类型关键字</value>
+    <value>Показати ключові слова вбудованих типів</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
-    <value>启动但不调试</value>
+    <value>Старт б_ез відладки</value>
   </data>
   <data name="StatusBar_Ready" xml:space="preserve">
-    <value>就绪</value>
+    <value>Готовий</value>
   </data>
   <data name="StatusBar_Running" xml:space="preserve">
-    <value>运行中...</value>
+    <value>Працює...</value>
   </data>
   <data name="StepIntoCommand" xml:space="preserve">
-    <value>逐语句(_I)</value>
+    <value>Крок_всередину</value>
   </data>
   <data name="StepOutCommand" xml:space="preserve">
-    <value>跳出(_T)</value>
+    <value>Крок _наверх</value>
   </data>
   <data name="StepOverCommand" xml:space="preserve">
-    <value>逐过程(_O)</value>
+    <value>Крок _через</value>
   </data>
   <data name="StopDebuggingCommand" xml:space="preserve">
-    <value>停止调试(_E)</value>
+    <value>Зупинити _відладку</value>
   </data>
   <data name="SwitchToFrameCommand" xml:space="preserve">
-    <value>切换到帧(_S)</value>
+    <value>_Перемикнутись на фрейм</value>
   </data>
   <data name="SwitchToThreadCommand" xml:space="preserve">
-    <value>切换到线程(_S)</value>
+    <value>_Перемикнутись на потік</value>
   </data>
   <data name="ThawThreadCommand" xml:space="preserve">
-    <value>解冻(_T)</value>
+    <value>_Розморозити</value>
   </data>
   <data name="ThreadsCommand" xml:space="preserve">
-    <value>线程(_H)</value>
+    <value>По_токи</value>
   </data>
   <data name="ThreadType_Main" xml:space="preserve">
-    <value>主线程</value>
+    <value>Головний потік</value>
   </data>
   <data name="ThreadType_Terminated" xml:space="preserve">
-    <value>终止的线程</value>
+    <value>Завершений</value>
   </data>
   <data name="ThreadType_ThreadPool" xml:space="preserve">
-    <value>线程池</value>
+    <value>Пул потоків</value>
   </data>
   <data name="ThreadType_Unknown" xml:space="preserve">
-    <value>未知线程</value>
+    <value>Невідомий потік</value>
   </data>
   <data name="ThreadType_Worker" xml:space="preserve">
-    <value>工作线程</value>
+    <value>Робочий потік</value>
   </data>
   <data name="Thread_LocationNotAvailable" xml:space="preserve">
-    <value>&lt; 不可用 &gt;</value>
+    <value>&lt;не доступне&gt;</value>
   </data>
   <data name="Thread_NoName" xml:space="preserve">
-    <value>&lt;无名称&gt;</value>
+    <value>&lt;Без імені&gt;</value>
   </data>
   <data name="Thread_Priority_AboveNormal" xml:space="preserve">
-    <value>高于正常</value>
+    <value>Вище середнього</value>
   </data>
   <data name="Thread_Priority_BelowNormal" xml:space="preserve">
-    <value>低于正常</value>
+    <value>Нижче середнього</value>
   </data>
   <data name="Thread_Priority_Highest" xml:space="preserve">
-    <value>高</value>
+    <value>Найвищий</value>
   </data>
   <data name="Thread_Priority_Lowest" xml:space="preserve">
-    <value>低</value>
+    <value>Найнижчий</value>
   </data>
   <data name="Thread_Priority_Normal" xml:space="preserve">
-    <value>正常</value>
+    <value>Звичайний</value>
   </data>
   <data name="ToggleBreakpointCommand" xml:space="preserve">
-    <value>设置/取消断点(_G)</value>
+    <value>Переключити точку зупинки</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
-    <value>全部中断</value>
+    <value>Перервати Усе</value>
   </data>
   <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
-    <value>继续</value>
+    <value>Продовжити</value>
   </data>
   <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
-    <value>继续</value>
+    <value>Продовжити</value>
   </data>
   <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
-    <value>调试程序</value>
+    <value>Відлагодження</value>
   </data>
   <data name="ToolBarRestartToolTip" xml:space="preserve">
-    <value>重新开始</value>
+    <value>Перезапустити</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>显示下一语句</value>
+    <value>Показати наступний оператор</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
-    <value>启动</value>
+    <value>Старт</value>
   </data>
   <data name="ToolBarStepIntoToolTip" xml:space="preserve">
-    <value>逐语句</value>
+    <value>Крок всередину</value>
   </data>
   <data name="ToolBarStepOutToolTip" xml:space="preserve">
-    <value>跳出</value>
+    <value>Крок наверх</value>
   </data>
   <data name="ToolBarStepOverToolTip" xml:space="preserve">
-    <value>逐过程</value>
+    <value>Крок через</value>
   </data>
   <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
-    <value>停止调试</value>
+    <value>Зупинити відлагодження</value>
   </data>
   <data name="Window_Breakpoints" xml:space="preserve">
-    <value>断点</value>
+    <value>Точки зупинки</value>
   </data>
   <data name="Window_CallStack" xml:space="preserve">
-    <value>调用堆栈</value>
+    <value>Стек викликів</value>
   </data>
   <data name="Window_ExceptionSettings" xml:space="preserve">
-    <value>异常设置</value>
+    <value>Налаштування виключень</value>
   </data>
   <data name="Window_Locals" xml:space="preserve">
-    <value>局部变量</value>
+    <value>Локальні змінні</value>
   </data>
   <data name="Window_Memory_10_MenuItem" xml:space="preserve">
-    <value>内存 1_0</value>
+    <value>Пам'ять 1_0</value>
   </data>
   <data name="Window_Memory_N" xml:space="preserve">
-    <value>内存 {0}</value>
+    <value>Пам'ять {0}</value>
   </data>
   <data name="Window_Memory_N_MenuItem" xml:space="preserve">
-    <value>内存 _{0}</value>
+    <value>Пам'ять _{0}</value>
   </data>
   <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
-    <value>内存 {0}</value>
+    <value>Пам'ять {0}</value>
   </data>
   <data name="Window_Modules" xml:space="preserve">
-    <value>模块</value>
+    <value>Модулі</value>
   </data>
   <data name="Window_Threads" xml:space="preserve">
-    <value>线程</value>
+    <value>Потоки</value>
   </data>
   <data name="YesNo_No" xml:space="preserve">
-    <value>否</value>
+    <value>Ні</value>
   </data>
   <data name="YesNo_Yes" xml:space="preserve">
-    <value>是</value>
+    <value>Так</value>
   </data>
   <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
-    <value>语法高亮</value>
+    <value>Підсвітка синтаксису</value>
   </data>
   <data name="LoadModulesCommand" xml:space="preserve">
-    <value>打开模块</value>
+    <value>Завантажити модулі</value>
   </data>
   <data name="LoadXModulesCommand" xml:space="preserve">
-    <value>打开 {0} 模块</value>
+    <value>Завантажити {0} модулів</value>
   </data>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
-    <value>显示参数类型</value>
+    <value>Показати типи параметрів</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>调试器</value>
+    <value>Відладчик</value>
   </data>
   <data name="DebugLoggerName" xml:space="preserve">
-    <value>调试</value>
+    <value>Відладка</value>
   </data>
   <data name="ShowExceptionMessages" xml:space="preserve">
-    <value>异常消息(_E)</value>
+    <value>_Повідомлення про виключення</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>模块加载消息(_L)</value>
+    <value>Повідомлення _завантаження модуля</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>模块卸载消息(_U)</value>
+    <value>Повідомлення _вивантаження модуля</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
-    <value>进程退出消息(_P)</value>
+    <value>Повідомлення виходу _процесу</value>
   </data>
   <data name="ShowProgramOutputMessages" xml:space="preserve">
-    <value>程序输出(_O)</value>
+    <value>_Вивід програми</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>分步过滤信息</value>
+    <value>Повідомлення фільтрації _кроків</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>线程退出消息(_T)</value>
+    <value>Повідомлення про вихід _потоку</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
-    <value>MDA消息</value>
+    <value>Повідомлення MDA</value>
   </data>
   <data name="DebugLogAdditionalInformation" xml:space="preserve">
-    <value>其他信息: {0}</value>
+    <value>Додаткова інформація: {0}</value>
   </data>
   <data name="DebugLogExceptionHandled" xml:space="preserve">
-    <value>引发异常: '{0}' in {1}</value>
+    <value>Виключення: '{0}' в {1}</value>
   </data>
   <data name="DebugLogExceptionUnhandled" xml:space="preserve">
-    <value>'{0}' 类型的未处理的异常发生在 {1}</value>
+    <value>В {1} відбулось неопрацьоване  виключення типу '{0}'</value>
   </data>
   <data name="DebugLogExitProcess" xml:space="preserve">
-    <value>'{0}' 程序已退出，返回值为 {1} (0x{1:x})。</value>
+    <value>Програма «{0}» завершилась із кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
-    <value>线程 0x{0:x} 已退出，返回值为 {1} (0x{1:x})。</value>
+    <value>Потік 0x{0:x} завершився із кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
-    <value>已加载 '{0}'</value>
+    <value>Завантажений "{0}".</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
-    <value>托管调试助手 '{0}' 检测到 '{1}' 中的一个问题。</value>
+    <value>Помічник керованої відладки '{0}' знайшов проблему у '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>已卸载 '{0}'</value>
+    <value>Вивантажений "{0}".</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt; 没有异常消息 &gt;"</value>
+    <value>«&lt;повідомлення без виключення&gt;»</value>
   </data>
   <data name="GlyphToolTip_Location" xml:space="preserve">
-    <value>位置</value>
+    <value>Розташування</value>
   </data>
   <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
-    <value>内存窗口</value>
+    <value>Пам"ять</value>
   </data>
   <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
-    <value>十六进制编辑器 (内存窗口)</value>
+    <value>Hex-редактор (пам'ять)</value>
   </data>
   <data name="DbgAsm_DebugEngine" xml:space="preserve">
-    <value>调试引擎(_D)</value>
+    <value>_Двигун відладки</value>
   </data>
   <data name="DebugWindows" xml:space="preserve">
-    <value>窗口(_W)</value>
+    <value>_Вікна</value>
   </data>
   <data name="OutputCommand" xml:space="preserve">
-    <value>输出(_O)</value>
+    <value>Вив_ід</value>
   </data>
   <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
     <value>Ctrl+Alt+W, {0}</value>
   </data>
   <data name="TerminateAllCommand" xml:space="preserve">
-    <value>终止所有(_M)</value>
+    <value>_Завершити все</value>
   </data>
   <data name="WatchCommand" xml:space="preserve">
-    <value>监视(_W)</value>
+    <value>_Watch</value>
   </data>
   <data name="Window_Watch_10_MenuItem" xml:space="preserve">
-    <value>监视 1_0</value>
+    <value>Watch 1_0</value>
   </data>
   <data name="Window_Watch_N" xml:space="preserve">
-    <value>监视 {0}</value>
+    <value>Watch {0}</value>
   </data>
   <data name="Window_Watch_N_MenuItem" xml:space="preserve">
-    <value>监视 _{0}</value>
+    <value>Watch _{0}</value>
   </data>
   <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
-    <value>监视 {0}</value>
+    <value>Watch {0}</value>
   </data>
   <data name="Options" xml:space="preserve">
-    <value>选项(_O)...</value>
+    <value>_Параметри...</value>
   </data>
   <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
     <value>Ctrl+Alt+Z</value>
   </data>
   <data name="ProcessesCommand" xml:space="preserve">
-    <value>进程(_P)</value>
+    <value>_Процесси</value>
   </data>
   <data name="Window_Processes" xml:space="preserve">
-    <value>进程</value>
+    <value>Процеси</value>
   </data>
   <data name="Column_Debugging" xml:space="preserve">
-    <value>调试中</value>
+    <value>Відлагодження</value>
   </data>
   <data name="Column_ID" xml:space="preserve">
     <value>ID</value>
   </data>
   <data name="Column_State" xml:space="preserve">
-    <value>状态</value>
+    <value>Стан</value>
   </data>
   <data name="Column_Title" xml:space="preserve">
-    <value>标题</value>
+    <value>Заголовок</value>
   </data>
   <data name="Process_Paused" xml:space="preserve">
-    <value>中断</value>
+    <value>Зупинений</value>
   </data>
   <data name="Process_Running" xml:space="preserve">
-    <value>运行中</value>
+    <value>Виконується</value>
   </data>
   <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
-    <value>附加到进程</value>
+    <value>Приєднатись до Процесу</value>
   </data>
   <data name="Processes_DetachToolTip" xml:space="preserve">
-    <value>分离进程</value>
+    <value>Від'єднати процес</value>
   </data>
   <data name="Processes_TerminateToolTip" xml:space="preserve">
-    <value>终止进程</value>
+    <value>Припинити процес</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
   <data name="DetachProcessCommand" xml:space="preserve">
-    <value>分离进程(_D)</value>
+    <value>Від'єднати процес</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
-    <value>调试停止时分离(_W)</value>
+    <value>Від'єднати, _коли відладка завершиться</value>
   </data>
   <data name="TerminateProcessCommand" xml:space="preserve">
-    <value>终止进程(_M)</value>
+    <value>_Завершити процес</value>
   </data>
   <data name="ProcessCommand" xml:space="preserve">
-    <value>进程</value>
+    <value>Процес</value>
   </data>
   <data name="Column_ProcessName" xml:space="preserve">
-    <value>进程名</value>
+    <value>Ім'я процесу</value>
   </data>
   <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
-    <value>&lt;不在此列表中的所有 {0} &gt;</value>
+    <value>&lt;Все {0} не в цьому списку&gt;</value>
   </data>
   <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
-    <value>编辑条件</value>
+    <value>Редагувати умови</value>
   </data>
   <data name="Column_Conditions" xml:space="preserve">
-    <value>条件</value>
+    <value>Умови</value>
   </data>
   <data name="Column_BreakWhenThrown" xml:space="preserve">
-    <value>引发异常时中断</value>
+    <value>Зупинити при з'явленні виключення</value>
   </data>
   <data name="Column_Category" xml:space="preserve">
-    <value>类别</value>
+    <value>Категорія</value>
   </data>
   <data name="Exception_Conditions_And" xml:space="preserve">
-    <value>与</value>
+    <value>І</value>
   </data>
   <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
-    <value>模块名称等于</value>
+    <value>Імя модуля рівно</value>
   </data>
   <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
-    <value>模块名称不等于</value>
+    <value>Ім'я модуля не рівно</value>
   </data>
   <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>重置所有搜索条件以显示所有异常</value>
+    <value>Скинути всі критерії пошуку, щоб показати всі виключення</value>
   </data>
   <data name="Exceptions_AllCategories" xml:space="preserve">
-    <value>全部</value>
+    <value>Всі</value>
   </data>
   <data name="EditConditionsCommand" xml:space="preserve">
-    <value>编辑条件...</value>
+    <value>Змінити умови...</value>
   </data>
   <data name="ExceptionsCommand" xml:space="preserve">
-    <value>异常</value>
+    <value>Виключення</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>查找(_F)</value>
+    <value>Пошук</value>
   </data>
   <data name="Exceptions_NoMatch" xml:space="preserve">
-    <value>没有能匹配搜索过滤器的异常类型。</value>
+    <value>Немає типів виключень, що відповідають умові пошуку.</value>
   </data>
   <data name="AddExceptionButton" xml:space="preserve">
-    <value>添加</value>
+    <value>Додати</value>
   </data>
   <data name="ExceptionDescription" xml:space="preserve">
-    <value>异常说明</value>
+    <value>Опис винятоку</value>
   </data>
   <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
-    <value>名称不能为空</value>
+    <value>Ім'я не може бути пустим</value>
   </data>
   <data name="EditConditions_Title" xml:space="preserve">
-    <value>编辑条件</value>
+    <value>Редагувати умови</value>
   </data>
   <data name="Button_AddCondition" xml:space="preserve">
-    <value>添加条件(_A)</value>
+    <value>_Додати умову</value>
   </data>
   <data name="ModuleBreakpointsCommand" xml:space="preserve">
-    <value>模块断点(_U)</value>
+    <value>Точки зупинки модуля</value>
   </data>
   <data name="Window_ModuleBreakpoints" xml:space="preserve">
-    <value>模块断点</value>
+    <value>Точки зупинки модуля</value>
   </data>
   <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
-    <value>添加断点</value>
+    <value>Додати точку зупинки</value>
   </data>
   <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
-    <value>删除断点</value>
+    <value>Видалити точки зупинки</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
-    <value>编辑 AppDomain 名称</value>
+    <value>Редагувати ім'я AppDomain</value>
   </data>
   <data name="EditModuleNameCommand" xml:space="preserve">
-    <value>编辑模块名称</value>
+    <value>Редагувати ім'я модуля</value>
   </data>
   <data name="EditOrderCommand" xml:space="preserve">
-    <value>编辑模块加载顺序</value>
+    <value>Змінити порядок завантаження модуля</value>
   </data>
   <data name="EditProcessNameCommand" xml:space="preserve">
-    <value>编辑过程名称</value>
+    <value>Редагувати ім'я процесу</value>
   </data>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
-    <value>删除所有断点</value>
+    <value>Видалити усі точки зупинок</value>
   </data>
   <data name="RemoveBreakpointCommand" xml:space="preserve">
-    <value>删除断点</value>
+    <value>Видалити точки зупинки</value>
   </data>
   <data name="DisableBreakpointCommand3" xml:space="preserve">
-    <value>禁用断点</value>
+    <value>Вимкнути точку зупинки</value>
   </data>
   <data name="EnableBreakpointCommand3" xml:space="preserve">
-    <value>启用断点</value>
+    <value>Увімкнути точку зупинки</value>
   </data>
   <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
-    <value>一个进程中断时则中断所有进程</value>
+    <value>Перервати усі процеси при перериванні одного</value>
   </data>
   <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
     <value>Ctrl+Alt+F10</value>
@@ -1006,495 +1005,495 @@
     <value>Ctrl+Shift+Alt+F11</value>
   </data>
   <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
-    <value>逐语句（当前进程）</value>
+    <value>Крок із заходом (поточний процес)</value>
   </data>
   <data name="StepOutCurrentProcessCommand" xml:space="preserve">
-    <value>跳出（当前进程）</value>
+    <value>Крок із виходом (поточний процес)</value>
   </data>
   <data name="StepOverCurrentProcessCommand" xml:space="preserve">
-    <value>逐过程（当前进程）</value>
+    <value>Крок з обходом (поточний процес)</value>
   </data>
   <data name="Processes_BreakProcessToolTip" xml:space="preserve">
-    <value>中断进程</value>
+    <value>Перервати процес</value>
   </data>
   <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
-    <value>继续进程</value>
+    <value>Продовжити процес</value>
   </data>
   <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
-    <value>逐语句</value>
+    <value>Крок всередину</value>
   </data>
   <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
-    <value>跳出</value>
+    <value>Крок наверх</value>
   </data>
   <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
-    <value>逐过程</value>
+    <value>Крок через</value>
   </data>
   <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
-    <value>只单步执行当前进程</value>
+    <value>Крокувати лише в поточному процесі</value>
   </data>
   <data name="BreakProcessCommand" xml:space="preserve">
-    <value>中断进程(_B)</value>
+    <value>_Перервати процес</value>
   </data>
   <data name="ContinueProcessCommand" xml:space="preserve">
-    <value>继续进程(_C)</value>
+    <value>_Продовжити процес</value>
   </data>
   <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
-    <value>搜索进程</value>
+    <value>Пошук процесу</value>
   </data>
   <data name="AutosCommand" xml:space="preserve">
-    <value>自动</value>
+    <value>_Автоматичні</value>
   </data>
   <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
     <value>Ctrl+Alt+V, A</value>
   </data>
   <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
-    <value>导出符合当前的搜索条件的所有断点</value>
+    <value>Експорт усіх точок зупинки, що відповідають поточній умові пошуку</value>
   </data>
   <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
-    <value>从文件导入断点</value>
+    <value>Імпортувати точки зупинок із файлу</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>导出选中项(_E)...</value>
+    <value>_Експортувати обране...</value>
   </data>
   <data name="Breakpoints_NoMatch" xml:space="preserve">
-    <value>没有断点匹配您的筛选条件。</value>
+    <value>Нема точок зупинки, що відповідають умові пошуку.</value>
   </data>
   <data name="Breakpoints_Search" xml:space="preserve">
-    <value>搜索</value>
+    <value>Пошук</value>
   </data>
   <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
-    <value>搜索断点</value>
+    <value>Пошук точки зупину</value>
   </data>
   <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
-    <value>删除与当前的搜索条件匹配的所有断点</value>
+    <value>Видалити усі точки зупинок, що відповідають поточному фільтру</value>
   </data>
   <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>重置所有搜索条件，以便显示所有断点</value>
+    <value>Скинути всі критерії пошуку, щоб показати всі точки зупинки</value>
   </data>
   <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
-    <value>启用或禁用与当前的搜索条件匹配的所有断点</value>
+    <value>Включення чи виключення усіх точок зупинки, що відповідають поточній умові пошуку</value>
   </data>
   <data name="Modules_AllProcesses" xml:space="preserve">
-    <value>全部</value>
+    <value>Всі</value>
   </data>
   <data name="Modules_NoMatch" xml:space="preserve">
-    <value>没有模块匹配您的搜索条件。</value>
+    <value>Немає модулів, що відповідають умові пошуку.</value>
   </data>
   <data name="Modules_Search" xml:space="preserve">
-    <value>搜索</value>
+    <value>Пошук</value>
   </data>
   <data name="Modules_Search_ToolTip" xml:space="preserve">
-    <value>查找模块</value>
+    <value>Пошук модуля</value>
   </data>
   <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>重置所有搜索条件，以便显示所有模块</value>
+    <value>Скинути всі критерії пошуку, щоб показанти всі модулі</value>
   </data>
   <data name="Modules_Process" xml:space="preserve">
-    <value>进程</value>
+    <value>Процес</value>
   </data>
   <data name="SearchHelp_ToolTip" xml:space="preserve">
-    <value>帮助</value>
+    <value>Допомога</value>
   </data>
   <data name="Column_Condition" xml:space="preserve">
-    <value>条件</value>
+    <value>Умова</value>
   </data>
   <data name="Column_Filter" xml:space="preserve">
-    <value>筛选器</value>
+    <value>Фільтр</value>
   </data>
   <data name="Column_HitCount" xml:space="preserve">
-    <value>命中计数</value>
+    <value>Число попадань</value>
   </data>
   <data name="Column_WhenHit" xml:space="preserve">
-    <value>当命中</value>
+    <value>При попаданні</value>
   </data>
   <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
-    <value>转到反汇编</value>
+    <value>До дизасембльованого коду</value>
   </data>
   <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
-    <value>转到源代码</value>
+    <value>Перейти до джерельного коду</value>
   </data>
   <data name="GoToSourceCodeCommand" xml:space="preserve">
-    <value>转到源代码</value>
+    <value>Перейти до джерельного коду</value>
   </data>
   <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
-    <value>(没有条件)</value>
+    <value>(нема умови)</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
-    <value>当 '{0}' 已更改时</value>
+    <value>коли '{0}' змінилось</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
-    <value>当'{0}'为true时</value>
+    <value>коли '{0}' істинно</value>
   </data>
   <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
-    <value>(无)</value>
+    <value>(Нічого)</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
-    <value>当命中次数是 {0} 的倍数</value>
+    <value>коли число попадань кратне {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
-    <value>当命中的次数等于 {0}</value>
+    <value>коли число попадань рівне {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
-    <value>当命中次数大于或等于 {0}</value>
+    <value>коли число попадань більше чи рівне {0}</value>
   </data>
   <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
-    <value>总是中断</value>
+    <value>зупиняти завжди</value>
   </data>
   <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
-    <value>中断</value>
+    <value>Зупинений</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
-    <value>打印消息 '{0}'</value>
+    <value>Роздрукувати повідомлення '{0} '</value>
   </data>
   <data name="ShortCutKeyAltEnter" xml:space="preserve">
     <value>Alt+Enter</value>
   </data>
   <data name="SettingsCommand" xml:space="preserve">
-    <value>设置(_S)</value>
+    <value>_Налаштування</value>
   </data>
   <data name="EditBreakpointSettings_Title" xml:space="preserve">
-    <value>断点设置</value>
+    <value>Параметри точки зупинки</value>
   </data>
   <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
-    <value>为 True</value>
+    <value>Істина</value>
   </data>
   <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
-    <value>当发生更改时</value>
+    <value>При зміні</value>
   </data>
   <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
-    <value>是倍数于</value>
+    <value>Кратно</value>
   </data>
   <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
-    <value>条件表达式(_E)</value>
+    <value>Умовний _вираз</value>
   </data>
   <data name="EditBreakpointSettings_Filter" xml:space="preserve">
-    <value>过滤器(_F)</value>
+    <value>_Фільтр</value>
   </data>
   <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
-    <value>命中计数(_H)</value>
+    <value>_Кількість попадань</value>
   </data>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
-    <value>日志信息(_L)</value>
+    <value>_Log Повідомленя</value>
   </data>
   <data name="GlyphToolTip_Actions" xml:space="preserve">
-    <value>操作:</value>
+    <value>Дії:</value>
   </data>
   <data name="GlyphToolTip_Conditions" xml:space="preserve">
-    <value>条件:</value>
+    <value>Умови:</value>
   </data>
   <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
-    <value>条件表达式:</value>
+    <value>Умовний вираз:</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
-    <value>当 '{0}' 已更改时</value>
+    <value>'{0}' було змінено</value>
   </data>
   <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
-    <value>当'{0}'为 True 时</value>
+    <value>'{0}' істинно</value>
   </data>
   <data name="Breakpoint_Filter_Filter" xml:space="preserve">
-    <value>筛选器: '{0}'</value>
+    <value>Фільтр: '{0}'</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
-    <value>命中的次数是 {0} 的倍数</value>
+    <value>К-сть попадань кратно {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
-    <value>命中的次数等于 {0}</value>
+    <value>К-сть попадань рівно {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
-    <value>命中次数大于或等于 {0}</value>
+    <value>Кількість попадань більше чи рівне {0}</value>
   </data>
   <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
-    <value>将消息'{0}'，打印到“输出"窗口</value>
+    <value>Вивести повідомлення '{0}', в вікно виводу</value>
   </data>
   <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
-    <value>禁用断点</value>
+    <value>Вимкнути точку зупинки</value>
   </data>
   <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
-    <value>启用断点</value>
+    <value>Увімкнути точку зупинки</value>
   </data>
   <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
-    <value>设置...</value>
+    <value>Налаштування...</value>
   </data>
   <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
-    <value>中断</value>
+    <value>Зупинений</value>
   </data>
   <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
-    <value>继续执行</value>
+    <value>Продовжити виконання</value>
   </data>
   <data name="ExportCommand" xml:space="preserve">
-    <value>导出(_X)...</value>
+    <value>Експорт...</value>
   </data>
   <data name="SettingsCommand2" xml:space="preserve">
-    <value>设置(_S)...</value>
+    <value>На_лаштування...</value>
   </data>
   <data name="StartDebuggingCommand" xml:space="preserve">
-    <value>启动调试</value>
+    <value>Запустити відладку</value>
   </data>
   <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
-    <value>中断并打印消息 '{0}'</value>
+    <value>Зупинитись та вивести повідомлення '{0}'</value>
   </data>
   <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
-    <value>无法找到方法： {0}</value>
+    <value>Функція не знайдена: {0}</value>
   </data>
   <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
-    <value>当前不会命中断点。{0}</value>
+    <value>Точка зупинки не може бути досягнута. {0}</value>
   </data>
   <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
-    <value>尚未加载模块或没有加载此模块的调试符号。</value>
+    <value>Модуль не може бути завантажений чи не можуть бути завантажені символи для цього модуля.</value>
   </data>
   <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
-    <value>无法创建断点。</value>
+    <value>Не можливо створити точку зупинки.</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>标签</value>
+    <value>Мітки</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>编辑标签</value>
+    <value>Редагувати Мітки</value>
   </data>
   <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
-    <value>冻结线程</value>
+    <value>Заморозити потоки</value>
   </data>
   <data name="Threads_NoMatch" xml:space="preserve">
-    <value>没有满足搜索条件的线程</value>
+    <value>Ні один потік не відповідає фільтру.</value>
   </data>
   <data name="Threads_Process" xml:space="preserve">
-    <value>进程</value>
+    <value>Процес</value>
   </data>
   <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>重置所有搜索条件，以便显示所有线程</value>
+    <value>Скинути усі пошукові умови так, щоб потоки стали видимі</value>
   </data>
   <data name="Threads_Search" xml:space="preserve">
-    <value>搜索</value>
+    <value>Пошук</value>
   </data>
   <data name="Threads_Search_ToolTip" xml:space="preserve">
-    <value>搜索线程</value>
+    <value>Пошук потоку</value>
   </data>
   <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
-    <value>解冻线程</value>
+    <value>Розморозити потоки</value>
   </data>
   <data name="Threads_AllProcesses" xml:space="preserve">
-    <value>全部</value>
+    <value>Всі</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>标签</value>
+    <value>Мітки</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
-    <value>编辑标签</value>
+    <value>Редагувати Мітки</value>
   </data>
   <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
-    <value>目前 {0}</value>
+    <value>в даний час {0}</value>
   </data>
   <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
-    <value>重置命中次数</value>
+    <value>Скинути лічильник зупинок</value>
   </data>
   <data name="HelpToolTip" xml:space="preserve">
-    <value>帮助</value>
+    <value>Допомога</value>
   </data>
   <data name="FilterExpression_AllVariables" xml:space="preserve">
-    <value>可以使用的变量：</value>
+    <value>Змінні, що можуть бути використані:</value>
   </data>
   <data name="FilterExpression_Example" xml:space="preserve">
-    <value>示例： {0}</value>
+    <value>Приклад: {0}</value>
   </data>
   <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
-    <value>转义序列： {0}</value>
+    <value>Escape-послідовності: {0}</value>
   </data>
   <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
-    <value>使用 {xxx} 来求值表达式 xxx</value>
+    <value>Використовуйте {xxx}, щоб обчислити вираз xxx</value>
   </data>
   <data name="TracepointMessage_Example" xml:space="preserve">
-    <value>示例： {0}</value>
+    <value>Приклад: {0}</value>
   </data>
   <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
-    <value>可以使用以下关键字：</value>
+    <value>Можуть бути використані наступні ключові слова:</value>
   </data>
   <data name="CallStackBreakpointCommand" xml:space="preserve">
-    <value>断点(_B)</value>
+    <value>_Точка зупинки</value>
   </data>
   <data name="InsertBreakpointCommand" xml:space="preserve">
-    <value>插入断点(_R)</value>
+    <value>Вставити т_очку зупинки</value>
   </data>
   <data name="InsertTracepointCommand" xml:space="preserve">
-    <value>插入跟踪点(_T)</value>
+    <value>Вставити то_чку трасування</value>
   </data>
   <data name="UnwindToThisFrameCommand" xml:space="preserve">
-    <value>从这个框架中解开</value>
+    <value>_Відмотати до цього фрейму</value>
   </data>
   <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
-    <value>这是将要执行的下一个语句。</value>
+    <value>Це наступна інструкція, що буде виконана.</value>
   </data>
   <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
-    <value>这是此进程从当前函数返回时要执行的下一个语句。</value>
+    <value>Це наступна інструкція, що буде виконана після повернення потоку із поточної функції.</value>
   </data>
   <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
-    <value>启用托管调试助手 (MDA)</value>
+    <value>Ввімкнути помічник відладки керованого коду (MDA)</value>
   </data>
   <data name="DebugStepProcessError" xml:space="preserve">
-    <value>无法单步执行: {0}</value>
+    <value>Не можливо перейти: {0}</value>
   </data>
   <data name="ProcessIsNotPaused" xml:space="preserve">
-    <value>进程未暂停</value>
+    <value>Процес не призупинено</value>
   </data>
   <data name="Window_Autos" xml:space="preserve">
-    <value>自动</value>
+    <value>Авто змінні</value>
   </data>
   <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
-    <value>在变量窗口中高亮显示更改过的变量</value>
+    <value>Виділяти змінені змінні у вікнах змінних</value>
   </data>
   <data name="MakeObjectIdCommand" xml:space="preserve">
-    <value>设置对象ID</value>
+    <value>_Створити Object ID</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>语言</value>
+    <value>Мова</value>
   </data>
   <data name="DbgSettings_DebugEngine" xml:space="preserve">
-    <value>调试引擎</value>
+    <value>Двигун відладки</value>
   </data>
   <data name="DbgSettings_Language" xml:space="preserve">
-    <value>语言</value>
+    <value>Мова</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
     <value>Ctrl+V</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>全部清除</value>
+    <value>Очистити все</value>
   </data>
   <data name="DeleteWatchCommand" xml:space="preserve">
-    <value>删除监视(_D)</value>
+    <value>В_идалити watch</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>粘贴(_P)</value>
+    <value>_Вставити</value>
   </data>
   <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
-    <value>此表达式可导致副作用，将不被计算</value>
+    <value>Цей вираз викликає побічні ефекти та не буде обчислений</value>
   </data>
   <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
-    <value>单击按钮立即计算。</value>
+    <value>Натисніть цю кнопку, щоб обчислити прямо зараз.</value>
   </data>
   <data name="ErrorEvaluatingExpression" xml:space="preserve">
-    <value>无法计算表达式的值</value>
+    <value>Не можливо обчислити вираз</value>
   </data>
   <data name="DeleteObjectIdCommand" xml:space="preserve">
-    <value>删除对象 ID</value>
+    <value>Видалити Object ID</value>
   </data>
   <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
-    <value>在变量窗口中显示对象的原始结构</value>
+    <value>Показати сиру структуру об'єктів у вікнах змінних</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
-    <value>&lt;未知&gt;</value>
+    <value>&lt;Невідомо&gt;</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>刷新</value>
+    <value>Оновити</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
-    <value>组合参数和局部变量</value>
+    <value>Групувати разом параметри і локальні змінні</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>显示编译器生成的变量</value>
+    <value>Показати змінні, створені компілятором</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>显示反编译器生成的变量</value>
+    <value>Показати змінні, створені декомпілятором</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
-    <value>对局部变量排序</value>
+    <value>Сортувати локальні змінні</value>
   </data>
   <data name="DbgSettings_SortParameters" xml:space="preserve">
-    <value>对参数排序</value>
+    <value>Параметри сортування</value>
   </data>
   <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
-    <value>隐藏编译器生成的成员</value>
+    <value>Приховати створені компілятором конструкції</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
-    <value>隐式函数求值被用户关闭</value>
+    <value>Обчислення неявних функцій відключено користувачем</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>遵守隐藏成员的属性</value>
+    <value>Поважати атрибути, які ховають члени</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>内部调试器错误</value>
+    <value>Внутрішня помилка дебагера</value>
   </data>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
-    <value>函数求值需要所有线程都在运行。</value>
+    <value>Обчислення функції вимагає виконання усіх потоків.</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>数字分隔符</value>
+    <value>Розділювачі цифр</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
-    <value>命令行</value>
+    <value>Командний рядок</value>
   </data>
   <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
-    <value>无法获取局部变量或参数的值，因为它在此时不可用，可能是被优化了。</value>
+    <value>Не вдалось отримати значення локальної змінної чи аргументу, тому що він недоступний для поточного вказівника інструкцій, можливо тому, що він був оптимізований.</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>信息: {0}</value>
+    <value>Повідомлення: {0}</value>
   </data>
   <data name="ExceptionName" xml:space="preserve">
-    <value>异常: {0}</value>
+    <value>Виключення: {0}</value>
   </data>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
-    <value>{0} ({1}) 中出现未处理的异常</value>
+    <value>Необроблена виняткова ситуація в {0} ({1})</value>
   </data>
   <data name="StatusBar_BreakpointHit" xml:space="preserve">
-    <value>断点</value>
+    <value>Точка зупинки</value>
   </data>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
-    <value>断点表达式必须是布尔表达式</value>
+    <value>Вираз точки зупинки має бути типу boolean</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
-    <value>在模块加载时禁用JIT优化</value>
+    <value>Відключити JIT-оптимізацію при завантаженні модуля</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
-    <value>程序模块</value>
+    <value>Модулі програми</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
-    <value>系统模块</value>
+    <value>Системні модулі</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
-    <value>运行时无法计算此表达式。</value>
+    <value>Середовище виконання не може обчислити цей вираз.</value>
   </data>
   <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
-    <value>启用或禁用与当前搜索条件匹配的所有异常</value>
+    <value>Включити чи виключити усі виключення, що відповідають поточній умові пошуку</value>
   </data>
   <data name="DisableBreakpointCommand2" xml:space="preserve">
-    <value>禁用断点(_D)</value>
+    <value>_Вимкнути точку зупинки</value>
   </data>
   <data name="Exceptions_Add_ToolTip" xml:space="preserve">
-    <value>添加异常到列表</value>
+    <value>Додати виключення у список</value>
   </data>
   <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
-    <value>要停止调试吗？</value>
+    <value>Ви бажаєте зупинити відладку?</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>使被调试进程获得焦点</value>
+    <value>Перемістити фокус в процес, що відлагоджується</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
-    <value>打开所有模块</value>
+    <value>Відкрити усі модулі</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>在变量窗口中隐藏已弃用的成员</value>
+    <value>Скрити deprecated члени в вікнах змінних</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>显示返回值</value>
+    <value>Відображати значення, що вертаються</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>将 GUI 应用程序的控制台输出重定向到 "输出" 窗口</value>
+    <value>Перенаправити вивід консолі GUI-програм в Вікно виводу</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
-    <value>使映像更易于调试</value>
+    <value>Зробити збірку легшою до відладки</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>公共成员</value>
+    <value>Відкриті члени</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>显示原始区域变量</value>
+    <value>Показати сирі локальні змінні</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>启用异步调试</value>
+    <value>Ввімкнути асинхронну відладку</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
-    <value>逐过程执行属性和运算符</value>
+    <value>Обхід властивостей та операторів</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>复制表达式(_X)</value>
+    <value>Копіювати в_иключення</value>
   </data>
 </root>
