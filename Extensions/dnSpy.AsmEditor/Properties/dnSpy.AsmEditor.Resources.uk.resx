@@ -2059,7 +2059,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Вибрати поле</value>
   </data>
   <data name="Pick_GenericType" xml:space="preserve">
-    <value>Pick a Generic Type</value>
+    <value>Вибрати узагальнений тип</value>
   </data>
   <data name="Pick_Method" xml:space="preserve">
     <value>Вибрати метод</value>
@@ -2200,16 +2200,16 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Тільки _IL</value>
   </data>
   <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_Strong Name Signed</value>
+    <value>Підписано _сильним іменем</value>
   </data>
   <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>_Track Debug Data</value>
+    <value>В_ідслідковувати дебаг дані</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
     <value>_Header Version</value>
   </data>
   <data name="Module_Metadata_VersionString" xml:space="preserve">
-    <value>_VersionString</value>
+    <value>Стрічка _версії</value>
   </data>
   <data name="Module_Mvid" xml:space="preserve">
     <value>_Mvid</value>
@@ -2218,16 +2218,16 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>PE</value>
   </data>
   <data name="Module_PE_Machine" xml:space="preserve">
-    <value>_Machine</value>
+    <value>_Архітектура</value>
   </data>
   <data name="NetModule_Mvid" xml:space="preserve">
     <value>_Mvid</value>
   </data>
   <data name="PE_Header_Characteristics" xml:space="preserve">
-    <value>Characteristics</value>
+    <value>Характеристики</value>
   </data>
   <data name="PE_Header_DllCharacteristics" xml:space="preserve">
-    <value>DllCharacteristics</value>
+    <value>Характеристики Dll</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
@@ -2251,10 +2251,10 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Тільки _IL</value>
   </data>
   <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_Strong Name Signed</value>
+    <value>Підписано _сильним іменем</value>
   </data>
   <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>_Track Debug Data</value>
+    <value>В_ідслідковувати дебаг дані</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
     <value>_Major RT Ver</value>
@@ -2281,7 +2281,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>S_torageFlags</value>
   </data>
   <data name="SaveModule_Metadata_VersionString" xml:space="preserve">
-    <value>_VersionString</value>
+    <value>Стрічка _версії</value>
   </data>
   <data name="SaveModule_PE_Machine" xml:space="preserve">
     <value>_Архітектура</value>

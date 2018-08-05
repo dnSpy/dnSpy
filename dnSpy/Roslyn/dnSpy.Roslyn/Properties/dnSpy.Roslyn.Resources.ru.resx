@@ -124,10 +124,10 @@
     <value>Разрешить небезопасный код</value>
   </data>
   <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
-    <value>Check for arithmetic overflow/underflow</value>
+    <value>Проверка на арифметические переполнения/потерю точности</value>
   </data>
   <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
-    <value>Embed Visual Basic runtime</value>
+    <value>Внедрить среду исполнения Visual Basic</value>
   </data>
   <data name="CompilerSettings_Optimize" xml:space="preserve">
     <value>Оптимизация кода</value>
@@ -136,13 +136,13 @@
     <value>Сравнение параметров: двоичное</value>
   </data>
   <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
-    <value>Option explicit</value>
+    <value>Явная типизация</value>
   </data>
   <data name="CompilerSettings_OptionInfer" xml:space="preserve">
-    <value>Option infer</value>
+    <value>Локальная типизация</value>
   </data>
   <data name="CompilerSettings_OptionStrict" xml:space="preserve">
-    <value>Option strict</value>
+    <value>Строгая типизация</value>
   </data>
   <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
     <value>Символы условной компиляции</value>
