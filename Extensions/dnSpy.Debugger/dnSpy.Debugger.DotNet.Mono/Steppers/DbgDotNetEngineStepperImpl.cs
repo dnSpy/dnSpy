@@ -147,7 +147,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				return true;
 			});
 			session.MonoStepper = stepReq;
-			//TODO: StepOver fails on mono unless there's a portable PDB file available
 			stepReq.Depth = isStepInto ? StepDepth.Into : StepDepth.Over;
 			stepReq.Size = StepSize.Min;
 			stepReq.Filter = GetStepFilterFlags();
