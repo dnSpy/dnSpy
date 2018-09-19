@@ -683,7 +683,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					throw new InvalidOperationException();
 			}
 
-			var sigComparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule);
+			var sigComparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS | SigComparerOptions.CompareDeclaringTypes, targetModule);
 			var propComparer = new ImportPropertyEqualityComparer(sigComparer);
 			var eventComparer = new ImportEventEqualityComparer(sigComparer);
 			var targetProps = new Dictionary<PropertyDef, PropertyDef>(propComparer);
