@@ -117,106 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="BamlOptionDlgTab" xml:space="preserve">
+    <value>دیکامپایلر BAML</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
+    <value>دیس‌اسمبل BAML</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
+    <value>یک ویژگی در هر خط</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="BamlSettings_UseTabs" xml:space="preserve">
+    <value>استفاده از زبانه ها</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="DisassembleBAMLCommand" xml:space="preserve">
+    <value>دیس‌اسمبل BAML</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="Error_AttachedEvent" xml:space="preserve">
+    <value>رویداد ضمیمه '{0}'.</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="Error_IComponentConnectorConnetCannotBeParsed" xml:space="preserve">
+    <value>کلاس '{0}' دارای متود IComponentConnector.Connect است اما قابل تجزیه نیست.</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="Error_UnknownConnectionId" xml:space="preserve">
+    <value>شناسه اتصال ناشناخته: {0}</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
-  </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
-  </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
-  </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
-  </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
-  </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
-  </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
-  </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
-  </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
-  </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
-  </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="Msg_GlobalNamespace" xml:space="preserve">
+    <value>"{0}" پیشوندی است برای فضای نام سراسری.</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
-  </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
-  </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
-  </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
-  </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
-  </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
-  </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
-  </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
-  </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
-  </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
-  </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
-  </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
-  </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
-  </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
-  </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+    <value>دیکامپایلر BAML</value>
   </data>
 </root>

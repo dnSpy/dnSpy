@@ -117,106 +117,139 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="ClassesToolTip" xml:space="preserve">
+    <value>کلاس ها</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>اجازه به کد نا امن</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>بررسی overflow/underflow محاسباتی</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>رانتایم جاسازی شده ویژوال بیسیک</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>بهینه سازی کد</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>آپشن مقایسه: باینری</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>آپشن صریح</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>آپشن نتیجه گیری</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>آپشن سخت گیرانه</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>نشانه های کامپایل شرطی</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>تمام</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
+  <data name="ConstantsToolTip" xml:space="preserve">
+    <value>ثابت ها</value>
   </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>عبارت ارزیابی شد و مقداری ندارد</value>
   </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>اعضای استاتیک</value>
   </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>نمایش پویا</value>
   </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>خطا</value>
   </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>با گسترش مشاهده پویا اعضای پویا برای شیء دریافت کنید</value>
   </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>با گسترش نمای نتایج enumerate باعث IEnumerable میشود</value>
   </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>اعضای نمونه</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>مشاهده خام</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>مشاهده نتایج</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>اعضای مشترک شده</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
+  <data name="DelegatesToolTip" xml:space="preserve">
+    <value>دلگیت ها</value>
   </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>نمایش پویا نیاز به {0} دارد تا ارجاع شود</value>
   </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>فقط COM و اشیاء پویا میتوانند نمایش پویا داشته باشند</value>
   </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
+  <data name="EnumsToolTip" xml:space="preserve">
+    <value>اینام ها</value>
   </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
+  <data name="EventsToolTip" xml:space="preserve">
+    <value>رویدادها</value>
   </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
+  <data name="ExtensionMethodsToolTip" xml:space="preserve">
+    <value>متودهای توسعه</value>
   </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
+  <data name="FieldsToolTip" xml:space="preserve">
+    <value>Fieldها</value>
   </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>کامپایل با یک خطا مواجه شد: {0}</value>
   </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>بیان نامعتبر است</value>
   </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+  <data name="InterfacesToolTip" xml:space="preserve">
+    <value>واسطه ها</value>
   </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>کلیدواژه ها</value>
   </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+  <data name="LocalsAndParametersToolTip" xml:space="preserve">
+    <value>متغیر های محلی و پارامترها</value>
+  </data>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} بازگشت</value>
+  </data>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>نوع متغیرها</value>
+  </data>
+  <data name="MethodsToolTip" xml:space="preserve">
+    <value>متود ها</value>
+  </data>
+  <data name="ModulesToolTip" xml:space="preserve">
+    <value>ماژول ها</value>
+  </data>
+  <data name="NamespacesToolTip" xml:space="preserve">
+    <value>فضاهای نام</value>
+  </data>
+  <data name="PropertiesToolTip" xml:space="preserve">
+    <value>Propertieها</value>
+  </data>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>فقط انواع Enumerable میتوانند نمای نتایج داشته باشند</value>
+  </data>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>اسنیپت ها</value>
+  </data>
+  <data name="StructuresToolTip" xml:space="preserve">
+    <value>ساختارها</value>
+  </data>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>نمایش نتایج نیاز به {0} دارد تا ارجاع شود</value>
+  </data>
+  <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
+    <value>تایپ '{0}' در اسمبلی '{1}' وجود ندارد</value>
   </data>
 </root>

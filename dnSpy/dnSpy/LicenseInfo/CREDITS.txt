@@ -73,3 +73,8 @@ Italian:
 Ukrainian:
 
 	IamHappy (mrmx2013)
+
+Persian:
+
+	RezaHNA
+	Rex Prog

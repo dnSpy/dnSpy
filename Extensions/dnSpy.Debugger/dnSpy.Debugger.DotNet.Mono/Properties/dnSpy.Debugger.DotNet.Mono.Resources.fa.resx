@@ -117,106 +117,136 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>آرگومان ها</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>_اسمبلی</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>توقف در</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
+    <value>_پورت</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
+    <value>اتصال</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="DbgAsm_IP_Address" xml:space="preserve">
+    <value>آدرس IP</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>دایرکتوری کار</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>CreateProcess</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>متوقف نشو</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>نقطه ورود</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>فایل وجود ندارد</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
-  </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
-  </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
-  </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
-  </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
-  </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
-  </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
-  </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>نام پرونده گم شده</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+    <value>دیباگر ({0})</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+  <data name="Error_CouldNotFindFile" xml:space="preserve">
+    <value>نمیتوان {0} را پیدا کرد</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
+    <value>نمی توان به پروسس دیباگ شده اتصال پیدا کرد</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
+  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
+    <value>پروسس دیباگ شده پیدا نشد</value>
   </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
+  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
+    <value>اتصال به پروسس دیباگ شده بطور غیر منتظره بسته شد</value>
   </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
+  <data name="Thread_UserState_Aborted" xml:space="preserve">
+    <value>لغو شده</value>
   </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
+  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
+    <value>AbortRequested</value>
   </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>پس زمینه</value>
   </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>متوقف شد</value>
   </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>StopRequested</value>
   </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>معلق شد</value>
   </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>SuspendRequested</value>
   </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>شروع نشده</value>
   </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
   </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;no exception message&gt;"</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>ارزیابی عملکرد</value>
+  </data>
+  <data name="StackFrame_NativeTransition" xml:space="preserve">
+    <value>گذار بومی</value>
+  </data>
+  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
+    <value>این رانتایم از صدازدن متود های عمومی پشتیبانی نمیکند</value>
+  </data>
+  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
+    <value>امکان نوشتن 'this' وجود ندارد</value>
+  </data>
+  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
+    <value>عضو با توجه به محدودیت های runtime قابل دسترسی نمی باشد</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>قادر به تنظیم قدم بعدی نیست.</value>
+  </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>پروسس متوقف شده است و منتظر دیباگر میباشد</value>
+  </data>
+  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
+    <value>متاسفانه runtime از تنظیم قدم بعدی پشتیبانی نمیکند</value>
+  </data>
+  <data name="AttachToProcessXCommand" xml:space="preserve">
+    <value>پیوست به پروسس ({0})...</value>
+  </data>
+  <data name="UnityEditor" xml:space="preserve">
+    <value>ویرایشگر</value>
+  </data>
+  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
+    <value>استفاده از پنجره پیوست به پروسس (Unity) برای اتصال به دیباگر</value>
+  </data>
+  <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
+    <value>نمیتوان هنگامی که پروسس متوقف است بریکپوینت قرار داد.</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>اجرایی</value>
+  </data>
+  <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
+    <value>اطمینان حاصل کنید که شما فایل mono.dll پچ شده بازی را دارید</value>
+  </data>
+  <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
+    <value>_وقفه (ثانیه)</value>
+  </data>
+  <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
+    <value>این فقط برای بیلد های دیباگر یونیتی میباشد</value>
+  </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>در حال دیباگ بازی های یونیتی</value>
   </data>
 </root>

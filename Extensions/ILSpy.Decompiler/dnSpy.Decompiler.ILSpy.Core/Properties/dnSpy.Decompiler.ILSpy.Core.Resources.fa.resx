@@ -117,106 +117,115 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="DecompilerSettings_AddUsingDeclarations" xml:space="preserve">
+    <value>اضافه کردن با استفاده از تعاریف</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
+    <value>اجازه دادن به فیلد آغازگر</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
+    <value>همیشه متغیرهای exception را در بلاک های catch ایجادکن مگر اینکه نوع Object باشد</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
+    <value>ترتیب دیکامپایل</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
+    <value>دیکامپایل method/lambda های ناشناس</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
+    <value>دیکامپایل متودهای ناهمگام (async/await)</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="DecompilerSettings_DecompileAutoEvents" xml:space="preserve">
+    <value>دیکامپایل event های خودکار</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="DecompilerSettings_DecompileAutoProps" xml:space="preserve">
+    <value>دیکامپایل خواص خودکار</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
+    <value>دیکامپایل شمارنده ها (بازگشت yield)</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
+    <value>دیکامپایل درخت های expression</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+  <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
+    <value>دیکامپایل foreach statements</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
+  <data name="DecompilerSettings_DecompileLockStatements" xml:space="preserve">
+    <value>دیکامپایل lock statements</value>
   </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
+    <value>دیکامپایل query expressions</value>
   </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
+  <data name="DecompilerSettings_DecompileSwitchOnString" xml:space="preserve">
+    <value>دیکامپایل سوئیچ در رشته</value>
   </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
+  <data name="DecompilerSettings_DecompileUsingStatements" xml:space="preserve">
+    <value>دیکامپایل با استفاده از statement ها</value>
   </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
+  <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
+    <value>اضافه کردن فضاهای نام به همه تایپ ها</value>
   </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
+  <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
+    <value>اضافه کردن فضای نام به انواع با نام مشابه</value>
   </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
+  <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
+    <value>استفاده از اپراتورهای افزایشی و کاهشی</value>
   </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
+    <value>استفاده از انتصاب اصطلاحات مانند استفاده در while ها ((count = Do()) != 0) ;</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+  <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
+    <value>حداکثر تعداد عناصر آرایه برای نشان دادن</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>اضافه کردن اصلاح کننده 'خصوصی'به اعضای تایپ</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+  <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
+    <value>دیکامپایل آبجکت یا مجموعه ی آغازگرها</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>نمایش یک attribute سفارشی شده در هر خط</value>
   </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
+  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
+    <value>حذف constructor های خالی پیشفرض</value>
   </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
+  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
+    <value>جایگزینی 'new delegate-class(xxx)' با 'xxx'</value>
   </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
+  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
+    <value>نمایش متودها و تایپ های مخفی تولید شده توسط دیکامپایلر</value>
   </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
+  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
+    <value>نمایش توضیحات IL opcode</value>
   </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
+  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
+    <value>نمایش بایت های دستورات IL</value>
   </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
+  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
+    <value>نمایش شماره خط و نام فایل در صورت وجود</value>
   </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
+  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
+    <value>نشان دادن token ها، RVA ها و آفست های فایل</value>
   </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
+  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
+    <value>نمایش مستندات XML در کد های دیکامپایل شده</value>
   </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+  <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
+    <value>مرتب کردن attribute های سفارشی</value>
   </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
+  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
+    <value>مرتب کردن method ها، field ها، propertie ها، event ها و type ها</value>
   </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
+    <value>دستورالعمل های 'System' را هنگام مرتب سازی using ها ابتدا قرار بده</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>اضافه کردن اصلاح کننده "داخلى" به تایپ ها</value>
+  </data>
+  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
+    <value>استفاده از نام متغیرها از سیمبول های دیباگ، در صورت وجود</value>
+  </data>
+  <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
+    <value>منظم کردن اعضا در ترتیب سورس کد</value>
   </data>
 </root>

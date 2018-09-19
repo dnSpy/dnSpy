@@ -117,106 +117,73 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="AddClassBreakpointCommand" xml:space="preserve">
+    <value>اضافه کردن بریکپوینت کلاس</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="AddClassTracepointCommand" xml:space="preserve">
+    <value>اضافه کردن Tracepoint کلاس</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="AddMethodBreakpointCommand" xml:space="preserve">
+    <value>اضافه کردن بریکپوینت متود</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
+    <value>توقف هنگامی که پرتاب خطا رخ داد</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_انصراف</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="CancelLoadingModulesMessage" xml:space="preserve">
+    <value>لغو بارگذاری ماژول ها؟</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
+    <value>نمیتوان expression ها را ارزیابی کرد هنگامی که stack frame جاری یک native stack frame باشد</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
+    <value>متغیرهای تولید شده توسط دیکامپایلر نمی تواند مورد ارزیابی قرار گیرد</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL آفست {0}</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>خط {0} کاراکتر {1}</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>خطای دیباگر داخلی</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
+  <data name="LoadModule_InfoText" xml:space="preserve">
+    <value>در حال بارگذاری ماژول. اگر ماژول حجیم باشد ممکن است مدتی طول بکشد.</value>
   </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+  <data name="LoadModule_Title" xml:space="preserve">
+    <value>بارگذاری ماژول های پویا</value>
   </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' استثنا از نوع "{1}" انداخت</value>
   </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
+  <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
+    <value>متادیتای ماژول پیدا نشد، یا نامعتبر می باشد</value>
   </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>شما باید پروسس را متوقف کنید قبل از اینکه ماژول های پویا بتوانند بارگذاری شوند.</value>
   </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
+  <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
+    <value>هیچ شیء در آدرس داده شده پیدا نشد</value>
   </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
+  <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
+    <value>هیچ exception ای روی ترد فعلی وجود ندارد</value>
   </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>بارگذاری مجدد بدنه متودها</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+  <data name="ReturnValueNotAvailable" xml:space="preserve">
+    <value>مقدار بازگشتی در حال حاضر در دسترس نمی باشد</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>گام به: پله بیش از اپراتور '{0} '.</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>گام به: پله بیش از ویژگی '{0} '.</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
-  </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
-  </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
-  </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
-  </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
-  </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
-  </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
-  </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
-  </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
-  </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
-  </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
-  </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+  <data name="UnknownVariableOrObjectId" xml:space="preserve">
+    <value>متغیر یا شناسه شیء ناشناخته است</value>
   </data>
 </root>

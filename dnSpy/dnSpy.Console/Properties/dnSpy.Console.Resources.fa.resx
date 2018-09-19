@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error1" xml:space="preserve">
+    <value>خطا: {0}</value>
+  </data>
+  <data name="FileOrDirDoesNotExist" xml:space="preserve">
+    <value>پرونده/دایرکتوری '{0}' وجود ندارد</value>
+  </data>
+  <data name="InvalidOption" xml:space="preserve">
+    <value>تنظیم نامعتبر: {0}</value>
+  </data>
+  <data name="InvalidSolutionName" xml:space="preserve">
+    <value>نام sln. ({0}) می بایست با دایرکتوری پروژه نسبت داشته باشد</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>مقدار metadata token نامعتبر است</value>
+  </data>
+  <data name="InvalidVSVersion" xml:space="preserve">
+    <value>نسخه ویژوال استودیو نامعتبر است: {0}</value>
+  </data>
+  <data name="LanguageDoesNotExist" xml:space="preserve">
+    <value>زبان '{0}' وجود ندارد</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>زبان ها:</value>
+  </data>
+  <data name="LanguageXDoesNotExist" xml:space="preserve">
+    <value>زبان برنامه نویسی {0} وجود ندارد</value>
+  </data>
+  <data name="MissingAsmSearchPath" xml:space="preserve">
+    <value>مسیر جستجو assembly گم شده</value>
+  </data>
+  <data name="MissingDotNetFilename" xml:space="preserve">
+    <value>نام پرونده دات نت مفقود شده</value>
+  </data>
+  <data name="MissingLanguageName" xml:space="preserve">
+    <value>نام زبان برنامه نویسی مفقود شده</value>
+  </data>
+  <data name="MissingMDToken" xml:space="preserve">
+    <value>مقدار metadata token مفقود شده</value>
+  </data>
+  <data name="MissingNumberOfThreads" xml:space="preserve">
+    <value>شماره ترد ها مفقود شده</value>
+  </data>
+  <data name="MissingOptions" xml:space="preserve">
+    <value>هیچ تنظیمی مشخص نشده</value>
+  </data>
+  <data name="MissingOutputDir" xml:space="preserve">
+    <value>پوشه خروجی مفقود شده</value>
+  </data>
+  <data name="MissingSolutionName" xml:space="preserve">
+    <value>نام sln. مفقود شده</value>
+  </data>
+  <data name="MissingVSVersion" xml:space="preserve">
+    <value>نسخه ویژوال استودیو گم شده</value>
+  </data>
+  <data name="NoLanguagesFound" xml:space="preserve">
+    <value>هیچ زبانی پیدا نشد. مطمئن شوید فایل های dll زبان دقیقا در فولدر این برنامه قرار دارند.</value>
+  </data>
+  <data name="NotDotNetFile" xml:space="preserve">
+    <value>{0} یک فایل دات نت نیست</value>
+  </data>
+  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
+    <value>هنگام استفاده از --md فقط یک فایل میتواند دیکامپایل شود</value>
+  </data>
+  <data name="MissingUserGacPath" xml:space="preserve">
+    <value>مسیر GAC کاربر مفقود شده</value>
+  </data>
+  <data name="InvalidMemberToDecompile" xml:space="preserve">
+    <value>فقط تایپ ها، متودها، فیلدها، event ها و خواص میتواند دیکامپایل شود</value>
+  </data>
+  <data name="CouldNotFindTypeX" xml:space="preserve">
+    <value>تایپ {0} یافت نشد</value>
+  </data>
+  <data name="CouldNotResolveGacFileX" xml:space="preserve">
+    <value>نمیتوان GAC اسمبلی را resolve نمود '{0}'</value>
+  </data>
+  <data name="MissingGacFile" xml:space="preserve">
+    <value>نام GAC اسمبلی مفقود شده</value>
+  </data>
+  <data name="MissingTypeName" xml:space="preserve">
+    <value>نام کامل تایپ مفقود شده</value>
+  </data>
+  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
+    <value>زبان {0} ایجاد فایل های پروژه را پشتیبانی نمی کند</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>تنظیمات زبان:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>همه تنظیمات boolean را میتوان با استفاده از 'no-' یا 'dont-' نمایش داد، به عنوان مثال. --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>آرگومان های تنظیمات مفقود شده</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>GUID نامعتبر است</value>
+  </data>
+  <data name="CmdLineAssembly" xml:space="preserve">
+    <value>اسمبلی</value>
+  </data>
+  <data name="CmdLineDescription_AsmPath" xml:space="preserve">
+    <value>مسیر جستجوی اسمبلی. مسیر می تواند با '{0}' از هم جدا شود یا می توانید از --asm-path's استفاده کنید</value>
+  </data>
+  <data name="CmdLineDescription_GACFile" xml:space="preserve">
+    <value>دیکامپایل یک اسمبلی از GAC. از نام کامل اسمبلی برای مصرف یک ورژن دقیق استفاده کنید.</value>
+  </data>
+  <data name="CmdLineDescription_Language" xml:space="preserve">
+    <value>انتخاب زبان، پیشفرض #C میباشد. Guid ها را هم میتوان استفاده نمود.</value>
+  </data>
+  <data name="CmdLineDescription_MDToken" xml:space="preserve">
+    <value>دیکامپایل عضو با metadata token N به stdout</value>
+  </data>
+  <data name="CmdLineDescription_NoBAML" xml:space="preserve">
+    <value>baml را به xaml دیکامپایل نکن</value>
+  </data>
+  <data name="CmdLineDescription_NoGAC" xml:space="preserve">
+    <value>از GAC برای جستجو اسمبلی ها استفاده نشود. مناسب استفاده با --no-stdlib</value>
+  </data>
+  <data name="CmdLineDescription_NoResources" xml:space="preserve">
+    <value>ریسورس ها آنپک نشوند</value>
+  </data>
+  <data name="CmdLineDescription_NoResX" xml:space="preserve">
+    <value>فایل های .resx ایجاد نشوند</value>
+  </data>
+  <data name="CmdLineDescription_NoSLN" xml:space="preserve">
+    <value>فایل .sln ایجاد نشود</value>
+  </data>
+  <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
+    <value>پروژه ها mscorlib را ارجاع نمی دهند</value>
+  </data>
+  <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
+    <value>تعداد ترد های کارگر. پیشفرض استفاده از یک ترد در هر هسته CPU</value>
+  </data>
+  <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
+    <value>پوشه خروجی</value>
+  </data>
+  <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
+    <value>guid پروژه</value>
+  </data>
+  <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
+    <value>جستجوی بازگشتی برای فایل های .NET برای دیکامپایل</value>
+  </data>
+  <data name="CmdLineDescription_SlnName" xml:space="preserve">
+    <value>نام فایل .sln</value>
+  </data>
+  <data name="CmdLineDescription_Type1" xml:space="preserve">
+    <value>دیکامپایل تایپ با نام مشخص شده برای stdout. هر دو Namespace.Name یا Name، غیرحساس به کوچک یا بزرگی کاراکتر</value>
+  </data>
+  <data name="CmdLineDescription_Type2" xml:space="preserve">
+    <value>مشابه t-</value>
+  </data>
+  <data name="CmdLineDescription_UserGAC" xml:space="preserve">
+    <value>مسیر GAC کاربر. مسیر میتواند با '{0}' از هم جدا شود یا میتوانید از --user-gac متعدد استفاده کنید</value>
+  </data>
+  <data name="CmdLineDescription_VSVersion" xml:space="preserve">
+    <value>نسخه ویژوال استودیو 2005، 2008، ...، {0}</value>
+  </data>
+  <data name="CmdLineLanguage" xml:space="preserve">
+    <value>زبان</value>
+  </data>
+  <data name="CmdLineName" xml:space="preserve">
+    <value>نام</value>
+  </data>
+  <data name="CmdLineOutputDir" xml:space="preserve">
+    <value>مسیر خروجی</value>
+  </data>
+  <data name="CmdLinePath" xml:space="preserve">
+    <value>مسیر</value>
+  </data>
+  <data name="ExampleDescription1" xml:space="preserve">
+    <value>دیکامپایل تمام فایل های دات نت در دایرکتوری بالا و ذخیره در مسیر C:\out\path</value>
+  </data>
+  <data name="ExampleDescription2" xml:space="preserve">
+    <value>دیکامپایل تمام فایل های دات نت در دایرکتوری بالا و همه زیر دایرکتوری ها</value>
+  </data>
+  <data name="ExampleDescription3" xml:space="preserve">
+    <value>دیکامپایل تمام فایل های دات نت *.dll در دایرکتوری بالا و ذخیره در مسیر C:\out\path</value>
+  </data>
+  <data name="ExampleDescription4" xml:space="preserve">
+    <value>دیکامپایل عضو با توکن 0x06000123</value>
+  </data>
+  <data name="ExampleDescription5" xml:space="preserve">
+    <value>System.Int32 را از mscorlib دیکامپایل کن</value>
+  </data>
+  <data name="ExamplesHeader" xml:space="preserve">
+    <value>مثال‌ها:</value>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
+  </data>
+  <data name="CmdLineDescription_NoColor" xml:space="preserve">
+    <value>متن را رنگ آمیزی نکن</value>
+  </data>
+  <data name="CmdLineDescription_Spaces" xml:space="preserve">
+    <value>اندازه یک تب در فضاها یا 0 برای استفاده از یک تب</value>
+  </data>
+  <data name="InvalidSpacesArgument" xml:space="preserve">
+    <value>تعداد فضاهای می باید بین {0} و {1} باشد</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>آرگومان ها پیدا نشد</value>
+  </data>
+</root>

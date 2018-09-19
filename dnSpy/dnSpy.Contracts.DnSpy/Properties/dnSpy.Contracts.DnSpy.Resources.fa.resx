@@ -117,106 +117,75 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>همه پرونده ها</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>خطایی رخ داده است:
+
+{0}</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_انصراف</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="CouldNotConvert" xml:space="preserve">
+    <value>امکان تبدیل '{0}' وجود ندارد</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="CouldNotConvertFromString" xml:space="preserve">
+    <value>نمی توان آن را از یک رشته تبدیل کرد: {0}</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="CouldNotDeserializeData" xml:space="preserve">
+    <value>داده ها را نمیتوان deserialize کرد: {0}</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="Files_DotNetExecutables" xml:space="preserve">
+    <value>اجرایی.NET</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="Files_DotNetNetModules" xml:space="preserve">
+    <value>NetModule های دات نت</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+  <data name="Files_Executables" xml:space="preserve">
+    <value>فایل های اجرایی</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+  <data name="Files_Images" xml:space="preserve">
+    <value>تصاویر</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+  <data name="Files_StrongNameKeyFiles" xml:space="preserve">
+    <value>کلید فایل های Strong Name</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
+  <data name="Files_XmlFiles" xml:space="preserve">
+    <value>فایل های XML</value>
   </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>GUID غیر معتبر است</value>
   </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
+  <data name="NewDataNotImageList" xml:space="preserve">
+    <value>داده های جدید لیست تصویر نیست.</value>
   </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
+  <data name="NoTypeConverter" xml:space="preserve">
+    <value>{0} هیچگونه TypeConverter ندارد و نمیتواند از یک رشته تبدیل شود.</value>
   </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
+  <data name="NumberOfBytes" xml:space="preserve">
+    <value>{0} بایت ها</value>
   </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
+  <data name="NumberOfBytesAndType" xml:space="preserve">
+    <value>{0} بایت ها، نوع = {1}</value>
   </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
+  <data name="ResourceTypeCantBeChanged" xml:space="preserve">
+    <value>نوع ریسورس را نمی توان تغییر داد</value>
   </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="SaveResource" xml:space="preserve">
+    <value>ذخیره ریسورس</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+  <data name="SaveResources" xml:space="preserve">
+    <value>ذخیره ریسورس ها</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+  <data name="Search_SearchColumnHelpText" xml:space="preserve">
+    <value>ستون جستجو: {0}</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+  <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
+    <value>از '{0}' برای معکوس کردن تطابقات استفاده کنید، برای عنوان مثال. {1}</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
-  </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
-  </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
-  </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
-  </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
-  </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
-  </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
-  </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
-  </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
-  </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
-  </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
-  </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+  <data name="ValueMustBeType" xml:space="preserve">
+    <value>مقدار باید از نوع {0} باشد. خطا: {1}</value>
   </data>
 </root>

@@ -122,6 +122,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.fr.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.it.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.uk.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Decompiler.Resources.fa.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">

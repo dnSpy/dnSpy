@@ -288,6 +288,7 @@
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.fr.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.it.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.uk.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.fa.resx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">

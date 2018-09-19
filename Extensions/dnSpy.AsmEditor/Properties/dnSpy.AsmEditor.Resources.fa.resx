@@ -118,296 +118,296 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppendObject" xml:space="preserve">
-    <value>Додати об'єкт</value>
+    <value>اضافه کردن شی</value>
   </data>
   <data name="AppendType" xml:space="preserve">
-    <value>Додати тип</value>
+    <value>اضافه کردن نوع(Type)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>Вимкнути оптимізатор JIT-компіляції</value>
+    <value>_غیرفعال کردن JIT Compile Optimizer</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>Ввімкнути відслідковування _JIT-компіляції</value>
+    <value>فعال کردن _JIT Compile Tracking</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
-    <value>Архітектура проц_есора вказана</value>
+    <value>معماری پردازنده را مشخص می کند</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>Відкритий ключ</value>
+    <value>_کلیدعمومی</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>Retargetable</value>
+    <value>قابل تغییر هدف</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>Тип вмістимого</value>
+    <value>نوع محتوا</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
-    <value>Локаль</value>
+    <value>فرهنگ</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
-    <value>Версія .NET</value>
+    <value>_نسخه .Net</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>Хеш алгоритм</value>
+    <value>الگوریتم _هش</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
-    <value>Архітектура процесора</value>
+    <value>معماری پردازنده</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
-    <value>Відкритий ключ</value>
+    <value>کلید _عمومی</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
-    <value>Версія</value>
+    <value>_نسخه</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
-    <value>Додати</value>
+    <value>_اضافه کردن</value>
   </data>
   <data name="Button_Add2" xml:space="preserve">
-    <value>Додати...</value>
+    <value>_اضافه کردن...</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Відміна</value>
+    <value>_انصراف</value>
   </data>
   <data name="Button_Delete" xml:space="preserve">
-    <value>Видалити</value>
+    <value>_حذف</value>
   </data>
   <data name="Button_Edit" xml:space="preserve">
-    <value>Редагувати...</value>
+    <value>_ویرایش کردن...</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>ОК</value>
+    <value>_موافق</value>
   </data>
   <data name="Button_Remove" xml:space="preserve">
-    <value>_Видалити</value>
+    <value>حذف</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Очистити</value>
+    <value>تنظیم مجدد</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
-    <value>Тип властивості/поля</value>
+    <value>ویژگی/نوع فیلد</value>
   </data>
   <data name="ClearCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Очистити об'єкти</value>
+    <value>پاک کردن اشیاء</value>
   </data>
   <data name="ClearTypesCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="ClearTypesCharacter_ToolTip" xml:space="preserve">
-    <value>Очистити Типи</value>
+    <value>پاک کردن Types</value>
   </data>
   <data name="ConstantDlg_Constant" xml:space="preserve">
-    <value>Константа</value>
+    <value>ثابت</value>
   </data>
   <data name="ConstructorArguments" xml:space="preserve">
-    <value>Аргументи конструктора</value>
+    <value>آرگومان سازنده</value>
   </data>
   <data name="CopyAsTextCommand" xml:space="preserve">
-    <value>Копіювати як текст</value>
+    <value>کپی بعنوان متن</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Копіювати</value>
+    <value>کپی</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
-    <value>Копіювати байти IL</value>
+    <value>کپی IL Bytes</value>
   </data>
   <data name="CopyILBytesKey" xml:space="preserve">
     <value>Ctrl+B</value>
   </data>
   <data name="CouldNotResolveType" xml:space="preserve">
-    <value>Не можливо визначити тип. Переконайтесь, що збірка для цього типу була завантажена.</value>
+    <value>قادر به Resolve Type نیست. مطمئن شوید که آن اسمبلی(assembly) در حال حاضر لود شده است.</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
-    <value>Створити збірку...</value>
+    <value>ایجاد اسمبلی(assembly)...</value>
   </data>
   <data name="CreateAssemblyCommand2" xml:space="preserve">
-    <value>Створити збірку</value>
+    <value>ایجاد اسمبلی(assembly)</value>
   </data>
   <data name="CreateConstant_Title" xml:space="preserve">
-    <value>Створити константу</value>
+    <value>ایجاد ثابت</value>
   </data>
   <data name="CreateCustomAttribute" xml:space="preserve">
-    <value>Створити користувацький атрибут</value>
+    <value>ایجاد ویژگی(Attribute) سفارشی</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
-    <value>Створити подію...</value>
+    <value>ایجاد رویداد(Event)...</value>
   </data>
   <data name="CreateEventCommand2" xml:space="preserve">
-    <value>Створити подію</value>
+    <value>ایجاد رویداد(Event)</value>
   </data>
   <data name="CreateFieldCommand" xml:space="preserve">
-    <value>Створити поле...</value>
+    <value>ایجاد رویداد(Event)...</value>
   </data>
   <data name="CreateFieldCommand2" xml:space="preserve">
-    <value>Створити поле</value>
+    <value>ایجاد فیلد(Field)</value>
   </data>
   <data name="CreateFieldTypeSig" xml:space="preserve">
-    <value>Створити поле TypeSig</value>
+    <value>ایجاد TypeSig فیلد(Field)</value>
   </data>
   <data name="CreateFnPtrMethodSignature" xml:space="preserve">
-    <value>Створити сігнатуру метода FnPtr</value>
+    <value>ایجاد FnPtr Method Signature</value>
   </data>
   <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
-    <value>Створити аргументи узагальненого типу</value>
+    <value>ایجاد Generic Instance Type Arguments</value>
   </data>
   <data name="CreateGenericParameter" xml:space="preserve">
-    <value>Створити загальний параметр</value>
+    <value>ایجاد Generic Parameter</value>
   </data>
   <data name="CreateGenericParameterConstraint" xml:space="preserve">
-    <value>Створити обмеження загального параметру</value>
+    <value>ایجاد Generic Parameter Constraint</value>
   </data>
   <data name="CreateMethodOverride" xml:space="preserve">
-    <value>Створити перевантаження методу</value>
+    <value>ایجاد Method Override</value>
   </data>
   <data name="CreateMethodSignature" xml:space="preserve">
-    <value>Створити сігнатуру методу</value>
+    <value>ایجاد Method Signature</value>
   </data>
   <data name="CreateParameter" xml:space="preserve">
-    <value>Створити параметр</value>
+    <value>ایجاد پارامتر(Parameter)</value>
   </data>
   <data name="CreatePropertySignature" xml:space="preserve">
-    <value>Створити сігнатуру властивості</value>
+    <value>ایجاد Property Signature</value>
   </data>
   <data name="CreateReturnType" xml:space="preserve">
-    <value>Створити тип "повернення"</value>
+    <value>ایجاد Return Type</value>
   </data>
   <data name="CreateSecurityAttribute" xml:space="preserve">
-    <value>Створити атрибут безпеки</value>
+    <value>ایجاد Security Attribute</value>
   </data>
   <data name="CreateSecurityDeclaration" xml:space="preserve">
-    <value>Створити декларацію безпеки</value>
+    <value>ایجاد Security Declaration</value>
   </data>
   <data name="CreateType" xml:space="preserve">
-    <value>Створити тип</value>
+    <value>ایجاد یک نوع(Type)</value>
   </data>
   <data name="CreateTypeSig" xml:space="preserve">
-    <value>Створити TypeSig</value>
+    <value>ایجاد TypeSig</value>
   </data>
   <data name="CreateTypeSpec" xml:space="preserve">
-    <value>Створити TypeSpec</value>
+    <value>ایجاد TypeSpec</value>
   </data>
   <data name="Create_N_TypeSigs" xml:space="preserve">
-    <value>Створити {0} TypeSigs</value>
+    <value>ایجاد {0} TypeSig</value>
   </data>
   <data name="Create_TypeSig" xml:space="preserve">
-    <value>Створити TypeSig</value>
+    <value>ایجاد یک TypeSig</value>
   </data>
   <data name="Create_TypeSigs" xml:space="preserve">
-    <value>Створити TypeSigs</value>
+    <value>ایجاد TypeSigها</value>
   </data>
   <data name="Create_TypeSigs_N_Left" xml:space="preserve">
-    <value>Залишилось {0} TypeSig</value>
+    <value>{0} TypeSig مانده</value>
   </data>
   <data name="Create_TypeSigs_OneLeft" xml:space="preserve">
-    <value>Залишився один TypeSig</value>
+    <value>یک TypeSig مانده</value>
   </data>
   <data name="CustomAttributesTab" xml:space="preserve">
-    <value>Користувацькі атрибути</value>
+    <value>Attrs سفارشی</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
-    <value>Вирізати</value>
+    <value>برش</value>
   </data>
   <data name="DeleteCommandKey" xml:space="preserve">
-    <value>Видалити</value>
+    <value>Del</value>
     <comment>the delete key</comment>
   </data>
   <data name="DeleteEventCommand" xml:space="preserve">
-    <value>Видалити подію</value>
+    <value>حذف رویداد(Event)</value>
   </data>
   <data name="DeleteEvents" xml:space="preserve">
-    <value>Видалити {0} подій</value>
+    <value>حذف {0} رویداد(Event)</value>
   </data>
   <data name="DeleteFieldCommand" xml:space="preserve">
-    <value>Видалити поле</value>
+    <value>حذف فیلد(Field)</value>
   </data>
   <data name="DeleteFieldsCommand" xml:space="preserve">
-    <value>Видалити {0} полів</value>
+    <value>حذف {0} فیلدها(Fields)</value>
   </data>
   <data name="DeleteX" xml:space="preserve">
-    <value>Видалити {0}</value>
+    <value>حذف {0}</value>
   </data>
   <data name="DisableMMapIOCommand" xml:space="preserve">
-    <value>Відключити Memory Mapped I/O</value>
+    <value>غیرفعال کردن Memory Mapped I/O</value>
   </data>
   <data name="EditAssemblyCommand" xml:space="preserve">
-    <value>Змінити збірку...</value>
+    <value>ویرایش اسمبلی(Assembly)...</value>
   </data>
   <data name="EditAssemblyCommand2" xml:space="preserve">
-    <value>Змінити збірку</value>
+    <value>ویرایش اسمبلی(Assembly)</value>
   </data>
   <data name="EditCustomAttribute" xml:space="preserve">
-    <value>Змінити користувацький атрибут</value>
+    <value>ویرایش Attribute سفارشی</value>
   </data>
   <data name="EditEventCommand" xml:space="preserve">
-    <value>Редагувати подію...</value>
+    <value>ویرایش Event...</value>
   </data>
   <data name="EditEventCommand2" xml:space="preserve">
-    <value>Редагувати подію</value>
+    <value>ویرایش Event</value>
   </data>
   <data name="EditFieldCommand" xml:space="preserve">
-    <value>Редагувати поле...</value>
+    <value>ویرایش Field...</value>
   </data>
   <data name="EditFieldCommand2" xml:space="preserve">
-    <value>Редагувати поле</value>
+    <value>ویرایش Field</value>
   </data>
   <data name="EditGenericParameter" xml:space="preserve">
-    <value>Змінити узагальнюючий параметр</value>
+    <value>ویرایش Generic Parameter</value>
   </data>
   <data name="EditGenericParameterConstraint" xml:space="preserve">
-    <value>Змінити обмеження узагальнюючого параметру</value>
+    <value>ویرایش Generic Parameter Constraint</value>
   </data>
   <data name="EditMemberRef" xml:space="preserve">
-    <value>Змінити MemberRef</value>
+    <value>ویرایش MemberRef</value>
   </data>
   <data name="EditMethodOverride" xml:space="preserve">
-    <value>Змінити перевизначення методу</value>
+    <value>ویرایش Method Override</value>
   </data>
   <data name="EditMethodSpec" xml:space="preserve">
-    <value>Змінити MethodSpec</value>
+    <value>ویرایش MethodSpec</value>
   </data>
   <data name="EditParamDef" xml:space="preserve">
-    <value>Змінити ParamDef</value>
+    <value>ویرایش ParamDef</value>
   </data>
   <data name="EditParameter" xml:space="preserve">
-    <value>Змінити ParamDef</value>
+    <value>ویرایش Parameter</value>
   </data>
   <data name="EditSecurityAttribute" xml:space="preserve">
-    <value>Змінити атрибут безпеки</value>
+    <value>ویرایش Security Attribute</value>
   </data>
   <data name="EditSecurityDeclaration" xml:space="preserve">
-    <value>Змінити оголошення безпеки</value>
+    <value>ویرایش Security Declaration</value>
   </data>
   <data name="EnumType" xml:space="preserve">
     <value>Enum: {0}</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>&lt;помилка&gt;</value>
+    <value>&lt;خطا&gt;</value>
   </data>
   <data name="EventType" xml:space="preserve">
-    <value>Тип події: {0}</value>
+    <value>Event Type: {0}</value>
   </data>
   <data name="Event_ClearCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="Event_ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Встановити в null</value>
+    <value>تنظیم به null</value>
   </data>
   <data name="Event_InvokeMethod" xml:space="preserve">
-    <value>Викликати...</value>
+    <value>_درخواست...</value>
   </data>
   <data name="Event_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="Event_RemoveMethod" xml:space="preserve">
-    <value>_Видалити</value>
+    <value>_حذف...</value>
   </data>
   <data name="Event_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
@@ -416,37 +416,37 @@
     <value>_SpecialName</value>
   </data>
   <data name="FieldAccess_Assembly" xml:space="preserve">
-    <value>Збірка</value>
+    <value>Assembly</value>
   </data>
   <data name="FieldAccess_Family" xml:space="preserve">
-    <value>Сімейство типів</value>
+    <value>Family</value>
   </data>
   <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>Сімейство типів і збірка</value>
+    <value>Family and Assembly</value>
   </data>
   <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>Сімейство типів або збірка</value>
+    <value>Family or Assembly</value>
   </data>
   <data name="FieldAccess_Private" xml:space="preserve">
-    <value>Приватний</value>
+    <value>Private</value>
   </data>
   <data name="FieldAccess_PrivateScope" xml:space="preserve">
     <value>PrivateScope</value>
   </data>
   <data name="FieldAccess_Public" xml:space="preserve">
-    <value>Доступний</value>
+    <value>Public</value>
   </data>
   <data name="FieldType" xml:space="preserve">
-    <value>Тип поля: {0}</value>
+    <value>Field Type: {0}</value>
   </data>
   <data name="Field_Access" xml:space="preserve">
-    <value>_Доступ</value>
+    <value>_Access</value>
   </data>
   <data name="Field_DefaultValueInfo" xml:space="preserve">
-    <value>Значення за замовчанням для цього поля</value>
+    <value>مقدار پیش فرض برای این field</value>
   </data>
   <data name="Field_Flags" xml:space="preserve">
-    <value>Прапорці</value>
+    <value>Flags</value>
   </data>
   <data name="Field_Flags_InitOnly" xml:space="preserve">
     <value>_InitOnly</value>
@@ -467,13 +467,13 @@
     <value>_Static</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
-    <value>Початкове значення</value>
+    <value>Initial_Value</value>
   </data>
   <data name="Field_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="Field_Offset" xml:space="preserve">
-    <value>Офсет</value>
+    <value>O_ffset</value>
   </data>
   <data name="Field_RVA" xml:space="preserve">
     <value>_RVA</value>
@@ -482,67 +482,67 @@
     <value>gparam({0})</value>
   </data>
   <data name="GP_Class" xml:space="preserve">
-    <value>Клас</value>
+    <value>C_lass</value>
   </data>
   <data name="GP_Constraints" xml:space="preserve">
-    <value>Константи</value>
+    <value>محدودیت ها</value>
   </data>
   <data name="GP_DefaultConstructor" xml:space="preserve">
-    <value>Конструктор за замовчуванням</value>
+    <value>پیشفرض</value>
   </data>
   <data name="GP_Kind" xml:space="preserve">
-    <value>Вид</value>
+    <value>نوع</value>
   </data>
   <data name="GP_Kind_ToolTip" xml:space="preserve">
-    <value>Використовувати лише якщо заголовок метаданих версії 1.1 (0x0101). Інакше Тип ігнорується</value>
+    <value>فقط وقتی استفاده میشود که هدر MD در ورژن 1.1 (0x0101) باشد. ورژن 1.1 نیست پس رد درخواست</value>
   </data>
   <data name="GP_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="GP_Number" xml:space="preserve">
-    <value>Число</value>
+    <value>شماره(_U)</value>
   </data>
   <data name="GP_Struct" xml:space="preserve">
-    <value>Структура</value>
+    <value>سازه</value>
   </data>
   <data name="GP_Variance" xml:space="preserve">
-    <value>Варіантність</value>
+    <value>مغایرت</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
-    <value>Переважно 32-Біт</value>
+    <value>اولویت 32 بیت</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitReqd" xml:space="preserve">
-    <value>Потрібно 32-bit</value>
+    <value>32 بیتی مورد نیاز است</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_ILLibrary" xml:space="preserve">
-    <value>IL бібліотека</value>
+    <value>IL Library</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_IL_Only" xml:space="preserve">
-    <value>лишень IL</value>
+    <value>فقط IL</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_NativeEntryPoint" xml:space="preserve">
-    <value>Нативна точка входу</value>
+    <value>نقطه شروع Native</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_StrongNameSigned" xml:space="preserve">
-    <value>Підпис сильним іменем</value>
+    <value>امضای نام قوی</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_TrackDebugData" xml:space="preserve">
-    <value>Відслідковувати дебаг дані</value>
+    <value>پیگیری اطلاعات دیباگ</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
-    <value>Заголовок Cor20</value>
+    <value>Cor20 Header</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>DOS заголовок</value>
+    <value>DOS Header</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>Заголовок файлу</value>
+    <value>File Header</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Опційний заголовок (32-bit)</value>
+    <value>Optional Header (32-bit)</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
-    <value>Опційний заголовок (64-bit)</value>
+    <value>Optional Header (64-bit)</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
     <value>ImplMap</value>
@@ -554,23 +554,22 @@
     <value>CallCon_v</value>
   </data>
   <data name="ImplMap_CharacterSet" xml:space="preserve">
-    <value>Кодування
-</value>
+    <value>C_harSet</value>
   </data>
   <data name="ImplMap_Enable" xml:space="preserve">
-    <value>Дозволити</value>
+    <value>فعال کردن(_E)</value>
   </data>
   <data name="ImplMap_Module" xml:space="preserve">
-    <value>Модуль</value>
+    <value>ماژول</value>
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="ImplMap_NoMangle" xml:space="preserve">
-    <value>Без манглювання</value>
+    <value>No_Mangle</value>
   </data>
   <data name="ImplMap_SupportsLastError" xml:space="preserve">
-    <value>Підтримує ОстаннюПомилку</value>
+    <value>Supports_LastError</value>
   </data>
   <data name="ImplMap_ThrowOn_SHORT" xml:space="preserve">
     <value>_ThrowOn...</value>
@@ -579,37 +578,37 @@
     <value>ThrowOnUnmappableChar</value>
   </data>
   <data name="MainTab" xml:space="preserve">
-    <value>Головний</value>
+    <value>اصلی</value>
   </data>
   <data name="MarshalType" xml:space="preserve">
-    <value>Маршалінг: {0}</value>
+    <value>نوع مارشال: {0}</value>
   </data>
   <data name="MarshalTypeTab" xml:space="preserve">
-    <value>Маршалінг</value>
+    <value>نوع مارشال</value>
   </data>
   <data name="MarshalType_Array" xml:space="preserve">
-    <value>Масив</value>
+    <value>_آرایه</value>
   </data>
   <data name="MarshalType_ByRef" xml:space="preserve">
     <value>_ByRef</value>
   </data>
   <data name="MarshalType_Cookie" xml:space="preserve">
-    <value>Coo_kie</value>
+    <value>_کوکی</value>
   </data>
   <data name="MarshalType_Data" xml:space="preserve">
-    <value>_Data</value>
+    <value>_دیتا</value>
   </data>
   <data name="MarshalType_ElemType" xml:space="preserve">
     <value>Elem_Type</value>
   </data>
   <data name="MarshalType_Enable" xml:space="preserve">
-    <value>Дозволити</value>
+    <value>فعال کردن(_E)</value>
   </data>
   <data name="MarshalType_EnumNotInitialized" xml:space="preserve">
-    <value>&lt;Не ініціалізований&gt;</value>
+    <value>&lt;Not Initialized&gt;</value>
   </data>
   <data name="MarshalType_Flags" xml:space="preserve">
-    <value>_Прапорці</value>
+    <value>_پرچم ها</value>
   </data>
   <data name="MarshalType_GUID" xml:space="preserve">
     <value>_GUID</value>
@@ -618,7 +617,7 @@
     <value>_NativeType</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
-    <value>нічого</value>
+    <value>هیچی</value>
   </data>
   <data name="MarshalType_NumElems" xml:space="preserve">
     <value>_NumElems</value>
@@ -633,37 +632,37 @@
     <value>_ParamNum</value>
   </data>
   <data name="MarshalType_Reserved" xml:space="preserve">
-    <value>_Reserved</value>
+    <value>_معکوس</value>
   </data>
   <data name="MarshalType_Size" xml:space="preserve">
-    <value>_Размір</value>
+    <value>_اندازه</value>
   </data>
   <data name="MarshalType_Vector" xml:space="preserve">
-    <value>Век_тор</value>
+    <value>_وکتور</value>
   </data>
   <data name="MarshalType_VT" xml:space="preserve">
     <value>_VT</value>
   </data>
   <data name="MemberRef_Class" xml:space="preserve">
-    <value>Класс</value>
+    <value>کلاس</value>
   </data>
   <data name="MemberRef_ClassTab" xml:space="preserve">
-    <value>Класс</value>
+    <value>کلاس</value>
   </data>
   <data name="MemberRef_FieldSigTab" xml:space="preserve">
     <value>FieldSig</value>
   </data>
   <data name="MemberRef_InitFromField" xml:space="preserve">
-    <value>Ініціалізувати із поля...</value>
+    <value>راه اندازی از فیلد...</value>
   </data>
   <data name="MemberRef_InitFromMethod" xml:space="preserve">
-    <value>Ініціалізувати із Методу...</value>
+    <value>راه اندازی از متود...</value>
   </data>
   <data name="MemberRef_MethodDef" xml:space="preserve">
     <value>_MethodDef</value>
   </data>
   <data name="MemberRef_MethodDef_ToolTip" xml:space="preserve">
-    <value>Класс ініціалізації для MethodDef</value>
+    <value>راه اندازی کلاس به MethodDef</value>
   </data>
   <data name="MemberRef_MethodSigTab" xml:space="preserve">
     <value>MethodSig</value>
@@ -672,31 +671,31 @@
     <value>Mo_duleRef</value>
   </data>
   <data name="MemberRef_ModuleRef_ToolTip" xml:space="preserve">
-    <value>Класс ініціалізації для ModuleRef</value>
+    <value>راه اندازی کلاس به ModuleRef</value>
   </data>
   <data name="MemberRef_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="MemberRef_Type" xml:space="preserve">
-    <value>_Тип</value>
+    <value>_Type</value>
   </data>
   <data name="MemberRef_TypeSpec" xml:space="preserve">
     <value>Type_Spec</value>
   </data>
   <data name="MemberRef_TypeSpec_ToolTip" xml:space="preserve">
-    <value>Класс ініціалізації для TypeSpec</value>
+    <value>راه اندازی کلاس به TypeSpec</value>
   </data>
   <data name="MemberRef_Type_ToolTip" xml:space="preserve">
-    <value>Класс ініціалізації для Типу</value>
+    <value>راه اندازی کلاس به Type</value>
   </data>
   <data name="MethodCantBeNull" xml:space="preserve">
-    <value>Метод не може бути пустий</value>
+    <value>متود نمیتواند خالی باشد</value>
   </data>
   <data name="MethodInstantiationTypesTab" xml:space="preserve">
-    <value>Типи методів створення екземплярів</value>
+    <value>تایپ های اکتشاف متود</value>
   </data>
   <data name="MethodSig_CallingConv" xml:space="preserve">
-    <value>Дом. про виклик</value>
+    <value>Ca_lling Conv</value>
   </data>
   <data name="MethodSig_ExplicitThis" xml:space="preserve">
     <value>E_xplicitThis</value>
@@ -705,67 +704,67 @@
     <value>_HasThis</value>
   </data>
   <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
-    <value>Типи параметрів методу</value>
+    <value>تایپ های پارامتر متود</value>
   </data>
   <data name="MethodSig_MethodVarArgParameterTypes" xml:space="preserve">
-    <value>Типи параметрів VarArg методу</value>
+    <value>تایپ های VarArg متود</value>
   </data>
   <data name="MethodSig_NumGenerics" xml:space="preserve">
     <value># Generic_s</value>
   </data>
   <data name="MethodSig_ReturnType" xml:space="preserve">
-    <value>Тип повернення...</value>
+    <value>نوع بازگشت...</value>
   </data>
   <data name="MethodSpec_Method" xml:space="preserve">
-    <value>_Метод</value>
+    <value>_Method</value>
   </data>
   <data name="MethodsTab" xml:space="preserve">
-    <value>Методи</value>
+    <value>متود ها</value>
   </data>
   <data name="MoveDownCommand" xml:space="preserve">
-    <value>Перемістити вниз</value>
+    <value>انتقال به _پایین</value>
   </data>
   <data name="MoveDown_ToolTip" xml:space="preserve">
-    <value>Перемістити вниз</value>
+    <value>انتقال به پایین</value>
   </data>
   <data name="MoveUpCommand" xml:space="preserve">
-    <value>Перемістити В_гору</value>
+    <value>انتقال به _بالا</value>
   </data>
   <data name="MoveUp_ToolTip" xml:space="preserve">
-    <value>Перемістити вгору</value>
+    <value>انتقال به بالا</value>
   </data>
   <data name="NamedArguments" xml:space="preserve">
-    <value>Іменовані аргументи</value>
+    <value>آرگومان های ناگذاری شده</value>
   </data>
   <data name="NoName" xml:space="preserve">
-    <value>&lt;&lt;безіменний&gt;&gt;</value>
+    <value>&lt;&lt;بینام&gt;&gt;</value>
   </data>
   <data name="NotGenericType" xml:space="preserve">
-    <value>{0} - це не узагальнений тип</value>
+    <value>{0} یک تایپ عمومی نمی باشد</value>
   </data>
   <data name="OtherMethodsTab" xml:space="preserve">
-    <value>Інші методи</value>
+    <value>متودهای دیگر</value>
   </data>
   <data name="ParamDef_Flags" xml:space="preserve">
-    <value>Прапорці</value>
+    <value>Flags</value>
   </data>
   <data name="ParamDef_Flags_In" xml:space="preserve">
     <value>_In</value>
   </data>
   <data name="ParamDef_Flags_Optional" xml:space="preserve">
-    <value>О_пційний</value>
+    <value>_اختیاری</value>
   </data>
   <data name="ParamDef_Flags_Out" xml:space="preserve">
     <value>O_ut</value>
   </data>
   <data name="ParamDef_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="ParamDef_Sequence" xml:space="preserve">
-    <value>_Послідовність</value>
+    <value>_دنباله</value>
   </data>
   <data name="ParamDef_Sequence_ToolTip" xml:space="preserve">
-    <value>Послідовність 0 - параметр, що повертається, послідовність 1 - перший параметр тощо</value>
+    <value>دنباله 0 پارامتر بازگشت است، دنباله 1 است پارامتر اول، و غیره</value>
   </data>
   <data name="ParameterNumber" xml:space="preserve">
     <value>param({0})</value>
@@ -774,64 +773,64 @@
     <value>param(return)</value>
   </data>
   <data name="Parameter_DefaultValueInfo" xml:space="preserve">
-    <value>Значення по замовчунню для цього параметру</value>
+    <value>مقدار پیش فرض برای این پارامتر</value>
   </data>
   <data name="PasteAfterSelectionCommand" xml:space="preserve">
-    <value>Вставити опісля вид_іленого</value>
+    <value>جای گذاری پس از _انتخاب</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Вставити</value>
+    <value>_جای گذاری</value>
   </data>
   <data name="PickMember_OpenAsmToolTip" xml:space="preserve">
-    <value>Відкрити збірку чи NetModule</value>
+    <value>بازکردن اسمبلی یا NetModule</value>
   </data>
   <data name="PickMember_Search" xml:space="preserve">
-    <value>_Пошук</value>
+    <value>_جستجو</value>
   </data>
   <data name="PickMember_SelectCorrectNode" xml:space="preserve">
-    <value>Ви повинні вибрати правильний вузол</value>
+    <value>شما باید یک گره صحیح را انتخاب کنید</value>
   </data>
   <data name="PickMember_TypeMustBeSelected" xml:space="preserve">
-    <value>Необхідно вибрати тип.</value>
+    <value>یک type باید انتخاب شود.</value>
   </data>
   <data name="Pick_Constructor" xml:space="preserve">
-    <value>Вибрати конструктор</value>
+    <value>یک Constructor را انتخاب کنید</value>
   </data>
   <data name="Pick_EnumType" xml:space="preserve">
-    <value>Вибрати тип Enum</value>
+    <value>یک نوع Enum انتخاب کنید</value>
   </data>
   <data name="Pick_Type" xml:space="preserve">
-    <value>Виберіть тип</value>
+    <value>یک Type انتخاب کنید</value>
   </data>
   <data name="RawCustomAttributeBlob" xml:space="preserve">
-    <value>Сирі двійкові дані</value>
+    <value>Blob خام</value>
   </data>
   <data name="RawCustomAttributeBlob2" xml:space="preserve">
-    <value>&lt;сирі двійкові дані&gt;</value>
+    <value>&lt;blob خام&gt;</value>
   </data>
   <data name="RemoveAssembliesCommand" xml:space="preserve">
-    <value>Видалити {0} збірок</value>
+    <value>حذف اسمبلی {0}</value>
   </data>
   <data name="RemoveAssemblyCommand" xml:space="preserve">
-    <value>Видалити збірку</value>
+    <value>حذف اسمبلی</value>
   </data>
   <data name="RemoveCharacter" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="RemoveCharacter_ToolTip" xml:space="preserve">
-    <value>Видалити останній об'єкт</value>
+    <value>حذف آخرین شیء</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>Видалити {0}</value>
+    <value>حذف {0}</value>
   </data>
   <data name="RemoveLastTypeCharacter" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="RemoveLastTypeCharacter_ToolTip" xml:space="preserve">
-    <value>Видалити останній тип</value>
+    <value>حذف آخرین تایپ</value>
   </data>
   <data name="ReturnTypeRequired" xml:space="preserve">
-    <value>Потрібний тип повернення</value>
+    <value>نوع بازگشت مورد نیاز است</value>
   </data>
   <data name="SecurityDeclarationsTab" xml:space="preserve">
     <value>Sec Decls</value>
@@ -873,749 +872,749 @@
     <value>U</value>
   </data>
   <data name="Type" xml:space="preserve">
-    <value>Тип: {0}</value>
+    <value>نوع(Type): {0}</value>
   </data>
   <data name="TypeMustBeGeneric" xml:space="preserve">
-    <value>Тип має бути узагальнений</value>
+    <value>این نوع(Type) باید از نوع generic باشد</value>
   </data>
   <data name="TypeSigCreator_Array" xml:space="preserve">
-    <value>Маси_в</value>
+    <value>آرایه</value>
   </data>
   <data name="TypeSigCreator_Array_LowerBounds" xml:space="preserve">
-    <value>Ни_жні границі</value>
+    <value>حدود پایین</value>
   </data>
   <data name="TypeSigCreator_Array_LowerBounds_ToolTip" xml:space="preserve">
-    <value>Список нижніх границь масивів через кому (цілі зі знаком)</value>
+    <value>لیست کاما جدا از هم متشکل از آرایه حدود پایین تر (اعداد صحیح علامت دار)</value>
   </data>
   <data name="TypeSigCreator_Array_Rank" xml:space="preserve">
-    <value>Ран_г</value>
+    <value>_رتبه</value>
   </data>
   <data name="TypeSigCreator_Array_Sizes" xml:space="preserve">
-    <value>Розміри</value>
+    <value>_اندازه ها</value>
   </data>
   <data name="TypeSigCreator_Array_Sizes_ToolTip" xml:space="preserve">
-    <value>Список розмірів масивів через кому (цілі без знаку)</value>
+    <value>لیست جداشده کاما متشکل از اندازه آرایه (اعداد صحیح بی علامت)</value>
   </data>
   <data name="TypeSigCreator_Array_ToolTip" xml:space="preserve">
-    <value>Перетворити тип в багатомірний масив</value>
+    <value>تبدیل تایپ به آرایه چند بعدی</value>
   </data>
   <data name="TypeSigCreator_ByRef" xml:space="preserve">
     <value>_ByRef</value>
   </data>
   <data name="TypeSigCreator_ByRef_ToolTip" xml:space="preserve">
-    <value>Перетворити тип в ссилочний</value>
+    <value>تبدیل تایپ به یک by-reference</value>
   </data>
   <data name="TypeSigCreator_Clear" xml:space="preserve">
-    <value>Оч_истити</value>
+    <value>_پاک کردن</value>
   </data>
   <data name="TypeSigCreator_Clear_ToolTip" xml:space="preserve">
-    <value>Очистити тип</value>
+    <value>پاک کردن تایپ</value>
   </data>
   <data name="TypeSigCreator_CModOpt" xml:space="preserve">
     <value>CModOp_t</value>
   </data>
   <data name="TypeSigCreator_CModOpt_ToolTip" xml:space="preserve">
-    <value>Додати опційний C-модифікатор</value>
+    <value>اضافه کردن یک اصلاح کننده C اختیاری</value>
   </data>
   <data name="TypeSigCreator_CModReqd" xml:space="preserve">
     <value>C_ModReqd</value>
   </data>
   <data name="TypeSigCreator_CModReqd_ToolTip" xml:space="preserve">
-    <value>Додати необхідний модифікатор C</value>
+    <value>اضافه کردن یک اصلاح کننده C الزامی</value>
   </data>
   <data name="TypeSigCreator_FnPtr" xml:space="preserve">
     <value>_FnPtr</value>
   </data>
   <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
-    <value>Додати вказівник на функцію</value>
+    <value>اضافه کردن یک اشاره گر تابع</value>
   </data>
   <data name="TypeSigCreator_GenericInst" xml:space="preserve">
     <value>_GenericInst</value>
   </data>
   <data name="TypeSigCreator_GenericInst_ToolTip" xml:space="preserve">
-    <value>Додати тип узагальненого екземпляру</value>
+    <value>افزودن یک instance type عمومی</value>
   </data>
   <data name="TypeSigCreator_GenericsCount" xml:space="preserve">
     <value>#</value>
   </data>
   <data name="TypeSigCreator_GenericsCount_ToolTip" xml:space="preserve">
-    <value>Номер узагальненої змінної типу/методу</value>
+    <value>شماره متغیر متود/تایپ عمومی</value>
   </data>
   <data name="TypeSigCreator_MultidimensionalArray" xml:space="preserve">
-    <value>Багатомірний масив</value>
+    <value>آرایه چند بعدی</value>
   </data>
   <data name="TypeSigCreator_MVar" xml:space="preserve">
     <value>_MVar</value>
   </data>
   <data name="TypeSigCreator_MVar_ToolTip" xml:space="preserve">
-    <value>Додати узагальнену змінну для методу</value>
+    <value>اضافه کردن یک متود متغیر عمومی</value>
   </data>
   <data name="TypeSigCreator_Pinned" xml:space="preserve">
-    <value>За_кріплений</value>
+    <value>سنجاق کردن</value>
   </data>
   <data name="TypeSigCreator_Pinned_ToolTip" xml:space="preserve">
-    <value>Перетворити у закріплену змінну</value>
+    <value>تبدیل به متغیر سنجاق شده</value>
   </data>
   <data name="TypeSigCreator_Pointer" xml:space="preserve">
-    <value>_Вказівник</value>
+    <value>_اشاره گر</value>
   </data>
   <data name="TypeSigCreator_Pointer_ToolTip" xml:space="preserve">
-    <value>Перетворити тип у вказівник</value>
+    <value>تبدیل type به یک اشاره گر</value>
   </data>
   <data name="TypeSigCreator_Remove_ToolTip" xml:space="preserve">
-    <value>Видалити останній доданий тип</value>
+    <value>حذف آخرین type اضافه شده</value>
   </data>
   <data name="TypeSigCreator_SZArray" xml:space="preserve">
-    <value>Масив S_Z</value>
+    <value>آرایه S_Z</value>
   </data>
   <data name="TypeSigCreator_SZArray_ToolTip" xml:space="preserve">
-    <value>Перетворити тип в одномірний масив із нульовою нижньою границею</value>
+    <value>تبدیل به آرایه تک بعدی، حد پایین صفر</value>
   </data>
   <data name="TypeSigCreator_Type" xml:space="preserve">
-    <value>_Тип</value>
+    <value>_Type</value>
   </data>
   <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
-    <value>Додати тип</value>
+    <value>افزودن یک type</value>
   </data>
   <data name="TypeSigCreator_Var" xml:space="preserve">
-    <value>_Змінна</value>
+    <value>_Var</value>
   </data>
   <data name="TypeSigCreator_Var_ToolTip" xml:space="preserve">
-    <value>Додати узагальнену змінну для методу</value>
+    <value>اضافه کردن یک تایپ متغیر عمومی</value>
   </data>
   <data name="TypeTab" xml:space="preserve">
-    <value>Тип</value>
+    <value>تایپ</value>
   </data>
   <data name="Unknown" xml:space="preserve">
-    <value>Невідоме</value>
+    <value>ناشناخته</value>
   </data>
   <data name="UnknownBytesMsg" xml:space="preserve">
-    <value>Деякі скопійовані байти є невідомі, оскільки метод був відредагований. Нові токени і зміщення 
- стрічок стануть відомі після того, як файл збережеться на диск і знову буде відкрито.</value>
+    <value>برخی از بایت های کپی شده ناشناخته اند زیرا متود ویرایش شده. توکن های جدید و آفست رشته ها فقط زمانی شناخته خواهند شد که فایل ذخیره و دوباره بازشود.</value>
   </data>
   <data name="UnknownEnum" xml:space="preserve">
-    <value>Невідомий Enum</value>
+    <value>Enum ناشناخته</value>
   </data>
   <data name="Value" xml:space="preserve">
-    <value>_Значення</value>
+    <value>_مقدار</value>
   </data>
   <data name="ValueType_ToolTip" xml:space="preserve">
-    <value>Тип значення</value>
+    <value>نوع مقدار</value>
   </data>
   <data name="XML" xml:space="preserve">
     <value>_XML</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Додати існуючий NetModule в збірку...</value>
+    <value>اضافه کردن NetModule موجود به اسمبلی...</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>Додати існуючий NetModule в збірку</value>
+    <value>اضافه کردن NetModule موجود به اسمبلی</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Додати новий NetModule в збірку...</value>
+    <value>اضافه کردن NetModule جدید به اسمبلی...</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>Додати новий NetModule в збірку</value>
+    <value>اضافه کردن NetModule جدید به اسمبلی</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>Всі файли</value>
+    <value>تمامی فایل ها</value>
   </data>
   <data name="AskCancelSave" xml:space="preserve">
-    <value>Ви дійсно бажаєте скасувати операцію?</value>
+    <value>آیا از لغو ذخیره کردن اطمینان دارید؟</value>
   </data>
   <data name="AskCancelSaveCloseWindow" xml:space="preserve">
-    <value>Збереження скасовується. Ви дійсно бажаєте закрити вікно?</value>
+    <value>ذخیره سازی لغو شد.
+شما مطمئن هستید که می خواهید پنجره را ببندید؟</value>
   </data>
   <data name="AskDeleteField" xml:space="preserve">
-    <value>Це поле може використовуватись у якійсь збірці. Ви переконані, що бажаєте його видалити?</value>
+    <value>ممکن است در اسمبلی کدی وجود داشته باشد که این فیلد را فراخوانده باشد. آیا اطمینان دارید که این فیلد حذف شود؟</value>
   </data>
   <data name="AskDeleteMethod" xml:space="preserve">
-    <value>Цей метод може використовуватись у якійсь збірці. Ви переконані,, що бажаєте видалити метод?</value>
+    <value>ممکن است در اسمبلی کدی وجود داشته باشد که این متود را فراخوانده باشد. آیا اطمینان دارید که این متود حذف شود؟</value>
   </data>
   <data name="AskDeleteType" xml:space="preserve">
-    <value>Цей тип може використовуватись у якійсь збірці. Ви переконані,, що бажаєте видалити цей конкретний тип?</value>
+    <value>ممکن است در اسمبلی کدی وجود داشته باشد که این تایپ را فراخوانده باشد. آیا اطمینان دارید که این تایپ حذف شود؟</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>Є незбережений файл. Ви хочете зберегти зміни перед виходом?</value>
+    <value>یک فایل ذخیره نشده وجود دارد. میخواهید قبل از خروج آن را ذخیره کنید؟</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>Є {0} Незбережених файлів. Ви хочете зберегти ці зміни перед виходом?</value>
+    <value>فایل های {0} ذخیره نشده اند. میخواهید قبل از خروج آن ها را ذخیره کنید؟</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
-    <value>Ви переконані, що хочете завантажити нові збірки і втратити усі зміни?</value>
+    <value>آیا مطمئن هستید که میخواهید اسمبلی های جدیدی را بارگذاری کنید و تغییرات از دست برود؟</value>
   </data>
   <data name="AskReloadAssembliesLoseChanges" xml:space="preserve">
-    <value>Ви переконані, що хочете перевантажити усі збірки і втратити зміни?</value>
+    <value>آیا مطمئن هستید که میخواهید مجددا اسمبلی ها را بارگذاری کنید و تغییرات از دست برود؟</value>
   </data>
   <data name="AskSaveFile" xml:space="preserve">
-    <value>Файл не був збережений. Ви хочете зберегти його перед продовженням?</value>
+    <value>فایل هنوز ذخیره نشده. میخواهید قبل از ادامه کار آن را ذخیره کنید؟</value>
   </data>
   <data name="AskSaveFiles" xml:space="preserve">
-    <value>Файли ще не було збережено. Ви хочете зберегти їх, перш ніж продовжити?</value>
+    <value>فایل ها ذخیره نشده. میخواهید قبل از ادامه کار آن ها را ذخیره کنید؟</value>
   </data>
   <data name="BaseTypeTab" xml:space="preserve">
-    <value>Базовий тип</value>
+    <value>تایپ پایه</value>
   </data>
   <data name="BaseTypeX" xml:space="preserve">
-    <value>Базовий тип: {0}</value>
+    <value>تایپ پایه: {0}</value>
   </data>
   <data name="Button_Append" xml:space="preserve">
-    <value>Д_одати</value>
+    <value>الحاق کردن</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
-    <value>Збірка</value>
+    <value>Assembly</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
-    <value>Перетворити збірку в NetModule</value>
+    <value>تبدیل اسمبلی به NetModule</value>
   </data>
   <data name="ConvertUncondBranchCommand" xml:space="preserve">
-    <value>Перетворити в безумовну _гілку</value>
+    <value>تبدیل به شاخه _بی قید و شرط</value>
   </data>
   <data name="ConvertUncondBranchesCommand" xml:space="preserve">
-    <value>Перетворити в безумовні _гілки</value>
+    <value>تبدیل به شاخه های _بی قید و شرط</value>
   </data>
   <data name="ConvNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Перетворити NetModule у збірку</value>
+    <value>تبدیل NetModule به اسمبلی</value>
   </data>
   <data name="CopyAsTextCommand2" xml:space="preserve">
-    <value>Копіювати як _текст</value>
+    <value>کپی بعنوان _متن</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Копіювати зміщення в файлі</value>
+    <value>کپی آفست فایل</value>
   </data>
   <data name="CopyFileOffsetsCommand" xml:space="preserve">
-    <value>Копіювати зміщення в файлі</value>
+    <value>کپی آفست های فایل</value>
   </data>
   <data name="CopyMetaDataToken" xml:space="preserve">
-    <value>Копіювати токен _метаданих</value>
+    <value>_کپی MD Token</value>
   </data>
   <data name="CopyMetaDataTokens" xml:space="preserve">
-    <value>Копіювати токени _метаданих</value>
+    <value>_کپی MD Token ها</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>Копіювати RVA</value>
+    <value>_کپی RVA</value>
   </data>
   <data name="CopyRVAsCommand" xml:space="preserve">
-    <value>Копіювати RVA</value>
+    <value>_کپی RVA ها</value>
   </data>
   <data name="CreateAnExceptionCatchType" xml:space="preserve">
-    <value>Створити тип для захоплення виключення</value>
+    <value>ایجاد یک تایپ Exception Catch</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>Створити ресурс, злінкований зі збіркою...</value>
+    <value>ایجاد ریسورس لینک شده به صورت اسمبلی...</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс, злінкований зі збіркою</value>
+    <value>ایجاد ریسورس لینک شده به صورت اسمبلی</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
-    <value>Створити ресурс System.Data.Bitmap/Icon...</value>
+    <value>ایجاد ریسورس System.Data.Bitmap/Icon...</value>
   </data>
   <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс System.Data.Bitmap/Icon</value>
+    <value>ایجاد ریسورس System.Data.Bitmap/Icon</value>
   </data>
   <data name="CreateByteArrayResourceCommand" xml:space="preserve">
-    <value>Створити ресурс масив байтів...</value>
+    <value>ایجاد ریسورس آرایه بایت...</value>
   </data>
   <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс масив байтів</value>
+    <value>ایجاد ریسورس آرایه بایت</value>
   </data>
   <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
-    <value>Створити ресурс пов'язаний із файлом...</value>
+    <value>ایجاد ریسورس لینک شده به صورت فایل...</value>
   </data>
   <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс пов'язаний із файлом</value>
+    <value>ایجاد ریسورس لینک شده به صورت فایل</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
-    <value>Створити файл ресурсів...</value>
+    <value>ایجاد فایل ریسورس...</value>
   </data>
   <data name="CreateFileResourceCommand2" xml:space="preserve">
-    <value>Створити файл ресурсів</value>
+    <value>ایجاد فایل ریسورس</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
-    <value>Створити ресурс System.Windows.Forms.ImageListStreamer...</value>
+    <value>ایجاد ریسورس System.Windows.Forms.ImageListStreamer...</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс System.Windows.Forms.ImageListStreamer</value>
+    <value>ایجاد ریسورس System.Windows.Forms.ImageListStreamer</value>
   </data>
   <data name="CreateInterfaceImpl" xml:space="preserve">
-    <value>Створити реалізацію інтерфейсу</value>
+    <value>ایجاد Interface Impl</value>
   </data>
   <data name="CreateLocalType" xml:space="preserve">
-    <value>Створити локальний тип</value>
+    <value>ایجاد یک Local Type</value>
   </data>
   <data name="CreateMethodCommand" xml:space="preserve">
-    <value>Створити метод...</value>
+    <value>ایجاد متود...</value>
   </data>
   <data name="CreateMethodCommand2" xml:space="preserve">
-    <value>Створити метод</value>
+    <value>ایجاد متود</value>
   </data>
   <data name="CreateMethodSig" xml:space="preserve">
-    <value>Створити MethodSig</value>
+    <value>ایجاد MethodSig</value>
   </data>
   <data name="CreateMultiFileResourceCommand" xml:space="preserve">
-    <value>Створити багато-файловий ресурс...</value>
+    <value>ایجاد چندین فایل ریسورس...</value>
   </data>
   <data name="CreateMultiFileResourceCommand2" xml:space="preserve">
-    <value>Створити багато-файловий ресурс</value>
+    <value>ایجاد چندین فایل ریسورس</value>
   </data>
   <data name="CreateNestedTypeCommand" xml:space="preserve">
-    <value>Створити вкладений тип...</value>
+    <value>ایجاد Nested Type...</value>
   </data>
   <data name="CreateNestedTypeCommand2" xml:space="preserve">
-    <value>Створити вкладений тип</value>
+    <value>ایجاد Nested Type</value>
   </data>
   <data name="CreateNetModuleCommand" xml:space="preserve">
-    <value>Створити NetModule...</value>
+    <value>ایجاد NetModule...</value>
   </data>
   <data name="CreateNetModuleCommand2" xml:space="preserve">
-    <value>Створити NetModule</value>
+    <value>ایجاد NetModule</value>
   </data>
   <data name="CreatePropertyCommand" xml:space="preserve">
-    <value>Створити властивість...</value>
+    <value>ایجاد Property...</value>
   </data>
   <data name="CreatePropertyCommand2" xml:space="preserve">
-    <value>Створити властивість</value>
+    <value>ایجاد Property</value>
   </data>
   <data name="CreateResourceCommand" xml:space="preserve">
-    <value>Створити ресурс...</value>
+    <value>ایجاد ریسورس...</value>
   </data>
   <data name="CreateResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс</value>
+    <value>ایجاد ریسورس</value>
   </data>
   <data name="CreateStreamResourceCommand" xml:space="preserve">
-    <value>Створити ресурс System.IO.Stream...</value>
+    <value>ایجاد ریسورس System.IO.Stream...</value>
   </data>
   <data name="CreateStreamResourceCommand2" xml:space="preserve">
-    <value>Створити ресурс System.IO.Stream</value>
+    <value>ایجاد ریسورس System.IO.Stream</value>
   </data>
   <data name="CreateTypeCommand" xml:space="preserve">
-    <value>Створити тип...</value>
+    <value>ایجاد Type...</value>
   </data>
   <data name="CreateTypeCommand2" xml:space="preserve">
-    <value>Створити тип</value>
+    <value>ایجاد Type</value>
   </data>
   <data name="DeleteMethodCommand" xml:space="preserve">
-    <value>Видалити метод</value>
+    <value>حذف متود</value>
   </data>
   <data name="DeleteMethodsCommand" xml:space="preserve">
-    <value>Видалити {0} методів</value>
+    <value>حذف متودها {0}</value>
   </data>
   <data name="DeleteNamespaceCommand" xml:space="preserve">
-    <value>Видалити простір імен</value>
+    <value>حذف فضای نام</value>
   </data>
   <data name="DeleteNamespacesCommand" xml:space="preserve">
-    <value>Видалити {0} простори імен</value>
+    <value>حذف فضاهای نام {0}</value>
   </data>
   <data name="DeletePropertiesCommand" xml:space="preserve">
-    <value>Видалити властивості {0}</value>
+    <value>حذف ویژگی ها {0}</value>
   </data>
   <data name="DeletePropertyCommand" xml:space="preserve">
-    <value>Видалити властивість</value>
+    <value>حذف ویژگی</value>
   </data>
   <data name="DeleteResourceCommand" xml:space="preserve">
-    <value>Видалити ресурс</value>
+    <value>حذف ریسورس</value>
   </data>
   <data name="DeleteResourcesCommand" xml:space="preserve">
-    <value>Видалити {0} ресурсів</value>
+    <value>حذف ریسورس ها {0}</value>
   </data>
   <data name="DeleteTypeCommand" xml:space="preserve">
-    <value>Видалити тип</value>
+    <value>حذف Type</value>
   </data>
   <data name="DeleteTypesCommand" xml:space="preserve">
-    <value>Видалити {0} типів</value>
+    <value>حذف تایپ ها {0}</value>
   </data>
   <data name="EditFieldMemberRef" xml:space="preserve">
-    <value>Редагувати поле MemberRef</value>
+    <value>ویرایش فیلد MemberRef</value>
   </data>
   <data name="EditILInstructionsCommand" xml:space="preserve">
-    <value>Редагувати ін_струкції IL...</value>
+    <value>ویرایش _دستورات IL...</value>
   </data>
   <data name="EditInterfaceImpl" xml:space="preserve">
-    <value>Редагувати реалізацію інтерфейсу</value>
+    <value>ویرایش Interface Impl</value>
   </data>
   <data name="EditMethodBodyCommand" xml:space="preserve">
-    <value>Редагувати тіло методу...</value>
+    <value>ویرایش بدنه متود...</value>
   </data>
   <data name="EditMethodBodyCommand2" xml:space="preserve">
-    <value>Редагувати тіло методу</value>
+    <value>ویرایش بدنه متود</value>
   </data>
   <data name="EditMethodCommand" xml:space="preserve">
-    <value>Редагувати метод...</value>
+    <value>ویرایش متود...</value>
   </data>
   <data name="EditMethodCommand2" xml:space="preserve">
-    <value>Редагувати метод</value>
+    <value>ویرایش متود</value>
   </data>
   <data name="EditMethodMemberRef" xml:space="preserve">
-    <value>Редагувати MemberRef методу</value>
+    <value>ویرایش متود MemberRef</value>
   </data>
   <data name="EditModuleCommand" xml:space="preserve">
-    <value>Редагувати модуль...</value>
+    <value>ویرایش ماژول...</value>
   </data>
   <data name="EditModuleCommand2" xml:space="preserve">
-    <value>Редагувати модуль</value>
+    <value>ویرایش ماژول</value>
   </data>
   <data name="EditNamespace" xml:space="preserve">
-    <value>Редагувати простір імен</value>
+    <value>ویرایش فضای نام</value>
   </data>
   <data name="EditOperand_Field" xml:space="preserve">
-    <value>_Поле...</value>
+    <value>_Field...</value>
   </data>
   <data name="EditOperand_Field_MemberRef" xml:space="preserve">
-    <value>MemberRef п_оля...</value>
+    <value>فیلد MemberRef...</value>
   </data>
   <data name="EditOperand_Method" xml:space="preserve">
-    <value>_Метод...</value>
+    <value>_متود...</value>
   </data>
   <data name="EditOperand_MethodSpec" xml:space="preserve">
     <value>Met_hodSpec...</value>
   </data>
   <data name="EditOperand_Method_MemberRef" xml:space="preserve">
-    <value>MemberRef м_етоду...</value>
+    <value>متود MemberRef...</value>
   </data>
   <data name="EditOperand_Type" xml:space="preserve">
-    <value>_Тип...</value>
+    <value>_تایپ...</value>
   </data>
   <data name="EditOperand_TypeSpec" xml:space="preserve">
     <value>Type_Spec...</value>
   </data>
   <data name="EditPropertyCommand" xml:space="preserve">
-    <value>Редагувати властивість...</value>
+    <value>ویرایش ویژگی...</value>
   </data>
   <data name="EditPropertyCommand2" xml:space="preserve">
-    <value>Редагувати властивість</value>
+    <value>ویرایش ویژگی</value>
   </data>
   <data name="EditResourceCommand" xml:space="preserve">
-    <value>Редагувати ресурс...</value>
+    <value>ویرایش ریسورس...</value>
   </data>
   <data name="EditResourceCommand2" xml:space="preserve">
-    <value>Редагувати ресурс</value>
+    <value>ویرایش ریسورس</value>
   </data>
   <data name="EditResource_ContainsNoMetadata" xml:space="preserve">
-    <value>_Метадані відсутні</value>
+    <value>_حاوی متادیتا نیست</value>
   </data>
   <data name="EditResource_File" xml:space="preserve">
-    <value>_Файл</value>
+    <value>_فایل</value>
   </data>
   <data name="EditResource_Hash" xml:space="preserve">
-    <value>_Хеш</value>
+    <value>_هش</value>
   </data>
   <data name="EditSwitchInstructionOperand" xml:space="preserve">
-    <value>Змінити операнд switch</value>
+    <value>ویرایش Operand سوئیچ</value>
   </data>
   <data name="EditTypeCommand" xml:space="preserve">
-    <value>Редагувати Тип...</value>
+    <value>ویرایش تایپ...</value>
   </data>
   <data name="EditTypeCommand2" xml:space="preserve">
-    <value>Редагувати Тип</value>
+    <value>ویرایش تایپ</value>
   </data>
   <data name="EH_Command1" xml:space="preserve">
-    <value>Додати новий обробник винятків Пе_ред виділенням</value>
+    <value>ایجاد یک Exception Handler جدید قبل از انتخاب</value>
   </data>
   <data name="EH_Command2" xml:space="preserve">
-    <value>Додати новий обробник винятків Пі_сля виділення</value>
+    <value>ایجاد یک Exception Handler جدید بعد از انتخاب</value>
   </data>
   <data name="EH_Command3" xml:space="preserve">
-    <value>_Додати новий обробник виключень</value>
+    <value>_الحاق Exception Handler جدید</value>
   </data>
   <data name="EH_Command4" xml:space="preserve">
-    <value>_Видалити обробник виключень</value>
+    <value>_حذف Exception Handler</value>
   </data>
   <data name="EH_Command5" xml:space="preserve">
-    <value>_Видалити обробники виключень</value>
+    <value>_حذف Exception Handler ها</value>
   </data>
   <data name="EH_Command6" xml:space="preserve">
-    <value>_Видалити усі обробники виключень</value>
+    <value>حذف _همه Exception Handler ها</value>
   </data>
   <data name="EmptyFilename" xml:space="preserve">
-    <value>&lt;пусте ім'я файлу&gt;</value>
+    <value>&lt;نام فایل خالی&gt;</value>
   </data>
   <data name="Error_AssemblyFieldMustNotBeEmpty" xml:space="preserve">
-    <value>Збірка не має бути пустою.</value>
+    <value>اسمبلی نباید خالی باشد.</value>
   </data>
   <data name="Error_CouldNotFindMethod" xml:space="preserve">
-    <value>Не вдалось знайти метод: {0}</value>
+    <value>نمیتوان متود را پیدا کرد: {0}</value>
   </data>
   <data name="Error_CouldNotFindTypeOrItsAssembly" xml:space="preserve">
-    <value>Не вдалось знайти тип чи його збірку.</value>
+    <value>نمیتوان تایپ یا اسمبلی اش رو پیدا کرد.</value>
   </data>
   <data name="Error_CouldNotLoadType" xml:space="preserve">
-    <value>Не вдалось завантажити тип '{0}': {1}</value>
+    <value>نمیتوان تایپ '{0}': {1} را پیدا نمود</value>
   </data>
   <data name="Error_CouldNotSerializeImages" xml:space="preserve">
-    <value>Не вдалось серіалізувати зображення. Помилка: {0}</value>
+    <value>نمیتوان تصاویر را مرتب سازی نمود. خطا: {0}</value>
   </data>
   <data name="Error_DeSerializationDisabledInSettings" xml:space="preserve">
-    <value>(Де)серіалізація виключена в налаштуваннях.</value>
+    <value>(نا)مرتب سازی در تنظیمات غیرفعال شده.</value>
   </data>
   <data name="Error_EmptyImageList" xml:space="preserve">
-    <value>Неможливо створити пустий список зображень</value>
+    <value>امکان ایجاد لیست تصویر خالی وجود ندارد</value>
   </data>
   <data name="Error_Filename_ContainsInvalidPathCharacter" xml:space="preserve">
-    <value>Ім'я файлу містить недопустимі символи.</value>
+    <value>نام فایل حاوی حداقل یک کاراکتر غیرمجاز است.</value>
   </data>
   <data name="Error_Filename_Empty" xml:space="preserve">
-    <value>Ім'я файлу не може бути порожнім.</value>
+    <value>نام پرونده نمی تواند خالی باشد.</value>
   </data>
   <data name="Error_Filename_FolderDoesNotExist" xml:space="preserve">
-    <value>Папка «{0}» не існує.</value>
+    <value>فایل '{0}' وجود ندارد.</value>
   </data>
   <data name="Error_Filename_FolderExists" xml:space="preserve">
-    <value>Папка з такою ж назвою як ім'я файлу вже існує.</value>
+    <value>پرونده ای با نام مشابه فایل وجود دارد.</value>
   </data>
   <data name="Error_Filename_OnlyWhitespace" xml:space="preserve">
-    <value>Ім'я файлу не може містити тільки пробіли</value>
+    <value>نام فایل نمیتواند فقط شامل فضای خالی باشد</value>
   </data>
   <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
-    <value>Ім'я файлу є зарезервоване операційною системою і не може використовуватися.</value>
+    <value>نام فایل یک دستور عملیاتی سیستم است و نمیتواند استفاده شود.</value>
   </data>
   <data name="Error_Filename_TooLong" xml:space="preserve">
-    <value>Ім'я файлу задовге.</value>
+    <value>نام فایل خیلی طولانی است.</value>
   </data>
   <data name="Error_InstrHasBeenRemoved" xml:space="preserve">
-    <value>Інструкція видалена</value>
+    <value>دستور حذف شده</value>
   </data>
   <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>Цільова інструкція була видалена</value>
+    <value>هدف دستور حذف شده است</value>
   </data>
   <data name="Error_InvalidResourceData" xml:space="preserve">
-    <value>Не можна використовувати ці дані: {0}</value>
+    <value>نمیتوانید از این داده استفاده کنید: {0}</value>
   </data>
   <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
-    <value>Локальна змінна була видалена</value>
+    <value>متغیر حذف شد</value>
   </data>
   <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
-    <value>Нові дані повинні бути зображенням. Помилка: {0}</value>
+    <value>اطلاعات جدید باید یک فایل باشد. خطا: {0}</value>
   </data>
   <data name="Error_NotNetModule" xml:space="preserve">
-    <value>{0} не є NetModule</value>
+    <value>{0} یک NetModule نیست</value>
   </data>
   <data name="Error_NotSNKFile" xml:space="preserve">
-    <value>'{0}' не є файлом ключа строгого імені (snk)</value>
+    <value>'{0}' یک فایل strong name key نیست (snk)</value>
   </data>
   <data name="Error_OnlyInstrsCanBeSelected" xml:space="preserve">
-    <value>Можна вибрати лише інструкції</value>
+    <value>فقط دستورات میتوانند انتخاب شوند</value>
   </data>
   <data name="Error_OpenFile" xml:space="preserve">
-    <value>Помилка відкриття файлу: {0}</value>
+    <value>خطا در بازکردن فایل: {0}</value>
   </data>
   <data name="Error_OpenImage" xml:space="preserve">
-    <value>Не вдалось відкрити файл, або це не зображення. Помилка: {0}</value>
+    <value>نمیتوان فایل را باز کرد یا فایل اجرایی نمی باشد: {0}</value>
   </data>
   <data name="Error_OpMustBeField" xml:space="preserve">
-    <value>Операнд має бути полем</value>
+    <value>عملگر باید یک فیلد باشد</value>
   </data>
   <data name="Error_OpMustBeInstr" xml:space="preserve">
-    <value>Операнд має бути інструкцією</value>
+    <value>عملگر باید یک دستور باشد</value>
   </data>
   <data name="Error_OpMustBeListInstrs" xml:space="preserve">
-    <value>Операнд має бути списком інструкцій</value>
+    <value>عملگر باید لیستی از دستورات باشد</value>
   </data>
   <data name="Error_OpMustBeLocal" xml:space="preserve">
-    <value>Операнд має бути локальною змінною</value>
+    <value>عملگر باید یک متغیر باشد</value>
   </data>
   <data name="Error_OpMustBeMethod" xml:space="preserve">
-    <value>Операнд має бути методом</value>
+    <value>عملگر باید یک متود باشد</value>
   </data>
   <data name="Error_OpMustBeMethodSig" xml:space="preserve">
-    <value>Операнд має бути сігнатурою методу</value>
+    <value>عملگر باید یک signature متود باشد</value>
   </data>
   <data name="Error_OpMustBeParam" xml:space="preserve">
-    <value>Операнд має бути параметром</value>
+    <value>عملگر باید یک پارامتر باشد</value>
   </data>
   <data name="Error_OpMustBeType" xml:space="preserve">
-    <value>Операнд має бути типом</value>
+    <value>عملگر باید یک تایپ باشد</value>
   </data>
   <data name="Error_OpMustBeTypeMethodField" xml:space="preserve">
-    <value>Операнд має бути типом, методом, полем</value>
+    <value>عملگر باید یک تایپ، متود، فیلد باشد</value>
   </data>
   <data name="Error_ReadingFiles" xml:space="preserve">
-    <value>Помилка читання файлів: {0}</value>
+    <value>خطا در خواندن فایل: {0}</value>
   </data>
   <data name="Error_SwitchInstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>Точка переходу інструкції switch була видалена</value>
+    <value>دستورات سوئیچ هدف حذف شد</value>
   </data>
   <data name="Error_VersionStringTooLong" xml:space="preserve">
-    <value>Версія задовга</value>
+    <value>رشته ورژن بسیار بلند است</value>
   </data>
   <data name="ExceptionHandlersTab" xml:space="preserve">
-    <value>Обробники виключень</value>
+    <value>مدیریت استثناء ها</value>
   </data>
   <data name="GenericParametersTab" xml:space="preserve">
-    <value>Узагальнені Параметри</value>
+    <value>متغیر های عمومی</value>
   </data>
   <data name="GoToMetaDataTableRowCommand" xml:space="preserve">
-    <value>Перейти до рядка таблиці MD ({0:X8})</value>
+    <value>رفتن به ({0:X8}) در MD Table Row</value>
   </data>
   <data name="GoToMetaDataTableRowCommand2" xml:space="preserve">
-    <value>Перейти до рядка таблиці MD...</value>
+    <value>رفتن به MD Table Row...</value>
   </data>
   <data name="GoToMetaDataTableRowTitle" xml:space="preserve">
-    <value>Перейти до рядка таблиці MD</value>
+    <value>رفتن به MD Table Row</value>
   </data>
   <data name="GoToMetaDataTableRow_InvalidMetadataToken" xml:space="preserve">
-    <value>Невірний токен метаданих: 0x{0:X8}</value>
+    <value>توکن metadata نامعتبر می باشد: 0x{0:X8}</value>
   </data>
   <data name="GoToMetaDataTableRow_MetadataToken" xml:space="preserve">
-    <value>Токен метаданих</value>
+    <value>_توکن Metadata</value>
   </data>
   <data name="GoToMetaDataTableRow_TokenDoesNotExist" xml:space="preserve">
-    <value>Токен {0:X8} не існує в метаданих</value>
+    <value>توکن {0:X8} در metadata وجود ندارد</value>
   </data>
   <data name="GoToRowIdentifierCommand" xml:space="preserve">
-    <value>_Перейти до RID...</value>
+    <value>_رفتن به RID...</value>
   </data>
   <data name="GoToRowIdentifier_InvalidRowIdentifier" xml:space="preserve">
-    <value>Невірне RID: {0}</value>
+    <value>RID نامعتبر: {0}</value>
   </data>
   <data name="GoToRowIdentifier_Title" xml:space="preserve">
-    <value>Перейти до RID</value>
+    <value>رفتن به RID</value>
   </data>
   <data name="HexCopyMethodBodyCommand" xml:space="preserve">
-    <value>Копіювати тіло методу в HEX форматі</value>
+    <value>رونوشت از بدنه متود به صورت هگز</value>
   </data>
   <data name="HexNode_PE" xml:space="preserve">
     <value>PE</value>
   </data>
   <data name="HexNode_PE_Section" xml:space="preserve">
-    <value>Секція</value>
+    <value>سکشن</value>
   </data>
   <data name="HexNode_StorageHeader" xml:space="preserve">
-    <value>Заголовок сховища</value>
+    <value>مخزن Header</value>
   </data>
   <data name="HexNode_StorageSignature" xml:space="preserve">
-    <value>Сігнатура сховища</value>
+    <value>امضای مخزن</value>
   </data>
   <data name="HexNode_StorageStream" xml:space="preserve">
-    <value>Потік сховища</value>
+    <value>استریم مخزن</value>
   </data>
   <data name="HexNode_TablesStream" xml:space="preserve">
-    <value>Потік таблиць</value>
+    <value>استریم جداول</value>
   </data>
   <data name="HexPasteMethodBodyCommand" xml:space="preserve">
-    <value>Вставити шістнадцяткове тіло методу</value>
+    <value>جایگذاری بدنه متود به صورت هگز</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
-    <value>Записати шістнадцяткове пусте тіло</value>
+    <value>خالی کردن بدنه متود به صورت هگز</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
-    <value>Записати шістнадцяткове 'return false' тіло</value>
+    <value>نوشتن 'return false' به صورت هگز در بدنه متود</value>
   </data>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
-    <value>Записати шістнадцяткове 'return true' тіло</value>
+    <value>نوشتن 'return true' به صورت هگز در بدنه متود</value>
   </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
-    <value>Вставити байти</value>
+    <value>درج بایت ها</value>
   </data>
   <data name="Images" xml:space="preserve">
-    <value>Малюнки</value>
+    <value>تصاویر</value>
   </data>
   <data name="Index" xml:space="preserve">
-    <value>Індекс</value>
+    <value>فهرست</value>
   </data>
   <data name="Info" xml:space="preserve">
-    <value>Info</value>
+    <value>اطلاعات</value>
   </data>
   <data name="InstructionOperand" xml:space="preserve">
-    <value>Операнд</value>
+    <value>عملگر</value>
   </data>
   <data name="Instr_Command1" xml:space="preserve">
-    <value>Додати нову інструкцію пе_ред виділенням</value>
+    <value>اضافه کردن دستور العمل جدید قبل از انتخاب</value>
   </data>
   <data name="Instr_Command2" xml:space="preserve">
-    <value>Додати нову інструкцію пі_сля виділенням</value>
+    <value>اضافه کردن دستور العمل جدید بعد از انتخاب</value>
   </data>
   <data name="Instr_Command3" xml:space="preserve">
-    <value>_Додати нову інструкцію в кінець</value>
+    <value>_افزودن دستور جدید</value>
   </data>
   <data name="Instr_Command4" xml:space="preserve">
-    <value>Видалити Інструкцію</value>
+    <value>حذف دستور</value>
   </data>
   <data name="Instr_Command5" xml:space="preserve">
-    <value>Видалити Інструкції</value>
+    <value>_حذف دستورالعمل ها</value>
   </data>
   <data name="Instr_Command6" xml:space="preserve">
-    <value>Видалити Усі Інструкції</value>
+    <value>حذف _همه دستورالعمل ها</value>
   </data>
   <data name="InterfacesTab" xml:space="preserve">
-    <value>Інтерфейси</value>
+    <value>Interfaces</value>
   </data>
   <data name="InvertBranchCommand" xml:space="preserve">
-    <value>_Інвертувати гілку</value>
+    <value>_معکوس کردن شرط</value>
   </data>
   <data name="InvertBranchesCommand" xml:space="preserve">
-    <value>_Інвертувати гілки</value>
+    <value>_معکوس کردن شروط</value>
   </data>
   <data name="LocalName" xml:space="preserve">
-    <value>Назва</value>
+    <value>نام</value>
   </data>
   <data name="LocalsTab" xml:space="preserve">
-    <value>Локальні змінні</value>
+    <value>متغیرها</value>
   </data>
   <data name="LocalType" xml:space="preserve">
-    <value>Тип</value>
+    <value>تایپ</value>
   </data>
   <data name="Local_Command1" xml:space="preserve">
-    <value>Додати нову локальну змінну пе_ред виділенням</value>
+    <value>اضافه کردن متغیر جدید قبل از انتخاب</value>
   </data>
   <data name="Local_Command2" xml:space="preserve">
-    <value>Додати нову локальну змінну після виділення</value>
+    <value>اضافه کردن متغیر جدید بعد از انتخاب</value>
   </data>
   <data name="Local_Command3" xml:space="preserve">
-    <value>Дод_ати нову локальну змінну</value>
+    <value>_درج متغیر جدید</value>
   </data>
   <data name="Local_Command4" xml:space="preserve">
-    <value>_Видалити локальну змінну</value>
+    <value>_حذف متغیر</value>
   </data>
   <data name="Local_Command5" xml:space="preserve">
-    <value>_Видалити локальні змінні</value>
+    <value>_حذف متغیرها</value>
   </data>
   <data name="Local_Command6" xml:space="preserve">
-    <value>_Видалити усі локальні змінні</value>
+    <value>حذف همه متغیرها</value>
   </data>
   <data name="Local_CompilerGenerated_Character" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="Local_CompilerGenerated_Character_ToolTip" xml:space="preserve">
-    <value>Створені компілятором</value>
+    <value>تولید شده توسط کامپایلر</value>
   </data>
   <data name="Local_Pinned_Character" xml:space="preserve">
     <value>P</value>
   </data>
   <data name="Local_Pinned_Character_ToolTip" xml:space="preserve">
-    <value>Закріплені</value>
+    <value>پین شد</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
-    <value>Параметри запису метаданих</value>
+    <value>تنظیمات MD Writer</value>
   </data>
   <data name="MetadataTab" xml:space="preserve">
-    <value>Метадані</value>
+    <value>Metadata</value>
   </data>
   <data name="MethodBodyType_IL" xml:space="preserve">
     <value>IL</value>
   </data>
   <data name="MethodBodyType_Native" xml:space="preserve">
-    <value>Native</value>
+    <value>نتیو</value>
   </data>
   <data name="MethodBodyType_None" xml:space="preserve">
-    <value>Нічого</value>
+    <value>هیچ</value>
   </data>
   <data name="MethodBody_CodeType" xml:space="preserve">
-    <value>Т_ип коду</value>
+    <value>نوع کد</value>
   </data>
   <data name="MethodBody_HeaderOffset" xml:space="preserve">
-    <value>Зміщення заголо_вку</value>
+    <value>آفست Header</value>
   </data>
   <data name="MethodBody_HeaderRVA" xml:space="preserve">
-    <value>_RVA заголовку</value>
+    <value>هدر _RVA</value>
   </data>
   <data name="MethodBody_InitLocals" xml:space="preserve">
-    <value>_Иніціалізувати локальні змінні</value>
+    <value>متغیرهای _آغاز</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
-    <value>_Залишити старий MaxStack</value>
+    <value>_نگه داری از MaxStack قدیمی</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
-    <value>Не перераховувати значення MaxStack при збереженні файлу</value>
+    <value>مقدار MaxStack را در هنگام ذخیره فایل مجددا محاسبه نکن</value>
   </data>
   <data name="MethodBody_LocalVariableSignatureToken" xml:space="preserve">
     <value>_LocalVarSigTok</value>
@@ -1627,130 +1626,130 @@
     <value>_RVA</value>
   </data>
   <data name="MethodBody_Type" xml:space="preserve">
-    <value>Тип _Body</value>
+    <value>_بدنه تایپ</value>
   </data>
   <data name="MethodOverridesTab" xml:space="preserve">
-    <value>Перевантаження</value>
+    <value>باطل کردن</value>
   </data>
   <data name="MethodParametersTab" xml:space="preserve">
-    <value>Параметри</value>
+    <value>پارامترها</value>
   </data>
   <data name="MethodSignatureTab" xml:space="preserve">
-    <value>Сігнатура</value>
+    <value>امضا</value>
   </data>
   <data name="Method_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="Module_DotNetVersion" xml:space="preserve">
-    <value>Версія .NET</value>
+    <value>_نسخه .Net</value>
   </data>
   <data name="Module_EntryPoint" xml:space="preserve">
-    <value>Точка входу</value>
+    <value>نقطه ورود</value>
   </data>
   <data name="Module_EntryPoint_Managed" xml:space="preserve">
     <value>Mana_ged</value>
   </data>
   <data name="Module_EntryPoint_Native" xml:space="preserve">
-    <value>Native</value>
+    <value>نتیو</value>
   </data>
   <data name="Module_EntryPoint_None" xml:space="preserve">
-    <value>Нічого</value>
+    <value>هیچ</value>
   </data>
   <data name="Module_GUIDs" xml:space="preserve">
     <value>GUIDs</value>
   </data>
   <data name="Module_Metadata" xml:space="preserve">
-    <value>Метадані</value>
+    <value>Metadata</value>
   </data>
   <data name="Module_ModuleType" xml:space="preserve">
-    <value>Тип _модуля</value>
+    <value>تایپ ماژول</value>
   </data>
   <data name="Module_Name" xml:space="preserve">
-    <value>І_м'я</value>
+    <value>_نام</value>
   </data>
   <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
-    <value>Перемістити типи в пустий простір імен</value>
+    <value>انتقال تایپ ها به فضای نام خالی</value>
   </data>
   <data name="Namespace_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="NetModule_DotNetVersion" xml:space="preserve">
-    <value>Версія .NET</value>
+    <value>_نسخه .Net</value>
   </data>
   <data name="NetModule_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="NodesUseHexEditorMsg" xml:space="preserve">
-    <value>Всі нижчележачі вузли дерева використовують Hex-редактор для змін PE-файлу</value>
+    <value>تمامی گره های درخت زیر از ویرایشگر هگز برای تغییرات در فایل PE استفاده کنند</value>
   </data>
   <data name="NopInstrCommand" xml:space="preserve">
-    <value>_NOP-інструкція</value>
+    <value>_پوچ کردن دستور</value>
   </data>
   <data name="NopInstrsCommand" xml:space="preserve">
-    <value>_NOP-інструкції</value>
+    <value>_پوچ کردن دستورات</value>
   </data>
   <data name="Offset" xml:space="preserve">
-    <value>Зміщення</value>
+    <value>آفست</value>
   </data>
   <data name="OpenHexEditorCommand" xml:space="preserve">
-    <value>Відкрити He_x-редактор</value>
+    <value>بازگردن ویرایشگر هگز</value>
   </data>
   <data name="OptimizeAllInstructionsCommand" xml:space="preserve">
-    <value>Оптимі_зувати усі інструкції</value>
+    <value>بهینه سازی همه دستورالعمل ها</value>
   </data>
   <data name="Padding" xml:space="preserve">
-    <value>доповнити</value>
+    <value>پد</value>
   </data>
   <data name="PasteRecordsCommand" xml:space="preserve">
-    <value>_Вставити {0} записів @ {1:X8}, RID {2}</value>
+    <value>جایگذاری {0} سوابق @ {1:X8}, RID {2}</value>
   </data>
   <data name="PropertyX" xml:space="preserve">
-    <value>Властивість: {0}</value>
+    <value>ویژگی: {0}</value>
   </data>
   <data name="Property_DefaultValue" xml:space="preserve">
-    <value>Значення по замовчуванню для цієї властивості</value>
+    <value>مقدار پیش فرض برای این ویژگی</value>
   </data>
   <data name="Property_GetterMethods" xml:space="preserve">
     <value>Getters</value>
   </data>
   <data name="Property_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="Property_OtherMethods" xml:space="preserve">
-    <value>Інші методи</value>
+    <value>متودهای دیگر</value>
   </data>
   <data name="Property_SetterMethods" xml:space="preserve">
     <value>Setters</value>
   </data>
   <data name="Property_Signature" xml:space="preserve">
-    <value>Підпис</value>
+    <value>امضا</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
-    <value>Зберегти {0} в двійкових даних</value>
+    <value>ذخیره به صورت خام {0}</value>
   </data>
   <data name="RawSaveResourcesCommand" xml:space="preserve">
-    <value>Зберегти {0} ресурсів в двійкових даних</value>
+    <value>ذخیره ریسورس به صورت خام {0}</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>Зберегти {0} ресурсів, використовуючи під-директорії</value>
+    <value>ذخیره ریسورس به صورت خام{0}، استفاده از زیر مسیرها</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>Повторити</value>
+    <value>انجام مجدد</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Повторити</value>
+    <value>انجام مجدد</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
-    <value>Видалити і додати Pops</value>
+    <value>حذف و اضافه _کردن Pops</value>
   </data>
   <data name="RemoveNetModuleCommand" xml:space="preserve">
-    <value>Видалити NetModule із збірки</value>
+    <value>حذف NetModule از اسمبلی</value>
   </data>
   <data name="RenameNamespaceCommand" xml:space="preserve">
-    <value>Переназвати простір імен</value>
+    <value>تغییر اسم فضای نام</value>
   </data>
   <data name="Resource_ColorDepth" xml:space="preserve">
-    <value>_Глибина кольору</value>
+    <value>_عمق رنگ</value>
   </data>
   <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
     <value>16-bit</value>
@@ -1768,151 +1767,157 @@
     <value>8-bit</value>
   </data>
   <data name="Resource_Data" xml:space="preserve">
-    <value>_Data</value>
+    <value>_دیتا</value>
   </data>
   <data name="Resource_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="Resource_Size" xml:space="preserve">
-    <value>_Размір</value>
+    <value>_اندازه</value>
   </data>
   <data name="Resource_TransparentColor" xml:space="preserve">
-    <value>Колі_р прозорості</value>
+    <value>_رنگ شفاف</value>
   </data>
   <data name="Resource_Type" xml:space="preserve">
-    <value>_Тип</value>
+    <value>_Type</value>
   </data>
   <data name="Resource_Value" xml:space="preserve">
-    <value>_Значення</value>
+    <value>_مقدار</value>
   </data>
   <data name="RowIdentifier" xml:space="preserve">
     <value>RID</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Зберегти...</value>
+    <value>_ذخیره...</value>
   </data>
   <data name="SaveAllCommand" xml:space="preserve">
-    <value>Зберегти У_се...</value>
+    <value>ذخیره _همه...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Зберегти всі</value>
+    <value>ذخیره همه</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
-    <value>Зберегти модуль...</value>
+    <value>ذخیره _ماژول...</value>
   </data>
   <data name="SaveModuleCommand2" xml:space="preserve">
-    <value>Зберегти модуль</value>
+    <value>ذخیره ماژول</value>
   </data>
   <data name="SaveModulesCommand" xml:space="preserve">
-    <value>Зберегти модулі</value>
+    <value>ذخیره ماژول ها...</value>
   </data>
   <data name="SaveModules_CancelingSave" xml:space="preserve">
-    <value>Скасовую зберігання. Будь ласка, зачекайте...</value>
+    <value>درحال لغو ذخیره سازی. لطفاً منتظر بمانید...</value>
   </data>
   <data name="SaveModules_Close" xml:space="preserve">
-    <value>_Закрити</value>
+    <value>_بستن</value>
   </data>
   <data name="SaveModules_ErrorsInLog" xml:space="preserve">
-    <value>Є помилки в журналі:</value>
+    <value>در گزارش وقایع خطاهایی می باشد:</value>
   </data>
   <data name="SaveModules_FileHasErrors" xml:space="preserve">
-    <value>Файл #{0} ({1}) має помилки</value>
+    <value>فایل دارای خطاهای #{0} ({1}) می باشد</value>
   </data>
   <data name="SaveModules_Log_AccessError" xml:space="preserve">
-    <value>Помилка доступу: {0}</value>
+    <value>خطای دسترسی: {0}</value>
   </data>
   <data name="SaveModules_Log_AllFilesWritten" xml:space="preserve">
-    <value>Всі файли збережені на диск.</value>
+    <value>تمام فایل های روی دیسک نوشته شد.</value>
   </data>
   <data name="SaveModules_Log_Exception" xml:space="preserve">
-    <value>Трапилось виключення {0}</value>
+    <value>یک خطا رخ داده است
+
+{0}</value>
   </data>
   <data name="SaveModules_Log_FileError" xml:space="preserve">
-    <value>Помилка файлу: {0}</value>
+    <value>خطای پرونده: {0}</value>
   </data>
   <data name="SaveModules_Log_SaveWasCanceled" xml:space="preserve">
-    <value>Запис скасований користувачем.</value>
+    <value>ذخیره سازی توسط کاربر لغو شد.</value>
   </data>
   <data name="SaveModules_Log_WritingFile" xml:space="preserve">
-    <value>Запис {0}...</value>
+    <value>در حال نوشتن {0}...</value>
   </data>
   <data name="SaveModules_Options" xml:space="preserve">
-    <value>Налаштування...</value>
+    <value>_تنظیمات...</value>
   </data>
   <data name="SaveModules_SaveAll" xml:space="preserve">
-    <value>_Зберегти все</value>
+    <value>_ذخیره همه</value>
   </data>
   <data name="SaveModules_SavedFiles" xml:space="preserve">
-    <value>Файли, які буде збережено:</value>
+    <value>فایل هایی که ذخیره می شود:</value>
   </data>
   <data name="SaveModules_Title" xml:space="preserve">
-    <value>Зберегти модулі</value>
+    <value>ذخیره ماژول ها</value>
   </data>
   <data name="SaveModule_AddPECheckSum" xml:space="preserve">
-    <value>Дод_ати контрольну суму PE</value>
+    <value>_اضافه کردن Checksum به PE</value>
   </data>
   <data name="SaveModule_CreateHeapEvenIfEmpty" xml:space="preserve">
-    <value>Створити кучу навіть якщо вона пуста</value>
+    <value>ایجاد Heap اگر خالی بود</value>
   </data>
   <data name="SaveModule_Filename" xml:space="preserve">
-    <value>_Ім'я файлу</value>
+    <value>_نام فایل</value>
   </data>
   <data name="SaveModule_KeepOldMaxStack" xml:space="preserve">
-    <value>_Зберегти старе значення MaxStack</value>
+    <value>_نگه داری از مقدار MaxStack قدیمی</value>
   </data>
   <data name="SaveModule_KeepOldMaxStack_ToolTip" xml:space="preserve">
-    <value>Використати значення MaxStack із методу замість обчислення нового значення MaxStack. Необхідно тоді, коли методи все ще обфусковані</value>
+    <value>استفاده از مقدار MaxStack از متود به حای محاسبه مقدار MaxStack جدید.
+مواقعی نیاز است که متود هنوز مبهم سازی شده باشد</value>
   </data>
   <data name="SaveModule_MetadataHeaderOptions" xml:space="preserve">
-    <value>Опції заголовку метаданих</value>
+    <value>تنظیمات Metadata Header</value>
   </data>
   <data name="SaveModule_MiscOptions" xml:space="preserve">
-    <value>Додаткові опції</value>
+    <value>تنظیمات متفرقه</value>
   </data>
   <data name="SaveModule_ModuleType" xml:space="preserve">
-    <value>Тип _модуля</value>
+    <value>تایپ ماژول</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
-    <value>Зберегти до_даткові дані підпису</value>
+    <value>حفظ اطلاعات E_xtra Signature</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData_ToolTip" xml:space="preserve">
-    <value>Зберігати будь-які додаткові дані після підпису. Деякі обфускатори зберігають там дані</value>
+    <value>حفظ هرگونه اطلاعات اضافی بعد از امضاها.
+بعضی از مبهم سازها اطلاعاتی را آنجا قرار میدهند</value>
   </data>
   <data name="SaveModule_PreserveHeapOffsets" xml:space="preserve">
-    <value>Зберегти зміщення в кучі</value>
+    <value>حفظ آفست های Heap</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>Зберегти усі токени метаданих</value>
+    <value>حفظ همه MD توکن ها</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
-    <value>Якщо файл все ще обфускований, ймовірно потрібно зберегти RID</value>
+    <value>اگر فایل هنوز مبهم سازی شده است، ممکن است RID ها نیاز به حفظ داشته باشند</value>
   </data>
   <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
-    <value>Спільні тіла методів</value>
+    <value>بدنه های مشترک شده متود</value>
   </data>
   <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
-    <value>Методи .NET, які мають ідентичний код, будуть його розділяти між собою. Вихідний файл будет меньший по розміру</value>
+    <value>متود های .NET که دقیقا بدنه آنها یکی است بدنه انها مشترک میشوند.
+خروجی کمی از لحاظ حجمی کمتر خواهد بود</value>
   </data>
   <data name="SaveModule_Title" xml:space="preserve">
-    <value>Зберегти модуль</value>
+    <value>ذخیره ماژول</value>
   </data>
   <data name="SaveModule_UseMixedMode" xml:space="preserve">
-    <value>_Mixed-Mode Збірка</value>
+    <value>ماژول _Mixed-Mode</value>
   </data>
   <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
-    <value>Встановіть прапорець у випадку mixed-mode модуля (наприклад. C+ + / .NET). Після установки прапорця більшість опцій буде повторно переініціалізовано</value>
+    <value>باید تیک خورده باشد اگر ماژول یک mixed-mode است (برای مثال C++/.NET).
+هنگامی که این تنظیم تیک خورده باشد بسیاری از تنظیمات بازنگری خواهند شد</value>
   </data>
   <data name="SaveModule_WritePdb" xml:space="preserve">
-    <value>Зберегти _PDB-файл</value>
+    <value>ذخیره فایل _PDB</value>
   </data>
   <data name="SaveResourceCommand" xml:space="preserve">
-    <value>Зберегти {0}</value>
+    <value>ذخیره {0}</value>
   </data>
   <data name="SaveResourcesCommand" xml:space="preserve">
-    <value>Зберегти {0} ресурсів</value>
+    <value>ذخیره ریسورس های {0}</value>
   </data>
   <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>Зберегти {0} ресурсів, використовуючи під-директорії</value>
+    <value>ذخیره ریسورس های {0}، استفاده از زیر مسیرها</value>
   </data>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
@@ -1966,103 +1971,103 @@
     <value>Shift+Alt+R</value>
   </data>
   <data name="ShowDataInHexEditorCommand" xml:space="preserve">
-    <value>Показати дані в He_x-редакторі</value>
+    <value>نمایش اطلاعات در ویرایشگر هگز</value>
   </data>
   <data name="ShowInHexEditorCommand" xml:space="preserve">
-    <value>Показати в редакторі He_x</value>
+    <value>نمایش در ویرایشگر _هگز</value>
   </data>
   <data name="ShowInHexEditorCommand2" xml:space="preserve">
-    <value>Показати в Hex редакторі</value>
+    <value>نمایش در ویرایشگر هگز</value>
   </data>
   <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
-    <value>Показати початкове значення в Hex редакторі</value>
+    <value>نمایش مقدار اولیه در ویرایشگر هگز</value>
   </data>
   <data name="ShowInstrsInHexEditorCommand" xml:space="preserve">
-    <value>Показати інструкції в Hex редакторі</value>
+    <value>نمایش مقدار اولیه در ویرایشگر _هگز</value>
   </data>
   <data name="ShowMethodBodyInHexEditorCommand" xml:space="preserve">
-    <value>Показати тіло методу в Hex-редакторі</value>
+    <value>نمایش بدنه متود در ویرایشگر هگز</value>
   </data>
   <data name="SimplifyAllInstructionsCommand" xml:space="preserve">
-    <value>_Упростити усі інструкції</value>
+    <value>_ساده سازی تمامی دستورالعمل ها</value>
   </data>
   <data name="SortMetadataTableCommand" xml:space="preserve">
-    <value>_ Сортувати таблицю</value>
+    <value>_مرتب سازی جدول</value>
   </data>
   <data name="SortSelectionCommand" xml:space="preserve">
-    <value>Со_ртувати виділене</value>
+    <value>مرتب سازی گزینش شده ها</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
-    <value>Параметри табличної кучі</value>
+    <value>تنظیمات جداول Heap</value>
   </data>
   <data name="Token" xml:space="preserve">
-    <value>Токен</value>
+    <value>توکن</value>
   </data>
   <data name="TooManyBytesSelected" xml:space="preserve">
-    <value>Вибрано забагато байтів даних</value>
+    <value>شما بایت های بسیار زیادی را از اطلاعات انتخاب کردید</value>
   </data>
   <data name="Type_ClassSize" xml:space="preserve">
-    <value>Розмір к_ласу</value>
+    <value>اندازه _کلاس</value>
   </data>
   <data name="Type_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_نام</value>
   </data>
   <data name="Type_Namespace" xml:space="preserve">
-    <value>Простір імен</value>
+    <value>_فضای نام</value>
   </data>
   <data name="Type_PackingSize" xml:space="preserve">
-    <value>Розмір упак_овки</value>
+    <value>اندازه فشردن</value>
   </data>
   <data name="UndoCommand" xml:space="preserve">
-    <value>Відмінити</value>
+    <value>بازگرد</value>
   </data>
   <data name="UndoToolBarToolTip" xml:space="preserve">
-    <value>Відмінити</value>
+    <value>بازگرد</value>
   </data>
   <data name="UnsavedFile" xml:space="preserve">
-    <value>Існує незбережений файл.</value>
+    <value>فایل ذخیره نشده ای وجود دارد.</value>
   </data>
   <data name="UnsavedFiles" xml:space="preserve">
-    <value>Існують {0} незбережених файлів.</value>
+    <value>فایل های {0} ذخیره نشده اند.</value>
   </data>
   <data name="XBytes" xml:space="preserve">
-    <value>{0} байт</value>
+    <value>{0} بایت</value>
   </data>
   <data name="AddAfterSelInstr_ToolTip" xml:space="preserve">
-    <value>Додати інструкцію після обраної</value>
+    <value>اضافه کردن دستورالعملی بعد از دستور انتخاب شده</value>
   </data>
   <data name="InstructionsTab" xml:space="preserve">
-    <value>Інструкції</value>
+    <value>دستورالعمل ها</value>
   </data>
   <data name="Module_NewGuid1" xml:space="preserve">
-    <value>_Новий</value>
+    <value>_جدید</value>
   </data>
   <data name="Module_NewGuid2" xml:space="preserve">
-    <value>Н_овий</value>
+    <value>_جدید</value>
   </data>
   <data name="Module_NewGuid3" xml:space="preserve">
-    <value>Но_вий</value>
+    <value>_جدید</value>
   </data>
   <data name="NetModule_NewGuid1" xml:space="preserve">
-    <value>Но_вий</value>
+    <value>_جدید</value>
   </data>
   <data name="Pick_Assembly" xml:space="preserve">
-    <value>Вибрати збірку</value>
+    <value>انتخاب ماژول</value>
   </data>
   <data name="Pick_EntryPoint" xml:space="preserve">
-    <value>Вибрати точку входу</value>
+    <value>انتخاب نقطه ورود</value>
   </data>
   <data name="Pick_Field" xml:space="preserve">
-    <value>Вибрати поле</value>
+    <value>انتخاب یک فیلد</value>
   </data>
   <data name="Pick_GenericType" xml:space="preserve">
-    <value>Вибрати узагальнений тип</value>
+    <value>انتخاب یک Type عمومی</value>
   </data>
   <data name="Pick_Method" xml:space="preserve">
-    <value>Вибрати метод</value>
+    <value>انتخاب یک متود</value>
   </data>
   <data name="Pick_Module" xml:space="preserve">
-    <value>Вибрати модуль</value>
+    <value>انتخاب یک ماژول</value>
   </data>
   <data name="ExceptionHandler_Column_CatchType" xml:space="preserve">
     <value>CatchType</value>
@@ -2083,10 +2088,10 @@
     <value>TryStart</value>
   </data>
   <data name="ExceptionHandler_Column_Type" xml:space="preserve">
-    <value>Тип</value>
+    <value>تایپ</value>
   </data>
   <data name="Flags" xml:space="preserve">
-    <value>Прапорці</value>
+    <value>Flags</value>
   </data>
   <data name="MethodBody_Column_OpCode" xml:space="preserve">
     <value>OpCode</value>
@@ -2095,22 +2100,22 @@
     <value>RID</value>
   </data>
   <data name="EditResource_Visibility" xml:space="preserve">
-    <value>_Видимість</value>
+    <value>_قابلیت دیدن</value>
   </data>
   <data name="GP_GenericParamConstraints" xml:space="preserve">
-    <value>Константи</value>
+    <value>محدودیت ها</value>
   </data>
   <data name="Metadata_Sorted_Rows" xml:space="preserve">
-    <value>Сортування</value>
+    <value>مرتب شده</value>
   </data>
   <data name="Metadata_Valid_Rows" xml:space="preserve">
-    <value>Вірний</value>
+    <value>معتبر</value>
   </data>
   <data name="Method_Access" xml:space="preserve">
-    <value>Доступ</value>
+    <value>دسترسی</value>
   </data>
   <data name="Method_CodeType" xml:space="preserve">
-    <value>Т_ип коду</value>
+    <value>Cod_eType</value>
   </data>
   <data name="Method_Flags_Abstract" xml:space="preserve">
     <value>_Abstract</value>
@@ -2119,7 +2124,7 @@
     <value>Chec_kAccessOnOverride</value>
   </data>
   <data name="Method_Flags_Final" xml:space="preserve">
-    <value>_Final</value>
+    <value>_نهایی</value>
   </data>
   <data name="Method_Flags_HideBySig" xml:space="preserve">
     <value>Hi_deBySig</value>
@@ -2140,7 +2145,7 @@
     <value>UnmanagedE_xport</value>
   </data>
   <data name="Method_Flags_Virtual" xml:space="preserve">
-    <value>_Virtual</value>
+    <value>_مجازی</value>
   </data>
   <data name="Method_ImplFlags" xml:space="preserve">
     <value>ImplFlags</value>
@@ -2164,7 +2169,7 @@
     <value>Prese_rveSig</value>
   </data>
   <data name="Method_ImplFlags_Synchronized" xml:space="preserve">
-    <value>Sync_hronized</value>
+    <value>هماهنگ شده</value>
   </data>
   <data name="Method_ManagedType" xml:space="preserve">
     <value>_ManagedType</value>
@@ -2176,7 +2181,7 @@
     <value>Cor20</value>
   </data>
   <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
-    <value>Версія _Runtime</value>
+    <value>_ورژن رانتایم</value>
   </data>
   <data name="Module_EncBaseId" xml:space="preserve">
     <value>Enc_BaseId</value>
@@ -2185,28 +2190,28 @@
     <value>EncI_d</value>
   </data>
   <data name="Module_Flags_Bit32Preferred" xml:space="preserve">
-    <value>32-Bit _Preferred</value>
+    <value>_ترجیح به 32 بیت بودن</value>
   </data>
   <data name="Module_Flags_Bit32Required" xml:space="preserve">
-    <value>_32-Bit Required</value>
+    <value>اجبار به 32 بیت بودن</value>
   </data>
   <data name="Module_Flags_ILLibrary" xml:space="preserve">
-    <value>Біб_ліотека IL</value>
+    <value>_کتابخانه IL</value>
   </data>
   <data name="Module_Flags_ILOnly" xml:space="preserve">
-    <value>Тільки _IL</value>
+    <value>فقط _IL</value>
   </data>
   <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
-    <value>Підписано _сильним іменем</value>
+    <value>_امضا شده با Strong Name</value>
   </data>
   <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>В_ідслідковувати дебаг дані</value>
+    <value>اطلاعات _مسیر دیباگ</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
-    <value>Версія _заголовку</value>
+    <value>ورژن _Header</value>
   </data>
   <data name="Module_Metadata_VersionString" xml:space="preserve">
-    <value>Стрічка _версії</value>
+    <value>_VersionString</value>
   </data>
   <data name="Module_Mvid" xml:space="preserve">
     <value>_Mvid</value>
@@ -2215,16 +2220,16 @@
     <value>PE</value>
   </data>
   <data name="Module_PE_Machine" xml:space="preserve">
-    <value>_Архітектура</value>
+    <value>_ماشین</value>
   </data>
   <data name="NetModule_Mvid" xml:space="preserve">
     <value>_Mvid</value>
   </data>
   <data name="PE_Header_Characteristics" xml:space="preserve">
-    <value>Характеристики</value>
+    <value>Characteristics</value>
   </data>
   <data name="PE_Header_DllCharacteristics" xml:space="preserve">
-    <value>Характеристики Dll</value>
+    <value>DllCharacteristics</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
@@ -2233,25 +2238,25 @@
     <value>_SpecialName</value>
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
-    <value>_Точка входу</value>
+    <value>_نقطه ورود</value>
   </data>
   <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
-    <value>32-Bit _Preferred</value>
+    <value>_ترجیح به 32 بیت بودن</value>
   </data>
   <data name="SaveModule_Cor20_Flags_Bit32Required" xml:space="preserve">
-    <value>_32-Bit Required</value>
+    <value>اجبار به 32 بیت بودن</value>
   </data>
   <data name="SaveModule_Cor20_Flags_ILLibrary" xml:space="preserve">
-    <value>Біб_ліотека IL</value>
+    <value>_کتابخانه IL</value>
   </data>
   <data name="SaveModule_Cor20_Flags_ILOnly" xml:space="preserve">
-    <value>Тільки _IL</value>
+    <value>فقط _IL</value>
   </data>
   <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
-    <value>Підписано _сильним іменем</value>
+    <value>_امضا شده با Strong Name</value>
   </data>
   <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>В_ідслідковувати дебаг дані</value>
+    <value>اطلاعات _مسیر دیباگ</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
     <value>_Major RT Ver</value>
@@ -2278,13 +2283,13 @@
     <value>S_torageFlags</value>
   </data>
   <data name="SaveModule_Metadata_VersionString" xml:space="preserve">
-    <value>Стрічка _версії</value>
+    <value>_VersionString</value>
   </data>
   <data name="SaveModule_PE_Machine" xml:space="preserve">
-    <value>_Архітектура</value>
+    <value>_ماشین</value>
   </data>
   <data name="SaveModule_PE_Subsystem" xml:space="preserve">
-    <value>_Підсистема</value>
+    <value>_Subsystem</value>
   </data>
   <data name="SaveModule_TablesHeap_ExtraData" xml:space="preserve">
     <value>Extra_Data</value>
@@ -2308,13 +2313,13 @@
     <value>A_bstract</value>
   </data>
   <data name="Type_Flags_Accessibility" xml:space="preserve">
-    <value>Доступніст_ь</value>
+    <value>دسترسی</value>
   </data>
   <data name="Type_Flags_BeforeFieldInit" xml:space="preserve">
     <value>BeforeFieldIni_t</value>
   </data>
   <data name="Type_Flags_Custom" xml:space="preserve">
-    <value>Custo_m</value>
+    <value>سفارشی</value>
   </data>
   <data name="Type_Flags_Forwarder" xml:space="preserve">
     <value>_Forwarder</value>
@@ -2323,10 +2328,10 @@
     <value>_Import</value>
   </data>
   <data name="Type_Flags_Kind" xml:space="preserve">
-    <value>_Тип</value>
+    <value>_نوع</value>
   </data>
   <data name="Type_Flags_Layout" xml:space="preserve">
-    <value>Layo_ut</value>
+    <value>_طرح</value>
   </data>
   <data name="Type_Flags_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
@@ -2335,7 +2340,7 @@
     <value>Seale_d</value>
   </data>
   <data name="Type_Flags_Semantics" xml:space="preserve">
-    <value>_Семантика</value>
+    <value>_Semantics</value>
   </data>
   <data name="Type_Flags_Serializable" xml:space="preserve">
     <value>S_erializable</value>
@@ -2344,112 +2349,112 @@
     <value>S_pecialName</value>
   </data>
   <data name="Type_Flags_String" xml:space="preserve">
-    <value>Стріч_ка</value>
+    <value>Strin_g</value>
   </data>
   <data name="Type_Flags_Visibility" xml:space="preserve">
-    <value>Видиміст_ть</value>
+    <value>Visibilit_y</value>
   </data>
   <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
     <value>_WindowsRuntime</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
-    <value>Поле</value>
+    <value>فیلد</value>
   </data>
   <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
-    <value>Властивість</value>
+    <value>ویژگی</value>
   </data>
   <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
-    <value>-- Виправити помилки, змінивши параметри.</value>
+    <value>-- رفع خطاها با ویرایش تنظیمات.</value>
   </data>
   <data name="GoToMetaDataTableRow_RID" xml:space="preserve">
     <value>_RID</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Редактор збірки</value>
+    <value>ویرایشگر اسمبلی</value>
   </data>
   <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Змінити метод ({0})...</value>
+    <value>ویرایش متود ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
-    <value>Редагування коду</value>
+    <value>ویرایش کد</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Декомпіляція...</value>
+    <value>در حال دیکامپایل...</value>
   </data>
   <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
-    <value>Код</value>
+    <value>کد</value>
   </data>
   <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
-    <value>Опис</value>
+    <value>توضیحات</value>
   </data>
   <data name="CompileDiagnostics_Header_File" xml:space="preserve">
-    <value>Файл</value>
+    <value>فایل</value>
   </data>
   <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
-    <value>Стрічка</value>
+    <value>خط</value>
   </data>
   <data name="Button_Compile" xml:space="preserve">
-    <value>Компілювати</value>
+    <value>کامپایل</value>
   </data>
   <data name="StatusError" xml:space="preserve">
-    <value>Помилка</value>
+    <value>خطا</value>
   </data>
   <data name="StatusHidden" xml:space="preserve">
-    <value>Прихований</value>
+    <value>مخفی</value>
   </data>
   <data name="StatusInfo" xml:space="preserve">
-    <value>Дані</value>
+    <value>اطلاعات</value>
   </data>
   <data name="StatusWarning" xml:space="preserve">
-    <value>Увага</value>
+    <value>هشدار</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Додати посилання збірки</value>
+    <value>اضافه کردن مرجع به اسمبلی</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Додати посилання збірки (GAC)</value>
+    <value>اضافه کردن اسمبلی مرجع (GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Не вдалося додати посилання на збірку.</value>
+    <value>نمیتوان مراجع اسمبلی را اضافه نمود.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
-    <value>Редагувати тіло методу</value>
+    <value>ویرایش کد متود</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>Не підтримується додавання або видалення "static" або 'shared' для редагованих методів: {0}</value>
+    <value>اضافه کردن یا حذف 'static' یا 'Shared' از متود ویرایش شده پشتیبانی نمی شود: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>Не можливо знайти відредагований метод. Переконайтесь, що ви не додали чи видалили 'static' чи 'Shared' або змінили типи параметрів, тип повернення або ім'я методу: {0}</value>
+    <value>نمیتوان متود ویرایش شده را پیدا کرد.مطمئن شوید که شما 'static' یا 'Shared' را حذف یا اضافه، تغییرات در نوع پارامترها،  نوع بازگشت یا نام متود انجام نداده اید: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
-    <value>Не вдалось знайти поле: {0}</value>
+    <value>نمیتوان فیلد را پیدا کرد: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
-    <value>Не вдалось знайти метод: {0}</value>
+    <value>نمیتوان متود را پیدا کرد: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
-    <value>Не можливо знайти тип редагованого методу: {0}</value>
+    <value>نمیتوان تایپ متودهای ویرایش شده را پیدا کرد: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
-    <value>Не вдалось знайти тип: {0}</value>
+    <value>نمیتوان تایپ را پیدا کرد: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
-    <value>Перейменування віртуальних подій не підтримується: {0}</value>
+    <value>تغییر نام از رویداد های مجازی پشتیبانی نمی شود: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
-    <value>Перейменування віртуальних методів не підтримується: {0}</value>
+    <value>تغییر نام از متودهای مجازی پشتیبانی نمی شود: {0}</value>
   </data>
   <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
-    <value>Перейменування віртуальних властивостей не підтримується: {0}</value>
+    <value>تغییر نام از ویژگی های مجازی پشتیبانی نمی شود: {0}</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>Пошук</value>
+    <value>یافتن</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Послідовний пошук</value>
+    <value>جستجوی افزایشی</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
@@ -2458,43 +2463,43 @@
     <value>F6</value>
   </data>
   <data name="Button_Cancel2" xml:space="preserve">
-    <value>Скасувати</value>
+    <value>انصراف</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>Змінити атрибути збірки</value>
+    <value>ویرایش ویژگی های اسمبلی</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
-    <value>Додати клас</value>
+    <value>افزودن کلاس</value>
   </data>
   <data name="MergeWithAssemblyCommand" xml:space="preserve">
-    <value>Об'єднати зі збіркою...</value>
+    <value>ادغام با اسمبلی دیگر...</value>
   </data>
   <data name="MergeWithAssemblyCommand2" xml:space="preserve">
-    <value>Об'єднати зі збіркою</value>
+    <value>ادغام با اسمبلی دیگر</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>Змінити атрибути збірки ({0})...</value>
+    <value>ویرایش ویژگی های اسمبلی ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
-    <value>Додати клас ({0})...</value>
+    <value>افزودن کلاس ({0})...</value>
   </data>
   <data name="EditCodeEditClass" xml:space="preserve">
-    <value>Змінити клас</value>
+    <value>ویرایش کلاس</value>
   </data>
   <data name="EditCodeEditClass2" xml:space="preserve">
-    <value>Змінити клас ({0})...</value>
+    <value>ویرایش کلاس ({0})...</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
-    <value>Не знайдено редагований текст: {0}</value>
+    <value>نمیتوان تایپ ویرایش شده را پیدا کرد: {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>Закрити старі модулі в пам'яті</value>
+    <value>بستن ماژول های قدیمی در مموری</value>
   </data>
   <data name="CloseAllMissingFilesCommand" xml:space="preserve">
-    <value>Закрити всі відсутні файли</value>
+    <value>بستن تمام فایل های گم شده</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
-    <value>Значимість</value>
+    <value>شدت</value>
   </data>
   <data name="ParamDef_Flags_Lcid" xml:space="preserve">
     <value>Lcid</value>
@@ -2503,7 +2508,7 @@
     <value>Retval</value>
   </data>
   <data name="AddDocumentsToolTip" xml:space="preserve">
-    <value>Додати Джерельний Код</value>
+    <value>اضافه کردن سورس کد</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>Ctrl+O</value>
@@ -2515,18 +2520,18 @@
     <value>Ctrl+Shift+O</value>
   </data>
   <data name="EditCodeAddClassMembers" xml:space="preserve">
-    <value>Додати члени класу</value>
+    <value>افزودن اعضای کلاس</value>
   </data>
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
-    <value>Додати члени класу ({0})...</value>
+    <value>افزودن اعضای کلاس ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
-    <value>Копіювати невідо_мі потоки метаданих</value>
+    <value>رونوشت از استریم های _ناشناخته Metadata</value>
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
-    <value>Запустити NGEN.exe, якщо ця збірка інстальована в GAC</value>
+    <value>فایل NGEN.exe را اجراکن اگر اسمبلی در GAC نصب شده</value>
   </data>
   <data name="CompilerDlgTabTitle" xml:space="preserve">
-    <value>Компілятор</value>
+    <value>کامپایلر</value>
   </data>
 </root>

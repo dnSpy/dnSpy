@@ -117,106 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+  <data name="InvalidBoolean" xml:space="preserve">
+    <value>مقدار باید از نوع بولی باشد (درست یا نادرست)</value>
   </data>
-  <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+  <data name="InvalidChar" xml:space="preserve">
+    <value>کاراکتر باید محصور شده در علامت نقل قول تکی (') باشد</value>
   </data>
-  <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+  <data name="InvalidDateTime" xml:space="preserve">
+    <value>مقدار باید DateTime باشد</value>
   </data>
-  <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+  <data name="InvalidDecimal" xml:space="preserve">
+    <value>مقدار باید Decimal باشد</value>
   </data>
-  <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+  <data name="InvalidDouble" xml:space="preserve">
+    <value>مقدار باید عدد ممیزی شناور 64بیتی باشد</value>
   </data>
-  <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+  <data name="InvalidEscapeSequence" xml:space="preserve">
+    <value>کاراکتر ناشناس دنباله فرار: \{0}</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+  <data name="InvalidEscapeSequence2" xml:space="preserve">
+    <value>رشته ناشناس دنباله فرار: \{0}</value>
   </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+  <data name="InvalidHexCharacter" xml:space="preserve">
+    <value>یک رشته هگز فقط باید حاوی ارقام 0-9 و A-F باشد</value>
   </data>
-  <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+  <data name="InvalidHexStringSize" xml:space="preserve">
+    <value>یک رشته هگز باید شامل ارقام هگز باشد</value>
   </data>
-  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+  <data name="InvalidInteger1" xml:space="preserve">
+    <value>مقدار hexadecimal یا decimal integer نمی باشد</value>
   </data>
-  <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+  <data name="InvalidInteger2" xml:space="preserve">
+    <value>مقدار بیش از حد کوچک می باشد</value>
   </data>
-  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
+  <data name="InvalidInteger3" xml:space="preserve">
+    <value>مقدار بیش از حد بزرگ است</value>
   </data>
-  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+  <data name="InvalidInteger4" xml:space="preserve">
+    <value>مقدار میبایست بین {0} و {1} (0x{1:X}) باشد</value>
   </data>
-  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
+  <data name="InvalidInteger5" xml:space="preserve">
+    <value>مقدار میبایست بین {0} ({2}0x{0:X}) و {1} (0x{1:X}) باشد</value>
   </data>
-  <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
+  <data name="InvalidListValue" xml:space="preserve">
+    <value>مقدار در فهرست نمیتواند خالی باشد</value>
   </data>
-  <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
+  <data name="InvalidListValue2" xml:space="preserve">
+    <value>عناصر لیست باید با کاما از هم جدا شوند</value>
   </data>
-  <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
+  <data name="InvalidSingle" xml:space="preserve">
+    <value>مقدار باید عدد ممیزی شناور 32بیتی باشد</value>
   </data>
-  <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
+  <data name="InvalidString1" xml:space="preserve">
+    <value>رشته باید شامل مقدار 'null' یا محصور شده در علامت نقل قول (") باشد</value>
   </data>
-  <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+  <data name="InvalidString2" xml:space="preserve">
+    <value>رشته باید محصور شده در علامت نقل قول (") باشد</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+    <value>مقدار باید TimeSpan باشد</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+  <data name="InvalidUnsignedInteger1" xml:space="preserve">
+    <value>فقط اعداد غیر منفی مجاز میباشند</value>
   </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+  <data name="InvalidUnsignedInteger2" xml:space="preserve">
+    <value>مقدار unsigned hexadecimal یا decimal integer نمی باشد</value>
   </data>
-  <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
+  <data name="InvalidUnsignedInteger3" xml:space="preserve">
+    <value>مقدار میبایست بین {0} و {1} (0x{1:X}) باشد</value>
   </data>
-  <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
-  </data>
-  <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
-  </data>
-  <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
-  </data>
-  <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
-  </data>
-  <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
-  </data>
-  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
-  </data>
-  <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
-  </data>
-  <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
-  </data>
-  <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
-  </data>
-  <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
-  </data>
-  <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+  <data name="InvalidUnsignedInteger4" xml:space="preserve">
+    <value>مقدار میبایست بین {0} (0x{0:X}) و {1} (0x{1:X}) باشد</value>
   </data>
 </root>

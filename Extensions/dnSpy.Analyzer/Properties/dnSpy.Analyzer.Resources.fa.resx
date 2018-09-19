@@ -118,105 +118,105 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AnalyzeCommand" xml:space="preserve">
-    <value>Analy_sieren</value>
+    <value>آنالیز</value>
   </data>
   <data name="AnalyzerWindowTitle" xml:space="preserve">
-    <value>Analysierer</value>
+    <value>تحلیل گر</value>
   </data>
   <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewandt auf</value>
+    <value>اعمال به</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen von</value>
+    <value>تخصیص یافته توسط</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>_Kopieren</value>
+    <value>کپی</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
-    <value>Doppelklick</value>
+    <value>دابل کلیک</value>
   </data>
   <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>hinzufügen</value>
+    <value>اضافه کردن</value>
   </data>
   <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>entfernen</value>
+    <value>حذف</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Sichtbar durch</value>
+    <value>در معرض</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Erweiterungsmethoden</value>
+    <value>توابع اضافی</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Gehe zu Verweis</value>
+    <value>برو به مرجع</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Verweis in Methode zeigen</value>
+    <value>نمایش مرجع در تابع</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+    <value>نمایش مرجع در تابع (سربرگ_جدید)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Gehe zu Verweis (neuer Ta_b)</value>
+    <value>برو به مرجع (سربرگ_جدید)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
-    <value>versteckt</value>
+    <value>پنهان کردن</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Implementiert von</value>
+    <value>پیاده سازی شده توسط</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanziiert von</value>
+    <value>کشف شده توسط</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Überschrieben von</value>
+    <value>رونویسی شده توسط</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibt</value>
+    <value>رونویس ها</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblies</value>
+    <value>تجزیه و تحلیل assemblis</value>
   </data>
   <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
+    <value>get</value>
   </data>
   <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+    <value>set</value>
   </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Ausgelöst durch</value>
+    <value>شروع شده توسط</value>
   </data>
   <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Gelesen von</value>
+    <value>خوانده شده توسط</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>_Entfernen</value>
+    <value>حذف</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Suchen...</value>
+    <value>در حال جستجو...</value>
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Umschalt+Doppelklick</value>
+    <value>Shit + Double Click</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>Strg+C</value>
+    <value>Ctrl+C</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Strg+Umschalt+R</value>
+    <value>Ctrl+Shift+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Entf</value>
+    <value>Del</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens anzeigen</value>
+    <value>نمایش توکن ها(Tokens)</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Syntax hervorheben</value>
+    <value>قالب برجسته</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Verwendet von</value>
+    <value>استفاده شده توسط</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
-    <value>Benutzt</value>
+    <value>استفاده شده</value>
   </data>
 </root>
