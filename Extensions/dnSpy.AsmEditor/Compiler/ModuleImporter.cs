@@ -127,7 +127,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			public ExtraImportedTypeData(TypeDef compiledType) => CompiledType = compiledType;
 		}
 
-		const SigComparerOptions SIG_COMPARER_OPTIONS = SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
+		const SigComparerOptions SIG_COMPARER_BASE_OPTIONS = SigComparerOptions.IgnoreModifiers;
+		const SigComparerOptions SIG_COMPARER_OPTIONS = SIG_COMPARER_BASE_OPTIONS | SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
 
 		public ModuleImporter(ModuleDef targetModule, IAssemblyResolver assemblyResolver) {
 			this.targetModule = targetModule ?? throw new ArgumentNullException(nameof(targetModule));
@@ -1138,7 +1139,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep1(IEnumerable<MergedImportedType> importedTypes) {
-			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
+			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
 
@@ -1269,7 +1270,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep2(IEnumerable<MergedImportedType> importedTypes) {
-			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
+			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
 
