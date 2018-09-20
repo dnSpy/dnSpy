@@ -730,6 +730,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (p.SetMethod == method)
 					return "set_" + p.Name;
 			}
+			foreach (var e in method.DeclaringType.Events) {
+				if (e.AddMethod == method)
+					return "add_" + e.Name;
+				if (e.RemoveMethod == method)
+					return "remove_" + e.Name;
+				if (e.InvokeMethod == method)
+					return "raise_" + e.Name;
+			}
 			return method.Name;
 		}
 
