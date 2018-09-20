@@ -14,6 +14,8 @@ namespace dnSpy.Roslyn.EditorFeatures.Host
         private int _completedItems;
         private int _totalItems;
 
+		public string Description { get; set; }
+
         private readonly Action<int, int> _updateActionOpt;
 
         public ProgressTracker()

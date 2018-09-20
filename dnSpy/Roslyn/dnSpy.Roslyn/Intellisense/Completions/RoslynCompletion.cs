@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.Tags;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 
@@ -50,7 +51,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		}
 
 		IEnumerable<CompletionIcon> GetAttributeIcons() {
-			if (CompletionItem.Tags.Contains(CompletionTags.Warning))
+			if (CompletionItem.Tags.Contains(WellKnownTags.Warning))
 				return new[] { new CompletionIcon2(imageMonikerService.ToImageMoniker(DsImages.StatusWarning), null, null) };
 			return null;
 		}
