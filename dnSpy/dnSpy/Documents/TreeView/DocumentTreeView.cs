@@ -751,17 +751,22 @@ namespace dnSpy.Documents.TreeView {
 			var existingFiles = new HashSet<string>(DocumentService.GetDocuments().Select(a => a.Filename ?? string.Empty), StringComparer.OrdinalIgnoreCase);
 			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
 			TreeNodeData newSelectedNode = null;
+
+			bool shellInit = true;
+			IWshRuntimeLibrary.WshShell ws = null;
+			try {
+				ws = new IWshRuntimeLibrary.WshShell();
+			} catch {
+				shellInit = false;
+			}
+
 			for (int i = 0, j = 0; i < filenames.Length; i++) {
 				// Resolve shortcuts
-				var directory = Path.GetDirectoryName(filenames[i]);
-				var file = Path.GetFileName(filenames[i]);
-
-				var shell = new Shell32.Shell();
-				var folder = shell.NameSpace(directory);
-				var folderItem = folder.ParseName(file);
-				if (folderItem != null && folderItem.IsLink) {
-					var link = (Shell32.ShellLinkObject)folderItem.GetLink;
-					filenames[i] = link.Path;
+				if (shellInit) {
+					try {
+						var sc = (IWshRuntimeLibrary.IWshShortcut)ws.CreateShortcut(filenames[i]);
+						filenames[i] = sc.TargetPath;
+					} catch { }
 				}
 
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));
