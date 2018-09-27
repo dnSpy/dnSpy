@@ -753,16 +753,11 @@ namespace dnSpy.Documents.TreeView {
 			TreeNodeData newSelectedNode = null;
 			for (int i = 0, j = 0; i < filenames.Length; i++) {
 				// Resolve shortcuts
-				var directory = Path.GetDirectoryName(filenames[i]);
-				var file = Path.GetFileName(filenames[i]);
-
-				var shell = new Shell32.Shell();
-				var folder = shell.NameSpace(directory);
-				var folderItem = folder.ParseName(file);
-				if (folderItem != null && folderItem.IsLink) {
-					var link = (Shell32.ShellLinkObject)folderItem.GetLink;
-					filenames[i] = link.Path;
-				}
+				var ws = new IWshRuntimeLibrary.WshShell();
+				try {
+					var sc = (IWshRuntimeLibrary.IWshShortcut)ws.CreateShortcut(filenames[i]);
+					filenames[i] = sc.TargetPath;
+				} catch { }
 
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));
 				if (document == null)
