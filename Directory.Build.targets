@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Remove garbage files added by Microsoft.CodeAnalysis.Workspaces.Common 2.9.0+ when target is .NET Framework -->
+    <!-- Also remove other stuff we don't need -->
+    <GarbageFile>$(GarbageFile);$(OutputPath)\cs\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\de\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\es\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\fr\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\it\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\ja\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\ko\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\pl\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\pt-BR\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\ru\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\tr\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\zh-Hans\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\zh-Hant\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\Microsoft.CodeAnalysis.Workspaces.Desktop.pdb</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.batteries_green.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.batteries_v2.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.core.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.provider.e_sqlite3.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Data.Common.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Globalization.Extensions.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Net.Http.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Net.Sockets.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Runtime.Serialization.Primitives.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Security.SecureString.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\System.Threading.Overlapped.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\x64\e_sqlite3.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\x86\e_sqlite3.dll</GarbageFile>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\x86</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\x64</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\cs</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\ja</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\ko</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\pl</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\pt-BR</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\tr</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\zh-Hans</GarbageDir>
+    <GarbageDir>$(GarbageDir);$(OutputPath)\zh-Hant</GarbageDir>
+  </PropertyGroup>
+  <Target Name="MyRemoveGarbageFiles" AfterTargets="AfterBuild">
+    <Delete Files="$(GarbageFile)" ContinueOnError="WarnAndContinue" />
+    <RemoveDir Directories="$(GarbageDir)" ContinueOnError="WarnAndContinue" />
+  </Target>
+</Project>
