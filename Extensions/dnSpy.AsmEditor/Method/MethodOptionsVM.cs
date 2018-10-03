@@ -139,6 +139,11 @@ namespace dnSpy.AsmEditor.Method {
 			set => SetFlagValue(MethodImplAttributes.NoOptimization, value);
 		}
 
+		public bool AggressiveOptimization {
+			get => GetFlagValue(MethodImplAttributes.AggressiveOptimization);
+			set => SetFlagValue(MethodImplAttributes.AggressiveOptimization, value);
+		}
+
 		bool GetFlagValue(MethodImplAttributes flag) => (ImplAttributes & flag) != 0;
 
 		void SetFlagValue(MethodImplAttributes flag, bool value) {

@@ -101,6 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsNoInlining => (MethodImplementationFlags & DmdMethodImplAttributes.NoInlining) != 0;
 		public bool IsAggressiveInlining => (MethodImplementationFlags & DmdMethodImplAttributes.AggressiveInlining) != 0;
 		public bool IsNoOptimization => (MethodImplementationFlags & DmdMethodImplAttributes.NoOptimization) != 0;
+		public bool IsAggressiveOptimization => (MethodImplementationFlags & DmdMethodImplAttributes.AggressiveOptimization) != 0;
 
 		public bool IsPublic => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.Public;
 		public bool IsPrivate => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.Private;
