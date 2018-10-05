@@ -133,7 +133,7 @@
     <value>Аргументи Хоста</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Робочий каталог</value>
+    <value>_Робоча Директорія</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
     <value>Створити процес</value>

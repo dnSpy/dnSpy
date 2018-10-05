@@ -205,7 +205,7 @@
     <value>Поля</value>
   </data>
   <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
-    <value>Скомпільований вираз кинув виняткову ситуацію: {0}</value>
+    <value>Скомпільований вираз кинув виключення: {0}</value>
   </data>
   <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
     <value>Неприпустимий вираз</value>

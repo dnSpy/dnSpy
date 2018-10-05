@@ -127,7 +127,7 @@
     <value>&lt;не доступне&gt;</value>
   </data>
   <data name="AppMenu_Debug" xml:space="preserve">
-    <value>Відлагодження</value>
+    <value>_Відлагодження</value>
   </data>
   <data name="AppTitle_Debugging" xml:space="preserve">
     <value>Відлагодження</value>

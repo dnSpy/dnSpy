@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error1" xml:space="preserve">
-    <value>Помилка: {0}</value>
+    <value>ПОМИЛКА: {0}</value>
   </data>
   <data name="FileOrDirDoesNotExist" xml:space="preserve">
     <value>Файл/директорія '{0}' не існує</value>
   </data>
   <data name="InvalidOption" xml:space="preserve">
-    <value>Неприпустимий параметр: {0}</value>
+    <value>Невірний параметр: {0}</value>
   </data>
   <data name="InvalidSolutionName" xml:space="preserve">
-    <value>ім'я .sln ({0}) має бути відносно каталогу проекту</value>
+    <value>Ім'я .sln ({0}) має бути відносно каталогу проекту</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
     <value>Невірний токен метаданих</value>
@@ -184,7 +184,7 @@
     <value>Відсутній шлях до користувацького GAC </value>
   </data>
   <data name="InvalidMemberToDecompile" xml:space="preserve">
-    <value>Лише типи, методи, поля, події та властивості можуть бути декомпільовані</value>
+    <value>Лише типи, методи, поля, події та властивості можна декомпілювати</value>
   </data>
   <data name="CouldNotFindTypeX" xml:space="preserve">
     <value>Не вдалося знайти тип {0}</value>

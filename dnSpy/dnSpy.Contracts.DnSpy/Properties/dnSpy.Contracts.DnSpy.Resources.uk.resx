@@ -124,7 +124,7 @@
     <value>Сталася помилка: {0}</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Відміна</value>
+    <value>_Відміна</value>
   </data>
   <data name="CouldNotConvert" xml:space="preserve">
     <value>Не вдалося перетворити '{0} '</value>
@@ -166,7 +166,7 @@
     <value>{0} байт</value>
   </data>
   <data name="NumberOfBytesAndType" xml:space="preserve">
-    <value>{0} байт, тип = {1}</value>
+    <value>{0} байт, Тип = {1}</value>
   </data>
   <data name="ResourceTypeCantBeChanged" xml:space="preserve">
     <value>Не можна змінити тип ресурсу</value>

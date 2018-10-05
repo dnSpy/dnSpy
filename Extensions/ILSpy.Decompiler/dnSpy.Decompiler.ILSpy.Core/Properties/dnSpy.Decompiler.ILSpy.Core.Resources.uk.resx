@@ -145,7 +145,7 @@
     <value>Декомпілювати перечислення (yield return)</value>
   </data>
   <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
-    <value>Декомпілювати дерева выразів</value>
+    <value>Декомпілювати дерева виразів</value>
   </data>
   <data name="DecompilerSettings_DecompileForeachStatements" xml:space="preserve">
     <value>Декомпілювати оператори foreach</value>

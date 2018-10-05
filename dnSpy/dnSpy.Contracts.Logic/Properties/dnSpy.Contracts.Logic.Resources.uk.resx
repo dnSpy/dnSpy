@@ -124,10 +124,10 @@
     <value>Символ повинен бути взятий в одинарні лапки (')</value>
   </data>
   <data name="InvalidDateTime" xml:space="preserve">
-    <value>Значення має бути дата й час</value>
+    <value>Значення має бути дата й час (DateTime)</value>
   </data>
   <data name="InvalidDecimal" xml:space="preserve">
-    <value>Значення має бути десятковим</value>
+    <value>Значення має бути десятковим (Decimal)</value>
   </data>
   <data name="InvalidDouble" xml:space="preserve">
     <value>Значення має бути 64-бітним числом із плаваючою крапкою</value>
@@ -148,7 +148,7 @@
     <value>Значення не є шістнадцятковим чи цілим десятковим</value>
   </data>
   <data name="InvalidInteger2" xml:space="preserve">
-    <value>Замале значення</value>
+    <value>Значення замале</value>
   </data>
   <data name="InvalidInteger3" xml:space="preserve">
     <value>Значення завелике</value>
@@ -175,7 +175,7 @@
     <value>Рядок має бути взятим у подвійні лапки (")</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
-    <value>Значення має бути проміжок часу</value>
+    <value>Значення має бути проміжок часу (TimeSpan)</value>
   </data>
   <data name="InvalidUnsignedInteger1" xml:space="preserve">
     <value>Лише додатні цілі числа дозволені</value>

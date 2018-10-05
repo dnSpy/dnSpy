@@ -139,7 +139,7 @@
     <value>Виберіть текст. Натисніть ще раз, щоб виділити весь текст</value>
   </data>
   <data name="HelpCtrlAltDown" xml:space="preserve">
-    <value>Показати наступну команду, яка відповідає поточному тексту</value>
+    <value>Показати наступну команду, яка відповідає вхідному тексту</value>
   </data>
   <data name="HelpCtrlAltUp" xml:space="preserve">
     <value>Показати попередню команду, яка відповідає поточному тексту</value>
