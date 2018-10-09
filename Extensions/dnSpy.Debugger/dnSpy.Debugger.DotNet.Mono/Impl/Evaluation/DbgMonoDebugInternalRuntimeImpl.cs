@@ -24,10 +24,13 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Disassembly;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.CallStack;
@@ -1174,6 +1177,21 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		bool? EqualsCore(DbgDotNetValueImpl a, DbgDotNetValueImpl b) {
 			Dispatcher.VerifyAccess();
 			return GetEquatableValue(a.Value as ObjectMirror).Equals3(GetEquatableValue(b.Value as ObjectMirror));
+		}
+
+		public bool TryGetNativeCode(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode) {
+			nativeCode = default;
+			return false;
+		}
+
+		public bool TryGetNativeCode(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
+			nativeCode = default;
+			return false;
+		}
+
+		public bool TryGetSymbol(ulong address, out SymbolResolverResult result) {
+			result = default;
+			return false;
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

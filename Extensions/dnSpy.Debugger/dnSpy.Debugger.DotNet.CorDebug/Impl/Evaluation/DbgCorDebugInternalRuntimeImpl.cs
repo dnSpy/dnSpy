@@ -30,9 +30,11 @@ using dnlib.DotNet.Writer;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.DotNet.Disassembly;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks;
@@ -1298,6 +1300,60 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		bool? EqualsCore(DbgDotNetValueImpl a, DbgDotNetValueImpl b) {
 			Dispatcher.VerifyAccess();
 			return GetEquatableValue(a.Type, a.TryGetCorValue()).Equals3(GetEquatableValue(b.Type, b.TryGetCorValue()));
+		}
+
+		public bool TryGetNativeCode(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode) {
+			if (Dispatcher.CheckAccess())
+				return TryGetNativeCodeCore(frame, out nativeCode);
+			return TryGetNativeCode2(frame, out nativeCode);
+
+			bool TryGetNativeCode2(DbgStackFrame frame2, out DbgDotNetNativeCode nativeCode2) {
+				DbgDotNetNativeCode nativeCodeTmp = default;
+				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(frame2, out nativeCodeTmp));
+				nativeCode2 = nativeCodeTmp;
+				return res;
+			}
+		}
+		bool TryGetNativeCodeCore(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode) {
+			Dispatcher.VerifyAccess();
+			nativeCode = default;
+			return false;
+		}
+
+		public bool TryGetNativeCode(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
+			if (Dispatcher.CheckAccess())
+				return TryGetNativeCodeCore(method, out nativeCode);
+			return TryGetNativeCode2(method, out nativeCode);
+
+			bool TryGetNativeCode2(DmdMethodBase method2, out DbgDotNetNativeCode nativeCode2) {
+				DbgDotNetNativeCode nativeCodeTmp = default;
+				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(method2, out nativeCodeTmp));
+				nativeCode2 = nativeCodeTmp;
+				return res;
+			}
+		}
+		bool TryGetNativeCodeCore(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
+			Dispatcher.VerifyAccess();
+			nativeCode = default;
+			return false;
+		}
+
+		public bool TryGetSymbol(ulong address, out SymbolResolverResult result) {
+			if (Dispatcher.CheckAccess())
+				return TryGetSymbolCore(address, out result);
+			return TryGetSymbolCore2(address, out result);
+
+			bool TryGetSymbolCore2(ulong address2, out SymbolResolverResult result2) {
+				SymbolResolverResult resultTmp = default;
+				bool res = Dispatcher.InvokeRethrow(() => TryGetSymbolCore(address2, out resultTmp));
+				result2 = resultTmp;
+				return res;
+			}
+		}
+		bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
+			Dispatcher.VerifyAccess();
+			result = default;
+			return false;
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

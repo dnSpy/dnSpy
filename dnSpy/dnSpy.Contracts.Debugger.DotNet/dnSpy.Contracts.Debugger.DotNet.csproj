@@ -55,6 +55,8 @@
     <Compile Include="DbgDotNetInternalAppDomain.cs" />
     <Compile Include="DbgDotNetInternalModule.cs" />
     <Compile Include="DbgDotNetInternalRuntime.cs" />
+    <Compile Include="Disassembly\DbgDotNetNativeCode.cs" />
+    <Compile Include="Disassembly\DbgDotNetNativeCodeBlock.cs" />
     <Compile Include="Evaluation\DbgDotNetAliasInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetCustomTypeInfo.cs" />
     <Compile Include="Evaluation\DbgDotNetDispatcher.cs" />
