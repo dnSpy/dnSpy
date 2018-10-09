@@ -332,6 +332,23 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerDisplayAttributeEval),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebuggerNoStringQuotesEval),
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.DebugViewPropertyName),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmComment),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmDirective),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmPrefix),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmMnemonic),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmKeyword),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmOperator),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmPunctuation),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmNumber),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmRegister),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmSelectorValue),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmLabelAddress),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmFunctionAddress),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmLabel),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmFunction),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmData),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmAddress),
+				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmHexBytes),
 			};
 			foreach (var ct in classificationTypes) {
 				Debug.Assert(ct != null);

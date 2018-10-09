@@ -327,6 +327,23 @@ namespace dnSpy.Contracts.Text {
 		DebuggerDisplayAttributeEval,
 		DebuggerNoStringQuotesEval,
 		DebugViewPropertyName,
+		AsmComment,
+		AsmDirective,
+		AsmPrefix,
+		AsmMnemonic,
+		AsmKeyword,
+		AsmOperator,
+		AsmPunctuation,
+		AsmNumber,
+		AsmRegister,
+		AsmSelectorValue,
+		AsmLabelAddress,
+		AsmFunctionAddress,
+		AsmLabel,
+		AsmFunction,
+		AsmData,
+		AsmAddress,
+		AsmHexBytes,
 
 		/// <summary>
 		/// Must be last
@@ -640,6 +657,23 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebuggerDisplayAttributeEval = TextColor.DebuggerDisplayAttributeEval;
 		public static readonly object DebuggerNoStringQuotesEval = TextColor.DebuggerNoStringQuotesEval;
 		public static readonly object DebugViewPropertyName = TextColor.DebugViewPropertyName;
+		public static readonly object AsmComment = TextColor.AsmComment;
+		public static readonly object AsmDirective = TextColor.AsmDirective;
+		public static readonly object AsmPrefix = TextColor.AsmPrefix;
+		public static readonly object AsmMnemonic = TextColor.AsmMnemonic;
+		public static readonly object AsmKeyword = TextColor.AsmKeyword;
+		public static readonly object AsmOperator = TextColor.AsmOperator;
+		public static readonly object AsmPunctuation = TextColor.AsmPunctuation;
+		public static readonly object AsmNumber = TextColor.AsmNumber;
+		public static readonly object AsmRegister = TextColor.AsmRegister;
+		public static readonly object AsmSelectorValue = TextColor.AsmSelectorValue;
+		public static readonly object AsmLabelAddress = TextColor.AsmLabelAddress;
+		public static readonly object AsmFunctionAddress = TextColor.AsmFunctionAddress;
+		public static readonly object AsmLabel = TextColor.AsmLabel;
+		public static readonly object AsmFunction = TextColor.AsmFunction;
+		public static readonly object AsmData = TextColor.AsmData;
+		public static readonly object AsmAddress = TextColor.AsmAddress;
+		public static readonly object AsmHexBytes = TextColor.AsmHexBytes;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -955,6 +989,23 @@ namespace dnSpy.Contracts.Text {
 			DebuggerDisplayAttributeEval,
 			DebuggerNoStringQuotesEval,
 			DebugViewPropertyName,
+			AsmComment,
+			AsmDirective,
+			AsmPrefix,
+			AsmMnemonic,
+			AsmKeyword,
+			AsmOperator,
+			AsmPunctuation,
+			AsmNumber,
+			AsmRegister,
+			AsmSelectorValue,
+			AsmLabelAddress,
+			AsmFunctionAddress,
+			AsmLabel,
+			AsmFunction,
+			AsmData,
+			AsmAddress,
+			AsmHexBytes,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

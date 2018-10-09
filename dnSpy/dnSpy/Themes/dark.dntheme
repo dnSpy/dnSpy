@@ -300,6 +300,23 @@
 		<color name="debuggerdisplayattributeeval" fg="#6BF0FF" />
 		<color name="debuggernostringquoteseval" fg="#6BF0FF" />
 		<color name="debugviewpropertyname" fg="#248F8F" />
+		<color name="asmcomment" fg="#57A64A" />
+		<color name="asmdirective" fg="#6F42C1" />
+		<color name="asmprefix" fg="#D73A49" />
+		<color name="asmmnemonic" fg="#D73A49" />
+		<color name="asmkeyword" fg="#6F42C1" />
+		<color name="asmoperator" fg="#B4B4B4" />
+		<color name="asmpunctuation" fg="#DCDCDC" />
+		<color name="asmnumber" fg="#005CC5" />
+		<color name="asmregister" fg="#E36209" />
+		<color name="asmselectorvalue" fg="#005CC5" />
+		<color name="asmlabeladdress" fg="#005CC5" />
+		<color name="asmfunctionaddress" fg="#005CC5" />
+		<color name="asmlabel" fg="#806F4D" />
+		<color name="asmfunction" fg="#FF8000" />
+		<color name="asmdata" fg="#AA70FF" />
+		<color name="asmaddress" fg="#6C4ABE" />
+		<color name="asmhexbytes" fg="#DCDCDC" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
