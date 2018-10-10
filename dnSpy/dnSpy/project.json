@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"Iced": "0.9.0",
 		"Microsoft.VisualStudio.Composition": "15.6.36",
 		"Microsoft.VisualStudio.Text.UI.Wpf": "15.5.27130",
 		"Microsoft.VisualStudio.Language.Intellisense": "15.5.27130",

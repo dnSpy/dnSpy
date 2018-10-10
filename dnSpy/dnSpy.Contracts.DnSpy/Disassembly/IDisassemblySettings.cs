@@ -71,14 +71,9 @@ namespace dnSpy.Contracts.Disassembly {
 		bool SpaceAfterOperandSeparator { get; set; }
 
 		/// <summary>
-		/// Add a space after the open memory bracket, eg. "[ rax]" vs "[rax]"
+		/// Add a space between the memory expression and the brackets, eg. "[ rax ]" vs "[rax]"
 		/// </summary>
-		bool SpaceAfterMemoryOpenBracket { get; set; }
-
-		/// <summary>
-		/// Add a space before the close memory bracket, eg. "[rax ]" vs "[rax]"
-		/// </summary>
-		bool SpaceBeforeMemoryCloseBracket { get; set; }
+		bool SpaceAfterMemoryBracket { get; set; }
 
 		/// <summary>
 		/// Add spaces between memory operand "+" and "-" operators, eg. "[rax + rcx]" vs "[rax+rcx]"

@@ -59,6 +59,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_DEBUGGER = 2000;
 
 		/// <summary>
+		/// Order of disassembler settings page
+		/// </summary>
+		public const double ORDER_DISASSEMBLER = 2500;
+
+		/// <summary>
 		/// Order of Text Viewer settings page
 		/// </summary>
 		public const double ORDER_DOCUMENT_VIEWER = 3000;
@@ -132,6 +137,16 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Guid of Compiler settings page
 		/// </summary>
 		public const string GUID_COMPILER = "3ABE6BCF-06FE-4D75-AFA0-1E75577D8BCD";
+
+		/// <summary>
+		/// Guid of Disassembler settings page
+		/// </summary>
+		public const string GUID_DISASSEMBLER = "9B8D176A-7BEE-46B4-995A-727C82FF7DAF";
+
+		/// <summary>
+		/// Guid of Disassembler / Code Style page
+		/// </summary>
+		public const string GUID_DISASSEMBLER_CODESTYLE = "48477544-423A-46CB-B9C4-AFBC73A1DBD3";
 
 		/// <summary>
 		/// Guid of Code Editor settings page

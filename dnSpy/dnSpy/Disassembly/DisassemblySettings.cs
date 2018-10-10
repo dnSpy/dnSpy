@@ -126,27 +126,16 @@ namespace dnSpy.Disassembly {
 		}
 		bool spaceAfterOperandSeparator;
 
-		public bool SpaceAfterMemoryOpenBracket {
-			get => spaceAfterMemoryOpenBracket;
+		public bool SpaceAfterMemoryBracket {
+			get => spaceAfterMemoryBracket;
 			set {
-				if (value != spaceAfterMemoryOpenBracket) {
-					spaceAfterMemoryOpenBracket = value;
-					OnPropertyChanged(nameof(SpaceAfterMemoryOpenBracket));
+				if (value != spaceAfterMemoryBracket) {
+					spaceAfterMemoryBracket = value;
+					OnPropertyChanged(nameof(SpaceAfterMemoryBracket));
 				}
 			}
 		}
-		bool spaceAfterMemoryOpenBracket;
-
-		public bool SpaceBeforeMemoryCloseBracket {
-			get => spaceBeforeMemoryCloseBracket;
-			set {
-				if (value != spaceBeforeMemoryCloseBracket) {
-					spaceBeforeMemoryCloseBracket = value;
-					OnPropertyChanged(nameof(SpaceBeforeMemoryCloseBracket));
-				}
-			}
-		}
-		bool spaceBeforeMemoryCloseBracket;
+		bool spaceAfterMemoryBracket;
 
 		public bool SpacesBetweenMemoryAddOperators {
 			get => spacesBetweenMemoryAddOperators;
@@ -524,8 +513,7 @@ namespace dnSpy.Disassembly {
 			FirstOperandCharIndex = sect.Attribute<int?>(nameof(FirstOperandCharIndex)) ?? FirstOperandCharIndex;
 			TabSize = sect.Attribute<int?>(nameof(TabSize)) ?? TabSize;
 			SpaceAfterOperandSeparator = sect.Attribute<bool?>(nameof(SpaceAfterOperandSeparator)) ?? SpaceAfterOperandSeparator;
-			SpaceAfterMemoryOpenBracket = sect.Attribute<bool?>(nameof(SpaceAfterMemoryOpenBracket)) ?? SpaceAfterMemoryOpenBracket;
-			SpaceBeforeMemoryCloseBracket = sect.Attribute<bool?>(nameof(SpaceBeforeMemoryCloseBracket)) ?? SpaceBeforeMemoryCloseBracket;
+			SpaceAfterMemoryBracket = sect.Attribute<bool?>(nameof(SpaceAfterMemoryBracket)) ?? SpaceAfterMemoryBracket;
 			SpacesBetweenMemoryAddOperators = sect.Attribute<bool?>(nameof(SpacesBetweenMemoryAddOperators)) ?? SpacesBetweenMemoryAddOperators;
 			SpacesBetweenMemoryMulOperators = sect.Attribute<bool?>(nameof(SpacesBetweenMemoryMulOperators)) ?? SpacesBetweenMemoryMulOperators;
 			ScaleBeforeIndex = sect.Attribute<bool?>(nameof(ScaleBeforeIndex)) ?? ScaleBeforeIndex;
@@ -571,8 +559,7 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(FirstOperandCharIndex), FirstOperandCharIndex);
 			sect.Attribute(nameof(TabSize), TabSize);
 			sect.Attribute(nameof(SpaceAfterOperandSeparator), SpaceAfterOperandSeparator);
-			sect.Attribute(nameof(SpaceAfterMemoryOpenBracket), SpaceAfterMemoryOpenBracket);
-			sect.Attribute(nameof(SpaceBeforeMemoryCloseBracket), SpaceBeforeMemoryCloseBracket);
+			sect.Attribute(nameof(SpaceAfterMemoryBracket), SpaceAfterMemoryBracket);
 			sect.Attribute(nameof(SpacesBetweenMemoryAddOperators), SpacesBetweenMemoryAddOperators);
 			sect.Attribute(nameof(SpacesBetweenMemoryMulOperators), SpacesBetweenMemoryMulOperators);
 			sect.Attribute(nameof(ScaleBeforeIndex), ScaleBeforeIndex);
@@ -620,8 +607,7 @@ namespace dnSpy.Disassembly {
 			other.FirstOperandCharIndex = FirstOperandCharIndex;
 			other.TabSize = TabSize;
 			other.SpaceAfterOperandSeparator = SpaceAfterOperandSeparator;
-			other.SpaceAfterMemoryOpenBracket = SpaceAfterMemoryOpenBracket;
-			other.SpaceBeforeMemoryCloseBracket = SpaceBeforeMemoryCloseBracket;
+			other.SpaceAfterMemoryBracket = SpaceAfterMemoryBracket;
 			other.SpacesBetweenMemoryAddOperators = SpacesBetweenMemoryAddOperators;
 			other.SpacesBetweenMemoryMulOperators = SpacesBetweenMemoryMulOperators;
 			other.ScaleBeforeIndex = ScaleBeforeIndex;
