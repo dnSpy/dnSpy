@@ -17,27 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-
-namespace dnSpy.Contracts.Disassembly.Viewer {
+namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
-	/// <see cref="DisassemblyViewerService"/> options
+	/// nasm disassembly settings
 	/// </summary>
-	public abstract class DisassemblyViewerServiceOptions : INotifyPropertyChanged {
+	public interface INasmDisassemblySettings : IDisassemblySettings {
 		/// <summary>
-		/// Raised when a property is changed
+		/// Shows byte, word, dword or qword if it's a sign extended immediate operand value, eg. 'or rcx,-1' vs 'or rcx,byte -1'
 		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		/// <summary>
-		/// Raises <see cref="PropertyChanged"/>
-		/// </summary>
-		/// <param name="propName">Name of property that changed</param>
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-		/// <summary>
-		/// If true, opens a new tab by default, else reuses an existing viewer
-		/// </summary>
-		public abstract bool OpenNewTab { get; set; }
+		bool ShowSignExtendedImmediateSize { get; set; }
 	}
 }

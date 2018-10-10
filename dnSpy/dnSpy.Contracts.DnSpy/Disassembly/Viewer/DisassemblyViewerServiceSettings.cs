@@ -21,9 +21,9 @@ using System.ComponentModel;
 
 namespace dnSpy.Contracts.Disassembly.Viewer {
 	/// <summary>
-	/// Disassembly content options
+	/// <see cref="DisassemblyViewerService"/> settings
 	/// </summary>
-	public abstract class DisassemblyContentOptions : INotifyPropertyChanged {
+	public abstract class DisassemblyViewerServiceSettings : INotifyPropertyChanged {
 		/// <summary>
 		/// Raised when a property is changed
 		/// </summary>
@@ -36,48 +36,8 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		/// <summary>
-		/// Show instruction address
+		/// If true, opens a new tab by default, else reuses an existing viewer
 		/// </summary>
-		public abstract bool ShowInstructionAddress { get; set; }
-
-		/// <summary>
-		/// Show instruction bytes
-		/// </summary>
-		public abstract bool ShowInstructionBytes { get; set; }
-
-		/// <summary>
-		/// Add an empty line between basic blocks
-		/// </summary>
-		public abstract bool EmptyLineBetweenBasicBlocks { get; set; }
-
-		/// <summary>
-		/// Add labels to the disassembled code
-		/// </summary>
-		public abstract bool AddLabels { get; set; }
-
-		/// <summary>
-		/// x86 disassembler
-		/// </summary>
-		public abstract X86Disassembler X86Disassembler { get; set; }
-	}
-
-	/// <summary>
-	/// x86 disassembler
-	/// </summary>
-	public enum X86Disassembler {
-		/// <summary>
-		/// masm disassembler
-		/// </summary>
-		Masm,
-
-		/// <summary>
-		/// nasm disassembler
-		/// </summary>
-		Nasm,
-
-		/// <summary>
-		/// GNU assembler (AT&amp;T) disassembler
-		/// </summary>
-		Gas,
+		public abstract bool OpenNewTab { get; set; }
 	}
 }

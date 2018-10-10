@@ -23,15 +23,15 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 	/// </summary>
 	public abstract class DisassemblyViewerService {
 		/// <summary>
-		/// Gets the options
+		/// Gets the settings
 		/// </summary>
-		public abstract DisassemblyViewerServiceOptions Options { get; }
+		public abstract DisassemblyViewerServiceSettings Settings { get; }
 
 		/// <summary>
 		/// Shows the disassembly in a viewer
 		/// </summary>
 		/// <param name="contentProvider">Content provider</param>
-		public void Show(DisassemblyContentProvider contentProvider) => Show(contentProvider, Options.OpenNewTab);
+		public void Show(DisassemblyContentProvider contentProvider) => Show(contentProvider, Settings.OpenNewTab);
 
 		/// <summary>
 		/// Shows the disassembly in a viewer

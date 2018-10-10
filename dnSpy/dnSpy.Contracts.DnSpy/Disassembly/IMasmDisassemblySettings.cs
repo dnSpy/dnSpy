@@ -19,12 +19,8 @@
 
 namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
-	/// nasm disassembly options
+	/// masm disassembly settings
 	/// </summary>
-	public interface INasmDisassemblyOptions : IDisassemblyOptions {
-		/// <summary>
-		/// Shows byte, word, dword or qword if it's a sign extended immediate operand value, eg. 'or rcx,-1' vs 'or rcx,byte -1'
-		/// </summary>
-		bool ShowSignExtendedImmediateSize { get; set; }
+	public interface IMasmDisassemblySettings : IDisassemblySettings {
 	}
 }

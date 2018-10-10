@@ -21,9 +21,9 @@ using System.ComponentModel;
 
 namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
-	/// x86/x64 disassembly options
+	/// x86/x64 disassembly settings
 	/// </summary>
-	public interface IDisassemblyOptions : INotifyPropertyChanged {
+	public interface IDisassemblySettings : INotifyPropertyChanged {
 		/// <summary>
 		/// Prefixes are upper cased
 		/// </summary>

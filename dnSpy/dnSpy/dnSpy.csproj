@@ -177,6 +177,11 @@
     <Compile Include="Decompiler\DecompilerServiceSettings.cs" />
     <Compile Include="Decompiler\DummyDecompiler.cs" />
     <Compile Include="Decompiler\MethodDebugService.cs" />
+    <Compile Include="Disassembly\DisassemblySettings.cs" />
+    <Compile Include="Disassembly\GasDisassemblySettingsImpl.cs" />
+    <Compile Include="Disassembly\MasmDisassemblySettingsImpl.cs" />
+    <Compile Include="Disassembly\NasmDisassemblySettingsImpl.cs" />
+    <Compile Include="Disassembly\Viewer\DisassemblyContentSettingsImpl.cs" />
     <Compile Include="Documents\AssemblyResolver.cs" />
     <Compile Include="Documents\DefaultDsDocumentLoader.cs" />
     <Compile Include="Documents\DefaultDsDocumentProvider.cs" />

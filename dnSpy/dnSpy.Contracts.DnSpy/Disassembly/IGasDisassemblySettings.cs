@@ -19,8 +19,22 @@
 
 namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
-	/// masm disassembly options
+	/// GNU assembler (AT&amp;T syntax) disassembly settings
 	/// </summary>
-	public interface IMasmDisassemblyOptions : IDisassemblyOptions {
+	public interface IGasDisassemblySettings : IDisassemblySettings {
+		/// <summary>
+		/// If true, the formatter doesn't add '%' to registers, eg. %eax vs eax
+		/// </summary>
+		bool NakedRegisters { get; set; }
+
+		/// <summary>
+		/// Shows the mnemonic size suffix, eg. 'mov %eax,%ecx' vs 'movl %eax,%ecx'
+		/// </summary>
+		bool ShowMnemonicSizeSuffix { get; set; }
+
+		/// <summary>
+		/// Add a space after the comma if it's a memory operand, eg. '(%eax,%ecx,2)' vs '(%eax, %ecx, 2)'
+		/// </summary>
+		bool SpaceAfterMemoryOperandComma { get; set; }
 	}
 }
