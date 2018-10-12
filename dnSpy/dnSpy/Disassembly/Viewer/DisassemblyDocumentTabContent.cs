@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Disassembly.Viewer;
@@ -78,11 +79,54 @@ namespace dnSpy.Disassembly.Viewer {
 			var factory = documentViewerContentFactoryProvider.Create();
 			var disasmContent = contentProvider.GetContent();
 			var output = factory.Output;
-			foreach (var text in disasmContent.Text) {
-				if (text.Reference != null)
-					output.Write(text.Text, text.Reference, ToDecompilerReferenceFlags(text.ReferenceFlags), text.Color);
+			var bracesStack = new Stack<(int pos, char brace)>();
+			foreach (var info in disasmContent.Text) {
+				var text = info.Text;
+				if (info.Reference != null)
+					output.Write(text, info.Reference, ToDecompilerReferenceFlags(info.ReferenceFlags), info.Color);
 				else
-					output.Write(text.Text, text.Color);
+					output.Write(text, info.Color);
+
+				for (int i = 0; i < text.Length; i++) {
+					char c = text[i];
+					if (c == '\n')
+						bracesStack.Clear();
+					int pos = output.NextPosition - text.Length + i;
+					char opening = default;
+					CodeBracesRangeFlags flags = default;
+					switch (c) {
+					case '(':
+					case '{':
+					case '[':
+					case '<':
+						bracesStack.Push((pos, c));
+						break;
+
+					case ')':
+						opening = '(';
+						flags = CodeBracesRangeFlags.BraceKind_Parentheses;
+						break;
+
+					case '}':
+						opening = '{';
+						flags = CodeBracesRangeFlags.BraceKind_CurlyBraces;
+						break;
+
+					case ']':
+						opening = '[';
+						flags = CodeBracesRangeFlags.BraceKind_SquareBrackets;
+						break;
+
+					case '>':
+						opening = '<';
+						flags = CodeBracesRangeFlags.BraceKind_AngleBrackets;
+						break;
+					}
+					if (bracesStack.Count > 0 && bracesStack.Peek().brace == opening) {
+						int startPos = bracesStack.Pop().pos;
+						output.AddBracePair(new TextSpan(startPos, 1), new TextSpan(pos, 1), flags);
+					}
+				}
 			}
 			var contentType = GetContentType(disasmContent.Kind);
 			return (factory.CreateContent(documentViewer, contentType), contentType);

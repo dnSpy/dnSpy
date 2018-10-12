@@ -137,7 +137,6 @@ namespace dnSpy.Disassembly.Viewer {
 
 				foreach (var info in block.Instructions) {
 					var instr = info.Instruction;
-					bool printedSomething = false;
 					if ((formatterOptions & InternalFormatterOptions.InstructionAddresses) != 0) {
 						string address;
 						switch (instr.CodeSize) {
@@ -163,14 +162,14 @@ namespace dnSpy.Disassembly.Viewer {
 							break;
 						}
 						if (address != null) {
-							printedSomething = true;
 							output.Write(address, BoxedTextColor.AsmAddress);
 							output.Write(" ", BoxedTextColor.Text);
 						}
 					}
+					else
+						output.Write(formatter.Options.TabSize > 0 ? "\t" : "        ", BoxedTextColor.Text);
 
 					if ((formatterOptions & InternalFormatterOptions.InstructionBytes) != 0) {
-						printedSomething = true;
 						foreach (var b in info.Bytes)
 							output.Write(b.ToString(upperCaseHex ? "X2" : "x2"), BoxedTextColor.AsmHexBytes);
 						int missingBytes = HEXBYTES_COLUMN_BYTE_LENGTH - info.Bytes.Length;
@@ -179,8 +178,6 @@ namespace dnSpy.Disassembly.Viewer {
 						output.Write(" ", BoxedTextColor.Text);
 					}
 
-					if (!printedSomething)
-						output.Write(formatter.Options.TabSize > 0 ? "\t" : "        ", BoxedTextColor.Text);
 					formatter.Format(ref instr, formatterOutput);
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}
