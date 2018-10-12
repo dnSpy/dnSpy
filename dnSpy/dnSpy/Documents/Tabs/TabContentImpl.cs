@@ -171,6 +171,7 @@ namespace dnSpy.Documents.Tabs {
 				if (id != null)
 					id.Dispose();
 				documentTabService.OnRemoved(this);
+				tabHistory.Dispose();
 				removed = true;
 			}
 		}

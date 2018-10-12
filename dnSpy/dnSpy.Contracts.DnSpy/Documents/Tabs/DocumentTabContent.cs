@@ -23,7 +23,8 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Contains the data used to generate the content shown in a tab
+	/// Contains the data used to generate the content shown in a tab. If it implements <see cref="IDisposable"/>,
+	/// it gets disposed when it's no longer in use.
 	/// </summary>
 	public abstract class DocumentTabContent {
 		/// <summary>

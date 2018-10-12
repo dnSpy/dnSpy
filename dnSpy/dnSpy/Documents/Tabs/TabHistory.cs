@@ -49,10 +49,15 @@ namespace dnSpy.Documents.Tabs {
 			if (saveCurrent && current != null)
 				oldList.Add(new TabContentState(current, current.DocumentTab.UIContext.CreateUIState()));
 			current = content ?? throw new ArgumentNullException(nameof(content));
+			foreach (var state in newList)
+				Dispose(state.DocumentTabContent);
 			newList.Clear();
 		}
 
-		public void OverwriteCurrent(DocumentTabContent content) => current = content ?? throw new ArgumentNullException(nameof(content));
+		public void OverwriteCurrent(DocumentTabContent content) {
+			Dispose(current);
+			current = content ?? throw new ArgumentNullException(nameof(content));
+		}
 
 		public bool CanNavigateBackward => oldList.Count > 0;
 		public bool CanNavigateForward => newList.Count > 0;
@@ -85,9 +90,26 @@ namespace dnSpy.Documents.Tabs {
 		void Remove(List<TabContentState> list, Func<DocumentTabContent, bool> handler) {
 			for (int i = list.Count - 1; i >= 0; i--) {
 				var c = list[i];
-				if (handler(c.DocumentTabContent))
+				if (handler(c.DocumentTabContent)) {
+					Dispose(list[i].DocumentTabContent);
 					list.RemoveAt(i);
+				}
 			}
 		}
+
+		public void Dispose() {
+			foreach (var state in oldList)
+				Dispose(state.DocumentTabContent);
+			oldList.Clear();
+
+			foreach (var state in newList)
+				Dispose(state.DocumentTabContent);
+			newList.Clear();
+
+			Dispose(current);
+			current = null;
+		}
+
+		void Dispose(DocumentTabContent documentTabContent) => (documentTabContent as IDisposable)?.Dispose();
 	}
 }
