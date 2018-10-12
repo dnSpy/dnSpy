@@ -51,14 +51,11 @@ namespace dnSpy.Disassembly.Viewer {
 				case FormatterOutputTextKind.Mnemonic:
 				case FormatterOutputTextKind.Keyword:
 				case FormatterOutputTextKind.Register:
-				case FormatterOutputTextKind.SelectorValue:
-				case FormatterOutputTextKind.LabelAddress:
-				case FormatterOutputTextKind.FunctionAddress:
 				case FormatterOutputTextKindExtensions.UnknownSymbol:
 				case FormatterOutputTextKindExtensions.Data:
 				case FormatterOutputTextKindExtensions.Label:
 				case FormatterOutputTextKindExtensions.Function:
-					output.Write(text, new AsmReference(kind, text), DisassemblyReferenceFlags.None, color);
+					output.Write(text, new AsmReference(kind, text), DisassemblyReferenceFlags.Local, color);
 					break;
 
 				default:
@@ -133,7 +130,7 @@ namespace dnSpy.Disassembly.Viewer {
 				if (!string.IsNullOrEmpty(block.Comment))
 					WriteComment(output, commentPrefix, block.Comment);
 				if ((formatterOptions & InternalFormatterOptions.AddLabels) != 0 && !string.IsNullOrEmpty(block.Label)) {
-					output.Write(block.Label, new AsmReference(block.LabelKind, block.Label), DisassemblyReferenceFlags.Definition, GetColor(block.LabelKind));
+					output.Write(block.Label, new AsmReference(block.LabelKind, block.Label), DisassemblyReferenceFlags.Definition | DisassemblyReferenceFlags.Local, GetColor(block.LabelKind));
 					output.Write(":", BoxedTextColor.AsmPunctuation);
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}

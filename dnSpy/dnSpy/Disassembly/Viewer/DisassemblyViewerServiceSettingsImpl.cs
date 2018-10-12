@@ -17,25 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using dnSpy.Contracts.Disassembly.Viewer;
-using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Disassembly.Viewer {
-	[Export(typeof(IAppSettingsPageProvider))]
-	sealed class DisassemblySettingsPageProvider : IAppSettingsPageProvider {
-		readonly DisassemblyViewerService disassemblyViewerService;
-		readonly DisassemblyContentSettingsImpl disassemblySettings;
-
-		[ImportingConstructor]
-		DisassemblySettingsPageProvider(DisassemblyViewerService disassemblyViewerService, DisassemblyContentSettingsImpl disassemblySettings) {
-			this.disassemblyViewerService = disassemblyViewerService;
-			this.disassemblySettings = disassemblySettings;
+	sealed class DisassemblyViewerServiceSettingsImpl : DisassemblyViewerServiceSettings {
+		public override bool OpenNewTab {
+			get => openNewTab;
+			set {
+				if (openNewTab != value) {
+					openNewTab = value;
+					OnPropertyChanged(nameof(OpenNewTab));
+				}
+			}
 		}
-
-		public IEnumerable<AppSettingsPage> Create() {
-			yield return new DisassemblyAppSettingsPage(disassemblyViewerService.Settings, disassemblySettings);
-		}
+		bool openNewTab = true;
 	}
 }

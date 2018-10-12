@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		/// <summary>
-		/// If true, opens a new tab by default, else reuses an existing viewer
+		/// Open a new tab instead of reusing the current tab
 		/// </summary>
 		public abstract bool OpenNewTab { get; set; }
 	}

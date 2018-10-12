@@ -19,7 +19,6 @@
 
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Contracts.MVVM;
@@ -29,6 +28,7 @@ using System.Collections.ObjectModel;
 
 namespace dnSpy.Disassembly.Viewer {
 	sealed class DisassemblyAppSettingsPage : AppSettingsPage {
+		readonly DisassemblyViewerServiceSettings _global_viewerSettings;
 		readonly DisassemblyContentSettingsBase _global_disassemblySettings;
 		readonly DisassemblyContentSettingsBase disassemblySettings;
 
@@ -39,11 +39,16 @@ namespace dnSpy.Disassembly.Viewer {
 		public override string Title => dnSpy_Resources.DisassemblerDlgTabTitle;
 		public override object UIObject => this;
 
-		//TODO: use the other settings class
 		public bool NewTab {
-			get => true;
-			set { }
+			get => newTab;
+			set {
+				if (newTab != value) {
+					newTab = value;
+					OnPropertyChanged(nameof(NewTab));
+				}
+			}
 		}
+		bool newTab;
 
 		public ObservableCollection<X86DisassemblerVM> X86DisassemblerVM { get; }
 
@@ -64,10 +69,12 @@ namespace dnSpy.Disassembly.Viewer {
 			(X86Disassembler.Gas, CodeStyleConstants.GAS_NAME),
 		};
 
-		public DisassemblyAppSettingsPage(DisassemblyContentSettingsBase disassemblySettings) {
+		public DisassemblyAppSettingsPage(DisassemblyViewerServiceSettings viewerSettings, DisassemblyContentSettingsBase disassemblySettings) {
+			_global_viewerSettings = viewerSettings;
 			_global_disassemblySettings = disassemblySettings;
 			this.disassemblySettings = disassemblySettings.Clone();
 
+			NewTab = viewerSettings.OpenNewTab;
 			X86DisassemblerVM = new ObservableCollection<X86DisassemblerVM>(x86DisasmInfos.Select(a => new X86DisassemblerVM(a.disasm, a.name)));
 
 			var tox86DisasmName = x86DisasmInfos.ToDictionary(k => k.disasm, v => v.name);
@@ -82,6 +89,7 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 
 		public override void OnApply() {
+			_global_viewerSettings.OpenNewTab = NewTab;
 			disassemblySettings.X86Disassembler = SelectedX86DisassemblerVM.Disassembler;
 			disassemblySettings.CopyTo(_global_disassemblySettings);
 		}

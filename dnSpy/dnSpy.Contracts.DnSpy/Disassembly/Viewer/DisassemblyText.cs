@@ -35,13 +35,47 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		public object Color { get; }
 
 		/// <summary>
+		/// Gets the reference or null
+		/// </summary>
+		public object Reference { get; }
+
+		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public DisassemblyReferenceFlags ReferenceFlags { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public DisassemblyText(object color, string text) {
+		/// <param name="reference">Reference or null</param>
+		/// <param name="referenceFlags">Reference flags</param>
+		public DisassemblyText(object color, string text, object reference, DisassemblyReferenceFlags referenceFlags) {
 			Color = color ?? throw new ArgumentNullException(nameof(color));
 			Text = text ?? throw new ArgumentNullException(nameof(text));
+			Reference = reference;
+			ReferenceFlags = referenceFlags;
 		}
+	}
+
+	/// <summary>
+	/// <see cref="DisassemblyText"/> reference flags
+	/// </summary>
+	public enum DisassemblyReferenceFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None						= 0,
+
+		/// <summary>
+		/// It's a definition if set, else it's a reference to the definition
+		/// </summary>
+		Definition					= 0x00000001,
+
+		/// <summary>
+		/// It's a local definition or reference, eg. a label
+		/// </summary>
+		Local						= 0x00000002,
 	}
 }

@@ -66,7 +66,7 @@ namespace dnSpy.Disassembly.Viewer {
 			var cachedSymResolver = new CachedSymbolResolver();
 			foreach (var block in blocks) {
 				if (!string.IsNullOrEmpty(block.Label))
-					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
+					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(SymbolKindUtils.ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
 			}
 			if (symbolResolver != null) {
 				var addresses = GetPossibleSymbolAddresses(blocks);
@@ -79,29 +79,9 @@ namespace dnSpy.Disassembly.Viewer {
 			for (int i = 0; i < blocks.Length; i++) {
 				var block = blocks[i];
 				if (cachedSymResolver.TryResolve(block.Address, out var symbol, out _) && block.Label != symbol.Symbol)
-					blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, symbol.Symbol, ToFormatterOutputTextKind(symbol.Kind), block.Instructions);
+					blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, symbol.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symbol.Kind), block.Instructions);
 			}
 			return new X86DisassemblyContentProvider(cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, blocks);
-		}
-
-		static SymbolKind ToSymbolKind(FormatterOutputTextKind kind) {
-			switch (kind) {
-			case FormatterOutputTextKindExtensions.UnknownSymbol:return SymbolKind.Unknown;
-			case FormatterOutputTextKindExtensions.Data:		return SymbolKind.Data;
-			case FormatterOutputTextKindExtensions.Label:		return SymbolKind.Label;
-			case FormatterOutputTextKindExtensions.Function:	return SymbolKind.Function;
-			default:											return SymbolKind.Unknown;
-			}
-		}
-
-		static FormatterOutputTextKind ToFormatterOutputTextKind(SymbolKind kind) {
-			switch (kind) {
-			case SymbolKind.Unknown:	return FormatterOutputTextKindExtensions.UnknownSymbol;
-			case SymbolKind.Data:		return FormatterOutputTextKindExtensions.Data;
-			case SymbolKind.Label:		return FormatterOutputTextKindExtensions.Label;
-			case SymbolKind.Function:	return FormatterOutputTextKindExtensions.Function;
-			default:					return FormatterOutputTextKind.Text;
-			}
 		}
 
 		static ulong[] GetPossibleSymbolAddresses(X86Block[] blocks) {

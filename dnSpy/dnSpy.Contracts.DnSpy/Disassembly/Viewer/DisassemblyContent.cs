@@ -18,7 +18,6 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Disassembly.Viewer {
 	/// <summary>
@@ -26,23 +25,48 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 	/// </summary>
 	public readonly struct DisassemblyContent {
 		/// <summary>
+		/// Gets the content kind
+		/// </summary>
+		public DisassemblyContentKind Kind { get; }
+
+		/// <summary>
 		/// Gets the text
 		/// </summary>
 		public DisassemblyText[] Text { get; }
 
 		/// <summary>
-		/// Gets the references
-		/// </summary>
-		public SpanDataCollection<DisassemblyReferenceInfo> ReferenceCollection { get; }
-
-		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="kind">Content kind</param>
 		/// <param name="text">Disassembly</param>
-		/// <param name="referenceCollection">References</param>
-		public DisassemblyContent(DisassemblyText[] text, SpanDataCollection<DisassemblyReferenceInfo> referenceCollection) {
+		public DisassemblyContent(DisassemblyContentKind kind, DisassemblyText[] text) {
+			Kind = kind;
 			Text = text ?? throw new ArgumentNullException(nameof(text));
-			ReferenceCollection = referenceCollection ?? throw new ArgumentNullException(nameof(referenceCollection));
 		}
+	}
+
+	/// <summary>
+	/// Content kind
+	/// </summary>
+	public enum DisassemblyContentKind {
+		/// <summary>
+		/// Some other unknown kind
+		/// </summary>
+		Unknown,
+
+		/// <summary>
+		/// x86 masm syntax
+		/// </summary>
+		Masm,
+
+		/// <summary>
+		/// x86 nasm syntax
+		/// </summary>
+		Nasm,
+
+		/// <summary>
+		/// x86 AT&amp;T syntax
+		/// </summary>
+		ATT,
 	}
 }

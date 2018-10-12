@@ -39,6 +39,12 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		/// <summary>
 		/// Called when it's no longer used by a view
 		/// </summary>
-		public abstract void Close();
+		public abstract void Dispose();
+
+		/// <summary>
+		/// Clones this instance so it can be shown in a new tab
+		/// </summary>
+		/// <returns></returns>
+		public abstract DisassemblyContentProvider Clone();
 	}
 }

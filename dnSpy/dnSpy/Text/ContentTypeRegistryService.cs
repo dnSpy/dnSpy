@@ -27,6 +27,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	[Export(typeof(IContentTypeRegistryService))]
+	[Export(typeof(IContentTypeRegistryService2))]
 	sealed class ContentTypeRegistryService : IContentTypeRegistryService2 {
 		const string UnknownContentTypeName = "UNKNOWN";
 		const string TextPrefix = "text/";

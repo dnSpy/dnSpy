@@ -193,8 +193,12 @@
     <Compile Include="Disassembly\Viewer\DisassemblyContentOutput.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyContentProviderFactoryImpl.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyContentSettingsImpl.cs" />
+    <Compile Include="Disassembly\Viewer\DisassemblyDocumentTabContent.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblySettingsPageProvider.cs" />
+    <Compile Include="Disassembly\Viewer\DisassemblyViewerServiceImpl.cs" />
+    <Compile Include="Disassembly\Viewer\DisassemblyViewerServiceSettingsImpl.cs" />
     <Compile Include="Disassembly\Viewer\InternalFormatterOptions.cs" />
+    <Compile Include="Disassembly\Viewer\SymbolKindUtils.cs" />
     <Compile Include="Disassembly\Viewer\X86DisassemblyContentGenerator.cs" />
     <Compile Include="Disassembly\Viewer\X86DisassemblyContentProvider.cs" />
     <Compile Include="Disassembly\Viewer\X86DisassemblyContentProviderFactory.cs" />

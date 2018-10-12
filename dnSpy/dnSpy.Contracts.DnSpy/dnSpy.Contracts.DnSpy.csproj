@@ -164,7 +164,6 @@
     <Compile Include="Disassembly\Viewer\DisassemblyContentProvider.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyContentProviderFactory.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyContentSettings.cs" />
-    <Compile Include="Disassembly\Viewer\DisassemblyReferenceInfo.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyText.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyViewerService.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyViewerServiceSettings.cs" />

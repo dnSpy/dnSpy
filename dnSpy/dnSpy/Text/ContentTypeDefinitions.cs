@@ -89,6 +89,11 @@ namespace dnSpy.Text {
 		static readonly ContentTypeDefinition ILContentTypeDefinition;
 
 		[Export]
+		[Name(ContentTypes.Assembler)]
+		[BaseDefinition(ContentTypes.Code)]
+		static readonly ContentTypeDefinition AssemblerContentTypeDefinition;
+
+		[Export]
 		[Name(ContentTypes.RoslynCode)]
 		[BaseDefinition(ContentTypes.Code)]
 		static readonly ContentTypeDefinition RoslynCodeContentTypeDefinition;

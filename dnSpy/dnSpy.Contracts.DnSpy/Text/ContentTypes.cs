@@ -93,6 +93,11 @@ namespace dnSpy.Contracts.Text {
 		public const string IL = "MSIL";
 
 		/// <summary>
+		/// Assembler
+		/// </summary>
+		public const string Assembler = "Assembler";
+
+		/// <summary>
 		/// Roslyn (C# / Visual Basic) code
 		/// </summary>
 		public const string RoslynCode = "Roslyn Languages";

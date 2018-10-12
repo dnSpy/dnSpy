@@ -66,32 +66,12 @@ namespace dnSpy.Disassembly.Viewer {
 					if (!fakeSymbol || owner.AddLabels) {
 						Debug.Assert(symResult.Address == address, "Symbol address != orig address: NYI");
 						if (symResult.Address == address) {
-							symbol = new SymbolResult(symResult.Symbol, ToFormatterOutputTextKind(symResult.Kind));
+							symbol = new SymbolResult(symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind));
 							return true;
 						}
 					}
 				}
 				return base.TryGetSymbol(operand, ref instruction, address, addressSize, out symbol, ref options);
-			}
-
-			static FormatterOutputTextKind ToFormatterOutputTextKind(SymbolKind kind) {
-				switch (kind) {
-				case SymbolKind.Unknown:
-					return FormatterOutputTextKindExtensions.UnknownSymbol;
-
-				case SymbolKind.Label:
-					return FormatterOutputTextKindExtensions.Label;
-
-				case SymbolKind.Function:
-					return FormatterOutputTextKindExtensions.Function;
-
-				case SymbolKind.Data:
-					return FormatterOutputTextKindExtensions.Data;
-
-				default:
-					Debug.Fail($"Unknown symbol kind: {kind}");
-					goto case SymbolKind.Unknown;
-				}
 			}
 		}
 
@@ -107,16 +87,19 @@ namespace dnSpy.Disassembly.Viewer {
 			symbolResolver = new SymbolResolverImpl(this);
 		}
 
-		(Formatter formatter, string commentPrefix, bool upperCaseHex) GetDisassemblerInfo(X86Disassembler disasm) {
+		public override DisassemblyContentProvider Clone() =>
+			new X86DisassemblyContentProvider(cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, blocks);
+
+		(Formatter formatter, string commentPrefix, DisassemblyContentKind contentKind, bool upperCaseHex) GetDisassemblerInfo(X86Disassembler disasm) {
 			switch (disasm) {
 			case X86Disassembler.Masm:
-				return (new MasmFormatter(masmSettings.ToMasm(), symbolResolver), MASM_COMMENT, masmSettings.UpperCaseHex);
+				return (new MasmFormatter(masmSettings.ToMasm(), symbolResolver), MASM_COMMENT, DisassemblyContentKind.Masm, masmSettings.UpperCaseHex);
 
 			case X86Disassembler.Nasm:
-				return (new NasmFormatter(nasmSettings.ToNasm(), symbolResolver), NASM_COMMENT, nasmSettings.UpperCaseHex);
+				return (new NasmFormatter(nasmSettings.ToNasm(), symbolResolver), NASM_COMMENT, DisassemblyContentKind.Nasm, nasmSettings.UpperCaseHex);
 
 			case X86Disassembler.Gas:
-				return (new GasFormatter(gasSettings.ToGas(), symbolResolver), GAS_COMMENT, gasSettings.UpperCaseHex);
+				return (new GasFormatter(gasSettings.ToGas(), symbolResolver), GAS_COMMENT, DisassemblyContentKind.ATT, gasSettings.UpperCaseHex);
 
 			default:
 				Debug.Fail($"Unknown disassembler: {disasm}");
@@ -151,7 +134,7 @@ namespace dnSpy.Disassembly.Viewer {
 			var output = new DisassemblyContentOutput();
 			var disasmInfo = GetDisassemblerInfo(disasmSettings.X86Disassembler);
 			X86DisassemblyContentGenerator.Write(output, header, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.upperCaseHex), blocks);
-			return output.Create();
+			return output.Create(disasmInfo.contentKind);
 		}
 
 		void DisassemblyContentSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -207,7 +190,7 @@ namespace dnSpy.Disassembly.Viewer {
 				OnContentChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		public override void Close() {
+		public override void Dispose() {
 			closed = true;
 			disasmSettings.PropertyChanged -= DisassemblyContentSettings_PropertyChanged;
 			masmSettings.PropertyChanged -= MasmDisassemblySettings_PropertyChanged;
