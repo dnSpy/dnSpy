@@ -307,15 +307,15 @@
 		<color name="asmkeyword" fg="#6F42C1" />
 		<color name="asmoperator" fg="#000000" />
 		<color name="asmpunctuation" fg="#000000" />
-		<color name="asmnumber" fg="#005CC5" />
+		<color name="asmnumber" fg="#5B2DA8" />
 		<color name="asmregister" fg="#E36209" />
-		<color name="asmselectorvalue" fg="#005CC5" />
-		<color name="asmlabeladdress" fg="#005CC5" />
-		<color name="asmfunctionaddress" fg="#005CC5" />
+		<color name="asmselectorvalue" fg="#5B2DA8" />
+		<color name="asmlabeladdress" fg="#5B2DA8" />
+		<color name="asmfunctionaddress" fg="#5B2DA8" />
 		<color name="asmlabel" fg="#663300" />
 		<color name="asmfunction" fg="#880000" />
 		<color name="asmdata" fg="#CC3399" />
-		<color name="asmaddress" fg="#6C4ABE" />
+		<color name="asmaddress" fg="#5B2DA8" />
 		<color name="asmhexbytes" fg="#000000" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
