@@ -1486,15 +1486,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tab size.
-        /// </summary>
-        public static string DisassemblySettings_TabSize {
-            get {
-                return ResourceManager.GetString("DisassemblySettings_TabSize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Upper case everything.
         /// </summary>
         public static string DisassemblySettings_UpperCaseAll {

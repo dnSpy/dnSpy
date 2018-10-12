@@ -65,7 +65,6 @@ namespace dnSpy.Disassembly {
 		public X86DisasmBooleanSetting UsePseudoOps { get; }
 
 		public Int32VM OperandColumnVM { get; }
-		public Int32VM TabSizeVM { get; }
 
 		public string HexPrefix {
 			get => disassemblySettings.HexPrefix ?? string.Empty;
@@ -143,10 +142,6 @@ namespace dnSpy.Disassembly {
 				if (!OperandColumnVM.HasError)
 					this.disassemblySettings.FirstOperandCharIndex = OperandColumnVM.Value - 1;
 			}, useDecimal: true) { Min = 1, Max = 100 };
-			TabSizeVM = new Int32VM(disassemblySettings.TabSize, a => {
-				if (!TabSizeVM.HasError)
-					this.disassemblySettings.TabSize = TabSizeVM.Value;
-			}, useDecimal: true) { Min = 0, Max = 100 };
 
 			if (!disassemblySettings.AddDigitSeparators)
 				DigitSeparator = null;
