@@ -102,7 +102,7 @@ namespace dnSpy.Disassembly {
 				}
 			}
 		}
-		int firstOperandCharIndex;
+		int firstOperandCharIndex = 8;
 
 		public int TabSize {
 			get => tabSize;

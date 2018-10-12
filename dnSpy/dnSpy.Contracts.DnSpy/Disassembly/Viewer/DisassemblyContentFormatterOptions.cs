@@ -31,48 +31,43 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		None							= 0,
 
 		/// <summary>
-		/// Add an empty line between <see cref="NativeCodeBlock"/>s
-		/// </summary>
-		EmptyLineBetweenBlocks			= 0x00000001,
-
-		/// <summary>
 		/// Add an empty line between basic blocks (overrides global options)
 		/// </summary>
-		EmptyLineBetweenBasicBlocks		= 0x00000002,
+		EmptyLineBetweenBasicBlocks		= 0x00000001,
 
 		/// <summary>
 		/// Don't add an empty line between basic blocks (overrides global options)
 		/// </summary>
-		NoEmptyLineBetweenBasicBlocks	= 0x00000004,
+		NoEmptyLineBetweenBasicBlocks	= 0x00000002,
 
 		/// <summary>
 		/// Show instruction addresses (overrides global options)
 		/// </summary>
-		InstructionAddresses			= 0x00000008,
+		InstructionAddresses			= 0x00000004,
 
 		/// <summary>
 		/// Don't show instruction addresses (overrides global options)
 		/// </summary>
-		NoInstructionAddresses			= 0x00000010,
+		NoInstructionAddresses			= 0x00000008,
 
 		/// <summary>
 		/// Show instruction bytes (overrides global options)
 		/// </summary>
-		InstructionBytes				= 0x00000020,
+		InstructionBytes				= 0x00000010,
 
 		/// <summary>
 		/// Don't show instruction bytes (overrides global options)
 		/// </summary>
-		NoInstructionBytes				= 0x00000040,
+		NoInstructionBytes				= 0x00000020,
 
 		/// <summary>
 		/// Add labels to the disassembled code (overrides global options)
 		/// </summary>
-		AddLabels						= 0x00000080,
+		AddLabels						= 0x00000040,
 
 		/// <summary>
 		/// Don't add labels to the disassembled code (overrides global options)
 		/// </summary>
-		NoAddLabels						= 0x00000100,
+		NoAddLabels						= 0x00000080,
 	}
 }
