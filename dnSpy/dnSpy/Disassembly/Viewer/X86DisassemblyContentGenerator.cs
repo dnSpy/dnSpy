@@ -35,7 +35,7 @@ namespace dnSpy.Disassembly.Viewer {
 				this.value = value;
 			}
 			public override bool Equals(object obj) => obj is AsmReference other && kind == other.kind && StringComparer.Ordinal.Equals(value, other.value);
-			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(value ?? string.Empty);
+			public override int GetHashCode() => (int)kind ^ StringComparer.Ordinal.GetHashCode(value ?? string.Empty);
 		}
 
 		sealed class FormatterOutputImpl : FormatterOutput {
@@ -124,7 +124,7 @@ namespace dnSpy.Disassembly.Viewer {
 			bool upperCaseHex = (formatterOptions & InternalFormatterOptions.UpperCaseHex) != 0;
 			var formatterOutput = new FormatterOutputImpl(output);
 			for (int i = 0; i < blocks.Length; i++) {
-				var block = blocks[i];
+				ref readonly var block = ref blocks[i];
 				if (i > 0 && (formatterOptions & InternalFormatterOptions.EmptyLineBetweenBasicBlocks) != 0)
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				if (!string.IsNullOrEmpty(block.Comment))
@@ -149,25 +149,19 @@ namespace dnSpy.Disassembly.Viewer {
 							break;
 
 						case CodeSize.Code64:
+						case CodeSize.Unknown:
 							address = instr.IP64.ToString(upperCaseHex ? "X16" : "x16");
 							break;
 
-						case CodeSize.Unknown:
-							address = null;
-							break;
-
 						default:
-							address = null;
 							Debug.Fail($"Unknown code size: {instr.CodeSize}");
-							break;
+							goto case CodeSize.Unknown;
 						}
-						if (address != null) {
-							output.Write(address, BoxedTextColor.AsmAddress);
-							output.Write(" ", BoxedTextColor.Text);
-						}
+						output.Write(address, BoxedTextColor.AsmAddress);
+						output.Write(" ", BoxedTextColor.Text);
 					}
 					else
-						output.Write(formatter.Options.TabSize > 0 ? "\t" : "        ", BoxedTextColor.Text);
+						output.Write(formatter.Options.TabSize > 0 ? "\t\t" : "        ", BoxedTextColor.Text);
 
 					if ((formatterOptions & InternalFormatterOptions.InstructionBytes) != 0) {
 						foreach (var b in info.Bytes)

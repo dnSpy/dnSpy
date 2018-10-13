@@ -42,7 +42,7 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 	}
 
-	struct X86DisassemblyContentProviderFactory {
+	readonly struct X86DisassemblyContentProviderFactory {
 		readonly X86DisassemblyContentProviderFactoryDependencies deps;
 		readonly int bitness;
 		readonly DisassemblyContentFormatterOptions formatterOptions;

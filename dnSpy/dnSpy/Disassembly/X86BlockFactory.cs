@@ -139,12 +139,7 @@ namespace dnSpy.Disassembly {
 						int opCount = instr.OpCount;
 						for (int i = 0; i < opCount; i++) {
 							if (instr.GetOpKind(i) == OpKind.Memory) {
-								ulong address;
-								if (baseReg == Register.RIP)
-									address = instr.NextIP64 + (ulong)(int)instr.MemoryDisplacement;
-								else
-									address = instr.NextIP32 + instr.MemoryDisplacement;
-								Add(targets, address, TargetKind.Data);
+								Add(targets, instr.IPRelativeMemoryAddress, TargetKind.Data);
 								break;
 							}
 						}
