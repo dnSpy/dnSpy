@@ -424,7 +424,7 @@ namespace dnSpy.Disassembly {
 				}
 			}
 		}
-		bool shortBranchNumbers;
+		bool shortBranchNumbers = true;
 
 		public bool SignedImmediateOperands {
 			get => signedImmediateOperands;
