@@ -56,6 +56,16 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		public abstract bool AddLabels { get; set; }
 
 		/// <summary>
+		/// Show IL code, if available
+		/// </summary>
+		public abstract bool ShowILCode { get; set; }
+
+		/// <summary>
+		/// Show source code or decompiled code, if available
+		/// </summary>
+		public abstract bool ShowCode { get; set; }
+
+		/// <summary>
 		/// x86 disassembler
 		/// </summary>
 		public abstract X86Disassembler X86Disassembler { get; set; }

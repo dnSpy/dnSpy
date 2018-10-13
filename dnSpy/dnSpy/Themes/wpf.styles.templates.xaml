@@ -6728,6 +6728,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_X86AssemblerSyntax}" Target="{Binding ElementName=x86DisassemblerComboBox}" />
@@ -6735,8 +6737,10 @@
             <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding NewTab}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_NewTab}"/>
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowInstructionAddress}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowInstructionAddress}"/>
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowInstructionBytes}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowInstructionBytes}"/>
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.EmptyLineBetweenBasicBlocks}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_EmptyLineBetweenBasicBlocks}"/>
-            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.AddLabels}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_AddLabels}"/>
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILCode}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowILCode}"/>
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.ShowCode}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowCode}"/>
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.EmptyLineBetweenBasicBlocks}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_EmptyLineBetweenBasicBlocks}"/>
+            <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.AddLabels}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_AddLabels}"/>
         </Grid>
     </DataTemplate>
 

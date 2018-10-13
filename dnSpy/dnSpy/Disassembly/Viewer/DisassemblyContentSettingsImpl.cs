@@ -69,6 +69,28 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 		bool addLabels = true;
 
+		public override bool ShowILCode {
+			get => showILCode;
+			set {
+				if (value != showILCode) {
+					showILCode = value;
+					OnPropertyChanged(nameof(ShowILCode));
+				}
+			}
+		}
+		bool showILCode = true;
+
+		public override bool ShowCode {
+			get => showCode;
+			set {
+				if (value != showCode) {
+					showCode = value;
+					OnPropertyChanged(nameof(ShowCode));
+				}
+			}
+		}
+		bool showCode = true;
+
 		public override X86Disassembler X86Disassembler {
 			get => x86Disassembler;
 			set {
@@ -92,6 +114,8 @@ namespace dnSpy.Disassembly.Viewer {
 			other.ShowInstructionBytes = ShowInstructionBytes;
 			other.EmptyLineBetweenBasicBlocks = EmptyLineBetweenBasicBlocks;
 			other.AddLabels = AddLabels;
+			other.ShowILCode = ShowILCode;
+			other.ShowCode = ShowCode;
 			other.X86Disassembler = X86Disassembler;
 			return other;
 		}
@@ -113,6 +137,8 @@ namespace dnSpy.Disassembly.Viewer {
 			ShowInstructionBytes = sect.Attribute<bool?>(nameof(ShowInstructionBytes)) ?? ShowInstructionBytes;
 			EmptyLineBetweenBasicBlocks = sect.Attribute<bool?>(nameof(EmptyLineBetweenBasicBlocks)) ?? EmptyLineBetweenBasicBlocks;
 			AddLabels = sect.Attribute<bool?>(nameof(AddLabels)) ?? AddLabels;
+			ShowILCode = sect.Attribute<bool?>(nameof(ShowILCode)) ?? ShowILCode;
+			ShowCode = sect.Attribute<bool?>(nameof(ShowCode)) ?? ShowCode;
 			X86Disassembler = sect.Attribute<X86Disassembler?>(nameof(X86Disassembler)) ?? X86Disassembler;
 
 			PropertyChanged += OnPropertyChanged;
@@ -126,6 +152,8 @@ namespace dnSpy.Disassembly.Viewer {
 			sect.Attribute(nameof(ShowInstructionBytes), ShowInstructionBytes);
 			sect.Attribute(nameof(EmptyLineBetweenBasicBlocks), EmptyLineBetweenBasicBlocks);
 			sect.Attribute(nameof(AddLabels), AddLabels);
+			sect.Attribute(nameof(ShowILCode), ShowILCode);
+			sect.Attribute(nameof(ShowCode), ShowCode);
 			sect.Attribute(nameof(X86Disassembler), X86Disassembler);
 		}
 	}

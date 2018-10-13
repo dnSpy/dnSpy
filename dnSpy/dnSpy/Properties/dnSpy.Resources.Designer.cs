@@ -1378,6 +1378,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show decompiled code.
+        /// </summary>
+        public static string DisassemblySettings_ShowCode {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show IL code.
+        /// </summary>
+        public static string DisassemblySettings_ShowILCode {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowILCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show instruction address.
         /// </summary>
         public static string DisassemblySettings_ShowInstructionAddress {

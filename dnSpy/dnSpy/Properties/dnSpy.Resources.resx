@@ -2040,4 +2040,10 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="Disassembly_TabTitle" xml:space="preserve">
     <value>Disassembly</value>
   </data>
+  <data name="DisassemblySettings_ShowCode" xml:space="preserve">
+    <value>Show decompiled code</value>
+  </data>
+  <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
+    <value>Show IL code</value>
+  </data>
 </root>

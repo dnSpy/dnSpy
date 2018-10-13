@@ -115,13 +115,13 @@ namespace dnSpy.Contracts.Debugger.Disassembly {
 		None						= 0,
 
 		/// <summary>
-		/// Include IL code as comments, if possible
+		/// Show IL code, if available
 		/// </summary>
-		IncludeIL					= 0x00000001,
+		ShowILCode					= 0x00000001,
 
 		/// <summary>
-		/// Include decompiled code or source code as comments, if possible
+		/// Show source code or decompiled code, if available
 		/// </summary>
-		IncludeCode					= 0x00000002,
+		ShowCode					= 0x00000002,
 	}
 }
