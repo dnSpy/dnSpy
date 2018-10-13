@@ -1380,7 +1380,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			Debug.Assert(currentPos == totalLen);
 
 			var map = code.GetILToNativeMapping();
-			Array.Sort(map, (a, b) => a.nativeStartOffset.CompareTo(b.nativeStartOffset));
+			Array.Sort(map, (a, b) => {
+				int c = a.nativeStartOffset.CompareTo(b.nativeStartOffset);
+				if (c != 0)
+					return c;
+				return a.nativeEndOffset.CompareTo(b.nativeEndOffset);
+			});
+			totalLen = 0;
+			for (int i = 0; i < chunks.Length; i++) {
+				chunks[i].StartAddr -= (uint)totalLen;
+				totalLen += (int)chunks[i].Length;
+			}
 			var blocks = new DbgDotNetNativeCodeBlock[map.Length];
 			ulong baseAddress = chunks[0].StartAddr;
 			uint chunkByteOffset = 0;
@@ -1413,8 +1423,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					if (chunkByteOffset < chunks[chunkIndex].Length)
 						break;
 					chunkByteOffset -= chunks[chunkIndex].Length;
-					baseAddress = chunks[chunkIndex].StartAddr;
 					chunkIndex++;
+					if (chunkIndex < chunks.Length)
+						baseAddress = chunks[chunkIndex].StartAddr;
 				}
 			}
 

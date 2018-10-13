@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -99,6 +100,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 
 					ILSourceStatementProvider ilCodeProvider = default;
 					SourceStatementProvider codeProvider = default;
+					List<int> ilOffsets = null;
 
 					if (canShowILCode) {
 						var provider = new DecompiledCodeProvider(ilDecompiler, method, cancellationToken);
@@ -124,7 +126,11 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 						var info = codeProvider.GetStatement(ilOffset);
 						AddStatement(commentBuilder, info.line, info.span, showStmt: true);
 						if (!ilCodeProvider.IsDefault) {
-							int endILOffset = GetNextILOffset(nativeBlocks, i + 1);
+							if (ilOffsets == null)
+								ilOffsets = GetILOffsets(nativeBlocks);
+							int endILOffset = GetNextILOffset(ilOffsets, ilOffset);
+							if (endILOffset < 0)
+								endILOffset = ilOffset + 1;
 							info = ilCodeProvider.GetStatement(ilOffset, endILOffset);
 							AddStatement(commentBuilder, info.line, info.span, showStmt: false);
 						}
@@ -142,14 +148,23 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			return true;
 		}
 
-		static int GetNextILOffset(DbgDotNetNativeCodeBlock[] blocks, int index) {
-			while (index < blocks.Length) {
-				int offset = blocks[index].ILOffset;
-				if (offset >= 0)
-					return offset;
-				index++;
+		static List<int> GetILOffsets(DbgDotNetNativeCodeBlock[] blocks) {
+			var list = new List<int>(blocks.Length);
+			foreach (var block in blocks) {
+				if (block.ILOffset >= 0)
+					list.Add(block.ILOffset);
 			}
-			return int.MaxValue;
+			list.Sort();
+			return list;
+		}
+
+		static int GetNextILOffset(List<int> sortedOffsets, int ilOffset) {
+			int index = sortedOffsets.BinarySearch(ilOffset);
+			if (index < 0)
+				return -1;
+			if (index + 1 == sortedOffsets.Count)
+				return int.MaxValue;
+			return sortedOffsets[index + 1];
 		}
 
 		void AddStatement(StringBuilder sb, string lines, TextSpan span, bool showStmt) {
