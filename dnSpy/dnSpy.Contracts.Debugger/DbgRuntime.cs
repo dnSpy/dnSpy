@@ -193,6 +193,7 @@ namespace dnSpy.Contracts.Debugger {
 		public override string ToString() {
 			switch (Kind) {
 			case DbgBreakInfoKind.Unknown:
+			case DbgBreakInfoKind.Connected:
 			default:
 				return Kind.ToString();
 

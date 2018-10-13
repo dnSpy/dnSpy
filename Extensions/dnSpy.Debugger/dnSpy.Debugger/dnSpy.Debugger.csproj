@@ -133,6 +133,7 @@
     <Compile Include="Dialogs\DebugProgram\DebugProgramVM.cs" />
     <Compile Include="Dialogs\DebugProgram\OptionsPageVM.cs" />
     <Compile Include="Disassembly\DbgNativeCodeProviderImpl.cs" />
+    <Compile Include="Disassembly\DbgShowNativeCodeServiceImpl.cs" />
     <Compile Include="Evaluation\DbgEvalFormatterSettings.cs" />
     <Compile Include="Evaluation\DbgEvalFormatterSettingsBase.cs" />
     <Compile Include="Evaluation\DbgEvaluationContextImpl.cs" />

@@ -1861,6 +1861,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find the method&apos;s code. Make sure that the process is paused and that the method has been jitted..
+        /// </summary>
+        public static string Error_CouldNotShowDisassembly {
+            get {
+                return ResourceManager.GetString("Error_CouldNotShowDisassembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not start &apos;{0}&apos;
         ///ERROR: {1}.
         /// </summary>
