@@ -71,6 +71,10 @@
     <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
     <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
     <Compile Include="Disassembly\DbgRuntimeNativeCodeProviderImpl.cs" />
+    <Compile Include="Disassembly\DecompiledCodeProvider.cs" />
+    <Compile Include="Disassembly\DecompilerOutputImpl.cs" />
+    <Compile Include="Disassembly\ILSourceStatementProvider.cs" />
+    <Compile Include="Disassembly\SourceStatementProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgAliasProvider.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetDispatcherExtensions.cs" />
     <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactory.cs" />

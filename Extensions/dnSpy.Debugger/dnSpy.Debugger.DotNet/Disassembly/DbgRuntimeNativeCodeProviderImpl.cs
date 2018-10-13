@@ -17,9 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Threading;
+using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -72,7 +76,10 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			return false;
 		}
 
-		bool CreateResult(IDbgDotNetRuntime runtime, DbgModule methodModule, int methodToken, string header, DbgNativeCodeOptions options, DbgDotNetNativeCode nativeCode, out GetNativeCodeResult result) {
+		bool CreateResult(IDbgDotNetRuntime runtime, DbgModule methodModule, uint methodToken, string header, DbgNativeCodeOptions options, DbgDotNetNativeCode nativeCode, out GetNativeCodeResult result) {
+			if (methodToken == uint.MaxValue)
+				methodToken = 0;
+
 			var newBlocks = new NativeCodeBlock[nativeCode.Blocks.Length];
 			for (int i = 0; i < newBlocks.Length; i++) {
 				ref var blocks = ref nativeCode.Blocks[i];
@@ -80,18 +87,51 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 
 			var decompiler = decompilerService.Decompiler;
+			if (decompiler != null && decompiler.GenericGuid == DecompilerConstants.LANGUAGE_IL)
+				decompiler = null;
 			bool canShowILCode = (options & DbgNativeCodeOptions.ShowILCode) != 0 && ilDecompiler != null;
 			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && decompiler != null;
 			if (methodModule != null && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
 				var module = dbgMetadataService.TryGetMetadata(methodModule, DbgLoadModuleOptions.AutoLoaded);
-				var method = module?.ResolveToken(methodToken);
+				var method = module?.ResolveToken(methodToken) as MethodDef;
 				if (method != null) {
+					var cancellationToken = CancellationToken.None;
+
+					ILSourceStatementProvider ilCodeProvider = default;
+					SourceStatementProvider codeProvider = default;
+
 					if (canShowILCode) {
-						//TODO:
+						var provider = new DecompiledCodeProvider(ilDecompiler, method, cancellationToken);
+						if (provider.TryDecompile())
+							ilCodeProvider = provider.CreateILCodeProvider();
 					}
 
 					if (canShowCode) {
-						//TODO:
+						var provider = new DecompiledCodeProvider(decompiler, method, cancellationToken);
+						if (provider.TryDecompile())
+							codeProvider = provider.CreateCodeProvider();
+					}
+
+					var commentBuilder = new StringBuilder();
+					var nativeBlocks = nativeCode.Blocks;
+					for (int i = 0; i < newBlocks.Length; i++) {
+						int ilOffset = nativeBlocks[i].ILOffset;
+						if (ilOffset < 0)
+							continue;
+
+						var block = newBlocks[i];
+
+						var info = codeProvider.GetStatement(ilOffset);
+						AddStatement(commentBuilder, info.line, info.span, showStmt: true);
+						if (!ilCodeProvider.IsDefault) {
+							int endILOffset = GetNextILOffset(nativeBlocks, i + 1);
+							info = ilCodeProvider.GetStatement(ilOffset, endILOffset);
+							AddStatement(commentBuilder, info.line, info.span, showStmt: false);
+						}
+
+						if (commentBuilder.Length != 0)
+							newBlocks[i] = new NativeCodeBlock(block.Kind, block.Address, block.Code, commentBuilder.ToString());
+						commentBuilder.Length = 0;
 					}
 				}
 			}
@@ -100,6 +140,61 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			var symbolResolver = new DotNetSymbolResolver(runtime);
 			result = new GetNativeCodeResult(newCode, symbolResolver, header);
 			return true;
+		}
+
+		static int GetNextILOffset(DbgDotNetNativeCodeBlock[] blocks, int index) {
+			while (index < blocks.Length) {
+				int offset = blocks[index].ILOffset;
+				if (offset >= 0)
+					return offset;
+				index++;
+			}
+			return int.MaxValue;
+		}
+
+		void AddStatement(StringBuilder sb, string lines, TextSpan span, bool showStmt) {
+			if (lines == null)
+				return;
+
+			Debug.Assert(span.End <= lines.Length);
+			int pos = 0;
+			while (pos < lines.Length) {
+				int nextLineOffset;
+				int eol = lines.IndexOf('\n', pos);
+				if (eol < 0) {
+					eol = lines.Length;
+					nextLineOffset = eol;
+				}
+				else {
+					nextLineOffset = eol + 1;
+					if (eol > 0 && lines[eol - 1] == '\r')
+						eol--;
+				}
+				sb.Append(lines, pos, eol - pos);
+				sb.AppendLine();
+
+				// Show statement, but only if it's the first line, and if there are multiple statements on the same line
+				if (showStmt && pos == 0) {
+					int nonSpace = FindNonSpace(lines, pos, eol);
+					int stmtEnd = Math.Min(eol, span.End);
+					if (!(nonSpace >= span.Start && stmtEnd == span.End)) {
+						sb.Append(' ', span.Start - pos);
+						sb.Append('^', stmtEnd - span.Start);
+						sb.AppendLine();
+					}
+				}
+
+				pos = nextLineOffset;
+			}
+		}
+
+		static int FindNonSpace(string lines, int pos, int end) {
+			while (pos < end) {
+				if (!char.IsWhiteSpace(lines[pos]))
+					return pos;
+				pos++;
+			}
+			return -1;
 		}
 
 		static bool TryGetDotNetRuntime(DbgRuntime dbgRuntime, out IDbgDotNetRuntime runtime) {
@@ -130,7 +225,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			if (!runtime.TryGetNativeCode(frame, out var nativeCode))
 				return false;
 
-			const int methodToken = 0;//TODO:
+			uint methodToken = frame.FunctionToken;
 			const string header = null;//TODO:
 			return CreateResult(runtime, frame.Module, methodToken, header, options, nativeCode, out result);
 		}

@@ -108,7 +108,11 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 
 		static void WriteComment(DisassemblyContentOutput output, string commentPrefix, string text) {
-			foreach (var line in text.Replace("\r\n", "\n").Split(new char[] { '\n' })) {
+			var lines = text.Replace("\r\n", "\n").Split(new char[] { '\n' });
+			for (int i = 0; i < lines.Length; i++) {
+				var line = lines[i];
+				if (i + 1 == lines.Length && line.Length == 0)
+					break;
 				if (line.Length == 0)
 					output.Write(commentPrefix, BoxedTextColor.AsmComment);
 				else

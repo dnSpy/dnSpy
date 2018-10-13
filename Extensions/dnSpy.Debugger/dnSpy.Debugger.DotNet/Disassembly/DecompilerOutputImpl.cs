@@ -18,25 +18,31 @@
 */
 
 using System;
+using System.Text;
 using dnSpy.Contracts.Decompiler;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Disassembly {
 	sealed class DecompilerOutputImpl : IDecompilerOutput {
-		int textLength;
+		readonly StringBuilder sb;
 		int indentLevel;
 		bool addIndent;
 		uint methodToken;
 		MethodDebugInfo methodDebugInfo;
 		MethodDebugInfo kickoffMethodDebugInfo;
 
-		public int Length => textLength;
-		public int NextPosition => textLength + (addIndent ? indentLevel : 0);
+		const string TAB_SPACES = "    ";
+
+		public int Length => sb.Length;
+		public int NextPosition => sb.Length + (addIndent ? indentLevel * TAB_SPACES.Length : 0);
 		public bool UsesCustomData => true;
 
-		public DecompilerOutputImpl() => addIndent = true;
+		public DecompilerOutputImpl() {
+			sb = new StringBuilder();
+			addIndent = true;
+		}
 
 		internal void Clear() {
-			textLength = 0;
+			sb.Length = 0;
 			indentLevel = 0;
 			addIndent = true;
 			methodToken = 0;
@@ -74,26 +80,27 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public void WriteLine() {
 			addIndent = true;
-			textLength += Environment.NewLine.Length;
+			sb.Append(Environment.NewLine);
 		}
 
 		void AddIndent() {
 			if (!addIndent)
 				return;
 			addIndent = false;
-			textLength += indentLevel;
+			for (int i = 0; i < indentLevel; i++)
+				sb.Append(TAB_SPACES);
 		}
 
 		void AddText(string text, object color) {
 			if (addIndent)
 				AddIndent();
-			textLength += text.Length;
+			sb.Append(text);
 		}
 
 		void AddText(string text, int index, int length, object color) {
 			if (addIndent)
 				AddIndent();
-			textLength += length;
+			sb.Append(text, index, length);
 		}
 
 		public void Write(string text, object color) => AddText(text, color);
@@ -107,5 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				AddIndent();
 			AddText(text, index, length, color);
 		}
+
+		public override string ToString() => sb.ToString();
 	}
 }

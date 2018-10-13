@@ -162,6 +162,12 @@ namespace dnSpy.Disassembly.Viewer {
 				refresh = true;
 				break;
 
+			case nameof(DisassemblyContentSettings.ShowILCode):
+			case nameof(DisassemblyContentSettings.ShowCode):
+				// IL code and decompiled code are shown in comments and aren't created by this class
+				refresh = false;
+				break;
+
 			default:
 				Debug.Fail($"Unknown property: {e.PropertyName}");
 				refresh = false;
