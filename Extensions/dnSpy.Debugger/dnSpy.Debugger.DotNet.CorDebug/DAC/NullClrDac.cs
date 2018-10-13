@@ -17,10 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Disassembly;
+
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 	sealed class NullClrDac : ClrDac {
 		public static readonly ClrDac Instance = new NullClrDac();
 		NullClrDac() { }
 		public override ClrDacThreadInfo? GetThreadInfo(int tid) => null;
+		public override bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
+			result = default;
+			return false;
+		}
 	}
 }

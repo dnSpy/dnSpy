@@ -92,6 +92,20 @@ namespace dndbg.Engine {
 			return infos;
 		}
 
+		public unsafe ILToNativeMap[] GetILToNativeMapping() {
+			int hr = obj.GetILToNativeMapping(0, out uint cMap, IntPtr.Zero);
+			if (hr < 0)
+				return Array.Empty<ILToNativeMap>();
+			var infos = new ILToNativeMap[cMap];
+			if (cMap != 0) {
+				fixed (void* p = &infos[0])
+					hr = obj.GetILToNativeMapping(cMap, out cMap, new IntPtr(p));
+				if (hr < 0)
+					return Array.Empty<ILToNativeMap>();
+			}
+			return infos;
+		}
+
 		public unsafe uint[] GetReturnValueLiveOffset(uint ilOffset) {
 			var c3 = obj as ICorDebugCode3;
 			if (c3 == null)

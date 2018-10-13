@@ -19,8 +19,10 @@
 
 using System;
 using System.Diagnostics;
+using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Contracts.Text;
+using dnSpy.Properties;
 using Iced.Intel;
 
 namespace dnSpy.Disassembly.Viewer {
@@ -115,8 +117,19 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 		}
 
-		public static void Write(DisassemblyContentOutput output, string header, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks) {
+		public static void Write(DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks) {
+			bool printedSomething = false;
+			if (optimization == NativeCodeOptimization.Unoptimized) {
+				printedSomething = true;
+				const string LINE = "********************************************";
+				WriteComment(output, commentPrefix, LINE);
+				WriteComment(output, commentPrefix, dnSpy_Resources.Disassembly_MethodIsNotOptimized);
+				WriteComment(output, commentPrefix, LINE);
+				output.Write(Environment.NewLine, BoxedTextColor.Text);
+			}
 			if (header != null) {
+				if (printedSomething)
+					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				WriteComment(output, commentPrefix, header);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}

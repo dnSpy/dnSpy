@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public override string ClrFilename { get; }
 		public override string RuntimeDirectory { get; }
 		public DbgDotNetDispatcher Dispatcher { get; }
-		public DbgDotNetRuntimeFeatures Features => DbgDotNetRuntimeFeatures.ObjectIds;
+		public DbgDotNetRuntimeFeatures Features => DbgDotNetRuntimeFeatures.ObjectIds | DbgDotNetRuntimeFeatures.NativeMethodBodies;
 
 		ICorDebugValueConverter ICorDebugRuntime.ValueConverter => corDebugValueConverter;
 
@@ -1303,21 +1303,29 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		public bool TryGetNativeCode(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode) {
+			if (!ILDbgEngineStackFrame.TryGetEngineStackFrame(frame, out var ilFrame)) {
+				nativeCode = default;
+				return false;
+			}
 			if (Dispatcher.CheckAccess())
-				return TryGetNativeCodeCore(frame, out nativeCode);
-			return TryGetNativeCode2(frame, out nativeCode);
+				return TryGetNativeCodeCore(ilFrame, out nativeCode);
+			return TryGetNativeCode2(ilFrame, out nativeCode);
 
-			bool TryGetNativeCode2(DbgStackFrame frame2, out DbgDotNetNativeCode nativeCode2) {
+			bool TryGetNativeCode2(ILDbgEngineStackFrame ilFrame2, out DbgDotNetNativeCode nativeCode2) {
 				DbgDotNetNativeCode nativeCodeTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(frame2, out nativeCodeTmp));
+				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(ilFrame2, out nativeCodeTmp));
 				nativeCode2 = nativeCodeTmp;
 				return res;
 			}
 		}
-		bool TryGetNativeCodeCore(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode) {
+		bool TryGetNativeCodeCore(ILDbgEngineStackFrame ilFrame, out DbgDotNetNativeCode nativeCode) {
 			Dispatcher.VerifyAccess();
-			nativeCode = default;
-			return false;
+			if (!engine.IsPaused) {
+				nativeCode = default;
+				return false;
+			}
+			var code = ilFrame.CorFrame.Code;
+			return TryGetNativeCodeCore(code, out nativeCode);
 		}
 
 		public bool TryGetNativeCode(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
@@ -1334,8 +1342,109 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 		bool TryGetNativeCodeCore(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
 			Dispatcher.VerifyAccess();
+			if (!engine.IsPaused) {
+				nativeCode = default;
+				return false;
+			}
+
+			//TODO:
 			nativeCode = default;
 			return false;
+		}
+
+		bool TryGetNativeCodeCore(CorCode code, out DbgDotNetNativeCode nativeCode) {
+			nativeCode = default;
+			if (code == null)
+				return false;
+
+			var process = code.Function?.Module?.Process;
+			if (process == null)
+				return false;
+
+			// The returned chunks are sorted
+			var chunks = code.GetCodeChunks();
+			if (chunks.Length == 0)
+				return false;
+
+			int totalLen = 0;
+			foreach (var chunk in chunks)
+				totalLen += (int)chunk.Length;
+			var allCodeBytes = new byte[totalLen];
+			int currentPos = 0;
+			foreach (var chunk in chunks) {
+				int hr = process.ReadMemory(chunk.StartAddr, allCodeBytes, currentPos, (int)chunk.Length, out int sizeRead);
+				if (hr < 0 || sizeRead != (int)chunk.Length)
+					return false;
+				currentPos += (int)chunk.Length;
+			}
+			Debug.Assert(currentPos == totalLen);
+
+			var map = code.GetILToNativeMapping();
+			Array.Sort(map, (a, b) => a.nativeStartOffset.CompareTo(b.nativeStartOffset));
+			var blocks = new DbgDotNetNativeCodeBlock[map.Length];
+			ulong baseAddress = chunks[0].StartAddr;
+			uint chunkByteOffset = 0;
+			for (int i = 0, chunkIndex = 0; i < blocks.Length; i++) {
+				var info = map[i];
+				bool b = info.nativeEndOffset <= (uint)allCodeBytes.Length && info.nativeStartOffset <= info.nativeEndOffset && chunkIndex < chunks.Length;
+				Debug.Assert(b);
+				if (!b)
+					return false;
+				var codeBytes = new byte[(int)(info.nativeEndOffset - info.nativeStartOffset)];
+				Array.Copy(allCodeBytes, (int)info.nativeStartOffset, codeBytes, 0, codeBytes.Length);
+				ulong address = baseAddress + info.nativeStartOffset;
+				if ((CorDebugIlToNativeMappingTypes)info.ilOffset == CorDebugIlToNativeMappingTypes.NO_MAPPING)
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Unknown, address, codeBytes, -1);
+				else if ((CorDebugIlToNativeMappingTypes)info.ilOffset == CorDebugIlToNativeMappingTypes.PROLOG)
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Prolog, address, codeBytes, -1);
+				else if ((CorDebugIlToNativeMappingTypes)info.ilOffset == CorDebugIlToNativeMappingTypes.EPILOG)
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Epilog, address, codeBytes, -1);
+				else
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Code, address, codeBytes, (int)info.ilOffset);
+
+				chunkByteOffset += (uint)codeBytes.Length;
+				for (;;) {
+					if (chunkIndex >= chunks.Length) {
+						if (i + 1 == blocks.Length)
+							break;
+						Debug.Assert(false);
+						return false;
+					}
+					if (chunkByteOffset < chunks[chunkIndex].Length)
+						break;
+					chunkByteOffset -= chunks[chunkIndex].Length;
+					baseAddress = chunks[chunkIndex].StartAddr;
+					chunkIndex++;
+				}
+			}
+
+			NativeCodeOptimization optimization;
+			switch (code.CompilerFlags) {
+			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT:
+				optimization = NativeCodeOptimization.Optimized;
+				break;
+			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION:
+			case CorDebugJITCompilerFlags.CORDEBUG_JIT_ENABLE_ENC:
+				optimization = NativeCodeOptimization.Unoptimized;
+				break;
+			default:
+				Debug.Fail($"Unknown optimization: {code.CompilerFlags}");
+				optimization = NativeCodeOptimization.Unknown;
+				break;
+			}
+
+			var machine = Runtime.Process.Machine;
+			NativeCodeKind codeKind;
+			if (machine == DbgMachine.X64)
+				codeKind = NativeCodeKind.X86_64;
+			else if (machine == DbgMachine.X86)
+				codeKind = NativeCodeKind.X86_32;
+			else {
+				Debug.Fail($"Unknown machine: {machine}");
+				return false;
+			}
+			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks);
+			return true;
 		}
 
 		public bool TryGetSymbol(ulong address, out SymbolResolverResult result) {
@@ -1352,8 +1461,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 		bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
 			Dispatcher.VerifyAccess();
-			result = default;
-			return false;
+			if (!engine.IsPaused) {
+				result = default;
+				return false;
+			}
+			return engine.clrDac.TryGetSymbolCore(address, out result);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }

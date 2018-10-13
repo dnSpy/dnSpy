@@ -17,38 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
-	/// Contains the code that will be disassembled
+	/// Code optimization
 	/// </summary>
-	public readonly struct NativeCode {
+	public enum NativeCodeOptimization {
 		/// <summary>
-		/// Gets the code kind
+		/// It's not known whether the code is optimized or not
 		/// </summary>
-		public NativeCodeKind Kind { get; }
+		Unknown,
 
 		/// <summary>
-		/// Gets the optimization kind
+		/// The code wasn't optimized, eg. it's a debug build
 		/// </summary>
-		public NativeCodeOptimization Optimization { get; }
+		Unoptimized,
 
 		/// <summary>
-		/// All blocks to disassemble
+		/// Optimized code
 		/// </summary>
-		public NativeCodeBlock[] Blocks { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="kind">Code kind</param>
-		/// <param name="optimization">Optimization kind</param>
-		/// <param name="blocks">All blocks to disassemble</param>
-		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks) {
-			Kind = kind;
-			Optimization = optimization;
-			Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
-		}
+		Optimized,
 	}
 }

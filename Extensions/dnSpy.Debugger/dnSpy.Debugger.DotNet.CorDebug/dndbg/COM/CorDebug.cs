@@ -169,6 +169,16 @@ namespace dndbg.COM.CorDebug {
 		public uint Length;
 		uint pad;
 	};
+	struct ILToNativeMap {
+		public uint ilOffset;
+		public uint nativeStartOffset;  
+		public uint nativeEndOffset;  
+	}
+	enum CorDebugIlToNativeMappingTypes {
+		NO_MAPPING = -1,
+		PROLOG     = -2,
+		EPILOG     = -3
+	}
 	[StructLayout(LayoutKind.Sequential)]
 	struct CorDebugExceptionObjectStackFrame {
 		[MarshalAs(UnmanagedType.Interface)]
@@ -801,7 +811,8 @@ namespace dndbg.COM.CorDebug {
 		void GetCode([In] uint startOffset, [In] uint endOffset, [In] uint cBufferAlloc, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode buffer, out uint pcBufferSize);
 		[PreserveSig]
 		int GetVersionNumber(out uint nVersion);
-		void GetILToNativeMapping([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode map);
+		[PreserveSig]
+		int GetILToNativeMapping([In] uint cMap, out uint pcMap, [Out] IntPtr map);
 		void GetEnCRemapSequencePoints([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode offsets);
 	}
 	[Guid("5F696509-452F-4436-A3FE-4D11FE7E2347"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

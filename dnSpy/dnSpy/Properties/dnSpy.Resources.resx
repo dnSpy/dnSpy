@@ -2046,4 +2046,7 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
     <value>Show IL code</value>
   </data>
+  <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
+    <value>The method is not optimized</value>
+  </data>
 </root>

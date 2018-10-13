@@ -1216,6 +1216,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The method is not optimized.
+        /// </summary>
+        public static string Disassembly_MethodIsNotOptimized {
+            get {
+                return ResourceManager.GetString("Disassembly_MethodIsNotOptimized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disassembly.
         /// </summary>
         public static string Disassembly_TabTitle {

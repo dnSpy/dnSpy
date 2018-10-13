@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.Disassembly;
 using Microsoft.Diagnostics.Runtime;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
@@ -100,6 +101,25 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			if (thread.IsSTA) flags |= ClrDacThreadFlags.IsSTA;
 			if (thread.IsMTA) flags |= ClrDacThreadFlags.IsMTA;
 			return new ClrDacThreadInfo(thread.ManagedThreadId, flags);
+		}
+
+		public override bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
+			string name;
+
+			name = clrRuntime.GetJitHelperFunctionName(address);
+			if (name != null) {
+				result = new SymbolResolverResult(SymbolKind.Function, name, address);
+				return true;
+			}
+
+			name = clrRuntime.GetMethodTableName(address);
+			if (name != null) {
+				result = new SymbolResolverResult(SymbolKind.Data, "methodtable(" + name + ")", address);
+				return true;
+			}
+
+			result = default;
+			return false;
 		}
 	}
 }

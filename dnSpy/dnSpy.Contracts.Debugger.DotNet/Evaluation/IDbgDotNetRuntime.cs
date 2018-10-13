@@ -385,6 +385,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Async step with object ids isn't supported
 		/// </summary>
 		NoAsyncStepObjectId		= 0x00000008,
+
+		/// <summary>
+		/// It's possible to get the native code of jitted managed methods
+		/// </summary>
+		NativeMethodBodies		= 0x00000010,
 	}
 
 	/// <summary>

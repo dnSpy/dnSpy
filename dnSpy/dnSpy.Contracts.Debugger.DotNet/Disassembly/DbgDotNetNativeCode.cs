@@ -31,6 +31,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Disassembly {
 		public NativeCodeKind Kind { get; }
 
 		/// <summary>
+		/// Gets the optimization kind
+		/// </summary>
+		public NativeCodeOptimization Optimization { get; }
+
+		/// <summary>
 		/// All blocks to disassemble
 		/// </summary>
 		public DbgDotNetNativeCodeBlock[] Blocks { get; }
@@ -39,9 +44,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Disassembly {
 		/// Constructor
 		/// </summary>
 		/// <param name="kind">Code kind</param>
+		/// <param name="optimization">Optimization kind</param>
 		/// <param name="blocks">All blocks to disassemble</param>
-		public DbgDotNetNativeCode(NativeCodeKind kind, DbgDotNetNativeCodeBlock[] blocks) {
+		public DbgDotNetNativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, DbgDotNetNativeCodeBlock[] blocks) {
 			Kind = kind;
+			Optimization = optimization;
 			Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
 		}
 	}

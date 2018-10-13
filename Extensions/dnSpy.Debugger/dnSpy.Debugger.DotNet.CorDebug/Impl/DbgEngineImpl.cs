@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		readonly DebuggerThread debuggerThread;
 		readonly object lockObj;
 		readonly ClrDacProvider clrDacProvider;
-		ClrDac clrDac;
+		internal ClrDac clrDac;
 		bool clrDacInitd;
 		readonly DbgManager dbgManager;
 		readonly DbgModuleMemoryRefreshedNotifier2 dbgModuleMemoryRefreshedNotifier;
@@ -125,6 +125,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal T InvokeCorDebugThread<T>(Func<T> callback) => debuggerThread.Invoke(callback);
 		internal void CorDebugThread(Action callback) => debuggerThread.BeginInvoke(callback);
 		internal string DebuggeeVersion => dnDebugger.DebuggeeVersion;
+		internal bool IsPaused => dnDebugger.ProcessState == DebuggerProcessState.Paused;
 
 		internal DbgEngineMessageFlags GetMessageFlags(bool pause = false) {
 			VerifyCorDebugThread();

@@ -33,6 +33,7 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly IGasDisassemblySettings gasSettings;
 		readonly DisassemblyContentFormatterOptions formatterOptions;
 		readonly string header;
+		readonly NativeCodeOptimization optimization;
 		readonly X86Block[] blocks;
 		readonly SymbolResolverImpl symbolResolver;
 		bool hasRegisteredEvents;
@@ -66,7 +67,7 @@ namespace dnSpy.Disassembly.Viewer {
 					if (!fakeSymbol || owner.AddLabels) {
 						Debug.Assert(symResult.Address == address, "Symbol address != orig address: NYI");
 						if (symResult.Address == address) {
-							symbol = new SymbolResult(symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind));
+							symbol = new SymbolResult(symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind), SymbolFlags.Address);
 							return true;
 						}
 					}
@@ -75,7 +76,7 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 		}
 
-		public X86DisassemblyContentProvider(CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, X86Block[] blocks) {
+		public X86DisassemblyContentProvider(CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, NativeCodeOptimization optimization, X86Block[] blocks) {
 			this.cachedSymbolResolver = cachedSymbolResolver ?? throw new ArgumentNullException(nameof(cachedSymbolResolver));
 			this.disasmSettings = disasmSettings ?? throw new ArgumentNullException(nameof(disasmSettings));
 			this.masmSettings = masmSettings ?? throw new ArgumentNullException(nameof(masmSettings));
@@ -83,12 +84,13 @@ namespace dnSpy.Disassembly.Viewer {
 			this.gasSettings = gasSettings ?? throw new ArgumentNullException(nameof(gasSettings));
 			this.formatterOptions = formatterOptions;
 			this.header = header;
+			this.optimization = optimization;
 			this.blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
 			symbolResolver = new SymbolResolverImpl(this);
 		}
 
 		public override DisassemblyContentProvider Clone() =>
-			new X86DisassemblyContentProvider(cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, blocks);
+			new X86DisassemblyContentProvider(cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, optimization, blocks);
 
 		(Formatter formatter, string commentPrefix, DisassemblyContentKind contentKind, bool upperCaseHex) GetDisassemblerInfo(X86Disassembler disasm) {
 			switch (disasm) {
@@ -133,7 +135,7 @@ namespace dnSpy.Disassembly.Viewer {
 
 			var output = new DisassemblyContentOutput();
 			var disasmInfo = GetDisassemblerInfo(disasmSettings.X86Disassembler);
-			X86DisassemblyContentGenerator.Write(output, header, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.upperCaseHex), blocks);
+			X86DisassemblyContentGenerator.Write(output, header, optimization, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.upperCaseHex), blocks);
 			return output.Create(disasmInfo.contentKind);
 		}
 
