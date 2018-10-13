@@ -98,6 +98,8 @@
     <Compile Include="DbgThread.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="DebugProgramOptions.cs" />
+    <Compile Include="Disassembly\DbgNativeCodeProvider.cs" />
+    <Compile Include="Disassembly\DbgRuntimeNativeCodeProvider.cs" />
     <Compile Include="Engine\CallStack\DbgEngineStackFrame.cs" />
     <Compile Include="Engine\CallStack\DbgEngineStackWalker.cs" />
     <Compile Include="Engine\DbgEngine.cs" />
