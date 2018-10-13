@@ -84,7 +84,6 @@ namespace dnSpy.Disassembly {
 			var instrInfo = new List<(Instruction instruction, int block, byte[] code)>();
 			for (int blockIndex = 0; blockIndex < blocks.Length; blockIndex++) {
 				var block = blocks[blockIndex];
-				Add(targets, block.Address, TargetKind.BlockStart);
 
 				var reader = new ByteArrayCodeReader(block.Code);
 				var decoder = Decoder.Create(bitness, reader);
@@ -145,6 +144,14 @@ namespace dnSpy.Disassembly {
 						}
 					}
 				}
+			}
+			foreach (var block in blocks) {
+				if (targets.TryGetValue(block.Address, out var origKind)) {
+					if (origKind < TargetKind.BlockStart && origKind != TargetKind.Unknown)
+						targets[block.Address] = TargetKind.BlockStart;
+				}
+				else
+					targets.Add(block.Address, TargetKind.Unknown);
 			}
 
 			var newBlocks = new List<BlockInfo>();
