@@ -313,7 +313,7 @@
 		<color name="asmlabeladdress" fg="#5B2DA8" />
 		<color name="asmfunctionaddress" fg="#5B2DA8" />
 		<color name="asmlabel" fg="#663300" />
-		<color name="asmfunction" fg="#880000" />
+		<color name="asmfunction" fg="#339966" />
 		<color name="asmdata" fg="#CC3399" />
 		<color name="asmaddress" fg="#5B2DA8" />
 		<color name="asmhexbytes" fg="#000000" />
