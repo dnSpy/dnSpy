@@ -211,7 +211,7 @@
     <value>Показати XML документацію в декомпільованому коді</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Сортувати коритсувацькі атрибути</value>
+    <value>Сортувати користувацькі атрибути</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Сортувати методи, поля, властивості, події і типи</value>

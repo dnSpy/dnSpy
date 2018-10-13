@@ -2528,6 +2528,6 @@
     <value>如果在 GAC 中安装了此程序集，则运行 NGEN.exe</value>
   </data>
   <data name="CompilerDlgTabTitle" xml:space="preserve">
-    <value>编译器：</value>
+    <value>编译器</value>
   </data>
 </root>

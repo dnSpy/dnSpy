@@ -124,7 +124,7 @@
     <value>Збірка</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Зупинитись на</value>
+    <value>_Зупинитись на</value>
   </data>
   <data name="DbgAsm_Host" xml:space="preserve">
     <value>_Host</value>
@@ -263,7 +263,7 @@
     <value>Не можу встановити наступну інструкцію.</value>
   </data>
   <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Не можна перервати процес. Помилка: 0x{0:X8}</value>
+    <value>Не можу перервати процес. Помилка: 0x{0:X8}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>Внутрішня помилка дебагера</value>

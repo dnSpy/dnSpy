@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddBreakpointCommand" xml:space="preserve">
-    <value>Додати точку зупинки</value>
+    <value>_Додати точку зупинки</value>
   </data>
   <data name="AddExceptionCommand" xml:space="preserve">
     <value>Додати Виключення</value>
@@ -154,7 +154,7 @@
     <value>Точки зупинок</value>
   </data>
   <data name="Button_Attach" xml:space="preserve">
-    <value>Приєднатись</value>
+    <value>_Приєднатись</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
     <value>Відміна</value>
@@ -1495,5 +1495,8 @@
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
     <value>Копіювати в_иключення</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
   </data>
 </root>

@@ -1495,4 +1495,7 @@ Voulez-vous vraiment étendre cet élément ?</value>
   <data name="CopyExpressionCommand" xml:space="preserve">
     <value>Copier l'_expression</value>
   </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+  </data>
 </root>

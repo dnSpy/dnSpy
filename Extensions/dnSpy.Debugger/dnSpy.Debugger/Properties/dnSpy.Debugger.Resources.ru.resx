@@ -1497,4 +1497,7 @@
   <data name="CopyExpressionCommand" xml:space="preserve">
     <value>Копировать и_сключение</value>
   </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+  </data>
 </root>

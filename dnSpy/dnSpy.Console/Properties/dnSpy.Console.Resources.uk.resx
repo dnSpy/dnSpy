@@ -205,7 +205,7 @@
     <value>Мовні налаштування:</value>
   </data>
   <data name="LanguageOptionsDesc" xml:space="preserve">
-    <value>Усі опції можуть бути виключені, використовуючи префікси 'no-' чи 'dont-', наприклад --dont-sort-members</value>
+    <value>Усі булеві опції можуть бути виключені, використовуючи префікси 'no-' чи 'dont-', наприклад --dont-sort-members</value>
   </data>
   <data name="MissingOptionArgument" xml:space="preserve">
     <value>Пропущений аргумент опції</value>
