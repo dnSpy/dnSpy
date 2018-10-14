@@ -1429,6 +1429,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				}
 			}
 
+			X86NativeCodeInfo codeInfo = null;//TODO:
+
 			NativeCodeOptimization optimization;
 			switch (code.CompilerFlags) {
 			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT:
@@ -1454,7 +1456,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				Debug.Fail($"Unknown machine: {machine}");
 				return false;
 			}
-			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks);
+			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo);
 			return true;
 		}
 

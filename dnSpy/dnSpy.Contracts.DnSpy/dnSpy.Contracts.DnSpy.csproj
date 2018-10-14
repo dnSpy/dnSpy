@@ -168,6 +168,9 @@
     <Compile Include="Disassembly\Viewer\DisassemblyText.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyViewerService.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyViewerServiceSettings.cs" />
+    <Compile Include="Disassembly\X86NativeCodeInfo.cs" />
+    <Compile Include="Disassembly\X86Register.cs" />
+    <Compile Include="Disassembly\X86Variable.cs" />
     <Compile Include="Documents\AnnotationsImpl.cs" />
     <Compile Include="Documents\DocumentConstants.cs" />
     <Compile Include="Documents\DotNetReferences.cs" />
