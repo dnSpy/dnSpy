@@ -181,9 +181,12 @@ namespace dnSpy.Disassembly.Viewer {
 						output.Write(formatter.Options.TabSize > 0 ? "\t\t" : "        ", BoxedTextColor.Text);
 
 					if ((formatterOptions & InternalFormatterOptions.InstructionBytes) != 0) {
-						foreach (var b in info.Bytes)
+						var codeBytes = info.Code.Array;
+						for (int j = 0; j < info.Code.Count; j++) {
+							byte b = codeBytes[j + info.Code.Offset];
 							output.Write(b.ToString(upperCaseHex ? "X2" : "x2"), BoxedTextColor.AsmHexBytes);
-						int missingBytes = HEXBYTES_COLUMN_BYTE_LENGTH - info.Bytes.Length;
+						}
+						int missingBytes = HEXBYTES_COLUMN_BYTE_LENGTH - info.Code.Count;
 						for (int j = 0; j < missingBytes; j++)
 							output.Write("  ", BoxedTextColor.Text);
 						output.Write(" ", BoxedTextColor.Text);

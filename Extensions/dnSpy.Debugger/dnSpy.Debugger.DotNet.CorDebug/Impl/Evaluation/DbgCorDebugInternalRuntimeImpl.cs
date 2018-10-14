@@ -1400,19 +1400,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				Debug.Assert(b);
 				if (!b)
 					return false;
-				var codeBytes = new byte[(int)(info.nativeEndOffset - info.nativeStartOffset)];
-				Array.Copy(allCodeBytes, (int)info.nativeStartOffset, codeBytes, 0, codeBytes.Length);
+				int codeLen = (int)(info.nativeEndOffset - info.nativeStartOffset);
+				var rawCode = new ArraySegment<byte>(allCodeBytes, (int)info.nativeStartOffset, codeLen);
 				ulong address = baseAddress + info.nativeStartOffset;
 				if ((CorDebugIlToNativeMappingTypes)info.ilOffset == CorDebugIlToNativeMappingTypes.NO_MAPPING)
-					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Unknown, address, codeBytes, -1);
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Unknown, address, rawCode, -1);
 				else if ((CorDebugIlToNativeMappingTypes)info.ilOffset == CorDebugIlToNativeMappingTypes.PROLOG)
-					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Prolog, address, codeBytes, -1);
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Prolog, address, rawCode, -1);
 				else if ((CorDebugIlToNativeMappingTypes)info.ilOffset == CorDebugIlToNativeMappingTypes.EPILOG)
-					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Epilog, address, codeBytes, -1);
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Epilog, address, rawCode, -1);
 				else
-					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Code, address, codeBytes, (int)info.ilOffset);
+					blocks[i] = new DbgDotNetNativeCodeBlock(NativeCodeBlockKind.Code, address, rawCode, (int)info.ilOffset);
 
-				chunkByteOffset += (uint)codeBytes.Length;
+				chunkByteOffset += (uint)codeLen;
 				for (;;) {
 					if (chunkIndex >= chunks.Length) {
 						if (i + 1 == blocks.Length)

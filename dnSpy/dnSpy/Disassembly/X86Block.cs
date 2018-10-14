@@ -41,10 +41,10 @@ namespace dnSpy.Disassembly {
 	}
 
 	readonly struct X86InstructionInfo {
-		public byte[] Bytes { get; }
+		public ArraySegment<byte> Code { get; }
 		public Instruction Instruction { get; }
-		public X86InstructionInfo(byte[] bytes, in Instruction instruction) {
-			Bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
+		public X86InstructionInfo(ArraySegment<byte> code, in Instruction instruction) {
+			Code = code;
 			Instruction = instruction;
 		}
 	}

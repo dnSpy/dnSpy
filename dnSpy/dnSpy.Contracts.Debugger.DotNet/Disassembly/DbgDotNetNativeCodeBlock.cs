@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Disassembly {
 		/// <summary>
 		/// Gets the raw code
 		/// </summary>
-		public byte[] Code { get; }
+		public ArraySegment<byte> Code { get; }
 
 		/// <summary>
 		/// IL offset or -1 if unknown
@@ -52,10 +52,10 @@ namespace dnSpy.Contracts.Debugger.DotNet.Disassembly {
 		/// <param name="address">Address of block</param>
 		/// <param name="code">Raw code</param>
 		/// <param name="ilOffset">IL offset or -1 if unknown</param>
-		public DbgDotNetNativeCodeBlock(NativeCodeBlockKind kind, ulong address, byte[] code, int ilOffset) {
+		public DbgDotNetNativeCodeBlock(NativeCodeBlockKind kind, ulong address, ArraySegment<byte> code, int ilOffset) {
 			Kind = kind;
 			Address = address;
-			Code = code ?? throw new ArgumentNullException(nameof(code));
+			Code = code;
 			ILOffset = ilOffset;
 		}
 	}

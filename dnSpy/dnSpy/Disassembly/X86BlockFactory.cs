@@ -69,11 +69,9 @@ namespace dnSpy.Disassembly {
 				targets[address] = kind;
 		}
 
-		static byte[] GetBytes(byte[] code, ulong address, ref Instruction instr) {
+		static ArraySegment<byte> GetBytes(ArraySegment<byte> code, ulong address, ref Instruction instr) {
 			int index = (int)(instr.IP64 - address);
-			var instrBytes = new byte[instr.ByteLength];
-			Array.Copy(code, index, instrBytes, 0, instrBytes.Length);
-			return instrBytes;
+			return new ArraySegment<byte>(code.Array, code.Offset + index, instr.ByteLength);
 		}
 
 		static string GetLabel(int index) => LABEL_PREFIX + index.ToString();
@@ -81,11 +79,11 @@ namespace dnSpy.Disassembly {
 
 		public static X86Block[] Create(int bitness, NativeCodeBlock[] blocks) {
 			var targets = new Dictionary<ulong, TargetKind>();
-			var instrInfo = new List<(Instruction instruction, int block, byte[] code)>();
+			var instrInfo = new List<(Instruction instruction, int block, ArraySegment<byte> code)>();
 			for (int blockIndex = 0; blockIndex < blocks.Length; blockIndex++) {
 				var block = blocks[blockIndex];
 
-				var reader = new ByteArrayCodeReader(block.Code);
+				var reader = new ByteArrayCodeReader(block.Code.Array, block.Code.Offset, block.Code.Count);
 				var decoder = Decoder.Create(bitness, reader);
 				decoder.InstructionPointer = block.Address;
 				while (reader.CanReadByte) {
@@ -178,7 +176,7 @@ namespace dnSpy.Disassembly {
 				var x86Instructions = new X86InstructionInfo[instructions.Count];
 				for (int j = 0; j < instructions.Count; j++) {
 					var instr = instructions[j];
-					x86Instructions[j] = new X86InstructionInfo(instr.Bytes, instr.Instruction);
+					x86Instructions[j] = new X86InstructionInfo(instr.Code, instr.Instruction);
 				}
 
 				string label;

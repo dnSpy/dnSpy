@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <summary>
 		/// Gets the raw code
 		/// </summary>
-		public byte[] Code { get; }
+		public ArraySegment<byte> Code { get; }
 
 		/// <summary>
 		/// Block comment or null. It can contain multiple lines
@@ -51,10 +51,10 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <param name="address">Address of block</param>
 		/// <param name="code">Raw code</param>
 		/// <param name="comment">Block comment or null. It can contain multiple lines</param>
-		public NativeCodeBlock(NativeCodeBlockKind kind, ulong address, byte[] code, string comment) {
+		public NativeCodeBlock(NativeCodeBlockKind kind, ulong address, ArraySegment<byte> code, string comment) {
 			Kind = kind;
 			Address = address;
-			Code = code ?? throw new ArgumentNullException(nameof(code));
+			Code = code;
 			Comment = comment;
 		}
 	}
