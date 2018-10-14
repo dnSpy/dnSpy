@@ -121,10 +121,18 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 		}
 
-		public static void Write(DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks) {
-			bool printedSomething = false;
+		static string GetName(NativeVariableInfo[] variableInfo, in X86Variable varInfo) {
+			foreach (var info in variableInfo) {
+				if (info.IsLocal == varInfo.IsLocal && info.Index == varInfo.Index)
+					return info.Name;
+			}
+			return null;
+		}
+
+		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo) {
+			if (variableInfo == null)
+				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {
-				printedSomething = true;
 				const string LINE = "********************************************";
 				WriteComment(output, commentPrefix, LINE);
 				WriteComment(output, commentPrefix, dnSpy_Resources.Disassembly_MethodIsNotOptimized);
@@ -132,13 +140,74 @@ namespace dnSpy.Disassembly.Viewer {
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 			if (header != null) {
-				if (printedSomething)
-					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				WriteComment(output, commentPrefix, header);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
 			bool upperCaseHex = (formatterOptions & InternalFormatterOptions.UpperCaseHex) != 0;
+			var variables = codeInfo?.Variables ?? Array.Empty<X86Variable>();
+			if (variables.Length != 0) {
+				var sb = new System.Text.StringBuilder();
+				foreach (var varInfo in variables) {
+					bool printedName = false;
+					if (varInfo.Index >= 0) {
+						printedName = true;
+						sb.Append(varInfo.IsLocal ? "local" : "arg");
+						sb.Append(" #");
+						sb.Append(varInfo.Index);
+						sb.Append(' ');
+					}
+					var name = varInfo.Name ?? GetName(variableInfo, varInfo);
+					if (name != null) {
+						printedName = true;
+						if (varInfo.Index >= 0)
+							sb.Append('(');
+						sb.Append(name);
+						if (varInfo.Index >= 0)
+							sb.Append(')');
+						sb.Append(' ');
+					}
+					if (!printedName) {
+						sb.Append("???");
+						sb.Append(' ');
+					}
+					sb.Append(FormatAddress(bitness, varInfo.LiveAddress, upperCaseHex));
+					sb.Append('-');
+					sb.Append(FormatAddress(bitness, varInfo.LiveAddress + varInfo.LiveLength, upperCaseHex));
+					sb.Append(' ');
+					switch (varInfo.LocationKind) {
+					case X86VariableLocationKind.Register:
+						sb.Append(varInfo.Register.ToString());
+						break;
+
+					case X86VariableLocationKind.Memory:
+						sb.Append('[');
+						sb.Append(varInfo.Register.ToString());
+						int memOffs = varInfo.MemoryOffset;
+						if (memOffs < 0) {
+							sb.Append('-');
+							memOffs = -memOffs;
+						}
+						else if (memOffs > 0)
+							sb.Append('+');
+						if (memOffs != 0) {
+							sb.Append(formatter.Options.HexPrefix ?? string.Empty);
+							sb.Append(memOffs.ToString(upperCaseHex ? "X2" : "x2"));
+							sb.Append(formatter.Options.HexSuffix ?? string.Empty);
+						}
+						sb.Append(']');
+						break;
+
+					default:
+						Debug.Fail($"Unknown location kind: {varInfo.LocationKind}");
+						break;
+					}
+					WriteComment(output, commentPrefix, sb.ToString());
+					sb.Clear();
+				}
+				output.Write(Environment.NewLine, BoxedTextColor.Text);
+			}
+
 			var formatterOutput = new FormatterOutputImpl(output);
 			for (int i = 0; i < blocks.Length; i++) {
 				ref readonly var block = ref blocks[i];
@@ -155,25 +224,7 @@ namespace dnSpy.Disassembly.Viewer {
 				foreach (var info in block.Instructions) {
 					var instr = info.Instruction;
 					if ((formatterOptions & InternalFormatterOptions.InstructionAddresses) != 0) {
-						string address;
-						switch (instr.CodeSize) {
-						case CodeSize.Code16:
-							address = instr.IP16.ToString(upperCaseHex ? "X4" : "x4");
-							break;
-
-						case CodeSize.Code32:
-							address = instr.IP32.ToString(upperCaseHex ? "X8" : "x8");
-							break;
-
-						case CodeSize.Code64:
-						case CodeSize.Unknown:
-							address = instr.IP64.ToString(upperCaseHex ? "X16" : "x16");
-							break;
-
-						default:
-							Debug.Fail($"Unknown code size: {instr.CodeSize}");
-							goto case CodeSize.Unknown;
-						}
+						var address = FormatAddress(bitness, instr.IP64, upperCaseHex);
 						output.Write(address, BoxedTextColor.AsmAddress);
 						output.Write(" ", BoxedTextColor.Text);
 					}
@@ -195,6 +246,23 @@ namespace dnSpy.Disassembly.Viewer {
 					formatter.Format(ref instr, formatterOutput);
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}
+			}
+		}
+
+		static string FormatAddress(int bitness, ulong address, bool upperCaseHex) {
+			switch (bitness) {
+			case 16:
+				return address.ToString(upperCaseHex ? "X4" : "x4");
+
+			case 32:
+				return address.ToString(upperCaseHex ? "X8" : "x8");
+
+			case 64:
+				return address.ToString(upperCaseHex ? "X16" : "x16");
+
+			default:
+				Debug.Fail($"Unknown bitness: {bitness}");
+				goto case 64;
 			}
 		}
 	}

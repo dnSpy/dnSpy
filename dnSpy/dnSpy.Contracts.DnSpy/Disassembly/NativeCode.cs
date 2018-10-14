@@ -45,17 +45,24 @@ namespace dnSpy.Contracts.Disassembly {
 		public NativeCodeInfo CodeInfo { get; }
 
 		/// <summary>
+		/// Variable info or null
+		/// </summary>
+		public NativeVariableInfo[] VariableInfo { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="kind">Code kind</param>
 		/// <param name="optimization">Optimization kind</param>
 		/// <param name="blocks">All blocks to disassemble</param>
 		/// <param name="codeInfo">Extra code info or null</param>
-		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo) {
+		/// <param name="variableInfo">Variable info or null</param>
+		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo) {
 			Kind = kind;
 			Optimization = optimization;
 			Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
 			CodeInfo = codeInfo;
+			VariableInfo = variableInfo;
 		}
 	}
 

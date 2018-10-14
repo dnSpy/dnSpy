@@ -36,13 +36,13 @@ namespace dnSpy.Disassembly.Viewer {
 
 			switch (code.Kind) {
 			case NativeCodeKind.X86_16:
-				return new X86DisassemblyContentProviderFactory(x86Deps, 16, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks).Create();
+				return new X86DisassemblyContentProviderFactory(x86Deps, 16, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo).Create();
 
 			case NativeCodeKind.X86_32:
-				return new X86DisassemblyContentProviderFactory(x86Deps, 32, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks).Create();
+				return new X86DisassemblyContentProviderFactory(x86Deps, 32, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo).Create();
 
 			case NativeCodeKind.X86_64:
-				return new X86DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks).Create();
+				return new X86DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo).Create();
 
 			default:
 				throw new ArgumentException();

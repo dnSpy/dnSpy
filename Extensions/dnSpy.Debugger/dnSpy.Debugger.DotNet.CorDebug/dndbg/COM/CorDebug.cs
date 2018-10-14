@@ -829,6 +829,45 @@ namespace dndbg.COM.CorDebug {
 		[PreserveSig]
 		int GetReturnValueLiveOffset([In] uint ILoffset, [In] uint bufferSize, out uint pFetched, [MarshalAs(UnmanagedType.LPArray)] [Out] uint[] pOffsets);
 	}
+	[Guid("18221FA4-20CB-40FA-B19D-9F91C4FA8C14"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugCode4 {
+		[PreserveSig]
+		int EnumerateVariableHomes([MarshalAs(UnmanagedType.Interface)] out ICorDebugVariableHomeEnum ppEnum);
+	}
+	[Guid("E76B7A57-4F7A-4309-85A7-5D918C3DEAF7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugVariableHomeEnum : ICorDebugEnum {
+		void Skip([In] uint celt);
+		void Reset();
+		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
+		void GetCount(out uint pcelt);
+		[PreserveSig]
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.LPArray)] [Out] ICorDebugVariableHome[] homes, out uint pceltFetched);
+	};
+	enum VariableLocationType {
+		VLT_REGISTER,
+		VLT_REGISTER_RELATIVE,
+		VLT_INVALID
+	}
+	[Guid("50847B8D-F43F-41B0-924C-6383A5F2278B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugVariableHome {
+		[PreserveSig]
+		int GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
+		[PreserveSig]
+		int GetSlotIndex(out int pSlotIndex);
+		[PreserveSig]
+		int GetArgumentIndex(out int pArgumentIndex);
+		[PreserveSig]
+		int GetLiveRange(out uint pStartOffset, out uint pEndOffset);
+		[PreserveSig]
+		int GetLocationType(out VariableLocationType pLocationType);
+		[PreserveSig]
+		int GetRegister(out CorDebugRegister pRegister);
+		[PreserveSig]
+		int GetOffset(out int pOffset);
+	}
 	[Guid("55E96461-9645-45E4-A2FF-0367877ABCDE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface ICorDebugCodeEnum : ICorDebugEnum {

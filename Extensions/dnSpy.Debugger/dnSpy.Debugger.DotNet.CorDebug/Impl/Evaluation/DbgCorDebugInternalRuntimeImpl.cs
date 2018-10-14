@@ -1379,6 +1379,41 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 			Debug.Assert(currentPos == totalLen);
 
+			var varHomes = code.GetVariables();
+			Array.Sort(varHomes, (a, b) => {
+				int c = a.StartOffset.CompareTo(b.StartOffset);
+				if (c != 0)
+					return c;
+				return a.Length.CompareTo(b.Length);
+			});
+			for (int i = 0, chunkIndex = 0, chunkOffset = 0; i < varHomes.Length; i++) {
+				var startOffset = varHomes[i].StartOffset;
+				while (chunkIndex < chunks.Length) {
+					if (startOffset < (uint)chunkOffset + chunks[chunkIndex].Length)
+						break;
+					chunkOffset += (int)chunks[chunkIndex].Length;
+					chunkIndex++;
+				}
+				Debug.Assert(chunkIndex < chunks.Length);
+				if (chunkIndex >= chunks.Length) {
+					varHomes = Array.Empty<VariableHome>();
+					break;
+				}
+				varHomes[i].StartOffset += chunks[chunkIndex].StartAddr - (uint)chunkOffset;
+			}
+			Array.Sort(varHomes, (a, b) => {
+				int c = a.SlotIndex.CompareTo(b.SlotIndex);
+				if (c != 0)
+					return c;
+				c = a.ArgumentIndex.CompareTo(b.ArgumentIndex);
+				if (c != 0)
+					return c;
+				c = a.StartOffset.CompareTo(b.StartOffset);
+				if (c != 0)
+					return c;
+				return a.Length.CompareTo(b.Length);
+			});
+
 			var map = code.GetILToNativeMapping();
 			Array.Sort(map, (a, b) => {
 				int c = a.nativeStartOffset.CompareTo(b.nativeStartOffset);
@@ -1429,35 +1464,267 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				}
 			}
 
-			X86NativeCodeInfo codeInfo = null;//TODO:
+			var x86Variables = CreateVariables(varHomes) ?? Array.Empty<X86Variable>();
+			X86NativeCodeInfo codeInfo = null;
+			if (x86Variables.Length != 0)
+				codeInfo = new X86NativeCodeInfo(x86Variables);
 
 			NativeCodeOptimization optimization;
 			switch (code.CompilerFlags) {
 			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT:
 				optimization = NativeCodeOptimization.Optimized;
 				break;
+
 			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION:
 			case CorDebugJITCompilerFlags.CORDEBUG_JIT_ENABLE_ENC:
 				optimization = NativeCodeOptimization.Unoptimized;
 				break;
+
 			default:
 				Debug.Fail($"Unknown optimization: {code.CompilerFlags}");
 				optimization = NativeCodeOptimization.Unknown;
 				break;
 			}
 
-			var machine = Runtime.Process.Machine;
 			NativeCodeKind codeKind;
-			if (machine == DbgMachine.X64)
+			switch (Runtime.Process.Machine) {
+			case DbgMachine.X64:
 				codeKind = NativeCodeKind.X86_64;
-			else if (machine == DbgMachine.X86)
+				break;
+
+			case DbgMachine.X86:
 				codeKind = NativeCodeKind.X86_32;
-			else {
-				Debug.Fail($"Unknown machine: {machine}");
+				break;
+
+			default:
+				Debug.Fail($"Unknown machine: {Runtime.Process.Machine}");
 				return false;
 			}
+
 			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo);
 			return true;
+		}
+
+		X86Variable[] CreateVariables(VariableHome[] varHomes) {
+			var x86Variables = varHomes.Length == 0 ? Array.Empty<X86Variable>() : new X86Variable[varHomes.Length];
+			var machine = Runtime.Process.Machine;
+			for (int i = 0; i < varHomes.Length; i++) {
+				var varHome = varHomes[i];
+				bool isLocal;
+				int varIndex;
+				if (varHome.SlotIndex >= 0) {
+					isLocal = true;
+					varIndex = varHome.SlotIndex;
+				}
+				else if (varHome.ArgumentIndex >= 0) {
+					isLocal = false;
+					varIndex = varHome.ArgumentIndex;
+				}
+				else
+					return null;
+
+				X86VariableLocationKind locationKind;
+				X86Register register;
+				int memoryOffset;
+				switch (varHome.LocationType) {
+				case VariableLocationType.VLT_REGISTER:
+					locationKind = X86VariableLocationKind.Register;
+					if (!TryGetRegister(machine, varHome.Register, out register))
+						return null;
+					memoryOffset = 0;
+					break;
+
+				case VariableLocationType.VLT_REGISTER_RELATIVE:
+					locationKind = X86VariableLocationKind.Memory;
+					if (!TryGetRegister(machine, varHome.Register, out register))
+						return null;
+					memoryOffset = varHome.Offset;
+					break;
+
+				case VariableLocationType.VLT_INVALID:
+				default:
+					return null;
+				}
+
+				const string varName = null;
+				x86Variables[i] = new X86Variable(varName, varIndex, isLocal, varHome.StartOffset, varHome.Length, locationKind, register, memoryOffset);
+			}
+			return x86Variables;
+		}
+
+		static bool TryGetRegister(DbgMachine machine, CorDebugRegister corReg, out X86Register register) {
+			switch (machine) {
+			case DbgMachine.X86:
+				switch (corReg) {
+				case CorDebugRegister.REGISTER_X86_EIP:
+					register = X86Register.EIP;
+					return true;
+				case CorDebugRegister.REGISTER_X86_ESP:
+					register = X86Register.ESP;
+					return true;
+				case CorDebugRegister.REGISTER_X86_EBP:
+					register = X86Register.EBP;
+					return true;
+				case CorDebugRegister.REGISTER_X86_EAX:
+					register = X86Register.EAX;
+					return true;
+				case CorDebugRegister.REGISTER_X86_ECX:
+					register = X86Register.ECX;
+					return true;
+				case CorDebugRegister.REGISTER_X86_EDX:
+					register = X86Register.EDX;
+					return true;
+				case CorDebugRegister.REGISTER_X86_EBX:
+					register = X86Register.EBX;
+					return true;
+				case CorDebugRegister.REGISTER_X86_ESI:
+					register = X86Register.ESI;
+					return true;
+				case CorDebugRegister.REGISTER_X86_EDI:
+					register = X86Register.EDI;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_0:
+					register = X86Register.ST0;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_1:
+					register = X86Register.ST1;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_2:
+					register = X86Register.ST2;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_3:
+					register = X86Register.ST3;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_4:
+					register = X86Register.ST4;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_5:
+					register = X86Register.ST5;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_6:
+					register = X86Register.ST6;
+					return true;
+				case CorDebugRegister.REGISTER_X86_FPSTACK_7:
+					register = X86Register.ST7;
+					return true;
+				default:
+					Debug.Fail($"Unknown register number {(int)corReg}");
+					register = default;
+					return false;
+				}
+
+			case DbgMachine.X64:
+				switch (corReg) {
+				case CorDebugRegister.REGISTER_AMD64_RIP:
+					register = X86Register.RIP;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RSP:
+					register = X86Register.RSP;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RBP:
+					register = X86Register.RBP;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RAX:
+					register = X86Register.RAX;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RCX:
+					register = X86Register.RCX;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RDX:
+					register = X86Register.RDX;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RBX:
+					register = X86Register.RBX;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RSI:
+					register = X86Register.RSI;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_RDI:
+					register = X86Register.RDI;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R8:
+					register = X86Register.R8;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R9:
+					register = X86Register.R9;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R10:
+					register = X86Register.R10;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R11:
+					register = X86Register.R11;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R12:
+					register = X86Register.R12;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R13:
+					register = X86Register.R13;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R14:
+					register = X86Register.R14;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_R15:
+					register = X86Register.R15;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM0:
+					register = X86Register.XMM0;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM1:
+					register = X86Register.XMM1;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM2:
+					register = X86Register.XMM2;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM3:
+					register = X86Register.XMM3;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM4:
+					register = X86Register.XMM4;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM5:
+					register = X86Register.XMM5;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM6:
+					register = X86Register.XMM6;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM7:
+					register = X86Register.XMM7;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM8:
+					register = X86Register.XMM8;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM9:
+					register = X86Register.XMM9;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM10:
+					register = X86Register.XMM10;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM11:
+					register = X86Register.XMM11;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM12:
+					register = X86Register.XMM12;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM13:
+					register = X86Register.XMM13;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM14:
+					register = X86Register.XMM14;
+					return true;
+				case CorDebugRegister.REGISTER_AMD64_XMM15:
+					register = X86Register.XMM15;
+					return true;
+				default:
+					Debug.Fail($"Unknown register number {(int)corReg}");
+					register = default;
+					return false;
+				}
+
+			default:
+				Debug.Fail($"Unknown machine: {machine}");
+				register = default;
+				return false;
+			}
 		}
 
 		public bool TryGetSymbol(ulong address, out SymbolResolverResult result) {

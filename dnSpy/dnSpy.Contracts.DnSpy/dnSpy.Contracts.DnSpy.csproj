@@ -159,6 +159,7 @@
     <Compile Include="Disassembly\NativeCodeBlockKind.cs" />
     <Compile Include="Disassembly\NativeCodeKind.cs" />
     <Compile Include="Disassembly\NativeCodeOptimization.cs" />
+    <Compile Include="Disassembly\NativeVariableInfo.cs" />
     <Compile Include="Disassembly\NumberBase.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyContent.cs" />
     <Compile Include="Disassembly\Viewer\DisassemblyContentFormatterOptions.cs" />

@@ -92,6 +92,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				decompiler = null;
 			bool canShowILCode = (options & DbgNativeCodeOptions.ShowILCode) != 0 && ilDecompiler != null;
 			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && decompiler != null;
+			NativeVariableInfo[] nativeVariableInfo = null;
 			if (methodModule != null && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
 				var module = dbgMetadataService.TryGetMetadata(methodModule, DbgLoadModuleOptions.AutoLoaded);
 				var method = module?.ResolveToken(methodToken) as MethodDef;
@@ -110,8 +111,10 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 
 					if (canShowCode) {
 						var provider = new DecompiledCodeProvider(decompiler, method, cancellationToken);
-						if (provider.TryDecompile())
+						if (provider.TryDecompile()) {
 							codeProvider = provider.CreateCodeProvider();
+							nativeVariableInfo = provider.CreateNativeVariableInfo();
+						}
 					}
 
 					var commentBuilder = new StringBuilder();
@@ -142,7 +145,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				}
 			}
 
-			var newCode = new NativeCode(nativeCode.Kind, nativeCode.Optimization, newBlocks, nativeCode.CodeInfo);
+			var newCode = new NativeCode(nativeCode.Kind, nativeCode.Optimization, newBlocks, nativeCode.CodeInfo, nativeVariableInfo);
 			var symbolResolver = new DotNetSymbolResolver(runtime);
 			result = new GetNativeCodeResult(newCode, symbolResolver, header);
 			return true;

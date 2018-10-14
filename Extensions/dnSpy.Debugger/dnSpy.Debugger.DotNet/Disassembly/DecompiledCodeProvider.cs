@@ -18,10 +18,12 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Disassembly;
 using dnSpy.Decompiler.Utils;
 
 namespace dnSpy.Debugger.DotNet.Disassembly {
@@ -61,6 +63,41 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 			debugInfo = info.debugInfo;
 			return debugInfo != null;
+		}
+
+		public NativeVariableInfo[] CreateNativeVariableInfo() {
+			if (debugInfo == null)
+				return Array.Empty<NativeVariableInfo>();
+			var list = new List<NativeVariableInfo>();
+			foreach (var arg in debugInfo.Parameters) {
+				var p = arg.Parameter;
+				if (p == null || p.Index < 0)
+					continue;
+				var name = arg.Name;
+				if (string.IsNullOrEmpty(name))
+					continue;
+				list.Add(new NativeVariableInfo(isLocal: false, p.Index, name));
+			}
+			foreach (var scope in GetScopes(debugInfo.Scope)) {
+				foreach (var local in scope.Locals) {
+					var l = local.Local;
+					if (l == null)
+						continue;
+					var name = local.Name;
+					if (string.IsNullOrEmpty(name))
+						continue;
+					list.Add(new NativeVariableInfo(isLocal: true, l.Index, name));
+				}
+			}
+			return list.Count == 0 ? Array.Empty<NativeVariableInfo>() : list.ToArray();
+		}
+
+		static IEnumerable<MethodDebugScope> GetScopes(MethodDebugScope scope) {
+			yield return scope;
+			foreach (var childScope in scope.Scopes) {
+				foreach (var s in GetScopes(childScope))
+					yield return s;
+			}
 		}
 
 		(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
