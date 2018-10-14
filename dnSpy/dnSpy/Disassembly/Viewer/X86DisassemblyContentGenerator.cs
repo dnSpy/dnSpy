@@ -176,6 +176,10 @@ namespace dnSpy.Disassembly.Viewer {
 					sb.Append(FormatAddress(bitness, varInfo.LiveAddress + varInfo.LiveLength, upperCaseHex));
 					sb.Append(' ');
 					switch (varInfo.LocationKind) {
+					case X86VariableLocationKind.Other:
+						sb.Append("???");
+						break;
+
 					case X86VariableLocationKind.Register:
 						sb.Append(varInfo.Register.ToString());
 						break;

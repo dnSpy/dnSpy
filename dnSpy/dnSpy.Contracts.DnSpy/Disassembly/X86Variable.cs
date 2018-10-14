@@ -95,6 +95,11 @@ namespace dnSpy.Contracts.Disassembly {
 	/// </summary>
 	public enum X86VariableLocationKind {
 		/// <summary>
+		/// The variable is stored somewhere else
+		/// </summary>
+		Other,
+
+		/// <summary>
 		/// The variable is stored in a register
 		/// </summary>
 		Register,

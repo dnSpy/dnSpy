@@ -1542,6 +1542,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					break;
 
 				case VariableLocationType.VLT_INVALID:
+					// eg. local is a ulong stored on the stack and it's 32-bit code
+					locationKind = X86VariableLocationKind.Other;
+					register = X86Register.None;
+					memoryOffset = 0;
+					break;
+
 				default:
 					return null;
 				}

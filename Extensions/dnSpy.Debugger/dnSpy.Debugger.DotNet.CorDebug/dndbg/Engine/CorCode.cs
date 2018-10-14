@@ -167,8 +167,7 @@ namespace dndbg.Engine {
 					break;
 
 				case VariableLocationType.VLT_INVALID:
-					Debug.Fail($"Invalid variable location");
-					continue;
+					break;
 
 				default:
 					Debug.Fail($"Unknown location type: {varInfo.LocationType}");
