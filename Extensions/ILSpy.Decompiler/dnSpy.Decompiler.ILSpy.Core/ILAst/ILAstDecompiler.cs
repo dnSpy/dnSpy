@@ -163,7 +163,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 				var expr = n as ILExpression;
 				if (expr != null) {
 					var v = expr.Operand as ILVariable;
-					if (v != null && !v.IsParameter)
+					if (v != null)
 						yield return v;
 					continue;
 				}
