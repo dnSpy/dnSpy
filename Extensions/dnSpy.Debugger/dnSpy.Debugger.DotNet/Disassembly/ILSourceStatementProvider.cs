@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		}
 
 		public (string line, TextSpan span) GetStatement(int ilOffset, int endILOffset) {
-			Debug.Assert(ilOffset < endILOffset);
+			Debug.Assert(ilOffset <= endILOffset);
 			var text = this.text;
 			var debugInfo = this.debugInfo;
 			if (text == null || debugInfo == null)
@@ -50,6 +50,8 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 			else if (ilOffset < endILOffset)
 				stmtEnd = debugInfo.GetSourceStatementByCodeOffset((uint)endILOffset - 1);
+			else if (ilOffset == endILOffset)
+				stmtEnd = stmt;
 			else
 				stmtEnd = null;
 			if (stmt == null || stmtEnd == null)

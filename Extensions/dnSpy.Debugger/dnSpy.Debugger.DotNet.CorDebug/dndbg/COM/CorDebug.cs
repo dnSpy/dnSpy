@@ -171,8 +171,8 @@ namespace dndbg.COM.CorDebug {
 	};
 	struct ILToNativeMap {
 		public uint ilOffset;
-		public uint nativeStartOffset;  
-		public uint nativeEndOffset;  
+		public uint nativeStartOffset;
+		public uint nativeEndOffset;
 	}
 	enum CorDebugIlToNativeMappingTypes {
 		NO_MAPPING = -1,

@@ -162,6 +162,11 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			int index = sortedOffsets.BinarySearch(ilOffset);
 			if (index < 0)
 				return -1;
+			while (index + 1 < sortedOffsets.Count) {
+				if (sortedOffsets[index + 1] != ilOffset)
+					break;
+				index++;
+			}
 			if (index + 1 == sortedOffsets.Count)
 				return int.MaxValue;
 			return sortedOffsets[index + 1];
@@ -192,7 +197,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				if (showStmt && pos == 0) {
 					int nonSpace = FindNonSpace(lines, pos, eol);
 					int stmtEnd = Math.Min(eol, span.End);
-					if (!(nonSpace >= span.Start && stmtEnd == span.End)) {
+					if (!(nonSpace >= span.Start && stmtEnd == eol)) {
 						sb.Append(' ', span.Start - pos);
 						sb.Append('^', stmtEnd - span.Start);
 						sb.AppendLine();
