@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
@@ -28,6 +29,17 @@ using Iced.Intel;
 namespace dnSpy.Disassembly.Viewer {
 	static class X86DisassemblyContentGenerator {
 		const int HEXBYTES_COLUMN_BYTE_LENGTH = 10;
+
+		sealed class AsmReferenceFactory {
+			readonly Dictionary<(FormatterOutputTextKind kind, string value), AsmReference> dict = new Dictionary<(FormatterOutputTextKind kind, string value), AsmReference>();
+
+			public AsmReference Create(FormatterOutputTextKind kind, string value) {
+				var key = (kind, value);
+				if (!dict.TryGetValue(key, out var asmRef))
+					dict[key] = asmRef = new AsmReference(kind, value);
+				return asmRef;
+			}
+		}
 
 		sealed class AsmReference {
 			readonly FormatterOutputTextKind kind;
@@ -41,9 +53,13 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 
 		sealed class FormatterOutputImpl : FormatterOutput {
+			readonly AsmReferenceFactory refFactory;
 			readonly DisassemblyContentOutput output;
 
-			public FormatterOutputImpl(DisassemblyContentOutput output) => this.output = output;
+			public FormatterOutputImpl(AsmReferenceFactory refFactory, DisassemblyContentOutput output) {
+				this.refFactory = refFactory;
+				this.output = output;
+			}
 
 			public override void Write(string text, FormatterOutputTextKind kind) {
 				var color = GetColor(kind);
@@ -57,7 +73,7 @@ namespace dnSpy.Disassembly.Viewer {
 				case FormatterOutputTextKindExtensions.Data:
 				case FormatterOutputTextKindExtensions.Label:
 				case FormatterOutputTextKindExtensions.Function:
-					output.Write(text, new AsmReference(kind, text), DisassemblyReferenceFlags.Local, color);
+					output.Write(text, refFactory.Create(kind, text), DisassemblyReferenceFlags.Local, color);
 					break;
 
 				default:
@@ -217,7 +233,8 @@ namespace dnSpy.Disassembly.Viewer {
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
-			var formatterOutput = new FormatterOutputImpl(output);
+			var refFactory = new AsmReferenceFactory();
+			var formatterOutput = new FormatterOutputImpl(refFactory, output);
 			for (int i = 0; i < blocks.Length; i++) {
 				ref readonly var block = ref blocks[i];
 				if (i > 0 && (formatterOptions & InternalFormatterOptions.EmptyLineBetweenBasicBlocks) != 0)
@@ -225,7 +242,7 @@ namespace dnSpy.Disassembly.Viewer {
 				if (!string.IsNullOrEmpty(block.Comment))
 					WriteComment(output, commentPrefix, block.Comment);
 				if ((formatterOptions & InternalFormatterOptions.AddLabels) != 0 && !string.IsNullOrEmpty(block.Label)) {
-					output.Write(block.Label, new AsmReference(block.LabelKind, block.Label), DisassemblyReferenceFlags.Definition | DisassemblyReferenceFlags.Local, GetColor(block.LabelKind));
+					output.Write(block.Label, refFactory.Create(block.LabelKind, block.Label), DisassemblyReferenceFlags.Definition | DisassemblyReferenceFlags.Local, GetColor(block.LabelKind));
 					output.Write(":", BoxedTextColor.AsmPunctuation);
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}
