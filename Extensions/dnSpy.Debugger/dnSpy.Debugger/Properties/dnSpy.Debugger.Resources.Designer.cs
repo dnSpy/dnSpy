@@ -2224,15 +2224,6 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Go To Disassembly.
-        /// </summary>
-        public static string GoToDisassemblyCommand {
-            get {
-                return ResourceManager.GetString("GoToDisassemblyCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Go To _Disassembly.
         /// </summary>
         public static string GoToDisassemblyCommand2 {

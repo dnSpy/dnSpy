@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanGoToSourceCode;
 	}
 
-	[ExportMenuItem(Header = "res:GoToDisassemblyCommand", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CODE, Order = 10)]
+	[ExportMenuItem(Header = "res:GoToDisassemblyCommand2", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CODE, Order = 10)]
 	sealed class GoToDisassemblyBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
 		GoToDisassemblyBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)

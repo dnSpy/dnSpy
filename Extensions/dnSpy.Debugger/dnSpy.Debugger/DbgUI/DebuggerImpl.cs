@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -39,6 +38,7 @@ using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Debugger.Breakpoints.Code.TextEditor;
 using dnSpy.Debugger.Code.TextEditor;
+using dnSpy.Debugger.Disassembly;
 using dnSpy.Debugger.Exceptions;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
@@ -61,12 +61,13 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService;
 		readonly Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService;
+		readonly Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService;
 		readonly DebuggerSettings debuggerSettings;
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
 
 		[ImportingConstructor]
-		DebuggerImpl(UIDispatcher uiDispatcher, Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService, DebuggerSettings debuggerSettings) {
+		DebuggerImpl(UIDispatcher uiDispatcher, Lazy<IMessageBoxService> messageBoxService, Lazy<IAppWindow> appWindow, Lazy<IDocumentTabService> documentTabService, Lazy<DbgManager> dbgManager, Lazy<StartDebuggingOptionsProvider> startDebuggingOptionsProvider, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<TextViewBreakpointService> textViewBreakpointService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgTextViewCodeLocationService> dbgTextViewCodeLocationService, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService, Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService, DebuggerSettings debuggerSettings) {
 			this.uiDispatcher = uiDispatcher;
 			this.messageBoxService = messageBoxService;
 			this.appWindow = appWindow;
@@ -80,6 +81,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.referenceNavigatorService = referenceNavigatorService;
 			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
 			this.dbgExceptionFormatterService = dbgExceptionFormatterService;
+			this.dbgShowNativeCodeService = dbgShowNativeCodeService;
 			this.debuggerSettings = debuggerSettings;
 			UI(() => appWindow.Value.MainWindowClosing += AppWindow_MainWindowClosing);
 		}
@@ -280,6 +282,34 @@ namespace dnSpy.Debugger.DbgUI {
 			state.SetStepper(stepper);
 			stepper.Closed += (s, e) => UI(() => state.Cancel(stepper));
 			stepper.Step(step, autoClose: true);
+		}
+
+		public override bool CanGoToDisassembly => CanExecutePauseCommand && dbgManager.Value.CurrentThread.Current != null;
+		public override void GoToDisassembly() {
+			if (!CanGoToDisassembly)
+				return;
+			using (var res = GetCurrentTextViewStatementLocation()) {
+				if (res.Location != null) {
+					foreach (var runtime in GetRuntimes()) {
+						if (dbgShowNativeCodeService.Value.CanShowNativeCode(runtime, res.Location)) {
+							if (!dbgShowNativeCodeService.Value.ShowNativeCode(runtime, res.Location))
+								messageBoxService.Value.Show(dnSpy_Debugger_Resources.Error_CouldNotShowDisassembly);
+							break;
+						}
+					}
+				}
+			}
+		}
+		IEnumerable<DbgRuntime> GetRuntimes() {
+			var currentRuntime = dbgManager.Value.CurrentRuntime.Current;
+			if (currentRuntime != null)
+				yield return currentRuntime;
+			foreach (var process in dbgManager.Value.Processes) {
+				foreach (var runtime in process.Runtimes) {
+					if (runtime != currentRuntime)
+						yield return runtime;
+				}
+			}
 		}
 
 		public override bool CanToggleCreateBreakpoint => textViewBreakpointService.Value.CanToggleCreateBreakpoint;

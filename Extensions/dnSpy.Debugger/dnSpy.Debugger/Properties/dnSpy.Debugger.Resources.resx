@@ -357,9 +357,6 @@ ERROR: {1}</value>
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>_Freeze</value>
   </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>Go To Disassembly</value>
-  </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>Go To _Disassembly</value>
   </data>

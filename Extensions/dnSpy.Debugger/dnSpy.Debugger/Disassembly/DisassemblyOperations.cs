@@ -19,8 +19,10 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Disassembly {
 	abstract class DisassemblyOperations {
@@ -34,12 +36,14 @@ namespace dnSpy.Debugger.Disassembly {
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService;
+		readonly Lazy<IMessageBoxService> messageBoxService;
 
 		[ImportingConstructor]
-		DisassemblyOperationsImpl(Lazy<DbgManager> dbgManager, Lazy<DbgCallStackService> dbgCallStackService, Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService) {
+		DisassemblyOperationsImpl(Lazy<DbgManager> dbgManager, Lazy<DbgCallStackService> dbgCallStackService, Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService, Lazy<IMessageBoxService> messageBoxService) {
 			this.dbgManager = dbgManager;
 			this.dbgCallStackService = dbgCallStackService;
 			this.dbgShowNativeCodeService = dbgShowNativeCodeService;
+			this.messageBoxService = messageBoxService;
 		}
 
 		public override bool IsDebugging => dbgManager.Value.IsDebugging;
@@ -53,8 +57,10 @@ namespace dnSpy.Debugger.Disassembly {
 				return;
 
 			var frame = dbgCallStackService.Value.ActiveFrame;
-			if (frame != null)
-				dbgShowNativeCodeService.Value.ShowNativeCode(frame);
+			if (frame != null) {
+				if (!dbgShowNativeCodeService.Value.ShowNativeCode(frame))
+					messageBoxService.Value.Show(dnSpy_Debugger_Resources.Error_CouldNotShowDisassembly);
+			}
 		}
 	}
 }

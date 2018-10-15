@@ -127,5 +127,16 @@ namespace dnSpy.Debugger.DbgUI {
 			public override void Execute(Context context) => debugger.Value.SetNextStatement();
 			public override bool IsVisible(Context context) => debugger.Value.CanSetNextStatement;
 		}
+
+		[ExportMenuItem(Icon = DsImagesAttribute.DisassemblyWindow, Header = "res:GoToDisassemblyCommand2", Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 50)]
+		sealed class GoToDisassemblyDocumentViewerCommand : DocumentViewerCommand {
+			[ImportingConstructor]
+			public GoToDisassemblyDocumentViewerCommand(Lazy<Debugger> debugger)
+				: base(debugger) {
+			}
+
+			public override void Execute(Context context) => debugger.Value.GoToDisassembly();
+			public override bool IsVisible(Context context) => debugger.Value.CanGoToDisassembly;
+		}
 	}
 }
