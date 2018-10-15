@@ -129,7 +129,7 @@ namespace dnSpy.Disassembly.Viewer {
 			return null;
 		}
 
-		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo) {
+		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName) {
 			if (variableInfo == null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {
@@ -141,6 +141,11 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 			if (header != null) {
 				WriteComment(output, commentPrefix, header);
+				output.Write(Environment.NewLine, BoxedTextColor.Text);
+			}
+
+			if (methodName != null) {
+				WriteComment(output, commentPrefix, methodName);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 

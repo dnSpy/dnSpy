@@ -158,20 +158,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame)) {
 					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
 					// Don't throw if it fails to resolve. Callers must be able to handle null return values
-					var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
-					if ((object)method != null) {
-						if (genericTypeArguments.Count != 0) {
-							var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
-							method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
-						}
-						if (genericMethodArguments.Count != 0)
-							method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
-					}
-					state.Method = method;
+					state.Method = TryGetMethod(module, methodMetadataToken, genericTypeArguments, genericMethodArguments);
 				}
 				state.Initialized = true;
 			}
 			return state.Method;
+		}
+
+		static DmdMethodBase TryGetMethod(DmdModule module, int methodMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
+			if ((object)method != null) {
+				if (genericTypeArguments.Count != 0) {
+					var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
+					method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+				}
+				if (genericMethodArguments.Count != 0)
+					method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
+			}
+			return method;
 		}
 
 		TypeMirror GetType(DbgEvaluationInfo evalInfo, DmdType type) =>

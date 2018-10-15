@@ -205,20 +205,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (ILDbgEngineStackFrame.TryGetEngineStackFrame(evalInfo.Frame, out var ilFrame)) {
 					ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
 					// Don't throw if it fails to resolve. Callers must be able to handle null return values
-					var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
-					if ((object)method != null) {
-						if (genericTypeArguments.Count != 0) {
-							var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
-							method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
-						}
-						if (genericMethodArguments.Count != 0)
-							method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
-					}
-					state.Method = method;
+					state.Method = TryGetMethod(module, methodMetadataToken, genericTypeArguments, genericMethodArguments);
 				}
 				state.Initialized = true;
 			}
 			return state.Method;
+		}
+
+		static DmdMethodBase TryGetMethod(DmdModule module, int methodMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+			var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>)null, null, DmdResolveOptions.None);
+			if ((object)method != null) {
+				if (genericTypeArguments.Count != 0) {
+					var type = method.ReflectedType.MakeGenericType(genericTypeArguments);
+					method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+				}
+				if (genericMethodArguments.Count != 0)
+					method = ((DmdMethodInfo)method).MakeGenericMethod(genericMethodArguments);
+			}
+			return method;
 		}
 
 		CorType GetType(CorAppDomain appDomain, DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
@@ -1325,7 +1329,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 			}
 			var code = ilFrame.CorFrame.Code;
-			return TryGetNativeCodeCore(code, out nativeCode);
+			ilFrame.GetFrameMethodInfo(out var module, out var methodMetadataToken, out var genericTypeArguments, out var genericMethodArguments);
+			var reflectionMethod = TryGetMethod(module, methodMetadataToken, genericTypeArguments, genericMethodArguments);
+			return TryGetNativeCodeCore(code, reflectionMethod, out nativeCode);
 		}
 
 		public bool TryGetNativeCode(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
@@ -1352,7 +1358,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return false;
 		}
 
-		bool TryGetNativeCodeCore(CorCode code, out DbgDotNetNativeCode nativeCode) {
+		bool TryGetNativeCodeCore(CorCode code, DmdMethodBase reflectionMethod, out DbgDotNetNativeCode nativeCode) {
 			nativeCode = default;
 			if (code == null)
 				return false;
@@ -1501,7 +1507,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 			}
 
-			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo);
+			var methodName = reflectionMethod?.ToString();
+			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo, methodName);
 			return true;
 		}
 

@@ -52,8 +52,9 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly NativeCodeBlock[] blocks;
 		readonly X86NativeCodeInfo codeInfo;
 		readonly NativeVariableInfo[] variableInfo;
+		readonly string methodName;
 
-		public X86DisassemblyContentProviderFactory(X86DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo) {
+		public X86DisassemblyContentProviderFactory(X86DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName) {
 			if (blocks == null)
 				throw new ArgumentNullException(nameof(blocks));
 			this.deps = deps ?? throw new ArgumentNullException(nameof(deps));
@@ -65,6 +66,7 @@ namespace dnSpy.Disassembly.Viewer {
 			this.blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
 			this.codeInfo = codeInfo as X86NativeCodeInfo;
 			this.variableInfo = variableInfo;
+			this.methodName = methodName;
 		}
 
 		public DisassemblyContentProvider Create() {
@@ -87,7 +89,7 @@ namespace dnSpy.Disassembly.Viewer {
 				if (cachedSymResolver.TryResolve(block.Address, out var symbol, out _) && block.Label != symbol.Symbol)
 					blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, symbol.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symbol.Kind), block.Instructions);
 			}
-			return new X86DisassemblyContentProvider(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo);
+			return new X86DisassemblyContentProvider(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName);
 		}
 
 		static ulong[] GetPossibleSymbolAddresses(X86Block[] blocks) {
