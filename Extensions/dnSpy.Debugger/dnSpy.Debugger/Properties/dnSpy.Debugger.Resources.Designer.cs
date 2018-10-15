@@ -1672,6 +1672,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Disassembly.
+        /// </summary>
+        public static string DisassemblyCommand {
+            get {
+                return ResourceManager.GetString("DisassemblyCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit AppDomain Name.
         /// </summary>
         public static string EditAppDomainNameCommand {
@@ -2952,6 +2961,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyAlt6 {
             get {
                 return ResourceManager.GetString("ShortCutKeyAlt6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+8.
+        /// </summary>
+        public static string ShortCutKeyAlt8 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAlt8", resourceCulture);
             }
         }
         
