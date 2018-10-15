@@ -1393,6 +1393,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 			Debug.Assert(currentPos == totalLen);
 
+			// We must get IL to native mappings before we get var homes, or the var
+			// homes array will be empty.
+			var map = code.GetILToNativeMapping();
 			var varHomes = code.GetVariables();
 			Array.Sort(varHomes, (a, b) => {
 				int c = a.StartOffset.CompareTo(b.StartOffset);
@@ -1428,7 +1431,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return a.Length.CompareTo(b.Length);
 			});
 
-			var map = code.GetILToNativeMapping();
 			Array.Sort(map, (a, b) => {
 				int c = a.nativeStartOffset.CompareTo(b.nativeStartOffset);
 				if (c != 0)
