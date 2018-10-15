@@ -30,22 +30,26 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Disassembly;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Disassembly;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Disassembly;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Disassembly {
 	[ExportDbgRuntimeNativeCodeProvider(null, PredefinedDbgRuntimeKindGuids.DotNet)]
 	sealed class DbgRuntimeNativeCodeProviderImpl : DbgRuntimeNativeCodeProvider {
-		readonly DbgMetadataService dbgMetadataService;
+		readonly Lazy<DbgMetadataService> dbgMetadataService;
+		readonly Lazy<DbgModuleIdProviderService> dbgModuleIdProviderService;
 		readonly IDecompilerService decompilerService;
 		readonly IDecompiler ilDecompiler;
 
 		[ImportingConstructor]
-		DbgRuntimeNativeCodeProviderImpl(DbgMetadataService dbgMetadataService, IDecompilerService decompilerService) {
+		DbgRuntimeNativeCodeProviderImpl(Lazy<DbgMetadataService> dbgMetadataService, Lazy<DbgModuleIdProviderService> dbgModuleIdProviderService, IDecompilerService decompilerService) {
 			this.dbgMetadataService = dbgMetadataService;
+			this.dbgModuleIdProviderService = dbgModuleIdProviderService;
 			this.decompilerService = decompilerService;
 			ilDecompiler = decompilerService.AllDecompilers.FirstOrDefault(a => a.GenericGuid == DecompilerConstants.LANGUAGE_IL);
 		}
@@ -94,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && decompiler != null;
 			NativeVariableInfo[] nativeVariableInfo = null;
 			if (methodModule != null && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
-				var module = dbgMetadataService.TryGetMetadata(methodModule, DbgLoadModuleOptions.AutoLoaded);
+				var module = dbgMetadataService.Value.TryGetMetadata(methodModule, DbgLoadModuleOptions.AutoLoaded);
 				var method = module?.ResolveToken(methodToken) as MethodDef;
 				if (method != null) {
 					var cancellationToken = CancellationToken.None;
@@ -249,30 +253,21 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				return false;
 
 			uint methodToken = frame.FunctionToken;
-			const string header = null;//TODO:
+			const string header = null;
 			return CreateResult(runtime, frame.Module, methodToken, header, options, nativeCode, out result);
 		}
 
-		public override bool CanGetNativeCode(DbgBoundCodeBreakpoint boundBreakpoint) {
-			if (!TryGetDotNetRuntime(boundBreakpoint.Runtime, out var runtime))
-				return false;
+		public override bool CanGetNativeCode(DbgBoundCodeBreakpoint boundBreakpoint) =>
+			CanGetNativeCode(boundBreakpoint.Runtime, boundBreakpoint.Breakpoint.Location);
 
-			return false;//TODO:
-		}
-
-		public override bool TryGetNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, DbgNativeCodeOptions options, out GetNativeCodeResult result) {
-			result = default;
-			if (!TryGetDotNetRuntime(boundBreakpoint.Runtime, out var runtime))
-				return false;
-
-			return false;//TODO:
-		}
+		public override bool TryGetNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, DbgNativeCodeOptions options, out GetNativeCodeResult result) =>
+			TryGetNativeCode(boundBreakpoint.Runtime, boundBreakpoint.Breakpoint.Location, options, out result);
 
 		public override bool CanGetNativeCode(DbgRuntime dbgRuntime, DbgCodeLocation location) {
 			if (!TryGetDotNetRuntime(dbgRuntime, out var runtime))
 				return false;
 
-			return false;//TODO:
+			return location is IDbgDotNetCodeLocation loc;
 		}
 
 		public override bool TryGetNativeCode(DbgRuntime dbgRuntime, DbgCodeLocation location, DbgNativeCodeOptions options, out GetNativeCodeResult result) {
@@ -280,7 +275,25 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			if (!TryGetDotNetRuntime(dbgRuntime, out var runtime))
 				return false;
 
-			return false;//TODO:
+			if (!(location is IDbgDotNetCodeLocation loc))
+				return false;
+
+			var module = loc.DbgModule ?? dbgModuleIdProviderService.Value.GetModule(loc.Module);
+			if (module == null)
+				return false;
+			var reflectionModule = module.GetReflectionModule();
+			if (reflectionModule == null)
+				return false;
+
+			var reflectionMethod = reflectionModule.ResolveMethod((int)loc.Token);
+			if ((object)reflectionMethod == null)
+				return false;
+
+			if (!runtime.TryGetNativeCode(reflectionMethod, out var nativeCode))
+				return false;
+
+			const string header = null;
+			return CreateResult(runtime, module, loc.Token, header, options, nativeCode, out result);
 		}
 	}
 }

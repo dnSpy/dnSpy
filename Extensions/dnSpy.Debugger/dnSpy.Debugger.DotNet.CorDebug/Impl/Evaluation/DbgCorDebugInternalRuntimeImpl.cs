@@ -1348,14 +1348,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 		bool TryGetNativeCodeCore(DmdMethodBase method, out DbgDotNetNativeCode nativeCode) {
 			Dispatcher.VerifyAccess();
-			if (!engine.IsPaused) {
-				nativeCode = default;
-				return false;
-			}
-
-			//TODO:
 			nativeCode = default;
-			return false;
+			if (!engine.IsPaused)
+				return false;
+
+			var dbgModule = method.Module.GetDebuggerModule();
+			if (dbgModule == null)
+				return false;
+			if (!engine.TryGetDnModule(dbgModule, out var dnModule))
+				return false;
+			var func = dnModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken);
+			if (func == null)
+				return false;
+			var code = func.NativeCode;
+			if (code == null)
+				return false;
+			return TryGetNativeCodeCore(code, method, out nativeCode);
 		}
 
 		bool TryGetNativeCodeCore(CorCode code, DmdMethodBase reflectionMethod, out DbgDotNetNativeCode nativeCode) {
