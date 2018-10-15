@@ -78,7 +78,7 @@ namespace dnSpy.Disassembly.Viewer {
 				}
 			}
 		}
-		bool showILCode = true;
+		bool showILCode;
 
 		public override bool ShowCode {
 			get => showCode;
