@@ -1915,7 +1915,7 @@
     <value>Дозволити більше одного екземпляра (потрібне перезавантаження)</value>
   </data>
   <data name="DisassemblerDlgTabTitle" xml:space="preserve">
-    <value>Disassembler</value>
+    <value>Дизассемблер</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
     <value>Code Style</value>

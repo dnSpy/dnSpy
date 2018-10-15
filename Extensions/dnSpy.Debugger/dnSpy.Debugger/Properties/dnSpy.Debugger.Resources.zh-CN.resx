@@ -357,9 +357,6 @@
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>冻结(_F)</value>
   </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>转到反汇编</value>
-  </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>转到反汇编(_D)</value>
   </data>
@@ -1499,5 +1496,11 @@
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
     <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
   </data>
 </root>

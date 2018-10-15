@@ -357,9 +357,6 @@
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>معلق کردن</value>
   </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>رفتن به دیس اسمبلی</value>
-  </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>رفتن به _دیس اسمبلی</value>
   </data>
@@ -1499,5 +1496,11 @@
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
     <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
   </data>
 </root>

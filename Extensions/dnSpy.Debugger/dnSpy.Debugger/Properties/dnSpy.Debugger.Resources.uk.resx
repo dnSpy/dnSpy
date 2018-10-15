@@ -356,9 +356,6 @@
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>Заморозити</value>
   </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>До дизасембльованого коду</value>
-  </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>До _дизасембльованого коду</value>
   </data>
@@ -1497,6 +1494,12 @@
     <value>Копіювати в_иключення</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
-    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+    <value>Не вдалося знайти код методу. Переконайтеся, що процес зупинився і що метод був jitted.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
   </data>
 </root>

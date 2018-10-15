@@ -355,9 +355,6 @@ ERREUR : {1}</value>
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>_Geler</value>
   </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>Aller au désassemblage</value>
-  </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>Aller au _désassemblage</value>
   </data>
@@ -1497,5 +1494,11 @@ Voulez-vous vraiment étendre cet élément ?</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
     <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
   </data>
 </root>

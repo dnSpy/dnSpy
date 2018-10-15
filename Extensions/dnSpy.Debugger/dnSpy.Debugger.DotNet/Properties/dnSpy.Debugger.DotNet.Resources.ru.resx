@@ -172,7 +172,7 @@
     <value>В текущем потоке нет исключения</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
-    <value>Перегрузить тела всех методов</value>
+    <value>Перезагрузить тела всех методов</value>
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
     <value>Возвращаемое значение сейчас недоступно</value>

@@ -136,7 +136,7 @@
     <value>_Рабочий каталог</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Создать Процесс</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Не прерывать</value>

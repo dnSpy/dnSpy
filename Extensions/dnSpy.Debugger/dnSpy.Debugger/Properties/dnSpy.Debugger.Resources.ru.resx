@@ -357,9 +357,6 @@
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>_Заморозить</value>
   </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>К дизассемблированному коду</value>
-  </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>К _дизассемблированному коду</value>
   </data>
@@ -1390,10 +1387,10 @@
     <value>Группировать параметры и локальные переменные вместе</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>Показать созданные компилятором переменные</value>
+    <value>Показывать созданные компилятором переменные</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>Показать созданные декомпилятором переменные</value>
+    <value>Показывать созданные декомпилятором переменные</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
     <value>Сортировать локальные переменные</value>
@@ -1474,7 +1471,7 @@
     <value>Скрыть deprecated члены в окнах переменных</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
-    <value>Показать возвращаемые значения</value>
+    <value>Показывать возвращаемые значения</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
     <value>Перенаправить вывод консоли GUI-приложений в Окно вывода</value>
@@ -1486,10 +1483,10 @@
     <value>Открытые члены</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
-    <value>Показать сырые локальные переменные</value>
+    <value>Показывать сырые локальные переменные</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Включить асинх. отладку</value>
+    <value>Включить асинхронную отладку</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
     <value>Обход свойств и операторов</value>
@@ -1498,6 +1495,12 @@
     <value>Копировать и_сключение</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
-    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+    <value>Не удалось найти код метода. Убедитесь, что процесс приостановлен, и что этот метод был скомпилирован.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
   </data>
 </root>

@@ -1921,132 +1921,132 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>Disassembler</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Code Style</value>
+    <value>Kód stílus</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Add labels</value>
+    <value>Címkék hozzáadása</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Add leading '0' to hex numbers if needed</value>
+    <value>Vezető '0' hozzáadása a hexa számokhoz, ha szükséges</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
-    <value>Always show size of memory operands</value>
+    <value>Mindig mutassa a memória operandusok méretét</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Always show the scale value</value>
+    <value>Mindig mutassa a méretezés értékét</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
-    <value>Always show segment registers</value>
+    <value>Mindig mutassa a szegmens registereket</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
-    <value>Digit separator</value>
+    <value>Számjegy elválasztó</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Add an empty line between blocks</value>
+    <value>Tegyen üres sorokat a blokkok közé</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>Hex prefix</value>
+    <value>Hexa előtag</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>Hex suffix</value>
+    <value>Hexa utótag</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
-    <value>Show disassembly in a new tab</value>
+    <value>A visszafordított kódot új fülön mutassa</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Operand column</value>
+    <value>Operandus oszlop</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
-    <value>RIP-relative addresses</value>
+    <value>RIP relatív címzés</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Show scale before index register</value>
+    <value>Mutassa a méretezés értékét az index regiszter előtt</value>
   </data>
   <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Short numbers (branches)</value>
+    <value>Rövid számok (elágazásnál)</value>
   </data>
   <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Short numbers</value>
+    <value>Rövid számok</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Show branch size</value>
+    <value>Elágazás méretének mutatása</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
-    <value>Show instruction address</value>
+    <value>Utasítás címének mutatása</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
-    <value>Show instruction bytes</value>
+    <value>Utasítás bájtok mutatása</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
-    <value>Show zero displacements</value>
+    <value>Nulla eltolás mutatása</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Signed numbers</value>
+    <value>Előjeles számok</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>Előjeles eltolások</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Show small numbers in decimal</value>
+    <value>Kicsi számok mutatása decimálisan</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Space after memory operand brackets</value>
+    <value>Szóköz a memória operandus zárójeleinél</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
-    <value>Space after operand separator</value>
+    <value>Szóköz az operandus elválasztónál</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Space between '+'</value>
+    <value>Szóköz a '+' körül</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Space between '*'</value>
+    <value>Szóköz a '*' körül</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
-    <value>Upper case everything</value>
+    <value>Minden nagybetűs</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Upper case hex numbers</value>
+    <value>Nagybetűs hexa számok</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
-    <value>Upper case keywords</value>
+    <value>Nagybetűs kulcsszavak</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
-    <value>Upper case mnemonics</value>
+    <value>Nagybetűs mnemonikok</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
-    <value>Upper case prefixes</value>
+    <value>Nagybetűs előtagok</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
-    <value>Upper case registers</value>
+    <value>Nagybetűs regiszterek</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
-    <value>Pseudo instructions</value>
+    <value>Pszeudo utasítások</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
-    <value>Syntax</value>
+    <value>Szintaxis</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
-    <value>Naked registers</value>
+    <value>Csupasz regiszterek</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Always show mnemonic size suffix</value>
+    <value>Mindig mutassa a mnemonic méret utótagját</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Space after memory operand comma</value>
+    <value>Szóköz a memória operandus vesszője után</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
-    <value>Hex numbers</value>
+    <value>Hexa számok</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
     <value>Disassembly</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
-    <value>Show decompiled code</value>
+    <value>Visszafordított kód mutatása</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Show IL code</value>
+    <value>IL kód mutatása</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
-    <value>The method is not optimized</value>
+    <value>A metódus nem optimalizált</value>
   </data>
 </root>

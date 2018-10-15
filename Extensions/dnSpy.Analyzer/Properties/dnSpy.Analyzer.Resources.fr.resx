@@ -178,7 +178,7 @@
     <value>Analyser les Assembly</value>
   </data>
   <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>Récupérer</value>
+    <value>récupérer</value>
   </data>
   <data name="PropertySetterTreeNode" xml:space="preserve">
     <value>Fixer</value>

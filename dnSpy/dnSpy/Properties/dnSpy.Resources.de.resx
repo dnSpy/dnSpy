@@ -1921,10 +1921,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Disassembler</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Code Style</value>
+    <value>Codestil</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Add labels</value>
+    <value>Beschriftung hinzufügen</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
     <value>Add leading '0' to hex numbers if needed</value>
@@ -1942,13 +1942,13 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Digit separator</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Add an empty line between blocks</value>
+    <value>Leerzeile zwischen Blöcken einfügen</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>Hex prefix</value>
+    <value>Hex-Präfix</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>Hex suffix</value>
+    <value>Hex-Suffix</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
     <value>Show disassembly in a new tab</value>
@@ -1996,13 +1996,13 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Space after operand separator</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Space between '+'</value>
+    <value>Leerzeichen zwischen '+'</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Space between '*'</value>
+    <value>Leerzeichen zwischen '*'</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
-    <value>Upper case everything</value>
+    <value>Alles großschreiben</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
     <value>Upper case hex numbers</value>
@@ -2041,12 +2041,12 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Disassembly</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
-    <value>Show decompiled code</value>
+    <value>Dekompilierten Code anzeigen</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Show IL code</value>
+    <value>IL-Code anzeigen</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
-    <value>The method is not optimized</value>
+    <value>Die Methode ist nicht optimiert</value>
   </data>
 </root>
