@@ -1,154 +1,35 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BB748E78-376F-429A-8D83-9A8946EC179F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Contracts</RootNamespace>
-    <AssemblyName>dnSpy.Contracts.Logic</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\dnSpy.Contracts.Logic.XML</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1685</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\dnSpy.Contracts.Logic.XML</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1685</NoWarn>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Decompiler\AddressReference.cs" />
-    <Compile Include="Decompiler\AsyncMethodDebugInfo.cs" />
-    <Compile Include="Decompiler\AsyncStepInfo.cs" />
-    <Compile Include="Decompiler\BamlDecompilerOptions.cs" />
-    <Compile Include="Decompiler\CodeBracesRange.cs" />
-    <Compile Include="Decompiler\CodeBracesRangeFlags.cs" />
-    <Compile Include="Decompiler\DecompilationContext.cs" />
-    <Compile Include="Decompiler\DecompilationType.cs" />
-    <Compile Include="Decompiler\DecompileAssemblyInfo.cs" />
-    <Compile Include="Decompiler\DecompilePartialType.cs" />
-    <Compile Include="Decompiler\DecompilerConstants.cs" />
-    <Compile Include="Decompiler\DecompilerOptionConstants.cs" />
-    <Compile Include="Decompiler\DecompilerReferenceFlags.cs" />
-    <Compile Include="Decompiler\DecompilerSettingsBase.cs" />
-    <Compile Include="Decompiler\DecompileTypeBase.cs" />
-    <Compile Include="Decompiler\DecompileTypeMethods.cs" />
-    <Compile Include="Decompiler\Extensions.cs" />
-    <Compile Include="Decompiler\FormatterOptions.cs" />
-    <Compile Include="Decompiler\GenericArgumentResolver.cs" />
-    <Compile Include="Decompiler\IBamlDecompiler.cs" />
-    <Compile Include="Decompiler\IDecompiler.cs" />
-    <Compile Include="Decompiler\IDecompilerCreator.cs" />
-    <Compile Include="Decompiler\IDecompilerOption.cs" />
-    <Compile Include="Decompiler\IDecompilerOutput.cs" />
-    <Compile Include="Decompiler\IDecompilerProvider.cs" />
-    <Compile Include="Decompiler\IdentifierEscaper.cs" />
-    <Compile Include="Decompiler\IInstructionBytesReader.cs" />
-    <Compile Include="Decompiler\ILSpan.cs" />
-    <Compile Include="Decompiler\InstructionReference.cs" />
-    <Compile Include="Decompiler\ISimpleILPrinter.cs" />
-    <Compile Include="Decompiler\ISourceVariable.cs" />
-    <Compile Include="Decompiler\LineSeparator.cs" />
-    <Compile Include="Decompiler\MemberComparer.cs" />
-    <Compile Include="Decompiler\MetadataTextColorProvider.cs" />
-    <Compile Include="Decompiler\MethodDebugInfo.cs" />
-    <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
-    <Compile Include="Decompiler\MethodDebugScope.cs" />
-    <Compile Include="Decompiler\MethodDebugScopeBuilder.cs" />
-    <Compile Include="Decompiler\MethodSourceStatement.cs" />
-    <Compile Include="Decompiler\MethodStatementReference.cs" />
-    <Compile Include="Decompiler\NamespaceReference.cs" />
-    <Compile Include="Decompiler\PredefinedCompilerNames.cs" />
-    <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
-    <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />
-    <Compile Include="Decompiler\SimpleXmlParser.cs" />
-    <Compile Include="Decompiler\SourceLocal.cs" />
-    <Compile Include="Decompiler\SourceParameter.cs" />
-    <Compile Include="Decompiler\SourceStatement.cs" />
-    <Compile Include="Decompiler\SpanReference.cs" />
-    <Compile Include="Decompiler\StringBuilderDecompilerOutput.cs" />
-    <Compile Include="Decompiler\StringBuilderExtensions.cs" />
-    <Compile Include="Decompiler\TextColorWriterToDecompilerOutput.cs" />
-    <Compile Include="Decompiler\TextSpan.cs" />
-    <Compile Include="Decompiler\TextSpanData.cs" />
-    <Compile Include="Decompiler\TextWriterDecompilerOutput.cs" />
-    <Compile Include="Decompiler\TokenReference.cs" />
-    <Compile Include="Decompiler\TypesHierarchyHelpers.cs" />
-    <Compile Include="Decompiler\XmlDoc\XmlDocKeyProvider.cs" />
-    <Compile Include="Decompiler\XmlDoc\XmlDocLoader.cs" />
-    <Compile Include="Decompiler\XmlDoc\XmlDocRenderer.cs" />
-    <Compile Include="Decompiler\XmlDoc\XmlDocumentationProvider.cs" />
-    <Compile Include="Metadata\ModuleId.cs" />
-    <Compile Include="Metadata\ModuleTokenId.cs" />
-    <Compile Include="MVVM\ViewModelBase.cs" />
-    <Compile Include="Properties\dnSpy.Contracts.Logic.Resources.Designer.cs">
+    <Compile Update="Properties\dnSpy.Contracts.Logic.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Contracts.Logic.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\ResourceHelper.cs" />
-    <Compile Include="Text\Indenter.cs" />
-    <Compile Include="Text\ITextColorWriter.cs" />
-    <Compile Include="Text\ITextColorWriterExtensions.cs" />
-    <Compile Include="Text\NameUtilities.cs" />
-    <Compile Include="Text\TextColor.cs" />
-    <Compile Include="Utilities\GacInfo.cs" />
-    <Compile Include="Utilities\SimpleTypeConverter.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+    <EmbeddedResource Update="Properties\dnSpy.Contracts.Logic.Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Contracts.Logic.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.es-ES.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.hu.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.fr.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.it.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.uk.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.fa.resx" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.Logic.Properties;
 
 namespace dnSpy.Contracts.Utilities {
 	/// <summary>

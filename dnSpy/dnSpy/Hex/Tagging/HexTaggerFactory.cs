@@ -28,7 +28,7 @@ using dnSpy.Hex.MEF;
 
 namespace dnSpy.Hex.Tagging {
 	[Export(typeof(HexTaggerFactory))]
-	public sealed class HexTaggerFactory {
+	sealed class HexTaggerFactory {
 		readonly Lazy<HexTaggerProvider, INamedTaggerMetadata>[] hexBufferTaggerProviders;
 		readonly Lazy<HexViewTaggerProvider, IViewTaggerMetadata>[] hexViewTaggerProviders;
 

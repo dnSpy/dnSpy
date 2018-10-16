@@ -1,127 +1,39 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Decompiler.ILSpy.Core</RootNamespace>
-    <AssemblyName>dnSpy.Decompiler.ILSpy.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Copyright>Copyright 2011-2014 AlphaSierraPapa for the SharpDevelop Team</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1685</NoWarn>
-    <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Debug\dnSpy.Decompiler.ILSpy.Core.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1685</NoWarn>
-    <DocumentationFile>..\..\..\dnSpy\dnSpy\bin\Release\dnSpy.Decompiler.ILSpy.Core.xml</DocumentationFile>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="CSharp\AssemblyInfoTransform.cs" />
-    <Compile Include="CSharp\BuilderCache.cs" />
-    <Compile Include="CSharp\BuilderState.cs" />
-    <Compile Include="CSharp\CSharpDecompiler.cs" />
-    <Compile Include="CSharp\DecompilePartialTransform.cs" />
-    <Compile Include="CSharp\DecompileTypeMethodsTransform.cs" />
-    <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
-    <Compile Include="ILAst\ILAstDecompiler.cs" />
-    <Compile Include="IL\ILDecompiler.cs" />
-    <Compile Include="IL\ILDecompilerUtils.cs" />
-    <Compile Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.Designer.cs">
+    <Compile Update="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Decompiler.ILSpy.Core.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\CSharpVBDecompilerSettings.cs" />
-    <Compile Include="Settings\DecompilerSettingsService.cs" />
-    <Compile Include="Settings\ILAstDecompilerSettings.cs" />
-    <Compile Include="Settings\ILDecompilerSettings.cs" />
-    <Compile Include="Settings\ILSettings.cs" />
-    <Compile Include="Text\ContentTypesInternal.cs" />
-    <Compile Include="VisualBasic\ILSpyEnvironmentProvider.cs" />
-    <Compile Include="VisualBasic\VBDecompiler.cs" />
-    <Compile Include="VisualBasic\VBTextOutputFormatter.cs" />
-    <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
-    <Compile Include="XmlDoc\StringLineIterator.cs" />
-    <Compile Include="XmlDoc\SubString.cs" />
-    <Compile Include="XmlDoc\XmlDocLine.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
-      <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
-      <Name>dnSpy.Contracts.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
-      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>dnSpy.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
-      <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
-      <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj">
-      <Project>{7b82b671-419f-45f4-b778-d9286f996efa}</Project>
-      <Name>ICSharpCode.NRefactory.VB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
-      <Project>{53dca265-3c3c-42f9-b647-f72ba678122b}</Project>
-      <Name>ICSharpCode.NRefactory.CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
-      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
-      <Name>ICSharpCode.NRefactory</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.resx">
+    <EmbeddedResource Update="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Decompiler.ILSpy.Core.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.de.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.es-ES.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.hu.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.fr.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.it.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.uk.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Decompiler.ILSpy.Core.Resources.fa.resx" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj" />
+    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj" />
+    <ProjectReference Include="..\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj" />
+    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj" />
+    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj" />
+  </ItemGroup>
+
 </Project>

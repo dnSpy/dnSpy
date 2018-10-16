@@ -23,7 +23,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using dnlib.DotNet.Resources;
-using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.DnSpy.Properties;
 
 namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>

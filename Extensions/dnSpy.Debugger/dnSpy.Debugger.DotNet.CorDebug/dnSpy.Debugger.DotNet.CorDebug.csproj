@@ -1,315 +1,72 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Debugger.DotNet.CorDebug</RootNamespace>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <AssemblyName>dnSpy.Debugger.DotNet.CorDebug.x</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;THREAD_SAFE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\..\dnSpy\dnSpy\bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1685</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
-    <DefineConstants>TRACE;THREAD_SAFE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1685</NoWarn>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Breakpoints\DbgBreakpointLocationFormatterProviderImpl.cs" />
-    <Compile Include="Breakpoints\TextEditor\DbgBreakpointGlyphFormatterImpl.cs" />
-    <Compile Include="Breakpoints\TextEditor\DbgBreakpointGlyphTextMarkerLocationProviderImpl.cs" />
-    <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
-    <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
-    <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
-    <Compile Include="CallStack\StackFrameData.cs" />
-    <Compile Include="CallStack\TextEditor\DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl.cs" />
-    <Compile Include="CallStack\TextEditor\DbgStackFrameTextViewMarkerImpl.cs" />
-    <Compile Include="Code\BreakpointFormatterService.cs" />
-    <Compile Include="Code\DbgDotNetNativeCodeLocationFactory.cs" />
-    <Compile Include="Code\DbgDotNetNativeCodeLocationImpl.cs" />
-    <Compile Include="Code\DbgDotNetNativeLocationImpl.cs" />
-    <Compile Include="Code\ReferenceConverterImpl.cs" />
-    <Compile Include="DAC\ClrDac.cs" />
-    <Compile Include="DAC\ClrDacImpl.cs" />
-    <Compile Include="DAC\ClrDacProvider.cs" />
-    <Compile Include="DAC\ClrDacThreadInfo.cs" />
-    <Compile Include="DAC\IClrDacDebugger.cs" />
-    <Compile Include="DAC\NullClrDac.cs" />
-    <Compile Include="Dialogs\AttachToProcess\DebuggableProcesses.cs" />
-    <Compile Include="Dialogs\AttachToProcess\DotNetCoreAttachProgramOptionsProvider.cs" />
-    <Compile Include="Dialogs\AttachToProcess\DotNetFrameworkAttachProgramOptionsProvider.cs" />
-    <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
-    <Compile Include="Dialogs\DebugProgram\DotNetCoreStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\DotNetFrameworkStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\DotNetStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
-    <Compile Include="dndbg\COM\CorDebug.cs" />
-    <Compile Include="dndbg\COM\MetaData.cs" />
-    <Compile Include="dndbg\COM\MetaHost.cs" />
-    <Compile Include="dndbg\DotNet\CorAssemblyDef.cs" />
-    <Compile Include="dndbg\DotNet\CorAssemblyRef.cs" />
-    <Compile Include="dndbg\DotNet\CorDeclSecurity.cs" />
-    <Compile Include="dndbg\DotNet\CorEventDef.cs" />
-    <Compile Include="dndbg\DotNet\CorExportedType.cs" />
-    <Compile Include="dndbg\DotNet\CorFieldDef.cs" />
-    <Compile Include="dndbg\DotNet\CorFileDef.cs" />
-    <Compile Include="dndbg\DotNet\CorGenericParam.cs" />
-    <Compile Include="dndbg\DotNet\CorGenericParamConstraint.cs" />
-    <Compile Include="dndbg\DotNet\CorInterfaceImpl.cs" />
-    <Compile Include="dndbg\DotNet\CorManifestResource.cs" />
-    <Compile Include="dndbg\DotNet\CorMemberRef.cs" />
-    <Compile Include="dndbg\DotNet\CorMethodDef.cs" />
-    <Compile Include="dndbg\DotNet\CorMethodSpec.cs" />
-    <Compile Include="dndbg\DotNet\CorModuleDef.cs" />
-    <Compile Include="dndbg\DotNet\CorModuleRef.cs" />
-    <Compile Include="dndbg\DotNet\CorParamDef.cs" />
-    <Compile Include="dndbg\DotNet\CorPropertyDef.cs" />
-    <Compile Include="dndbg\DotNet\CorStandAloneSig.cs" />
-    <Compile Include="dndbg\DotNet\CorTypeDef.cs" />
-    <Compile Include="dndbg\DotNet\CorTypeRef.cs" />
-    <Compile Include="dndbg\DotNet\CorTypeSpec.cs" />
-    <Compile Include="dndbg\DotNet\ICorMDTokenProvider.cs" />
-    <Compile Include="dndbg\DotNet\ICorModuleDefHelper.cs" />
-    <Compile Include="dndbg\DotNet\IProcessReader.cs" />
-    <Compile Include="dndbg\DotNet\ProcessBinaryReader.cs" />
-    <Compile Include="dndbg\DotNet\TypeUpdatedEventArgs.cs" />
-    <Compile Include="dndbg\DotNet\Utils.cs" />
-    <Compile Include="dndbg\Engine\AttachProcessOptions.cs" />
-    <Compile Include="dndbg\Engine\BreakpointList.cs" />
-    <Compile Include="dndbg\Engine\BreakProcessHelper.cs" />
-    <Compile Include="dndbg\Engine\BreakProcessKind.cs" />
-    <Compile Include="dndbg\Engine\COMObject.cs" />
-    <Compile Include="dndbg\Engine\CorAppDomain.cs" />
-    <Compile Include="dndbg\Engine\CorAssembly.cs" />
-    <Compile Include="dndbg\Engine\CorChain.cs" />
-    <Compile Include="dndbg\Engine\CorClass.cs" />
-    <Compile Include="dndbg\Engine\CorCode.cs" />
-    <Compile Include="dndbg\Engine\CordbgErrors.cs" />
-    <Compile Include="dndbg\Engine\CorDebugExtensions.cs" />
-    <Compile Include="dndbg\Engine\CorDebugManagedCallback.cs" />
-    <Compile Include="dndbg\Engine\CoreCLRHelper.cs" />
-    <Compile Include="dndbg\Engine\CorEval.cs" />
-    <Compile Include="dndbg\Engine\CorFrame.cs" />
-    <Compile Include="dndbg\Engine\CorFunction.cs" />
-    <Compile Include="dndbg\Engine\CorFunctionBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\CorMDA.cs" />
-    <Compile Include="dndbg\Engine\CorModule.cs" />
-    <Compile Include="dndbg\Engine\CorModuleDefHelper.cs" />
-    <Compile Include="dndbg\Engine\CorProcess.cs" />
-    <Compile Include="dndbg\Engine\CorProcessReader.cs" />
-    <Compile Include="dndbg\Engine\CorStepper.cs" />
-    <Compile Include="dndbg\Engine\CorThread.cs" />
-    <Compile Include="dndbg\Engine\CorType.cs" />
-    <Compile Include="dndbg\Engine\CorValue.cs" />
-    <Compile Include="dndbg\Engine\DebugCallbackEventArgs.cs" />
-    <Compile Include="dndbg\Engine\DebugEventBreakpointList.cs" />
-    <Compile Include="dndbg\Engine\DebuggeeVersionDetector.cs" />
-    <Compile Include="dndbg\Engine\DebuggerCollection.cs" />
-    <Compile Include="dndbg\Engine\DebuggerEventArgs.cs" />
-    <Compile Include="dndbg\Engine\DebuggerPauseState.cs" />
-    <Compile Include="dndbg\Engine\DebuggerProcessState.cs" />
-    <Compile Include="dndbg\Engine\DebuggerState.cs" />
-    <Compile Include="dndbg\Engine\DebugOptions.cs" />
-    <Compile Include="dndbg\Engine\DebugProcessOptions.cs" />
-    <Compile Include="dndbg\Engine\DnAnyDebugEventBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DnAppDomain.cs" />
-    <Compile Include="dndbg\Engine\DnAssembly.cs" />
-    <Compile Include="dndbg\Engine\DnBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DnCodeBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DnDebugEventBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DnDebugger.cs" />
-    <Compile Include="dndbg\Engine\DnEval.cs" />
-    <Compile Include="dndbg\Engine\DnILCodeBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DnModule.cs" />
-    <Compile Include="dndbg\Engine\DnModuleId.cs" />
-    <Compile Include="dndbg\Engine\DnNativeCodeBreakpoint.cs" />
-    <Compile Include="dndbg\Engine\DnProcess.cs" />
-    <Compile Include="dndbg\Engine\DnThread.cs" />
-    <Compile Include="dndbg\Engine\ECallManager.cs" />
-    <Compile Include="dndbg\Engine\IDebugMessageDispatcher.cs" />
-    <Compile Include="dndbg\Engine\IdentifierEscaper.cs" />
-    <Compile Include="dndbg\Engine\ILFrameIP.cs" />
-    <Compile Include="dndbg\Engine\MDAPI.cs" />
-    <Compile Include="dndbg\Engine\NativeMethods.cs" />
-    <Compile Include="dndbg\Engine\PreventManagedDebuggerDetection.cs" />
-    <Compile Include="dndbg\Engine\ProcessCreationFlags.cs" />
-    <Compile Include="dndbg\Engine\ProcessDataStream.cs" />
-    <Compile Include="dndbg\Engine\StepRange.cs" />
-    <Compile Include="dndbg\Engine\Win32EnvironmentStringBuilder.cs" />
-    <Compile Include="Impl\Attach\CorDebugAttachToProgramOptions.cs" />
-    <Compile Include="Impl\Attach\DotNetCoreAttachToProgramOptions.cs" />
-    <Compile Include="Impl\Attach\DotNetFrameworkAttachToProgramOptions.cs" />
-    <Compile Include="Impl\CorDebugTypeCreator.cs" />
-    <Compile Include="Impl\DbgCorDebugInternalAppDomainImpl.cs" />
-    <Compile Include="Impl\DbgCorDebugInternalModuleImpl.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
-    <Compile Include="Impl\DbgEngineImpl.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
-    <Compile Include="Impl\DbgEngineImpl.ModuleDef.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
-    <Compile Include="Impl\DbgEngineImplDependencies.cs" />
-    <Compile Include="Impl\DbgEngineProviderImpl.cs" />
-    <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
-    <Compile Include="Impl\DebuggerThread.cs" />
-    <Compile Include="Impl\DebugOptionsProviderImpl.cs" />
-    <Compile Include="Impl\DmdDispatcherImpl.cs" />
-    <Compile Include="Impl\DmdDynamicModuleHelperImpl.cs" />
-    <Compile Include="Impl\DnDebuggerObjectHolder.cs" />
-    <Compile Include="Impl\DnlibAssemblyResolverImpl.cs" />
-    <Compile Include="Impl\DnModuleIdExtensions.cs" />
-    <Compile Include="Impl\DnThreadUtils.cs" />
-    <Compile Include="Impl\DotNetCoreDbgEngineImpl.cs" />
-    <Compile Include="Impl\DotNetCoreDbgProcessStarter.cs" />
-    <Compile Include="Impl\DotNetFrameworkDbgEngineImpl.cs" />
-    <Compile Include="Impl\Evaluation\CordbgErrorHelper.cs" />
-    <Compile Include="Impl\Evaluation\CreateCorValueResult.cs" />
-    <Compile Include="Impl\Evaluation\DbgCorDebugInternalRuntimeImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgCorValueHolder.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetObjectIdImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetRawValueFactory.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
-    <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
-    <Compile Include="Impl\Evaluation\EvalArgumentConverter.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ClassHook.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ClassHookInfo.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ClassHookProvider.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\CorDebugValueConverterImpl.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ICorDebugRuntime.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\System_String.cs" />
-    <Compile Include="Impl\Evaluation\NullableTypeUtils.cs" />
-    <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
-    <Compile Include="Impl\ExceptionUtils.cs" />
-    <Compile Include="Impl\ModuleCreator.cs" />
-    <Compile Include="Impl\ModuleIdExtensions.cs" />
-    <Compile Include="Impl\PathUtils.cs" />
-    <Compile Include="Impl\ReflectionTypeCreator.cs" />
-    <Compile Include="Impl\ThreadProperties.cs" />
-    <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
-    <Compile Include="Metadata\DbgAssemblyInfoProviderImpl.cs" />
-    <Compile Include="Metadata\DbgDynamicModuleProviderImpl.cs" />
-    <Compile Include="Metadata\DbgModuleIdProviderImpl.cs" />
-    <Compile Include="Metadata\LastValidRids.cs" />
-    <Compile Include="Native\NativeMethods.cs" />
-    <Compile Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.Designer.cs">
+    <Compile Update="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Debugger.DotNet.CorDebug.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steppers\DbgDotNetEngineStepperImpl.cs" />
-    <Compile Include="Steppers\DbgDotNetStepperBreakpointImpl.cs" />
-    <Compile Include="TheExtension.cs" />
-    <Compile Include="UI\UIDispatcher.cs" />
-    <Compile Include="Utilities\DotNetAssemblyUtilities.cs" />
-    <Compile Include="Utilities\DotNetCoreHelpers.cs" />
-    <Compile Include="Utilities\PortableExecutableFileHelpers.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj">
-      <Project>{a6d1aa27-abdd-4832-b4d0-94e4b175c98f}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet.CorDebug</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
-      <Project>{2376E072-101F-4900-8770-79C6DFFBD0FB}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
-      <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
-      <Name>dnSpy.Contracts.Debugger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
-      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
-      <Name>dnSpy.Contracts.DnSpy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
-      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
-      <Name>dnSpy.Contracts.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\clrmd\src\Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj">
-      <Project>{a82126ca-23aa-41f1-8586-a5938d44d0a7}</Project>
-      <Name>Microsoft.Diagnostics.Runtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
-      <Project>{fcd8913d-85a0-479e-9689-70fea52c6dcb}</Project>
-      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
-    </ProjectReference>
+    <EmbeddedResource Update="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Debugger.DotNet.CorDebug.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
+    <ProjectReference Include="..\clrmd\src\Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj" />
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Debugger.DotNet.CorDebug.Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.de.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.es-ES.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.hu.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.fr.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.it.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.uk.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.fa.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
-  </ItemGroup>
+
   <ItemGroup>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="project.json" />
+    <NetCoreDebugFilesX86 Include="..\netcorefiles\x86\**" />
+    <NetCoreDebugFilesX64 Include="..\netcorefiles\x64\**" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if not exist "$(TargetDir)debug\core\x86" mkdir "$(TargetDir)debug\core\x86"
-if not exist "$(TargetDir)debug\core\x64" mkdir "$(TargetDir)debug\core\x64"
-copy $(ProjectDir)..\netcorefiles\x86\dbgshim.dll "$(TargetDir)debug\core\x86" &gt; NUL
-copy $(ProjectDir)..\netcorefiles\x64\dbgshim.dll "$(TargetDir)debug\core\x64" &gt; NUL
-</PostBuildEvent>
-  </PropertyGroup>
+
+  <Target Name="CopyNetCoreDebugFiles" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(NetCoreDebugFilesX86)" DestinationFolder="$(TargetDir)debug\core\x86" />
+    <Copy SourceFiles="@(NetCoreDebugFilesX64)" DestinationFolder="$(TargetDir)debug\core\x64" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
+  </ItemGroup>
+
 </Project>

@@ -1,245 +1,76 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8EA4B210-37BE-478F-AB0E-8C8C3E016114}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Debugger.DotNet</RootNamespace>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <AssemblyName>dnSpy.Debugger.DotNet.x</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\..\dnSpy\dnSpy\bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1685</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1685</NoWarn>
-  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProviderImpl.cs" />
-    <Compile Include="Breakpoints\Code\DbgDotNetBreakpointFactoryImpl.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\ClassBreakpointCommands.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphFormatterImpl.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphTextMarkerLocationProviderImpl.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\DeleteBreakpointsInRemovedModules.cs" />
-    <Compile Include="CallStack\TextEditor\DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl.cs" />
-    <Compile Include="CallStack\TextEditor\DbgStackFrameTextViewMarkerImpl.cs" />
-    <Compile Include="Code\BreakpointFormatterService.cs" />
-    <Compile Include="Code\DbgBreakpointLocationFormatterImpl.cs" />
-    <Compile Include="Code\DbgCodeLocationSerializerImpl.cs" />
-    <Compile Include="Code\DbgDotNetCodeLocationFactoryImpl.cs" />
-    <Compile Include="Code\DbgDotNetCodeLocationImpl.cs" />
-    <Compile Include="Code\DbgDotNetDebugInfoService.cs" />
-    <Compile Include="Code\DbgDotNetDebugInfoServiceImpl.cs" />
-    <Compile Include="Code\DbgDotNetDecompilerGuidProviderImpl.cs" />
-    <Compile Include="Code\DbgDotNetDecompilerServiceImpl.cs" />
-    <Compile Include="Code\DbgMethodDebugInfoProvider.cs" />
-    <Compile Include="Code\DotNetReferenceNavigator.cs" />
-    <Compile Include="Code\ReferenceConverterImpl.cs" />
-    <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProviderImpl.cs" />
-    <Compile Include="Dialogs\DebugProgram\DotNetGenericDebugEngineGuidProvider.cs" />
-    <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
-    <Compile Include="Disassembly\DbgRuntimeNativeCodeProviderImpl.cs" />
-    <Compile Include="Disassembly\DecompiledCodeProvider.cs" />
-    <Compile Include="Disassembly\DecompilerOutputImpl.cs" />
-    <Compile Include="Disassembly\ILSourceStatementProvider.cs" />
-    <Compile Include="Disassembly\SourceStatementProvider.cs" />
-    <Compile Include="Evaluation\Engine\DbgAliasProvider.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetDispatcherExtensions.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactory.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactoryExtensions.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetEngineValueNodeFactoryService.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetLanguageServiceImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgDotNetValueCreator.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineAutosProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineExceptionsProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineExpressionEvaluatorImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineFormatterImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineLanguageImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineLanguageProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineLocalsProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineObjectIdFactoryImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineObjectIdImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineReturnValuesProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineTypeVariablesProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineValueImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineValueNodeFactoryImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgEngineValueNodeImpl.cs" />
-    <Compile Include="Evaluation\Engine\DbgModuleReferenceProvider.cs" />
-    <Compile Include="Evaluation\Engine\DecompilerOutputImpl.cs" />
-    <Compile Include="Evaluation\Engine\ExceptionUtils.cs" />
-    <Compile Include="Evaluation\Engine\ExpressionCompilerConstants.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\AddressILValue.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\ArrayILValue.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\BoxedValueTypeILValue.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\ByRefILValueImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DbgDotNetILInterpreter.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DebuggerRuntimeFactory.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DebuggerRuntimeFactoryImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DebuggerRuntimeImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DefaultArgumentsProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DefaultLocalsProviderImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DotNetClassHook.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\DotNetClassHookFactory.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\Hooks\dnSpy_Roslyn_ExpressionEvaluator_IntrinsicMethods.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\Hooks\DotNetClassHookFactoryImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\Hooks\System_Runtime_CompilerServices_RuntimeHelpers.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\IDebuggerRuntime.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\ILValues.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\InterpreterLocalsProvider.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\RuntimeHandleILValues.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\SyntheticValues.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\TypeILValueImpl.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\UnboxAddressILValue.cs" />
-    <Compile Include="Evaluation\Engine\Interpreter\VariablesProvider.cs" />
-    <Compile Include="Evaluation\Engine\IntrinsicsAssemblyBuilder.cs" />
-    <Compile Include="Evaluation\Engine\LanguageConstants.cs" />
-    <Compile Include="Evaluation\Engine\MetadataFixer.cs" />
-    <Compile Include="Evaluation\Engine\MethodDebugScopeUtils.cs" />
-    <Compile Include="Evaluation\Engine\ModuleRefFinder.cs" />
-    <Compile Include="Evaluation\Engine\ObjectCache.cs" />
-    <Compile Include="Evaluation\Engine\StateWithKey.cs" />
-    <Compile Include="Exceptions\BreakWhenThrownExceptionCommand.cs" />
-    <Compile Include="Exceptions\CLRDbgExceptionFormatter.cs" />
-    <Compile Include="Metadata\ClassLoader.cs" />
-    <Compile Include="Metadata\Commands.cs" />
-    <Compile Include="Metadata\DbgAssemblyInfoProviderService.cs" />
-    <Compile Include="Metadata\DbgDynamicModuleProviderService.cs" />
-    <Compile Include="Metadata\DbgInMemoryModuleService.cs" />
-    <Compile Include="Metadata\DbgMetadataServiceImpl.cs" />
-    <Compile Include="Metadata\DbgModuleIdProviderService.cs" />
-    <Compile Include="Metadata\DbgModuleMemoryRefreshedNotifierImpl.cs" />
-    <Compile Include="Metadata\DsDocumentProvider.cs" />
-    <Compile Include="Metadata\DynamicModuleDefDocument.cs" />
-    <Compile Include="Metadata\IModuleIdHolder.cs" />
-    <Compile Include="Metadata\Internal\DbgRawMetadataImpl.cs" />
-    <Compile Include="Metadata\Internal\DbgRawMetadataServiceImpl.cs" />
-    <Compile Include="Metadata\Internal\NativeMethods.cs" />
-    <Compile Include="Metadata\MemoryModuleDefDocument.cs" />
-    <Compile Include="Metadata\ModuleIdFactoryProviderImpl.cs" />
-    <Compile Include="Metadata\ModuleLoaderDlg.xaml.cs">
+    <Compile Update="Metadata\ModuleLoaderDlg.xaml.cs">
       <DependentUpon>ModuleLoaderDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Metadata\ModuleLoaderVM.cs" />
-    <Compile Include="Metadata\ShowModuleLoaderService.cs" />
-    <Compile Include="Metadata\TreeViewUpdater.cs" />
-    <Compile Include="Modules\DbgLoadModuleReferenceHandlerImpl.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\dnSpy.Debugger.DotNet.Resources.Designer.cs">
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\dnSpy.Debugger.DotNet.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Debugger.DotNet.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Steppers\Engine\CompilerUtils.cs" />
-    <Compile Include="Steppers\Engine\DbgEngineStepperFactoryImpl.cs" />
-    <Compile Include="Steppers\Engine\DbgEngineStepperImpl.cs" />
-    <Compile Include="Steppers\Engine\TaskEvalUtils.cs" />
-    <Compile Include="TheExtension.cs" />
-    <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
-      <Project>{2376e072-101f-4900-8770-79c6dffbd0fb}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
-      <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
-      <Name>dnSpy.Contracts.Debugger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
-      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
-      <Name>dnSpy.Contracts.DnSpy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
-      <Project>{bb748e78-376f-429a-8d83-9a8946ec179f}</Project>
-      <Name>dnSpy.Contracts.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
-      <Project>{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}</Project>
-      <Name>dnSpy.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj">
-      <Project>{b89e5078-ff71-4fb2-b99f-a790bd94afd7}</Project>
-      <Name>dnSpy.Debugger.DotNet.Interpreter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
-      <Project>{FCD8913D-85A0-479E-9689-70FEA52C6DCB}</Project>
-      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.resx">
+    <EmbeddedResource Update="Properties\dnSpy.Debugger.DotNet.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Debugger.DotNet.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.de.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.es-ES.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.hu.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.fr.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.it.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.uk.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Resources.fa.resx" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="DotNet.ex.xml" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj" />
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj" />
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="debug\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <Page Include="Metadata\ModuleLoaderDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
+  </ItemGroup>
+
   <Import Project="..\..\..\EmbedInteropTypes.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if not exist "$(TargetDir)debug" mkdir "$(TargetDir)debug"
-copy $(ProjectDir)*.ex.xml "$(TargetDir)debug" &gt; NUL
-</PostBuildEvent>
-  </PropertyGroup>
+
 </Project>

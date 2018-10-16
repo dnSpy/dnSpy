@@ -107,7 +107,7 @@ namespace dndbg.DotNet {
 		uint lastTriedTypeRid;
 
 		/// <summary>
-		/// Needs to be set to true after <see cref="LoadEverything()"/> has been called if this
+		/// Needs to be set to true after <see cref="LoadEverything(ICancellationToken)"/> has been called if this
 		/// instance can be accessed from other threads other than the main thread.
 		/// </summary>
 		public bool DisableMDAPICalls {
@@ -1084,7 +1084,7 @@ namespace dndbg.DotNet {
 		}
 
 		/// <summary>
-		/// Update <see cref="ExportedTypes"/> with new <see cref="ExportedType"/>s that have been
+		/// Update <see cref="ModuleDef.ExportedTypes"/> with new <see cref="ExportedType"/>s that have been
 		/// added to the dynamic assembly. Returns true if at least one new <see cref="ExportedType"/>
 		/// was added to the list.
 		/// </summary>
@@ -1118,7 +1118,7 @@ namespace dndbg.DotNet {
 		}
 
 		/// <summary>
-		/// Update <see cref="Resources"/> with new <see cref="Resource"/>s that have been
+		/// Update <see cref="ModuleDef.Resources"/> with new <see cref="Resource"/>s that have been
 		/// added to the dynamic assembly. Returns true if at least one new <see cref="Resource"/>
 		/// was added to the list.
 		/// </summary>

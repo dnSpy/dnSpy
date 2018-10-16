@@ -29,11 +29,11 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using dnlib.DotNet;
+using dnSpy.Console.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.MSBuild;
-using dnSpy_Console.Properties;
 
 namespace dnSpy_Console {
 	[Serializable]

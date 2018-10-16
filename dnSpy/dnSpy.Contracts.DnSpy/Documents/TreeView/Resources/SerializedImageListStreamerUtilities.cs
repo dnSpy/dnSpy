@@ -26,7 +26,7 @@ using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
-using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.DnSpy.Properties;
 
 namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>

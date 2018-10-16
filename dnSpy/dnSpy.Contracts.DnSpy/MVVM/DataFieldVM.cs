@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.DnSpy.Properties;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Contracts.MVVM {

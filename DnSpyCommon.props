@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <Features>strict</Features>
+    <LangVersion>latest</LangVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <!-- Update App.config whenever this value changes -->
+    <DnSpyAssemblyVersion>5.0.9.0</DnSpyAssemblyVersion>
+    <!-- This is shown in the title bar -->
+    <DnSpyAssemblyInformationalVersion>v5.0.9</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyCopyright>Copyright (C) 2014-2018 de4dot@gmail.com</DnSpyAssemblyCopyright>
+
+    <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
+    <IcedVersion>0.9.0</IcedVersion>
+    <MSVSCompositionVersion>15.6.36</MSVSCompositionVersion>
+    <MSVSImagingDesignTimeVersion>15.0.25726-Preview5</MSVSImagingDesignTimeVersion>
+    <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
+    <MSVSTextVersion>15.5.27130</MSVSTextVersion>
+    <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
+    <RoslynVersion>2.9.0</RoslynVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+</Project>

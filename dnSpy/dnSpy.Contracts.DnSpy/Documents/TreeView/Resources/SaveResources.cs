@@ -25,9 +25,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.DnSpy.Properties;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
-using dnSpy.Contracts.Properties;
 using Ookii.Dialogs.Wpf;
 using WF = System.Windows.Forms;
 

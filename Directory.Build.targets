@@ -22,6 +22,7 @@
     <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.batteries_v2.dll</GarbageFile>
     <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.core.dll</GarbageFile>
     <GarbageFile>$(GarbageFile);$(OutputPath)\SQLitePCLRaw.provider.e_sqlite3.dll</GarbageFile>
+    <GarbageFile>$(GarbageFile);$(OutputPath)\e_sqlite3.dll</GarbageFile>
     <GarbageFile>$(GarbageFile);$(OutputPath)\System.Data.Common.dll</GarbageFile>
     <GarbageFile>$(GarbageFile);$(OutputPath)\System.Globalization.Extensions.dll</GarbageFile>
     <GarbageFile>$(GarbageFile);$(OutputPath)\System.Net.Http.dll</GarbageFile>
