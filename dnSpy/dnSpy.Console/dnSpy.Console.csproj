@@ -12,6 +12,8 @@
     <OutputPath>..\dnSpy\bin\$(Configuration)\</OutputPath>
 
     <OutputType>Exe</OutputType>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
