@@ -93,7 +93,7 @@ namespace dnSpy.AsmEditor.Types {
 		static string GetHeader(DocumentTreeNodeData[] nodes) {
 			nodes = DeleteTypeDefCommand.FilterOutGlobalTypes(nodes);
 			if (nodes.Length == 1)
-				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
+				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.TruncateWithElipsis(UIUtilities.EscapeMenuItemHeader(nodes[0].ToString())));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteTypesCommand, nodes.Length);
 		}
 

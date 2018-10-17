@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		static string GetHeader(DocumentTreeNodeData[] nodes) {
 			if (nodes.Length == 1)
-				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(nodes[0].ToString()));
+				return string.Format(dnSpy_AsmEditor_Resources.DeleteX, UIUtilities.EscapeMenuItemHeader(UIUtilities.TruncateWithElipsis(nodes[0].ToString())));
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteMethodsCommand, nodes.Length);
 		}
 
