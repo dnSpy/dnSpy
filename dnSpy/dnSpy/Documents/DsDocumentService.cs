@@ -132,7 +132,8 @@ namespace dnSpy.Documents {
 		}
 
 		public IDsDocument FindAssembly(IAssembly assembly) {
-			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
+			const AssemblyNameComparerFlags flags = AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version;
+			var comparer = new AssemblyNameComparer(flags);
 			rwLock.EnterReadLock();
 			try {
 				foreach (var info in documents) {
