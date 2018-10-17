@@ -119,7 +119,7 @@ namespace dnSpy.MainApp {
 			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(sc.UIObject);
-			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
+			AddTitleInfo(IntPtr.Size == 4 ? "32-bit" : "64-bit");
 #if DEBUG
 			AddTitleInfo("Debug Build");
 #endif
