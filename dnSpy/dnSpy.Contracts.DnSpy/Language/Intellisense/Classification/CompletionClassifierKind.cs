@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		DisplayText,
 
 		/// <summary>
-		/// Classify <see cref="Completion4.Suffix"/>, the context is a <see cref="CompletionSuffixClassifierContext"/>
+		/// Classify <see cref="DsCompletion.Suffix"/>, the context is a <see cref="CompletionSuffixClassifierContext"/>
 		/// </summary>
 		Suffix,
 	}

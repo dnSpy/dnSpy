@@ -32,13 +32,11 @@ namespace dnSpy.Language.Intellisense {
 	[Name(PredefinedIntellisensePresenterProviders.DefaultCompletionPresenter)]
 	[ContentType(ContentTypes.Any)]
 	sealed class CompletionPresenterProvider : IIntellisensePresenterProvider {
-		readonly IImageMonikerService imageMonikerService;
 		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
 		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
 
 		[ImportingConstructor]
-		CompletionPresenterProvider(IImageMonikerService imageMonikerService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
-			this.imageMonikerService = imageMonikerService;
+		CompletionPresenterProvider(Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
 			this.completionTextElementProviderService = completionTextElementProviderService;
 			this.completionUIElementProviders = Orderer.Order(completionUIElementProviders).ToArray();
 		}
@@ -47,7 +45,7 @@ namespace dnSpy.Language.Intellisense {
 			var completionSession = session as ICompletionSession;
 			if (completionSession == null)
 				return null;
-			return new CompletionPresenter(imageMonikerService, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
+			return new CompletionPresenter(completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
 		}
 	}
 }

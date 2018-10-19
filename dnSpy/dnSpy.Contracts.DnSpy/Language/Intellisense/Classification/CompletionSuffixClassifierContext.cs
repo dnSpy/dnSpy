@@ -21,7 +21,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Contracts.Language.Intellisense.Classification {
 	/// <summary>
-	/// Context needed to classify <see cref="Completion4.Suffix"/>
+	/// Context needed to classify <see cref="DsCompletion.Suffix"/>
 	/// </summary>
 	public sealed class CompletionSuffixClassifierContext : CompletionClassifierContext {
 		/// <summary>

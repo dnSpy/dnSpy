@@ -67,7 +67,7 @@ namespace dnSpy.Language.Intellisense {
 				break;
 
 			case CompletionClassifierKind.Suffix:
-				var suffix = (completion as Completion4)?.Suffix ?? string.Empty;
+				var suffix = (completion as DsCompletion)?.Suffix ?? string.Empty;
 				context = new CompletionSuffixClassifierContext(completionSet, completion, suffix, colorize);
 				defaultContentType = ContentTypes.CompletionSuffix;
 				break;

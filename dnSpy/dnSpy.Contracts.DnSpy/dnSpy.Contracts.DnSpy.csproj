@@ -64,11 +64,8 @@
 
   <ItemGroup>
     <PackageReference Include="Ookii.Dialogs" Version="$(OokiiDialogsVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime" Version="$(MSVSImagingDesignTimeVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>
-
-  <Import Project="..\..\EmbedInteropTypes.targets" />
 
 </Project>

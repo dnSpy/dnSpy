@@ -43,11 +43,9 @@ namespace dnSpy.Language.Intellisense {
 		readonly List<CompletionVM> list;
 		readonly IList<Completion> completionList;
 		readonly INotifyCollectionChanged completionListNotifyCollectionChanged;
-		readonly IImageMonikerService imageMonikerService;
 
-		public CompletionCollectionVM(IList<Completion> completionList, IImageMonikerService imageMonikerService) {
+		public CompletionCollectionVM(IList<Completion> completionList) {
 			this.completionList = completionList ?? throw new ArgumentNullException(nameof(completionList));
-			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
 			completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
 			if (completionListNotifyCollectionChanged != null)
 				completionListNotifyCollectionChanged.CollectionChanged += CompletionList_CollectionChanged;
@@ -99,7 +97,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		CompletionVM GetOrCreateVM(Completion completion) => CompletionVM.TryGet(completion) ?? new CompletionVM(completion, imageMonikerService);
+		CompletionVM GetOrCreateVM(Completion completion) => CompletionVM.TryGet(completion) ?? new CompletionVM(completion);
 
 		void ReinitializeList() {
 			list.Clear();

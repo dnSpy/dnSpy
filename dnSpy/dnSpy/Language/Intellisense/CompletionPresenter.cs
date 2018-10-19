@@ -71,7 +71,6 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		readonly IImageMonikerService imageMonikerService;
 		readonly ICompletionSession session;
 		readonly ICompletionTextElementProvider completionTextElementProvider;
 		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
@@ -91,8 +90,7 @@ namespace dnSpy.Language.Intellisense {
 		const double defaultMinWidth = 150;
 		const double toolTipDelayMilliSeconds = 250;
 
-		public CompletionPresenter(IImageMonikerService imageMonikerService, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
-			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
+		public CompletionPresenter(ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
 			this.session = session ?? throw new ArgumentNullException(nameof(session));
 			this.completionTextElementProvider = completionTextElementProvider ?? throw new ArgumentNullException(nameof(completionTextElementProvider));
 			this.completionUIElementProviders = completionUIElementProviders ?? throw new ArgumentNullException(nameof(completionUIElementProviders));
@@ -491,13 +489,13 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void UpdateFilterCollection() {
-			var filterCompletionSet = session.SelectedCompletionSet as CompletionSet2;
+			var filterCompletionSet = session.SelectedCompletionSet as DsCompletionSet;
 			DisposeFilters();
 			if (filterCompletionSet != null) {
 				var completionSetFilters = filterCompletionSet.Filters;
 				if (completionSetFilters != null) {
 					foreach (var filter in completionSetFilters)
-						filters.Add(new FilterVM(filter, this, imageMonikerService.ToImageReference(filter.Moniker)));
+						filters.Add(new FilterVM(filter, this, filter.ImageReference));
 				}
 			}
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Filters)));
@@ -532,7 +530,7 @@ namespace dnSpy.Language.Intellisense {
 			completionCollectionVM = null;
 			if (completions == null)
 				return null;
-			completionCollectionVM = new CompletionCollectionVM(completions, imageMonikerService);
+			completionCollectionVM = new CompletionCollectionVM(completions);
 			return completionCollectionVM;
 		}
 		CompletionCollectionVM completionCollectionVM;
@@ -611,7 +609,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public FrameworkElement GetSuffix(CompletionVM vm) {
 			var completion = vm.Completion;
-			if (string.IsNullOrEmpty((completion as Completion4)?.Suffix))
+			if (string.IsNullOrEmpty((completion as DsCompletion)?.Suffix))
 				return null;
 			var elem = CreateFrameworkElement(completion, CompletionClassifierKind.Suffix);
 			elem.Margin = new Thickness(5, 0, 2, 0);

@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel;
+using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
-using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterVM : INotifyPropertyChanged {
@@ -53,9 +53,9 @@ namespace dnSpy.Language.Intellisense {
 		public string AccessKey => filter.AccessKey;
 
 		readonly CompletionPresenter owner;
-		readonly IIntellisenseFilter filter;
+		readonly DsIntellisenseFilter filter;
 
-		public FilterVM(IIntellisenseFilter filter, CompletionPresenter owner, ImageReference imageReference) {
+		public FilterVM(DsIntellisenseFilter filter, CompletionPresenter owner, ImageReference imageReference) {
 			this.filter = filter ?? throw new ArgumentNullException(nameof(filter));
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			ImageReference = imageReference;

@@ -18,25 +18,31 @@
 */
 
 using dnSpy.Contracts.Images;
-using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.VisualStudio.Language.Intellisense;
 
-namespace dnSpy.Contracts.Language.Intellisense {
+namespace dnSpy.Contracts.DnSpy.Language.Intellisense {
 	/// <summary>
-	/// Converts <see cref="ImageMoniker"/>s to and from <see cref="ImageReference"/>s
+	/// Completion icon
 	/// </summary>
-	public interface IImageMonikerService {
+	public class DsCompletionIcon : CompletionIcon {
 		/// <summary>
-		/// Converts <paramref name="imageReference"/> to an <see cref="ImageMoniker"/>
+		/// Gets the image
 		/// </summary>
-		/// <param name="imageReference">Image reference</param>
-		/// <returns></returns>
-		ImageMoniker ToImageMoniker(ImageReference imageReference);
+		public virtual ImageReference ImageReference { get; }
 
 		/// <summary>
-		/// Converts <paramref name="imageMoniker"/> to an <see cref="ImageReference"/>
+		/// true to theme the image by changing it so it matches the background color
 		/// </summary>
-		/// <param name="imageMoniker">Image moniker</param>
-		/// <returns></returns>
-		ImageReference ToImageReference(ImageMoniker imageMoniker);
+		public virtual bool ThemeImage { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="imageReference">Image</param>
+		/// <param name="themeImage">true to theme the image by changing it so it matches the background color</param>
+		public DsCompletionIcon(ImageReference imageReference, bool themeImage = false) {
+			ImageReference = imageReference;
+			ThemeImage = themeImage;
+		}
 	}
 }

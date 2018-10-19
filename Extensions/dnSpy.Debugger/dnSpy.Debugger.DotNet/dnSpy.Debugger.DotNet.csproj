@@ -71,6 +71,4 @@
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>
 
-  <Import Project="..\..\..\EmbedInteropTypes.targets" />
-
 </Project>

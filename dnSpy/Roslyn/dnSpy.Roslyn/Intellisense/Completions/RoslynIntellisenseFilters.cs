@@ -18,39 +18,38 @@
 */
 
 using System;
+using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Properties;
 using Microsoft.CodeAnalysis.Tags;
-using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Roslyn.Intellisense.Completions {
 	static class RoslynIntellisenseFilters {
-		public static RoslynIntellisenseFilter[] CreateFilters(IImageMonikerService imageMonikerService) => new RoslynIntellisenseFilter[] {
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.LocalVariable, dnSpy_Roslyn_Resources.LocalsAndParametersToolTip, "L", WellKnownTags.Local, WellKnownTags.Parameter),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.ConstantPublic, dnSpy_Roslyn_Resources.ConstantsToolTip, "O", WellKnownTags.Constant),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.Property, dnSpy_Roslyn_Resources.PropertiesToolTip, "P", WellKnownTags.Property),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.EventPublic, dnSpy_Roslyn_Resources.EventsToolTip, "V", WellKnownTags.Event),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.FieldPublic, dnSpy_Roslyn_Resources.FieldsToolTip, "F", WellKnownTags.Field),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.MethodPublic, dnSpy_Roslyn_Resources.MethodsToolTip, "M", WellKnownTags.Method),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.ExtensionMethod, dnSpy_Roslyn_Resources.ExtensionMethodsToolTip, "X", WellKnownTags.ExtensionMethod),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.InterfacePublic, dnSpy_Roslyn_Resources.InterfacesToolTip, "I", WellKnownTags.Interface),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.ClassPublic, dnSpy_Roslyn_Resources.ClassesToolTip, "C", WellKnownTags.Class),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.ModulePublic, dnSpy_Roslyn_Resources.ModulesToolTip, "U", WellKnownTags.Module),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.StructurePublic, dnSpy_Roslyn_Resources.StructuresToolTip, "S", WellKnownTags.Structure),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.EnumerationPublic, dnSpy_Roslyn_Resources.EnumsToolTip, "E", WellKnownTags.Enum),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.DelegatePublic, dnSpy_Roslyn_Resources.DelegatesToolTip, "D", WellKnownTags.Delegate),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.Namespace, dnSpy_Roslyn_Resources.NamespacesToolTip, "N", WellKnownTags.Namespace),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.IntellisenseKeyword, dnSpy_Roslyn_Resources.KeywordsToolTip, "K", WellKnownTags.Keyword),
-			new RoslynIntellisenseFilter(imageMonikerService, DsImages.Snippet, dnSpy_Roslyn_Resources.SnippetsToolTip, "T", WellKnownTags.Snippet),
+		public static RoslynIntellisenseFilter[] CreateFilters() => new RoslynIntellisenseFilter[] {
+			new RoslynIntellisenseFilter(DsImages.LocalVariable, dnSpy_Roslyn_Resources.LocalsAndParametersToolTip, "L", WellKnownTags.Local, WellKnownTags.Parameter),
+			new RoslynIntellisenseFilter(DsImages.ConstantPublic, dnSpy_Roslyn_Resources.ConstantsToolTip, "O", WellKnownTags.Constant),
+			new RoslynIntellisenseFilter(DsImages.Property, dnSpy_Roslyn_Resources.PropertiesToolTip, "P", WellKnownTags.Property),
+			new RoslynIntellisenseFilter(DsImages.EventPublic, dnSpy_Roslyn_Resources.EventsToolTip, "V", WellKnownTags.Event),
+			new RoslynIntellisenseFilter(DsImages.FieldPublic, dnSpy_Roslyn_Resources.FieldsToolTip, "F", WellKnownTags.Field),
+			new RoslynIntellisenseFilter(DsImages.MethodPublic, dnSpy_Roslyn_Resources.MethodsToolTip, "M", WellKnownTags.Method),
+			new RoslynIntellisenseFilter(DsImages.ExtensionMethod, dnSpy_Roslyn_Resources.ExtensionMethodsToolTip, "X", WellKnownTags.ExtensionMethod),
+			new RoslynIntellisenseFilter(DsImages.InterfacePublic, dnSpy_Roslyn_Resources.InterfacesToolTip, "I", WellKnownTags.Interface),
+			new RoslynIntellisenseFilter(DsImages.ClassPublic, dnSpy_Roslyn_Resources.ClassesToolTip, "C", WellKnownTags.Class),
+			new RoslynIntellisenseFilter(DsImages.ModulePublic, dnSpy_Roslyn_Resources.ModulesToolTip, "U", WellKnownTags.Module),
+			new RoslynIntellisenseFilter(DsImages.StructurePublic, dnSpy_Roslyn_Resources.StructuresToolTip, "S", WellKnownTags.Structure),
+			new RoslynIntellisenseFilter(DsImages.EnumerationPublic, dnSpy_Roslyn_Resources.EnumsToolTip, "E", WellKnownTags.Enum),
+			new RoslynIntellisenseFilter(DsImages.DelegatePublic, dnSpy_Roslyn_Resources.DelegatesToolTip, "D", WellKnownTags.Delegate),
+			new RoslynIntellisenseFilter(DsImages.Namespace, dnSpy_Roslyn_Resources.NamespacesToolTip, "N", WellKnownTags.Namespace),
+			new RoslynIntellisenseFilter(DsImages.IntellisenseKeyword, dnSpy_Roslyn_Resources.KeywordsToolTip, "K", WellKnownTags.Keyword),
+			new RoslynIntellisenseFilter(DsImages.Snippet, dnSpy_Roslyn_Resources.SnippetsToolTip, "T", WellKnownTags.Snippet),
 		};
 	}
 
-	sealed class RoslynIntellisenseFilter : IntellisenseFilter {
+	sealed class RoslynIntellisenseFilter : DsIntellisenseFilter {
 		public string[] Tags { get; }
 
-		public RoslynIntellisenseFilter(IImageMonikerService imageMonikerService, ImageReference imageReference, string toolTip, string accessKey, params string[] tags)
-			: base(imageMonikerService.ToImageMoniker(imageReference), toolTip, accessKey, automationText: null, initialIsChecked: false, initialIsEnabled: true) {
+		public RoslynIntellisenseFilter(ImageReference imageReference, string toolTip, string accessKey, params string[] tags)
+			: base(imageReference, toolTip, accessKey, false, true) {
 			if (tags == null)
 				throw new ArgumentNullException(nameof(tags));
 			if (tags.Length == 0)

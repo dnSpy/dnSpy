@@ -35,27 +35,21 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 	[Name(PredefinedDsCompletionSourceProviders.Roslyn)]
 	[ContentType(ContentTypes.RoslynCode)]
 	sealed class CompletionSourceProvider : ICompletionSourceProvider {
-		readonly IImageMonikerService imageMonikerService;
 		readonly IMruCompletionService mruCompletionService;
 
 		[ImportingConstructor]
-		CompletionSourceProvider(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService) {
-			this.imageMonikerService = imageMonikerService;
+		CompletionSourceProvider(IMruCompletionService mruCompletionService) =>
 			this.mruCompletionService = mruCompletionService;
-		}
 
-		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource(imageMonikerService, mruCompletionService);
+		public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer) => new CompletionSource(mruCompletionService);
 	}
 
 	sealed class CompletionSource : ICompletionSource {
 		const string DefaultCompletionSetMoniker = "All";
-		readonly IImageMonikerService imageMonikerService;
 		readonly IMruCompletionService mruCompletionService;
 
-		public CompletionSource(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService) {
-			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
+		public CompletionSource(IMruCompletionService mruCompletionService) =>
 			this.mruCompletionService = mruCompletionService ?? throw new ArgumentNullException(nameof(mruCompletionService));
-		}
 
 		public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets) {
 			var snapshot = session.TextView.TextSnapshot;
@@ -78,7 +72,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			if (completionList.Span.End > snapshot.Length)
 				return;
 			var trackingSpan = snapshot.CreateTrackingSpan(completionList.Span.Start, completionList.Span.Length, SpanTrackingMode.EdgeInclusive, TrackingFidelityMode.Forward);
-			var completionSet = RoslynCompletionSet.Create(imageMonikerService, mruCompletionService, completionList, info.Value.CompletionService, session.TextView, DefaultCompletionSetMoniker, dnSpy_Roslyn_Resources.CompletionSet_All, trackingSpan);
+			var completionSet = RoslynCompletionSet.Create(mruCompletionService, completionList, info.Value.CompletionService, session.TextView, DefaultCompletionSetMoniker, dnSpy_Roslyn_Resources.CompletionSet_All, trackingSpan);
 			completionSets.Add(completionSet);
 		}
 
