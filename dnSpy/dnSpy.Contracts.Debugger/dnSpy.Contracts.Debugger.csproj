@@ -13,7 +13,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
 

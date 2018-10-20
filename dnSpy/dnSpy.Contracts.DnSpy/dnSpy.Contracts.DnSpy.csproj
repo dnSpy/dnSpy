@@ -27,13 +27,17 @@
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
+   </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsDotNetCore)' == 'true' ">
+    <FrameworkReference Include="Microsoft.DesktopUI"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +70,7 @@
     <PackageReference Include="Ookii.Dialogs" Version="$(OokiiDialogsVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="$(SCCompositionVersion)" Condition=" '$(IsDotNetCore)' == 'true' " />
   </ItemGroup>
 
 </Project>

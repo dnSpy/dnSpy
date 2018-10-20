@@ -11,8 +11,12 @@
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsDotNetCore)' == 'true' ">
+    <FrameworkReference Include="Microsoft.DesktopUI"/>
   </ItemGroup>
 
   <ItemGroup>

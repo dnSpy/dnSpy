@@ -61,9 +61,6 @@ namespace dnSpy.Roslyn.Text {
 			return MefHostServices.Create(asms);
 		}
 		static readonly string[] otherAssemblies = new string[] {
-			// Don't include Microsoft.CodeAnalysis.Workspaces.Desktop, it contains refs to Microsoft.Build
-			// and other files that aren't included.
-			// "Microsoft.CodeAnalysis.Workspaces.Desktop, Version={0}, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
 			"Microsoft.CodeAnalysis.Features, Version={0}, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
 			"Microsoft.CodeAnalysis.CSharp.Features, Version={0}, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
 			"Microsoft.CodeAnalysis.VisualBasic.Features, Version={0}, Culture=neutral, PublicKeyToken=31bf3856ad364e35",

@@ -273,6 +273,9 @@ namespace dnSpy.MainApp {
 		}
 
 		Assembly[] GetAssemblies() {
+#if NETCOREAPP
+			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+#endif
 			var list = new List<Assembly>();
 			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
@@ -302,6 +305,10 @@ namespace dnSpy.MainApp {
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
 			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+#if NETCOREAPP
+			foreach (var file in files)
+				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file));
+#endif
 			var asms = new List<Assembly>();
 			foreach (var file in files) {
 				try {

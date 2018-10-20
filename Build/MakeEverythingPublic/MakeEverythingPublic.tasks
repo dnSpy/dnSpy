@@ -1,5 +1,5 @@
 ﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)\compiled\MakeEverythingPublic.dll" TaskName="MakeEverythingPublic.MakeEverythingPublic" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\compiled\MakeEverythingPublic.dll" TaskName="MakeEverythingPublic.MakeEverythingPublic" />
 	<Target Name="MakeEverythingPublic" AfterTargets="ResolveAssemblyReferences">
 		<MakeEverythingPublic AssembliesToMakePublic="$(MakeEverythingPublicAssemblies)" ReferencePath="@(ReferencePath)" DestinationDirectory="$(MSBuildProjectDirectory)\obj\$(Configuration)\MakeEverythingPublic" IVTString="$(MakeEverythingPublicIVTString)">
 			<Output ItemName="_MakeEverythingPublic_OutputReferencePath" TaskParameter="OutputReferencePath" />

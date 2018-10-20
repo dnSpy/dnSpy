@@ -23,7 +23,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System.ComponentModel.Composition" />

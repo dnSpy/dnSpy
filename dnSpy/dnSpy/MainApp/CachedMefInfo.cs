@@ -34,6 +34,17 @@ namespace dnSpy.MainApp {
 			this.stream = stream;
 		}
 
+		static readonly string[] clrDllFilenames = new string[] { "clr.dll", "coreclr.dll" };
+		static string GetPathToClrDll() {
+			var basePath = Path.GetDirectoryName(typeof(void).Assembly.Location);
+			foreach (var clrName in clrDllFilenames) {
+				var filename = Path.Combine(basePath, clrName);
+				if (File.Exists(filename))
+					return filename;
+			}
+			throw new InvalidProgramException($"Couldn't find clr.dll/coreclr.dll");
+		}
+
 		public void WriteFile(int[] tokens, out long resourceManagerTokensOffset) {
 			Debug.Assert(assemblies.Length == tokens.Length);
 			stream.Position = 0;
@@ -43,7 +54,7 @@ namespace dnSpy.MainApp {
 			// VS-MEF serializes metadata tokens. I don't know if eg. mscorlib tokens could be saved
 			// in the file so record some extra info in this file so we won't load it if eg. clr.dll
 			// or mscorlib.dll got updated.
-			WriteFile(writer, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll"));
+			WriteFile(writer, GetPathToClrDll());
 			WriteAssembly(writer, typeof(void).Assembly);
 
 			writer.Write(assemblies.Length);
@@ -97,7 +108,7 @@ namespace dnSpy.MainApp {
 			if (reader.ReadUInt32() != SIG)
 				return false;
 
-			if (!CheckFile(reader, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll")))
+			if (!CheckFile(reader, GetPathToClrDll()))
 				return false;
 			if (!CheckAssembly(reader, typeof(void).Assembly))
 				return false;

@@ -116,8 +116,6 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 					var lb = ilg.DeclareLocal(Import(local.Type), local.Type.IsPinned);
 					if (local.Index != lb.LocalIndex)
 						return null;
-					if (local.Name != null)
-						lb.SetLocalSymInfo(local.Name);
 					localsDict.Add(local, lb);
 				}
 			}

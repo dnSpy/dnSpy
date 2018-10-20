@@ -419,15 +419,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (elapsedTime >= connectionTimeout)
 						throw new CouldNotConnectException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
 					try {
-						var asyncConn = VirtualMachineManager.BeginConnect(endPoint, null);
-						if (!asyncConn.AsyncWaitHandle.WaitOne(connectionTimeout - elapsedTime)) {
-							VirtualMachineManager.CancelConnection(asyncConn);
+						var cts = new CancellationTokenSource(connectionTimeout - elapsedTime);
+						var asyncConn = VirtualMachineManager.ConnectAsync(endPoint, null, cts.Token);
+						if (!asyncConn.Wait(connectionTimeout - elapsedTime))
 							throw new CouldNotConnectException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
-						}
-						else {
-							vm = VirtualMachineManager.EndConnect(asyncConn);
-							break;
-						}
+						vm = asyncConn.Result;
+						break;
 					}
 					catch (SocketException sex) when (sex.SocketErrorCode == SocketError.ConnectionRefused) {
 						// Retry it in case it takes a while for mono.exe to initialize or if it hasn't started yet
@@ -459,6 +456,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				string msg;
 				if (ex is CouldNotConnectException)
 					msg = defaultCouldNotConnectMessage ?? ex.Message;
+				else if (ex is OperationCanceledException)
+					msg = dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotConnectToProcess;
 				else if (ex is StartException)
 					msg = ex.Message;
 				else {

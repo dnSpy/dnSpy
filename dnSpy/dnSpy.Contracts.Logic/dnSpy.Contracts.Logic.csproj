@@ -31,4 +31,8 @@
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Win32.Registry" Version="$(MSRegistryVersion)" Condition=" '$(IsDotNetCore)' == 'true' " />
+  </ItemGroup>
+
 </Project>
