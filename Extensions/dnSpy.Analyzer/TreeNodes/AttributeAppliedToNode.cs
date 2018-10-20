@@ -281,7 +281,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
 				foreach (var reference in assembly.AssemblyDef.Modules.SelectMany(module => module.GetAssemblyRefs())) {
-					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
+					if (AssemblyNameComparer.NameOnly.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
 					}
