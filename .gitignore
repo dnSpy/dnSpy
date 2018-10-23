@@ -13,3 +13,4 @@ _ReSharper*/
 project.lock.json
 *.nuget.props
 *.nuget.targets
+launchSettings.json
