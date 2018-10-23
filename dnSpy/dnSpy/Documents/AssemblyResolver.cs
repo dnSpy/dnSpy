@@ -47,15 +47,19 @@ namespace dnSpy.Documents {
 			const int MAX_CACHE_TIME_SECONDS = 10;
 			readonly HashSet<IAssembly> failedAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 			readonly object lockObj = new object();
+			volatile bool isEmpty = true;
 			DateTime lastTime = DateTime.UtcNow;
 
 			public bool IsFailed(IAssembly asm) {
+				if (isEmpty)
+					return false;
 				lock (lockObj) {
 					if (failedAsms.Count == 0)
 						return false;
 					var now = DateTime.UtcNow;
 					bool isOld = (now - lastTime).TotalSeconds > MAX_CACHE_TIME_SECONDS;
 					if (isOld) {
+						isEmpty = true;
 						failedAsms.Clear();
 						return false;
 					}
@@ -69,6 +73,7 @@ namespace dnSpy.Documents {
 				lock (lockObj) {
 					if (failedAsms.Count == 0)
 						lastTime = DateTime.UtcNow;
+					isEmpty = false;
 					failedAsms.Add(asmKey);
 				}
 			}
