@@ -59,16 +59,7 @@
     <EmbeddedResource Include="LicenseInfo\CREDITS.txt" />
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <None Include="Themes\blue.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\dark.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\hc.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\light.dntheme">
+    <None Include="Themes\*.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="FileLists\*.FileList.xml;LicenseInfo\*">
