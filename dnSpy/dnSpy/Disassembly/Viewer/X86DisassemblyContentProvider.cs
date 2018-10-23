@@ -69,14 +69,25 @@ namespace dnSpy.Disassembly.Viewer {
 			protected override bool TryGetSymbol(int operand, ref Instruction instruction, ulong address, int addressSize, out SymbolResult symbol, ref NumberFormattingOptions options) {
 				if (owner.cachedSymbolResolver.TryResolve(address, out var symResult, out bool fakeSymbol)) {
 					if (!fakeSymbol || owner.AddLabels) {
-						Debug.Assert(symResult.Address == address, "Symbol address != orig address: NYI");
-						if (symResult.Address == address) {
+						bool isBranch = symResult.Kind == SymbolKind.Function &&
+							instruction.FlowControl is var flowControl &&
+							(flowControl == FlowControl.UnconditionalBranch || flowControl == FlowControl.ConditionalBranch || flowControl == FlowControl.Call || flowControl == FlowControl.XbeginXabortXend);
+						if (!isBranch || !IsCurrentMethod(symResult.Address)) {
+							//TODO: need to support 'symResult.Address != address' (add a displacement to the symbol, eg. func+123)
 							symbol = new SymbolResult(symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind), SymbolFlags.Address);
 							return true;
 						}
 					}
 				}
 				return base.TryGetSymbol(operand, ref instruction, address, addressSize, out symbol, ref options);
+			}
+
+			bool IsCurrentMethod(ulong address) {
+				foreach (var block in owner.blocks) {
+					if (block.Contains(address))
+						return true;
+				}
+				return false;
 			}
 		}
 

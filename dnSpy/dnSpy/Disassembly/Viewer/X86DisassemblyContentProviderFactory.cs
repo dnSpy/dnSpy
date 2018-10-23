@@ -86,10 +86,18 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 			for (int i = 0; i < blocks.Length; i++) {
 				var block = blocks[i];
-				if (cachedSymResolver.TryResolve(block.Address, out var symbol, out _) && block.Label != symbol.Symbol)
+				if (cachedSymResolver.TryResolve(block.Address, out var symbol, out _) && block.Label != symbol.Symbol && !(symbol.Kind == SymbolKind.Function && IsCurrentMethod(blocks, symbol.Address)))
 					blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, symbol.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symbol.Kind), block.Instructions);
 			}
 			return new X86DisassemblyContentProvider(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName);
+
+			bool IsCurrentMethod(X86Block[] blocks2, ulong address) {
+				foreach (var block in blocks2) {
+					if (block.Contains(address))
+						return true;
+				}
+				return false;
+			}
 		}
 
 		static ulong[] GetPossibleSymbolAddresses(X86Block[] blocks) {

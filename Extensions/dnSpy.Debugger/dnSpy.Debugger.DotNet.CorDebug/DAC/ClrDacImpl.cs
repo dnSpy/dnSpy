@@ -118,6 +118,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 				return true;
 			}
 
+			var method = clrRuntime.GetMethodByAddress(address);
+			if (method == null && address >= 0x10000) {
+				if (clrRuntime.ReadPointer(address, out ulong newAddress))
+					method = clrRuntime.GetMethodByAddress(newAddress);
+			}
+			if (method != null) {
+				result = new SymbolResolverResult(SymbolKind.Function, method.ToString(), method.NativeCode);
+				return true;
+			}
+
 			result = default;
 			return false;
 		}
