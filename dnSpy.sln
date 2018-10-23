@@ -61,9 +61,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Decompiler.ILSpy.Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj", "{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.VisualBasic.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj", "{8B774E77-C956-4ABC-BBFE-8756CB4111C8}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "dnSpy.Roslyn.VisualBasic.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj", "{8B774E77-C956-4ABC-BBFE-8756CB4111C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.VisualBasic.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj", "{30057546-DED0-450E-89C3-0354B4FF9CCD}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "dnSpy.Roslyn.VisualBasic.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj", "{30057546-DED0-450E-89C3-0354B4FF9CCD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj", "{F10A60DA-4716-45F6-AB2E-4690440C0C7C}"
 EndProject
@@ -93,7 +93,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionCompiler", "dnSpy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj", "{DAD4C898-6CFF-485E-AB51-8D7E56F4C672}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj", "{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "BasicExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj", "{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger.DotNet.Mono", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Mono\dnSpy.Debugger.DotNet.Mono.csproj", "{083DE7BE-F315-4C7A-98B8-775428D4D20D}"
 EndProject
