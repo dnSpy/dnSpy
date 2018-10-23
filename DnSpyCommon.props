@@ -33,7 +33,7 @@
             - patch the cctor (create an empty body)
     build: (.NET Core 3.0 needed, and VS msbuild.exe)
         dotnet restore
-        msbuild /p:Configuration:Release
+        msbuild /p:Configuration=Release
     publish:
         CSPROJFILE:
             dnSpy\dnSpy\dnSpy.csproj
@@ -60,6 +60,7 @@
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
+    <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
 
     <!-- Update App.config whenever this value changes -->
     <DnSpyAssemblyVersion>5.0.9.0</DnSpyAssemblyVersion>
