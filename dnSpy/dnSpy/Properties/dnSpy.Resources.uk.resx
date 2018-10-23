@@ -1918,10 +1918,10 @@
     <value>Дизассемблер</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Code Style</value>
+    <value>Стиль Коду</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Add labels</value>
+    <value>Додати мітки</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
     <value>Add leading '0' to hex numbers if needed</value>
@@ -1936,13 +1936,13 @@
     <value>Always show segment registers</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
-    <value>Digit separator</value>
+    <value>Розділювач цифр</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
     <value>Add an empty line between blocks</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>Hex prefix</value>
+    <value>Hex префікс</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
     <value>Hex suffix</value>
@@ -1963,7 +1963,7 @@
     <value>Short numbers (branches)</value>
   </data>
   <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Short numbers</value>
+    <value>Короткі номери</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Show branch size</value>
@@ -1993,7 +1993,7 @@
     <value>Space after operand separator</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Space between '+'</value>
+    <value>Пробіл між '+'</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
     <value>Space between '*'</value>
@@ -2011,7 +2011,7 @@
     <value>Upper case mnemonics</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
-    <value>Upper case prefixes</value>
+    <value>Префікси у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
     <value>Upper case registers</value>
@@ -2020,7 +2020,7 @@
     <value>Pseudo instructions</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
-    <value>Syntax</value>
+    <value>Синтаксис</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
     <value>Naked registers</value>

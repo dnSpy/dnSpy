@@ -1492,10 +1492,10 @@ ERROR: {1}</value>
     <value>Copiar E_xpresión</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
-    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+    <value>No se pudo encontrar el código del método. Asegúrese de que el proceso se ha detenido y que el método ha sido compilado mediante jit.</value>
   </data>
   <data name="DisassemblyCommand" xml:space="preserve">
-    <value>_Disassembly</value>
+    <value>_Desensamblado</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+4</value>

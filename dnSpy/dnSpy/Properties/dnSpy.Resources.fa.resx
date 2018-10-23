@@ -1918,43 +1918,43 @@
     <value>اجازه به بیش از یک نمونه (نیاز به راه اندازی مجدد)</value>
   </data>
   <data name="DisassemblerDlgTabTitle" xml:space="preserve">
-    <value>Disassembler</value>
+    <value>دیس‌اسمبلر</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Code Style</value>
+    <value>استایل کد</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Add labels</value>
+    <value>افزودن برچسب ها</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Add leading '0' to hex numbers if needed</value>
+    <value>اضافه کردن پیشوند '0' به اعداد هگز در صورت لزوم</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
-    <value>Always show size of memory operands</value>
+    <value>همیشه اندازه حافظه عملوندها را نشان بده</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Always show the scale value</value>
+    <value>نمایش مقدار مقیاس</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
-    <value>Always show segment registers</value>
+    <value>همیشه بخش ثبات ها را نشان بده</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
-    <value>Digit separator</value>
+    <value>جدا کننده رقم</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Add an empty line between blocks</value>
+    <value>اضافه کردن یک خط خالی بین بلاک ها</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>Hex prefix</value>
+    <value>پیشوند هگز</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>Hex suffix</value>
+    <value>پسوند هگز</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
-    <value>Show disassembly in a new tab</value>
+    <value>نمایش دیس‌اسمبلی در تب دیگر</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Operand column</value>
+    <value>ستون عملوند</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
     <value>RIP-relative addresses</value>
@@ -1963,70 +1963,70 @@
     <value>Show scale before index register</value>
   </data>
   <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Short numbers (branches)</value>
+    <value>اعداد کوتاه (شاخه ها)</value>
   </data>
   <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Short numbers</value>
+    <value>اعداد کوتاه</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Show branch size</value>
+    <value>نمایش اندازه شاخه</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
-    <value>Show instruction address</value>
+    <value>نمایش آدرس های دستور</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
-    <value>Show instruction bytes</value>
+    <value>نمایش بایت های دستور</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
-    <value>Show zero displacements</value>
+    <value>نمایش جابجایی های صفر</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Signed numbers</value>
+    <value>اعداد علامت دار</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>جابجایی های علامت دار</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Show small numbers in decimal</value>
+    <value>نمایش اعداد کوچک در دسیمال</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Space after memory operand brackets</value>
+    <value>فاصله بعد از براکت های عملوند حافظه</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
-    <value>Space after operand separator</value>
+    <value>فاصله بعد از جدا کننده عملوند</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Space between '+'</value>
+    <value>فضای بین '+'</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Space between '*'</value>
+    <value>فضای بین '*'</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
-    <value>Upper case everything</value>
+    <value>همه چیز با حروف بزرگ</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Upper case hex numbers</value>
+    <value>اعداد هگز با حروف بزرگ</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
-    <value>Upper case keywords</value>
+    <value>واؤه های کلیدی با حروف بزرگ</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
-    <value>Upper case mnemonics</value>
+    <value>حروف بزرگ mnemonics</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
-    <value>Upper case prefixes</value>
+    <value>پیشوندها با حروف بزرگ</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
-    <value>Upper case registers</value>
+    <value>ثبات ها با حروف بزرگ</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
-    <value>Pseudo instructions</value>
+    <value>شبه دستورات</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
-    <value>Syntax</value>
+    <value>سینتکس</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
-    <value>Naked registers</value>
+    <value>ثبات های خام</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
     <value>Always show mnemonic size suffix</value>
@@ -2035,18 +2035,18 @@
     <value>Space after memory operand comma</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
-    <value>Hex numbers</value>
+    <value>شماره های هگز</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
     <value>Disassembly</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
-    <value>Show decompiled code</value>
+    <value>نمایش کد دیکامپایل شده</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Show IL code</value>
+    <value>نمایش کدهای IL</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
-    <value>The method is not optimized</value>
+    <value>متود بهینه نشده است</value>
   </data>
 </root>
