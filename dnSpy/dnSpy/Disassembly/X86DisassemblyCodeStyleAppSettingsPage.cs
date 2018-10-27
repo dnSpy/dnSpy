@@ -109,7 +109,7 @@ namespace dnSpy.Disassembly {
 
 			public bool TryGetSymbol(int operand, int instructionOperand, ref Instruction instruction, ulong address, int addressSize, out SymbolResult symbol) {
 				if (address == SYMBOLADDR) {
-					symbol = new SymbolResult(SYMBOLADDR, new TextInfo(SYMBOLNAME, FormatterOutputTextKind.Data), SymbolFlags.Address);
+					symbol = new SymbolResult(SYMBOLADDR, new TextInfo(SYMBOLNAME, FormatterOutputTextKind.Data), SymbolFlags.None);
 					return true;
 				}
 				symbol = default;

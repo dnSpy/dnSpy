@@ -104,6 +104,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 		}
 
 		public override bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
+			const ulong MIN_ADDR = 0x10000;
+			if (address < MIN_ADDR) {
+				result = default;
+				return false;
+			}
+
 			string name;
 
 			name = clrRuntime.GetJitHelperFunctionName(address);
@@ -119,8 +125,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			}
 
 			var method = clrRuntime.GetMethodByAddress(address);
-			const ulong MIN_ADDR = 0x10000;
-			if (method == null && address >= MIN_ADDR) {
+			if (method == null && (address & ((uint)clrRuntime.PointerSize - 1)) == 0) {
 				if (clrRuntime.ReadPointer(address, out ulong newAddress) && newAddress >= MIN_ADDR)
 					method = clrRuntime.GetMethodByAddress(newAddress);
 			}
