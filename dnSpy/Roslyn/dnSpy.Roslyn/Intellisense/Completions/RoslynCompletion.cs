@@ -18,7 +18,6 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.CodeAnalysis.Completion;

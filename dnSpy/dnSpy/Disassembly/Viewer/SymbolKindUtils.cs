@@ -25,19 +25,19 @@ namespace dnSpy.Disassembly.Viewer {
 		public static SymbolKind ToSymbolKind(FormatterOutputTextKind kind) {
 			switch (kind) {
 			case FormatterOutputTextKindExtensions.UnknownSymbol:return SymbolKind.Unknown;
-			case FormatterOutputTextKindExtensions.Data:		return SymbolKind.Data;
-			case FormatterOutputTextKindExtensions.Label:		return SymbolKind.Label;
-			case FormatterOutputTextKindExtensions.Function:	return SymbolKind.Function;
-			default:											return SymbolKind.Unknown;
+			case FormatterOutputTextKind.Data:		return SymbolKind.Data;
+			case FormatterOutputTextKind.Label:		return SymbolKind.Label;
+			case FormatterOutputTextKind.Function:	return SymbolKind.Function;
+			default:								return SymbolKind.Unknown;
 			}
 		}
 
 		public static FormatterOutputTextKind ToFormatterOutputTextKind(SymbolKind kind) {
 			switch (kind) {
 			case SymbolKind.Unknown:	return FormatterOutputTextKindExtensions.UnknownSymbol;
-			case SymbolKind.Data:		return FormatterOutputTextKindExtensions.Data;
-			case SymbolKind.Label:		return FormatterOutputTextKindExtensions.Label;
-			case SymbolKind.Function:	return FormatterOutputTextKindExtensions.Function;
+			case SymbolKind.Data:		return FormatterOutputTextKind.Data;
+			case SymbolKind.Label:		return FormatterOutputTextKind.Label;
+			case SymbolKind.Function:	return FormatterOutputTextKind.Function;
 			default:					return FormatterOutputTextKind.Text;
 			}
 		}

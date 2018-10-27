@@ -1432,6 +1432,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show symbol address.
+        /// </summary>
+        public static string DisassemblySettings_ShowSymbolAddress {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowSymbolAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show zero displacements.
         /// </summary>
         public static string DisassemblySettings_ShowZeroDisplacements {

@@ -69,7 +69,7 @@
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2018 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
-    <IcedVersion>0.9.0</IcedVersion>
+    <IcedVersion>1.0.0</IcedVersion>
     <MSBuildNuGetVersion>15.8.166</MSBuildNuGetVersion>
     <MSRegistryVersion>4.5.0</MSRegistryVersion>
     <MSVSCompositionVersion>15.8.98</MSVSCompositionVersion>

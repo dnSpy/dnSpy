@@ -33,7 +33,7 @@ namespace dnSpy.Disassembly {
 		GasDisassemblySettings GasSettings => (GasDisassemblySettings)Settings;
 
 		public GasAppSettingsPage(GasDisassemblySettings disassemblySettings)
-			: base(disassemblySettings, disassemblySettings.Clone(), new GasFormatter()) {
+			: base(disassemblySettings, disassemblySettings.Clone(), new GasFormatter(new GasFormatterOptions(), SymbolResolver.Instance)) {
 			NakedRegisters = AddDisasmBoolSetting(() => GasSettings.NakedRegisters, value => GasSettings.NakedRegisters = value, Instruction.Create(Code.Xchg_r64_RAX, Register.RSI, Register.RAX));
 			ShowMnemonicSizeSuffix = AddDisasmBoolSetting(() => GasSettings.ShowMnemonicSizeSuffix, value => GasSettings.ShowMnemonicSizeSuffix = value, Instruction.Create(Code.Xchg_r64_RAX, Register.RSI, Register.RAX));
 			SpaceAfterMemoryOperandComma = AddDisasmBoolSetting(() => GasSettings.SpaceAfterMemoryOperandComma, value => GasSettings.SpaceAfterMemoryOperandComma = value, Instruction.Create(Code.Mov_rm64_r64, new MemoryOperand(Register.RAX, Register.RDI, 4, 0x12345678, 8), Register.RCX));

@@ -29,7 +29,7 @@ namespace dnSpy.Disassembly {
 		NasmDisassemblySettings NasmSettings => (NasmDisassemblySettings)Settings;
 
 		public NasmAppSettingsPage(NasmDisassemblySettings disassemblySettings)
-			: base(disassemblySettings, disassemblySettings.Clone(), new NasmFormatter()) { }
+			: base(disassemblySettings, disassemblySettings.Clone(), new NasmFormatter(new NasmFormatterOptions(), SymbolResolver.Instance)) { }
 
 		protected override void InitializeFormatterOptionsCore(FormatterOptions options) {
 			var nasm = (NasmFormatterOptions)options;

@@ -62,32 +62,19 @@ namespace dnSpy.Disassembly.Viewer {
 
 		public override event EventHandler OnContentChanged;
 
-		sealed class SymbolResolverImpl : SymbolResolver {
+		sealed class SymbolResolverImpl : Iced.Intel.ISymbolResolver {
 			readonly X86DisassemblyContentProvider owner;
 			public SymbolResolverImpl(X86DisassemblyContentProvider owner) => this.owner = owner;
 
-			protected override bool TryGetSymbol(int operand, ref Instruction instruction, ulong address, int addressSize, out SymbolResult symbol, ref NumberFormattingOptions options) {
+			public bool TryGetSymbol(int operand, int instructionOperand, ref Instruction instruction, ulong address, int addressSize, out SymbolResult symbol) {
 				if (owner.cachedSymbolResolver.TryResolve(address, out var symResult, out bool fakeSymbol)) {
 					if (!fakeSymbol || owner.AddLabels) {
-						bool isBranch = symResult.Kind == SymbolKind.Function &&
-							instruction.FlowControl is var flowControl &&
-							(flowControl == FlowControl.UnconditionalBranch || flowControl == FlowControl.ConditionalBranch || flowControl == FlowControl.Call || flowControl == FlowControl.XbeginXabortXend);
-						if (!isBranch || !IsCurrentMethod(symResult.Address)) {
-							//TODO: need to support 'symResult.Address != address' (add a displacement to the symbol, eg. func+123)
-							symbol = new SymbolResult(symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind), SymbolFlags.Address);
-							return true;
-						}
+						symbol = new SymbolResult(symResult.Address, symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind), SymbolFlags.Address);
+						return true;
 					}
 				}
-				return base.TryGetSymbol(operand, ref instruction, address, addressSize, out symbol, ref options);
-			}
-
-			bool IsCurrentMethod(ulong address) {
-				foreach (var block in owner.blocks) {
-					if (block.Contains(address))
-						return true;
-				}
-				return false;
+				symbol = default;
+				return fakeSymbol;
 			}
 		}
 

@@ -6804,6 +6804,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
@@ -6822,10 +6824,10 @@
             <TextBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterOperandSeparator.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterMemoryBracket.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryBracket}"/>
             <TextBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterMemoryBracket.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpacesBetweenMemoryAddOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryAddOperators}"/>
-            <TextBox Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpacesBetweenMemoryAddOperators.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpacesBetweenMemoryMulOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryMulOperators}"/>
-            <TextBox Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpacesBetweenMemoryMulOperators.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceBetweenMemoryAddOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryAddOperators}"/>
+            <TextBox Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceBetweenMemoryAddOperators.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceBetweenMemoryMulOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryMulOperators}"/>
+            <TextBox Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceBetweenMemoryMulOperators.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="20" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ScaleBeforeIndex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ScaleBeforeIndex}"/>
             <TextBox Grid.Row="21" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ScaleBeforeIndex.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="22" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding AlwaysShowScale.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_AlwaysShowScale}"/>
@@ -6854,16 +6856,18 @@
             <TextBox Grid.Row="45" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowBranchSize.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="46" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UsePseudoOps.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UsePseudoOps}"/>
             <TextBox Grid.Row="47" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UsePseudoOps.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="48" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
-            <TextBox Grid.Row="49" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
-            <Label Grid.Row="50" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />
-            <TextBox Grid.Row="50" Grid.Column="1" Margin="5 5 0 0" Name="opColumnTextBox" Text="{Binding OperandColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="51" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexPrefixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexPrefix}" />
-            <TextBox Grid.Row="51" Grid.Column="1" Margin="5 5 0 0" Name="hexPrefixTextBox" Text="{Binding HexPrefix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="52" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexSuffixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexSuffix}" />
-            <TextBox Grid.Row="52" Grid.Column="1" Margin="5 5 0 0" Name="hexSuffixTextBox" Text="{Binding HexSuffix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="53" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=digitSeparatorTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_DigitSeparator}" />
-            <TextBox Grid.Row="53" Grid.Column="1" Margin="5 5 0 0" Name="digitSeparatorTextBox" Text="{Binding DigitSeparator, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="48" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowSymbolAddress.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowSymbolAddress}"/>
+            <TextBox Grid.Row="49" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowSymbolAddress.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="50" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
+            <TextBox Grid.Row="51" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
+            <Label Grid.Row="52" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />
+            <TextBox Grid.Row="52" Grid.Column="1" Margin="5 5 0 0" Name="opColumnTextBox" Text="{Binding OperandColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="53" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexPrefixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexPrefix}" />
+            <TextBox Grid.Row="53" Grid.Column="1" Margin="5 5 0 0" Name="hexPrefixTextBox" Text="{Binding HexPrefix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="54" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexSuffixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexSuffix}" />
+            <TextBox Grid.Row="54" Grid.Column="1" Margin="5 5 0 0" Name="hexSuffixTextBox" Text="{Binding HexSuffix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="55" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=digitSeparatorTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_DigitSeparator}" />
+            <TextBox Grid.Row="55" Grid.Column="1" Margin="5 5 0 0" Name="digitSeparatorTextBox" Text="{Binding DigitSeparator, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </DataTemplate>
 
@@ -6927,6 +6931,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
@@ -6945,10 +6951,10 @@
             <TextBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterOperandSeparator.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterMemoryBracket.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryBracket}"/>
             <TextBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterMemoryBracket.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpacesBetweenMemoryAddOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryAddOperators}"/>
-            <TextBox Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpacesBetweenMemoryAddOperators.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpacesBetweenMemoryMulOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryMulOperators}"/>
-            <TextBox Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpacesBetweenMemoryMulOperators.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceBetweenMemoryAddOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryAddOperators}"/>
+            <TextBox Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceBetweenMemoryAddOperators.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceBetweenMemoryMulOperators.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpacesBetweenMemoryMulOperators}"/>
+            <TextBox Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceBetweenMemoryMulOperators.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="20" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ScaleBeforeIndex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ScaleBeforeIndex}"/>
             <TextBox Grid.Row="21" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ScaleBeforeIndex.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="22" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding AlwaysShowScale.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_AlwaysShowScale}"/>
@@ -6977,16 +6983,18 @@
             <TextBox Grid.Row="45" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowBranchSize.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="46" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UsePseudoOps.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UsePseudoOps}"/>
             <TextBox Grid.Row="47" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UsePseudoOps.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="48" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
-            <TextBox Grid.Row="49" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
-            <Label Grid.Row="50" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />
-            <TextBox Grid.Row="50" Grid.Column="1" Margin="5 5 0 0" Name="opColumnTextBox" Text="{Binding OperandColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="51" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexPrefixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexPrefix}" />
-            <TextBox Grid.Row="51" Grid.Column="1" Margin="5 5 0 0" Name="hexPrefixTextBox" Text="{Binding HexPrefix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="52" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexSuffixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexSuffix}" />
-            <TextBox Grid.Row="52" Grid.Column="1" Margin="5 5 0 0" Name="hexSuffixTextBox" Text="{Binding HexSuffix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="53" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=digitSeparatorTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_DigitSeparator}" />
-            <TextBox Grid.Row="53" Grid.Column="1" Margin="5 5 0 0" Name="digitSeparatorTextBox" Text="{Binding DigitSeparator, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="48" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowSymbolAddress.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowSymbolAddress}"/>
+            <TextBox Grid.Row="49" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowSymbolAddress.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="50" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
+            <TextBox Grid.Row="51" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
+            <Label Grid.Row="52" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />
+            <TextBox Grid.Row="52" Grid.Column="1" Margin="5 5 0 0" Name="opColumnTextBox" Text="{Binding OperandColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="53" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexPrefixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexPrefix}" />
+            <TextBox Grid.Row="53" Grid.Column="1" Margin="5 5 0 0" Name="hexPrefixTextBox" Text="{Binding HexPrefix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="54" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexSuffixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexSuffix}" />
+            <TextBox Grid.Row="54" Grid.Column="1" Margin="5 5 0 0" Name="hexSuffixTextBox" Text="{Binding HexSuffix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="55" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=digitSeparatorTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_DigitSeparator}" />
+            <TextBox Grid.Row="55" Grid.Column="1" Margin="5 5 0 0" Name="digitSeparatorTextBox" Text="{Binding DigitSeparator, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </DataTemplate>
 
@@ -6997,6 +7005,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -7084,20 +7094,22 @@
             <TextBox Grid.Row="35" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding RipRelativeAddresses.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="36" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UsePseudoOps.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UsePseudoOps}"/>
             <TextBox Grid.Row="37" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UsePseudoOps.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="38" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding NakedRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_NakedRegisters}"/>
-            <TextBox Grid.Row="39" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding NakedRegisters.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="40" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowMnemonicSizeSuffix.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowMnemonicSizeSuffix}"/>
-            <TextBox Grid.Row="41" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowMnemonicSizeSuffix.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="42" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
-            <TextBox Grid.Row="43" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
-            <Label Grid.Row="44" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />
-            <TextBox Grid.Row="44" Grid.Column="1" Margin="5 5 0 0" Name="opColumnTextBox" Text="{Binding OperandColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="45" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexPrefixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexPrefix}" />
-            <TextBox Grid.Row="45" Grid.Column="1" Margin="5 5 0 0" Name="hexPrefixTextBox" Text="{Binding HexPrefix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="46" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexSuffixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexSuffix}" />
-            <TextBox Grid.Row="46" Grid.Column="1" Margin="5 5 0 0" Name="hexSuffixTextBox" Text="{Binding HexSuffix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="47" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=digitSeparatorTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_DigitSeparator}" />
-            <TextBox Grid.Row="47" Grid.Column="1" Margin="5 5 0 0" Name="digitSeparatorTextBox" Text="{Binding DigitSeparator, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="38" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowSymbolAddress.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowSymbolAddress}"/>
+            <TextBox Grid.Row="39" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowSymbolAddress.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="40" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding NakedRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_NakedRegisters}"/>
+            <TextBox Grid.Row="41" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding NakedRegisters.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="42" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowMnemonicSizeSuffix.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowMnemonicSizeSuffix}"/>
+            <TextBox Grid.Row="43" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowMnemonicSizeSuffix.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="44" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
+            <TextBox Grid.Row="45" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
+            <Label Grid.Row="46" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />
+            <TextBox Grid.Row="46" Grid.Column="1" Margin="5 5 0 0" Name="opColumnTextBox" Text="{Binding OperandColumnVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="47" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexPrefixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexPrefix}" />
+            <TextBox Grid.Row="47" Grid.Column="1" Margin="5 5 0 0" Name="hexPrefixTextBox" Text="{Binding HexPrefix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="48" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexSuffixTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_HexSuffix}" />
+            <TextBox Grid.Row="48" Grid.Column="1" Margin="5 5 0 0" Name="hexSuffixTextBox" Text="{Binding HexSuffix, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="49" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=digitSeparatorTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_DigitSeparator}" />
+            <TextBox Grid.Row="49" Grid.Column="1" Margin="5 5 0 0" Name="digitSeparatorTextBox" Text="{Binding DigitSeparator, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </DataTemplate>
 

@@ -137,27 +137,27 @@ namespace dnSpy.Disassembly {
 		}
 		bool spaceAfterMemoryBracket;
 
-		public bool SpacesBetweenMemoryAddOperators {
-			get => spacesBetweenMemoryAddOperators;
+		public bool SpaceBetweenMemoryAddOperators {
+			get => spaceBetweenMemoryAddOperators;
 			set {
-				if (value != spacesBetweenMemoryAddOperators) {
-					spacesBetweenMemoryAddOperators = value;
-					OnPropertyChanged(nameof(SpacesBetweenMemoryAddOperators));
+				if (value != spaceBetweenMemoryAddOperators) {
+					spaceBetweenMemoryAddOperators = value;
+					OnPropertyChanged(nameof(SpaceBetweenMemoryAddOperators));
 				}
 			}
 		}
-		bool spacesBetweenMemoryAddOperators;
+		bool spaceBetweenMemoryAddOperators;
 
-		public bool SpacesBetweenMemoryMulOperators {
-			get => spacesBetweenMemoryMulOperators;
+		public bool SpaceBetweenMemoryMulOperators {
+			get => spaceBetweenMemoryMulOperators;
 			set {
-				if (value != spacesBetweenMemoryMulOperators) {
-					spacesBetweenMemoryMulOperators = value;
-					OnPropertyChanged(nameof(SpacesBetweenMemoryMulOperators));
+				if (value != spaceBetweenMemoryMulOperators) {
+					spaceBetweenMemoryMulOperators = value;
+					OnPropertyChanged(nameof(SpaceBetweenMemoryMulOperators));
 				}
 			}
 		}
-		bool spacesBetweenMemoryMulOperators;
+		bool spaceBetweenMemoryMulOperators;
 
 		public bool ScaleBeforeIndex {
 			get => scaleBeforeIndex;
@@ -344,18 +344,7 @@ namespace dnSpy.Disassembly {
 				}
 			}
 		}
-		string digitSeparator = "_";
-
-		public bool AddDigitSeparators {
-			get => addDigitSeparators;
-			set {
-				if (value != addDigitSeparators) {
-					addDigitSeparators = value;
-					OnPropertyChanged(nameof(AddDigitSeparators));
-				}
-			}
-		}
-		bool addDigitSeparators;
+		string digitSeparator = null;
 
 		public bool ShortNumbers {
 			get => shortNumbers;
@@ -459,16 +448,16 @@ namespace dnSpy.Disassembly {
 		}
 		bool signExtendMemoryDisplacements;
 
-		public bool AlwaysShowMemorySize {
-			get => alwaysShowMemorySize;
+		public MemorySizeOptions MemorySizeOptions {
+			get => memorySizeOptions;
 			set {
-				if (value != alwaysShowMemorySize) {
-					alwaysShowMemorySize = value;
-					OnPropertyChanged(nameof(AlwaysShowMemorySize));
+				if (value != memorySizeOptions) {
+					memorySizeOptions = value;
+					OnPropertyChanged(nameof(MemorySizeOptions));
 				}
 			}
 		}
-		bool alwaysShowMemorySize;
+		MemorySizeOptions memorySizeOptions = MemorySizeOptions.Default;
 
 		public bool RipRelativeAddresses {
 			get => ripRelativeAddresses;
@@ -503,6 +492,17 @@ namespace dnSpy.Disassembly {
 		}
 		bool usePseudoOps = true;
 
+		public bool ShowSymbolAddress {
+			get => showSymbolAddress;
+			set {
+				if (value != showSymbolAddress) {
+					showSymbolAddress = value;
+					OnPropertyChanged(nameof(ShowSymbolAddress));
+				}
+			}
+		}
+		bool showSymbolAddress = true;
+
 		protected void ReadSettings(ISettingsSection sect) {
 			UpperCasePrefixes = sect.Attribute<bool?>(nameof(UpperCasePrefixes)) ?? UpperCasePrefixes;
 			UpperCaseMnemonics = sect.Attribute<bool?>(nameof(UpperCaseMnemonics)) ?? UpperCaseMnemonics;
@@ -514,8 +514,8 @@ namespace dnSpy.Disassembly {
 			TabSize = sect.Attribute<int?>(nameof(TabSize)) ?? TabSize;
 			SpaceAfterOperandSeparator = sect.Attribute<bool?>(nameof(SpaceAfterOperandSeparator)) ?? SpaceAfterOperandSeparator;
 			SpaceAfterMemoryBracket = sect.Attribute<bool?>(nameof(SpaceAfterMemoryBracket)) ?? SpaceAfterMemoryBracket;
-			SpacesBetweenMemoryAddOperators = sect.Attribute<bool?>(nameof(SpacesBetweenMemoryAddOperators)) ?? SpacesBetweenMemoryAddOperators;
-			SpacesBetweenMemoryMulOperators = sect.Attribute<bool?>(nameof(SpacesBetweenMemoryMulOperators)) ?? SpacesBetweenMemoryMulOperators;
+			SpaceBetweenMemoryAddOperators = sect.Attribute<bool?>(nameof(SpaceBetweenMemoryAddOperators)) ?? SpaceBetweenMemoryAddOperators;
+			SpaceBetweenMemoryMulOperators = sect.Attribute<bool?>(nameof(SpaceBetweenMemoryMulOperators)) ?? SpaceBetweenMemoryMulOperators;
 			ScaleBeforeIndex = sect.Attribute<bool?>(nameof(ScaleBeforeIndex)) ?? ScaleBeforeIndex;
 			AlwaysShowScale = sect.Attribute<bool?>(nameof(AlwaysShowScale)) ?? AlwaysShowScale;
 			AlwaysShowSegmentRegister = sect.Attribute<bool?>(nameof(AlwaysShowSegmentRegister)) ?? AlwaysShowSegmentRegister;
@@ -533,7 +533,6 @@ namespace dnSpy.Disassembly {
 			BinarySuffix = sect.Attribute<string>(nameof(BinarySuffix)) ?? BinarySuffix;
 			BinaryDigitGroupSize = sect.Attribute<int?>(nameof(BinaryDigitGroupSize)) ?? BinaryDigitGroupSize;
 			DigitSeparator = sect.Attribute<string>(nameof(DigitSeparator)) ?? DigitSeparator;
-			AddDigitSeparators = sect.Attribute<bool?>(nameof(AddDigitSeparators)) ?? AddDigitSeparators;
 			ShortNumbers = sect.Attribute<bool?>(nameof(ShortNumbers)) ?? ShortNumbers;
 			UpperCaseHex = sect.Attribute<bool?>(nameof(UpperCaseHex)) ?? UpperCaseHex;
 			SmallHexNumbersInDecimal = sect.Attribute<bool?>(nameof(SmallHexNumbersInDecimal)) ?? SmallHexNumbersInDecimal;
@@ -543,10 +542,11 @@ namespace dnSpy.Disassembly {
 			SignedImmediateOperands = sect.Attribute<bool?>(nameof(SignedImmediateOperands)) ?? SignedImmediateOperands;
 			SignedMemoryDisplacements = sect.Attribute<bool?>(nameof(SignedMemoryDisplacements)) ?? SignedMemoryDisplacements;
 			SignExtendMemoryDisplacements = sect.Attribute<bool?>(nameof(SignExtendMemoryDisplacements)) ?? SignExtendMemoryDisplacements;
-			AlwaysShowMemorySize = sect.Attribute<bool?>(nameof(AlwaysShowMemorySize)) ?? AlwaysShowMemorySize;
+			MemorySizeOptions = sect.Attribute<MemorySizeOptions?>(nameof(MemorySizeOptions)) ?? MemorySizeOptions;
 			RipRelativeAddresses = sect.Attribute<bool?>(nameof(RipRelativeAddresses)) ?? RipRelativeAddresses;
 			ShowBranchSize = sect.Attribute<bool?>(nameof(ShowBranchSize)) ?? ShowBranchSize;
 			UsePseudoOps = sect.Attribute<bool?>(nameof(UsePseudoOps)) ?? UsePseudoOps;
+			ShowSymbolAddress = sect.Attribute<bool?>(nameof(ShowSymbolAddress)) ?? ShowSymbolAddress;
 		}
 
 		protected void WriteSettings(ISettingsSection sect) {
@@ -560,8 +560,8 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(TabSize), TabSize);
 			sect.Attribute(nameof(SpaceAfterOperandSeparator), SpaceAfterOperandSeparator);
 			sect.Attribute(nameof(SpaceAfterMemoryBracket), SpaceAfterMemoryBracket);
-			sect.Attribute(nameof(SpacesBetweenMemoryAddOperators), SpacesBetweenMemoryAddOperators);
-			sect.Attribute(nameof(SpacesBetweenMemoryMulOperators), SpacesBetweenMemoryMulOperators);
+			sect.Attribute(nameof(SpaceBetweenMemoryAddOperators), SpaceBetweenMemoryAddOperators);
+			sect.Attribute(nameof(SpaceBetweenMemoryMulOperators), SpaceBetweenMemoryMulOperators);
 			sect.Attribute(nameof(ScaleBeforeIndex), ScaleBeforeIndex);
 			sect.Attribute(nameof(AlwaysShowScale), AlwaysShowScale);
 			sect.Attribute(nameof(AlwaysShowSegmentRegister), AlwaysShowSegmentRegister);
@@ -579,7 +579,6 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(BinarySuffix), BinarySuffix);
 			sect.Attribute(nameof(BinaryDigitGroupSize), BinaryDigitGroupSize);
 			sect.Attribute(nameof(DigitSeparator), DigitSeparator);
-			sect.Attribute(nameof(AddDigitSeparators), AddDigitSeparators);
 			sect.Attribute(nameof(ShortNumbers), ShortNumbers);
 			sect.Attribute(nameof(UpperCaseHex), UpperCaseHex);
 			sect.Attribute(nameof(SmallHexNumbersInDecimal), SmallHexNumbersInDecimal);
@@ -589,10 +588,11 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(SignedImmediateOperands), SignedImmediateOperands);
 			sect.Attribute(nameof(SignedMemoryDisplacements), SignedMemoryDisplacements);
 			sect.Attribute(nameof(SignExtendMemoryDisplacements), SignExtendMemoryDisplacements);
-			sect.Attribute(nameof(AlwaysShowMemorySize), AlwaysShowMemorySize);
+			sect.Attribute(nameof(MemorySizeOptions), MemorySizeOptions);
 			sect.Attribute(nameof(RipRelativeAddresses), RipRelativeAddresses);
 			sect.Attribute(nameof(ShowBranchSize), ShowBranchSize);
 			sect.Attribute(nameof(UsePseudoOps), UsePseudoOps);
+			sect.Attribute(nameof(ShowSymbolAddress), ShowSymbolAddress);
 		}
 
 		protected DisassemblySettings CopyTo(DisassemblySettings other) {
@@ -608,8 +608,8 @@ namespace dnSpy.Disassembly {
 			other.TabSize = TabSize;
 			other.SpaceAfterOperandSeparator = SpaceAfterOperandSeparator;
 			other.SpaceAfterMemoryBracket = SpaceAfterMemoryBracket;
-			other.SpacesBetweenMemoryAddOperators = SpacesBetweenMemoryAddOperators;
-			other.SpacesBetweenMemoryMulOperators = SpacesBetweenMemoryMulOperators;
+			other.SpaceBetweenMemoryAddOperators = SpaceBetweenMemoryAddOperators;
+			other.SpaceBetweenMemoryMulOperators = SpaceBetweenMemoryMulOperators;
 			other.ScaleBeforeIndex = ScaleBeforeIndex;
 			other.AlwaysShowScale = AlwaysShowScale;
 			other.AlwaysShowSegmentRegister = AlwaysShowSegmentRegister;
@@ -627,7 +627,6 @@ namespace dnSpy.Disassembly {
 			other.BinarySuffix = BinarySuffix;
 			other.BinaryDigitGroupSize = BinaryDigitGroupSize;
 			other.DigitSeparator = DigitSeparator;
-			other.AddDigitSeparators = AddDigitSeparators;
 			other.ShortNumbers = ShortNumbers;
 			other.UpperCaseHex = UpperCaseHex;
 			other.SmallHexNumbersInDecimal = SmallHexNumbersInDecimal;
@@ -637,10 +636,11 @@ namespace dnSpy.Disassembly {
 			other.SignedImmediateOperands = SignedImmediateOperands;
 			other.SignedMemoryDisplacements = SignedMemoryDisplacements;
 			other.SignExtendMemoryDisplacements = SignExtendMemoryDisplacements;
-			other.AlwaysShowMemorySize = AlwaysShowMemorySize;
+			other.MemorySizeOptions = MemorySizeOptions;
 			other.RipRelativeAddresses = RipRelativeAddresses;
 			other.ShowBranchSize = ShowBranchSize;
 			other.UsePseudoOps = UsePseudoOps;
+			other.ShowSymbolAddress = ShowSymbolAddress;
 			return other;
 		}
 	}

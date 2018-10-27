@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Contracts.MVVM;

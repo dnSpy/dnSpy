@@ -46,7 +46,7 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly X86DisassemblyContentProviderFactoryDependencies deps;
 		readonly int bitness;
 		readonly DisassemblyContentFormatterOptions formatterOptions;
-		readonly ISymbolResolver symbolResolver;
+		readonly Contracts.Disassembly.ISymbolResolver symbolResolver;
 		readonly string header;
 		readonly NativeCodeOptimization optimization;
 		readonly NativeCodeBlock[] blocks;
@@ -54,7 +54,7 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly NativeVariableInfo[] variableInfo;
 		readonly string methodName;
 
-		public X86DisassemblyContentProviderFactory(X86DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName) {
+		public X86DisassemblyContentProviderFactory(X86DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName) {
 			if (blocks == null)
 				throw new ArgumentNullException(nameof(blocks));
 			this.deps = deps ?? throw new ArgumentNullException(nameof(deps));
@@ -72,10 +72,6 @@ namespace dnSpy.Disassembly.Viewer {
 		public DisassemblyContentProvider Create() {
 			var blocks = X86BlockFactory.Create(bitness, this.blocks);
 			var cachedSymResolver = new CachedSymbolResolver();
-			foreach (var block in blocks) {
-				if (!string.IsNullOrEmpty(block.Label))
-					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(SymbolKindUtils.ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
-			}
 			if (symbolResolver != null) {
 				var addresses = GetPossibleSymbolAddresses(blocks);
 				if (addresses.Length != 0) {
@@ -84,20 +80,11 @@ namespace dnSpy.Disassembly.Viewer {
 					cachedSymResolver.AddSymbols(addresses, symbolResolverResults, fakeSymbol: false);
 				}
 			}
-			for (int i = 0; i < blocks.Length; i++) {
-				var block = blocks[i];
-				if (cachedSymResolver.TryResolve(block.Address, out var symbol, out _) && block.Label != symbol.Symbol && !(symbol.Kind == SymbolKind.Function && IsCurrentMethod(blocks, symbol.Address)))
-					blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, symbol.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symbol.Kind), block.Instructions);
+			foreach (var block in blocks) {
+				if (!string.IsNullOrEmpty(block.Label))
+					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(SymbolKindUtils.ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
 			}
 			return new X86DisassemblyContentProvider(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName);
-
-			bool IsCurrentMethod(X86Block[] blocks2, ulong address) {
-				foreach (var block in blocks2) {
-					if (block.Contains(address))
-						return true;
-				}
-				return false;
-			}
 		}
 
 		static ulong[] GetPossibleSymbolAddresses(X86Block[] blocks) {

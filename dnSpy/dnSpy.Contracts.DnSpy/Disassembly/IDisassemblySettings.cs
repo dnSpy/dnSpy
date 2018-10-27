@@ -78,12 +78,12 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <summary>
 		/// Add spaces between memory operand "+" and "-" operators, eg. "[rax + rcx]" vs "[rax+rcx]"
 		/// </summary>
-		bool SpacesBetweenMemoryAddOperators { get; set; }
+		bool SpaceBetweenMemoryAddOperators { get; set; }
 
 		/// <summary>
 		/// Add spaces between memory operand "*" operator, eg. "[rax * 4]" vs "[rax*4]"
 		/// </summary>
-		bool SpacesBetweenMemoryMulOperators { get; set; }
+		bool SpaceBetweenMemoryMulOperators { get; set; }
 
 		/// <summary>
 		/// Show memory operand scale value before the index register, eg. "[4*rax]" vs "[rax*4]"
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Disassembly {
 		string HexSuffix { get; set; }
 
 		/// <summary>
-		/// Size of a digit group. Used if <see cref="AddDigitSeparators"/> is true
+		/// Size of a digit group
 		/// </summary>
 		int HexDigitGroupSize { get; set; }
 
@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Disassembly {
 		string DecimalSuffix { get; set; }
 
 		/// <summary>
-		/// Size of a digit group. Used if <see cref="AddDigitSeparators"/> is true
+		/// Size of a digit group
 		/// </summary>
 		int DecimalDigitGroupSize { get; set; }
 
@@ -147,7 +147,7 @@ namespace dnSpy.Contracts.Disassembly {
 		string OctalSuffix { get; set; }
 
 		/// <summary>
-		/// Size of a digit group. Used if <see cref="AddDigitSeparators"/> is true
+		/// Size of a digit group
 		/// </summary>
 		int OctalDigitGroupSize { get; set; }
 
@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Disassembly {
 		string BinarySuffix { get; set; }
 
 		/// <summary>
-		/// Size of a digit group. Used if <see cref="AddDigitSeparators"/> is true
+		/// Size of a digit group
 		/// </summary>
 		int BinaryDigitGroupSize { get; set; }
 
@@ -170,11 +170,6 @@ namespace dnSpy.Contracts.Disassembly {
 		/// Digit separator or null/empty string
 		/// </summary>
 		string DigitSeparator { get; set; }
-
-		/// <summary>
-		/// Enables digit separators, see <see cref="DigitSeparator"/>, <see cref="HexDigitGroupSize"/>, <see cref="DecimalDigitGroupSize"/>, <see cref="OctalDigitGroupSize"/>, <see cref="BinaryDigitGroupSize"/>
-		/// </summary>
-		bool AddDigitSeparators { get; set; }
 
 		/// <summary>
 		/// Use shortest possible hexadecimal/octal/binary numbers, eg. 0xA/0Ah instead of eg. 0x0000000A/0000000Ah.
@@ -223,10 +218,10 @@ namespace dnSpy.Contracts.Disassembly {
 		bool SignExtendMemoryDisplacements { get; set; }
 
 		/// <summary>
-		/// Always show the memory size, even when not needed eg. "mov al,[rax]" vs "mov al,byte ptr [rax]".
+		/// Options that control if the memory size (eg. dword ptr) is shown or not.
 		/// This is ignored by the GAS (AT&amp;T) formatter.
 		/// </summary>
-		bool AlwaysShowMemorySize { get; set; }
+		MemorySizeOptions MemorySizeOptions { get; set; }
 
 		/// <summary>
 		/// true to show RIP relative addresses as '[rip+12345678h]', false to show RIP relative addresses as '[1029384756AFBECDh]'
@@ -242,5 +237,10 @@ namespace dnSpy.Contracts.Disassembly {
 		/// Use pseudo instructions, eg. vcmpngesd vs vcmpsd+imm8
 		/// </summary>
 		bool UsePseudoOps { get; set; }
+
+		/// <summary>
+		/// Show the original value after the symbol name, eg. 'mov eax,[myfield (12345678)]' vs 'mov eax,[myfield]'
+		/// </summary>
+		bool ShowSymbolAddress { get; set; }
 	}
 }

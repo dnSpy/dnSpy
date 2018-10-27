@@ -19,7 +19,7 @@
 
 using dnSpy.Contracts.Images;
 
-namespace dnSpy.Contracts.DnSpy.Language.Intellisense {
+namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// Completion filter
 	/// </summary>

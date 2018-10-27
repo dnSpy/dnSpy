@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;

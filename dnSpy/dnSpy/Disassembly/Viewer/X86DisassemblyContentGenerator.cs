@@ -70,9 +70,9 @@ namespace dnSpy.Disassembly.Viewer {
 				case FormatterOutputTextKind.Keyword:
 				case FormatterOutputTextKind.Register:
 				case FormatterOutputTextKindExtensions.UnknownSymbol:
-				case FormatterOutputTextKindExtensions.Data:
-				case FormatterOutputTextKindExtensions.Label:
-				case FormatterOutputTextKindExtensions.Function:
+				case FormatterOutputTextKind.Data:
+				case FormatterOutputTextKind.Label:
+				case FormatterOutputTextKind.Function:
 					output.Write(text, refFactory.Create(kind, text), DisassemblyReferenceFlags.Local, color);
 					break;
 
@@ -111,11 +111,11 @@ namespace dnSpy.Disassembly.Viewer {
 				return BoxedTextColor.AsmFunctionAddress;
 			case FormatterOutputTextKindExtensions.UnknownSymbol:
 				return BoxedTextColor.AsmLabel;
-			case FormatterOutputTextKindExtensions.Data:
+			case FormatterOutputTextKind.Data:
 				return BoxedTextColor.AsmData;
-			case FormatterOutputTextKindExtensions.Label:
+			case FormatterOutputTextKind.Label:
 				return BoxedTextColor.AsmLabel;
-			case FormatterOutputTextKindExtensions.Function:
+			case FormatterOutputTextKind.Function:
 				return BoxedTextColor.AsmFunction;
 			default:
 				Debug.Fail($"Unknown output kind: {kind}");

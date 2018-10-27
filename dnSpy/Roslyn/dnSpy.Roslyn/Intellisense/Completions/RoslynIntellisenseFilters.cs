@@ -18,8 +18,8 @@
 */
 
 using System;
-using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Language.Intellisense;
 using dnSpy.Roslyn.Properties;
 using Microsoft.CodeAnalysis.Tags;
 

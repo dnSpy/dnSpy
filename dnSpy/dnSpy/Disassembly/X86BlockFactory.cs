@@ -26,9 +26,6 @@ using Iced.Intel;
 namespace dnSpy.Disassembly {
 	static class FormatterOutputTextKindExtensions {
 		public const FormatterOutputTextKind UnknownSymbol = (FormatterOutputTextKind)(-1);
-		public const FormatterOutputTextKind Data = (FormatterOutputTextKind)(-2);
-		public const FormatterOutputTextKind Label = (FormatterOutputTextKind)(-3);
-		public const FormatterOutputTextKind Function = (FormatterOutputTextKind)(-4);
 	}
 
 	static class X86BlockFactory {
@@ -83,7 +80,7 @@ namespace dnSpy.Disassembly {
 			for (int blockIndex = 0; blockIndex < blocks.Length; blockIndex++) {
 				var block = blocks[blockIndex];
 
-				var reader = new ByteArrayCodeReader(block.Code.Array, block.Code.Offset, block.Code.Count);
+				var reader = new ByteArrayCodeReader(block.Code);
 				var decoder = Decoder.Create(bitness, reader);
 				decoder.InstructionPointer = block.Address;
 				while (reader.CanReadByte) {
@@ -189,18 +186,18 @@ namespace dnSpy.Disassembly {
 
 				case TargetKind.Data:
 					label = GetLabel(labelIndex++);
-					labelKind = FormatterOutputTextKindExtensions.Data;
+					labelKind = FormatterOutputTextKind.Data;
 					break;
 
 				case TargetKind.BlockStart:
 				case TargetKind.Branch:
 					label = GetLabel(labelIndex++);
-					labelKind = FormatterOutputTextKindExtensions.Label;
+					labelKind = FormatterOutputTextKind.Label;
 					break;
 
 				case TargetKind.Call:
 					label = GetFunc(methodIndex++);
-					labelKind = FormatterOutputTextKindExtensions.Function;
+					labelKind = FormatterOutputTextKind.Function;
 					break;
 
 				default:

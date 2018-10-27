@@ -35,6 +35,18 @@ namespace dnSpy.Disassembly {
 			}
 		}
 
+		public static Iced.Intel.MemorySizeOptions ToMemorySizeOptions(Contracts.Disassembly.MemorySizeOptions memorySizeOptions) {
+			switch (memorySizeOptions) {
+			case Contracts.Disassembly.MemorySizeOptions.Default:	return Iced.Intel.MemorySizeOptions.Default;
+			case Contracts.Disassembly.MemorySizeOptions.Always:	return Iced.Intel.MemorySizeOptions.Always;
+			case Contracts.Disassembly.MemorySizeOptions.Minimum:	return Iced.Intel.MemorySizeOptions.Minimum;
+			case Contracts.Disassembly.MemorySizeOptions.Never:		return Iced.Intel.MemorySizeOptions.Never;
+			default:
+				Debug.Fail($"Unknown mem size options: {memorySizeOptions}");
+				return Iced.Intel.MemorySizeOptions.Default;
+			}
+		}
+
 		static void CopyBase(FormatterOptions options, IDisassemblySettings settings) {
 			options.OctalPrefix = settings.OctalPrefix;
 			options.OctalSuffix = settings.OctalSuffix;
@@ -43,7 +55,6 @@ namespace dnSpy.Disassembly {
 			options.BinarySuffix = settings.BinarySuffix;
 			options.BinaryDigitGroupSize = settings.BinaryDigitGroupSize;
 			options.DigitSeparator = settings.DigitSeparator;
-			options.AddDigitSeparators = settings.AddDigitSeparators;
 			options.ShortNumbers = settings.ShortNumbers;
 			options.UpperCaseHex = settings.UpperCaseHex;
 			options.SmallHexNumbersInDecimal = settings.SmallHexNumbersInDecimal;
@@ -53,7 +64,7 @@ namespace dnSpy.Disassembly {
 			options.SignedImmediateOperands = settings.SignedImmediateOperands;
 			options.SignedMemoryDisplacements = settings.SignedMemoryDisplacements;
 			options.SignExtendMemoryDisplacements = settings.SignExtendMemoryDisplacements;
-			options.AlwaysShowMemorySize = settings.AlwaysShowMemorySize;
+			options.MemorySizeOptions = ToMemorySizeOptions(settings.MemorySizeOptions);
 			options.RipRelativeAddresses = settings.RipRelativeAddresses;
 			options.DecimalDigitGroupSize = settings.DecimalDigitGroupSize;
 			options.ShowBranchSize = settings.ShowBranchSize;
@@ -68,10 +79,9 @@ namespace dnSpy.Disassembly {
 			options.FirstOperandCharIndex = settings.FirstOperandCharIndex;
 			options.TabSize = settings.TabSize;
 			options.SpaceAfterOperandSeparator = settings.SpaceAfterOperandSeparator;
-			options.SpaceAfterMemoryOpenBracket = settings.SpaceAfterMemoryBracket;
-			options.SpaceBeforeMemoryCloseBracket = settings.SpaceAfterMemoryBracket;
-			options.SpacesBetweenMemoryAddOperators = settings.SpacesBetweenMemoryAddOperators;
-			options.SpacesBetweenMemoryMulOperators = settings.SpacesBetweenMemoryMulOperators;
+			options.SpaceAfterMemoryBracket = settings.SpaceAfterMemoryBracket;
+			options.SpaceBetweenMemoryAddOperators = settings.SpaceBetweenMemoryAddOperators;
+			options.SpaceBetweenMemoryMulOperators = settings.SpaceBetweenMemoryMulOperators;
 			options.ScaleBeforeIndex = settings.ScaleBeforeIndex;
 			options.AlwaysShowScale = settings.AlwaysShowScale;
 			options.AlwaysShowSegmentRegister = settings.AlwaysShowSegmentRegister;
@@ -80,6 +90,7 @@ namespace dnSpy.Disassembly {
 			options.HexSuffix = settings.HexSuffix;
 			options.DecimalPrefix = settings.DecimalPrefix;
 			options.UsePseudoOps = settings.UsePseudoOps;
+			options.ShowSymbolAddress = settings.ShowSymbolAddress;
 
 		}
 

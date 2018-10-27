@@ -119,12 +119,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			}
 
 			var method = clrRuntime.GetMethodByAddress(address);
-			if (method == null && address >= 0x10000) {
-				if (clrRuntime.ReadPointer(address, out ulong newAddress))
+			const ulong MIN_ADDR = 0x10000;
+			if (method == null && address >= MIN_ADDR) {
+				if (clrRuntime.ReadPointer(address, out ulong newAddress) && newAddress >= MIN_ADDR)
 					method = clrRuntime.GetMethodByAddress(newAddress);
 			}
 			if (method != null) {
-				result = new SymbolResolverResult(SymbolKind.Function, method.ToString(), method.NativeCode);
+				result = new SymbolResolverResult(SymbolKind.Function, method.ToString(), address);
 				return true;
 			}
 

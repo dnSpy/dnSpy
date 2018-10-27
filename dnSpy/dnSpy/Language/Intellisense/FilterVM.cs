@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.DnSpy.Language.Intellisense;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterVM : INotifyPropertyChanged {

@@ -17,32 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Images;
-using Microsoft.VisualStudio.Language.Intellisense;
-
-namespace dnSpy.Contracts.Language.Intellisense {
+namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
-	/// Completion icon
+	/// Memory size options used by the formatters
 	/// </summary>
-	public class DsCompletionIcon : CompletionIcon {
+	public enum MemorySizeOptions {
 		/// <summary>
-		/// Gets the image
+		/// Show memory size if the assembler requires it, else don't show any
 		/// </summary>
-		public virtual ImageReference ImageReference { get; }
+		Default,
 
 		/// <summary>
-		/// true to theme the image by changing it so it matches the background color
+		/// Always show the memory size, even if the assembler doesn't need it
 		/// </summary>
-		public virtual bool ThemeImage { get; }
+		Always,
 
 		/// <summary>
-		/// Constructor
+		/// Show memory size if a human can't figure out the size of the operand
 		/// </summary>
-		/// <param name="imageReference">Image</param>
-		/// <param name="themeImage">true to theme the image by changing it so it matches the background color</param>
-		public DsCompletionIcon(ImageReference imageReference, bool themeImage = false) {
-			ImageReference = imageReference;
-			ThemeImage = themeImage;
-		}
+		Minimum,
+
+		/// <summary>
+		/// Never show memory size
+		/// </summary>
+		Never,
 	}
 }
