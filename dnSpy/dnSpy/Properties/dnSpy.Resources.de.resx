@@ -1954,7 +1954,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Disassembly in neuem Tab anzeigen</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Operand column</value>
+    <value>Operand-Spalte</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
     <value>RIP-relative addresses</value>
@@ -2048,5 +2048,8 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>Die Methode ist nicht optimiert</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Show symbol address</value>
   </data>
 </root>

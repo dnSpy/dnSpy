@@ -2049,4 +2049,7 @@
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>متود بهینه نشده است</value>
   </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Show symbol address</value>
+  </data>
 </root>

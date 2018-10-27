@@ -1933,7 +1933,7 @@
     <value>Always show the scale value</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
-    <value>Always show segment registers</value>
+    <value>Завжди показувати сегменті регістри</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
     <value>Розділювач цифр</value>
@@ -1945,13 +1945,13 @@
     <value>Hex префікс</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>Hex suffix</value>
+    <value>Hex суфікс</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
     <value>Show disassembly in a new tab</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Operand column</value>
+    <value>Колонка операнду</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
     <value>RIP-relative addresses</value>
@@ -2035,7 +2035,7 @@
     <value>Hex numbers</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
-    <value>Disassembly</value>
+    <value>Дизассембльований код</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
     <value>Show decompiled code</value>
@@ -2045,5 +2045,8 @@
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>The method is not optimized</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Show symbol address</value>
   </data>
 </root>

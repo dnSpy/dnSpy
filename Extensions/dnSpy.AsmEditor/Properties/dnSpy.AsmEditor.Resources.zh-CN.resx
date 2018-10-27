@@ -749,13 +749,13 @@
     <value>标志位</value>
   </data>
   <data name="ParamDef_Flags_In" xml:space="preserve">
-    <value>进入(_I)</value>
+    <value>传入(_I)</value>
   </data>
   <data name="ParamDef_Flags_Optional" xml:space="preserve">
     <value>可选的(_O)</value>
   </data>
   <data name="ParamDef_Flags_Out" xml:space="preserve">
-    <value>输出(_U)</value>
+    <value>传出(_U)</value>
   </data>
   <data name="ParamDef_Name" xml:space="preserve">
     <value>名称(_N)</value>

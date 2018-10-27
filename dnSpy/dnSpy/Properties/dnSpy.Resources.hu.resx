@@ -2049,4 +2049,7 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>A metódus nem optimalizált</value>
   </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Show symbol address</value>
+  </data>
 </root>

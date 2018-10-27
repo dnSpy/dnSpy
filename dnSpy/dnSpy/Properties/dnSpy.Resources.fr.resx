@@ -2047,4 +2047,7 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>The method is not optimized</value>
   </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Show symbol address</value>
+  </data>
 </root>
