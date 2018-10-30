@@ -79,6 +79,12 @@ namespace dnSpy.Contracts.App {
 		/// <summary>Show start up time</summary>
 		bool ShowStartupTime { get; }
 
+		/// <summary>Attach to this process, unless it's 0</summary>
+		int DebugAttachPid { get; }
+
+		/// <summary>Attach to this process name, unless it's empty. Can contain wildcards.</summary>
+		string DebugAttachProcess { get; }
+
 		/// <summary>
 		/// Returns true if the argument is present
 		/// </summary>

@@ -44,6 +44,8 @@ namespace dnSpy.MainApp {
 		public string ShowToolWindow { get; }
 		public string HideToolWindow { get; }
 		public bool ShowStartupTime { get; }
+		public int DebugAttachPid { get; }
+		public string DebugAttachProcess { get; }
 
 		readonly Dictionary<string, string> userArgs = new Dictionary<string, string>();
 		readonly List<string> filenames = new List<string>();
@@ -69,6 +71,8 @@ namespace dnSpy.MainApp {
 			ShowToolWindow = string.Empty;
 			HideToolWindow = string.Empty;
 			ShowStartupTime = false;
+			DebugAttachPid = 0;
+			DebugAttachProcess = string.Empty;
 
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {
@@ -160,6 +164,19 @@ namespace dnSpy.MainApp {
 
 					case "--show-startup-time":
 						ShowStartupTime = true;
+						break;
+
+					case "-p":
+					case "--pid":
+						if (uint.TryParse(next, out uint pid))
+							DebugAttachPid = (int)pid;
+						i++;
+						break;
+
+					case "-pn":
+					case "--process-name":
+						DebugAttachProcess = next;
+						i++;
 						break;
 
 					default:

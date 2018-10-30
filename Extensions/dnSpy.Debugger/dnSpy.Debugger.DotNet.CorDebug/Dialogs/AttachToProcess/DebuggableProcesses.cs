@@ -46,9 +46,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 							continue;
 					}
 					if (Environment.Is64BitOperatingSystem) {
-						if (NativeMethods.IsWow64Process(process.Handle, out bool isWow64Process)) {
-							if ((IntPtr.Size == 4) != isWow64Process)
-								continue;
+						try {
+							if (NativeMethods.IsWow64Process(process.Handle, out bool isWow64Process)) {
+								if ((IntPtr.Size == 4) != isWow64Process)
+									continue;
+							}
+						}
+						catch (InvalidOperationException) {
+							continue;
 						}
 					}
 					if (process.HasExited)
