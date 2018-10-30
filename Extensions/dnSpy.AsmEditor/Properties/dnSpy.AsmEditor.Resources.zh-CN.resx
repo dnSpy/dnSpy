@@ -310,7 +310,7 @@
     <value>剩余一个方法签名</value>
   </data>
   <data name="CustomAttributesTab" xml:space="preserve">
-    <value>自定义标签</value>
+    <value>自定义特性</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
     <value>剪切(_T)</value>
@@ -344,7 +344,7 @@
     <value>编辑程序集</value>
   </data>
   <data name="EditCustomAttribute" xml:space="preserve">
-    <value>编辑自定义属性</value>
+    <value>编辑自定义特性</value>
   </data>
   <data name="EditEventCommand" xml:space="preserve">
     <value>编辑事件...</value>
@@ -380,7 +380,7 @@
     <value>编辑参数</value>
   </data>
   <data name="EditSecurityAttribute" xml:space="preserve">
-    <value>编辑安全标签</value>
+    <value>编辑安全特性</value>
   </data>
   <data name="EditSecurityDeclaration" xml:space="preserve">
     <value>编辑安全声明</value>
@@ -578,7 +578,7 @@
     <value>抛出无法映射的字符</value>
   </data>
   <data name="MainTab" xml:space="preserve">
-    <value>主函数</value>
+    <value>主要</value>
   </data>
   <data name="MarshalType" xml:space="preserve">
     <value>元类型: {0}</value>
@@ -2462,7 +2462,7 @@
     <value>取消</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>编辑程序集标签</value>
+    <value>编辑程序集特性</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
     <value>添加类</value>
@@ -2474,7 +2474,7 @@
     <value>与程序集合并</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>编辑程序集标签 ({0})...</value>
+    <value>编辑程序集特性 ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
     <value>添加类 ({0})...</value>

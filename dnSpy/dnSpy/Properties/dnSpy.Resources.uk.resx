@@ -1930,7 +1930,7 @@
     <value>Always show size of memory operands</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Always show the scale value</value>
+    <value>Завжди відображати значення масштабу</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
     <value>Завжди показувати сегменті регістри</value>
@@ -1972,7 +1972,7 @@
     <value>Show instruction address</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
-    <value>Show instruction bytes</value>
+    <value>Показати байти інструкцій</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
     <value>Show zero displacements</value>
@@ -2041,7 +2041,7 @@
     <value>Show decompiled code</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Show IL code</value>
+    <value>Показувати IL код</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>The method is not optimized</value>

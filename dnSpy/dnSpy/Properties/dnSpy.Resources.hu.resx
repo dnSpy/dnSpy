@@ -2050,6 +2050,6 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>A metódus nem optimalizált</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>Szimbólum címek mutatása</value>
   </data>
 </root>

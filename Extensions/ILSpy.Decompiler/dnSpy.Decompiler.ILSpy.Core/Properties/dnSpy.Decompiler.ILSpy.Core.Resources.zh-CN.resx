@@ -211,7 +211,7 @@
     <value>在反编译的代码中显示 XML 文档</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>排序自定义标签</value>
+    <value>排序自定义特性</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>排序方法、 字段、 属性、 事件和类型</value>

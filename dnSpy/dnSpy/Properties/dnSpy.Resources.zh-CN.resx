@@ -1953,19 +1953,19 @@
     <value>在新标签页中显示反汇编</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Operand column</value>
+    <value>操作数 列</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
     <value>RIP 相对地址</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Show scale before index register</value>
+    <value>在索引寄存器之前显示比例</value>
   </data>
   <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Short numbers (branches)</value>
+    <value>短数字（分支）</value>
   </data>
   <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Short numbers</value>
+    <value>短数字</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>显示分支大小</value>
@@ -1977,46 +1977,46 @@
     <value>显示指令字节</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
-    <value>Show zero displacements</value>
+    <value>显示零位移</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
     <value>有符号数字</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>带符号位移</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Show small numbers in decimal</value>
+    <value>以十进制显示较小数字</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Space after memory operand brackets</value>
+    <value>内存操作数括号后的空格</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
     <value>在操作数分隔符后加空格</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Space between '+'</value>
+    <value>'+' 之间的空格</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Space between '*'</value>
+    <value>'*' 之间的空格</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
     <value>全部大写</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Upper case hex numbers</value>
+    <value>大写十六进制数</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
-    <value>Upper case keywords</value>
+    <value>大写关键字</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
-    <value>Upper case mnemonics</value>
+    <value>大写助记符</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
-    <value>Upper case prefixes</value>
+    <value>大写前缀</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
-    <value>Upper case registers</value>
+    <value>大写寄存器</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
     <value>伪指令</value>
@@ -2028,10 +2028,10 @@
     <value>裸寄存器</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Always show mnemonic size suffix</value>
+    <value>始终显示助记符大小后缀</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Space after memory operand comma</value>
+    <value>内存操作数逗号后的空格</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
     <value>十六进制数</value>
@@ -2049,6 +2049,6 @@
     <value>此方法未优化</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>显示符号地址</value>
   </data>
 </root>

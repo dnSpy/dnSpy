@@ -2049,6 +2049,6 @@
     <value>El método no está optimizado</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>Mostrar la dirección del símbolo</value>
   </data>
 </root>
