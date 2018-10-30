@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
 
@@ -45,6 +46,7 @@ namespace dnSpy.Disassembly.Viewer {
 				return new X86DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName).Create();
 
 			default:
+				Debug.Fail($"Unknown code kind: {code.Kind}");
 				throw new ArgumentException();
 			}
 		}

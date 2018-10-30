@@ -160,10 +160,16 @@ namespace dnSpy.Disassembly.Viewer {
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
-			if (methodName != null) {
+			if (methodName != null)
 				WriteComment(output, commentPrefix, methodName);
-				output.Write(Environment.NewLine, BoxedTextColor.Text);
+			ulong codeSize = 0;
+			foreach (var block in blocks) {
+				var instrs = block.Instructions;
+				if (instrs.Length > 0)
+					codeSize += instrs[instrs.Length - 1].Instruction.NextIP64 - block.Address;
 			}
+			WriteComment(output, commentPrefix, $"Size: {codeSize} (0x{codeSize:X})");
+			output.Write(Environment.NewLine, BoxedTextColor.Text);
 
 			bool upperCaseHex = (formatterOptions & InternalFormatterOptions.UpperCaseHex) != 0;
 			var variables = codeInfo?.Variables ?? Array.Empty<X86Variable>();
