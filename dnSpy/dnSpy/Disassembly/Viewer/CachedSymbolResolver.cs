@@ -27,13 +27,16 @@ namespace dnSpy.Disassembly.Viewer {
 
 		public CachedSymbolResolver() => symbols = new Dictionary<ulong, (SymbolResolverResult result, bool fakeSymbol)>();
 
-		public void AddSymbol(ulong address, SymbolResolverResult symbol, bool fakeSymbol) => symbols[address] = (symbol, fakeSymbol);
+		public void AddSymbol(ulong address, SymbolResolverResult symbol, bool fakeSymbol) => AddSymbolCore(address, symbol, fakeSymbol);
+
+		void AddSymbolCore(ulong address, SymbolResolverResult symbol, bool fakeSymbol) =>
+			symbols[address] = (new SymbolResolverResult(symbol.Kind, SymbolResolverUtils.FixSymbol(symbol.Symbol), symbol.Address), fakeSymbol);
 
 		public void AddSymbols(ulong[] addresses, SymbolResolverResult[] symbolResolverResults, bool fakeSymbol) {
 			Debug.Assert(addresses.Length == symbolResolverResults.Length);
 			for (int i = 0; i < symbolResolverResults.Length; i++) {
 				if (!symbolResolverResults[i].IsDefault)
-					symbols[addresses[i]] = (symbolResolverResults[i], fakeSymbol);
+					AddSymbolCore(addresses[i], symbolResolverResults[i], fakeSymbol);
 			}
 		}
 
