@@ -35,6 +35,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					if (!context.IsValidProcess(process))
 						return false;
 				}
+				catch (InvalidOperationException) {
+					return false;
+				}
 				catch (ArgumentException) {
 					return false;
 				}

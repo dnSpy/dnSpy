@@ -81,6 +81,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 					try {
 						processes[w] = Process.GetProcessById(processIds[i]);
 					}
+					catch (InvalidOperationException) {
+						continue;
+					}
 					catch (ArgumentException) {
 						continue;
 					}

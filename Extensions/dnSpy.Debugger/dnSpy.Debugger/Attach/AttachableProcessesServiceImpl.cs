@@ -146,6 +146,9 @@ namespace dnSpy.Debugger.Attach {
 						if (!IsValidProcessName(Path.GetFileName(process.MainModule.FileName)))
 							return false;
 					}
+					catch (InvalidOperationException) {
+						return false;
+					}
 					catch (ArgumentException) {
 						return false;
 					}
