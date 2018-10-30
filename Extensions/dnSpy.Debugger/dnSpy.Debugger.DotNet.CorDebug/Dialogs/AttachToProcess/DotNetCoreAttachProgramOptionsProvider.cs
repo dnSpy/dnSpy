@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 
 	sealed class DotNetCoreAttachProgramOptionsProvider : AttachProgramOptionsProvider {
 		public override IEnumerable<AttachProgramOptions> Create(AttachProgramOptionsProviderContext context) {
-			foreach (var process in DebuggableProcesses.GetProcesses(context.CancellationToken)) {
+			foreach (var process in DebuggableProcesses.GetProcesses(context.ProcessIds, context.IsValidProcess, context.CancellationToken)) {
 				ProcessModule[] modules;
 				try {
 					modules = process.Modules.Cast<ProcessModule>().ToArray();

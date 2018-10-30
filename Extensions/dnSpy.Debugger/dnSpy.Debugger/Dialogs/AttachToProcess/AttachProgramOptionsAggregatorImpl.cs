@@ -107,7 +107,6 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				pendingOptions.Add(options);
 				start = !emptyQueueCalled && pendingOptions.Count == 1;
 				emptyQueueCalled |= start;
-
 			}
 			if (start)
 				uiDispatcher.UIBackground(EmptyQueue);
