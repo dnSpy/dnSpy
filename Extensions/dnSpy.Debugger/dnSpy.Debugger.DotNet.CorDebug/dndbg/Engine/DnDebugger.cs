@@ -258,15 +258,14 @@ namespace dndbg.Engine {
 
 		// Could be called from any thread
 		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) => debugMessageDispatcher.ExecuteAsync(() => {
-			DebugCallbackEventArgs e;
 			try {
-				e = func();
+				var e = func();
+				OnManagedCallbackInDebuggerThread(e);
 			}
 			catch {
 				// most likely debugger has already stopped
 				return;
 			}
-			OnManagedCallbackInDebuggerThread(e);
 		});
 
 		// Same as above method but called by CreateProcess, LoadModule, CreateAppDomain because
@@ -275,15 +274,12 @@ namespace dndbg.Engine {
 			using (var ev = new ManualResetEvent(false)) {
 				debugMessageDispatcher.ExecuteAsync(() => {
 					try {
-						DebugCallbackEventArgs e;
-						try {
-							e = func();
-						}
-						catch {
-							// most likely debugger has already stopped
-							return;
-						}
+						var e = func();
 						OnManagedCallbackInDebuggerThread(e);
+					}
+					catch {
+						// most likely debugger has already stopped
+						return;
 					}
 					finally {
 						ev.Set();
