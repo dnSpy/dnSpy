@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
@@ -146,7 +147,7 @@ namespace dnSpy.Debugger.Impl {
 				NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
 			if (hProcess.IsInvalid)
-				throw new InvalidOperationException($"Couldn't open process {pid}");
+				throw new InvalidOperationException($"Couldn't open process {pid}, error: 0x{Marshal.GetLastWin32Error():X8}");
 
 			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
