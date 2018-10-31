@@ -74,7 +74,7 @@ namespace dnSpy.Disassembly.Viewer {
 					}
 				}
 				symbol = default;
-				return fakeSymbol;
+				return false;
 			}
 		}
 
