@@ -49,9 +49,9 @@ namespace dnSpy.Disassembly {
 		}
 	}
 
-	readonly struct X86InstructionInfo {
-		public ArraySegment<byte> Code { get; }
-		public Instruction Instruction { get; }
+	struct X86InstructionInfo {
+		public ArraySegment<byte> Code;
+		public Instruction Instruction;
 		public X86InstructionInfo(ArraySegment<byte> code, in Instruction instruction) {
 			Code = code;
 			Instruction = instruction;

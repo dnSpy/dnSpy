@@ -171,10 +171,8 @@ namespace dnSpy.Disassembly {
 
 				var instructions = block.Instructions;
 				var x86Instructions = new X86InstructionInfo[instructions.Count];
-				for (int j = 0; j < instructions.Count; j++) {
-					var instr = instructions[j];
-					x86Instructions[j] = new X86InstructionInfo(instr.Code, instr.Instruction);
-				}
+				for (int j = 0; j < instructions.Count; j++)
+					x86Instructions[j] = instructions[j];
 
 				string label;
 				FormatterOutputTextKind labelKind;

@@ -91,12 +91,13 @@ namespace dnSpy.Disassembly.Viewer {
 			var addresses = new HashSet<ulong>();
 			foreach (var block in blocks) {
 				addresses.Add(block.Address);
-				foreach (var instrInfo in block.Instructions) {
-					var instr = instrInfo.Instruction;
+				var instrs = block.Instructions;
+				for (int i = 0; i < instrs.Length; i++) {
+					ref var instr = ref instrs[i].Instruction;
 					int opCount = instr.OpCount;
 					// Find all 16/32/64-bit immediates, and all branch targets
-					for (int i = 0; i < opCount; i++) {
-						switch (instr.GetOpKind(i)) {
+					for (int j = 0; j < opCount; j++) {
+						switch (instr.GetOpKind(j)) {
 						case OpKind.NearBranch16:
 						case OpKind.NearBranch32:
 						case OpKind.NearBranch64:
@@ -116,7 +117,7 @@ namespace dnSpy.Disassembly.Viewer {
 						case OpKind.Immediate64:
 						case OpKind.Immediate8to64:
 						case OpKind.Immediate32to64:
-							addresses.Add(instr.GetImmediate(i));
+							addresses.Add(instr.GetImmediate(j));
 							break;
 
 						case OpKind.Memory64:

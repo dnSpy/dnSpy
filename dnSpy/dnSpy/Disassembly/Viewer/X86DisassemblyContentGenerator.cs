@@ -123,8 +123,9 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 		}
 
+		static readonly char[] newlineChar = new[] { '\n' };
 		static void WriteComment(DisassemblyContentOutput output, string commentPrefix, string text) {
-			var lines = text.Replace("\r\n", "\n").Split(new char[] { '\n' });
+			var lines = text.Replace("\r\n", "\n").Split(newlineChar);
 			for (int i = 0; i < lines.Length; i++) {
 				var line = lines[i];
 				if (i + 1 == lines.Length && line.Length == 0)
@@ -253,8 +254,9 @@ namespace dnSpy.Disassembly.Viewer {
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}
 
-				foreach (var info in block.Instructions) {
-					var instr = info.Instruction;
+				var instrs = block.Instructions;
+				for (int j = 0; j < instrs.Length; j++) {
+					ref var instr = ref instrs[j].Instruction;
 					if ((formatterOptions & InternalFormatterOptions.InstructionAddresses) != 0) {
 						var address = FormatAddress(bitness, instr.IP64, upperCaseHex);
 						output.Write(address, BoxedTextColor.AsmAddress);
@@ -264,13 +266,14 @@ namespace dnSpy.Disassembly.Viewer {
 						output.Write(formatter.Options.TabSize > 0 ? "\t\t" : "        ", BoxedTextColor.Text);
 
 					if ((formatterOptions & InternalFormatterOptions.InstructionBytes) != 0) {
-						var codeBytes = info.Code.Array;
-						for (int j = 0; j < info.Code.Count; j++) {
-							byte b = codeBytes[j + info.Code.Offset];
+						var code = instrs[j].Code;
+						var codeBytes = code.Array;
+						for (int k = 0; k < code.Count; k++) {
+							byte b = codeBytes[k + code.Offset];
 							output.Write(b.ToString(upperCaseHex ? "X2" : "x2"), BoxedTextColor.AsmHexBytes);
 						}
-						int missingBytes = HEXBYTES_COLUMN_BYTE_LENGTH - info.Code.Count;
-						for (int j = 0; j < missingBytes; j++)
+						int missingBytes = HEXBYTES_COLUMN_BYTE_LENGTH - code.Count;
+						for (int k = 0; k < missingBytes; k++)
 							output.Write("  ", BoxedTextColor.Text);
 						output.Write(" ", BoxedTextColor.Text);
 					}

@@ -98,16 +98,16 @@ namespace dnSpy.Disassembly.Viewer {
 		public override DisassemblyContentProvider Clone() =>
 			new X86DisassemblyContentProvider(bitness, cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName);
 
-		(Formatter formatter, string commentPrefix, DisassemblyContentKind contentKind, bool upperCaseHex) GetDisassemblerInfo(X86Disassembler disasm) {
+		(Formatter formatter, string commentPrefix, DisassemblyContentKind contentKind) GetDisassemblerInfo(X86Disassembler disasm) {
 			switch (disasm) {
 			case X86Disassembler.Masm:
-				return (new MasmFormatter(masmSettings.ToMasm(), symbolResolver), MASM_COMMENT, DisassemblyContentKind.Masm, masmSettings.UpperCaseHex);
+				return (new MasmFormatter(masmSettings.ToMasm(), symbolResolver), MASM_COMMENT, DisassemblyContentKind.Masm);
 
 			case X86Disassembler.Nasm:
-				return (new NasmFormatter(nasmSettings.ToNasm(), symbolResolver), NASM_COMMENT, DisassemblyContentKind.Nasm, nasmSettings.UpperCaseHex);
+				return (new NasmFormatter(nasmSettings.ToNasm(), symbolResolver), NASM_COMMENT, DisassemblyContentKind.Nasm);
 
 			case X86Disassembler.Gas:
-				return (new GasFormatter(gasSettings.ToGas(), symbolResolver), GAS_COMMENT, DisassemblyContentKind.ATT, gasSettings.UpperCaseHex);
+				return (new GasFormatter(gasSettings.ToGas(), symbolResolver), GAS_COMMENT, DisassemblyContentKind.ATT);
 
 			default:
 				Debug.Fail($"Unknown disassembler: {disasm}");
@@ -141,7 +141,7 @@ namespace dnSpy.Disassembly.Viewer {
 
 			var output = new DisassemblyContentOutput();
 			var disasmInfo = GetDisassemblerInfo(disasmSettings.X86Disassembler);
-			X86DisassemblyContentGenerator.Write(bitness, output, header, optimization, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.upperCaseHex), blocks, codeInfo, variableInfo, methodName);
+			X86DisassemblyContentGenerator.Write(bitness, output, header, optimization, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.formatter.Options.UpperCaseHex), blocks, codeInfo, variableInfo, methodName);
 			return output.Create(disasmInfo.contentKind);
 		}
 
