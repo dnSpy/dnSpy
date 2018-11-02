@@ -82,6 +82,12 @@ namespace dnSpy.Contracts.App {
 		/// <summary>Attach to this process, unless it's 0</summary>
 		int DebugAttachPid { get; }
 
+		/// <summary>Event handle duplicated into the postmortem debugger process</summary>
+		uint DebugEvent { get; }
+
+		/// <summary>Address of a JIT_DEBUG_INFO structure allocated in the target process' address space (https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/-jdinfo--use-jit-debug-info-) </summary>
+		ulong JitDebugInfo { get; }
+
 		/// <summary>Attach to this process name, unless it's empty. Can contain wildcards.</summary>
 		string DebugAttachProcess { get; }
 

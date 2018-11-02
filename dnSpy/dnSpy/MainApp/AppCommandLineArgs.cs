@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using dnSpy.Contracts.App;
@@ -45,6 +46,8 @@ namespace dnSpy.MainApp {
 		public string HideToolWindow { get; }
 		public bool ShowStartupTime { get; }
 		public int DebugAttachPid { get; }
+		public uint DebugEvent { get; }
+		public ulong JitDebugInfo { get; }
 		public string DebugAttachProcess { get; }
 
 		readonly Dictionary<string, string> userArgs = new Dictionary<string, string>();
@@ -168,8 +171,20 @@ namespace dnSpy.MainApp {
 
 					case "-p":
 					case "--pid":
-						if (uint.TryParse(next, out uint pid))
+						if (TryParseUInt32(next, out uint pid))
 							DebugAttachPid = (int)pid;
+						i++;
+						break;
+
+					case "-e":
+						if (TryParseUInt32(next, out uint debugEvent))
+							DebugEvent = debugEvent;
+						i++;
+						break;
+
+					case "--jdinfo":
+						if (TryParseUInt64("0x" + next, out ulong jdInfo))
+							JitDebugInfo = jdInfo;
 						i++;
 						break;
 
@@ -198,6 +213,36 @@ namespace dnSpy.MainApp {
 				else
 					filenames.Add(GetFullPath(arg));
 			}
+		}
+
+		static bool TryParseUInt32(string s, out uint value) {
+			if (uint.TryParse(s, out value))
+				return true;
+			if (int.TryParse(s, out var value2)) {
+				value = (uint)value2;
+				return true;
+			}
+			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || s.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
+				s = s.Substring(2);
+				if (uint.TryParse(s, NumberStyles.HexNumber, null, out value))
+					return true;
+			}
+			return false;
+		}
+
+		static bool TryParseUInt64(string s, out ulong value) {
+			if (ulong.TryParse(s, out value))
+				return true;
+			if (long.TryParse(s, out var value2)) {
+				value = (ulong)value2;
+				return true;
+			}
+			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || s.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
+				s = s.Substring(2);
+				if (ulong.TryParse(s, NumberStyles.HexNumber, null, out value))
+					return true;
+			}
+			return false;
 		}
 
 		static string GetFullPath(string file) {
