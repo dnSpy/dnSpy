@@ -209,12 +209,12 @@ namespace dnSpy.Disassembly.Viewer {
 						break;
 
 					case X86VariableLocationKind.Register:
-						sb.Append(varInfo.Register.ToString());
+						sb.Append(formatter.Format(varInfo.Register.ToIcedRegister()));
 						break;
 
 					case X86VariableLocationKind.Memory:
 						sb.Append('[');
-						sb.Append(varInfo.Register.ToString());
+						sb.Append(formatter.Format(varInfo.Register.ToIcedRegister()));
 						int memOffs = varInfo.MemoryOffset;
 						if (memOffs < 0) {
 							sb.Append('-');
