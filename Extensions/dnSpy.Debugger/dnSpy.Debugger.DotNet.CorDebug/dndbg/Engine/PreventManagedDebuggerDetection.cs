@@ -19,12 +19,37 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace dndbg.Engine {
 	sealed class PreventManagedDebuggerDetection {
 		public static void Initialize(DnDebugger debugger) => new PreventManagedDebuggerDetection(debugger);
 
-		PreventManagedDebuggerDetection(DnDebugger debugger) => debugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+		// Make sure both of these work in x86 and x64 mode
+		static readonly byte[] returnFalse_x86 = new byte[] { 0x33, 0xC0, 0xC3 };		// xor eax,eax / retn
+		static readonly byte[] returnTrue_x86 = new byte[] { 0x6A, 0x01, 0x58, 0xC3 };	// push 1 / pop eax / retn
+		readonly byte[] returnFalse;
+		readonly byte[] returnTrue;
+
+		PreventManagedDebuggerDetection(DnDebugger debugger) {
+			// We only allow debugging on the same computer
+			switch (RuntimeInformation.ProcessArchitecture) {
+			case Architecture.X86:
+			case Architecture.X64:
+				returnFalse = returnFalse_x86;
+				returnTrue = returnTrue_x86;
+				break;
+
+			case Architecture.Arm:
+			case Architecture.Arm64:
+				Debug.Fail($"Unsupported CPU arch {RuntimeInformation.ProcessArchitecture}");
+				return;
+
+			default:
+				throw new InvalidOperationException($"Unknown CPU arch: {RuntimeInformation.ProcessArchitecture}");
+			}
+			debugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
 			if (e.Kind == DebugCallbackKind.CreateProcess) {
@@ -75,11 +100,8 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static bool WriteReturnFalse(CorProcess process, ulong addr) => WriteBytes(process, addr, returnFalse);
-		static bool WriteReturnTrue(CorProcess process, ulong addr) => WriteBytes(process, addr, returnTrue);
-		// Make sure both of these work in x86 and x64 mode
-		static readonly byte[] returnFalse = new byte[] { 0x33, 0xC0, 0xC3 };       // xor eax,eax / retn
-		static readonly byte[] returnTrue = new byte[] { 0x6A, 0x01, 0x58, 0xC3 };  // push 1 / pop eax / retn
+		bool WriteReturnFalse(CorProcess process, ulong addr) => WriteBytes(process, addr, returnFalse);
+		bool WriteReturnTrue(CorProcess process, ulong addr) => WriteBytes(process, addr, returnTrue);
 
 		unsafe static bool WriteBytes(CorProcess process, ulong addr, byte[] data) {
 			if (process == null || addr == 0 || data == null)
