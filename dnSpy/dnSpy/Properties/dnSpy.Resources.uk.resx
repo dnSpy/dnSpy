@@ -1939,7 +1939,7 @@
     <value>Розділювач цифр</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Add an empty line between blocks</value>
+    <value>Додати порожній рядок між блоками</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
     <value>Hex префікс</value>
@@ -1954,7 +1954,7 @@
     <value>Колонка операнду</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
-    <value>RIP-relative addresses</value>
+    <value>RIP-відносна адресація</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
     <value>Show scale before index register</value>
@@ -1966,10 +1966,10 @@
     <value>Короткі номери</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Show branch size</value>
+    <value>Показати розмір бренча</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
-    <value>Show instruction address</value>
+    <value>Показати адресу інструкцій</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
     <value>Показати байти інструкцій</value>
@@ -1984,7 +1984,7 @@
     <value>Signed displacements</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Show small numbers in decimal</value>
+    <value>Показувати малі числа десятковими</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
     <value>Space after memory operand brackets</value>
@@ -2032,7 +2032,7 @@
     <value>Space after memory operand comma</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
-    <value>Hex numbers</value>
+    <value>Hex-числа</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
     <value>Дизассембльований код</value>
@@ -2044,7 +2044,7 @@
     <value>Показувати IL код</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
-    <value>The method is not optimized</value>
+    <value>Метод не оптимізований</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Show symbol address</value>

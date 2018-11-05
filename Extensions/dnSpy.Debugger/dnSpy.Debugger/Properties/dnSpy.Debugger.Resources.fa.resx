@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddBreakpointCommand" xml:space="preserve">
-    <value>_درج نقطه توقف</value>
+    <value>افزودن نقطه شکست</value>
   </data>
   <data name="AddExceptionCommand" xml:space="preserve">
-    <value>اضافه کردن استثناء</value>
+    <value>افزودن استثناء</value>
   </data>
   <data name="AppDomainNotAvailable" xml:space="preserve">
-    <value>&lt;موجود نیست&gt;</value>
+    <value>&amp; lt؛ در دسترس نیست &amp; gt؛</value>
   </data>
   <data name="AppMenu_Debug" xml:space="preserve">
-    <value>_دیباگ</value>
+    <value>_رفع عیوب</value>
   </data>
   <data name="AppTitle_Debugging" xml:space="preserve">
-    <value>Debugging</value>
+    <value>در حال بهبودی</value>
   </data>
   <data name="AskDeleteAllBreakpoints" xml:space="preserve">
-    <value>مایل به حذف تمام نقاط توقف هستید؟</value>
+    <value>مایل به حذف تمام نقاط شکست هستید?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
-    <value>پیوست به _فرایند...</value>
+    <value>پیوست به _پردازش...</value>
   </data>
   <data name="Attach_AttachToProcess" xml:space="preserve">
-    <value>پیوستن به _فرایند</value>
+    <value>پیوستن به _پردازش</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>برای پیوست به فرایند 64 بیتی از dnspy.exe استفاده کنید</value>
+    <value>از dnspy.exe برای افزودن پردازنده های 64-بیتی استفاده کنید</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>برای پیوست به فرایند 32 بیتی از dnspy-x86.exe استفاده کنید</value>
+    <value>از dnspy-x86.exe برای افزودن پردازنده های 32-بیتی استفاده کنید</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
-    <value>متوقف کردن همه</value>
+    <value>توقف همه</value>
   </data>
   <data name="BreakpointsCommand" xml:space="preserve">
-    <value>_نقاط توقف</value>
+    <value>_نقاط شکست</value>
   </data>
   <data name="Button_Attach" xml:space="preserve">
-    <value>_پیوست</value>
+    <value>_افزودن</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
     <value>_انصراف</value>
@@ -163,13 +163,13 @@
     <value>_موافق</value>
   </data>
   <data name="Button_Refresh" xml:space="preserve">
-    <value>_تازه سازی</value>
+    <value>_نوسازی</value>
   </data>
   <data name="CallStackCommand" xml:space="preserve">
-    <value>_Call Stack</value>
+    <value>_تماس پیوسته</value>
   </data>
   <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
-    <value>حداکثر تعداد فریم های پشته توسط dnSpy فراتر رفته است.</value>
+    <value>حداکثر تعداد فریم های که توسط dnSpy ساپورت میشود فراتر رفته است.</value>
   </data>
   <data name="Column_Address" xml:space="preserve">
     <value>آدرس</value>
@@ -193,13 +193,13 @@
     <value>بهینه شده</value>
   </data>
   <data name="Column_Order" xml:space="preserve">
-    <value>ترتیب</value>
+    <value>سفارش</value>
   </data>
   <data name="Column_Path" xml:space="preserve">
     <value>مسیر</value>
   </data>
   <data name="Column_Process" xml:space="preserve">
-    <value>فرایند</value>
+    <value>پردازش</value>
   </data>
   <data name="Column_ProcessArchitecture" xml:space="preserve">
     <value>معماری</value>
@@ -214,13 +214,13 @@
     <value>عنوان</value>
   </data>
   <data name="Column_ProcessType" xml:space="preserve">
-    <value>Type</value>
+    <value>نوع</value>
   </data>
   <data name="Column_ThreadAffinityMask" xml:space="preserve">
-    <value>Affinity Mask</value>
+    <value>وابستگی ماسک</value>
   </data>
   <data name="Column_ThreadCategory" xml:space="preserve">
-    <value>دسته بندی</value>
+    <value>شاخه</value>
   </data>
   <data name="Column_ThreadID" xml:space="preserve">
     <value>شناسه</value>
@@ -238,16 +238,16 @@
     <value>وضعیت</value>
   </data>
   <data name="Column_ThreadSuspendedCount" xml:space="preserve">
-    <value>تعداد نخ‌های معلق شده</value>
+    <value>تعداد معلق</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
     <value>برچسب زمان</value>
   </data>
   <data name="Column_Type" xml:space="preserve">
-    <value>تایپ</value>
+    <value>نوع</value>
   </data>
   <data name="Column_Value" xml:space="preserve">
-    <value>مقدار</value>
+    <value>ارزش</value>
   </data>
   <data name="Column_Version" xml:space="preserve">
     <value>نسخه</value>
@@ -259,7 +259,7 @@
     <value>کپی</value>
   </data>
   <data name="DbgAsm_Title" xml:space="preserve">
-    <value>دیباگ برنامه</value>
+    <value>رفع عیوب برنامه</value>
   </data>
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
     <value>نمایش پنجره Locals زمانی که فرایند اشکال زدایی آغاز شد</value>
@@ -640,7 +640,7 @@
     <value>ترد کارگر</value>
   </data>
   <data name="Thread_LocationNotAvailable" xml:space="preserve">
-    <value>&lt;موجود نیست&gt;</value>
+    <value>&amp; lt؛ در دسترس نیست &amp; gt؛</value>
   </data>
   <data name="Thread_NoName" xml:space="preserve">
     <value>&lt;بینام&gt;</value>
@@ -853,7 +853,7 @@
     <value>_پروسس ها</value>
   </data>
   <data name="Column_Debugging" xml:space="preserve">
-    <value>Debugging</value>
+    <value>در حال بهبودی</value>
   </data>
   <data name="Column_ID" xml:space="preserve">
     <value>شناسه</value>
@@ -871,7 +871,7 @@
     <value>در حال اجرا</value>
   </data>
   <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
-    <value>پیوستن به _فرایند</value>
+    <value>پیوستن به _پردازش</value>
   </data>
   <data name="Processes_DetachToolTip" xml:space="preserve">
     <value>جدا شدن از پروسس</value>
@@ -892,7 +892,7 @@
     <value>_خاتمه دادن به پروسس</value>
   </data>
   <data name="ProcessCommand" xml:space="preserve">
-    <value>فرایند</value>
+    <value>پردازش</value>
   </data>
   <data name="Column_ProcessName" xml:space="preserve">
     <value>نام پروسس</value>
@@ -910,7 +910,7 @@
     <value>توقف هنگامی که پرتاب خطا رخ داد</value>
   </data>
   <data name="Column_Category" xml:space="preserve">
-    <value>دسته بندی</value>
+    <value>شاخه</value>
   </data>
   <data name="Exception_Conditions_And" xml:space="preserve">
     <value>و</value>
@@ -1087,7 +1087,7 @@
     <value>تنظیم مجدد تمام معیار به طوری که همه ماژول ها نمایش داده شده</value>
   </data>
   <data name="Modules_Process" xml:space="preserve">
-    <value>فرایند</value>
+    <value>پردازش</value>
   </data>
   <data name="SearchHelp_ToolTip" xml:space="preserve">
     <value>کمک</value>
@@ -1495,10 +1495,10 @@
     <value>کپی کردن _عبارت</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
-    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+    <value>روش کد گزاری پیدا نمی شود. اطمینان حاصل کنید که پردازش متوقف شده است و روش نابودشده است.</value>
   </data>
   <data name="DisassemblyCommand" xml:space="preserve">
-    <value>_Disassembly</value>
+    <value>_جداسازی</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
