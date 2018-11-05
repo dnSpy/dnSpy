@@ -255,11 +255,26 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		static DbgMachine GetMachine(int bitness) {
-			// We only allow debugging on the same computer and this is x86 or x64
-			switch (bitness) {
-			case 32: return DbgMachine.X86;
-			case 64: return DbgMachine.X64;
-			default: throw new ArgumentOutOfRangeException(nameof(bitness));
+			// We only allow debugging on the same computer
+			switch (RuntimeInformation.ProcessArchitecture) {
+			case Architecture.X86:
+			case Architecture.X64:
+				if (bitness == 32)
+					return DbgMachine.X86;
+				if (bitness == 64)
+					return DbgMachine.X64;
+				throw new ArgumentOutOfRangeException(nameof(bitness));
+
+			case Architecture.Arm:
+			case Architecture.Arm64:
+				if (bitness == 32)
+					return DbgMachine.Arm;
+				if (bitness == 64)
+					return DbgMachine.Arm64;
+				throw new ArgumentOutOfRangeException(nameof(bitness));
+
+			default:
+				throw new InvalidOperationException($"Unknown CPU arch: {RuntimeInformation.ProcessArchitecture}");
 			}
 		}
 

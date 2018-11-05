@@ -69,6 +69,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			switch (machine) {
 			case DbgMachine.X86:		return "x86";
 			case DbgMachine.X64:		return "x64";
+			case DbgMachine.Arm:		return "ARM";
+			case DbgMachine.Arm64:		return "ARM64";
 			default:
 				Debug.Fail($"Unknown arch: {machine}");
 				return "???";

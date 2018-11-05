@@ -215,6 +215,16 @@ namespace dnSpy.Contracts.Debugger {
 		/// x64, 64-bit
 		/// </summary>
 		X64,
+
+		/// <summary>
+		/// 32-bit ARM
+		/// </summary>
+		Arm,
+
+		/// <summary>
+		/// 64-bit ARM
+		/// </summary>
+		Arm64,
 	}
 
 	/// <summary>

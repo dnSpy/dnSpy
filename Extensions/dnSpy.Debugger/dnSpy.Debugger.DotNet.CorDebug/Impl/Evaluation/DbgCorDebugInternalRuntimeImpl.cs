@@ -1512,8 +1512,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				codeKind = NativeCodeKind.X86_32;
 				break;
 
+			case DbgMachine.Arm:
+			case DbgMachine.Arm64:
 			default:
-				Debug.Fail($"Unknown machine: {Runtime.Process.Machine}");
+				Debug.Fail($"Unsupported machine: {Runtime.Process.Machine}");
 				return false;
 			}
 
@@ -1743,8 +1745,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				}
 
+			case DbgMachine.Arm:
+			case DbgMachine.Arm64:
 			default:
-				Debug.Fail($"Unknown machine: {machine}");
+				Debug.Fail($"Unsupported machine: {machine}");
 				register = default;
 				return false;
 			}
