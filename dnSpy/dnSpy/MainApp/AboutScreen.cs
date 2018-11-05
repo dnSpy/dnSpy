@@ -190,7 +190,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void Write(IDecompilerOutput output) {
-			output.WriteLine($"dnSpy {appWindow.AssemblyInformationalVersion}", BoxedTextColor.Text);
+			output.WriteLine($"{Constants.DnSpy} {appWindow.AssemblyInformationalVersion}", BoxedTextColor.Text);
 			output.WriteLine();
 			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedTextColor.Text);
 			output.WriteLine();

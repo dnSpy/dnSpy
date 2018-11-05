@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 			// Use multicore JIT.
 			// Simple test: x86: ~18% faster startup, x64: ~12% faster startup.
 			try {
-				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
+				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Constants.DnSpyFile, "Startup");
 				Directory.CreateDirectory(profileDir);
 				ProfileOptimization.SetProfileRoot(profileDir);
 				ProfileOptimization.StartProfile($"startup-{IntPtr.Size * 8}.profile");
@@ -65,7 +65,7 @@ namespace dnSpy.MainApp {
 		static bool AskReadSettings() {
 			bool readSettings;
 			// Need to use DefaultDesktopOnly or the dlg box is shown in the background...
-			var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
+			var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, Constants.DnSpy, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
 			readSettings = res != MessageBoxResult.No;
 			return readSettings;
 		}

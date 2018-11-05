@@ -52,7 +52,7 @@ namespace dnSpy.Documents {
 					Load(f);
 			}
 			else
-				ProgressDlg.Show(this, "dnSpy", ownerWindow);
+				ProgressDlg.Show(this, MainApp.Constants.DnSpy, ownerWindow);
 
 			return loadedDocuments.ToArray();
 		}

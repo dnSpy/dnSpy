@@ -75,7 +75,7 @@ namespace dnSpy.MainApp {
 
 		static void ShowException(Exception ex) {
 			string msg = ex?.ToString() ?? "Unknown exception";
-			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show(msg, Constants.DnSpy, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
@@ -138,8 +138,8 @@ namespace dnSpy.MainApp {
 		}
 
 		static string GetCachedCompositionConfigurationFilename() {
-			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
-			return Path.Combine(profileDir, "dnSpy-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
+			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Constants.DnSpyFile, "Startup");
+			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
 		}
 
 		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
@@ -415,14 +415,14 @@ namespace dnSpy.MainApp {
 		}
 		static readonly IntPtr COPYDATASTRUCT_dwData = new IntPtr(0x11C9B152);
 		static readonly IntPtr COPYDATASTRUCT_result = new IntPtr(0x615F9D6E);
-		const string COPYDATASTRUCT_HEADER = "dnSpy";	// One line only
+		const string COPYDATASTRUCT_HEADER = Constants.DnSpy;	// One line only
 
 		void SwitchToOtherInstance() => EnumWindows(EnumWindowsHandler, IntPtr.Zero);
 
 		unsafe bool EnumWindowsHandler(IntPtr hWnd, IntPtr lParam) {
 			var sb = new StringBuilder(256);
 			GetWindowText(hWnd, sb, sb.Capacity);
-			if (sb.ToString().StartsWith("dnSpy ", StringComparison.Ordinal)) {
+			if (sb.ToString().StartsWith(Constants.DnSpy + " ", StringComparison.Ordinal)) {
 				var args = Environment.GetCommandLineArgs();
 				args[0] = COPYDATASTRUCT_HEADER;
 				var msg = string.Join(Environment.NewLine, args);
