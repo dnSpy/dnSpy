@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Disassembly {
 		/// <summary>
 		/// Extra optional info, or null if none
 		/// </summary>
-		public X86NativeCodeInfo CodeInfo { get; }
+		public NativeCodeInfo CodeInfo { get; }
 
 		/// <summary>
 		/// Method name or null
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Disassembly {
 		/// <param name="blocks">All blocks to disassemble</param>
 		/// <param name="codeInfo">Extra code info or null</param>
 		/// <param name="methodName">Method name or null</param>
-		public DbgDotNetNativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, DbgDotNetNativeCodeBlock[] blocks, X86NativeCodeInfo codeInfo, string methodName) {
+		public DbgDotNetNativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, DbgDotNetNativeCodeBlock[] blocks, NativeCodeInfo codeInfo, string methodName) {
 			Kind = kind;
 			Optimization = optimization;
 			Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));

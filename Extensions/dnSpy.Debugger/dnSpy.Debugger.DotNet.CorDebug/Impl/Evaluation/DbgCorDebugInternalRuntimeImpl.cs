@@ -1480,11 +1480,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				}
 			}
 
-			var x86Variables = CreateVariables(varHomes) ?? Array.Empty<X86Variable>();
-			X86NativeCodeInfo codeInfo = null;
-			if (x86Variables.Length != 0)
-				codeInfo = new X86NativeCodeInfo(x86Variables);
-
 			NativeCodeOptimization optimization;
 			switch (code.CompilerFlags) {
 			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT:
@@ -1502,18 +1497,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				break;
 			}
 
+			NativeCodeInfo codeInfo = null;
 			NativeCodeKind codeKind;
 			switch (Runtime.Process.Machine) {
 			case DbgMachine.X64:
-				codeKind = NativeCodeKind.X86_64;
-				break;
-
 			case DbgMachine.X86:
-				codeKind = NativeCodeKind.X86_32;
+				codeKind = Runtime.Process.Machine == DbgMachine.X86 ? NativeCodeKind.X86_32 : NativeCodeKind.X86_64;
+				var x86Variables = CreateVariablesX86(varHomes) ?? Array.Empty<X86Variable>();
+				if (x86Variables.Length != 0)
+					codeInfo = new X86NativeCodeInfo(x86Variables);
 				break;
 
 			case DbgMachine.Arm:
+				codeKind = NativeCodeKind.Arm;
+				Debug.Fail("Create variables like x86/x64 code above");
+				break;
+
 			case DbgMachine.Arm64:
+				codeKind = NativeCodeKind.Arm64;
+				Debug.Fail("Create variables like x86/x64 code above");
+				break;
+
 			default:
 				Debug.Fail($"Unsupported machine: {Runtime.Process.Machine}");
 				return false;
@@ -1524,7 +1528,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return true;
 		}
 
-		X86Variable[] CreateVariables(VariableHome[] varHomes) {
+		X86Variable[] CreateVariablesX86(VariableHome[] varHomes) {
 			var x86Variables = varHomes.Length == 0 ? Array.Empty<X86Variable>() : new X86Variable[varHomes.Length];
 			var machine = Runtime.Process.Machine;
 			for (int i = 0; i < varHomes.Length; i++) {
@@ -1548,14 +1552,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				switch (varHome.LocationType) {
 				case VariableLocationType.VLT_REGISTER:
 					locationKind = X86VariableLocationKind.Register;
-					if (!TryGetRegister(machine, varHome.Register, out register))
+					if (!TryGetRegisterX86(machine, varHome.Register, out register))
 						return null;
 					memoryOffset = 0;
 					break;
 
 				case VariableLocationType.VLT_REGISTER_RELATIVE:
 					locationKind = X86VariableLocationKind.Memory;
-					if (!TryGetRegister(machine, varHome.Register, out register))
+					if (!TryGetRegisterX86(machine, varHome.Register, out register))
 						return null;
 					memoryOffset = varHome.Offset;
 					break;
@@ -1577,7 +1581,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return x86Variables;
 		}
 
-		static bool TryGetRegister(DbgMachine machine, CorDebugRegister corReg, out X86Register register) {
+		static bool TryGetRegisterX86(DbgMachine machine, CorDebugRegister corReg, out X86Register register) {
 			switch (machine) {
 			case DbgMachine.X86:
 				switch (corReg) {

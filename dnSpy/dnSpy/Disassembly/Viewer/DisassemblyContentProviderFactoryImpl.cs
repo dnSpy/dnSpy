@@ -45,8 +45,10 @@ namespace dnSpy.Disassembly.Viewer {
 			case NativeCodeKind.X86_64:
 				return new X86DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName).Create();
 
+			case NativeCodeKind.Arm:
+			case NativeCodeKind.Arm64:
 			default:
-				Debug.Fail($"Unknown code kind: {code.Kind}");
+				Debug.Fail($"Unsupported code kind: {code.Kind}");
 				throw new ArgumentException();
 			}
 		}
