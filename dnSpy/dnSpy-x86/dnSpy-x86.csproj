@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ApplicationIcon>..\dnSpy\Images\dnSpy.ico</ApplicationIcon>
+    <ApplicationIcon>..\dnSpy\Images\dnSpy-x86.ico</ApplicationIcon>
     <ApplicationManifest>..\dnSpy\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
