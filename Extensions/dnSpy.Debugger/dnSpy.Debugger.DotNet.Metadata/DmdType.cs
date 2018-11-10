@@ -1071,6 +1071,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract int GenericParameterPosition { get; }
 
 		/// <summary>
+		/// true if it's a non constructed type with a TypeDef token
+		/// </summary>
+		public bool IsTypeDefinition => TypeSignatureKind == DmdTypeSignatureKind.Type;// Also if it's a TypeRef since it can be resolved to a TypeDef
+
+		/// <summary>
+		/// true if it's a generic type parameter
+		/// </summary>
+		public bool IsGenericTypeParameter => TypeSignatureKind == DmdTypeSignatureKind.TypeGenericParameter;
+
+		/// <summary>
+		/// true if it's a generic method parameter
+		/// </summary>
+		public bool IsGenericMethodParameter => TypeSignatureKind == DmdTypeSignatureKind.MethodGenericParameter;
+
+		/// <summary>
 		/// true if this type contains generic parameters
 		/// </summary>
 		public bool ContainsGenericParameters => CalculateContainsGenericParameters(this);
@@ -1352,8 +1367,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if this is a by-ref like value type
 		/// </summary>
 		public bool IsByRefLike =>
-			//TODO: Only tested with .NET Core 2.1 preview, it's possible that this will fail on .NET Framework with certain types,
-			// eg. ArgIterator, ByReference<T>, RuntimeArgumentHandle, TypedReference
+			//TODO: .NET Core adds this attribute to by ref like types, but .NET Framework does not, eg.
+			//		ArgIterator, RuntimeArgumentHandle, TypedReference
 			CustomAttributesHelper.IsDefined(this, "System.Runtime.CompilerServices.IsByRefLikeAttribute", inherit: false);
 
 		/// <summary>
