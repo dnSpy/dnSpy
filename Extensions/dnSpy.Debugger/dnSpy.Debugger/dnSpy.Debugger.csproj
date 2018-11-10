@@ -166,6 +166,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Iced" Version="$(IcedVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>
 

@@ -59,7 +59,21 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.PreventManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
+            <GroupBox Grid.Row="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableDebuggerDetection}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.AntiIsDebuggerPresent}" Content="IsDebuggerPresent" />
+                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Settings.AntiCheckRemoteDebuggerPresent}" Content="CheckRemoteDebuggerPresent" />
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.PreventManagedDebuggerDetection}" Content="System.Diagnostics.Debugger" />
+                </Grid>
+            </GroupBox>
             <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
             <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_UseStringConversionFunction}" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />
             <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding Settings.StepOverPropertiesAndOperators}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_StepOverPropertiesAndOperators}" />

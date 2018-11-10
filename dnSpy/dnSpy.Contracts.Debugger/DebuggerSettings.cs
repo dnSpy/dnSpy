@@ -79,6 +79,16 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool PreventManagedDebuggerDetection { get; set; }
 
 		/// <summary>
+		/// true to patch IsDebuggerPresent() so it can't be used to detect native debuggers
+		/// </summary>
+		public abstract bool AntiIsDebuggerPresent { get; set; }
+
+		/// <summary>
+		/// true to patch CheckRemoteDebuggerPresent() so it can't be used to detect native debuggers
+		/// </summary>
+		public abstract bool AntiCheckRemoteDebuggerPresent { get; set; }
+
+		/// <summary>
 		/// true to ignore break instructions and <see cref="System.Diagnostics.Debugger.Break"/> method calls
 		/// </summary>
 		public abstract bool IgnoreBreakInstructions { get; set; }

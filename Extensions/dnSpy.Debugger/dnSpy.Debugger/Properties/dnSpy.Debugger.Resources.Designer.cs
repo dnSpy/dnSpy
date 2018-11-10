@@ -1186,11 +1186,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Prevent code from detecting a managed debugger.
+        ///   Looks up a localized string similar to Prevent code from detecting the debugger.
         /// </summary>
-        public static string DbgSettings_DisableManagedDebuggerDetection {
+        public static string DbgSettings_DisableDebuggerDetection {
             get {
-                return ResourceManager.GetString("DbgSettings_DisableManagedDebuggerDetection", resourceCulture);
+                return ResourceManager.GetString("DbgSettings_DisableDebuggerDetection", resourceCulture);
             }
         }
         

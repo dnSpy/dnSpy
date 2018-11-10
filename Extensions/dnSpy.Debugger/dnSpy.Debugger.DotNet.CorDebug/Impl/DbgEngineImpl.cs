@@ -647,7 +647,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					throw new InvalidOperationException("Dispatcher has shut down");
 
 				var env = new DbgEnvironment(options.Environment);
-				if (!debuggerSettings.EnableManagedDebuggingAssistants) {
+				bool disableMDA = !debuggerSettings.EnableManagedDebuggingAssistants;
+				// If 32-bit .NET Framework and MDAs are enabled, pinvoke methods are called from clr.dll
+				// which breaks anti-IsDebuggerPresent() code. Our workaround is to disable MDAs.
+				// We can only debug processes with the same bitness, so check IntPtr.Size.
+				if (IntPtr.Size == 4 && debuggerSettings.AntiIsDebuggerPresent)
+					disableMDA = true;
+				if (disableMDA) {
 					// https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/diagnosing-errors-with-managed-debugging-assistants
 					env.Add("COMPLUS_MDA", "0");
 				}

@@ -182,6 +182,44 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool preventManagedDebuggerDetection = true;
 
+		public override bool AntiIsDebuggerPresent {
+			get {
+				lock (lockObj)
+					return antiIsDebuggerPresent;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = antiIsDebuggerPresent != value;
+					antiIsDebuggerPresent = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(AntiIsDebuggerPresent));
+					OnModified();
+				}
+			}
+		}
+		bool antiIsDebuggerPresent = true;
+
+		public override bool AntiCheckRemoteDebuggerPresent {
+			get {
+				lock (lockObj)
+					return antiCheckRemoteDebuggerPresent;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = antiCheckRemoteDebuggerPresent != value;
+					antiCheckRemoteDebuggerPresent = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(AntiCheckRemoteDebuggerPresent));
+					OnModified();
+				}
+			}
+		}
+		bool antiCheckRemoteDebuggerPresent = true;
+
 		public override bool IgnoreBreakInstructions {
 			get {
 				lock (lockObj)
@@ -611,6 +649,8 @@ namespace dnSpy.Debugger.Settings {
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = UseStringConversionFunction;
 			other.PreventManagedDebuggerDetection = PreventManagedDebuggerDetection;
+			other.AntiIsDebuggerPresent = AntiIsDebuggerPresent;
+			other.AntiCheckRemoteDebuggerPresent = AntiCheckRemoteDebuggerPresent;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.BreakAllProcesses = BreakAllProcesses;
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
@@ -658,6 +698,8 @@ namespace dnSpy.Debugger.Settings {
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
 			UseStringConversionFunction = sect.Attribute<bool?>(nameof(UseStringConversionFunction)) ?? UseStringConversionFunction;
 			PreventManagedDebuggerDetection = sect.Attribute<bool?>(nameof(PreventManagedDebuggerDetection)) ?? PreventManagedDebuggerDetection;
+			AntiIsDebuggerPresent = sect.Attribute<bool?>(nameof(AntiIsDebuggerPresent)) ?? AntiIsDebuggerPresent;
+			AntiCheckRemoteDebuggerPresent = sect.Attribute<bool?>(nameof(AntiCheckRemoteDebuggerPresent)) ?? AntiCheckRemoteDebuggerPresent;
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
@@ -696,6 +738,8 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
 			sect.Attribute(nameof(UseStringConversionFunction), UseStringConversionFunction);
 			sect.Attribute(nameof(PreventManagedDebuggerDetection), PreventManagedDebuggerDetection);
+			sect.Attribute(nameof(AntiIsDebuggerPresent), AntiIsDebuggerPresent);
+			sect.Attribute(nameof(AntiCheckRemoteDebuggerPresent), AntiCheckRemoteDebuggerPresent);
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
