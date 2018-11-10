@@ -75,7 +75,7 @@ namespace dnSpy.Hex {
 		public const uint MEM_RESERVE = 0x2000;
 
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern uint GetProcessId(IntPtr hThread);
+		public static extern uint GetProcessId(IntPtr hProcess);
 
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]

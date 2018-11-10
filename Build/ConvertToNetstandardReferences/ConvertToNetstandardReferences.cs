@@ -187,7 +187,7 @@ namespace ConvertToNetstandardReferences {
 				return null;
 			var options = new ModuleCreationOptions(context);
 			options.TryToLoadPdbFromDisk = false;
-			module = ModuleDefMD.Load(path, context);
+			module = ModuleDefMD.Load(path, options);
 			modules.Add(name, module);
 			return module.Assembly ?? throw new InvalidOperationException("It's a netmodule");
 		}
