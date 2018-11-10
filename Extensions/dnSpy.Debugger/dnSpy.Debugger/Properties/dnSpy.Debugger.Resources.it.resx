@@ -264,8 +264,8 @@
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
     <value>Visualizza la finestra variabili locali quando il debugger viene avviato</value>
   </data>
-  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
-    <value>Impedisci che il codice rilevi un debugger gestito</value>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Prevent code from detecting the debugger</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ignora Debugger.Break() e l'interruzione delle istruzioni</value>

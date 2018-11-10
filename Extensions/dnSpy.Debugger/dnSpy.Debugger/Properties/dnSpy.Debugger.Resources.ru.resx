@@ -264,8 +264,8 @@
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
     <value>Показать окно локальных переменных при старте дебаггера</value>
   </data>
-  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
-    <value>Запретить коду определять управляемый отладчик</value>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Prevent code from detecting the debugger</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Игнорировать Debugger.Break() и другие инструкции останова</value>

@@ -264,8 +264,8 @@
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
     <value>Mostrar a janela Locais ao iniciar o depurador</value>
   </data>
-  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
-    <value>Impedir código de detectar um depurador gerenciado</value>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Prevent code from detecting the debugger</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ignorar Debugger.Break() e quebrar as instruções</value>

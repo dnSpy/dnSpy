@@ -1978,7 +1978,7 @@
     <value>Show zero displacements</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Signed numbers</value>
+    <value>Числа зі знаком</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
     <value>Signed displacements</value>
@@ -1996,7 +1996,7 @@
     <value>Пробіл між '+'</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Space between '*'</value>
+    <value>Пробіл між '*'</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
     <value>Upper case everything</value>
@@ -2005,7 +2005,7 @@
     <value>Upper case hex numbers</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
-    <value>Upper case keywords</value>
+    <value>Верхній регістр ключових слів</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
     <value>Upper case mnemonics</value>
@@ -2014,10 +2014,10 @@
     <value>Префікси у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
-    <value>Upper case registers</value>
+    <value>Регістри у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
-    <value>Pseudo instructions</value>
+    <value>Псевдо інструкції</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
     <value>Синтаксис</value>
