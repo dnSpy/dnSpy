@@ -84,6 +84,20 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			throw new DbgHookException($"Couldn't find function {funcName} in {dllName}");
 		}
 
+		public override DbgHookedNativeFunction GetFunction(string dllName, string funcName, ulong address) {
+			if (dllName == null)
+				throw new ArgumentNullException(nameof(dllName));
+			if (funcName == null)
+				throw new ArgumentNullException(nameof(funcName));
+			if (!hookedFuncs.Add((dllName, funcName)))
+				throw new DbgHookException($"Some code tried to hook the same func twice: {dllName}: {funcName}");
+			var result = PatchAPI(address, address, address + 1);
+			if (result.ErrorMessage != null)
+				throw new DbgHookException(result.ErrorMessage);
+			simplePatches.Add(result.SimplePatch);
+			return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
+		}
+
 		PatchAPIResult PatchAPI(ulong address, ulong moduleAddress, ulong moduleEndAddress) {
 			switch (process.Machine) {
 			case DbgMachine.X86:

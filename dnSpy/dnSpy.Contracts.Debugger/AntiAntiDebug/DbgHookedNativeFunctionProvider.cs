@@ -31,6 +31,15 @@ namespace dnSpy.Contracts.Debugger.AntiAntiDebug {
 		public abstract DbgHookedNativeFunction GetFunction(string dllName, string funcName);
 
 		/// <summary>
+		/// Creates a hooked function
+		/// </summary>
+		/// <param name="dllName">DLL name including the dll extension</param>
+		/// <param name="funcName">Name of function</param>
+		/// <param name="address">Address of function</param>
+		/// <returns></returns>
+		public abstract DbgHookedNativeFunction GetFunction(string dllName, string funcName, ulong address);
+
+		/// <summary>
 		/// Gets the address of a module
 		/// </summary>
 		/// <param name="dllName">DLL name including the dll extension</param>
