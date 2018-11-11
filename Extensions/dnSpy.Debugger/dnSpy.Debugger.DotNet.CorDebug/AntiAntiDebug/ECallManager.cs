@@ -24,7 +24,7 @@ using System.Text;
 using dnlib.IO;
 using dnlib.PE;
 
-namespace dndbg.Engine {
+namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 	sealed class ECallManager {
 		/// <summary>
 		/// true if we found the CLR module (mscorwks/clr.dll/coreclr.dll)

@@ -24,21 +24,15 @@ using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
-	static class IsDebuggerPresentConstants {
-		public const string PublicDllName = "kernel32.dll";
-		public const string DllName = "kernel32.dll";
-		public const string FuncName = "IsDebuggerPresent";
-	}
-
-	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.PublicDllName, IsDebuggerPresentConstants.FuncName, new DbgMachine[0], 0)]
-	sealed class IsDebuggerPresentHook : IDbgNativeFunctionHook {
+	[ExportDbgNativeFunctionHook("clr.dll", "System.Diagnostics.Debugger", new DbgMachine[0])]
+	sealed class ManagedDebuggerHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 
 		[ImportingConstructor]
-		IsDebuggerPresentHook(DebuggerSettings debuggerSettings) => this.debuggerSettings = debuggerSettings;
+		ManagedDebuggerHook(DebuggerSettings debuggerSettings) => this.debuggerSettings = debuggerSettings;
 
 		public bool IsEnabled(DbgNativeFunctionHookContext context) {
-			if (!debuggerSettings.AntiIsDebuggerPresent)
+			if (!debuggerSettings.PreventManagedDebuggerDetection)
 				return false;
 
 			return CorDebugUtils.TryGetInternalRuntime(context.Process, out _);
@@ -52,11 +46,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 
 			switch (context.Process.Machine) {
 			case DbgMachine.X86:
-				HookX86(context, runtime, out errorMessage);
-				break;
-
 			case DbgMachine.X64:
-				HookX64(context, runtime, out errorMessage);
+				HookX86(context, runtime, out errorMessage);
 				break;
 
 			default:
@@ -67,9 +58,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		}
 
 		void HookX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime, out string errorMessage) =>
-			new IsDebuggerPresentPatcherX86(context, runtime).TryPatchX86(out errorMessage);
-
-		void HookX64(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime, out string errorMessage) =>
-			new IsDebuggerPresentPatcherX86(context, runtime).TryPatchX64(out errorMessage);
+			new ManagedDebuggerPatcherX86(context, runtime).TryPatch(out errorMessage);
 	}
 }

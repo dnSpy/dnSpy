@@ -675,8 +675,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dbgOptions.RedirectConsoleOutput)
 					dnDebugger.OnRedirectedOutput += DnDebugger_OnRedirectedOutput;
 				OnDebugProcess(dnDebugger);
-				if (debuggerSettings.PreventManagedDebuggerDetection)
-					PreventManagedDebuggerDetection.Initialize(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
 			}
@@ -731,8 +729,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (dnDebugger.Processes.Length == 0)
 					throw new ErrorException(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotAttachToProcess, $"PID={options.ProcessId.ToString()}"));
 				OnDebugProcess(dnDebugger);
-				if (debuggerSettings.PreventManagedDebuggerDetection)
-					PreventManagedDebuggerDetection.Initialize(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
 			}
