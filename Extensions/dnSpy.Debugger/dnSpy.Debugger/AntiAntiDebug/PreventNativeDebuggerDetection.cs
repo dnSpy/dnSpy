@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 						errorMessage = ex.Message ?? "???";
 					}
 					if (errorMessage != null)
-						errors.Add(errorMessage);
+						errors.Add($"{lz.Metadata.Dll}!{lz.Metadata.Function}: {errorMessage}");
 				}
 
 				context.Write();

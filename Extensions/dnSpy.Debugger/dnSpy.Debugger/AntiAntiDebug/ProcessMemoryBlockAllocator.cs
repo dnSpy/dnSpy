@@ -44,9 +44,9 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			foreach (var mem in allocatedMemory) {
 				if (process.Machine != DbgMachine.X64)
 					return mem;
-				if (!IsClose(moduleAddress, moduleEndAddress, mem.CurrentAddress))
+				if (!IsClose64(moduleAddress, moduleEndAddress, mem.CurrentAddress))
 					continue;
-				if (!IsClose(moduleAddress, moduleEndAddress, mem.EndAddress))
+				if (!IsClose64(moduleAddress, moduleEndAddress, mem.EndAddress))
 					continue;
 				return mem;
 			}
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			return null;
 		}
 
-		static bool IsClose(ulong start, ulong end, ulong addr) {
+		static bool IsClose64(ulong start, ulong end, ulong addr) {
 			long diff;
 
 			diff = (long)(addr - start);
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				ulong addr_lo = AlignDownPage(moduleAddress) - ALLOC_SIZE;
 				ulong addr_hi = AlignDownPage(moduleEndAddress) + ALLOC_SIZE;
 				while (true) {
-					bool lo = IsClose(moduleAddress, moduleEndAddress, addr_lo) && IsClose(moduleAddress, moduleEndAddress, addr_lo + ALLOC_SIZE);
+					bool lo = IsClose64(moduleAddress, moduleEndAddress, addr_lo) && IsClose64(moduleAddress, moduleEndAddress, addr_lo + ALLOC_SIZE);
 					if (lo) {
 						memPtr = NativeMethods.VirtualAllocEx(hProcess, (IntPtr)addr_lo, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_RESERVE | NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READWRITE);
 						if (memPtr != IntPtr.Zero)
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 						addr_lo -= ALLOC_SIZE;
 					}
 
-					bool hi = IsClose(moduleAddress, moduleEndAddress, addr_hi) && IsClose(moduleAddress, moduleEndAddress, addr_hi + ALLOC_SIZE);
+					bool hi = IsClose64(moduleAddress, moduleEndAddress, addr_hi) && IsClose64(moduleAddress, moduleEndAddress, addr_hi + ALLOC_SIZE);
 					if (hi) {
 						memPtr = NativeMethods.VirtualAllocEx(hProcess, (IntPtr)addr_hi, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_RESERVE | NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READWRITE);
 						if (memPtr != IntPtr.Zero)

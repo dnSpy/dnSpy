@@ -116,8 +116,10 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				throw new ArgumentNullException(nameof(dllName));
 			if (funcName == null)
 				throw new ArgumentNullException(nameof(funcName));
-			if (!toModuleInfo.TryGetValue(dllName, out var info))
-				throw new DbgHookException($"Couldn't find DLL {dllName}");
+			if (!toModuleInfo.TryGetValue(dllName, out var info)) {
+				address = 0;
+				return false;
+			}
 			return info.ExportedFunctions.TryGet(funcName, out address);
 		}
 

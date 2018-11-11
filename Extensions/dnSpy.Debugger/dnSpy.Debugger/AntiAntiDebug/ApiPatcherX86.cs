@@ -146,7 +146,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			return false;
 		}
 
-		static bool IsClose(ulong afterInstr, ulong target) {
+		static bool IsClose64(ulong afterInstr, ulong target) {
 			long diff = (long)(target - afterInstr);
 			return int.MinValue <= diff && diff <= int.MaxValue;
 		}
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 					// offset 4 = 5-1).
 					ulong minAddr = newFunctionAddress + PATCH_SIZE_X64_SHORT;
 					ulong maxAddr = newFunctionAddress + PATCH_SIZE_X64_SHORT - 1 + 15;
-					if (IsClose(startAddress + PATCH_SIZE_X64_SHORT, minAddr) && IsClose(startAddress + PATCH_SIZE_X64_SHORT, maxAddr))
+					if (IsClose64(startAddress + PATCH_SIZE_X64_SHORT, minAddr) && IsClose64(startAddress + PATCH_SIZE_X64_SHORT, maxAddr))
 						patchSize = PATCH_SIZE_X64_SHORT;
 					else
 						patchSize = PATCH_SIZE_X64_LONG;
