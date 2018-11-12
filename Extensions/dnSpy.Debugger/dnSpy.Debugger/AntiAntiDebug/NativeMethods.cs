@@ -36,6 +36,6 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, uint flAllocationType, uint flProtect);
 		public const uint MEM_COMMIT = 0x00001000;
 		public const uint MEM_RESERVE = 0x00002000;
-		public const uint PAGE_EXECUTE_READWRITE = 0x40;
+		public const uint PAGE_EXECUTE_READ = 0x20;
 	}
 }

@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				while (true) {
 					bool lo = IsClose64(moduleAddress, moduleEndAddress, addr_lo) && IsClose64(moduleAddress, moduleEndAddress, addr_lo + ALLOC_SIZE);
 					if (lo) {
-						memPtr = NativeMethods.VirtualAllocEx(hProcess, (IntPtr)addr_lo, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_RESERVE | NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READWRITE);
+						memPtr = NativeMethods.VirtualAllocEx(hProcess, (IntPtr)addr_lo, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_RESERVE | NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READ);
 						if (memPtr != IntPtr.Zero)
 							return AddNewMemory(memPtr, ALLOC_SIZE);
 						addr_lo -= ALLOC_SIZE;
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 					bool hi = IsClose64(moduleAddress, moduleEndAddress, addr_hi) && IsClose64(moduleAddress, moduleEndAddress, addr_hi + ALLOC_SIZE);
 					if (hi) {
-						memPtr = NativeMethods.VirtualAllocEx(hProcess, (IntPtr)addr_hi, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_RESERVE | NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READWRITE);
+						memPtr = NativeMethods.VirtualAllocEx(hProcess, (IntPtr)addr_hi, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_RESERVE | NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READ);
 						if (memPtr != IntPtr.Zero)
 							return AddNewMemory(memPtr, ALLOC_SIZE);
 						addr_hi += ALLOC_SIZE;
@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			if (allocatedMemory.Count != 0)
 				return allocatedMemory[0];
 
-			memPtr = NativeMethods.VirtualAllocEx(hProcess, IntPtr.Zero, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READWRITE);
+			memPtr = NativeMethods.VirtualAllocEx(hProcess, IntPtr.Zero, (IntPtr)ALLOC_SIZE, NativeMethods.MEM_COMMIT, NativeMethods.PAGE_EXECUTE_READ);
 			if (memPtr == IntPtr.Zero)
 				throw new DbgHookException("Couldn't allocate memory");
 			return AddNewMemory(memPtr, ALLOC_SIZE);
