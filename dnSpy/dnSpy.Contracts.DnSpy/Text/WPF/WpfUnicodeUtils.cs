@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.DnSpy.Text.WPF {
 	/// </summary>
 	static class WpfUnicodeUtils {
 		// The real limit seems to be 512
-		public const int MAX_BAD_CHARS = 500;
+		public const int MAX_BAD_CHARS = 200;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsBadWpfCombiningMark(char c) =>
