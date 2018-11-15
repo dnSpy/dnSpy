@@ -13,6 +13,7 @@
 
     <OutputType>WinExe</OutputType>
     <Prefer32Bit>true</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
