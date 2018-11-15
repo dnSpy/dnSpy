@@ -37,7 +37,7 @@
    </ItemGroup>
 
   <ItemGroup Condition=" '$(IsDotNetCore)' == 'true' ">
-    <FrameworkReference Include="Microsoft.DesktopUI"/>
+    <FrameworkReference Include="Microsoft.DesktopUI" />
   </ItemGroup>
 
   <ItemGroup>

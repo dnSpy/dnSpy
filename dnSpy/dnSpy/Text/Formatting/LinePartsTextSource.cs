@@ -23,6 +23,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
+using dnSpy.Contracts.DnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 
@@ -33,6 +34,7 @@ namespace dnSpy.Text.Formatting {
 		readonly string text;
 		int maxLengthLeft;
 		int linePartIndex;
+		int totalBadChars;
 
 		public LinePartsTextSource(LinePartsCollection linePartsCollection) {
 			this.linePartsCollection = linePartsCollection ?? throw new ArgumentNullException(nameof(linePartsCollection));
@@ -52,14 +54,28 @@ namespace dnSpy.Text.Formatting {
 				return new AdornmentTextRun(part);
 			else {
 				int offs = textSourceCharacterIndex - part.Column;
+				int baseOffset = part.Span.Start + offs;
 				int length = part.ColumnLength - offs;
 				Debug.Assert(length >= 0);
 				if (length > maxLengthLeft)
 					length = maxLengthLeft;
+				var text = this.text;
+				for (int i = 0; i < length; i++) {
+					var c = text[baseOffset + i];
+					if (WpfUnicodeUtils.IsBadWpfCombiningMark(c)) {
+						totalBadChars++;
+						Debug.Assert(totalBadChars <= WpfUnicodeUtils.MAX_BAD_CHARS);
+						if (totalBadChars == WpfUnicodeUtils.MAX_BAD_CHARS) {
+							maxLengthLeft = i;
+							length = i;
+							break;
+						}
+					}
+				}
 				if (length == 0)
 					return endOfLine;
 				maxLengthLeft -= length;
-				return new TextCharacters(text, part.Span.Start + offs, length, part.TextRunProperties);
+				return new TextCharacters(text, baseOffset, length, part.TextRunProperties);
 			}
 		}
 		static readonly TextEndOfLine endOfLine = new TextEndOfLine(1);
@@ -117,6 +133,9 @@ namespace dnSpy.Text.Formatting {
 			return column;
 		}
 
-		public void SetMaxLineLength(int maxLineLength) => maxLengthLeft = maxLineLength;
+		public void SetMaxLineLength(int maxLineLength) {
+			maxLengthLeft = maxLineLength;
+			totalBadChars = 0;
+		}
 	}
 }

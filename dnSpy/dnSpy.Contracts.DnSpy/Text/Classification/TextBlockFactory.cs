@@ -23,6 +23,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using dnSpy.Contracts.DnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 using DOC = System.Windows.Documents;
@@ -93,6 +94,7 @@ namespace dnSpy.Contracts.Text.Classification {
 				throw new ArgumentNullException(nameof(defaultProperties));
 			if (orderedPropsAndSpans == null)
 				throw new ArgumentNullException(nameof(orderedPropsAndSpans));
+			text = WpfUnicodeUtils.ReplaceBadChars(text);
 
 			var textBlock = new TextBlock();
 			bool filterOutNewlines = (flags & Flags.FilterOutNewlines) != 0;
