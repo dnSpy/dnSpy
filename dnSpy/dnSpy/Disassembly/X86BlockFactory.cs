@@ -133,10 +133,24 @@ namespace dnSpy.Disassembly {
 						int opCount = instr.OpCount;
 						for (int i = 0; i < opCount; i++) {
 							if (instr.GetOpKind(i) == OpKind.Memory) {
-								Add(targets, instr.IPRelativeMemoryAddress, TargetKind.Data);
+								if (IsCodeAddress(blocks, instr.IPRelativeMemoryAddress))
+									Add(targets, instr.IPRelativeMemoryAddress, TargetKind.Branch);
 								break;
 							}
 						}
+					}
+					else if (instr.MemoryDisplSize >= 2) {
+						ulong displ;
+						switch (instr.MemoryDisplSize) {
+						case 2:
+						case 4: displ = instr.MemoryDisplacement; break;
+						case 8: displ = (ulong)(int)instr.MemoryDisplacement; break;
+						default:
+							Debug.Fail($"Unknown mem displ size: {instr.MemoryDisplSize}");
+							goto case 8;
+						}
+						if (IsCodeAddress(blocks, displ))
+							Add(targets, displ, TargetKind.Branch);
 					}
 				}
 			}
@@ -206,6 +220,14 @@ namespace dnSpy.Disassembly {
 				x86Blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, label, labelKind, x86Instructions);
 			}
 			return x86Blocks;
+		}
+
+		static bool IsCodeAddress(NativeCodeBlock[] blocks, ulong address) {
+			foreach (var block in blocks) {
+				if (address >= block.Address && address < block.Address + (uint)block.Code.Count)
+					return true;
+			}
+			return false;
 		}
 	}
 }
