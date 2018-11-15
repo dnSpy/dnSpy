@@ -242,6 +242,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max string length.
+        /// </summary>
+        public static string DecompilerSettings_MaxStringLength {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_MaxStringLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add &apos;private&apos; modifier to type members.
         /// </summary>
         public static string DecompilerSettings_MemberAddPrivateModifier {

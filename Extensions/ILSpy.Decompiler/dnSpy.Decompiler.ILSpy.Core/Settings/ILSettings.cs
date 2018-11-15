@@ -107,6 +107,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		}
 		bool showPdbInfo = true;
 
+		public int MaxStringLength {
+			get => maxStringLength;
+			set {
+				if (maxStringLength != value) {
+					maxStringLength = value;
+					OnPropertyChanged(nameof(MaxStringLength));
+					OptionsChanged();
+				}
+			}
+		}
+		int maxStringLength = ICSharpCode.Decompiler.DecompilerSettings.ConstMaxStringLength;
+
 		public ILSettings Clone() => CopyTo(new ILSettings());
 
 		public ILSettings CopyTo(ILSettings other) {
@@ -116,6 +128,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			other.ShowILBytes = ShowILBytes;
 			other.SortMembers = SortMembers;
 			other.ShowPdbInfo = ShowPdbInfo;
+			other.MaxStringLength = MaxStringLength;
 			return other;
 		}
 
@@ -127,7 +140,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				ShowTokenAndRvaComments == other.ShowTokenAndRvaComments &&
 				ShowILBytes == other.ShowILBytes &&
 				SortMembers == other.SortMembers &&
-				ShowPdbInfo == other.ShowPdbInfo;
+				ShowPdbInfo == other.ShowPdbInfo &&
+				MaxStringLength == other.MaxStringLength;
 		}
 
 		public override int GetHashCode() {
@@ -139,6 +153,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			if (ShowILBytes) h ^= 0x10000000;
 			if (SortMembers) h ^= 0x08000000;
 			if (ShowPdbInfo) h ^= 0x04000000;
+			h ^= (uint)MaxStringLength;
 
 			return (int)h;
 		}

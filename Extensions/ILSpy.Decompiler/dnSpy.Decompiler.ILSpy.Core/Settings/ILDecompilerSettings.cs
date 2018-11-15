@@ -76,6 +76,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowPdbInfo,
 				Name = DecompilerOptionConstants.ShowPdbInfo_NAME,
 			};
+			yield return new DecompilerOption<int>(DecompilerOptionConstants.MaxStringLength_GUID,
+						() => ilSettings.MaxStringLength, a => ilSettings.MaxStringLength = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxStringLength,
+				Name = DecompilerOptionConstants.MaxStringLength_NAME,
+			};
 		}
 
 		public override bool Equals(object obj) =>

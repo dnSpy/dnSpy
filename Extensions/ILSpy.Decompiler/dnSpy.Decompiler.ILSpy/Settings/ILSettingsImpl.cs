@@ -41,6 +41,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? ShowILBytes;
 			SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? SortMembers;
 			ShowPdbInfo = sect.Attribute<bool?>(nameof(ShowPdbInfo)) ?? ShowPdbInfo;
+			MaxStringLength = sect.Attribute<int?>(nameof(MaxStringLength)) ?? MaxStringLength;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -56,6 +57,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			sect.Attribute(nameof(ShowILBytes), ShowILBytes);
 			sect.Attribute(nameof(SortMembers), SortMembers);
 			sect.Attribute(nameof(ShowPdbInfo), ShowPdbInfo);
+			sect.Attribute(nameof(MaxStringLength), MaxStringLength);
 		}
 	}
 }

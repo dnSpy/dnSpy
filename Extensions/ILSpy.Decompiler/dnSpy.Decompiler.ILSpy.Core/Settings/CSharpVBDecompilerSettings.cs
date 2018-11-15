@@ -183,6 +183,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxArrayElements,
 				Name = DecompilerOptionConstants.MaxArrayElements_NAME,
 			};
+			yield return new DecompilerOption<int>(DecompilerOptionConstants.MaxStringLength_GUID,
+						() => decompilerSettings.MaxStringLength, a => decompilerSettings.MaxStringLength = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxStringLength,
+				Name = DecompilerOptionConstants.MaxStringLength_NAME,
+			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.SortCustomAttributes_GUID,
 						() => decompilerSettings.SortCustomAttributes, a => decompilerSettings.SortCustomAttributes = a) {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_SortCustomAttributes,

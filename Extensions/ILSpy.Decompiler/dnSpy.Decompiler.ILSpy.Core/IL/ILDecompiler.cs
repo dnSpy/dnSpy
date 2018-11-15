@@ -94,6 +94,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			disOpts.ShowILBytes = langSettings.Settings.ShowILBytes;
 			disOpts.SortMembers = langSettings.Settings.SortMembers;
 			disOpts.ShowPdbInfo = langSettings.Settings.ShowPdbInfo;
+			disOpts.MaxStringLength = langSettings.Settings.MaxStringLength;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 
