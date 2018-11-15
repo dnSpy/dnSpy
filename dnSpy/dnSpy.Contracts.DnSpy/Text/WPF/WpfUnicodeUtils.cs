@@ -31,6 +31,36 @@ namespace dnSpy.Contracts.DnSpy.Text.WPF {
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsBadWpfCombiningMark(char c) =>
+			(c >= 0x0483 && c <= 0x0489) ||
+			(c >= 0x064B && c <= 0x0655) ||
+			c == 0x0670 ||
+			(c >= 0x0816 && c <= 0x0819) ||
+			(c >= 0x081B && c <= 0x0823) ||
+			(c >= 0x0825 && c <= 0x0827) ||
+			(c >= 0x0829 && c <= 0x082D) ||
+			(c >= 0x0859 && c <= 0x085B) ||
+			(c >= 0x0951 && c <= 0x0952) ||
+			(c >= 0x0AFA && c <= 0x0AFF) ||
+			c == 0x0D00 ||
+			(c >= 0x0D3B && c <= 0x0D3C) ||
+			(c >= 0x135D && c <= 0x135F) ||
+			(c >= 0x1CD0 && c <= 0x1CD2) ||
+			(c >= 0x1CD4 && c <= 0x1CE8) ||
+			c == 0x1CED ||
+			(c >= 0x1CF2 && c <= 0x1CF4) ||
+			(c >= 0x1CF7 && c <= 0x1CF9) ||
+			c == 0x200D ||
+			c >= 0x2CEF ||
+			(c >= 0x2CF0 && c <= 0x2CF1) ||
+			(c >= 0x2DE0 && c <= 0x2DFF) ||// Cyrillic Extended-A
+			(c >= 0x302A && c <= 0x302D) ||
+			(c >= 0x3099 && c <= 0x309A) ||
+			(c >= 0xA66F && c <= 0xA672) ||
+			(c >= 0xA674 && c <= 0xA67D) ||
+			(c >= 0xA69E && c <= 0xA69F) ||
+			(c >= 0xA6F0 && c <= 0xA6F1) ||
+			(c >= 0xA8E0 && c <= 0xA8F1) ||
+			(c >= 0xFE00 && c <= 0xFE0F) ||
 			(c >= 0x0300 && c <= 0x036F) ||// Combining Diacritical Marks
 			(c >= 0x1AB0 && c <= 0x1AFF) ||// Combining Diacritical Marks Extended
 			(c >= 0x1DC0 && c <= 0x1DFF) ||// Combining Diacritical Marks Supplement
