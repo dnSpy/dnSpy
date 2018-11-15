@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -161,6 +162,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return c;
 				return a.nativeEndOffset.CompareTo(b.nativeEndOffset);
 			});
+			map = AddMissingMapEntries(map, (uint)totalLen);
 			totalLen = 0;
 			for (int i = 0; i < chunks.Length; i++) {
 				chunks[i].StartAddr -= (uint)totalLen;
@@ -250,6 +252,45 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var methodName = reflectionMethod?.ToString();
 			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo, methodName);
 			return true;
+		}
+
+		static ILToNativeMap[] AddMissingMapEntries(ILToNativeMap[] map, uint methodLength) {
+			if (IsAllCodeBytes(map, methodLength))
+				return map;
+			var list = new List<ILToNativeMap>(map.Length + 4);
+			uint offs = 0;
+			for (int i = 0; i < map.Length; i++) {
+				var m = map[i];
+				if (offs < m.nativeStartOffset) {
+					list.Add(new ILToNativeMap {
+						ilOffset = unchecked((uint)CorDebugIlToNativeMappingTypes.NO_MAPPING),
+						nativeStartOffset = offs,
+						nativeEndOffset = m.nativeStartOffset,
+					});
+				}
+				list.Add(m);
+				offs = m.nativeEndOffset;
+			}
+			if (offs < methodLength) {
+				list.Add(new ILToNativeMap {
+					ilOffset = unchecked((uint)CorDebugIlToNativeMappingTypes.NO_MAPPING),
+					nativeStartOffset = offs,
+					nativeEndOffset = methodLength,
+				});
+			}
+			var result = list.ToArray();
+			Debug.Assert(IsAllCodeBytes(result, methodLength));
+			return result;
+		}
+
+		static bool IsAllCodeBytes(ILToNativeMap[] map, uint methodLength) {
+			if (map.Length == 0)
+				return methodLength == 0;
+			for (int i = 1; i < map.Length; i++) {
+				if (map[i - 1].nativeEndOffset != map[i].nativeStartOffset)
+					return false;
+			}
+			return map[map.Length - 1].nativeEndOffset == methodLength;
 		}
 
 		X86Variable[] CreateVariablesX86(VariableHome[] varHomes) {
