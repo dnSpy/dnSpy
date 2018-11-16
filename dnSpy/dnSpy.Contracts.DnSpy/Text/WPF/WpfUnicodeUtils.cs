@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.DnSpy.Text.WPF {
 			(c >= 0x1CF2 && c <= 0x1CF4) ||
 			(c >= 0x1CF7 && c <= 0x1CF9) ||
 			c == 0x200D ||
-			c >= 0x2CEF ||
+			c == 0x2CEF ||
 			(c >= 0x2CF0 && c <= 0x2CF1) ||
 			(c >= 0x2DE0 && c <= 0x2DFF) ||// Cyrillic Extended-A
 			(c >= 0x302A && c <= 0x302D) ||
