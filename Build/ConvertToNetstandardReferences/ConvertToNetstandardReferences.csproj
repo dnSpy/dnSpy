@@ -3,7 +3,7 @@
   <Import Project="..\..\DnSpyCommon.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
     <Version>$(DnSpyAssemblyVersion)</Version>
     <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
