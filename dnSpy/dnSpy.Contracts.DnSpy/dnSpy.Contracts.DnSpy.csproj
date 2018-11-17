@@ -11,6 +11,8 @@
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,15 +32,10 @@
   <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
    </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetCore)' == 'true' ">
-    <FrameworkReference Include="Microsoft.DesktopUI" />
-  </ItemGroup>
 
   <ItemGroup>
     <Page Include="Controls\ToolWindows\EditValueControl.xaml">
@@ -68,9 +65,9 @@
 
   <ItemGroup>
     <PackageReference Include="Ookii.Dialogs" Version="$(OokiiDialogsVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Composition.NetFxAttributes" Version="$(MSVSCompositionNetFxAttributesVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="$(SCCompositionVersion)" Condition=" '$(IsDotNetCore)' == 'true' " />
   </ItemGroup>
 
 </Project>

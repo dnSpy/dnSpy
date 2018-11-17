@@ -16,6 +16,8 @@
     <Prefer32Bit>false</Prefer32Bit>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -26,7 +28,6 @@
   <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />

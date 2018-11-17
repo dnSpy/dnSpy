@@ -13,10 +13,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="System.ComponentModel.Composition" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj" />
     <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj" />

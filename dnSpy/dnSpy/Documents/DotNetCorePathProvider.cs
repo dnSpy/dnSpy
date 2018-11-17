@@ -147,7 +147,7 @@ namespace dnSpy.Documents {
 			var sharedDir = Path.Combine(basePath, "shared");
 			if (!Directory.Exists(sharedDir))
 				yield break;
-			// Known dirs: Microsoft.NETCore.App, Microsoft.DesktopUI.App, Microsoft.AspNetCore.All, Microsoft.AspNetCore.App
+			// Known dirs: Microsoft.NETCore.App, Microsoft.WindowsDesktop.App, Microsoft.AspNetCore.All, Microsoft.AspNetCore.App
 			foreach (var versionsDir in GetDirectories(sharedDir)) {
 				foreach (var dir in GetDirectories(versionsDir)) {
 					var name = Path.GetFileName(dir);

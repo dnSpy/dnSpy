@@ -9,14 +9,12 @@
 
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetCore)' == 'true' ">
-    <FrameworkReference Include="Microsoft.DesktopUI"/>
   </ItemGroup>
 
   <ItemGroup>

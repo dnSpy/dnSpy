@@ -1,58 +1,7 @@
 ﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
-    <!--TODO: <TargetFrameworks> isn't used since you need .NET Core 3.0 SDK to
-    build .NET Core 3.0 apps and most people don't have it installed yet.
-    When this gets uncommented, some csproj files must be updated to use 
-        <Project Sdk="Microsoft.NET.Sdk.Wpf">
-    instead of
-        ﻿<Project Sdk="Microsoft.NET.Sdk">
-    All files:
-        dnSpy/dnSpy.Contracts.DnSpy/dnSpy.Contracts.DnSpy.csproj
-        dnSpy/dnSpy.Images/dnSpy.Images.csproj
-        dnSpy/dnSpy/dnSpy.csproj
-        dnSpy/dnSpy-x86/dnSpy-x86.csproj
-        dnSpy/Roslyn/dnSpy.Roslyn/dnSpy.Roslyn.csproj
-        Extensions/dnSpy.Analyzer/dnSpy.Analyzer.csproj
-        Extensions/dnSpy.AsmEditor/dnSpy.AsmEditor.csproj
-        Extensions/dnSpy.BamlDecompiler/dnSpy.BamlDecompiler.csproj
-        Extensions/dnSpy.Debugger/dnSpy.Debugger.DotNet.CorDebug/dnSpy.Debugger.DotNet.CorDebug.csproj
-        Extensions/dnSpy.Debugger/dnSpy.Debugger.DotNet.Mono/dnSpy.Debugger.DotNet.Mono.csproj
-        Extensions/dnSpy.Debugger/dnSpy.Debugger.DotNet/dnSpy.Debugger.DotNet.csproj
-        Extensions/dnSpy.Debugger/dnSpy.Debugger/dnSpy.Debugger.csproj
-        Extensions/dnSpy.Scripting.Roslyn/dnSpy.Scripting.Roslyn.csproj
-        Extensions/Examples/Example1.Extension/Example1.Extension.csproj
-        Extensions/Examples/Example2.Extension/Example2.Extension.csproj
-        Extensions/ILSpy.Decompiler/dnSpy.Decompiler.ILSpy/dnSpy.Decompiler.ILSpy.csproj
-        Libraries/ICSharpCode.TreeView/ICSharpCode.TreeView.csproj
-    There are also two .NET Core 3.0 preview bugs left:
-        https://github.com/dotnet/core/issues/2009
-            - copy the files from your .NET Framework dir
-        https://github.com/dotnet/corefx/issues/32641
-            - patch the cctor (create an empty body)
-    build: (.NET Core 3.0 needed, and VS msbuild.exe)
-        dotnet restore
-        msbuild /p:Configuration=Release
-    publish:
-        CSPROJFILE:
-            dnSpy\dnSpy\dnSpy.csproj
-            dnSpy\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj
-            Extensions\dnSpy.Analyzer\dnSpy.Analyzer.csproj
-            Extensions\dnSpy.AsmEditor\dnSpy.AsmEditor.csproj
-            Extensions\dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj
-            Extensions\dnSpy.Debugger\dnSpy.Debugger\dnSpy.Debugger.csproj
-            Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet\dnSpy.Debugger.DotNet.csproj
-            Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.CorDebug\dnSpy.Debugger.DotNet.CorDebug.csproj
-            Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Mono\dnSpy.Debugger.DotNet.Mono.csproj
-            Extensions\dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj
-            Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy\dnSpy.Decompiler.ILSpy.csproj
-        dotnet publish -c Release CSPROJFILE -f netcoreapp3.0 -_no-build -o dnSpy\dnSpy\bin\Release\netcoreapp3.0\Publish
-        NOTE: -_ is - - without the spaces
-    Copy debug\{x86,x64} to Publish\debug
-
-    <TargetFrameworks>net471;netcoreapp3.0</TargetFrameworks>
-    -->
+    <TargetFrameworks>net471</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
     <IsDotNetCore>false</IsDotNetCore>
     <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
@@ -72,12 +21,12 @@
     <IcedVersion>1.0.2</IcedVersion>
     <MSBuildNuGetVersion>15.8.166</MSBuildNuGetVersion>
     <MSRegistryVersion>4.5.0</MSRegistryVersion>
+    <MSVSCompositionNetFxAttributesVersion>15.8.98</MSVSCompositionNetFxAttributesVersion>
     <MSVSCompositionVersion>15.8.98</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
     <RoslynVersion>2.9.0</RoslynVersion>
-    <SCCompositionVersion>4.5.0</SCCompositionVersion>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />
