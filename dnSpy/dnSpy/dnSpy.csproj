@@ -269,6 +269,7 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes Condition=" '$(IsDotNetFramework)' != 'true'" >False</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
 
