@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			blockInstructions.Add(Instruction.CreateBranch(is64 ? II.Code.Jmp_rel32_64 : II.Code.Jmp_rel32_32, targetAddr));
 			var codeWriter = new ProcessMemoryBlockCodeWriter(memBlock);
 			var block = new InstructionBlock(codeWriter, blockInstructions, memBlock.CurrentAddress);
-			return BlockEncoder.TryEncode(is64 ? 64 : 32, block, out errorMessage, options: BlockEncoderOptions.DontFixBranches);
+			return BlockEncoder.TryEncode(is64 ? 64 : 32, block, out errorMessage);
 		}
 	}
 }
