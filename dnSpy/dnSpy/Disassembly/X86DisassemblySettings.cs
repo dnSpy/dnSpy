@@ -23,7 +23,7 @@ using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Disassembly {
-	abstract class DisassemblySettings : IDisassemblySettings {
+	abstract class X86DisassemblySettings : IX86DisassemblySettings {
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
@@ -595,7 +595,7 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(ShowSymbolAddress), ShowSymbolAddress);
 		}
 
-		protected DisassemblySettings CopyTo(DisassemblySettings other) {
+		protected X86DisassemblySettings CopyTo(X86DisassemblySettings other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			other.UpperCasePrefixes = UpperCasePrefixes;

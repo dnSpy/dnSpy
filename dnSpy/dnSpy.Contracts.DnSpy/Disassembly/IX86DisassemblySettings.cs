@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
 	/// x86/x64 disassembly settings
 	/// </summary>
-	public interface IDisassemblySettings : INotifyPropertyChanged {
+	public interface IX86DisassemblySettings : INotifyPropertyChanged {
 		/// <summary>
 		/// Prefixes are upper cased
 		/// </summary>

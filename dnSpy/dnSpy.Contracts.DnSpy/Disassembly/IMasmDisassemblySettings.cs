@@ -21,6 +21,6 @@ namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
 	/// masm disassembly settings
 	/// </summary>
-	public interface IMasmDisassemblySettings : IDisassemblySettings {
+	public interface IMasmDisassemblySettings : IX86DisassemblySettings {
 	}
 }

@@ -28,8 +28,8 @@ namespace dnSpy.Disassembly {
 
 		NasmDisassemblySettings NasmSettings => (NasmDisassemblySettings)Settings;
 
-		public NasmAppSettingsPage(NasmDisassemblySettings disassemblySettings)
-			: base(disassemblySettings, disassemblySettings.Clone(), new NasmFormatter(new NasmFormatterOptions(), SymbolResolver.Instance)) { }
+		public NasmAppSettingsPage(NasmDisassemblySettings x86DisassemblySettings)
+			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new NasmFormatter(new NasmFormatterOptions(), SymbolResolver.Instance)) { }
 
 		protected override void InitializeFormatterOptionsCore(FormatterOptions options) {
 			var nasm = (NasmFormatterOptions)options;
@@ -37,6 +37,6 @@ namespace dnSpy.Disassembly {
 		}
 
 		public override void OnApply() =>
-			((NasmDisassemblySettings)disassemblySettings).CopyTo((NasmDisassemblySettings)_global_disassemblySettings);
+			((NasmDisassemblySettings)x86DisassemblySettings).CopyTo((NasmDisassemblySettings)_global_x86DisassemblySettings);
 	}
 }

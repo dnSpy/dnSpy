@@ -47,7 +47,7 @@ namespace dnSpy.Disassembly {
 			}
 		}
 
-		static void CopyBase(FormatterOptions options, IDisassemblySettings settings) {
+		static void CopyBase(FormatterOptions options, IX86DisassemblySettings settings) {
 			options.OctalPrefix = settings.OctalPrefix;
 			options.OctalSuffix = settings.OctalSuffix;
 			options.OctalDigitGroupSize = settings.OctalDigitGroupSize;
