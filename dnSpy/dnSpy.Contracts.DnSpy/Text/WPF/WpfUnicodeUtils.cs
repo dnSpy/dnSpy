@@ -32,7 +32,8 @@ namespace dnSpy.Contracts.DnSpy.Text.WPF {
 		// See below for code that detects the bad values
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsBadWpfFormatterChar(uint cp) =>
-			(cp >= 0x0300 && cp <= 0x036F) ||
+			cp >= 0x0300 &&
+			(cp <= 0x036F ||
 			(cp >= 0x0483 && cp <= 0x0489) ||
 			(cp >= 0x064B && cp <= 0x0655) ||
 			cp == 0x0670 ||
@@ -92,7 +93,7 @@ namespace dnSpy.Contracts.DnSpy.Text.WPF {
 			(cp >= 0x1E023 && cp <= 0x1E024) ||
 			(cp >= 0x1E026 && cp <= 0x1E02A) ||
 			(cp >= 0x1E8D0 && cp <= 0x1E8D6) ||
-			(cp >= 0xE0100 && cp <= 0xE01EF);
+			(cp >= 0xE0100 && cp <= 0xE01EF));
 
 		public static string ReplaceBadChars(string s) {
 			bool hasBadChar = false;

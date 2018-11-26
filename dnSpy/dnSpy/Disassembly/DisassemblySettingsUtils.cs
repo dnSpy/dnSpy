@@ -91,7 +91,6 @@ namespace dnSpy.Disassembly {
 			options.DecimalPrefix = settings.DecimalPrefix;
 			options.UsePseudoOps = settings.UsePseudoOps;
 			options.ShowSymbolAddress = settings.ShowSymbolAddress;
-
 		}
 
 		public static MasmFormatterOptions ToMasm(this IMasmDisassemblySettings settings) {
