@@ -17,93 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
-using System.Globalization;
-using System.Text;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Disassembly.Viewer {
 	static class SymbolResolverUtils {
 		const int MAX_SYM_NAME_LEN = 1024;
 
-		public static string FixSymbol(string symbol) {
-			if (string.IsNullOrEmpty(symbol))
-				return string.Empty;
-
-			int i = 0;
-			if (symbol.Length <= MAX_SYM_NAME_LEN) {
-				for (; ; i++) {
-					if (i >= symbol.Length)
-						return symbol;
-					if (!IsValidSymbolChar(symbol[i]))
-						break;
-				}
-			}
-
-			var sb = new StringBuilder(symbol.Length + 10);
-			sb.Clear();
-			if (i != 0)
-				sb.Append(symbol, 0, i);
-
-			for (; i < symbol.Length; i++) {
-				char c = symbol[i];
-				if (!IsValidSymbolChar(c)) {
-					sb.Append(@"\u");
-					sb.Append(((ushort)c).ToString("X4"));
-				}
-				else
-					sb.Append(c);
-				if (sb.Length >= MAX_SYM_NAME_LEN)
-					break;
-			}
-
-			if (sb.Length > MAX_SYM_NAME_LEN) {
-				sb.Length = MAX_SYM_NAME_LEN;
-				sb.Append("...");
-			}
-
-			return sb.ToString();
-		}
-
-		static bool IsValidSymbolChar(char c) {
-			switch (char.GetUnicodeCategory(c)) {
-			case UnicodeCategory.UppercaseLetter:
-			case UnicodeCategory.LowercaseLetter:
-			case UnicodeCategory.TitlecaseLetter:
-			case UnicodeCategory.ModifierLetter:
-			case UnicodeCategory.OtherLetter:
-			case UnicodeCategory.NonSpacingMark:
-			case UnicodeCategory.SpacingCombiningMark:
-			case UnicodeCategory.EnclosingMark:
-			case UnicodeCategory.DecimalDigitNumber:
-			case UnicodeCategory.LetterNumber:
-			case UnicodeCategory.OtherNumber:
-			case UnicodeCategory.SpaceSeparator:
-			case UnicodeCategory.Surrogate:
-			case UnicodeCategory.ConnectorPunctuation:
-			case UnicodeCategory.DashPunctuation:
-			case UnicodeCategory.OpenPunctuation:
-			case UnicodeCategory.ClosePunctuation:
-			case UnicodeCategory.InitialQuotePunctuation:
-			case UnicodeCategory.FinalQuotePunctuation:
-			case UnicodeCategory.OtherPunctuation:
-			case UnicodeCategory.MathSymbol:
-			case UnicodeCategory.CurrencySymbol:
-			case UnicodeCategory.ModifierSymbol:
-			case UnicodeCategory.OtherSymbol:
-			case UnicodeCategory.OtherNotAssigned:
-				return true;
-
-			case UnicodeCategory.LineSeparator:
-			case UnicodeCategory.ParagraphSeparator:
-			case UnicodeCategory.Control:
-			case UnicodeCategory.Format:
-			case UnicodeCategory.PrivateUse:
-				return false;
-
-			default:
-				Debug.Fail($"Unknown unicode category: {char.GetUnicodeCategory(c)}");
-				return false;
-			}
-		}
+		public static string FixSymbol(string symbol) =>
+			IdentifierEscaper.Escape(symbol, MAX_SYM_NAME_LEN);
 	}
 }
