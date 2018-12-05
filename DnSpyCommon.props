@@ -10,6 +10,7 @@
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
     <!-- Update App.config whenever this value changes -->
     <DnSpyAssemblyVersion>5.0.9.0</DnSpyAssemblyVersion>
