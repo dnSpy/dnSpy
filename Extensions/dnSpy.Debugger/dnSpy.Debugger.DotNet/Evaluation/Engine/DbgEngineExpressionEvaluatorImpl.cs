@@ -56,8 +56,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return AssignCore(evalInfo, expression, valueExpression, options);
 			return Assign(dispatcher, evalInfo, expression, valueExpression, options);
 
-			DbgEngineEEAssignmentResult Assign(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, string valueExpression2, DbgEvaluationOptions options2) =>
-				dispatcher2.InvokeRethrow(() => AssignCore(evalInfo2, expression2, valueExpression2, options2));
+			DbgEngineEEAssignmentResult Assign(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, string valueExpression2, DbgEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => AssignCore(evalInfo2, expression2, valueExpression2, options2), out var result))
+					result = new DbgEngineEEAssignmentResult(DbgEEAssignmentResultFlags.None, DispatcherConstants.ProcessExitedError);
+				return result;
+			}
 		}
 
 		DbgEngineEEAssignmentResult AssignCore(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options) {
@@ -104,8 +107,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return EvaluateCore(evalInfo, expression, options, state);
 			return Evaluate(dispatcher, evalInfo, expression, options, state);
 
-			DbgEngineEvaluationResult Evaluate(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, DbgEvaluationOptions options2, object state2) =>
-				dispatcher2.InvokeRethrow(() => EvaluateCore(evalInfo2, expression2, options2, state2));
+			DbgEngineEvaluationResult Evaluate(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, DbgEvaluationOptions options2, object state2) {
+				if (!dispatcher2.TryInvokeRethrow(() => EvaluateCore(evalInfo2, expression2, options2, state2), out var result))
+					result = new DbgEngineEvaluationResult(DispatcherConstants.ProcessExitedError);
+				return result;
+			}
 		}
 
 		DbgEngineEvaluationResult EvaluateCore(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state) {
@@ -308,8 +314,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return EvaluateCore(evalInfo, obj, expression, options, state);
 			return Evaluate2(dispatcher, evalInfo, obj, expression, options, state);
 
-			DbgDotNetEvalResult Evaluate2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgDotNetValue obj2, string expression2, DbgEvaluationOptions options2, object state2) =>
-				dispatcher2.InvokeRethrow(() => EvaluateCore(evalInfo2, obj2, expression2, options2, state2));
+			DbgDotNetEvalResult Evaluate2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgDotNetValue obj2, string expression2, DbgEvaluationOptions options2, object state2) {
+				if (!dispatcher2.TryInvokeRethrow(() => EvaluateCore(evalInfo2, obj2, expression2, options2, state2), out var result))
+					result = new DbgDotNetEvalResult(DispatcherConstants.ProcessExitedError);
+				return result;
+			}
 		}
 
 		DbgDotNetEvalResult EvaluateCore(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state) {

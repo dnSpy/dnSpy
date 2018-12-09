@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			bool TryGetNativeCode2(ILDbgEngineStackFrame ilFrame2, out DbgDotNetNativeCode nativeCode2) {
 				DbgDotNetNativeCode nativeCodeTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(ilFrame2, out nativeCodeTmp));
+				Dispatcher.TryInvokeRethrow(() => TryGetNativeCodeCore(ilFrame2, out nativeCodeTmp), out var res);
 				nativeCode2 = nativeCodeTmp;
 				return res;
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			bool TryGetNativeCode2(DmdMethodBase method2, out DbgDotNetNativeCode nativeCode2) {
 				DbgDotNetNativeCode nativeCodeTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(method2, out nativeCodeTmp));
+				Dispatcher.TryInvokeRethrow(() => TryGetNativeCodeCore(method2, out nativeCodeTmp), out var res);
 				nativeCode2 = nativeCodeTmp;
 				return res;
 			}
@@ -530,7 +530,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			bool TryGetSymbolCore2(ulong address2, out SymbolResolverResult result2) {
 				SymbolResolverResult resultTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetSymbolCore(address2, out resultTmp));
+				Dispatcher.TryInvokeRethrow(() => TryGetSymbolCore(address2, out resultTmp), out var res);
 				result2 = resultTmp;
 				return res;
 			}

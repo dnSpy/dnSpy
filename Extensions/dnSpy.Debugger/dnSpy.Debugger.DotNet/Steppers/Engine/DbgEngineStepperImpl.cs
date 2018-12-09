@@ -325,7 +325,12 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			StepComplete?.Invoke(this, new DbgEngineStepCompleteEventArgs(thread, tag, error, forciblyCanceled));
 		}
 
-		public override void Step(object tag, DbgEngineStepKind step) => runtime.Dispatcher.BeginInvoke(() => Step_EngineThread(tag, step));
+		public override void Step(object tag, DbgEngineStepKind step) {
+			if (!runtime.Dispatcher.TryBeginInvoke(() => Step_EngineThread(tag, step))) {
+				// process has exited
+			}
+		}
+
 		void Step_EngineThread(object tag, DbgEngineStepKind step) {
 			runtime.Dispatcher.VerifyAccess();
 
@@ -1160,7 +1165,12 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			StepError("Internal error: " + exception.Message, tag);
 		}
 
-		public override void Cancel(object tag) => runtime.Dispatcher.BeginInvoke(() => Cancel_EngineThread(tag));
+		public override void Cancel(object tag) {
+			if (!runtime.Dispatcher.TryBeginInvoke(() => Cancel_EngineThread(tag))) {
+				// process has exited
+			}
+		}
+
 		void Cancel_EngineThread(object tag) {
 			runtime.Dispatcher.VerifyAccess();
 			var oldStepperData = stepper.Session;
@@ -1187,8 +1197,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
-			if (stepper.Session != null)
-				runtime.Dispatcher.BeginInvoke(() => ForceCancel_EngineThread());
+			if (stepper.Session != null) {
+				if (!runtime.Dispatcher.TryBeginInvoke(() => ForceCancel_EngineThread())) {
+					// process has exited
+				}
+			}
 			stepper.Close(dispatcher);
 		}
 	}

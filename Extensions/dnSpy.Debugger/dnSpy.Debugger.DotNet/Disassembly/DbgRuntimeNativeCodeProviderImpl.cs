@@ -59,8 +59,11 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 
 			public DotNetSymbolResolver(IDbgDotNetRuntime runtime) => this.runtime = runtime;
 
-			public void Resolve(ulong[] addresses, SymbolResolverResult[] result) =>
-				runtime.Dispatcher.Invoke(() => ResolveCore(addresses, result));
+			public void Resolve(ulong[] addresses, SymbolResolverResult[] result) {
+				if (!runtime.Dispatcher.TryInvoke(() => ResolveCore(addresses, result))) {
+					// process has exited
+				}
+			}
 
 			void ResolveCore(ulong[] addresses, SymbolResolverResult[] result) {
 				Debug.Assert(addresses.Length == result.Length);

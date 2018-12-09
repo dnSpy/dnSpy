@@ -18,26 +18,12 @@
 */
 
 using System;
-using System.Runtime.ExceptionServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Debugger.DotNet.Metadata;
 
-namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
-	static class DbgDotNetDispatcherExtensions {
-		public static bool TryInvokeRethrow<T>(this DbgDotNetDispatcher dispatcher, Func<T> callback, out T result) {
-			ExceptionDispatchInfo exceptionInfo = null;
-			bool success = dispatcher.TryInvoke(() => {
-				T res2;
-				try {
-					res2 = callback();
-				}
-				catch (Exception ex) {
-					exceptionInfo = ExceptionDispatchInfo.Capture(ex);
-					res2 = default;
-				}
-				return res2;
-			}, out result);
-			exceptionInfo?.Throw();
-			return success;
-		}
+namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+	sealed class DbgDotNetValueError : DbgDotNetValue {
+		public override bool IsNull => true;
+		public override DmdType Type => throw new NotImplementedException();
 	}
 }

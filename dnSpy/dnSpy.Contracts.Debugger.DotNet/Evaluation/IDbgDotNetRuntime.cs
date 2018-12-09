@@ -299,7 +299,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		int GetHashCode(DbgDotNetValue value);
 
 		/// <summary>
-		/// Gets an object ID's value
+		/// Gets an object ID's value or null if there was an error
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectId">Object id created by this class</param>

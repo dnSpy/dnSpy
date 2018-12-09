@@ -145,7 +145,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 
 		void FormatInvoke() {
 			var @this = this;
-			evalInfo.Runtime.GetDotNetRuntime().Dispatcher.Invoke(() => @this.FormatCore());
+			if (!evalInfo.Runtime.GetDotNetRuntime().Dispatcher.TryInvoke(() => @this.FormatCore())) {
+				// process has exited
+				OutputWrite("???", BoxedTextColor.Error);
+			}
 		}
 
 		void FormatCore() {

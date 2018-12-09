@@ -52,8 +52,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return GetNodesCore(evalInfo, options, localsOptions);
 			return GetNodes(dispatcher, evalInfo, options, localsOptions);
 
-			DbgEngineLocalsValueNodeInfo[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2, DbgLocalsValueNodeEvaluationOptions localsOptions2) =>
-				dispatcher2.InvokeRethrow(() => GetNodesCore(evalInfo2, options2, localsOptions2));
+			DbgEngineLocalsValueNodeInfo[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2, DbgLocalsValueNodeEvaluationOptions localsOptions2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetNodesCore(evalInfo2, options2, localsOptions2), out var result))
+					result = Array.Empty<DbgEngineLocalsValueNodeInfo>();
+				return result;
+			}
 		}
 
 		enum ValueInfoKind {
