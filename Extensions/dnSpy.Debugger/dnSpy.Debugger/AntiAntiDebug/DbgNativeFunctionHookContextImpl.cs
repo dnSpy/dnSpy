@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		}
 
 		public void Write() {
-			Allocator.Write();
+			processMemoryBlockAllocator.Write();
 			functionProvider.Write();
 		}
 
