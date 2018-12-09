@@ -1,6 +1,10 @@
 ﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <!--
+        - appveyor.yml (artifacts)
+        - dnSpy/dnSpy/App.config (supportedRuntime, .NET Framework only)
+    NOTE: Update the ABOVE files when TargetFrameworks is updated -->
     <TargetFrameworks>net472</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
     <IsDotNetCore>false</IsDotNetCore>
