@@ -317,15 +317,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				switch (varHome.LocationType) {
 				case VariableLocationType.VLT_REGISTER:
 					locationKind = X86VariableLocationKind.Register;
-					if (!TryGetRegisterX86(machine, varHome.Register, out register))
-						return null;
+					// Ignore errors, use register None
+					TryGetRegisterX86(machine, varHome.Register, out register);
 					memoryOffset = 0;
 					break;
 
 				case VariableLocationType.VLT_REGISTER_RELATIVE:
 					locationKind = X86VariableLocationKind.Memory;
-					if (!TryGetRegisterX86(machine, varHome.Register, out register))
-						return null;
+					// Ignore errors, the register is very rarely invalid (RyuJIT bug)
+					TryGetRegisterX86(machine, varHome.Register, out register);
 					memoryOffset = varHome.Offset;
 					break;
 
@@ -403,7 +403,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return true;
 				default:
 					Debug.Fail($"Unknown register number {(int)corReg}");
-					register = default;
+					register = X86Register.None;
 					return false;
 				}
 
@@ -510,7 +510,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return true;
 				default:
 					Debug.Fail($"Unknown register number {(int)corReg}");
-					register = default;
+					register = X86Register.None;
 					return false;
 				}
 
