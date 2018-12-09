@@ -24,6 +24,6 @@ namespace dnSpy.Disassembly.Viewer {
 		const int MAX_SYM_NAME_LEN = 1024;
 
 		public static string FixSymbol(string symbol) =>
-			IdentifierEscaper.Escape(symbol, MAX_SYM_NAME_LEN);
+			IdentifierEscaper.Escape(symbol, MAX_SYM_NAME_LEN, allowSpaces: true);
 	}
 }

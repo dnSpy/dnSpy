@@ -53,15 +53,16 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="id">Identifier</param>
 		/// <returns></returns>
-		public static string Escape(string id) => Escape(id, MAX_IDENTIFIER_LENGTH);
+		public static string Escape(string id) => Escape(id, MAX_IDENTIFIER_LENGTH, allowSpaces: false);
 
 		/// <summary>
 		/// Escapes an identifier
 		/// </summary>
 		/// <param name="id">Identifier</param>
 		/// <param name="maxLength">Max length</param>
+		/// <param name="allowSpaces">true to allow spaces</param>
 		/// <returns></returns>
-		public static string Escape(string id, int maxLength) {
+		public static string Escape(string id, int maxLength, bool allowSpaces) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;
 
@@ -71,7 +72,7 @@ namespace dnSpy.Contracts.Decompiler {
 				for (; ; i++) {
 					if (i >= id.Length)
 						return id;
-					if (!IsValidChar(id[i]))
+					if (!IsValidChar(id[i], allowSpaces))
 						break;
 				}
 			}
@@ -83,7 +84,7 @@ namespace dnSpy.Contracts.Decompiler {
 
 			for (; i < id.Length; i++) {
 				char c = id[i];
-				if (!IsValidChar(c)) {
+				if (!IsValidChar(c, allowSpaces)) {
 					sb.Append(@"\u");
 					sb.Append(((ushort)c).ToString("X4"));
 				}
@@ -101,11 +102,11 @@ namespace dnSpy.Contracts.Decompiler {
 			return sb.ToString();
 		}
 
-		static bool IsValidChar(char c) {
+		static bool IsValidChar(char c, bool allowSpaces) {
 			if (0x21 <= c && c <= 0x7E)
 				return true;
 			if (c <= 0x20)
-				return false;
+				return c == ' ' && allowSpaces;
 
 			switch (char.GetUnicodeCategory(c)) {
 			case UnicodeCategory.UppercaseLetter:
