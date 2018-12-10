@@ -70,7 +70,7 @@ namespace dnSpy.Documents {
 		}
 
 		static int GetPathGroupOrder(string path) {
-			if (StringComparer.OrdinalIgnoreCase.Equals(path, DotNetCoreAppDir))
+			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(path)), DotNetCoreAppDir))
 				return int.MaxValue;
 			return 0;
 		}
