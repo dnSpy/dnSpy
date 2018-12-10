@@ -258,7 +258,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			var args = $"/select,{filename}";
 			try {
-				Process.Start(new ProcessStartInfo("explorer.exe", args));
+				Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = false });
 			}
 			catch (IOException) {
 			}

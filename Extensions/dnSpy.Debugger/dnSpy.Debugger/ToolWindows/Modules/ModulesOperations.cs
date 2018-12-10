@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var args = $"/select,{filename}";
 			try {
-				Process.Start(new ProcessStartInfo("explorer.exe", args));
+				Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = false });
 			}
 			catch {
 			}

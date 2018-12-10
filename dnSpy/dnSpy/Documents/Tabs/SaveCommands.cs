@@ -216,7 +216,7 @@ namespace dnSpy.Documents.Tabs {
 				if (!File.Exists(fileToOpen))
 					return;
 				try {
-					Process.Start(fileToOpen);
+					Process.Start(new ProcessStartInfo(fileToOpen) { UseShellExecute = true });
 				}
 				catch {
 				}
