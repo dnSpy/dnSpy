@@ -19,8 +19,8 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	abstract class DbgDispatcher2 : DbgDispatcher {
@@ -29,29 +29,28 @@ namespace dnSpy.Debugger.Impl {
 
 	[Export(typeof(DbgDispatcher))]
 	sealed class DbgDispatcherImpl : DbgDispatcher2 {
-		const DispatcherPriority execPriority = DispatcherPriority.Send;
 		readonly DebuggerThread debuggerThread;
 
-		internal Dispatcher WpfDispatcher => debuggerThread.Dispatcher;
+		internal Dispatcher Dispatcher => debuggerThread.Dispatcher;
 
 		public DbgDispatcherImpl() {
 			debuggerThread = new DebuggerThread("Debugger");
 			debuggerThread.CallDispatcherRun();
 		}
 
-		public override bool CheckAccess() => WpfDispatcher.CheckAccess();
+		public override bool CheckAccess() => Dispatcher.CheckAccess();
 
 		public override void BeginInvoke(Action callback) {
-			if (WpfDispatcher.HasShutdownStarted || WpfDispatcher.HasShutdownFinished)
+			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 				return;
-			WpfDispatcher.BeginInvoke(execPriority, callback);
+			Dispatcher.BeginInvoke(callback);
 		}
 
 		public override T Invoke<T>(Func<T> callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			if (WpfDispatcher.HasShutdownStarted || WpfDispatcher.HasShutdownFinished)
+			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 				return default;
-			return WpfDispatcher.Invoke(callback, execPriority);
+			return Dispatcher.Invoke(callback);
 		}
 	}
 }

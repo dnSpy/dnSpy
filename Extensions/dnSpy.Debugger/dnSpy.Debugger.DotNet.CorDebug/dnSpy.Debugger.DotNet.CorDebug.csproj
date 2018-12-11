@@ -16,6 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\dnSpy.Debugger\Shared\Dispatcher.cs" Link="Impl\Dispatcher.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\dnSpy.Debugger.DotNet.CorDebug.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

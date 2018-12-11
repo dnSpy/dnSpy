@@ -19,12 +19,12 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgDispatcherProvider))]
 	sealed class DbgDispatcherProvider {
-		public Dispatcher WpfDispatcher => dbgDispatcher.WpfDispatcher;
+		public Dispatcher InternalDispatcher => dbgDispatcher.Dispatcher;
 		public DbgDispatcher2 Dispatcher => dbgDispatcher;
 
 		readonly DbgDispatcherImpl dbgDispatcher;

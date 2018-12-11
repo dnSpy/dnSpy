@@ -57,7 +57,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 				BeginInvoke(callback);
 				return true;
 			}
-			//TODO: The WPF dispatcher throws this when it's shutting down, but this code should not know about this exception
 			catch (TaskCanceledException) {
 				return false;
 			}
@@ -83,7 +82,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 				result = Invoke(callback);
 				return true;
 			}
-			//TODO: The WPF dispatcher throws this when it's shutting down, but this code should not know about this exception
 			catch (TaskCanceledException) {
 				result = default;
 				return false;

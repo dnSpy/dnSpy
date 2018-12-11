@@ -18,10 +18,9 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Threading;
-using System.Windows.Threading;
 using dndbg.Engine;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DebuggerThread {
@@ -42,9 +41,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		volatile WpfDebugMessageDispatcher __wpfDebugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
-			// We use WpfDebugMessageDispatcher in BeginInvoke()
-			Debug.Assert(DispPriority == WpfDebugMessageDispatcher.DispPriority);
-
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -65,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void DebuggerThreadProc(AutoResetEvent autoResetEvent) {
 			Thread.CurrentThread.Name = threadName;
-			Dispatcher = Dispatcher.CurrentDispatcher;
+			Dispatcher = new Dispatcher();
 			autoResetEvent.Set();
 
 			callDispatcherRunEvent.WaitOne();
@@ -82,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
 			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
+				Dispatcher.BeginInvokeShutdown();
 		}
 
 		public IDebugMessageDispatcher GetDebugMessageDispatcher() => WpfDebugMessageDispatcher;
@@ -90,14 +86,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
 		public bool CheckAccess() => Dispatcher.CheckAccess();
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
-		const DispatcherPriority DispPriority = DispatcherPriority.Send;
 		public T Invoke<T>(Func<T> callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			return Dispatcher.Invoke(callback, DispPriority);
+			return Dispatcher.Invoke(callback);
 		}
 		public void Invoke(Action callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			Dispatcher.Invoke(callback, DispPriority);
+			Dispatcher.Invoke(callback);
 		}
 		public void BeginInvoke(Action callback) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished) {

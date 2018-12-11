@@ -26,10 +26,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Shared;
 using dnSpy.Debugger.Utilities;
 using Microsoft.Win32.SafeHandles;
 
