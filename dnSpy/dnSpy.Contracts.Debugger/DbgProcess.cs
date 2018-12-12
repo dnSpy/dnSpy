@@ -67,6 +67,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract DbgMachine Machine { get; }
 
 		/// <summary>
+		/// Gets the operating system
+		/// </summary>
+		public abstract DbgOperatingSystem OperatingSystem { get; }
+
+		/// <summary>
 		/// Gets the process state
 		/// </summary>
 		public abstract DbgProcessState State { get; }
@@ -243,6 +248,26 @@ namespace dnSpy.Contracts.Debugger {
 		/// 64-bit ARM
 		/// </summary>
 		Arm64,
+	}
+
+	/// <summary>
+	/// Operating system
+	/// </summary>
+	public enum DbgOperatingSystem {
+		/// <summary>
+		/// Windows OS
+		/// </summary>
+		Windows,
+
+		/// <summary>
+		/// OSX/MacOS OS
+		/// </summary>
+		MacOS,
+
+		/// <summary>
+		/// Linux OS
+		/// </summary>
+		Linux,
 	}
 
 	/// <summary>
