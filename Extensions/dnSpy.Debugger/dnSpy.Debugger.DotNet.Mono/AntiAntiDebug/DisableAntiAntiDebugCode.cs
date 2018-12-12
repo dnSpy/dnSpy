@@ -41,11 +41,11 @@ namespace dnSpy.Debugger.DotNet.Mono.AntiAntiDebug {
 		public void Hook(DbgNativeFunctionHookContext context, out string errorMessage) => errorMessage = null;
 	}
 
-	[ExportDbgNativeFunctionHook("kernel32.dll", "CheckRemoteDebuggerPresent", new DbgMachine[0], 0)]
+	[ExportDbgNativeFunctionHook("kernel32.dll", "CheckRemoteDebuggerPresent", new DbgMachine[0], new[] { DbgOperatingSystem.Windows }, 0)]
 	sealed class DisableAntiCheckRemoteDebuggerPresent : DisableAntiAntiDebugCode {
 	}
 
-	[ExportDbgNativeFunctionHook("kernel32.dll", "IsDebuggerPresent", new DbgMachine[0], 0)]
+	[ExportDbgNativeFunctionHook("kernel32.dll", "IsDebuggerPresent", new DbgMachine[0], new[] { DbgOperatingSystem.Windows }, 0)]
 	sealed class DisableAntiIsDebuggerPresent : DisableAntiAntiDebugCode {
 	}
 }

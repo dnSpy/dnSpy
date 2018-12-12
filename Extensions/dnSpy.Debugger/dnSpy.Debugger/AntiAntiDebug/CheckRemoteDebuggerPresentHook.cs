@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		public const string FuncName = "CheckRemoteDebuggerPresent";
 	}
 
-	[ExportDbgNativeFunctionHook(CheckRemoteDebuggerPresentConstants.PublicDllName, CheckRemoteDebuggerPresentConstants.FuncName, new DbgMachine[0])]
+	[ExportDbgNativeFunctionHook(CheckRemoteDebuggerPresentConstants.PublicDllName, CheckRemoteDebuggerPresentConstants.FuncName, new DbgMachine[0], new[] { DbgOperatingSystem.Windows })]
 	sealed class CheckRemoteDebuggerPresentHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 

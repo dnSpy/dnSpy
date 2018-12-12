@@ -28,26 +28,49 @@ using dnSpy.Contracts.Debugger.AntiAntiDebug;
 namespace dnSpy.Debugger.AntiAntiDebug {
 	[Export(typeof(IDbgManagerStartListener))]
 	sealed class PreventNativeDebuggerDetection : IDbgManagerStartListener {
-		readonly Dictionary<DbgMachine, List<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>>> toHooks;
+		readonly Dictionary<Key, List<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>>> toHooks;
+
+		readonly struct Key : IEquatable<Key> {
+			readonly DbgMachine machine;
+			readonly DbgOperatingSystem operatingSystem;
+			public Key(DbgMachine machine, DbgOperatingSystem operatingSystem) {
+				this.machine = machine;
+				this.operatingSystem = operatingSystem;
+			}
+
+			public bool Equals(Key other) => machine == other.machine && operatingSystem == other.operatingSystem;
+			public override bool Equals(object obj) => obj is Key other && Equals(other);
+			public override int GetHashCode() => ((int)machine << 16) ^ (int)operatingSystem;
+		}
 
 		[ImportingConstructor]
 		PreventNativeDebuggerDetection([ImportMany] IEnumerable<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>> dbgNativeHooks) {
-			toHooks = new Dictionary<DbgMachine, List<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>>>();
+			toHooks = new Dictionary<Key, List<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>>>();
 			foreach (var lz in dbgNativeHooks.OrderBy(a => a.Metadata.Order)) {
 				foreach (var machine in GetMachines(lz.Metadata.Machines)) {
-					if (!toHooks.TryGetValue(machine, out var list))
-						toHooks.Add(machine, list = new List<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>>());
-					list.Add(lz);
+					foreach (var operatingSystem in GetOperatingSystems(lz.Metadata.OperatingSystems)) {
+						var key = new Key(machine, operatingSystem);
+						if (!toHooks.TryGetValue(key, out var list))
+							toHooks.Add(key, list = new List<Lazy<IDbgNativeFunctionHook, IDbgNativeFunctionHookMetadata>>());
+						list.Add(lz);
+					}
 				}
 			}
 		}
 
 		static readonly DbgMachine[] allMachines = (DbgMachine[])Enum.GetValues(typeof(DbgMachine));
+		static readonly DbgOperatingSystem[] allOperatingSystems = (DbgOperatingSystem[])Enum.GetValues(typeof(DbgOperatingSystem));
 
 		static DbgMachine[] GetMachines(DbgMachine[] machines) {
 			if (machines.Length != 0)
 				return machines;
 			return allMachines;
+		}
+
+		static DbgOperatingSystem[] GetOperatingSystems(DbgOperatingSystem[] operatingSystems) {
+			if (operatingSystems.Length != 0)
+				return operatingSystems;
+			return allOperatingSystems;
 		}
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
@@ -61,7 +84,8 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		}
 
 		void HookFuncs(DbgProcess process) {
-			if (!toHooks.TryGetValue(process.Machine, out var hooks))
+			var key = new Key(process.Machine, process.OperatingSystem);
+			if (!toHooks.TryGetValue(key, out var hooks))
 				return;
 
 			var hookedFuncs = new HashSet<(string dll, string function)>();

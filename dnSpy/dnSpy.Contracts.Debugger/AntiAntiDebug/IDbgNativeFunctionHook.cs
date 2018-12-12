@@ -49,6 +49,8 @@ namespace dnSpy.Contracts.Debugger.AntiAntiDebug {
 		string Function { get; }
 		/// <summary>See <see cref="ExportDbgNativeFunctionHookAttribute.Machines"/></summary>
 		DbgMachine[] Machines { get; }
+		/// <summary>See <see cref="ExportDbgNativeFunctionHookAttribute.OperatingSystems"/></summary>
+		DbgOperatingSystem[] OperatingSystems { get; }
 		/// <summary>See <see cref="ExportDbgNativeFunctionHookAttribute.Order"/></summary>
 		double Order { get; }
 	}
@@ -64,9 +66,10 @@ namespace dnSpy.Contracts.Debugger.AntiAntiDebug {
 		/// <param name="dll">DLL name including dll extension, case sensitive. It can be any name, it's only used to make sure only one handler patches a function.</param>
 		/// <param name="function">Function name, case sensitive. It can be any name, it's only used to make sure only one handler patches a function.</param>
 		/// <param name="machine">Supported machine</param>
+		/// <param name="operatingSystem">Supported operating system</param>
 		/// <param name="order">Order</param>
-		public ExportDbgNativeFunctionHookAttribute(string dll, string function, DbgMachine machine, double order = double.MaxValue)
-			: this(dll, function, new[] { machine }, order) {
+		public ExportDbgNativeFunctionHookAttribute(string dll, string function, DbgMachine machine, DbgOperatingSystem operatingSystem, double order = double.MaxValue)
+			: this(dll, function, new[] { machine }, new[] { operatingSystem }, order) {
 		}
 
 		/// <summary>
@@ -75,12 +78,14 @@ namespace dnSpy.Contracts.Debugger.AntiAntiDebug {
 		/// <param name="dll">DLL name including dll extension, case sensitive. It can be any name, it's only used to make sure only one handler patches a function.</param>
 		/// <param name="function">Function name, case sensitive. It can be any name, it's only used to make sure only one handler patches a function.</param>
 		/// <param name="machines">Supported machines or empty to support all available machines</param>
+		/// <param name="operatingSystems">Supported operating systems or empty to support all operating systems</param>
 		/// <param name="order">Order</param>
-		public ExportDbgNativeFunctionHookAttribute(string dll, string function, DbgMachine[] machines, double order = double.MaxValue)
+		public ExportDbgNativeFunctionHookAttribute(string dll, string function, DbgMachine[] machines, DbgOperatingSystem[] operatingSystems, double order = double.MaxValue)
 			: base(typeof(IDbgNativeFunctionHook)) {
 			Dll = dll ?? throw new ArgumentNullException(nameof(dll));
 			Function = function ?? throw new ArgumentNullException(nameof(function));
 			Machines = machines ?? throw new ArgumentNullException(nameof(machines));
+			OperatingSystems = operatingSystems ?? throw new ArgumentNullException(nameof(operatingSystems));
 			Order = order;
 		}
 
@@ -98,6 +103,11 @@ namespace dnSpy.Contracts.Debugger.AntiAntiDebug {
 		/// Supported machines or empty to support all available machines
 		/// </summary>
 		public DbgMachine[] Machines { get; }
+
+		/// <summary>
+		/// Supported operating systems or empty to support all operating systems
+		/// </summary>
+		public DbgOperatingSystem[] OperatingSystems { get; }
 
 		/// <summary>
 		/// Gets the order
