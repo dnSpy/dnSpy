@@ -24,7 +24,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using dndbg.COM.CorDebug;
-using Microsoft.Win32;
 
 namespace dndbg.Engine {
 	readonly struct CoreCLRInfo {
@@ -98,9 +97,6 @@ namespace dndbg.Engine {
 				if (File.Exists(dbgshimPathTemp))
 					list.Add(dbgshimPathTemp);
 			}
-			var s = GetDbgShimPathFromRegistry();
-			if (File.Exists(s))
-				list.Add(s);
 			return list;
 		}
 
@@ -157,21 +153,6 @@ namespace dndbg.Engine {
 			if (addr == IntPtr.Zero)
 				return null;
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(addr, typeof(T));
-		}
-
-		// We'd most likely find the Silverlight dbgshim.dll in the registry (check the Wow6432Node
-		// path), so disable this method.
-		static readonly bool enable_GetDbgShimPathFromRegistry = false;
-		static string GetDbgShimPathFromRegistry() {
-			if (!enable_GetDbgShimPathFromRegistry)
-				return null;
-			try {
-				using (var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\.NETFramework"))
-					return key.GetValue("DbgPackShimPath") as string;
-			}
-			catch {
-			}
-			return null;
 		}
 
 		static string GetDbgShimPathFromRuntimePath(string path) {
