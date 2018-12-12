@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Properties;
 
@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => typeVariableInfos.Length > 0;
 
-		static readonly DbgDotNetText typeVariablesName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.LocalsWindow_TypeVariables));
+		static readonly DbgDotNetText typeVariablesName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.LocalsWindow_TypeVariables));
 
 		readonly LanguageValueNodeFactory valueNodeFactory;
 		readonly DbgDotNetTypeVariableInfo[] typeVariableInfos;

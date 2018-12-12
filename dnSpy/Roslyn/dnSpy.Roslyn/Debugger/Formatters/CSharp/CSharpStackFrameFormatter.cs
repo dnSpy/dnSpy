@@ -24,12 +24,12 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 	readonly struct CSharpStackFrameFormatter {
-		readonly ITextColorWriter output;
+		readonly IDbgTextWriter output;
 		readonly DbgEvaluationInfo evalInfo;
 		readonly LanguageFormatter languageFormatter;
 		readonly DbgStackFrameFormatterOptions options;
@@ -68,7 +68,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		bool ShowIP => (options & DbgStackFrameFormatterOptions.IP) != 0;
 		bool DigitSeparators => (options & DbgStackFrameFormatterOptions.DigitSeparators) != 0;
 
-		public CSharpStackFrameFormatter(ITextColorWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
+		public CSharpStackFrameFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
@@ -77,13 +77,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 		}
 
-		void OutputWrite(string s, object color) => output.Write(color, s);
-		void WriteSpace() => OutputWrite(" ", BoxedTextColor.Text);
-		void WritePeriod() => OutputWrite(".", BoxedTextColor.Operator);
-		void WriteIdentifier(string id, object color) => OutputWrite(CSharpTypeFormatter.GetFormattedIdentifier(id), color);
+		void OutputWrite(string s, DbgTextColor color) => output.Write(color, s);
+		void WriteSpace() => OutputWrite(" ", DbgTextColor.Text);
+		void WritePeriod() => OutputWrite(".", DbgTextColor.Operator);
+		void WriteIdentifier(string id, DbgTextColor color) => OutputWrite(CSharpTypeFormatter.GetFormattedIdentifier(id), color);
 
 		void WriteCommaSpace() {
-			OutputWrite(",", BoxedTextColor.Punctuation);
+			OutputWrite(",", DbgTextColor.Punctuation);
 			WriteSpace();
 		}
 
@@ -111,9 +111,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		void FormatReturnType(DmdType type, bool isReadOnly) {
 			if (type.IsByRef && isReadOnly) {
 				type = type.GetElementType();
-				OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_ref, DbgTextColor.Keyword);
 				WriteSpace();
-				OutputWrite(Keyword_readonly, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_readonly, DbgTextColor.Keyword);
 				WriteSpace();
 			}
 			FormatType(type);
@@ -129,7 +129,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				return;
 			var primitiveFormatter = new CSharpPrimitiveValueFormatter(output, GetValueFormatterOptions() & ~ValueFormatterOptions.Decimal, cultureInfo);
 			var tokenString = primitiveFormatter.ToFormattedUInt32((uint)member.MetadataToken);
-			OutputWrite(CommentBegin + tokenString + CommentEnd, BoxedTextColor.Comment);
+			OutputWrite(CommentBegin + tokenString + CommentEnd, DbgTextColor.Comment);
 		}
 
 		bool NeedThreadSwitch() {
@@ -156,20 +156,20 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			var @this = this;
 			if (!evalInfo.Runtime.GetDotNetRuntime().Dispatcher.TryInvoke(() => @this.FormatCore())) {
 				// process has exited
-				OutputWrite("???", BoxedTextColor.Error);
+				OutputWrite("???", DbgTextColor.Error);
 			}
 		}
 
 		void FormatCore() {
 			if (ModuleNames) {
-				OutputWrite(evalInfo.Frame.Module?.Name ?? "???", BoxedTextColor.AssemblyModule);
-				OutputWrite("!", BoxedTextColor.Operator);
+				OutputWrite(evalInfo.Frame.Module?.Name ?? "???", DbgTextColor.ModuleName);
+				OutputWrite("!", DbgTextColor.Operator);
 			}
 
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var method = runtime.GetFrameMethod(evalInfo);
 			if ((object)method == null)
-				OutputWrite("???", BoxedTextColor.Error);
+				OutputWrite("???", DbgTextColor.Error);
 			else {
 				var propInfo = TypeFormatterUtils.TryGetProperty(method);
 				if (propInfo.kind != AccessorKind.None) {
@@ -191,13 +191,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			var genArgs = method.GetGenericArguments();
 			if (genArgs.Count == 0)
 				return;
-			OutputWrite(GenericsParenOpen, BoxedTextColor.Punctuation);
+			OutputWrite(GenericsParenOpen, DbgTextColor.Punctuation);
 			for (int i = 0; i < genArgs.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				FormatType(genArgs[i]);
 			}
-			OutputWrite(GenericsParenClose, BoxedTextColor.Punctuation);
+			OutputWrite(GenericsParenClose, DbgTextColor.Punctuation);
 		}
 
 		void WriteMethodParameterList(DmdMethodBase method, string openParen, string closeParen) =>
@@ -207,7 +207,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (!showParameterTypes && !showParameterNames && !showParameterValues)
 				return;
 
-			OutputWrite(openParen, BoxedTextColor.Punctuation);
+			OutputWrite(openParen, DbgTextColor.Punctuation);
 
 			int baseIndex = method.IsStatic ? 0 : 1;
 			var parameters = method.GetParameters();
@@ -222,7 +222,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 					needSpace = true;
 
 					if (param?.IsDefined("System.ParamArrayAttribute", false) == true) {
-						OutputWrite(Keyword_params, BoxedTextColor.Keyword);
+						OutputWrite(Keyword_params, DbgTextColor.Keyword);
 						WriteSpace();
 					}
 					var parameterType = parameterTypes[i];
@@ -237,15 +237,15 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 					needSpace = true;
 
 					if (!string.IsNullOrEmpty(param?.Name))
-						WriteIdentifier(param.Name, BoxedTextColor.Parameter);
+						WriteIdentifier(param.Name, DbgTextColor.Parameter);
 					else
-						WriteIdentifier("A_" + (baseIndex + i).ToString(), BoxedTextColor.Parameter);
+						WriteIdentifier("A_" + (baseIndex + i).ToString(), DbgTextColor.Parameter);
 				}
 				if (showParameterValues)
 					needSpace = FormatValue((uint)(baseIndex + i), needSpace);
 			}
 
-			OutputWrite(closeParen, BoxedTextColor.Punctuation);
+			OutputWrite(closeParen, DbgTextColor.Punctuation);
 		}
 
 		void WriteRefIfByRef(DmdParameterInfo param) {
@@ -255,15 +255,15 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (!type.IsByRef)
 				return;
 			if (!param.IsIn && param.IsOut) {
-				OutputWrite(Keyword_out, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_out, DbgTextColor.Keyword);
 				WriteSpace();
 			}
 			else if (!param.IsIn && !param.IsOut && TypeFormatterUtils.IsReadOnlyParameter(param)) {
-				OutputWrite(Keyword_in, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_in, DbgTextColor.Keyword);
 				WriteSpace();
 			}
 			else {
-				OutputWrite(Keyword_ref, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_ref, DbgTextColor.Keyword);
 				WriteSpace();
 			}
 		}
@@ -277,7 +277,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				if (parameterValue.IsNormalResult) {
 					if (needSpace) {
 						WriteSpace();
-						OutputWrite("=", BoxedTextColor.Operator);
+						OutputWrite("=", DbgTextColor.Operator);
 						WriteSpace();
 					}
 					needSpace = true;
@@ -287,7 +287,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 					if (value.Type.IsByRef)
 						value = dereferencedValue = value.LoadIndirect().Value;
 					if (value == null)
-						OutputWrite("???", BoxedTextColor.Error);
+						OutputWrite("???", DbgTextColor.Error);
 					else
 						valueFormatter.Format(value);
 				}
@@ -312,26 +312,26 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (!ShowIP)
 				return;
 			WriteSpace();
-			OutputWrite("(", BoxedTextColor.Punctuation);
-			OutputWrite("IL", BoxedTextColor.Text);
+			OutputWrite("(", DbgTextColor.Punctuation);
+			OutputWrite("IL", DbgTextColor.Text);
 			var primitiveFormatter = new CSharpPrimitiveValueFormatter(output, GetValueFormatterOptions() & ~ValueFormatterOptions.Decimal, cultureInfo);
 
 			var loc = evalInfo.Frame.Location as IDbgDotNetCodeLocation;
 			var ilOffsetMapping = loc?.ILOffsetMapping ?? DbgILOffsetMapping.Exact;
 			switch (ilOffsetMapping) {
 			case DbgILOffsetMapping.Prolog:
-				OutputWrite("=", BoxedTextColor.Operator);
-				OutputWrite("prolog", BoxedTextColor.Text);
+				OutputWrite("=", DbgTextColor.Operator);
+				OutputWrite("prolog", DbgTextColor.Text);
 				break;
 
 			case DbgILOffsetMapping.Epilog:
-				OutputWrite("=", BoxedTextColor.Operator);
-				OutputWrite("epilog", BoxedTextColor.Text);
+				OutputWrite("=", DbgTextColor.Operator);
+				OutputWrite("epilog", DbgTextColor.Text);
 				break;
 
 			case DbgILOffsetMapping.Exact:
 			case DbgILOffsetMapping.Approximate:
-				OutputWrite(ilOffsetMapping == DbgILOffsetMapping.Exact ? "=" : "≈", BoxedTextColor.Operator);
+				OutputWrite(ilOffsetMapping == DbgILOffsetMapping.Exact ? "=" : "≈", DbgTextColor.Operator);
 				if (evalInfo.Frame.FunctionOffset <= ushort.MaxValue)
 					primitiveFormatter.FormatUInt16((ushort)evalInfo.Frame.FunctionOffset);
 				else
@@ -342,8 +342,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			case DbgILOffsetMapping.NoInfo:
 			case DbgILOffsetMapping.UnmappedAddress:
 			default:
-				OutputWrite("=", BoxedTextColor.Operator);
-				OutputWrite("???", BoxedTextColor.Error);
+				OutputWrite("=", DbgTextColor.Operator);
+				OutputWrite("???", DbgTextColor.Error);
 				break;
 			}
 
@@ -351,8 +351,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
-					OutputWrite("Native", BoxedTextColor.Text);
-					OutputWrite("=", BoxedTextColor.Operator);
+					OutputWrite("Native", DbgTextColor.Text);
+					OutputWrite("=", DbgTextColor.Operator);
 					if (evalInfo.Runtime.Process.PointerSize == 4)
 						primitiveFormatter.FormatUInt32((uint)addr.Address);
 					else
@@ -360,14 +360,14 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 					long offs = (long)addr.Offset;
 					if (offs < 0) {
 						offs = -offs;
-						OutputWrite("-", BoxedTextColor.Operator);
+						OutputWrite("-", DbgTextColor.Operator);
 					}
 					else
-						OutputWrite("+", BoxedTextColor.Operator);
+						OutputWrite("+", DbgTextColor.Operator);
 					primitiveFormatter.FormatFewDigits((ulong)offs);
 				}
 			}
-			OutputWrite(")", BoxedTextColor.Punctuation);
+			OutputWrite(")", DbgTextColor.Punctuation);
 		}
 
 		void WriteAccessor(AccessorKind accessorKind) {
@@ -394,7 +394,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				break;
 			}
 			WritePeriod();
-			OutputWrite(keyword, BoxedTextColor.Keyword);
+			OutputWrite(keyword, DbgTextColor.Keyword);
 		}
 
 		void Format(DmdMethodBase method, DmdPropertyInfo property, AccessorKind accessorKind) {
@@ -407,7 +407,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				WritePeriod();
 			}
 			if (property.GetIndexParameters().Count != 0) {
-				OutputWrite(Keyword_this, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_this, DbgTextColor.Keyword);
 				WriteToken(property);
 				WriteMethodParameterListCore(method, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose, showParameterTypes: true, showParameterNames: false, showParameterValues: false);
 			}
@@ -485,7 +485,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			WriteOffset();
 		}
 
-		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
+		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? DbgTextColor.Keyword : DbgTextColor.Operator);
 
 		void WriteMethodName(DmdMethodBase method, string name, string[] operatorInfo) {
 			if (operatorInfo != null) {

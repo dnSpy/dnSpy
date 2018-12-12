@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Properties;
 
@@ -179,17 +179,17 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		protected abstract DbgDotNetText InstanceMembersName { get; }
 		protected abstract DbgDotNetText StaticMembersName { get; }
-		protected abstract void FormatTypeName(ITextColorWriter output, DmdType type);
-		protected abstract void FormatFieldName(ITextColorWriter output, DmdFieldInfo field);
-		protected abstract void FormatPropertyName(ITextColorWriter output, DmdPropertyInfo property);
-		public abstract void FormatArrayName(ITextColorWriter output, int index);
-		public abstract void FormatArrayName(ITextColorWriter output, int[] indexes);
+		protected abstract void FormatTypeName(IDbgTextWriter output, DmdType type);
+		protected abstract void FormatFieldName(IDbgTextWriter output, DmdFieldInfo field);
+		protected abstract void FormatPropertyName(IDbgTextWriter output, DmdPropertyInfo property);
+		public abstract void FormatArrayName(IDbgTextWriter output, int index);
+		public abstract void FormatArrayName(IDbgTextWriter output, int[] indexes);
 		public abstract string GetNewObjectExpression(DmdConstructorInfo ctor, string argumentExpression, DmdType expectedType);
 		public abstract string GetCallExpression(DmdMethodBase method, string instanceExpression);
 		public abstract string GetDereferenceExpression(string instanceExpression);
 		public abstract ref readonly DbgDotNetText GetDereferencedName();
 
-		internal void FormatTypeName2(ITextColorWriter output, DmdType type) => FormatTypeName(output, type);
+		internal void FormatTypeName2(IDbgTextWriter output, DmdType type) => FormatTypeName(output, type);
 
 		[Flags]
 		enum CreationOptions {
@@ -272,7 +272,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		string GetTypeExpression(DmdType type) {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			FormatTypeName(output, type);
 			return output.ToString();
 		}
@@ -435,10 +435,10 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				ref var info = ref infos[i];
 				FormatName(output, info.Member);
 				if (info.NeedTypeName) {
-					output.Write(BoxedTextColor.Text, " ");
-					output.Write(BoxedTextColor.Punctuation, "(");
+					output.Write(DbgTextColor.Text, " ");
+					output.Write(DbgTextColor.Punctuation, "(");
 					FormatTypeName(output, info.Member.DeclaringType);
-					output.Write(BoxedTextColor.Punctuation, ")");
+					output.Write(DbgTextColor.Punctuation, ")");
 				}
 				info.Name = output.CreateAndReset();
 			}
@@ -623,7 +623,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if (provider != null)
 				providers.Add(provider);
 		}
-		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_RawView));
+		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_RawView));
 
 		static MemberValueNodeInfoCollection Filter(MemberValueNodeInfoCollection infos, DbgValueNodeEvaluationOptions evalOptions) {
 			bool isRawView = (evalOptions & DbgValueNodeEvaluationOptions.RawView) != 0;

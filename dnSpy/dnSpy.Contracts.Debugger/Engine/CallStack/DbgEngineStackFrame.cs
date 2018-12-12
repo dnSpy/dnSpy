@@ -22,8 +22,8 @@ using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 	/// <summary>
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		/// <param name="valueOptions">Value option</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public virtual bool TryFormat(DbgEvaluationContext context, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) => false;
+		public virtual bool TryFormat(DbgEvaluationContext context, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) => false;
 
 		/// <summary>
 		/// Called after the <see cref="DbgStackFrame"/> has been created

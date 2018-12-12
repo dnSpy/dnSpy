@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineAutosProviderImpl : DbgEngineValueNodeProvider {
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			try {
 				for (int i = 0; i < res.Length; i++) {
 					evalInfo.CancellationToken.ThrowIfCancellationRequested();
-					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, "Error"));
+					var name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, "Error"));
 					res[i] = valueNodeFactory.CreateError(evalInfo, name, "NYI", "NYI", false);
 				}
 			}

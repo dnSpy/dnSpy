@@ -25,9 +25,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Properties;
@@ -507,7 +507,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			sbOutput.Reset();
 			return moduleContext.SearchMatcher.IsMatchAll(allStrings);
 		}
-		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
+		readonly DbgStringBuilderTextWriter sbOutput = new DbgStringBuilderTextWriter();
 
 		// UI thread
 		string GetName_UI(ModuleVM vm) {

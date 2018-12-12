@@ -28,9 +28,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.References;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Modules;
 using dnSpy.Debugger.ToolWindows.Memory;
 using dnSpy.Debugger.UI;
@@ -93,29 +93,29 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteName(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteOptimized(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteDynamic(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteInMemory(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteOrder(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteVersion(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteTimestamp(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteAddress(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteProcess(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteAppDomain(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WritePath(output, vm.Module);
 				output.WriteLine();
 			}

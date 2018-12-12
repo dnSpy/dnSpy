@@ -17,47 +17,37 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Contracts.Debugger.Text;
+using System;
+using dnSpy.Contracts.Text;
 
-namespace dnSpy.Contracts.Debugger.DotNet.Text {
+namespace dnSpy.Contracts.Debugger.Text.DnSpy {
 	/// <summary>
-	/// Creates <see cref="DbgDotNetText"/>
+	/// Implements <see cref="ITextColorWriter"/> and writes to a <see cref="IDbgTextWriter"/>
 	/// </summary>
-	public sealed class DbgDotNetTextOutput : IDbgTextWriter {
-		readonly List<DbgDotNetTextPart> list;
+	public sealed class DbgTextColorWriter : ITextColorWriter {
+		readonly IDbgTextWriter writer;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DbgDotNetTextOutput() => list = new List<DbgDotNetTextPart>();
+		/// <param name="writer">Debug text writer</param>
+		public DbgTextColorWriter(IDbgTextWriter writer) =>
+			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
 
 		/// <summary>
 		/// Writes text
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public void Write(DbgTextColor color, string text) => list.Add(new DbgDotNetTextPart(color, text));
+		public void Write(object color, string text) =>
+			writer.Write(ColorConverter.ToDebuggerColor(color), text);
 
 		/// <summary>
-		/// Creates a <see cref="DbgDotNetText"/>
+		/// Writes text
 		/// </summary>
-		/// <returns></returns>
-		public DbgDotNetText Create() => new DbgDotNetText(list.ToArray());
-
-		/// <summary>
-		/// Creates a <see cref="DbgDotNetText"/> and clears this instance so it can be reused
-		/// </summary>
-		/// <returns></returns>
-		public DbgDotNetText CreateAndReset() {
-			var res = new DbgDotNetText(list.ToArray());
-			list.Clear();
-			return res;
-		}
-
-		/// <summary>
-		/// Clears this instance
-		/// </summary>
-		public void Clear() => list.Clear();
+		/// <param name="color">Color</param>
+		/// <param name="text">Text</param>
+		public void Write(TextColor color, string text) =>
+			Write(color.Box(), text);
 	}
 }

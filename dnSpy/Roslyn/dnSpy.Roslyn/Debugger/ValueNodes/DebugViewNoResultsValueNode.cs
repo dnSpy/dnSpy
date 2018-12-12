@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
@@ -45,11 +45,11 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		const string EmptyPropertyName = "Empty";
 		readonly DbgDotNetText noResultsName;
-		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceProperty, EmptyPropertyName));
+		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.InstanceProperty, EmptyPropertyName));
 
 		DebugViewNoResultsValueNode(string expression, string emptyMessage) {
 			Expression = expression;
-			noResultsName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, emptyMessage));
+			noResultsName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, emptyMessage));
 		}
 
 		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationInfo evalInfo, string expression, DbgDotNetValueResult valueResult) {
@@ -77,7 +77,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		public override bool FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override bool FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			noResultsName.WriteTo(output);
 			return true;
 		}

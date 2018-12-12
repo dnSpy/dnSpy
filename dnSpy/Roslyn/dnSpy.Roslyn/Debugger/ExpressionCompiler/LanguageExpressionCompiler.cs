@@ -30,8 +30,9 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
 using dnSpy.Roslyn.Text;
 using dnSpy.Roslyn.Text.Classification;
 using Microsoft.CodeAnalysis;
@@ -423,36 +424,36 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 
 				string imageName;
 				DbgDotNetText displayName;
-				object nameColor;
+				DbgTextColor nameColor;
 				switch (info.Kind) {
 				case LocalAndMethodKind.Local:
 					imageName = PredefinedDbgValueNodeImageNames.Local;
-					nameColor = BoxedTextColor.Local;
+					nameColor = DbgTextColor.Local;
 					break;
 
 				case LocalAndMethodKind.Parameter:
 					imageName = PredefinedDbgValueNodeImageNames.Parameter;
-					nameColor = BoxedTextColor.Parameter;
+					nameColor = DbgTextColor.Parameter;
 					break;
 
 				case LocalAndMethodKind.This:
 					imageName = PredefinedDbgValueNodeImageNames.This;
-					nameColor = BoxedTextColor.Keyword;
+					nameColor = DbgTextColor.Keyword;
 					break;
 
 				case LocalAndMethodKind.LocalConstant:
 					imageName = PredefinedDbgValueNodeImageNames.Constant;
-					nameColor = BoxedTextColor.Local;
+					nameColor = DbgTextColor.Local;
 					break;
 
 				case LocalAndMethodKind.StaticLocal:
 					imageName = PredefinedDbgValueNodeImageNames.Local;
-					nameColor = BoxedTextColor.Local;
+					nameColor = DbgTextColor.Local;
 					break;
 
 				case LocalAndMethodKind.ObjectAddress:
 					imageName = PredefinedDbgValueNodeImageNames.ObjectAddress;
-					nameColor = BoxedTextColor.Number;
+					nameColor = DbgTextColor.Number;
 					break;
 
 				case LocalAndMethodKind.TypeVariables:
@@ -470,7 +471,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				default:
 					Debug.Fail($"Unknown {nameof(LocalAndMethodKind)} value: {info.Kind}");
 					imageName = PredefinedDbgValueNodeImageNames.Data;
-					nameColor = BoxedTextColor.Text;
+					nameColor = DbgTextColor.Text;
 					break;
 				}
 				displayName = new DbgDotNetText(new DbgDotNetTextPart(nameColor, info.LocalDisplayName));
@@ -508,7 +509,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return builder.ToImmutable();
 		}
 
-		protected static DbgDotNetText CreateErrorName(string expression) => new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, expression));
+		protected static DbgDotNetText CreateErrorName(string expression) => new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, expression));
 
 		protected DbgDotNetText GetExpressionText(string languageName, CompilationOptions compilationOptions, ParseOptions parseOptions, string expression, string documentText, int documentTextExpressionOffset, IEnumerable<MetadataReference> metadataReferences, CancellationToken cancellationToken) {
 			compilationOptions = compilationOptions.WithMetadataImportOptions(MetadataImportOptions.All);
@@ -529,12 +530,12 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				var output = ObjectCache.AllocDotNetTextOutput();
 				foreach (var info in classifier.GetColors(textSpan)) {
 					if (pos < info.Span.Start)
-						output.Write(BoxedTextColor.Text, expression.Substring(pos - textSpan.Start, info.Span.Start - pos));
-					output.Write(info.Color, expression.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
+						output.Write(DbgTextColor.Text, expression.Substring(pos - textSpan.Start, info.Span.Start - pos));
+					output.Write(ColorConverter.ToDebuggerColor(info.Color), expression.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
 					pos = info.Span.End;
 				}
 				if (pos < textSpan.End)
-					output.Write(BoxedTextColor.Text, expression.Substring(pos - textSpan.Start, textSpan.End - pos));
+					output.Write(DbgTextColor.Text, expression.Substring(pos - textSpan.Start, textSpan.End - pos));
 				return ObjectCache.FreeAndToText(ref output);
 			}
 		}
@@ -552,13 +553,13 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			AliasConstants.TryGetAliasInfo(aliasName, IsCaseSensitive, out aliasInfo);
 
 		protected DbgDotNetText CreateText(DbgDotNetAliasKind kind, string expression) {
-			object color;
+			DbgTextColor color;
 			switch (kind) {
-			case DbgDotNetAliasKind.Exception:		color = BoxedTextColor.DebugExceptionName; break;
-			case DbgDotNetAliasKind.StowedException:color = BoxedTextColor.DebugStowedExceptionName; break;
-			case DbgDotNetAliasKind.ReturnValue:	color = BoxedTextColor.DebugReturnValueName; break;
-			case DbgDotNetAliasKind.Variable:		color = BoxedTextColor.DebugVariableName; break;
-			case DbgDotNetAliasKind.ObjectId:		color = BoxedTextColor.DebugObjectIdName; break;
+			case DbgDotNetAliasKind.Exception:		color = DbgTextColor.ExceptionName; break;
+			case DbgDotNetAliasKind.StowedException:color = DbgTextColor.StowedExceptionName; break;
+			case DbgDotNetAliasKind.ReturnValue:	color = DbgTextColor.ReturnValueName; break;
+			case DbgDotNetAliasKind.Variable:		color = DbgTextColor.VariableName; break;
+			case DbgDotNetAliasKind.ObjectId:		color = DbgTextColor.ObjectIdName; break;
 			default:								throw new InvalidOperationException();
 			}
 			return new DbgDotNetText(new DbgDotNetTextPart(color, expression));

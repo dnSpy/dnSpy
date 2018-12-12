@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
@@ -51,7 +51,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			const string StateMachineTypeParameterPrefix = "SM$";
 			if (name.StartsWith(StateMachineTypeParameterPrefix))
 				name = name.Substring(StateMachineTypeParameterPrefix.Length);
-			return new DbgDotNetText(new DbgDotNetTextPart(isMethodParam ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter, EscapeIdentifier(name)));
+			return new DbgDotNetText(new DbgDotNetTextPart(isMethodParam ? DbgTextColor.MethodGenericParameter : DbgTextColor.TypeGenericParameter, EscapeIdentifier(name)));
 		}
 
 		internal DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValueNodeProvider provider, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, DbgDotNetText valueText) =>
@@ -91,7 +91,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				info = valueNodeProviderFactory.Create(evalInfo, addParens, expectedType, nodeInfo, options);
 			if (useProvider) {
 				if (info.ErrorMessage != null)
-					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, info.ErrorMessage)), formatSpecifiers, columnFormatter);
+					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, info.ErrorMessage)), formatSpecifiers, columnFormatter);
 				Debug.Assert(info.Provider != null);
 				return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, info.Provider?.ImageName ?? imageName, true, false, null, null, info.ErrorMessage, info.Provider?.ValueText ?? default, formatSpecifiers, columnFormatter);
 			}
@@ -138,7 +138,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return CreateValue(evalInfo, default, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, columnFormatter);
 		}
 
-		internal void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, DmdMethodBase method) =>
+		internal void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, DmdMethodBase method) =>
 			FormatReturnValueMethodName(evalInfo, output, ToDbgValueFormatterTypeOptions(options), options, cultureInfo, method, PropertyState.TryGetProperty(method));
 
 		static DbgValueFormatterTypeOptions ToDbgValueFormatterTypeOptions(DbgValueFormatterOptions options) {
@@ -156,7 +156,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return res;
 		}
 
-		protected abstract void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property);
+		protected abstract void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property);
 
 		public sealed override DbgDotNetValueNode CreateError(DbgEvaluationInfo evalInfo, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects) =>
 			new DbgDotNetValueNodeImpl(this, null, name, null, expression, PredefinedDbgValueNodeImageNames.Error, true, causesSideEffects, null, null, errorMessage, default, null, null);

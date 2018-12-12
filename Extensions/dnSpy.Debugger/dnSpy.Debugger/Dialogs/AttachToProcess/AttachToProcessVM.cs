@@ -26,9 +26,9 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach.Dialogs;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Contracts.Utilities;
@@ -271,7 +271,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			sbOutput.Reset();
 			return attachToProcessContext.SearchMatcher.IsMatchAll(allStrings);
 		}
-		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
+		readonly DbgStringBuilderTextWriter sbOutput = new DbgStringBuilderTextWriter();
 
 		string GetProcess_UI(ProgramVM vm) {
 			Debug.Assert(uiDispatcher.CheckAccess());
@@ -326,23 +326,23 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			if (programs.Length == 0)
 				return;
 
-			var sb = new StringBuilderTextColorOutput();
+			var sb = new DbgStringBuilderTextWriter();
 			var formatter = attachToProcessContext.Formatter;
 			foreach (var vm in programs) {
 				formatter.WriteProcess(sb, vm);
-				sb.Write(BoxedTextColor.Text, "\t");
+				sb.Write(DbgTextColor.Text, "\t");
 				formatter.WritePid(sb, vm);
-				sb.Write(BoxedTextColor.Text, "\t");
+				sb.Write(DbgTextColor.Text, "\t");
 				formatter.WriteTitle(sb, vm);
-				sb.Write(BoxedTextColor.Text, "\t");
+				sb.Write(DbgTextColor.Text, "\t");
 				formatter.WriteType(sb, vm);
-				sb.Write(BoxedTextColor.Text, "\t");
+				sb.Write(DbgTextColor.Text, "\t");
 				formatter.WriteMachine(sb, vm);
-				sb.Write(BoxedTextColor.Text, "\t");
+				sb.Write(DbgTextColor.Text, "\t");
 				formatter.WritePath(sb, vm);
-				sb.Write(BoxedTextColor.Text, "\t");
+				sb.Write(DbgTextColor.Text, "\t");
 				formatter.WriteCommandLine(sb, vm);
-				sb.Write(BoxedTextColor.Text, Environment.NewLine);
+				sb.Write(DbgTextColor.Text, Environment.NewLine);
 			}
 
 			var s = sb.ToString();
