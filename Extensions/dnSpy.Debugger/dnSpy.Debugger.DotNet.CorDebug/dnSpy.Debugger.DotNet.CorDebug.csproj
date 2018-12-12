@@ -16,7 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\dnSpy.Debugger\Shared\Dispatcher.cs" Link="Impl\Dispatcher.cs" />
+    <Compile Include="..\dnSpy.Debugger\Shared\Dispatcher.cs" Link="Shared\Dispatcher.cs" />
+    <Compile Include="..\dnSpy.Debugger\Shared\FileUtilities.cs" Link="Shared\FileUtilities.cs" />
   </ItemGroup>
 
   <ItemGroup>

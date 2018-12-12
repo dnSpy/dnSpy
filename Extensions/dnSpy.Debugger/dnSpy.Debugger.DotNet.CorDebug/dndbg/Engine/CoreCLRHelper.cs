@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using dndbg.COM.CorDebug;
+using dnSpy.Debugger.Shared;
 
 namespace dndbg.Engine {
 	readonly struct CoreCLRInfo {
@@ -37,7 +38,7 @@ namespace dndbg.Engine {
 	}
 
 	static class CoreCLRHelper {
-		const string DBGSHIM_FILENAME = "dbgshim.dll";
+		static readonly string dbgshimFilename = FileUtilities.GetNativeDllFilename("dbgshim");
 		delegate int GetStartupNotificationEvent(uint debuggeePID, out IntPtr phStartupEvent);
 		delegate int CloseCLREnumeration(IntPtr pHandleArray, IntPtr pStringArray, uint dwArrayLength);
 		delegate int EnumerateCLRs(uint debuggeePID, out IntPtr ppHandleArrayOut, out IntPtr ppStringArrayOut, out uint pdwArrayLengthOut);
@@ -157,7 +158,7 @@ namespace dndbg.Engine {
 
 		static string GetDbgShimPathFromRuntimePath(string path) {
 			try {
-				return Path.Combine(Path.GetDirectoryName(path), DBGSHIM_FILENAME);
+				return Path.Combine(Path.GetDirectoryName(path), dbgshimFilename);
 			}
 			catch {
 			}
@@ -189,7 +190,7 @@ namespace dndbg.Engine {
 		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, IntPtr outputHandle, IntPtr errorHandle, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
 			if (dbgShimState == null)
-				throw new Exception($"Could not load dbgshim.dll: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
+				throw new Exception($"Could not load {dbgshimFilename}: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
 
 			var startupEvent = IntPtr.Zero;
 			var hThread = IntPtr.Zero;

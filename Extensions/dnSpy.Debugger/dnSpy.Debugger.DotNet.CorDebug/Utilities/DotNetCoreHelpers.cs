@@ -22,10 +22,11 @@ using System.IO;
 using System.Reflection;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
-		public const string DotNetExeName = "dotnet.exe";
+		public static readonly string DotNetExeName = FileUtilities.GetNativeExeFilename("dotnet");
 
 		public static string GetPathToDotNetExeHost(int bitness) {
 			if (bitness != 32 && bitness != 64)
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 					var file = Path.Combine(path, DotNetExeName);
 					if (!File.Exists(file))
 						continue;
-					if (GetPeFileBitness(file) == bitness)
+					if (FileUtilities.GetNativeFileBitness(file) == bitness)
 						return file;
 				}
 				catch {
@@ -50,29 +51,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			return null;
 		}
 
-		static int GetPeFileBitness(string file) {
-			using (var f = File.OpenRead(file)) {
-				var r = new BinaryReader(f);
-				if (r.ReadUInt16() != 0x5A4D)
-					return -1;
-				f.Position = 0x3C;
-				f.Position = r.ReadUInt32();
-				if (r.ReadUInt32() != 0x4550)
-					return -1;
-				f.Position += 0x14;
-				ushort magic = r.ReadUInt16();
-				if (magic == 0x10B)
-					return 32;
-				if (magic == 0x20B)
-					return 64;
-				return -1;
-			}
-		}
-
 		public static string GetDebugShimFilename(int bitness) {
 			var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			basePath = Path.Combine(basePath, "debug", "core");
-			const string filename = "dbgshim.dll";
+			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
 			switch (bitness) {
 			case 32:	return Path.Combine(basePath, "x86", filename);
 			case 64:	return Path.Combine(basePath, "x64", filename);

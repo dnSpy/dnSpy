@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public string Host { get; set; }
 
 		/// <summary>
-		/// Host arguments (eg. "exec" if .NET Core's dotnext.exe is used)
+		/// Host arguments (eg. "exec" if .NET Core's dotnet.exe is used)
 		/// </summary>
 		public string HostArguments { get; set; }
 

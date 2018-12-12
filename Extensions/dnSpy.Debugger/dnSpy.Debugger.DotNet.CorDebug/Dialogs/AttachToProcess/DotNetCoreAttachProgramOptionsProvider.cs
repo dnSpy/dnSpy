@@ -28,6 +28,7 @@ using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore)]
@@ -45,10 +46,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 				catch {
 					continue;
 				}
+				var coreclrFilename = FileUtilities.GetNativeDllFilename("coreclr");
 				foreach (var module in modules) {
 					var moduleFilename = module.FileName;
 					var dllName = Path.GetFileName(moduleFilename);
-					if (dllName.Equals("coreclr.dll", StringComparison.OrdinalIgnoreCase)) {
+					if (dllName.Equals(coreclrFilename, StringComparison.OrdinalIgnoreCase)) {
 						foreach (var info in TryGetCoreCLRInfos(process, moduleFilename)) {
 							context.CancellationToken.ThrowIfCancellationRequested();
 							yield return info;
