@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
@@ -55,8 +55,7 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineInfo.Engine.Break();
 				}
 				if (!CheckIsDone_NoLock()) {
-					timer = new DispatcherTimer(DispatcherPriority.Send, owner.WpfDispatcher);
-					timer.Interval = TimeSpan.FromMilliseconds(breakTimeoutMilliseconds);
+					timer = new DispatcherTimer(owner.InternalDispatcher, TimeSpan.FromMilliseconds(breakTimeoutMilliseconds));
 					timer.Tick += Timer_Tick_DbgThread;
 					timer.Start();
 				}

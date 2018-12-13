@@ -22,12 +22,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Exceptions;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override DbgDispatcher Dispatcher => dbgDispatcherProvider.Dispatcher;
 		internal DbgDispatcher2 Dispatcher2 => dbgDispatcherProvider.Dispatcher;
-		Dispatcher WpfDispatcher => dbgDispatcherProvider.WpfDispatcher;
+		Dispatcher InternalDispatcher => dbgDispatcherProvider.InternalDispatcher;
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;
 		public override DbgProcess[] Processes {
@@ -184,7 +184,7 @@ namespace dnSpy.Debugger.Impl {
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.ToArray();
 			this.dbgModuleMemoryRefreshedNotifiers = dbgModuleMemoryRefreshedNotifiers.ToArray();
-			new DelayedIsRunningHelper(this, WpfDispatcher, RaiseDelayedIsRunningChanged_DbgThread);
+			new DelayedIsRunningHelper(this, InternalDispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
 
 		// DbgManager thread
@@ -360,7 +360,7 @@ namespace dnSpy.Debugger.Impl {
 					}
 				}
 				bool shouldDetach = startKind == DbgStartKind.Attach;
-				process = new DbgProcessImpl(this, WpfDispatcher, pid, CalculateProcessState(null), shouldDetach);
+				process = new DbgProcessImpl(this, InternalDispatcher, pid, CalculateProcessState(null), shouldDetach);
 				processes.Add(process);
 			}
 			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));

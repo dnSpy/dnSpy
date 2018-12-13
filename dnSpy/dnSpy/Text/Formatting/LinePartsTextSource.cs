@@ -61,8 +61,15 @@ namespace dnSpy.Text.Formatting {
 					length = maxLengthLeft;
 				var text = this.text;
 				for (int i = 0; i < length; i++) {
-					var c = text[baseOffset + i];
-					if (WpfUnicodeUtils.IsBadWpfCombiningMark(c)) {
+					uint cp = text[baseOffset + i];
+					if (char.IsHighSurrogate((char)cp) && i + 1 < length) {
+						uint lo = text[baseOffset + i + 1];
+						if (char.IsLowSurrogate((char)lo)) {
+							cp = 0x10000 + ((cp - 0xD800) << 10) + (lo - 0xDC00);
+							i++;
+						}
+					}
+					if (WpfUnicodeUtils.IsBadWpfFormatterChar(cp)) {
 						totalBadChars++;
 						Debug.Assert(totalBadChars <= WpfUnicodeUtils.MAX_BAD_CHARS);
 						if (totalBadChars == WpfUnicodeUtils.MAX_BAD_CHARS) {

@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Disassembly {
 	/// <summary>
 	/// nasm disassembly settings
 	/// </summary>
-	public interface INasmDisassemblySettings : IDisassemblySettings {
+	public interface INasmDisassemblySettings : IX86DisassemblySettings {
 		/// <summary>
 		/// Shows byte, word, dword or qword if it's a sign extended immediate operand value, eg. 'or rcx,-1' vs 'or rcx,byte -1'
 		/// </summary>

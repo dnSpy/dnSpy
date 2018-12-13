@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (string.IsNullOrWhiteSpace(uri))
 				return;
 			try {
-				Process.Start(uri);
+				Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
 			}
 			catch {
 			}

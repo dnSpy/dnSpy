@@ -219,6 +219,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				break;
 
 			case nameof(Process.Bitness):
+			case nameof(Process.PointerSize):
+			case nameof(Process.OperatingSystem):
 			case nameof(Process.ShouldDetach):
 				break;
 

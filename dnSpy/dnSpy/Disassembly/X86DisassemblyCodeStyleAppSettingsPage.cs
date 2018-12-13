@@ -31,13 +31,13 @@ namespace dnSpy.Disassembly {
 		const ulong SYMBOLADDR = 0x5AA556789ABCDEF0UL;
 		const string SYMBOLNAME = "secret_data";
 
-		protected readonly DisassemblySettings _global_disassemblySettings;
-		protected readonly DisassemblySettings disassemblySettings;
+		protected readonly X86DisassemblySettings _global_x86DisassemblySettings;
+		protected readonly X86DisassemblySettings x86DisassemblySettings;
 		readonly StringBuilderFormatterOutput x86Output;
 		readonly Formatter formatter;
 		readonly List<X86DisasmBooleanSetting> boolSettings;
 
-		public IDisassemblySettings Settings => disassemblySettings;
+		public IX86DisassemblySettings Settings => x86DisassemblySettings;
 		public sealed override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DISASSEMBLER_CODESTYLE);
 		public sealed override object UIObject => this;
 
@@ -71,10 +71,10 @@ namespace dnSpy.Disassembly {
 		public Int32VM OperandColumnVM { get; }
 
 		public string HexPrefix {
-			get => disassemblySettings.HexPrefix ?? string.Empty;
+			get => x86DisassemblySettings.HexPrefix ?? string.Empty;
 			set {
-				if (value != disassemblySettings.HexPrefix) {
-					disassemblySettings.HexPrefix = value;
+				if (value != x86DisassemblySettings.HexPrefix) {
+					x86DisassemblySettings.HexPrefix = value;
 					OnPropertyChanged(nameof(HexPrefix));
 					RefreshDisassembly();
 				}
@@ -82,10 +82,10 @@ namespace dnSpy.Disassembly {
 		}
 
 		public string HexSuffix {
-			get => disassemblySettings.HexSuffix ?? string.Empty;
+			get => x86DisassemblySettings.HexSuffix ?? string.Empty;
 			set {
-				if (value != disassemblySettings.HexSuffix) {
-					disassemblySettings.HexSuffix = value;
+				if (value != x86DisassemblySettings.HexSuffix) {
+					x86DisassemblySettings.HexSuffix = value;
 					OnPropertyChanged(nameof(HexSuffix));
 					RefreshDisassembly();
 				}
@@ -93,10 +93,10 @@ namespace dnSpy.Disassembly {
 		}
 
 		public string DigitSeparator {
-			get => disassemblySettings.DigitSeparator ?? string.Empty;
+			get => x86DisassemblySettings.DigitSeparator ?? string.Empty;
 			set {
-				if (value != disassemblySettings.DigitSeparator) {
-					disassemblySettings.DigitSeparator = value;
+				if (value != x86DisassemblySettings.DigitSeparator) {
+					x86DisassemblySettings.DigitSeparator = value;
 					OnPropertyChanged(nameof(DigitSeparator));
 					RefreshDisassembly();
 				}
@@ -117,9 +117,9 @@ namespace dnSpy.Disassembly {
 			}
 		}
 
-		protected X86DisassemblyCodeStyleAppSettingsPage(DisassemblySettings global_disassemblySettings, DisassemblySettings disassemblySettings, Formatter formatter) {
-			_global_disassemblySettings = global_disassemblySettings ?? throw new ArgumentNullException(nameof(global_disassemblySettings));
-			this.disassemblySettings = disassemblySettings ?? throw new ArgumentNullException(nameof(disassemblySettings));
+		protected X86DisassemblyCodeStyleAppSettingsPage(X86DisassemblySettings global_x86DisassemblySettings, X86DisassemblySettings x86DisassemblySettings, Formatter formatter) {
+			_global_x86DisassemblySettings = global_x86DisassemblySettings ?? throw new ArgumentNullException(nameof(global_x86DisassemblySettings));
+			this.x86DisassemblySettings = x86DisassemblySettings ?? throw new ArgumentNullException(nameof(x86DisassemblySettings));
 			x86Output = new StringBuilderFormatterOutput();
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 			boolSettings = new List<X86DisasmBooleanSetting>();
@@ -154,9 +154,9 @@ namespace dnSpy.Disassembly {
 			UsePseudoOps = AddDisasmBoolSetting(() => Settings.UsePseudoOps, value => Settings.UsePseudoOps = value, Instruction.Create(Code.EVEX_Vcmpps_k_k1_ymm_ymmm256b32_imm8, Register.K3, Register.YMM2, Register.YMM27, 7));
 			ShowSymbolAddress = AddDisasmBoolSetting(() => Settings.ShowSymbolAddress, value => Settings.ShowSymbolAddress = value, Instruction.Create(Code.Mov_r64_imm64, Register.RCX, SYMBOLADDR));
 
-			OperandColumnVM = new Int32VM(disassemblySettings.FirstOperandCharIndex + 1, a => {
+			OperandColumnVM = new Int32VM(x86DisassemblySettings.FirstOperandCharIndex + 1, a => {
 				if (!OperandColumnVM.HasError)
-					this.disassemblySettings.FirstOperandCharIndex = OperandColumnVM.Value - 1;
+					this.x86DisassemblySettings.FirstOperandCharIndex = OperandColumnVM.Value - 1;
 			}, useDecimal: true) { Min = 1, Max = 100 };
 
 			RefreshDisassembly();
@@ -186,49 +186,49 @@ namespace dnSpy.Disassembly {
 		void InitializeFormatterOptions(FormatterOptions options) {
 			InitializeFormatterOptionsCore(options);
 
-			options.UpperCasePrefixes = disassemblySettings.UpperCasePrefixes;
-			options.UpperCaseMnemonics = disassemblySettings.UpperCaseMnemonics;
-			options.UpperCaseRegisters = disassemblySettings.UpperCaseRegisters;
-			options.UpperCaseKeywords = disassemblySettings.UpperCaseKeywords;
-			options.UpperCaseOther = disassemblySettings.UpperCaseOther;
-			options.UpperCaseAll = disassemblySettings.UpperCaseAll;
-			options.FirstOperandCharIndex = disassemblySettings.FirstOperandCharIndex;
-			options.TabSize = disassemblySettings.TabSize;
-			options.SpaceAfterOperandSeparator = disassemblySettings.SpaceAfterOperandSeparator;
-			options.SpaceAfterMemoryBracket = disassemblySettings.SpaceAfterMemoryBracket;
-			options.SpaceBetweenMemoryAddOperators = disassemblySettings.SpaceBetweenMemoryAddOperators;
-			options.SpaceBetweenMemoryMulOperators = disassemblySettings.SpaceBetweenMemoryMulOperators;
-			options.ScaleBeforeIndex = disassemblySettings.ScaleBeforeIndex;
-			options.AlwaysShowScale = disassemblySettings.AlwaysShowScale;
-			options.AlwaysShowSegmentRegister = disassemblySettings.AlwaysShowSegmentRegister;
-			options.ShowZeroDisplacements = disassemblySettings.ShowZeroDisplacements;
-			options.HexPrefix = disassemblySettings.HexPrefix;
-			options.HexSuffix = disassemblySettings.HexSuffix;
-			options.HexDigitGroupSize = disassemblySettings.HexDigitGroupSize;
-			options.DecimalPrefix = disassemblySettings.DecimalPrefix;
-			options.DecimalSuffix = disassemblySettings.DecimalSuffix;
-			options.DecimalDigitGroupSize = disassemblySettings.DecimalDigitGroupSize;
-			options.OctalPrefix = disassemblySettings.OctalPrefix;
-			options.OctalSuffix = disassemblySettings.OctalSuffix;
-			options.OctalDigitGroupSize = disassemblySettings.OctalDigitGroupSize;
-			options.BinaryPrefix = disassemblySettings.BinaryPrefix;
-			options.BinarySuffix = disassemblySettings.BinarySuffix;
-			options.BinaryDigitGroupSize = disassemblySettings.BinaryDigitGroupSize;
-			options.DigitSeparator = disassemblySettings.DigitSeparator;
-			options.ShortNumbers = disassemblySettings.ShortNumbers;
-			options.UpperCaseHex = disassemblySettings.UpperCaseHex;
-			options.SmallHexNumbersInDecimal = disassemblySettings.SmallHexNumbersInDecimal;
-			options.AddLeadingZeroToHexNumbers = disassemblySettings.AddLeadingZeroToHexNumbers;
+			options.UpperCasePrefixes = x86DisassemblySettings.UpperCasePrefixes;
+			options.UpperCaseMnemonics = x86DisassemblySettings.UpperCaseMnemonics;
+			options.UpperCaseRegisters = x86DisassemblySettings.UpperCaseRegisters;
+			options.UpperCaseKeywords = x86DisassemblySettings.UpperCaseKeywords;
+			options.UpperCaseOther = x86DisassemblySettings.UpperCaseOther;
+			options.UpperCaseAll = x86DisassemblySettings.UpperCaseAll;
+			options.FirstOperandCharIndex = x86DisassemblySettings.FirstOperandCharIndex;
+			options.TabSize = x86DisassemblySettings.TabSize;
+			options.SpaceAfterOperandSeparator = x86DisassemblySettings.SpaceAfterOperandSeparator;
+			options.SpaceAfterMemoryBracket = x86DisassemblySettings.SpaceAfterMemoryBracket;
+			options.SpaceBetweenMemoryAddOperators = x86DisassemblySettings.SpaceBetweenMemoryAddOperators;
+			options.SpaceBetweenMemoryMulOperators = x86DisassemblySettings.SpaceBetweenMemoryMulOperators;
+			options.ScaleBeforeIndex = x86DisassemblySettings.ScaleBeforeIndex;
+			options.AlwaysShowScale = x86DisassemblySettings.AlwaysShowScale;
+			options.AlwaysShowSegmentRegister = x86DisassemblySettings.AlwaysShowSegmentRegister;
+			options.ShowZeroDisplacements = x86DisassemblySettings.ShowZeroDisplacements;
+			options.HexPrefix = x86DisassemblySettings.HexPrefix;
+			options.HexSuffix = x86DisassemblySettings.HexSuffix;
+			options.HexDigitGroupSize = x86DisassemblySettings.HexDigitGroupSize;
+			options.DecimalPrefix = x86DisassemblySettings.DecimalPrefix;
+			options.DecimalSuffix = x86DisassemblySettings.DecimalSuffix;
+			options.DecimalDigitGroupSize = x86DisassemblySettings.DecimalDigitGroupSize;
+			options.OctalPrefix = x86DisassemblySettings.OctalPrefix;
+			options.OctalSuffix = x86DisassemblySettings.OctalSuffix;
+			options.OctalDigitGroupSize = x86DisassemblySettings.OctalDigitGroupSize;
+			options.BinaryPrefix = x86DisassemblySettings.BinaryPrefix;
+			options.BinarySuffix = x86DisassemblySettings.BinarySuffix;
+			options.BinaryDigitGroupSize = x86DisassemblySettings.BinaryDigitGroupSize;
+			options.DigitSeparator = x86DisassemblySettings.DigitSeparator;
+			options.ShortNumbers = x86DisassemblySettings.ShortNumbers;
+			options.UpperCaseHex = x86DisassemblySettings.UpperCaseHex;
+			options.SmallHexNumbersInDecimal = x86DisassemblySettings.SmallHexNumbersInDecimal;
+			options.AddLeadingZeroToHexNumbers = x86DisassemblySettings.AddLeadingZeroToHexNumbers;
 			options.NumberBase = UseHexNumbers.Value ? Iced.Intel.NumberBase.Hexadecimal : Iced.Intel.NumberBase.Decimal;
-			options.ShortBranchNumbers = disassemblySettings.ShortBranchNumbers;
-			options.SignedImmediateOperands = disassemblySettings.SignedImmediateOperands;
-			options.SignedMemoryDisplacements = disassemblySettings.SignedMemoryDisplacements;
-			options.SignExtendMemoryDisplacements = disassemblySettings.SignExtendMemoryDisplacements;
-			options.MemorySizeOptions = DisassemblySettingsUtils.ToMemorySizeOptions(disassemblySettings.MemorySizeOptions);
-			options.RipRelativeAddresses = disassemblySettings.RipRelativeAddresses;
-			options.ShowBranchSize = disassemblySettings.ShowBranchSize;
-			options.UsePseudoOps = disassemblySettings.UsePseudoOps;
-			options.ShowSymbolAddress = disassemblySettings.ShowSymbolAddress;
+			options.ShortBranchNumbers = x86DisassemblySettings.ShortBranchNumbers;
+			options.SignedImmediateOperands = x86DisassemblySettings.SignedImmediateOperands;
+			options.SignedMemoryDisplacements = x86DisassemblySettings.SignedMemoryDisplacements;
+			options.SignExtendMemoryDisplacements = x86DisassemblySettings.SignExtendMemoryDisplacements;
+			options.MemorySizeOptions = DisassemblySettingsUtils.ToMemorySizeOptions(x86DisassemblySettings.MemorySizeOptions);
+			options.RipRelativeAddresses = x86DisassemblySettings.RipRelativeAddresses;
+			options.ShowBranchSize = x86DisassemblySettings.ShowBranchSize;
+			options.UsePseudoOps = x86DisassemblySettings.UsePseudoOps;
+			options.ShowSymbolAddress = x86DisassemblySettings.ShowSymbolAddress;
 
 			// The options are only used to show an example so ignore these properties
 			options.TabSize = 0;

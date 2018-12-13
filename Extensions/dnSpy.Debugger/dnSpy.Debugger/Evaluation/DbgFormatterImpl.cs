@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.CallStack;
 
 namespace dnSpy.Debugger.Evaluation {
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Evaluation {
 			this.engineFormatter = engineFormatter ?? throw new ArgumentNullException(nameof(engineFormatter));
 		}
 
-		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
+		public override void FormatExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatExceptionName(context, output, id);
 		}
 
-		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
+		public override void FormatStowedExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatStowedExceptionName(context, output, id);
 		}
 
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
+		public override void FormatReturnValueName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatReturnValueName(context, output, id);
 		}
 
-		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
+		public override void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatObjectIdName(context, output, id);
 		}
 
-		public override void FormatFrame(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Evaluation {
 				engineFormatter.FormatFrame(evalInfo, output, options, valueOptions, cultureInfo);
 		}
 
-		public override void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineFormatter.FormatValue(evalInfo, output, valueImpl.EngineValue, options, cultureInfo);
 		}
 
-		public override void FormatType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) {
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))

@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Properties;
 
@@ -36,8 +36,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.ResultsView;
 		public override DbgDotNetText ValueText => valueText;
 
-		static readonly DbgDotNetText valueText = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ExpandResultsViewMessage));
-		static readonly DbgDotNetText resultsViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ResultsView));
+		static readonly DbgDotNetText valueText = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ExpandResultsViewMessage));
+		static readonly DbgDotNetText resultsViewName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ResultsView));
 
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DmdType enumerableType;

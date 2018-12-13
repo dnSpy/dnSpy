@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 	/// <summary>
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="expr">Expression</param>
-		public abstract void Write(ITextColorWriter output, string expr);
+		public abstract void Write(IDbgTextWriter output, string expr);
 	}
 
 	/// <summary>

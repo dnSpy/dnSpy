@@ -32,8 +32,8 @@ namespace dnSpy.Disassembly {
 
 		GasDisassemblySettings GasSettings => (GasDisassemblySettings)Settings;
 
-		public GasAppSettingsPage(GasDisassemblySettings disassemblySettings)
-			: base(disassemblySettings, disassemblySettings.Clone(), new GasFormatter(new GasFormatterOptions(), SymbolResolver.Instance)) {
+		public GasAppSettingsPage(GasDisassemblySettings x86DisassemblySettings)
+			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new GasFormatter(new GasFormatterOptions(), SymbolResolver.Instance)) {
 			NakedRegisters = AddDisasmBoolSetting(() => GasSettings.NakedRegisters, value => GasSettings.NakedRegisters = value, Instruction.Create(Code.Xchg_r64_RAX, Register.RSI, Register.RAX));
 			ShowMnemonicSizeSuffix = AddDisasmBoolSetting(() => GasSettings.ShowMnemonicSizeSuffix, value => GasSettings.ShowMnemonicSizeSuffix = value, Instruction.Create(Code.Xchg_r64_RAX, Register.RSI, Register.RAX));
 			SpaceAfterMemoryOperandComma = AddDisasmBoolSetting(() => GasSettings.SpaceAfterMemoryOperandComma, value => GasSettings.SpaceAfterMemoryOperandComma = value, Instruction.Create(Code.Mov_rm64_r64, new MemoryOperand(Register.RAX, Register.RDI, 4, 0x12345678, 8), Register.RCX));
@@ -47,6 +47,6 @@ namespace dnSpy.Disassembly {
 		}
 
 		public override void OnApply() =>
-			((GasDisassemblySettings)disassemblySettings).CopyTo((GasDisassemblySettings)_global_disassemblySettings);
+			((GasDisassemblySettings)x86DisassemblySettings).CopyTo((GasDisassemblySettings)_global_x86DisassemblySettings);
 	}
 }

@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
 
 		static void OpenWebPage(string url) {
 			try {
-				Process.Start(url);
+				Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 			}
 			catch {
 			}

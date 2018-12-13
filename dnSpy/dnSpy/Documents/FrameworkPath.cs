@@ -36,17 +36,43 @@ namespace dnSpy.Documents {
 			var firstPath = paths[0];
 #if DEBUG
 			for (int i = 1; i < paths.Length; i++) {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(Path.GetDirectoryName(firstPath.Path), Path.GetDirectoryName(paths[i].Path)))
-					throw new ArgumentException();
 				if (firstPath.Bitness != paths[i].Bitness)
 					throw new ArgumentException();
 				if (!firstPath.Version.Equals(paths[i].Version))
 					throw new ArgumentException();
 			}
 #endif
-			Paths = paths.Select(a => a.Path).ToArray();
+			var allPaths = paths.Select(a => a.Path).ToArray();
+			Array.Sort(allPaths, SortPaths);
+			Paths = allPaths;
 			Bitness = firstPath.Bitness;
 			Version = firstPath.Version;
+
+			foreach (var p in Paths) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(p)), DotNetCoreAppDir)) {
+					HasDotNetCoreAppPath = true;
+					break;
+				}
+			}
+		}
+
+		// Sort the .NET Core dir last since it also contains some assemblies that exist in some other
+		// dirs, eg. WindowsBase.dll is in both Microsoft.NETCore.App and Microsoft.WindowsDesktop.App
+		// and the one in Microsoft.NETCore.App isn't the same one WPF apps expect (it has no types).
+		// There are other dupe assemblies, eg. Microsoft.Win32.Registry.dll exists both in
+		// Microsoft.NETCore.App and Microsoft.WindowsDesktop.App.
+		const string DotNetCoreAppDir = "Microsoft.NETCore.App";
+		static int SortPaths(string x, string y) {
+			int c = GetPathGroupOrder(x) - GetPathGroupOrder(y);
+			if (c != 0)
+				return c;
+			return StringComparer.OrdinalIgnoreCase.Compare(x, y);
+		}
+
+		static int GetPathGroupOrder(string path) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(path)), DotNetCoreAppDir))
+				return int.MaxValue;
+			return 0;
 		}
 
 		public int CompareTo(FrameworkPaths other) {
@@ -57,18 +83,21 @@ namespace dnSpy.Documents {
 			if (c != 0)
 				return c;
 
-			return StringComparer.OrdinalIgnoreCase.Compare(Path.GetDirectoryName(Paths[0]), Path.GetDirectoryName(other.Paths[0]));
+			return CompareTo(Paths, other.Paths);
 		}
 
-		internal bool HasDotNetCoreAppPath {
-			get {
-				foreach (var p in Paths) {
-					if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(p)), "Microsoft.NETCore.App"))
-						return true;
-				}
-				return false;
+		static int CompareTo(string[] a, string[] b) {
+			if (a.Length != b.Length)
+				return a.Length - b.Length;
+			for (int i = 0; i < a.Length; i++) {
+				int c = StringComparer.OrdinalIgnoreCase.Compare(Path.GetDirectoryName(a[i]), Path.GetDirectoryName(b[i]));
+				if (c != 0)
+					return c;
 			}
+			return 0;
 		}
+
+		internal bool HasDotNetCoreAppPath { get; }
 	}
 
 	// It's a class since very few of these are created

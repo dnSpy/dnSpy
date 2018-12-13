@@ -35,7 +35,7 @@ namespace dnSpy.Documents {
 				list.AddRange(GetDotNetCorePaths(info.path, info.bitness));
 
 			var paths = from p in list
-						group p by new { Path = Path.GetDirectoryName(p.Path).ToUpperInvariant(), p.Bitness, p.Version } into g
+						group p by new { Path = Path.GetDirectoryName(Path.GetDirectoryName(p.Path)).ToUpperInvariant(), p.Bitness, p.Version } into g
 						select new FrameworkPaths(g.ToArray());
 			var array = paths.ToArray();
 			Array.Sort(array);

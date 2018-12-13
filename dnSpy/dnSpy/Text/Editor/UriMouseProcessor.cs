@@ -121,7 +121,7 @@ namespace dnSpy.Text.Editor {
 		void StartBrowser(Uri uri) {
 			try {
 				if (uri.IsAbsoluteUri)
-					Process.Start(uri.AbsoluteUri);
+					Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
 			}
 			catch {
 				messageBoxService.Show(dnSpy_Resources.CouldNotStartBrowser);

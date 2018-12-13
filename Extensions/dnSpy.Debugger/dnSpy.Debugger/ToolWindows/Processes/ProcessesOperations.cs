@@ -28,8 +28,8 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach.Dialogs;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Steppers;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
@@ -92,23 +92,23 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteImage(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteName(output, vm.Process);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteId(output, vm.Process);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteTitle(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteState(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteDebugging(output, vm.Process);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteMachine(output, vm.Process.Machine);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WritePath(output, vm.Process);
 				output.WriteLine();
 			}

@@ -44,12 +44,19 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return GetValueCore(evalInfo);
 			return GetValue(dispatcher, evalInfo);
 
-			DbgEngineValue GetValue(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2) =>
-				dispatcher2.InvokeRethrow(() => GetValueCore(evalInfo2));
+			DbgEngineValue GetValue(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetValueCore(evalInfo2), out var result))
+					result = CreateError();
+				return result;
+			}
 		}
+
+		static DbgEngineValue CreateError() => new DbgEngineValueImpl(new DbgDotNetValueError());
 
 		DbgEngineValue GetValueCore(DbgEvaluationInfo evalInfo) {
 			var dnValue = runtime.GetValue(evalInfo, dnObjectId);
+			if (dnValue == null)
+				return CreateError();
 			try {
 				return new DbgEngineValueImpl(dnValue);
 			}

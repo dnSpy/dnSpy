@@ -24,7 +24,7 @@ using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Disassembly {
-	class NasmDisassemblySettings : DisassemblySettings, INasmDisassemblySettings {
+	class NasmDisassemblySettings : X86DisassemblySettings, INasmDisassemblySettings {
 		public NasmDisassemblySettings() {
 			HexSuffix = "h";
 			OctalSuffix = "o";

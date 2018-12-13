@@ -18,13 +18,13 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// <summary>
 	/// Creates <see cref="DbgDotNetText"/>
 	/// </summary>
-	public sealed class DbgDotNetTextOutput : ITextColorWriter {
+	public sealed class DbgDotNetTextOutput : IDbgTextWriter {
 		readonly List<DbgDotNetTextPart> list;
 
 		/// <summary>
@@ -37,14 +37,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public void Write(object color, string text) => list.Add(new DbgDotNetTextPart(color, text));
-
-		/// <summary>
-		/// Writes text
-		/// </summary>
-		/// <param name="color">Color</param>
-		/// <param name="text">Text</param>
-		public void Write(TextColor color, string text) => Write(color.Box(), text);
+		public void Write(DbgTextColor color, string text) => list.Add(new DbgDotNetTextPart(color, text));
 
 		/// <summary>
 		/// Creates a <see cref="DbgDotNetText"/>

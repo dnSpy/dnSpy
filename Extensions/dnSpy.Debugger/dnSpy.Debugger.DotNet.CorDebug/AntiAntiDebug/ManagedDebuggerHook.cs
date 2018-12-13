@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
-	[ExportDbgNativeFunctionHook("clr.dll", "System.Diagnostics.Debugger", new DbgMachine[0])]
+	[ExportDbgNativeFunctionHook("clr.dll", "System.Diagnostics.Debugger", new DbgMachine[0], new[] { DbgOperatingSystem.Windows })]
 	sealed class ManagedDebuggerHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 

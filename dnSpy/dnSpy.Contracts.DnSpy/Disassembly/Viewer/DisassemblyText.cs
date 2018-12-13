@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		public string Text { get; }
 
 		/// <summary>
-		/// Colr
+		/// Color
 		/// </summary>
 		public object Color { get; }
 

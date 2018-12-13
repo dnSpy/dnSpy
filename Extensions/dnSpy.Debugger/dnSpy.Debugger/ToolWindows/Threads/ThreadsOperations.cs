@@ -26,8 +26,8 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
@@ -74,31 +74,31 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteImage(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteId(output, vm.Thread);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteManagedId(output, vm.Thread);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteCategoryText(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteName(output, vm.Thread);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteLocation(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WritePriority(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteAffinityMask(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteSuspendedCount(output, vm.Thread);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteProcessName(output, vm.Thread);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteAppDomain(output, vm.Thread);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteState(output, vm.Thread);
 				output.WriteLine();
 			}

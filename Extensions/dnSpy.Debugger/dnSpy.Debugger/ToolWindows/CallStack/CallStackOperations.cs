@@ -31,8 +31,8 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Disassembly;
 using dnSpy.Debugger.Properties;
@@ -131,11 +131,11 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
 				formatter.WriteImage(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteName(output, vm);
 				output.WriteLine();
 			}

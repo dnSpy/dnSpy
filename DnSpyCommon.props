@@ -1,7 +1,11 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project>
 
   <PropertyGroup>
-    <TargetFrameworks>net471;netcoreapp3.0</TargetFrameworks>
+    <!--
+        - appveyor.yml (artifacts)
+        - dnSpy/dnSpy/App.config (supportedRuntime, .NET Framework only)
+    NOTE: Update the ABOVE files when TargetFrameworks is updated -->
+    <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
     <IsDotNetCore>false</IsDotNetCore>
     <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
@@ -20,14 +24,14 @@
 
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <IcedVersion>1.0.2</IcedVersion>
-    <MSBuildNuGetVersion>15.8.166</MSBuildNuGetVersion>
+    <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>
     <MSRegistryVersion>4.5.0</MSRegistryVersion>
     <MSVSCompositionNetFxAttributesVersion>15.8.98</MSVSCompositionNetFxAttributesVersion>
     <MSVSCompositionVersion>15.8.98</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
-    <RoslynVersion>2.9.0</RoslynVersion>
+    <RoslynVersion>2.10.0</RoslynVersion>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />

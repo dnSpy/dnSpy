@@ -26,16 +26,16 @@ namespace dnSpy.Disassembly.Viewer {
 	[Export(typeof(IAppSettingsPageProvider))]
 	sealed class DisassemblySettingsPageProvider : IAppSettingsPageProvider {
 		readonly DisassemblyViewerService disassemblyViewerService;
-		readonly DisassemblyContentSettingsImpl disassemblySettings;
+		readonly DisassemblyContentSettingsImpl x86DisassemblySettings;
 
 		[ImportingConstructor]
-		DisassemblySettingsPageProvider(DisassemblyViewerService disassemblyViewerService, DisassemblyContentSettingsImpl disassemblySettings) {
+		DisassemblySettingsPageProvider(DisassemblyViewerService disassemblyViewerService, DisassemblyContentSettingsImpl x86DisassemblySettings) {
 			this.disassemblyViewerService = disassemblyViewerService;
-			this.disassemblySettings = disassemblySettings;
+			this.x86DisassemblySettings = x86DisassemblySettings;
 		}
 
 		public IEnumerable<AppSettingsPage> Create() {
-			yield return new DisassemblyAppSettingsPage(disassemblyViewerService.Settings, disassemblySettings);
+			yield return new DisassemblyAppSettingsPage(disassemblyViewerService.Settings, x86DisassemblySettings);
 		}
 	}
 }

@@ -27,6 +27,7 @@ using System.Linq;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
@@ -602,7 +603,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			sbOutput.Reset();
 			return threadContext.SearchMatcher.IsMatchAll(allStrings);
 		}
-		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
+		readonly DbgStringBuilderTextWriter sbOutput = new DbgStringBuilderTextWriter();
 
 		// UI thread
 		string GetId_UI(ThreadVM vm) {

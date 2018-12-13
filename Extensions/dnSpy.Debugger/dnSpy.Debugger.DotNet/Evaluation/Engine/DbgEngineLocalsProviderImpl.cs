@@ -25,8 +25,8 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 using dnSpy.Debugger.DotNet.Properties;
 
@@ -52,8 +52,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return GetNodesCore(evalInfo, options, localsOptions);
 			return GetNodes(dispatcher, evalInfo, options, localsOptions);
 
-			DbgEngineLocalsValueNodeInfo[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2, DbgLocalsValueNodeEvaluationOptions localsOptions2) =>
-				dispatcher2.InvokeRethrow(() => GetNodesCore(evalInfo2, options2, localsOptions2));
+			DbgEngineLocalsValueNodeInfo[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2, DbgLocalsValueNodeEvaluationOptions localsOptions2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetNodesCore(evalInfo2, options2, localsOptions2), out var result))
+					result = Array.Empty<DbgEngineLocalsValueNodeInfo>();
+				return result;
+			}
 		}
 
 		enum ValueInfoKind {
@@ -248,7 +251,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						var decGen = (DecompilerGeneratedVariableValueInfo)valueInfo;
 						valueNodeInfo = new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Local,
 							valueNodeFactory.CreateError(evalInfo,
-							new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Local, decGen.Name)),
+							new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Local, decGen.Name)),
 							dnSpy_Debugger_DotNet_Resources.DecompilerGeneratedVariablesCanNotBeEvaluated,
 							decGen.Name, false));
 						break;
@@ -274,7 +277,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineLocalsValueNodeInfo CreateInternalErrorNode(DbgEvaluationInfo evalInfo, string errorMessage) =>
-			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(evalInfo, new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, "<error>")), errorMessage, "<internal.error>", false));
+			new DbgEngineLocalsValueNodeInfo(DbgLocalsValueNodeKind.Error, valueNodeFactory.CreateError(evalInfo, new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, "<error>")), errorMessage, "<internal.error>", false));
 
 		static int GetDecompilerGeneratedVariablesCount(MethodDebugScope rootScope, uint offset) {
 			var scope = rootScope;

@@ -26,12 +26,12 @@ namespace dnSpy.Disassembly {
 		public override Guid Guid => new Guid("B92522C8-3B79-4CC0-8E15-47F62F271269");
 		public override string Title => CodeStyleConstants.MASM_NAME;
 
-		public MasmAppSettingsPage(MasmDisassemblySettings disassemblySettings)
-			: base(disassemblySettings, disassemblySettings.Clone(), new MasmFormatter(new MasmFormatterOptions(), SymbolResolver.Instance)) { }
+		public MasmAppSettingsPage(MasmDisassemblySettings x86DisassemblySettings)
+			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new MasmFormatter(new MasmFormatterOptions(), SymbolResolver.Instance)) { }
 
 		protected override void InitializeFormatterOptionsCore(FormatterOptions options) { }
 
 		public override void OnApply() =>
-			((MasmDisassemblySettings)disassemblySettings).CopyTo((MasmDisassemblySettings)_global_disassemblySettings);
+			((MasmDisassemblySettings)x86DisassemblySettings).CopyTo((MasmDisassemblySettings)_global_x86DisassemblySettings);
 	}
 }

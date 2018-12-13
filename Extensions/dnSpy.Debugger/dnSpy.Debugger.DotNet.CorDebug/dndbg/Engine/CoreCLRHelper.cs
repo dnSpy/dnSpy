@@ -24,7 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using dndbg.COM.CorDebug;
-using Microsoft.Win32;
+using dnSpy.Debugger.Shared;
 
 namespace dndbg.Engine {
 	readonly struct CoreCLRInfo {
@@ -38,7 +38,7 @@ namespace dndbg.Engine {
 	}
 
 	static class CoreCLRHelper {
-		const string DBGSHIM_FILENAME = "dbgshim.dll";
+		static readonly string dbgshimFilename = FileUtilities.GetNativeDllFilename("dbgshim");
 		delegate int GetStartupNotificationEvent(uint debuggeePID, out IntPtr phStartupEvent);
 		delegate int CloseCLREnumeration(IntPtr pHandleArray, IntPtr pStringArray, uint dwArrayLength);
 		delegate int EnumerateCLRs(uint debuggeePID, out IntPtr ppHandleArrayOut, out IntPtr ppStringArrayOut, out uint pdwArrayLengthOut);
@@ -98,9 +98,6 @@ namespace dndbg.Engine {
 				if (File.Exists(dbgshimPathTemp))
 					list.Add(dbgshimPathTemp);
 			}
-			var s = GetDbgShimPathFromRegistry();
-			if (File.Exists(s))
-				list.Add(s);
 			return list;
 		}
 
@@ -159,24 +156,9 @@ namespace dndbg.Engine {
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(addr, typeof(T));
 		}
 
-		// We'd most likely find the Silverlight dbgshim.dll in the registry (check the Wow6432Node
-		// path), so disable this method.
-		static readonly bool enable_GetDbgShimPathFromRegistry = false;
-		static string GetDbgShimPathFromRegistry() {
-			if (!enable_GetDbgShimPathFromRegistry)
-				return null;
-			try {
-				using (var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\.NETFramework"))
-					return key.GetValue("DbgPackShimPath") as string;
-			}
-			catch {
-			}
-			return null;
-		}
-
 		static string GetDbgShimPathFromRuntimePath(string path) {
 			try {
-				return Path.Combine(Path.GetDirectoryName(path), DBGSHIM_FILENAME);
+				return Path.Combine(Path.GetDirectoryName(path), dbgshimFilename);
 			}
 			catch {
 			}
@@ -208,7 +190,7 @@ namespace dndbg.Engine {
 		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, IntPtr outputHandle, IntPtr errorHandle, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
 			if (dbgShimState == null)
-				throw new Exception($"Could not load dbgshim.dll: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
+				throw new Exception($"Could not load {dbgshimFilename}: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
 
 			var startupEvent = IntPtr.Zero;
 			var hThread = IntPtr.Zero;

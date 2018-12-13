@@ -38,15 +38,6 @@ namespace dnSpy.Disassembly {
 			LabelKind = labelKind;
 			Instructions = instructions ?? throw new ArgumentNullException(nameof(instructions));
 		}
-
-		public bool Contains(ulong address) {
-			if (address < Address)
-				return false;
-			var instrs = Instructions;
-			if (instrs == null || instrs.Length == 0)
-				return false;
-			return address < instrs[instrs.Length - 1].Instruction.NextIP64;
-		}
 	}
 
 	struct X86InstructionInfo {

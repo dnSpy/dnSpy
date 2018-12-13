@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			bool TryGetNativeCode2(ILDbgEngineStackFrame ilFrame2, out DbgDotNetNativeCode nativeCode2) {
 				DbgDotNetNativeCode nativeCodeTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(ilFrame2, out nativeCodeTmp));
+				Dispatcher.TryInvokeRethrow(() => TryGetNativeCodeCore(ilFrame2, out nativeCodeTmp), out var res);
 				nativeCode2 = nativeCodeTmp;
 				return res;
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			bool TryGetNativeCode2(DmdMethodBase method2, out DbgDotNetNativeCode nativeCode2) {
 				DbgDotNetNativeCode nativeCodeTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetNativeCodeCore(method2, out nativeCodeTmp));
+				Dispatcher.TryInvokeRethrow(() => TryGetNativeCodeCore(method2, out nativeCodeTmp), out var res);
 				nativeCode2 = nativeCodeTmp;
 				return res;
 			}
@@ -317,15 +317,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				switch (varHome.LocationType) {
 				case VariableLocationType.VLT_REGISTER:
 					locationKind = X86VariableLocationKind.Register;
-					if (!TryGetRegisterX86(machine, varHome.Register, out register))
-						return null;
+					// Ignore errors, use register None
+					TryGetRegisterX86(machine, varHome.Register, out register);
 					memoryOffset = 0;
 					break;
 
 				case VariableLocationType.VLT_REGISTER_RELATIVE:
 					locationKind = X86VariableLocationKind.Memory;
-					if (!TryGetRegisterX86(machine, varHome.Register, out register))
-						return null;
+					// Ignore errors, the register is very rarely invalid (RyuJIT bug)
+					TryGetRegisterX86(machine, varHome.Register, out register);
 					memoryOffset = varHome.Offset;
 					break;
 
@@ -403,7 +403,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return true;
 				default:
 					Debug.Fail($"Unknown register number {(int)corReg}");
-					register = default;
+					register = X86Register.None;
 					return false;
 				}
 
@@ -510,7 +510,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return true;
 				default:
 					Debug.Fail($"Unknown register number {(int)corReg}");
-					register = default;
+					register = X86Register.None;
 					return false;
 				}
 
@@ -530,7 +530,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			bool TryGetSymbolCore2(ulong address2, out SymbolResolverResult result2) {
 				SymbolResolverResult resultTmp = default;
-				bool res = Dispatcher.InvokeRethrow(() => TryGetSymbolCore(address2, out resultTmp));
+				Dispatcher.TryInvokeRethrow(() => TryGetSymbolCore(address2, out resultTmp), out var res);
 				result2 = resultTmp;
 				return res;
 			}

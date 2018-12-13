@@ -837,8 +837,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			if (dnDebugger.ProcessState == DebuggerProcessState.Running) {
 				int hr = dnDebugger.TryBreakProcesses();
-				if (hr < 0)
+				if (hr < 0) {
+					// We also sometimes get 0x80070005 before the process is terminated
+					if (hr == CordbgErrors.CORDBG_E_PROCESS_TERMINATED)
+						return;
 					SendMessage(new DbgMessageBreak(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotBreakProcess, hr), GetMessageFlags()));
+				}
 				else {
 					Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
 					// The debugger just picks the first thread in the first AppDomain, and this isn't

@@ -20,8 +20,8 @@
 using System;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.UI;
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		string OrderToNumber() {
-			var writer = new StringBuilderTextColorOutput();
+			var writer = new DbgStringBuilderTextWriter();
 			Context.Formatter.WriteOrder(writer, ModuleBreakpoint);
 			return writer.ToString();
 		}

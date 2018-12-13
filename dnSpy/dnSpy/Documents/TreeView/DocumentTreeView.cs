@@ -752,21 +752,28 @@ namespace dnSpy.Documents.TreeView {
 			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
 			TreeNodeData newSelectedNode = null;
 
-			bool shellInit = true;
 			IWshRuntimeLibrary.WshShell ws = null;
 			try {
 				ws = new IWshRuntimeLibrary.WshShell();
-			} catch {
-				shellInit = false;
+			}
+			catch {
+				ws = null;
 			}
 
 			for (int i = 0, j = 0; i < filenames.Length; i++) {
 				// Resolve shortcuts
-				if (shellInit) {
+				if (ws != null) {
 					try {
-						var sc = (IWshRuntimeLibrary.IWshShortcut)ws.CreateShortcut(filenames[i]);
-						filenames[i] = sc.TargetPath;
-					} catch { }
+						// The method seems to only accept files with a lnk extension. If it has no such
+						// extension, it's not a shortcut and we won't get a slow thrown exception.
+						if (filenames[i].EndsWith(".lnk", StringComparison.OrdinalIgnoreCase)) {
+							var sc = (IWshRuntimeLibrary.IWshShortcut)ws.CreateShortcut(filenames[i]);
+							filenames[i] = sc.TargetPath;
+						}
+					}
+					catch {
+						ws = null;
+					}
 				}
 
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));

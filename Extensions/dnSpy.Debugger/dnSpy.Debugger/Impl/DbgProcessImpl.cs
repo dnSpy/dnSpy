@@ -26,10 +26,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Shared;
 using dnSpy.Debugger.Utilities;
 using Microsoft.Win32.SafeHandles;
 
@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.Impl {
 		public override int Id { get; }
 		public override int Bitness { get; }
 		public override DbgMachine Machine { get; }
+		public override DbgOperatingSystem OperatingSystem { get; }
 		public override string Filename { get; }
 		public override string Name { get; }
 
@@ -151,6 +152,7 @@ namespace dnSpy.Debugger.Impl {
 
 			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
 			Machine = GetMachine(Bitness);
+			OperatingSystem = GetOperatingSystem();
 			var info = GetProcessName(pid);
 			Filename = info.filename ?? string.Empty;
 			Name = info.name ?? string.Empty;
@@ -276,6 +278,16 @@ namespace dnSpy.Debugger.Impl {
 			default:
 				throw new InvalidOperationException($"Unknown CPU arch: {RuntimeInformation.ProcessArchitecture}");
 			}
+		}
+
+		static DbgOperatingSystem GetOperatingSystem() {
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return DbgOperatingSystem.Windows;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				return DbgOperatingSystem.MacOS;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				return DbgOperatingSystem.Linux;
+			throw new InvalidOperationException("Unknown operating system");
 		}
 
 		public unsafe override void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) {

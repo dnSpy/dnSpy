@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		public const string FuncName = "IsDebuggerPresent";
 	}
 
-	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.PublicDllName, IsDebuggerPresentConstants.FuncName, new DbgMachine[0], 0)]
+	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.PublicDllName, IsDebuggerPresentConstants.FuncName, new DbgMachine[0], new[] { DbgOperatingSystem.Windows }, 0)]
 	sealed class IsDebuggerPresentHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 

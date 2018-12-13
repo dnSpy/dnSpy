@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
@@ -41,7 +41,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		string GetExpression(DmdType declaringType) {
 			var sb = ObjectCache.AllocStringBuilder();
-			var output = new StringBuilderTextColorOutput(sb);
+			var output = new DbgStringBuilderTextWriter(sb);
 			valueNodeProviderFactory.FormatTypeName2(output, declaringType);
 			return ObjectCache.FreeAndToString(ref sb);
 		}

@@ -20,11 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	static class MonoExeFinder {
-		public const string MONO_EXE = "mono.exe";
+		public static readonly string MONO_EXE = FileUtilities.GetNativeExeFilename("mono");
 		const string MONO_PROGRAM_FILES_DIR = "Mono";
 		const string MONO_PROGRAM_FILES_DIR_BIN = "bin";
 
@@ -65,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var file = Path.Combine(dir, MONO_EXE);
 					if (!File.Exists(file))
 						continue;
-					switch (GetPeFileBitness(file)) {
+					switch (FileUtilities.GetNativeFileBitness(file)) {
 					case 32:
 						if (mono32 == null)
 							mono32 = file;
@@ -90,31 +92,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					continue;
 				yield return path;
 			}
-			var progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			if (Directory.Exists(progFiles))
-				yield return Path.Combine(progFiles, MONO_PROGRAM_FILES_DIR, MONO_PROGRAM_FILES_DIR_BIN);
-			var progFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-			if (!StringComparer.OrdinalIgnoreCase.Equals(progFilesX86, progFiles) && Directory.Exists(progFilesX86))
-				yield return Path.Combine(progFilesX86, MONO_PROGRAM_FILES_DIR, MONO_PROGRAM_FILES_DIR_BIN);
-		}
-
-		static int GetPeFileBitness(string file) {
-			using (var f = File.OpenRead(file)) {
-				var r = new BinaryReader(f);
-				if (r.ReadUInt16() != 0x5A4D)
-					return -1;
-				f.Position = 0x3C;
-				f.Position = r.ReadUInt32();
-				// Mono only checks the low 2 bytes
-				if ((ushort)r.ReadUInt32() != 0x4550)
-					return -1;
-				f.Position += 0x14;
-				ushort magic = r.ReadUInt16();
-				if (magic == 0x10B)
-					return 32;
-				if (magic == 0x20B)
-					return 64;
-				return -1;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+				var progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+				if (Directory.Exists(progFiles))
+					yield return Path.Combine(progFiles, MONO_PROGRAM_FILES_DIR, MONO_PROGRAM_FILES_DIR_BIN);
+				var progFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+				if (!StringComparer.OrdinalIgnoreCase.Equals(progFilesX86, progFiles) && Directory.Exists(progFilesX86))
+					yield return Path.Combine(progFilesX86, MONO_PROGRAM_FILES_DIR, MONO_PROGRAM_FILES_DIR_BIN);
 			}
 		}
 	}
