@@ -199,7 +199,7 @@ namespace dnSpy_Console {
 			userGacPaths = new List<string>();
 			gacFiles = new List<string>();
 			decompilationContext = new DecompilationContext();
-			moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
+			moduleContext = ModuleDef.CreateModuleContext(); // Same as dnSpy.exe
 			assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
 			assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
 			assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe
