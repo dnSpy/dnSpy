@@ -136,7 +136,7 @@
     <value>Ви бажаєте видалити усі точки зупинки?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
-    <value>Приєднатись до Процесу...</value>
+    <value>Приєднатись до _Процесу...</value>
   </data>
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>Приєднатись до Процесу</value>
@@ -265,7 +265,7 @@
     <value>Показати вікно локальних змінних при старті дебагера</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Заборонити коду виявляти дебагер</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ігнорувати Debugger.Break() та інші операції зупинок</value>

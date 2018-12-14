@@ -136,7 +136,7 @@
     <value>Відкритий ключ</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>Retargetable</value>
+    <value>_Retargetable</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
     <value>Тип вмістимого</value>
@@ -160,7 +160,7 @@
     <value>Відкритий ключ</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
-    <value>Версія</value>
+    <value>_Версія</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
     <value>Додати</value>

@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Número máximo de elementos em array para mostrar</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Max string length</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Adicionar o modificador 'private' aos membros de tipo</value>
   </data>

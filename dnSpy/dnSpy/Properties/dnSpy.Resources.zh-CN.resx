@@ -1128,7 +1128,7 @@
     <value>代码编辑器</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>选项卡</value>
+    <value>制表符</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
     <value>将Tab转换为空格(_P)</value>

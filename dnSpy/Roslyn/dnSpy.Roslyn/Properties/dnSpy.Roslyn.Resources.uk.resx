@@ -193,7 +193,7 @@
     <value>Представлення Dynamic може бути лише в об'єктів COM чи Dynamic</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
-    <value>Enums</value>
+    <value>Перечислення</value>
   </data>
   <data name="EventsToolTip" xml:space="preserve">
     <value>Події</value>

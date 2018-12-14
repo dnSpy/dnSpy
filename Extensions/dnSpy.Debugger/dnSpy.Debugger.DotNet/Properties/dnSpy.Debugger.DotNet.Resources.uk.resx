@@ -136,7 +136,7 @@
     <value>Відмінити завантаження модулів?</value>
   </data>
   <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
-    <value>Неможливо обчислити вираз коли стек фрейм є нативний</value>
+    <value>Неможливо обчислити вираз, коли стек фрейм є нативний</value>
   </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
     <value>Створені змінні декомпілятором не можуть бути обчислені</value>

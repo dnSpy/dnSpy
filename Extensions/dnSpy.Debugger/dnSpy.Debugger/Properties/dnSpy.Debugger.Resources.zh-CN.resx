@@ -265,7 +265,7 @@
     <value>在调试器启动时显示局部变量窗口</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Evita la detección del código borrado en el depurador</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>忽略 Debugger.Break() 和中断指令</value>

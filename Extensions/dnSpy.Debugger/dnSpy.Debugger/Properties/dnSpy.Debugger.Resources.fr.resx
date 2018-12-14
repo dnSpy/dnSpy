@@ -265,7 +265,7 @@
     <value>Afficher la fenêtre des locales quand le débogueur démarre</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Empêcher le code de détecter un débogueur</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ignorer les Debugger.Break() et les instructions d'arrêt</value>

@@ -265,7 +265,7 @@
     <value>A Helyi ablakok megjelenítése a debugger indításakor</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>A kód megakadályozása a hibakereső detektálásában</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Debugger.Break() és break utasítások figyelmen kívül hagyása</value>

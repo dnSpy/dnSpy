@@ -265,7 +265,7 @@
     <value>Locals-Fenster beim Start des Debuggers anzeigen</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Verhindern, dass der Code den Debugger erkennt</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Debugger.Break() und break Instruktionen ignorieren</value>
@@ -1477,7 +1477,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Konsolen-Output von GUI-Applikationen zum Ausgabe-Fenster umleiten</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
-    <value>Erleichtern des Debuggens für ein Abbild</value>
+    <value>Debug Erleichterung für ein Abbild</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
     <value>Public Members</value>

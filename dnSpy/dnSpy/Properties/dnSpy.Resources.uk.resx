@@ -148,7 +148,7 @@
     <value>Оглядач Збірок</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
-    <value>Базовий тип та інтерфейси</value>
+    <value>Базовий Тип та інтерфейси</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
     <value>Відміна</value>
@@ -805,7 +805,7 @@
     <value>_Відкрити проект в Visual Studio</value>
   </data>
   <data name="ExportToProject_ProjectVersion" xml:space="preserve">
-    <value>Версія</value>
+    <value>_Версія</value>
   </data>
   <data name="ExportToProject_SolutionFilename" xml:space="preserve">
     <value>_Solution</value>
@@ -838,7 +838,7 @@
     <value>Методи</value>
   </data>
   <data name="MemberKind_NestedTypes" xml:space="preserve">
-    <value>Вкладені типи</value>
+    <value>Вкладені Типи</value>
   </data>
   <data name="MemberKind_Properties" xml:space="preserve">
     <value>Властивості</value>
@@ -1924,10 +1924,10 @@
     <value>Додати мітки</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Add leading '0' to hex numbers if needed</value>
+    <value>Додавати ведучий '0' для hex-чисел</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
-    <value>Always show size of memory operands</value>
+    <value>Завжди показувати розмір операндів пам'яті</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
     <value>Завжди відображати значення масштабу</value>
@@ -1948,7 +1948,7 @@
     <value>Hex суфікс</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
-    <value>Show disassembly in a new tab</value>
+    <value>Показати дизассемблер в новій вкладці</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
     <value>Колонка операнду</value>
@@ -1957,10 +1957,10 @@
     <value>RIP-відносна адресація</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Show scale before index register</value>
+    <value>Показати масштаб перед індексним регістром</value>
   </data>
   <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Short numbers (branches)</value>
+    <value>Короткі числа (в переходах)</value>
   </data>
   <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
     <value>Короткі номери</value>
@@ -1975,22 +1975,22 @@
     <value>Показати байти інструкцій</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
-    <value>Show zero displacements</value>
+    <value>Показувати нульові зміщення</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
     <value>Числа зі знаком</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>Переміщення зі знаком</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
     <value>Показувати малі числа десятковими</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Space after memory operand brackets</value>
+    <value>Пробіл після дужок операнду пам'яті</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
-    <value>Space after operand separator</value>
+    <value>Пробіл після розділювача операнду</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
     <value>Пробіл між '+'</value>
@@ -1999,16 +1999,16 @@
     <value>Пробіл між '*'</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
-    <value>Upper case everything</value>
+    <value>Все у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Upper case hex numbers</value>
+    <value>Hex-числа в верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
     <value>Верхній регістр ключових слів</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
-    <value>Upper case mnemonics</value>
+    <value>Верхній регістр мнемонік</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
     <value>Префікси у верхньому регістрі</value>
@@ -2023,13 +2023,13 @@
     <value>Синтаксис</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
-    <value>Naked registers</value>
+    <value>Голі регістри</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Always show mnemonic size suffix</value>
+    <value>Завжди показувати суфікс розміру мнемонік</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Space after memory operand comma</value>
+    <value>Пробіл після коми операнду пам'яті</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
     <value>Hex-числа</value>
@@ -2038,7 +2038,7 @@
     <value>Дизассембльований код</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
-    <value>Show decompiled code</value>
+    <value>Показати декомпільований код</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
     <value>Показувати IL код</value>
@@ -2047,6 +2047,6 @@
     <value>Метод не оптимізований</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>Показувати адресу символу</value>
   </data>
 </root>
