@@ -23,12 +23,8 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
-	abstract class DbgDispatcher2 : DbgDispatcher {
-		public abstract T Invoke<T>(Func<T> callback);
-	}
-
 	[Export(typeof(DbgDispatcher))]
-	sealed class DbgDispatcherImpl : DbgDispatcher2 {
+	sealed class DbgDispatcherImpl : DbgDispatcher {
 		readonly DebuggerThread debuggerThread;
 
 		internal Dispatcher Dispatcher => debuggerThread.Dispatcher;
@@ -44,13 +40,6 @@ namespace dnSpy.Debugger.Impl {
 			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 				return;
 			Dispatcher.BeginInvoke(callback);
-		}
-
-		public override T Invoke<T>(Func<T> callback) {
-			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
-				return default;
-			return Dispatcher.Invoke(callback);
 		}
 	}
 }
