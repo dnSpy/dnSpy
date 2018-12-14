@@ -658,7 +658,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		// recursionCounter[31] = check type equivalence
 		bool __ImplementsInterface(DmdType ifaceType, int recursionCounter) {
-			if (recursionCounter >= 100)
+			if ((recursionCounter & int.MaxValue) >= 100)
 				return false;
 			var type = this;
 			for (;;) {
