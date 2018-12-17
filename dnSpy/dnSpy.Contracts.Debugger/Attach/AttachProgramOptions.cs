@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Processor architecture or null to use the default value
 		/// </summary>
-		public virtual DbgMachine? Architecture => null;
+		public virtual DbgArchitecture? Architecture => null;
 
 		/// <summary>
 		/// Operating system or null to use the default value

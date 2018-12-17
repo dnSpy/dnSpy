@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgManager DbgManager => owner;
 		public override int Id { get; }
 		public override int Bitness { get; }
-		public override DbgMachine Machine { get; }
+		public override DbgArchitecture Architecture { get; }
 		public override DbgOperatingSystem OperatingSystem { get; }
 		public override string Filename { get; }
 		public override string Name { get; }
@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.Impl {
 				throw new InvalidOperationException($"Couldn't open process {pid}, error: 0x{Marshal.GetLastWin32Error():X8}");
 
 			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
-			Machine = GetMachine(Bitness);
+			Architecture = GetArchitecture(Bitness);
 			OperatingSystem = GetOperatingSystem();
 			var info = GetProcessName(pid);
 			Filename = info.filename ?? string.Empty;
@@ -256,23 +256,23 @@ namespace dnSpy.Debugger.Impl {
 			return (filename, name);
 		}
 
-		static DbgMachine GetMachine(int bitness) {
+		static DbgArchitecture GetArchitecture(int bitness) {
 			// We only allow debugging on the same computer
 			switch (RuntimeInformation.ProcessArchitecture) {
-			case Architecture.X86:
-			case Architecture.X64:
+			case System.Runtime.InteropServices.Architecture.X86:
+			case System.Runtime.InteropServices.Architecture.X64:
 				if (bitness == 32)
-					return DbgMachine.X86;
+					return DbgArchitecture.X86;
 				if (bitness == 64)
-					return DbgMachine.X64;
+					return DbgArchitecture.X64;
 				throw new ArgumentOutOfRangeException(nameof(bitness));
 
-			case Architecture.Arm:
-			case Architecture.Arm64:
+			case System.Runtime.InteropServices.Architecture.Arm:
+			case System.Runtime.InteropServices.Architecture.Arm64:
 				if (bitness == 32)
-					return DbgMachine.Arm;
+					return DbgArchitecture.Arm;
 				if (bitness == 64)
-					return DbgMachine.Arm64;
+					return DbgArchitecture.Arm64;
 				throw new ArgumentOutOfRangeException(nameof(bitness));
 
 			default:

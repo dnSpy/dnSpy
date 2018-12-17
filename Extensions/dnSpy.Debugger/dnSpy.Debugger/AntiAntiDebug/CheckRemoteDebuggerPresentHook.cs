@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		public const string FuncName = "CheckRemoteDebuggerPresent";
 	}
 
-	[ExportDbgNativeFunctionHook(CheckRemoteDebuggerPresentConstants.PublicDllName, CheckRemoteDebuggerPresentConstants.FuncName, new DbgMachine[0], new[] { DbgOperatingSystem.Windows })]
+	[ExportDbgNativeFunctionHook(CheckRemoteDebuggerPresentConstants.PublicDllName, CheckRemoteDebuggerPresentConstants.FuncName, new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows })]
 	sealed class CheckRemoteDebuggerPresentHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 
@@ -39,18 +39,18 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		public bool IsEnabled(DbgNativeFunctionHookContext context) => debuggerSettings.AntiCheckRemoteDebuggerPresent;
 
 		public void Hook(DbgNativeFunctionHookContext context, out string errorMessage) {
-			switch (context.Process.Machine) {
-			case DbgMachine.X86:
+			switch (context.Process.Architecture) {
+			case DbgArchitecture.X86:
 				HookX86(context, out errorMessage);
 				break;
 
-			case DbgMachine.X64:
+			case DbgArchitecture.X64:
 				HookX64(context, out errorMessage);
 				break;
 
 			default:
-				Debug.Fail($"Unsupported machine: {context.Process.Machine}");
-				errorMessage = $"Unsupported machine: {context.Process.Machine}";
+				Debug.Fail($"Unsupported architecture: {context.Process.Architecture}");
+				errorMessage = $"Unsupported architecture: {context.Process.Architecture}";
 				break;
 			}
 		}

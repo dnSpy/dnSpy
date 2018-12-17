@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Processor architecture
 		/// </summary>
-		public abstract DbgMachine Architecture { get; }
+		public abstract DbgArchitecture Architecture { get; }
 
 		/// <summary>
 		/// Operating system

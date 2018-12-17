@@ -36,10 +36,10 @@ namespace dnSpy.Debugger.Attach {
 		public string Title { get; }
 		public string Filename { get; }
 		public string CommandLine { get; }
-		public DbgMachine Architecture { get; }
+		public DbgArchitecture Architecture { get; }
 		public DbgOperatingSystem OperatingSystem { get; }
 
-		AttachableProcessInfo(int processId, RuntimeId runtimeId, Guid runtimeGuid, Guid runtimeKindGuid, string runtimeName, string name, string title, string filename, string commandLine, DbgMachine architecture, DbgOperatingSystem operatingSystem) {
+		AttachableProcessInfo(int processId, RuntimeId runtimeId, Guid runtimeGuid, Guid runtimeKindGuid, string runtimeName, string name, string title, string filename, string commandLine, DbgArchitecture architecture, DbgOperatingSystem operatingSystem) {
 			ProcessId = processId;
 			RuntimeId = runtimeId ?? throw new ArgumentNullException(nameof(runtimeId));
 			RuntimeGuid = runtimeGuid;
@@ -75,10 +75,10 @@ namespace dnSpy.Debugger.Attach {
 			}
 			Debug.Assert(architecture != null);
 			Debug.Assert(operatingSystem != null);
-			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture ?? DbgMachine.X86, operatingSystem ?? DbgOperatingSystem.Windows);
+			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture ?? DbgArchitecture.X86, operatingSystem ?? DbgOperatingSystem.Windows);
 		}
 
-		static (string name, string title, string filename, string commandLine, DbgMachine? arch, DbgOperatingSystem? operatingSystem) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+		static (string name, string title, string filename, string commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
 			try {
 				return GetDefaultPropertiesCore(processProvider, attachProgramOptions);
 			}
@@ -87,9 +87,9 @@ namespace dnSpy.Debugger.Attach {
 			return default;
 		}
 
-		static (string name, string title, string filename, string commandLine, DbgMachine? arch, DbgOperatingSystem? operatingSystem) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+		static (string name, string title, string filename, string commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
 			string name = null, title = null, filename = null, commandLine = null;
-			DbgMachine? arch = default;
+			DbgArchitecture? arch = default;
 			DbgOperatingSystem? operatingSystem = default;
 
 			var process = processProvider.GetProcess(attachProgramOptions.ProcessId);
@@ -105,16 +105,16 @@ namespace dnSpy.Debugger.Attach {
 					case System.Runtime.InteropServices.Architecture.X86:
 					case System.Runtime.InteropServices.Architecture.X64:
 						switch (bitness) {
-						case 32: arch = DbgMachine.X86; break;
-						case 64: arch = DbgMachine.X64; break;
+						case 32: arch = DbgArchitecture.X86; break;
+						case 64: arch = DbgArchitecture.X64; break;
 						}
 						break;
 
 					case System.Runtime.InteropServices.Architecture.Arm:
 					case System.Runtime.InteropServices.Architecture.Arm64:
 						switch (bitness) {
-						case 32: arch = DbgMachine.Arm; break;
-						case 64: arch = DbgMachine.Arm64; break;
+						case 32: arch = DbgArchitecture.Arm; break;
+						case 64: arch = DbgArchitecture.Arm64; break;
 						}
 						break;
 

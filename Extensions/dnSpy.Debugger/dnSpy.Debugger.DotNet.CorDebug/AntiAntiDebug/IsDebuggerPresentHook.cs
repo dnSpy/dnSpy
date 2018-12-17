@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		public const string FuncName = "IsDebuggerPresent";
 	}
 
-	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.PublicDllName, IsDebuggerPresentConstants.FuncName, new DbgMachine[0], new[] { DbgOperatingSystem.Windows }, 0)]
+	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.PublicDllName, IsDebuggerPresentConstants.FuncName, new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows }, 0)]
 	sealed class IsDebuggerPresentHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 
@@ -50,18 +50,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 				return;
 			}
 
-			switch (context.Process.Machine) {
-			case DbgMachine.X86:
+			switch (context.Process.Architecture) {
+			case DbgArchitecture.X86:
 				HookX86(context, runtime, out errorMessage);
 				break;
 
-			case DbgMachine.X64:
+			case DbgArchitecture.X64:
 				HookX64(context, runtime, out errorMessage);
 				break;
 
 			default:
-				Debug.Fail($"Unsupported machine: {context.Process.Machine}");
-				errorMessage = $"Unsupported machine: {context.Process.Machine}";
+				Debug.Fail($"Unsupported architecture: {context.Process.Architecture}");
+				errorMessage = $"Unsupported architecture: {context.Process.Architecture}";
 				break;
 			}
 		}

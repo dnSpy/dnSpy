@@ -62,9 +62,9 @@ namespace dnSpy.Contracts.Debugger {
 		public int PointerSize => Bitness / 8;
 
 		/// <summary>
-		/// Machine
+		/// Gets the architecture
 		/// </summary>
-		public abstract DbgMachine Machine { get; }
+		public abstract DbgArchitecture Architecture { get; }
 
 		/// <summary>
 		/// Gets the operating system
@@ -226,9 +226,9 @@ namespace dnSpy.Contracts.Debugger {
 	}
 
 	/// <summary>
-	/// Machine
+	/// Architecture
 	/// </summary>
-	public enum DbgMachine {
+	public enum DbgArchitecture {
 		/// <summary>
 		/// x86, 32-bit
 		/// </summary>

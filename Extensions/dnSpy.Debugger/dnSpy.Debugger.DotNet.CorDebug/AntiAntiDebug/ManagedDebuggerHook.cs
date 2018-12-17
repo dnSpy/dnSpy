@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
-	[ExportDbgNativeFunctionHook("clr.dll", "System.Diagnostics.Debugger", new DbgMachine[0], new[] { DbgOperatingSystem.Windows })]
+	[ExportDbgNativeFunctionHook("clr.dll", "System.Diagnostics.Debugger", new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows })]
 	sealed class ManagedDebuggerHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 
@@ -44,15 +44,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 				return;
 			}
 
-			switch (context.Process.Machine) {
-			case DbgMachine.X86:
-			case DbgMachine.X64:
+			switch (context.Process.Architecture) {
+			case DbgArchitecture.X86:
+			case DbgArchitecture.X64:
 				HookX86(context, runtime, out errorMessage);
 				break;
 
 			default:
-				Debug.Fail($"Unsupported machine: {context.Process.Machine}");
-				errorMessage = $"Unsupported machine: {context.Process.Machine}";
+				Debug.Fail($"Unsupported architecture: {context.Process.Architecture}");
+				errorMessage = $"Unsupported architecture: {context.Process.Architecture}";
 				break;
 			}
 		}
