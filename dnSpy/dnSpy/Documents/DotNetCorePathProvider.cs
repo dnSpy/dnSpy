@@ -23,19 +23,49 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using dnlib.DotNet;
 
 namespace dnSpy.Documents {
 	sealed class DotNetCorePathProvider {
 		readonly FrameworkPaths[] netcorePaths;
 
+		public bool HasDotNetCore => netcorePaths.Length != 0;
+
+		readonly struct NetCorePathInfo {
+			public readonly string Directory;
+			public readonly int Bitness;
+			public NetCorePathInfo(string directory, int bitness) {
+				Directory = directory ?? throw new ArgumentNullException(nameof(directory));
+				Bitness = bitness;
+			}
+		}
+
+		// It treats all previews/alphas as the same version. This is needed because .NET Core 3.0 preview's
+		// shared frameworks don't have the same version numbers, eg.:
+		//		shared\Microsoft.AspNetCore.App\3.0.0-preview-18579-0056
+		//		shared\Microsoft.NETCore.App\3.0.0-preview-27216-02
+		//		shared\Microsoft.WindowsDesktop.App\3.0.0-alpha-27214-12
+		readonly struct FrameworkVersionIgnoreExtra : IEquatable<FrameworkVersionIgnoreExtra> {
+			readonly FrameworkVersion version;
+
+			public FrameworkVersionIgnoreExtra(FrameworkVersion version) => this.version = version;
+
+			public bool Equals(FrameworkVersionIgnoreExtra other) =>
+				version.Major == other.version.Major &&
+				version.Minor == other.version.Minor &&
+				version.Patch == other.version.Patch &&
+				(version.Extra.Length == 0) == (other.version.Extra.Length == 0);
+
+			public override bool Equals(object obj) => obj is FrameworkVersionIgnoreExtra other && Equals(other);
+			public override int GetHashCode() => version.Major ^ version.Minor ^ version.Patch ^ (version.Extra.Length == 0 ? 0 : -1);
+		}
+
 		public DotNetCorePathProvider() {
 			var list = new List<FrameworkPath>();
 			foreach (var info in GetDotNetCoreBaseDirs())
-				list.AddRange(GetDotNetCorePaths(info.path, info.bitness));
+				list.AddRange(GetDotNetCorePaths(info.Directory, info.Bitness));
 
 			var paths = from p in list
-						group p by new { Path = Path.GetDirectoryName(Path.GetDirectoryName(p.Path)).ToUpperInvariant(), p.Bitness, p.Version } into g
+						group p by new { Path = Path.GetDirectoryName(Path.GetDirectoryName(p.Path)).ToUpperInvariant(), p.Bitness, Version = new FrameworkVersionIgnoreExtra(p.Version) } into g
 						select new FrameworkPaths(g.ToArray());
 			var array = paths.ToArray();
 			Array.Sort(array);
@@ -113,11 +143,14 @@ namespace dnSpy.Documents {
 		}
 
 		const string DotNetExeName = "dotnet.exe";
-		static IEnumerable<(string path, int bitness)> GetDotNetCoreBaseDirs() {
-			var pathEnvVar = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
-			foreach (var tmp in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)) {
+		static IEnumerable<NetCorePathInfo> GetDotNetCoreBaseDirs() {
+			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
+				path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
 				if (!Directory.Exists(path))
+					continue;
+				if (!hash.Add(path))
 					continue;
 				string file;
 				try {
@@ -137,8 +170,33 @@ namespace dnSpy.Documents {
 				}
 				if (bitness == -1)
 					continue;
-				yield return (path, bitness);
+				yield return new NetCorePathInfo(path, bitness);
 			}
+		}
+
+		static IEnumerable<string> GetDotNetCoreBaseDirCandidates() {
+			// Microsoft tools don't check the PATH env var, only the default locations (eg. ProgramFiles)
+			var envVars = new string[] {
+				"PATH",
+				"DOTNET_ROOT(x86)",
+				"DOTNET_ROOT",
+			};
+			foreach (var envVar in envVars) {
+				var pathEnvVar = Environment.GetEnvironmentVariable(envVar) ?? string.Empty;
+				foreach (var path in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries))
+					yield return path;
+			}
+
+			// Check default locations
+			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
+				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
+			const string dotnetDirName = "dotnet";
+			if (!string.IsNullOrEmpty(progDir))
+				yield return Path.Combine(progDir, dotnetDirName);
+			if (!string.IsNullOrEmpty(progDirX86))
+				yield return Path.Combine(progDirX86, dotnetDirName);
 		}
 
 		static IEnumerable<FrameworkPath> GetDotNetCorePaths(string basePath, int bitness) {
@@ -199,9 +257,14 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		public Version TryGetDotNetCoreVersion(ModuleDef module) {
-			if (TargetFrameworkAttributeInfo.TryCreateTargetFrameworkInfo(module, out var info) && info.IsDotNetCore)
-				return info.Version;
+		public Version TryGetDotNetCoreVersion(string filename) {
+			foreach (var info in netcorePaths) {
+				foreach (var path in info.Paths) {
+					if (FileUtils.IsFileInDir(path, filename))
+						return info.SystemVersion;
+				}
+			}
+
 			return null;
 		}
 	}

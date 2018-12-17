@@ -133,7 +133,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public override DsDocumentInfo? SerializedDocument => DsDocumentInfo.CreateDocument(Filename);
 		/// <inheritdoc/>
-		public override IDsDocumentNameKey Key => new FilenameKey(Filename);
+		public override IDsDocumentNameKey Key => FilenameKey.CreateFullPath(Filename);
 		/// <inheritdoc/>
 		public override IPEImage PEImage { get; }
 
@@ -221,7 +221,7 @@ namespace dnSpy.Contracts.Documents {
 		readonly bool isAsmNode;
 
 		/// <inheritdoc/>
-		public override IDsDocumentNameKey Key => new FilenameKey(Filename);
+		public override IDsDocumentNameKey Key => FilenameKey.CreateFullPath(Filename);
 		/// <inheritdoc/>
 		public override DsDocumentInfo? SerializedDocument => documentInfo;
 		DsDocumentInfo documentInfo;
