@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Enable all warning messages</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Deserialize types in resources (unsafe)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Any assembly could get loaded and executed with data from the resources.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Use memory mapped I/O</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Window Position</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Use the new text formatter</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>The new text formatter is faster but doesn't support word wrap or all unicode characters.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Text Editor</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Blue</value>
