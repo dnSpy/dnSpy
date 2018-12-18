@@ -1153,6 +1153,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timestamp:.
+        /// </summary>
+        public static string Decompile_Timestamp {
+            get {
+                return ResourceManager.GetString("Decompile_Timestamp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string DecompileCancelButton {

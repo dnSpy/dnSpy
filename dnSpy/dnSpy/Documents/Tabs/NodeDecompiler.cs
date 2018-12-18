@@ -20,12 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Text;
+using dnSpy.Properties;
 
 namespace dnSpy.Documents.Tabs {
 	enum NodeType {
@@ -212,7 +216,22 @@ namespace dnSpy.Documents.Tabs {
 			decompiler.DecompileNamespace(node.Name, children, output, decompilationContext);
 		}
 
-		void Decompile(PEDocumentNode node) => decompiler.WriteCommentLine(output, node.Document.Filename);
+		void Decompile(PEDocumentNode node) {
+			decompiler.WriteCommentLine(output, node.Document.Filename);
+			var peImage = node.Document.PEImage;
+			if (peImage != null) {
+				var timestampLine = dnSpy_Resources.Decompile_Timestamp + " ";
+				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+				if (ts < 0x80000000 && ts != 0) {
+					var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
+					var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+					timestampLine += $"{ts:X8} ({dateString})";
+				}
+				else
+					timestampLine += $"??? ({ts:X8})";
+				decompiler.WriteCommentLine(output, timestampLine);
+			}
+		}
 
 		void Decompile(ReferencesFolderNode node) {
 			foreach (var child in GetChildren(node)) {
