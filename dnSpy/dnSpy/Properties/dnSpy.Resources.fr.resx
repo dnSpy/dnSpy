@@ -2032,4 +2032,7 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Afficher l'adresse du symbole</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Timestamp :</value>
+  </data>
 </root>

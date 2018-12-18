@@ -2030,4 +2030,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Show symbol address</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Data/Hora:</value>
+  </data>
 </root>

@@ -130,7 +130,7 @@
     <value>Не вдалося перетворити '{0} '</value>
   </data>
   <data name="CouldNotConvertFromString" xml:space="preserve">
-    <value>Не можу перетворити з рядка: {0}</value>
+    <value>Не можу перетворити зі стрічки: {0}</value>
   </data>
   <data name="CouldNotDeserializeData" xml:space="preserve">
     <value>Не вдалося виконати десеріалізацію даних: {0}</value>

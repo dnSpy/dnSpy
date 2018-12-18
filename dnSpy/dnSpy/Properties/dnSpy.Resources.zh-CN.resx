@@ -2033,4 +2033,7 @@
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>显示符号地址</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>时间戳:</value>
+  </data>
 </root>

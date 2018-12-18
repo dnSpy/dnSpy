@@ -2034,4 +2034,7 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Szimbólum címek mutatása</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Időbélyeg:</value>
+  </data>
 </root>

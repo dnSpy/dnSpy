@@ -2034,4 +2034,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Adresse des Symbols anzeigen</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Zeitstempel:</value>
+  </data>
 </root>

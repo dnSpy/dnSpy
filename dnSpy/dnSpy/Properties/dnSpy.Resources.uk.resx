@@ -2031,4 +2031,7 @@
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Показувати адресу символу</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Часові відмітка:</value>
+  </data>
 </root>

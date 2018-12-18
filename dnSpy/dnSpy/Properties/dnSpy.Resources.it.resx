@@ -2029,4 +2029,7 @@
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Mostra l'indirizzo del simbolo</value>
   </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Timestamp:</value>
+  </data>
 </root>
