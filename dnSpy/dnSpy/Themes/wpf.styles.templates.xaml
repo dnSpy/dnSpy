@@ -6099,7 +6099,6 @@
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding AllowMoreThanOneInstance}" Content="{x:Static p:dnSpy_Resources.AllowMoreThanOneInstance}" />
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}" />
             <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}" />
-            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding DeserializeResources}" Content="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize}" ToolTip="{x:Static p:dnSpy_Resources.Options_Misc_Deserialize_ToolTip}" />
             <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseMemoryMappedIO}" Content="{x:Static p:dnSpy_Resources.Options_Misc_UseMmapdIO}" />
             <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0">
                 <GroupBox.Header>

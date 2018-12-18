@@ -89,16 +89,9 @@ namespace dnSpy.Documents.TreeView {
 		bool showToken = true;
 
 		public bool DeserializeResources {
-			get => deserializeResources;
-			set {
-				if (deserializeResources != value) {
-					deserializeResources = value;
-					OnPropertyChanged(nameof(DeserializeResources));
-					OnModified();
-				}
-			}
+			get => false;
+			set { }
 		}
-		bool deserializeResources = true;
 
 		public DocumentFilterType FilterDraggedItems {
 			get => filterDraggedItems;
