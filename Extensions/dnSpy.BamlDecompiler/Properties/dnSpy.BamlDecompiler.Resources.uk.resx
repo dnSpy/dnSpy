@@ -133,7 +133,7 @@
     <value>Дизасемблювати BAML</value>
   </data>
   <data name="Error_AttachedEvent" xml:space="preserve">
-    <value>Приєднана подія "{0}".</value>
+    <value>Приєднана подія '{0}'.</value>
   </data>
   <data name="Error_IComponentConnectorConnetCannotBeParsed" xml:space="preserve">
     <value>Клас "{0}" має IComponentConnector.Connect метод, який не вдалось проаналізувати.</value>

@@ -184,7 +184,7 @@
     <value>Відсутній шлях до користувацького GAC </value>
   </data>
   <data name="InvalidMemberToDecompile" xml:space="preserve">
-    <value>Лише типи, методи, поля, події та властивості можна декомпілювати</value>
+    <value>Можна декомпілювати лише типи, методи, поля, події та властивості</value>
   </data>
   <data name="CouldNotFindTypeX" xml:space="preserve">
     <value>Не вдалося знайти тип {0}</value>

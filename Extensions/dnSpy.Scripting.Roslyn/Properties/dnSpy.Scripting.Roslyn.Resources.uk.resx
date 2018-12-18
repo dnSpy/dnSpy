@@ -121,7 +121,7 @@
     <value>+ додаткова {0} помилка</value>
   </data>
   <data name="CompilationAdditionalErrors" xml:space="preserve">
-    <value>+ Додаткові {0} помилки</value>
+    <value>+ додаткові {0} помилки</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Копіювати</value>
