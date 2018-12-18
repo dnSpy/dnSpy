@@ -24,12 +24,11 @@ using dnSpy.Contracts.Debugger.AntiAntiDebug;
 
 namespace dnSpy.Debugger.AntiAntiDebug {
 	static class CheckRemoteDebuggerPresentConstants {
-		public const string PublicDllName = "kernel32.dll";
 		public const string DllName = "kernel32.dll";
 		public const string FuncName = "CheckRemoteDebuggerPresent";
 	}
 
-	[ExportDbgNativeFunctionHook(CheckRemoteDebuggerPresentConstants.PublicDllName, CheckRemoteDebuggerPresentConstants.FuncName, new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows })]
+	[ExportDbgNativeFunctionHook(CheckRemoteDebuggerPresentConstants.DllName, CheckRemoteDebuggerPresentConstants.FuncName, new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows })]
 	sealed class CheckRemoteDebuggerPresentHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 

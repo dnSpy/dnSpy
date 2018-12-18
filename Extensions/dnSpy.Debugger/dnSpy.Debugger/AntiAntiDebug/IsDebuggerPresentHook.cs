@@ -24,12 +24,11 @@ using dnSpy.Contracts.Debugger.AntiAntiDebug;
 
 namespace dnSpy.Debugger.AntiAntiDebug {
 	static class IsDebuggerPresentConstants {
-		public const string PublicDllName = "kernel32.dll";
 		public const string DllName = "kernel32.dll";
 		public const string FuncName = "IsDebuggerPresent";
 	}
 
-	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.PublicDllName, IsDebuggerPresentConstants.FuncName, new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows })]
+	[ExportDbgNativeFunctionHook(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName, new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows })]
 	sealed class IsDebuggerPresentHook : IDbgNativeFunctionHook {
 		readonly DebuggerSettings debuggerSettings;
 
