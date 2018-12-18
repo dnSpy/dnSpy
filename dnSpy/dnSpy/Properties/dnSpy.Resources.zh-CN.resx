@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>启用所有警告信息</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>反序列化资源中的类型 （不安全）</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>可以从资源中的数据里加载任意程序集并运行.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>使用内存映射 I/O</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>窗口位置</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>使用新版文本格式化程序</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>新版文本格式化程序速度快，但不支持自动换行以及 unicode 字符（如中文字符）。</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>HEX 编辑器</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>文本编辑器</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>蓝色(_B)</value>

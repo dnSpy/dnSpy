@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Включить все предупреждения</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Десериализовывать типы в ресурсах (небезопасно)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Любая сборка может быть загружена и выполнена с данными из ресурсов.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Использовать отображаемый в память ввод/вывод</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Позиция окна</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Использовать новый форматтер</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Новый форматтер быстрее старого, но не поддерживает перенос слов и все символы unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex-редактор</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Текстовый редактор</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Синяя</value>

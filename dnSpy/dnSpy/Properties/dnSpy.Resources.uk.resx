@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Ввімкнути усі попередження</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Десеріалізувати типи в ресурсах (небезпечно!)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Будь-яка збірка може бути завантажена і виконана із даними із ресурсів.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Використовувати відображений в пам'ять ввід/вивід</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Позиція вікна</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Викоритсовувати новий форматер</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Новий форматер швидший за старий, але не підтримує переніс слів і всі символи Unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex-редактор</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Текстовbй редактор</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>Голубий</value>

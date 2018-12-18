@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Habilitar todos los mensajes de advertencia</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Deserializar los tipos en recursos (inseguro)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Cualquier ensamblado podría ser cargado y ejecutado con los datos de los recursos.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Utilizar ficheros de mappeo en memoria I/O</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Posición de la ventana</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Utilice el nuevo formateador de texto</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>El formateador de texto nuevo es más rápido pero no soporta resumen o todos los caracteres unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Editor Hexadecimal</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Editor de texto</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Azul</value>
