@@ -51,6 +51,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Assembly declared security attributes replace target assembly's declared security attributes
 		/// </summary>
 		ReplaceAssemblyDeclSecurities			= 0x00000002,
+
+		/// <summary>
+		/// All exported types replace the target assembly's exported types
+		/// </summary>
+		ReplaceExportedTypes					= 0x00000004,
 	}
 
 	sealed partial class ModuleImporter {
@@ -71,6 +76,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public CustomAttribute[] NewAssemblyCustomAttributes { get; private set; }
 		public DeclSecurity[] NewAssemblyDeclSecurities { get; private set; }
 		public CustomAttribute[] NewModuleCustomAttributes { get; private set; }
+		public ExportedType[] NewExportedTypes { get; private set; }
 		public Version NewAssemblyVersion { get; private set; }
 		public Resource[] NewResources { get; private set; }
 
@@ -386,6 +392,12 @@ namespace dnSpy.AsmEditor.Compiler {
 					RemoveDuplicateSecurityPermissionAttributes(declSecs);
 					NewAssemblyDeclSecurities = declSecs.ToArray();
 				}
+			}
+
+			if ((options & ModuleImporterOptions.ReplaceExportedTypes) != 0) {
+				var exportedTypes = new List<ExportedType>();
+				ImportExportedTypes(exportedTypes);
+				NewExportedTypes = exportedTypes.ToArray();
 			}
 
 			ImportResources();
@@ -2259,6 +2271,44 @@ namespace dnSpy.AsmEditor.Compiler {
 				return Import(modRef, true);
 
 			throw new InvalidOperationException();
+		}
+
+		void ImportExportedTypes(List<ExportedType> exportedTypes) {
+			var toNewExportedType = new Dictionary<ExportedType, ExportedType>(sourceModule.ExportedTypes.Count);
+			var toNewImpl = new Dictionary<IImplementation, IImplementation>();
+			foreach (var et in sourceModule.ExportedTypes) {
+				var newEt = targetModule.UpdateRowId(new ExportedTypeUser(targetModule, et.TypeDefId, et.TypeNamespace, et.Name, et.Attributes, null));
+				exportedTypes.Add(newEt);
+				toNewExportedType.Add(et, newEt);
+				toNewImpl.Add(et, newEt);
+			}
+			foreach (var kv in toNewExportedType) {
+				var et = kv.Key;
+				var newEt = kv.Value;
+				var origImpl = et.Implementation;
+				if (origImpl == null)
+					continue;
+				if (!toNewImpl.TryGetValue(origImpl, out var newImpl)) {
+					switch (origImpl) {
+					case FileDef file:
+						newImpl = targetModule.UpdateRowId(new FileDefUser(file.Name, file.Flags, file.HashValue));
+						break;
+
+					case AssemblyRef asmRef:
+						newImpl = targetModule.UpdateRowId(new AssemblyRefUser(asmRef.Name, asmRef.Version, asmRef.PublicKeyOrToken, asmRef.Culture));
+						break;
+
+					case ExportedType declType:
+						// Should never happen since it should only reference an ExportedType that exists in ExportedTypes property
+						throw new InvalidOperationException();
+
+					default:
+						throw new InvalidOperationException();
+					}
+					toNewImpl.Add(origImpl, newImpl);
+				}
+				newEt.Implementation = newImpl;
+			}
 		}
 	}
 }
