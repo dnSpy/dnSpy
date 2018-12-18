@@ -375,11 +375,11 @@ namespace dnSpy.Documents {
 				if (!GacInfo.HasGAC2)
 					fwkKind = FrameworkKind.DotNetFramework4;
 				if (fwkKind == FrameworkKind.DotNetFramework4) {
-					FrameworkRedirect.ApplyFrameworkRedirectV4(ref tempAsm);
+					FrameworkRedirect.ApplyFrameworkRedirectV4(ref assembly);
 					gacVersion = 4;
 				}
 				else if (fwkKind == FrameworkKind.DotNetFramework2) {
-					FrameworkRedirect.ApplyFrameworkRedirectV2(ref tempAsm);
+					FrameworkRedirect.ApplyFrameworkRedirectV2(ref assembly);
 					gacVersion = 2;
 				}
 				else {

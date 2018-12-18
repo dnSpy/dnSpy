@@ -183,10 +183,13 @@ namespace dnSpy.Contracts.Utilities {
 					// .NET Framework 1.x and 2.x
 					path = Path.Combine(windir, "assembly");
 					if (Directory.Exists(path)) {
-						hasGAC2 = true;
-						gacDirInfosList.Add(new GacDirInfo(2, "", path, new string[] {
-							"GAC_32", "GAC_64", "GAC_MSIL", "GAC"
-						}));
+						hasGAC2 = File.Exists(Path.Combine(path, @"GAC_32\mscorlib\2.0.0.0__b77a5c561934e089\mscorlib.dll")) ||
+							File.Exists(Path.Combine(path, @"GAC_64\mscorlib\2.0.0.0__b77a5c561934e089\mscorlib.dll"));
+						if (hasGAC2) {
+							gacDirInfosList.Add(new GacDirInfo(2, "", path, new string[] {
+								"GAC_32", "GAC_64", "GAC_MSIL", "GAC"
+							}));
+						}
 					}
 
 					// .NET Framework 4.x
