@@ -44,6 +44,7 @@ namespace dnSpy.Documents {
 		const string TFM_netcoreapp = ".NETCoreApp";
 		const string TFM_netstandard = ".NETStandard";
 		const string UnityEngineFilename = "UnityEngine.dll";
+		const string SelfContainedDotNetCoreFilename = "System.Private.CoreLib.dll";
 
 		public AssemblyResolver(DsDocumentService documentService) {
 			this.documentService = documentService;
@@ -120,6 +121,7 @@ namespace dnSpy.Documents {
 			// This is .NET Framework 4.0 and later. Search in V4 GAC, not V2 GAC.
 			DotNetFramework4,
 			DotNetCore,
+			SelfContainedDotNetCore,
 			Unity,
 		}
 
@@ -255,6 +257,8 @@ namespace dnSpy.Documents {
 		static FrameworkKind GetFrameworkKind_Directory(string directory) {
 			if (File.Exists(Path.Combine(directory, UnityEngineFilename)))
 				return FrameworkKind.Unity;
+			if (File.Exists(Path.Combine(directory, SelfContainedDotNetCoreFilename)))
+				return FrameworkKind.SelfContainedDotNetCore;
 			return FrameworkKind.Unknown;
 		}
 
@@ -424,6 +428,10 @@ namespace dnSpy.Documents {
 
 			case FrameworkKind.DotNetCore:
 			case FrameworkKind.Unity:
+			case FrameworkKind.SelfContainedDotNetCore:
+				// If it's a self-contained .NET Core app, we don't need the version since we must only search
+				// the current directory.
+				Debug.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion == null);
 				document = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
 				if (document != null)
 					return documentService.GetOrAddCanDispose(document, assembly);
