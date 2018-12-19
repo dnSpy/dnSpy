@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using dnlib.DotNet;
-using Microsoft.Win32;
 
 namespace dnSpy.Contracts.Utilities {
 	/// <summary>
@@ -115,9 +114,9 @@ namespace dnSpy.Contracts.Utilities {
 			public readonly int Version;
 			public readonly string Path;
 			public readonly string Prefix;
-			public readonly IList<string> SubDirs;
+			public readonly string[] SubDirs;
 
-			public GacDirInfo(int version, string prefix, string path, IList<string> subDirs) {
+			public GacDirInfo(int version, string prefix, string path, string[] subDirs) {
 				Version = version;
 				Prefix = prefix;
 				Path = path;
@@ -232,7 +231,7 @@ namespace dnSpy.Contracts.Utilities {
 			}
 		}
 
-		static void AddIfExists(IList<string> paths, string basePath, string extraPath) {
+		static void AddIfExists(List<string> paths, string basePath, string extraPath) {
 			var path = Path.Combine(basePath, extraPath);
 			if (Directory.Exists(path))
 				paths.Add(path);
