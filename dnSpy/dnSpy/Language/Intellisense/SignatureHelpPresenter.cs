@@ -98,12 +98,12 @@ namespace dnSpy.Language.Intellisense {
 		IClassifier otherClassifier;
 
 		const string DefaultExtendedContentTypeName = " default " + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix;
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(DefaultExtendedContentTypeName)]
 		[BaseDefinition(ContentTypes.SignatureHelp)]
 		static readonly ContentTypeDefinition defaultContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public SignatureHelpPresenter(ISignatureHelpSession session, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
 			if (textBufferFactoryService == null)

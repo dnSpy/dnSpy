@@ -23,9 +23,9 @@ using dnSpy.Contracts.Settings.HexEditor;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	static class HexEditorOptionsDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[ExportHexEditorOptionsDefinition("res:HexEditorGroup_DebuggerMemory", PredefinedHexViewRoles.HexEditorGroupDebuggerMemory, AppSettingsConstants.GUID_HEX_EDITOR_DEBUGGER_MEMORY, typeof(HexEditorOptionsDefinitions))]
 		static readonly HexEditorOptionsDefinition defaultHexEditorOptionsDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

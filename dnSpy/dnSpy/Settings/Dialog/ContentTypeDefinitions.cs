@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Settings.Dialog {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNodeAppSettings)]
 		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
 		static readonly ContentTypeDefinition TreeViewNodeAppSettings;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

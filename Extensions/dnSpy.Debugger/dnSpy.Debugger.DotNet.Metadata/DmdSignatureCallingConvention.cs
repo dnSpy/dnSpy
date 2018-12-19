@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdSignatureCallingConvention : byte {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Default			= 0x00,
 		C				= 0x01,
 		StdCall			= 0x02,
@@ -42,6 +42,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Generic			= 0x10,
 		HasThis			= 0x20,
 		ExplicitThis	= 0x40,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

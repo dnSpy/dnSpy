@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.BamlDecompiler {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.BamlDnSpy)]
 		[BaseDefinition(ContentTypes.Baml)]
 		static readonly ContentTypeDefinition BamlDnSpyContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

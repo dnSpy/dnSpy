@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract bool ContainsGenericParameters { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsIL => (MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) == DmdMethodImplAttributes.IL;
 		public bool IsNative => (MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) == DmdMethodImplAttributes.Native;
 		public bool IsOPTIL => (MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) == DmdMethodImplAttributes.OPTIL;
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool RequireSecObject => (Attributes & DmdMethodAttributes.RequireSecObject) != 0;
 		public bool IsReuseSlot => (Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.ReuseSlot;
 		public bool IsNewSlot => (Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.NewSlot;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the RVA of the method body or native code or 0 if none
@@ -218,10 +218,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public abstract object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMethodBase left, DmdMethodBase right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 		public static bool operator !=(DmdMethodBase left, DmdMethodBase right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

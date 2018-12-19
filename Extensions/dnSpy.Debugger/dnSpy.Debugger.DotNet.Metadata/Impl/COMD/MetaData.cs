@@ -21,8 +21,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 
-#pragma warning disable 0108 // Member hides inherited member; missing new keyword
-#pragma warning disable 0649
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+#pragma warning disable CS0649
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	struct COR_FIELD_OFFSET {
 		public uint FieldToken;
@@ -196,5 +196,5 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		void EnumMethodSpecs([In] [Out] ref IntPtr phEnum, [In] uint tk, [Out] IntPtr rMethodSpecs, [In] uint cMax, out uint pcMethodSpecs);
 	}
 }
-#pragma warning restore 0649
-#pragma warning restore 0108 // Member hides inherited member; missing new keyword
+#pragma warning restore CS0649
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword

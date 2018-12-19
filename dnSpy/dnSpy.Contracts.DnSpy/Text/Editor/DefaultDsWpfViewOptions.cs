@@ -24,9 +24,9 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// Default <see cref="IWpfTextView"/> options
 	/// </summary>
 	public static class DefaultDsWpfViewOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string ForceClearTypeIfNeededName = "IWpfTextView/ForceClearTypeIfNeeded";
 		public static readonly EditorOptionKey<bool> ForceClearTypeIfNeededId = new EditorOptionKey<bool>(ForceClearTypeIfNeededName);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

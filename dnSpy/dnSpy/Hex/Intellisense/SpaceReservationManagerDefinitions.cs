@@ -24,10 +24,10 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Intellisense {
 	static class SpaceReservationManagerDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexSpaceReservationManagerDefinition))]
 		[VSUTIL.Name(HexIntellisenseSpaceReservationManagerNames.QuickInfoSpaceReservationManagerName)]
 		static readonly HexSpaceReservationManagerDefinition quickInfoSpaceReservationManagerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

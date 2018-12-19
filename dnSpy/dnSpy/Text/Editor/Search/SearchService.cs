@@ -59,12 +59,12 @@ namespace dnSpy.Text.Editor.Search {
 	}
 
 	sealed class SearchService : ViewModelBase, ISearchService {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.Search)]
 		[LayerKind(LayerKind.Overlay)]
 		static AdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		const int MAX_SEARCH_RESULTS = 5000;
 

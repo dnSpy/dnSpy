@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract DmdTypeAttributes Attributes { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsNotPublic => (Attributes & DmdTypeAttributes.VisibilityMask) == DmdTypeAttributes.NotPublic;
 		public bool IsPublic => (Attributes & DmdTypeAttributes.VisibilityMask) == DmdTypeAttributes.Public;
 		public bool IsNestedPublic => (Attributes & DmdTypeAttributes.VisibilityMask) == DmdTypeAttributes.NestedPublic;
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsUnicodeClass => (Attributes & DmdTypeAttributes.StringFormatMask) == DmdTypeAttributes.UnicodeClass;
 		public bool IsAutoClass => (Attributes & DmdTypeAttributes.StringFormatMask) == DmdTypeAttributes.AutoClass;
 		public bool IsCustomFormatClass => (Attributes & DmdTypeAttributes.StringFormatMask) == DmdTypeAttributes.CustomFormatClass;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// true if this type is <see cref="Nullable{T}"/>
@@ -1403,10 +1403,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public sealed override DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdType left, DmdType right) => DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
 		public static bool operator !=(DmdType left, DmdType right) => !DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

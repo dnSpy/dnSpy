@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		public abstract int GetSizeOfValueType(DmdType type);
 	}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public enum LoadValueType {
 		I,
 		I1,
@@ -232,5 +232,5 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		U2,
 		U4,
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -94,13 +94,13 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.ActiveColumnHighlighter)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.BottomLayer)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.TopLayer)]
 		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public ActiveColumnHighlighterService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
 			if (editorFormatMapService == null)

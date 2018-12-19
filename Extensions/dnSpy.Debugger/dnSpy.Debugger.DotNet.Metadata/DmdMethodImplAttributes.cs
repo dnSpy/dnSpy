@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdMethodImplAttributes : ushort {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		CodeTypeMask			= 0x0003,
 		IL						= 0x0000,
 		Native					= 0x0001,
@@ -42,6 +42,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		AggressiveInlining		= 0x0100,
 		NoOptimization			= 0x0040,
 		AggressiveOptimization	= 0x0200,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

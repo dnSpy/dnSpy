@@ -23,7 +23,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Scripting.Roslyn {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.ReplRoslyn)]
 		[BaseDefinition(ContentTypes.Repl)]
@@ -38,6 +38,6 @@ namespace dnSpy.Scripting.Roslyn {
 		[Name(ContentTypes.ReplVisualBasicRoslyn)]
 		[BaseDefinition(ContentTypes.ReplRoslyn)]
 		static readonly ContentTypeDefinition ReplVisualBasicRoslynContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

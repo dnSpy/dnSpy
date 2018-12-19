@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Text {
 	public enum TextColor {
 		// IMPORTANT: The order must match dnSpy.Contracts.Themes.ColorType
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Text,
 		Operator,
 		Punctuation,
@@ -349,14 +349,14 @@ namespace dnSpy.Contracts.Text {
 		/// Must be last
 		/// </summary>
 		Last,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
 	/// <summary>
 	/// Boxed colors
 	/// </summary>
 	public static class BoxedTextColor {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly object Text = TextColor.Text;
 		public static readonly object Operator = TextColor.Operator;
 		public static readonly object Punctuation = TextColor.Punctuation;
@@ -1007,6 +1007,6 @@ namespace dnSpy.Contracts.Text {
 			AsmAddress,
 			AsmHexBytes,
 		};
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

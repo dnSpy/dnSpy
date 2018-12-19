@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Search {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.Search)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition Search;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

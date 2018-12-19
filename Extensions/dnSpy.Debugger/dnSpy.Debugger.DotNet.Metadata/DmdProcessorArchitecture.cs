@@ -22,13 +22,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Processor architecture
 	/// </summary>
 	public enum DmdProcessorArchitecture {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		None,
 		MSIL,
 		X86,
 		IA64,
 		Amd64,
 		Arm
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

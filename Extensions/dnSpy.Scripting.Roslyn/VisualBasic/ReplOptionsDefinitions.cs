@@ -23,9 +23,9 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	static class ReplOptionsDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[ExportReplOptionsDefinition("Visual Basic", ContentTypes.ReplVisualBasicRoslyn, AppSettingsConstants.GUID_REPL_VISUAL_BASIC_ROSLYN)]
 		static readonly ReplOptionsDefinition visualBasicReplOptionsDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }
