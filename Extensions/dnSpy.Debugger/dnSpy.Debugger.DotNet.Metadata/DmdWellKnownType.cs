@@ -319,6 +319,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Span_T,
 		System_Runtime_InteropServices_GCHandle,
 
+		System_Runtime_CompilerServices_NullableAttribute,
+		System_ReadOnlySpan_T,
+		System_Runtime_CompilerServices_IsUnmanagedAttribute,
+		Microsoft_VisualBasic_Conversion,
+		System_Index,
+		System_Range,
+		System_Runtime_CompilerServices_AsyncIteratorStateMachineAttribute,
+		System_IAsyncDisposable,
+		System_Collections_Generic_IAsyncEnumerable_T,
+		System_Collections_Generic_IAsyncEnumerator_T,
+		System_Threading_Tasks_Sources_ManualResetValueTaskSourceCore_T,
+		System_Threading_Tasks_Sources_ValueTaskSourceStatus,
+		System_Threading_Tasks_Sources_ValueTaskSourceOnCompletedFlags,
+		System_Threading_Tasks_Sources_IValueTaskSource_T,
+		System_Threading_Tasks_Sources_IValueTaskSource,
+		System_Threading_Tasks_ValueTask_T,
+		System_Threading_Tasks_ValueTask,
+		System_Runtime_CompilerServices_AsyncIteratorMethodBuilder,
+		System_Threading_CancellationToken,
+
 		// When adding more types, update DmdWellKnownTypeUtils
 
 		None = -1,
