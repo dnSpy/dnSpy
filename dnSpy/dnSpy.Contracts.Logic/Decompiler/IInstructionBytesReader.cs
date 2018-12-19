@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Instruction bytes reader

@@ -365,6 +365,8 @@ namespace dnSpy.Documents {
 
 		IDsDocument ResolveNormal(IAssembly assembly, ModuleDef sourceModule) {
 			var fwkKind = GetFrameworkKind(sourceModule, out var netCoreVersion, out var sourceModuleDirectoryHint);
+			if (fwkKind == FrameworkKind.DotNetCore && !dotNetCorePathProvider.HasDotNetCore)
+				fwkKind = FrameworkKind.DotNetFramework4;
 			IDsDocument document;
 			switch (fwkKind) {
 			case FrameworkKind.Unknown:
