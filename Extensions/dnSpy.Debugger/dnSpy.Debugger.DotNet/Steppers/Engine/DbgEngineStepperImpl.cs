@@ -31,7 +31,6 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Steppers.Engine;
 using dnSpy.Contracts.Debugger.Engine.Steppers;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Debugger.DotNet.Code;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Properties;
@@ -399,10 +398,10 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		sealed class MethodILSpanState {
-			public ILSpan[] BodyRange;
+			public DbgILSpan[] BodyRange;
 		}
 
-		ILSpan[] TryCreateMethodBodySpans(DbgDotNetEngineStepperFrameInfo frame) {
+		DbgILSpan[] TryCreateMethodBodySpans(DbgDotNetEngineStepperFrameInfo frame) {
 			if (!frame.TryGetLocation(out var module, out var token, out var offset))
 				return null;
 			DbgEvaluationInfo evalInfo = null;
@@ -414,7 +413,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				var state = method.GetOrCreateData<MethodILSpanState>();
 				if (state.BodyRange == null) {
 					var body = method.GetMethodBody();
-					state.BodyRange = new ILSpan[] { new ILSpan(0, (uint)body.GetILAsByteArray().Length) };
+					state.BodyRange = new DbgILSpan[] { new DbgILSpan(0, (uint)body.GetILAsByteArray().Length) };
 				}
 				return state.BodyRange;
 			}
@@ -648,7 +647,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return null;
 		}
 
-		async Task<DbgThread> StepIntoCoreAsync(DbgDotNetEngineStepperFrameInfo frame, MethodDebugInfo debugInfoOrNull, DbgCodeRange[] statementRanges) {
+		async Task<DbgThread> StepIntoCoreAsync(DbgDotNetEngineStepperFrameInfo frame, DbgMethodDebugInfo debugInfoOrNull, DbgCodeRange[] statementRanges) {
 			if (debugInfoOrNull?.AsyncInfo != null && debugInfoOrNull.AsyncInfo.SetResultOffset != uint.MaxValue) {
 				if (!frame.TryGetLocation(out var module, out var token, out _))
 					throw new InvalidOperationException();
@@ -778,13 +777,13 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return thread;
 		}
 
-		List<AsyncStepInfo> GetAsyncStepInfos(in GetStepRangesAsyncResult result) {
+		List<DbgAsyncStepInfo> GetAsyncStepInfos(in GetStepRangesAsyncResult result) {
 			runtime.Dispatcher.VerifyAccess();
 			if (!debuggerSettings.AsyncDebugging)
 				return null;
 			if (result.DebugInfoOrNull?.AsyncInfo == null)
 				return null;
-			List<AsyncStepInfo> asyncStepInfos = null;
+			List<DbgAsyncStepInfo> asyncStepInfos = null;
 			GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfoOrNull.Method, result.DebugInfoOrNull.AsyncInfo, result.ExactStatementRanges);
 			foreach (var ranges in GetHiddenRanges(result.ExactStatementRanges, result.DebugInfoOrNull.GetUnusedRanges()))
 				GetAsyncStepInfos(ref asyncStepInfos, result.DebugInfoOrNull.Method, result.DebugInfoOrNull.AsyncInfo, ranges);
@@ -820,7 +819,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				builderFieldToken = builderFieldOrNull?.MDToken.Raw ?? 0;
 			}
 
-			public void AddYieldBreakpoint(DbgThread thread, DbgModule module, uint token, AsyncStepInfo stepInfo) {
+			public void AddYieldBreakpoint(DbgThread thread, DbgModule module, uint token, DbgAsyncStepInfo stepInfo) {
 				var yieldBreakpoint = stepper.CreateBreakpoint(thread, module, token, stepInfo.YieldOffset);
 				try {
 					var bpState = new AsyncBreakpointState(yieldBreakpoint, stepInfo.ResumeMethod, stepInfo.ResumeOffset);
@@ -936,7 +935,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
-		static IEnumerable<DbgCodeRange[]> GetHiddenRanges(DbgCodeRange[] statements, ILSpan[] unusedSpans) {
+		static IEnumerable<DbgCodeRange[]> GetHiddenRanges(DbgCodeRange[] statements, DbgILSpan[] unusedSpans) {
 #if DEBUG
 			for (int i = 1; i < statements.Length; i++)
 				Debug.Assert(statements[i - 1].End <= statements[i].Start);
@@ -958,19 +957,19 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			}
 		}
 
-		static void GetAsyncStepInfos(ref List<AsyncStepInfo> result, MethodDef currentMethod, AsyncMethodDebugInfo asyncInfo, DbgCodeRange[] ranges) {
+		static void GetAsyncStepInfos(ref List<DbgAsyncStepInfo> result, MethodDef currentMethod, DbgAsyncMethodDebugInfo asyncInfo, DbgCodeRange[] ranges) {
 			var stepInfos = asyncInfo.StepInfos;
 			for (int i = 0; i < stepInfos.Length; i++) {
 				ref readonly var stepInfo = ref stepInfos[i];
 				if (Contains(currentMethod, ranges, stepInfo)) {
 					if (result == null)
-						result = new List<AsyncStepInfo>();
+						result = new List<DbgAsyncStepInfo>();
 					result.Add(stepInfo);
 				}
 			}
 		}
 
-		static bool Contains(MethodDef currentMethod, DbgCodeRange[] ranges, in AsyncStepInfo stepInfo) {
+		static bool Contains(MethodDef currentMethod, DbgCodeRange[] ranges, in DbgAsyncStepInfo stepInfo) {
 			for (int i = 0; i < ranges.Length; i++) {
 				ref readonly var range = ref ranges[i];
 				if (range.Contains(stepInfo.YieldOffset) || (stepInfo.ResumeMethod == currentMethod && range.Contains(stepInfo.ResumeOffset)))
@@ -1050,13 +1049,13 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		readonly struct GetStepRangesAsyncResult {
-			public MethodDebugInfo DebugInfoOrNull { get; }
-			public MethodDebugInfo StateMachineDebugInfoOrNull { get; }
+			public DbgMethodDebugInfo DebugInfoOrNull { get; }
+			public DbgMethodDebugInfo StateMachineDebugInfoOrNull { get; }
 			public DbgDotNetEngineStepperFrameInfo Frame { get; }
 			public DbgCodeRange[] StatementRanges { get; }
 			public DbgCodeRange[] ExactStatementRanges { get; }
 			public DbgILInstruction[][] StatementInstructions { get; }
-			public GetStepRangesAsyncResult(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgCodeRange[] exactStatementRanges, DbgILInstruction[][] statementInstructions) {
+			public GetStepRangesAsyncResult(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull, DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] statementRanges, DbgCodeRange[] exactStatementRanges, DbgILInstruction[][] statementInstructions) {
 				DebugInfoOrNull = debugInfo;
 				StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
 				Frame = frame ?? throw new ArgumentNullException(nameof(frame));
@@ -1081,7 +1080,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			var instructions = Array.Empty<DbgILInstruction[]>();
 			if (info.DebugInfoOrNull != null) {
 				var sourceStatement = info.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
-				ILSpan[] ranges;
+				DbgILSpan[] ranges;
 				if (sourceStatement == null)
 					ranges = info.DebugInfoOrNull.GetUnusedRanges();
 				else {
@@ -1131,7 +1130,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return res;
 		}
 
-		static DbgCodeRange[] CreateStepRanges(ILSpan[] ilSpans) {
+		static DbgCodeRange[] CreateStepRanges(DbgILSpan[] ilSpans) {
 			if (ilSpans.Length == 0)
 				return Array.Empty<DbgCodeRange>();
 			var stepRanges = new DbgCodeRange[ilSpans.Length];

@@ -17,24 +17,33 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Code;
+using System;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	static class MethodDebugScopeUtils {
-		public static DbgMethodDebugScope GetScope(DbgMethodDebugScope rootScope, uint offset) {
-			var scope = rootScope;
-			for (;;) {
-				bool found = false;
-				foreach (var childScope in scope.Scopes) {
-					if (childScope.Span.Start <= offset && offset < childScope.Span.End) {
-						found = true;
-						scope = childScope;
-						break;
-					}
-				}
-				if (!found)
-					return scope;
-			}
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
+	/// <summary>
+	/// Method parameter info
+	/// </summary>
+	public readonly struct DbgParameter {
+		/// <summary>
+		/// Gets the parameter index
+		/// </summary>
+		public int Index { get; }
+
+		/// <summary>
+		/// Gets the parameter name
+		/// </summary>
+		public string Name { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="index">Parameter index</param>
+		/// <param name="name">Parameter name</param>
+		public DbgParameter(int index, string name) {
+			if (index < 0)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			Index = index;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 	}
 }

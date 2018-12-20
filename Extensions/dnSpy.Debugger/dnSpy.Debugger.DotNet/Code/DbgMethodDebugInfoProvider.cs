@@ -28,15 +28,14 @@ using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Decompiler.Utils;
 
 namespace dnSpy.Debugger.DotNet.Code {
 	struct MethodDebugInfoResult {
-		public MethodDebugInfo DebugInfoOrNull { get; }
-		public MethodDebugInfo StateMachineDebugInfoOrNull { get; }
+		public DbgMethodDebugInfo DebugInfoOrNull { get; }
+		public DbgMethodDebugInfo StateMachineDebugInfoOrNull { get; }
 		public uint LocalVarSigTok { get; }
-		public MethodDebugInfoResult(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull, uint localVarSigTok) {
+		public MethodDebugInfoResult(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull, uint localVarSigTok) {
 			DebugInfoOrNull = debugInfo;
 			StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
 			LocalVarSigTok = localVarSigTok;
@@ -122,8 +121,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
 					if (info.key.Equals(key)) {
-						if ((info.result.DebugInfoOrNull != null && info.result.DebugInfoOrNull.DecompilerSettingsVersion != decompiler.Settings.Version) ||
-							(info.result.StateMachineDebugInfoOrNull != null && info.result.StateMachineDebugInfoOrNull.DecompilerSettingsVersion != decompiler.Settings.Version)) {
+						if ((info.result.DebugInfoOrNull != null && info.result.DebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version) ||
+							(info.result.StateMachineDebugInfoOrNull != null && info.result.StateMachineDebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version)) {
 							debugInfos.RemoveAt(i);
 							continue;
 						}
@@ -173,8 +172,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 				info = TryCompileAndGetDebugInfo(decompiler, method, token, decContext, cancellationToken);
 			}
 			if (info.debugInfo == null && method.Body == null) {
-				var scope = new MethodDebugScope(new ILSpan(0, 0), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
-				info = (new MethodDebugInfo(null, -1, StateMachineKind.None, method, null, null, Array.Empty<SourceStatement>(), scope, null, null), null);
+				var scope = new DbgMethodDebugScope(new DbgILSpan(0, 0), Array.Empty<DbgMethodDebugScope>(), Array.Empty<DbgLocal>(), Array.Empty<DbgImportInfo>());
+				info = (new DbgMethodDebugInfo(DbgCompilerKind.Unknown, -1, method, null, Array.Empty<DbgSourceStatement>(), scope, null), null);
 			}
 			if (info.debugInfo == null)
 				return default;
@@ -193,7 +192,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryCompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
+		(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull) TryCompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
 			var output = DecompilerOutputImplCache.Alloc();
 			output.Initialize(methodToken);
 			decompiler.Decompile(method, output, decContext);

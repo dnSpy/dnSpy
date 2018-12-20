@@ -19,13 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace dnSpy.Contracts.Decompiler {
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// IL span
 	/// </summary>
-	public readonly struct ILSpan : IEquatable<ILSpan> {
+	public readonly struct DbgILSpan : IEquatable<DbgILSpan> {
 		readonly uint start, end;
 
 		/// <summary>
@@ -53,7 +52,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="start">Start offset</param>
 		/// <param name="length">Length</param>
-		public ILSpan(uint start, uint length) {
+		public DbgILSpan(uint start, uint length) {
 			this.start = start;
 			end = start + length;
 		}
@@ -64,50 +63,38 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="start">Start offset</param>
 		/// <param name="end">End offset</param>
 		/// <returns></returns>
-		public static ILSpan FromBounds(uint start, uint end) {
+		public static DbgILSpan FromBounds(uint start, uint end) {
 			if (end < start)
 				throw new ArgumentOutOfRangeException(nameof(end));
-			return new ILSpan(start, end - start);
+			return new DbgILSpan(start, end - start);
 		}
 
-		/// <summary>
-		/// Sorts and compacts <paramref name="input"/>
-		/// </summary>
-		/// <param name="input">Input values</param>
-		/// <returns></returns>
-		public static List<ILSpan> OrderAndCompact(IEnumerable<ILSpan> input) => OrderAndCompactList(input.ToList());
-
-		/// <summary>
-		/// Sorts and compacts <paramref name="input"/>
-		/// </summary>
-		/// <param name="input">Input list. It can be sorted, and it can also be returned to the caller.</param>
-		/// <returns></returns>
-		public static List<ILSpan> OrderAndCompactList(List<ILSpan> input) {// Don't rename to OrderAndCompact() since some pass in a list that shouldn't be modified
+		internal static List<DbgILSpan> OrderAndCompactList(List<DbgILSpan> input) {
 			if (input.Count <= 1)
 				return input;
 
-			input.Sort(ILSpanComparer.Instance);
-			var res = new List<ILSpan>();
+			input.Sort(DbgILSpanComparer.Instance);
+			var res = new List<DbgILSpan>();
 			var curr = input[0];
 			res.Add(curr);
 			for (int i = 1; i < input.Count; i++) {
 				var next = input[i];
 				if (curr.End == next.Start)
-					res[res.Count - 1] = curr = new ILSpan(curr.Start, next.End - curr.Start);
+					res[res.Count - 1] = curr = new DbgILSpan(curr.Start, next.End - curr.Start);
 				else if (next.Start > curr.End) {
 					res.Add(next);
 					curr = next;
 				}
 				else if (next.End > curr.End)
-					res[res.Count - 1] = curr = new ILSpan(curr.Start, next.End - curr.Start);
+					res[res.Count - 1] = curr = new DbgILSpan(curr.Start, next.End - curr.Start);
 			}
 
 			return res;
 		}
 
-		sealed class ILSpanComparer : IComparer<ILSpan> {
-			public static readonly ILSpanComparer Instance = new ILSpanComparer();
-			public int Compare(ILSpan x, ILSpan y) {
+		sealed class DbgILSpanComparer : IComparer<DbgILSpan> {
+			public static readonly DbgILSpanComparer Instance = new DbgILSpanComparer();
+			public int Compare(DbgILSpan x, DbgILSpan y) {
 				int c = unchecked((int)x.Start - (int)y.Start);
 				if (c != 0)
 					return c;
@@ -121,7 +108,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(ILSpan left, ILSpan right) => left.Equals(right);
+		public static bool operator ==(DbgILSpan left, DbgILSpan right) => left.Equals(right);
 
 		/// <summary>
 		/// operator !=()
@@ -129,21 +116,21 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(ILSpan left, ILSpan right) => !left.Equals(right);
+		public static bool operator !=(DbgILSpan left, DbgILSpan right) => !left.Equals(right);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(ILSpan other) => start == other.start && end == other.end;
+		public bool Equals(DbgILSpan other) => start == other.start && end == other.end;
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ILSpan && Equals((ILSpan)obj);
+		public override bool Equals(object obj) => obj is DbgILSpan && Equals((DbgILSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()

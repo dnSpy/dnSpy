@@ -17,24 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.Code;
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
+	/// <summary>
+	/// Compilers
+	/// </summary>
+	public enum DbgCompilerKind {
+		/// <summary>
+		/// Unknown compiler
+		/// </summary>
+		Unknown,
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	static class MethodDebugScopeUtils {
-		public static DbgMethodDebugScope GetScope(DbgMethodDebugScope rootScope, uint offset) {
-			var scope = rootScope;
-			for (;;) {
-				bool found = false;
-				foreach (var childScope in scope.Scopes) {
-					if (childScope.Span.Start <= offset && offset < childScope.Span.End) {
-						found = true;
-						scope = childScope;
-						break;
-					}
-				}
-				if (!found)
-					return scope;
-			}
-		}
+		/// <summary>
+		/// Microsoft C# compiler
+		/// </summary>
+		MicrosoftCSharp,
+
+		/// <summary>
+		/// Microsoft Visual Basic compiler
+		/// </summary>
+		MicrosoftVisualBasic,
+
+		/// <summary>
+		/// Mono C# compiler
+		/// </summary>
+		MonoCSharp,
 	}
 }

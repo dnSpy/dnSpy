@@ -23,8 +23,8 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
 using dnlib.DotNet;
-using dnlib.DotNet.Pdb;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
@@ -125,7 +125,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return () => CreateMethodDebugInfo(langDebugInfo, ref evalContextState.CompilerGeneratedVariableInfos, ref evalContextState.NotCompilerGenerated);
 		}
 
-		(CompilerGeneratedVariableInfo[] infos, bool[] notCompilerGenerated) CreateCompilerGeneratedVariableInfos(List<MethodDebugScope> allScopes, MethodDebugInfo methodDebugInfo) {
+		(CompilerGeneratedVariableInfo[] infos, bool[] notCompilerGenerated) CreateCompilerGeneratedVariableInfos(List<DbgMethodDebugScope> allScopes, DbgMethodDebugInfo methodDebugInfo) {
 			var locals = methodDebugInfo.Method.Body?.Variables;
 			if (locals == null || locals.Count == 0)
 				return (Array.Empty<CompilerGeneratedVariableInfo>(), Array.Empty<bool>());
@@ -134,10 +134,10 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						continue;
-					if (local.Local == null)
+					if (local.Index < 0)
 						continue;
-					if ((local.Local.Attributes & PdbLocalAttributes.DebuggerHidden) == 0)
-						notCompilerGenerated[local.Local.Index] = true;
+					if (!local.IsDebuggerHidden)
+						notCompilerGenerated[local.Index] = true;
 				}
 			}
 			int count = 0;
@@ -161,15 +161,15 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			var info = new DSEEMethodDebugInfo();
 			var methodDebugInfo = langDebugInfo.MethodDebugInfo;
 
-			var stack = new List<MethodDebugScope>();
-			var allScopes = new List<MethodDebugScope>();
-			var containingScopes = new List<MethodDebugScope>();
+			var stack = new List<DbgMethodDebugScope>();
+			var allScopes = new List<DbgMethodDebugScope>();
+			var containingScopes = new List<DbgMethodDebugScope>();
 			RoslynExpressionCompilerMethods.GetAllScopes(methodDebugInfo.Scope, stack, allScopes, containingScopes, langDebugInfo.ILOffset);
 
 			if (compilerGeneratedVariableInfos == null)
 				(compilerGeneratedVariableInfos, notCompilerGenerated) = CreateCompilerGeneratedVariableInfos(allScopes, methodDebugInfo);
 
-			info.Compiler = GetCompiler(methodDebugInfo.CompilerName);
+			info.Compiler = GetCompiler(methodDebugInfo.Compiler);
 			(info.HoistedLocalScopeRecords, info.HoistedVarFieldTokenToNamesMap) = GetHoistedVariablesInfo(allScopes, info.Compiler);
 			info.ImportRecordGroups = GetImports(methodDebugInfo.Method.DeclaringType, methodDebugInfo.Scope, out var defaultNamespaceName);
 			info.ExternAliasRecords = default;
@@ -184,16 +184,19 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return info;
 		}
 
-		static CompilerKind GetCompiler(string compilerName) {
-			switch (compilerName) {
-			case PredefinedCompilerNames.MicrosoftCSharp:		return CompilerKind.MicrosoftCSharp;
-			case PredefinedCompilerNames.MicrosoftVisualBasic:	return CompilerKind.MicrosoftVisualBasic;
-			case PredefinedCompilerNames.MonoCSharp:			return CompilerKind.MonoCSharp;
-			default:											return CompilerKind.Unknown;
+		static CompilerKind GetCompiler(DbgCompilerKind compiler) {
+			switch (compiler) {
+			case DbgCompilerKind.Unknown:				return CompilerKind.Unknown;
+			case DbgCompilerKind.MicrosoftCSharp:		return CompilerKind.MicrosoftCSharp;
+			case DbgCompilerKind.MicrosoftVisualBasic:	return CompilerKind.MicrosoftVisualBasic;
+			case DbgCompilerKind.MonoCSharp:			return CompilerKind.MonoCSharp;
+			default:
+				Debug.Fail($"Unknown compiler: {compiler}");
+				return CompilerKind.Unknown;
 			}
 		}
 
-		(ImmutableArray<HoistedLocalScopeRecord> hoistedLocalScopeRecords, ImmutableDictionary<int, string> hoistedVarFieldTokenToNamesMap) GetHoistedVariablesInfo(List<MethodDebugScope> scopes, CompilerKind compiler) {
+		(ImmutableArray<HoistedLocalScopeRecord> hoistedLocalScopeRecords, ImmutableDictionary<int, string> hoistedVarFieldTokenToNamesMap) GetHoistedVariablesInfo(List<DbgMethodDebugScope> scopes, CompilerKind compiler) {
 			int maxSlotIndex = -1;
 			foreach (var scope in scopes) {
 				foreach (var local in scope.Locals) {
@@ -249,7 +252,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return CSharp.MonoGeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex);
 		}
 
-		ImmutableArray<string> GetParameterNames(MethodDef method, SourceParameter[] parameters) {
+		ImmutableArray<string> GetParameterNames(MethodDef method, DbgParameter[] parameters) {
 			var ps = method.Parameters;
 			if (method.MethodSig.Params.Count == 0)
 				return default;
@@ -259,7 +262,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				var p = ps[i];
 				if (!p.IsNormalMethodParameter)
 					continue;
-				var name = TryGetSourceParameter(parameters, i)?.Name ?? p.Name;
+				var name = TryGetSourceParameter(parameters, i).Name ?? p.Name;
 				if (GetParameterName(i, name) != name) {
 					valid = false;
 					break;
@@ -272,7 +275,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			for (int i = 0; i < ps.Count; i++) {
 				var p = ps[i];
 				if (p.IsNormalMethodParameter) {
-					var name = TryGetSourceParameter(parameters, i)?.Name ?? p.Name;
+					var name = TryGetSourceParameter(parameters, i).Name ?? p.Name;
 					builder.Add(GetParameterName(i, name));
 				}
 				else
@@ -281,12 +284,12 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return builder.ToImmutable();
 		}
 
-		SourceParameter TryGetSourceParameter(SourceParameter[] parameters, int index) {
+		DbgParameter TryGetSourceParameter(DbgParameter[] parameters, int index) {
 			foreach (var p in parameters) {
-				if (p.Parameter?.Index == index)
+				if (p.Index == index)
 					return p;
 			}
-			return null;
+			return default;
 		}
 
 		protected virtual string GetParameterName(int index, string name) => GetParameterNameCore(index, name);
@@ -297,39 +300,39 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return IdentifierEscaper.Escape(name);
 		}
 
-		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName);
+		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string defaultNamespaceName);
 
-		protected static void AddDSEEImportRecord(ImmutableArray<DSEEImportRecord>.Builder builder, ImportInfo info, ref string defaultNamespaceName) {
+		protected static void AddDSEEImportRecord(ImmutableArray<DSEEImportRecord>.Builder builder, DbgImportInfo info, ref string defaultNamespaceName) {
 			switch (info.TargetKind) {
-			case ImportInfoKind.Namespace:
+			case DbgImportInfoKind.Namespace:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Namespace, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.Type:
+			case DbgImportInfoKind.Type:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Type, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.NamespaceOrType:
+			case DbgImportInfoKind.NamespaceOrType:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.NamespaceOrType, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.Assembly:
+			case DbgImportInfoKind.Assembly:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Assembly, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.XmlNamespace:
+			case DbgImportInfoKind.XmlNamespace:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.XmlNamespace, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.MethodToken:
+			case DbgImportInfoKind.MethodToken:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.MethodToken, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.CurrentNamespace:
+			case DbgImportInfoKind.CurrentNamespace:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.CurrentNamespace, info.Alias, info.Target, info.ExternAlias));
 				break;
 
-			case ImportInfoKind.DefaultNamespace:
+			case DbgImportInfoKind.DefaultNamespace:
 				defaultNamespaceName = info.Target ?? string.Empty;
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.DefaultNamespace, info.Alias, info.Target, info.ExternAlias));
 				break;

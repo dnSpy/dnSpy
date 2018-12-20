@@ -20,27 +20,27 @@
 using System;
 using System.Collections.Generic;
 
-namespace dnSpy.Contracts.Decompiler {
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
 	/// Source statement
 	/// </summary>
-	public readonly struct SourceStatement : IEquatable<SourceStatement> {
+	public readonly struct DbgSourceStatement : IEquatable<DbgSourceStatement> {
 		internal static readonly SpanStartComparerImpl SpanStartComparer = new SpanStartComparerImpl();
-		readonly ILSpan ilSpan;
-		readonly TextSpan textSpan;
+		readonly DbgILSpan ilSpan;
+		readonly DbgTextSpan textSpan;
 
 		/// <summary>
 		/// IL span
 		/// </summary>
-		public ILSpan ILSpan => ilSpan;
+		public DbgILSpan ILSpan => ilSpan;
 
 		/// <summary>
 		/// Text span
 		/// </summary>
-		public TextSpan TextSpan => textSpan;
+		public DbgTextSpan TextSpan => textSpan;
 
-		internal sealed class SpanStartComparerImpl : IComparer<SourceStatement> {
-			public int Compare(SourceStatement x, SourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
+		internal sealed class SpanStartComparerImpl : IComparer<DbgSourceStatement> {
+			public int Compare(DbgSourceStatement x, DbgSourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
 		}
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="ilSpan">IL span</param>
 		/// <param name="textSpan">Text span</param>
-		public SourceStatement(ILSpan ilSpan, TextSpan textSpan) {
+		public DbgSourceStatement(DbgILSpan ilSpan, DbgTextSpan textSpan) {
 			this.ilSpan = ilSpan;
 			this.textSpan = textSpan;
 		}
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(SourceStatement left, SourceStatement right) => left.Equals(right);
+		public static bool operator ==(DbgSourceStatement left, DbgSourceStatement right) => left.Equals(right);
 
 		/// <summary>
 		/// operator !=()
@@ -67,21 +67,21 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(SourceStatement left, SourceStatement right) => !left.Equals(right);
+		public static bool operator !=(DbgSourceStatement left, DbgSourceStatement right) => !left.Equals(right);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(SourceStatement other) => ilSpan.Equals(other.ilSpan) && textSpan.Equals(other.textSpan);
+		public bool Equals(DbgSourceStatement other) => ilSpan.Equals(other.ilSpan) && textSpan.Equals(other.textSpan);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is SourceStatement && Equals((SourceStatement)obj);
+		public override bool Equals(object obj) => obj is DbgSourceStatement && Equals((DbgSourceStatement)obj);
 
 		/// <summary>
 		/// GetHashCode()
