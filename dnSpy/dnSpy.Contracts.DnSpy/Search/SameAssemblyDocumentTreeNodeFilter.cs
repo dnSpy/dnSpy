@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Search {
 			this.allowedMod = allowedMod;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public override DocumentTreeNodeFilterResult GetResult(AssemblyDef asm) {
 			if (asm != allowedAsm)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
@@ -51,6 +51,6 @@ namespace dnSpy.Contracts.Search {
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
 			return base.GetResult(mod);
 		}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

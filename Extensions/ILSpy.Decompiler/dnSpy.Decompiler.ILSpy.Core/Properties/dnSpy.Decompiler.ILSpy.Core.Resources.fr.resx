@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Nombre maximal d’éléments de tableau à afficher</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Longueur de chaîne maximale</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Ajoutez le modificateur « privé » pour les membres de type</value>
   </data>

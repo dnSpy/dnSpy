@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="filename">Filename</param>
 		public FilenameKey(string filename) => this.filename = GetFullPath(filename);
 
+		FilenameKey(string filename, bool dummy) => this.filename = filename;
+
+		// PERF: Path.GetFullPath() is slow so if we know that FilenameKey.GetFullPath() == filename, use this method instead
+		internal static FilenameKey CreateFullPath(string filename) => new FilenameKey(filename, false);
+
 		static string GetFullPath(string filename) {
 			try {
 				// Prevent slow exceptions

@@ -17,7 +17,7 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
     <!-- Update App.config whenever this value changes -->
-    <DnSpyAssemblyVersion>5.0.9.0</DnSpyAssemblyVersion>
+    <DnSpyAssemblyVersion>5.0.65000.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
     <DnSpyAssemblyInformationalVersion>v5.x.x</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2018 de4dot@gmail.com</DnSpyAssemblyCopyright>

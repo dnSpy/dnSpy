@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Minden figyelmeztető üzenet engedélyezése</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Típusok deszerializálása az erőforrásokban (nem biztonságos)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Minden szerelvény betöltődhet és elindulhat az erőforrásokban lévő adatokkal.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Memóriába leképezett I/O használata</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Ablak pozíció</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Új szöveg formázó használata</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Az új szöveg formázó gyorsabb, de nem támogatja a sortörést vagy minden unicode karaktert.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hexa szerkesztő</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Szöveg szerkesztő</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Kék</value>
@@ -2051,5 +2033,8 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Szimbólum címek mutatása</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Időbélyeg:</value>
   </data>
 </root>

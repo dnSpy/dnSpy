@@ -17,11 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	static class MethodDebugScopeUtils {
-		public static MethodDebugScope GetScope(MethodDebugScope rootScope, uint offset) {
+		public static DbgMethodDebugScope GetScope(DbgMethodDebugScope rootScope, uint offset) {
 			var scope = rootScope;
 			for (;;) {
 				bool found = false;

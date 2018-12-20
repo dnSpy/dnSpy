@@ -17,26 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-
-namespace dnSpy.Contracts.App {
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
-	/// Application settings
+	/// Compilers
 	/// </summary>
-	interface IAppSettings : INotifyPropertyChanged {
+	public enum DbgCompilerKind {
 		/// <summary>
-		/// Text Editor: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// Unknown compiler
 		/// </summary>
-		bool UseNewRenderer_TextEditor { get; }
+		Unknown,
 
 		/// <summary>
-		/// Hex Editor: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// Microsoft C# compiler
 		/// </summary>
-		bool UseNewRenderer_HexEditor { get; }
+		MicrosoftCSharp,
 
 		/// <summary>
-		/// File TreeView: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// Microsoft Visual Basic compiler
 		/// </summary>
-		bool UseNewRenderer_DocumentTreeView { get; }
+		MicrosoftVisualBasic,
+
+		/// <summary>
+		/// Mono C# compiler
+		/// </summary>
+		MonoCSharp,
 	}
 }

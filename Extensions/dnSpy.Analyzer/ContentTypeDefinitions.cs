@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Analyzer {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNodeAnalyzer)]
 		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
 		static readonly ContentTypeDefinition TreeViewNodeAnalyzer;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

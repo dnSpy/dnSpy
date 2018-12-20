@@ -19,13 +19,13 @@
 
 using System.Threading.Tasks;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 
 namespace dnSpy.Debugger.DotNet.Code {
 	readonly struct GetMethodDebugInfoResult {
-		public MethodDebugInfo DebugInfoOrNull { get; }
-		public MethodDebugInfo StateMachineDebugInfoOrNull { get; }
-		public GetMethodDebugInfoResult(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) {
+		public DbgMethodDebugInfo DebugInfoOrNull { get; }
+		public DbgMethodDebugInfo StateMachineDebugInfoOrNull { get; }
+		public GetMethodDebugInfoResult(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull) {
 			DebugInfoOrNull = debugInfo;
 			StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
 		}

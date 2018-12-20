@@ -23,7 +23,7 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Classification.DnSpy {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[VSUTIL.Name(CT.ContentTypes.HexToolTip)]
 		[VSUTIL.BaseDefinition(CT.ContentTypes.Text)]
@@ -33,6 +33,6 @@ namespace dnSpy.Hex.Classification.DnSpy {
 		[VSUTIL.Name(CT.ContentTypes.DefaultHexToolTip)]
 		[VSUTIL.BaseDefinition(CT.ContentTypes.HexToolTip)]
 		static readonly VSUTIL.ContentTypeDefinition DefaultHexToolTipContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

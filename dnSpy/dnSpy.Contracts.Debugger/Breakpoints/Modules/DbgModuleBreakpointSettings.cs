@@ -59,10 +59,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		public string ProcessName { get; set; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => left.Equals(right);
 		public static bool operator !=(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>

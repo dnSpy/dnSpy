@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdBindingFlags {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Default					= 0,
 		IgnoreCase				= 0x00000001,
 		DeclaredOnly			= 0x00000002,
@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		OptionalParamBinding	= 0x00040000,
 		IgnoreReturn			= 0x01000000,
 		Inaccessible			= int.MinValue,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -1153,6 +1153,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timestamp:.
+        /// </summary>
+        public static string Decompile_Timestamp {
+            get {
+                return ResourceManager.GetString("Decompile_Timestamp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string DecompileCancelButton {
@@ -3603,24 +3612,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deserialize types in resources (unsafe).
-        /// </summary>
-        public static string Options_Misc_Deserialize {
-            get {
-                return ResourceManager.GetString("Options_Misc_Deserialize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Any assembly could get loaded and executed with data from the resources..
-        /// </summary>
-        public static string Options_Misc_Deserialize_ToolTip {
-            get {
-                return ResourceManager.GetString("Options_Misc_Deserialize_ToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Use memory mapped I/O.
         /// </summary>
         public static string Options_Misc_UseMmapdIO {
@@ -5696,42 +5687,6 @@ namespace dnSpy.Properties {
         public static string UseHorizontalTabGroupsCommand {
             get {
                 return ResourceManager.GetString("UseHorizontalTabGroupsCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hex Editor.
-        /// </summary>
-        public static string UseNewRenderer_HexEditor {
-            get {
-                return ResourceManager.GetString("UseNewRenderer_HexEditor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Text Editor.
-        /// </summary>
-        public static string UseNewRenderer_TextEditor {
-            get {
-                return ResourceManager.GetString("UseNewRenderer_TextEditor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use the new text formatter.
-        /// </summary>
-        public static string UseNewRendererHeader {
-            get {
-                return ResourceManager.GetString("UseNewRendererHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The new text formatter is faster but doesn&apos;t support word wrap or all unicode characters..
-        /// </summary>
-        public static string UseNewRendererInfo {
-            get {
-                return ResourceManager.GetString("UseNewRendererInfo", resourceCulture);
             }
         }
         

@@ -124,7 +124,7 @@
     <value>Дозволити ініціалізатори полів</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Завжди генерувати змінні виключення в catch-блоках, якщо ти не Object</value>
+    <value>Завжди генерувати exception змінні в catch-блоках, якщо ти не Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>Порядок Декомпіляції</value>
@@ -175,7 +175,10 @@
     <value>Використати вирази присвоєння такі, як у while ((count = Do()) != 0);</value>
   </data>
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
-    <value>Максимальна кількість відображених елементів масиву</value>
+    <value>Показувати максимальну кількість елементів масиву</value>
+  </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Максимальна довжина стрічки</value>
   </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Додати модифікатор 'private' до членів типу</value>
@@ -223,7 +226,7 @@
     <value>Додати модифікатор 'internal' до типів</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
-    <value>Використовувати імена змінних із відладочних символів, при наявності</value>
+    <value>Використовувати імена змінних із дебаг символів, при наявності</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
     <value>Сортувати члени як в джерельному коді</value>

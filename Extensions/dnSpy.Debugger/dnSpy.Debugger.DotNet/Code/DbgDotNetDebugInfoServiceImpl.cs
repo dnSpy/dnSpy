@@ -99,16 +99,19 @@ namespace dnSpy.Debugger.DotNet.Code {
 				refNavOffset = offset;
 
 			var key = new ModuleTokenId(moduleId.Value, token);
-			var info = methodDebugService.TryGetMethodDebugInfo(key);
-			MethodDebugInfo stateMachineDebugInfoOrNull = null;
-			if (info == null) {
+			var decompilerDebugInfo = methodDebugService.TryGetMethodDebugInfo(key);
+			DbgMethodDebugInfo debugInfo;
+			DbgMethodDebugInfo stateMachineDebugInfoOrNull = null;
+			if (decompilerDebugInfo != null)
+				debugInfo = DbgMethodDebugInfoUtils.ToDbgMethodDebugInfo(decompilerDebugInfo);
+			else {
 				var cancellationToken = CancellationToken.None;
 				var result = dbgMethodDebugInfoProvider.Value.GetMethodDebugInfo(decompilerService.Value.Decompiler, module, token, cancellationToken);
-				info = result.DebugInfoOrNull;
+				debugInfo = result.DebugInfoOrNull;
 				stateMachineDebugInfoOrNull = result.StateMachineDebugInfoOrNull;
 			}
 
-			return new GetMethodDebugInfoResult(info, stateMachineDebugInfoOrNull);
+			return new GetMethodDebugInfoResult(debugInfo, stateMachineDebugInfoOrNull);
 		}
 	}
 }

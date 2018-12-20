@@ -18,16 +18,17 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Decompiler;
 
-namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
+namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DecompilerOutputImpl : IDecompilerOutput {
 		int textLength;
 		int indentLevel;
 		bool addIndent;
 		uint methodToken;
-		MethodDebugInfo methodDebugInfo;
-		MethodDebugInfo kickoffMethodDebugInfo;
+		DbgMethodDebugInfo methodDebugInfo;
+		DbgMethodDebugInfo kickoffMethodDebugInfo;
 
 		public int Length => textLength;
 		public int NextPosition => textLength + (addIndent ? indentLevel : 0);
@@ -45,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public void Initialize(uint methodToken) => this.methodToken = methodToken;
-		public (MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryGetMethodDebugInfo() {
+		public (DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull) TryGetMethodDebugInfo() {
 			if (methodDebugInfo != null) {
 				if (kickoffMethodDebugInfo != null)
 					return (kickoffMethodDebugInfo, methodDebugInfo);
@@ -57,14 +58,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public void AddCustomData<TData>(string id, TData data) {
 			if (id == PredefinedCustomDataIds.DebugInfo && data is MethodDebugInfo debugInfo) {
 				if (debugInfo.Method.MDToken.Raw == methodToken)
-					methodDebugInfo = debugInfo;
+					methodDebugInfo = DbgMethodDebugInfoUtils.ToDbgMethodDebugInfo(debugInfo);
 				else if (debugInfo.KickoffMethod?.MDToken.Raw == methodToken) {
 					var m = debugInfo.KickoffMethod;
 					var body = m.Body;
 					int bodySize = body?.GetCodeSize() ?? 0;
 					var scope = new MethodDebugScope(new ILSpan(0, (uint)bodySize), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
-					kickoffMethodDebugInfo = new MethodDebugInfo(debugInfo.CompilerName, debugInfo.DecompilerSettingsVersion, StateMachineKind.None, m, null, null, Array.Empty<SourceStatement>(), scope, null, null);
-					methodDebugInfo = debugInfo;
+					kickoffMethodDebugInfo = DbgMethodDebugInfoUtils.ToDbgMethodDebugInfo(new MethodDebugInfo(debugInfo.CompilerName, debugInfo.DecompilerSettingsVersion, StateMachineKind.None, m, null, null, Array.Empty<SourceStatement>(), scope, null, null));
+					methodDebugInfo = DbgMethodDebugInfoUtils.ToDbgMethodDebugInfo(debugInfo);
 				}
 			}
 		}

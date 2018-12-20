@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		sealed class ILSpanComparer : IComparer<ILSpan> {
-			public static readonly IComparer<ILSpan> Instance = new ILSpanComparer();
+			public static readonly ILSpanComparer Instance = new ILSpanComparer();
 			public int Compare(ILSpan x, ILSpan y) {
 				int c = unchecked((int)x.Start - (int)y.Start);
 				if (c != 0)

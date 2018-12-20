@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	static class SpaceReservationManagerDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(SpaceReservationManagerDefinition))]
 		[Name(PredefinedSpaceReservationManagerNames.CurrentLine)]
 		[Order(Before = IntellisenseSpaceReservationManagerNames.SmartTagSpaceReservationManagerName)]
@@ -50,6 +50,6 @@ namespace dnSpy.Language.Intellisense {
 		[Name(IntellisenseSpaceReservationManagerNames.CompletionSpaceReservationManagerName)]
 		[Order(After = IntellisenseSpaceReservationManagerNames.SignatureHelpSpaceReservationManagerName)]
 		static readonly SpaceReservationManagerDefinition completionSpaceReservationManagerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

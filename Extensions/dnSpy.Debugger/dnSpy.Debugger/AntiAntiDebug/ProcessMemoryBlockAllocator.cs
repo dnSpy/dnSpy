@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		ProcessMemoryBlockImpl GetCloseBlock(ulong moduleAddress, ulong moduleEndAddress) {
 			foreach (var mem in allocatedMemory) {
-				if (process.Machine != DbgMachine.X64)
+				if (process.Architecture != DbgArchitecture.X64)
 					return mem;
 				if (!IsClose64(moduleAddress, moduleEndAddress, mem.CurrentAddress))
 					continue;
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 			// Only needed if target process is X64 (because of rip-relative addressing).
 			// Also, we can't allocate high mem if we're a 32-bit process so don't even try.
-			if (IntPtr.Size == 8 && process.Machine == DbgMachine.X64) {
+			if (IntPtr.Size == 8 && process.Architecture == DbgArchitecture.X64) {
 				ulong addr_lo = AlignDownPage(moduleAddress) - ALLOC_SIZE;
 				ulong addr_hi = AlignDownPage(moduleEndAddress) + ALLOC_SIZE;
 				while (true) {

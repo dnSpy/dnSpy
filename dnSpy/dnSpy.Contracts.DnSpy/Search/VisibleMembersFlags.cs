@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Search {
 	/// </summary>
 	[Flags]
 	public enum VisibleMembersFlags {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		AssemblyDef		= 0x00000001,
 		ModuleDef		= 0x00000002,
 		Namespace		= 0x00000004,
@@ -65,6 +65,6 @@ namespace dnSpy.Contracts.Search {
 						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
 						  ResourceList | NonNetFile | Resource | ResourceElement |
 						  Other,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

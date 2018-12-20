@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>فعالسازی تمام پیغام‌های خطا</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>نامرتب سازی تایپ ها در ریسورس (ناامن)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>هر سمبلی می تواند با داده از ریسورس بارگذاری و اجرا شود.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>استفاده از memory mapped I/O</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>موقعیت پنجره</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>استفاده از قالب متن جدید</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>قالب متن جدید سریع تر است اما از warp کردن متن و حروف unicode پشتیبانی نمی کند.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>ویرایشگر Hex</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>ویرایشگر متن</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_آبی</value>
@@ -2051,5 +2033,8 @@
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Show symbol address</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>برچسب زمان:</value>
   </data>
 </root>

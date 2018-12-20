@@ -19,13 +19,14 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgDispatcherProvider))]
 	sealed class DbgDispatcherProvider {
 		public Dispatcher InternalDispatcher => dbgDispatcher.Dispatcher;
-		public DbgDispatcher2 Dispatcher => dbgDispatcher;
+		public DbgDispatcher Dispatcher => dbgDispatcher;
 
 		readonly DbgDispatcherImpl dbgDispatcher;
 

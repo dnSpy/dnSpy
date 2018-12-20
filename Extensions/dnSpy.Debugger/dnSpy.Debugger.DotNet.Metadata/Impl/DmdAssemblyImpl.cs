@@ -231,7 +231,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return null;
 
 				var targetAssembly = assembly;
-				if (assemblyName != null && !AssemblyNameEqualityComparer.Instance.Equals(targetAssembly.GetName(), assemblyName)) {
+				if (assemblyName != null && !assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
 					targetAssembly = (DmdAssemblyImpl)targetAssembly.AppDomain.GetAssembly(assemblyName);
 					if (targetAssembly == null)
 						return null;

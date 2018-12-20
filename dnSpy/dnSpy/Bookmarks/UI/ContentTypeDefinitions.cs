@@ -23,7 +23,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Bookmarks.UI {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.BookmarksWindow)]
 		[BaseDefinition(ContentTypes.Text)]
@@ -38,6 +38,6 @@ namespace dnSpy.Bookmarks.UI {
 		[Name(ContentTypes.BookmarksWindowLabels)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition BookmarksWindowLabels;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

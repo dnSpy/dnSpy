@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Source statement
 	/// </summary>
 	public readonly struct SourceStatement : IEquatable<SourceStatement> {
-		internal static readonly IComparer<SourceStatement> SpanStartComparer = new SpanStartComparerImpl();
+		internal static readonly SpanStartComparerImpl SpanStartComparer = new SpanStartComparerImpl();
 		readonly ILSpan ilSpan;
 		readonly TextSpan textSpan;
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public TextSpan TextSpan => textSpan;
 
-		sealed class SpanStartComparerImpl : IComparer<SourceStatement> {
+		internal sealed class SpanStartComparerImpl : IComparer<SourceStatement> {
 			public int Compare(SourceStatement x, SourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
 		}
 

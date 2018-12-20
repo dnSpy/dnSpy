@@ -99,15 +99,15 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		}
 
 		PatchAPIResult PatchAPI(ulong address, ulong moduleAddress, ulong moduleEndAddress) {
-			switch (process.Machine) {
-			case DbgMachine.X86:
-			case DbgMachine.X64:
-				var patcherX86 = new ApiPatcherX86(processMemoryBlockAllocator, is64: process.Machine == DbgMachine.X64, address, moduleAddress, moduleEndAddress);
+			switch (process.Architecture) {
+			case DbgArchitecture.X86:
+			case DbgArchitecture.X64:
+				var patcherX86 = new ApiPatcherX86(processMemoryBlockAllocator, is64: process.Architecture == DbgArchitecture.X64, address, moduleAddress, moduleEndAddress);
 				return patcherX86.Patch();
 
 			default:
-				Debug.Fail($"Unsupported machine: {process.Machine}");
-				return new PatchAPIResult($"Unsupported machine: {process.Machine}");
+				Debug.Fail($"Unsupported architecture: {process.Architecture}");
+				return new PatchAPIResult($"Unsupported architecture: {process.Architecture}");
 			}
 		}
 

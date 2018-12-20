@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public object TitleObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowTitle);
 		public object StateObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowState);
 		public object DebuggingObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowDebugging);
-		public object MachineObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowMachine);
+		public object ArchitectureObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowArchitecture);
 		public object PathObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowPath);
 		public DbgProcess Process { get; }
 		public IProcessContext Context { get; }
@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			OnPropertyChanged(nameof(TitleObject));
 			OnPropertyChanged(nameof(StateObject));
 			OnPropertyChanged(nameof(DebuggingObject));
-			OnPropertyChanged(nameof(MachineObject));
+			OnPropertyChanged(nameof(ArchitectureObject));
 			OnPropertyChanged(nameof(PathObject));
 		}
 
@@ -214,8 +214,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				OnPropertyChanged(nameof(DebuggingObject));
 				break;
 
-			case nameof(Process.Machine):
-				OnPropertyChanged(nameof(MachineObject));
+			case nameof(Process.Architecture):
+				OnPropertyChanged(nameof(ArchitectureObject));
 				break;
 
 			case nameof(Process.Bitness):

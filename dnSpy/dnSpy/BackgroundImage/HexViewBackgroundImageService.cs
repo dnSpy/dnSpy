@@ -30,12 +30,12 @@ namespace dnSpy.BackgroundImage {
 		readonly WpfHexView wpfHexView;
 		HexAdornmentLayer adornmentLayer;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.BackgroundImage)]
 		[HexLayerKind(HexLayerKind.Underlay)]
 		static HexAdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		HexViewBackgroundImageService(WpfHexView wpfHexView, IImageSourceService imageSourceService)
 			: base(imageSourceService) {

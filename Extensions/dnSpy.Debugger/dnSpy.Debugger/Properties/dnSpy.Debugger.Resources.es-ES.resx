@@ -265,7 +265,7 @@
     <value>Mostrar la ventana local cuando se inicia el depurador</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Evita que el código detecte un depurador administrado</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ignorar Debugger.Break () y romper instrucciones</value>

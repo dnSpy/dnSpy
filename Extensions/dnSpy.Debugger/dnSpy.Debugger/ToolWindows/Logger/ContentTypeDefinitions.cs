@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.Logger {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.OutputDebug)]
 		[BaseDefinition(ContentTypes.Output)]
 		static readonly ContentTypeDefinition OutputDebugContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

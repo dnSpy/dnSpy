@@ -65,16 +65,16 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			}
 		}
 
-		public void WriteMachine(IDbgTextWriter output, DbgMachine machine) => output.Write(DbgTextColor.Text, GetMachineString(machine));
+		public void WriteArchitecture(IDbgTextWriter output, DbgArchitecture architecture) => output.Write(DbgTextColor.Text, GetArchitectureString(architecture));
 
-		static string GetMachineString(DbgMachine machine) {
-			switch (machine) {
-			case DbgMachine.X86:		return "x86";
-			case DbgMachine.X64:		return "x64";
-			case DbgMachine.Arm:		return "ARM";
-			case DbgMachine.Arm64:		return "ARM64";
+		static string GetArchitectureString(DbgArchitecture architecture) {
+			switch (architecture) {
+			case DbgArchitecture.X86:		return "x86";
+			case DbgArchitecture.X64:		return "x64";
+			case DbgArchitecture.Arm:		return "ARM";
+			case DbgArchitecture.Arm64:		return "ARM64";
 			default:
-				Debug.Fail($"Unknown arch: {machine}");
+				Debug.Fail($"Unknown arch: {architecture}");
 				return "???";
 			}
 		}

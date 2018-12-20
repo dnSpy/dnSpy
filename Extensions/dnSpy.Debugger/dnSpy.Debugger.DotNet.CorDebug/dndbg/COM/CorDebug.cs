@@ -23,8 +23,8 @@ using System.Security;
 using System.Text;
 using dndbg.Engine;
 
-#pragma warning disable 0108 // Member hides inherited member; missing new keyword
-#pragma warning disable 0649
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+#pragma warning disable CS0649
 namespace dndbg.COM.CorDebug {
 	enum CorDebugInterfaceVersion {
 		CorDebugInvalidVersion = 0,
@@ -2027,5 +2027,5 @@ namespace dndbg.COM.CorDebug {
 		AlwaysShowUpdates
 	}
 }
-#pragma warning restore 0649
-#pragma warning restore 0108 // Member hides inherited member; missing new keyword
+#pragma warning restore CS0649
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword

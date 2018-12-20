@@ -26,9 +26,9 @@ namespace dnSpy.Text.Projection {
 	sealed class BufferGraph : IBufferGraph {
 		public ITextBuffer TopBuffer { get; }
 		public event EventHandler<GraphBufferContentTypeChangedEventArgs> GraphBufferContentTypeChanged;
-#pragma warning disable 0067
+#pragma warning disable CS0067
 		public event EventHandler<GraphBuffersChangedEventArgs> GraphBuffersChanged;
-#pragma warning restore 0067
+#pragma warning restore CS0067
 
 		public BufferGraph(ITextBuffer textBuffer) {
 			TopBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));

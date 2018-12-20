@@ -29,6 +29,7 @@ namespace dnSpy.Documents {
 		public readonly string[] Paths;
 		public readonly int Bitness;
 		public readonly FrameworkVersion Version;
+		public readonly Version SystemVersion;
 
 		string DebuggerPaths => string.Join(Path.PathSeparator.ToString(), Paths);
 
@@ -38,7 +39,10 @@ namespace dnSpy.Documents {
 			for (int i = 1; i < paths.Length; i++) {
 				if (firstPath.Bitness != paths[i].Bitness)
 					throw new ArgumentException();
-				if (!firstPath.Version.Equals(paths[i].Version))
+				// Ignore Extra since it can be different if it's a preview
+				if (firstPath.Version.Major != paths[i].Version.Major ||
+					firstPath.Version.Minor != paths[i].Version.Minor ||
+					firstPath.Version.Patch != paths[i].Version.Patch)
 					throw new ArgumentException();
 			}
 #endif
@@ -47,6 +51,7 @@ namespace dnSpy.Documents {
 			Paths = allPaths;
 			Bitness = firstPath.Bitness;
 			Version = firstPath.Version;
+			SystemVersion = new Version(firstPath.Version.Major, firstPath.Version.Minor, firstPath.Version.Patch, 0);
 
 			foreach (var p in Paths) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(p)), DotNetCoreAppDir)) {

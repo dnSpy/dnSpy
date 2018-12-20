@@ -17,19 +17,33 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Debugger.Attach {
+using System;
+
+namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
-	/// Predefined architecture names, see <see cref="AttachProgramOptions.Architecture"/>
+	/// Method parameter info
 	/// </summary>
-	public static class PredefinedArchitectureNames {
+	public readonly struct DbgParameter {
 		/// <summary>
-		/// x86 (32-bit)
+		/// Gets the parameter index
 		/// </summary>
-		public static readonly string X86 = "x86";
+		public int Index { get; }
 
 		/// <summary>
-		/// x64 (64-bit)
+		/// Gets the parameter name
 		/// </summary>
-		public static readonly string X64 = "x64";
+		public string Name { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="index">Parameter index</param>
+		/// <param name="name">Parameter name</param>
+		public DbgParameter(int index, string name) {
+			if (index < 0)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			Index = index;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+		}
 	}
 }

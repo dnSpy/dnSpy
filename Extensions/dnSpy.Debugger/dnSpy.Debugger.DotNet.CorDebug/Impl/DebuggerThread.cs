@@ -31,14 +31,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		AutoResetEvent callDispatcherRunEvent;
 		readonly string threadName;
 
-		WpfDebugMessageDispatcher WpfDebugMessageDispatcher {
+		DebugMessageDispatcher DebugMessageDispatcher {
 			get {
-				if (__wpfDebugMessageDispatcher == null)
-					Interlocked.CompareExchange(ref __wpfDebugMessageDispatcher, new WpfDebugMessageDispatcher(Dispatcher), null);
-				return __wpfDebugMessageDispatcher;
+				if (__debugMessageDispatcher == null)
+					Interlocked.CompareExchange(ref __debugMessageDispatcher, new DebugMessageDispatcher(Dispatcher), null);
+				return __debugMessageDispatcher;
 			}
 		}
-		volatile WpfDebugMessageDispatcher __wpfDebugMessageDispatcher;
+		volatile DebugMessageDispatcher __debugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
 			this.threadName = threadName;
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				Dispatcher.BeginInvokeShutdown();
 		}
 
-		public IDebugMessageDispatcher GetDebugMessageDispatcher() => WpfDebugMessageDispatcher;
+		public IDebugMessageDispatcher GetDebugMessageDispatcher() => DebugMessageDispatcher;
 
 		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
 		public bool CheckAccess() => Dispatcher.CheckAccess();
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				// which will notify DbgManager. It will then call engine.Run() which must
 				// continue the process even if we're func evaluating. If we use Dispatcher,
 				// we'll block here since WpfDebugMessageDispatcher is waiting for an event.
-				WpfDebugMessageDispatcher.ExecuteAsync(callback);
+				DebugMessageDispatcher.ExecuteAsync(callback);
 			}
 		}
 	}

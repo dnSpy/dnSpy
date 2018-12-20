@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public TypeSig Type { get; }
 
 		/// <summary>
-		/// Gets the hoisted field or null if it's not a hoisted local/parameter
+		/// Gets the hoisted field or null if it's not a hoisted local
 		/// </summary>
 		public FieldDef HoistedField { get; }
 

@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Habilitar todas as mensagens de aviso</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Desserializar tipos em recursos (inseguro)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Qualquer assembly pode ser carregado e executado com dados a partir dos recursos.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Usar memória mapeada I/O</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Posição da janela</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Usar o novo formatador de texto</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>O novo formatador de texto é mais rápido, mas não suporta quebra automática ou todos os carateres unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Editor de texto</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>Azul</value>
@@ -2047,5 +2029,8 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Show symbol address</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Data/Hora:</value>
   </data>
 </root>

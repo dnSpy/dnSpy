@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Maximum megjelenítendő tömb elemek száma</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Maximális karakterlánc hossz</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>A 'private' módosító hozzáadása a típus tagokhoz</value>
   </data>

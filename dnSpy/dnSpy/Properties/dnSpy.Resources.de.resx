@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Aktiviere alle Warnung</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Deserialisiere Typen in Ressourcen (unsicher)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Jede Assembly könnte mit den Daten aus den Ressourcen geladen und ausgeführt werden.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Nutze Memory-Mapped I/O</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Fensterposition</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Neuen Textformatierer benutzen</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Der neue Textformatierer ist schneller, unterstützt aber keinen Zeilenumbruch oder alle Unicode Zeichen.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Text Editor</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Blau</value>
@@ -1933,13 +1915,13 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Immer Größe des Speicheroperands anzeigen</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Always show the scale value</value>
+    <value>Immer den Skalenwert anzeigen</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
     <value>Immer Segment Register anzeigen</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
-    <value>Digit separator</value>
+    <value>Zahlen mit Unterstrich unterteilen</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
     <value>Leerzeile zwischen Blöcken einfügen</value>
@@ -1957,16 +1939,16 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Operand-Spalte</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
-    <value>RIP-relative addresses</value>
+    <value>RIP-relative Adressen</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Show scale before index register</value>
+    <value>Skala vor dem Indexregister anzeigen</value>
   </data>
   <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Short numbers (branches)</value>
+    <value>Kurznummern (Zweige)</value>
   </data>
   <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Short numbers</value>
+    <value>Kurznummern</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Zweiggröße anzeigen</value>
@@ -1981,19 +1963,19 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Null Verschiebungen anzeigen</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Signed numbers</value>
+    <value>Signierte Nummern</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>Vorzeichenbehaftete Verschiebungen</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
     <value>Kleine Zahlen als Dezimalzahl anzeigen</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Space after memory operand brackets</value>
+    <value>Leerzeichen nach Speicheroperandenklammern</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
-    <value>Space after operand separator</value>
+    <value>Leerzeichen nach Operandentrennzeichen</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
     <value>Leerzeichen zwischen '+'</value>
@@ -2029,10 +2011,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Blanke Register</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Always show mnemonic size suffix</value>
+    <value>Immer mnemonisches Größen-Suffix anzeigen</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Space after memory operand comma</value>
+    <value>Leerzeichen nach Speicheroperand Komma</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
     <value>Hexadezimalzahlen verwenden</value>
@@ -2050,6 +2032,9 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Die Methode ist nicht optimiert</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>Adresse des Symbols anzeigen</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Zeitstempel:</value>
   </data>
 </root>

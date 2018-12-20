@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Search {
 	/// Filter base class
 	/// </summary>
 	public abstract class DocumentTreeNodeFilterBase : IDocumentTreeNodeFilter {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public virtual DocumentTreeNodeFilterResult GetResult(ModuleDef mod) => new DocumentTreeNodeFilterResult();
 		public virtual DocumentTreeNodeFilterResult GetResult(FieldDef field) => new DocumentTreeNodeFilterResult();
 		public virtual DocumentTreeNodeFilterResult GetResult(PropertyDef prop) => new DocumentTreeNodeFilterResult();
@@ -55,6 +55,6 @@ namespace dnSpy.Contracts.Search {
 		public virtual DocumentTreeNodeFilterResult GetResult(IDsDocument document) => new DocumentTreeNodeFilterResult();
 		public virtual DocumentTreeNodeFilterResult GetResultParamDefs(MethodDef method) => new DocumentTreeNodeFilterResult();
 		public virtual DocumentTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => new DocumentTreeNodeFilterResult();
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

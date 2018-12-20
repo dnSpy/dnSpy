@@ -265,7 +265,7 @@
     <value>Visualizza la finestra variabili locali quando il debugger viene avviato</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Impedisci al codice di rilevare il debugger</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ignora Debugger.Break() e l'interruzione delle istruzioni</value>
@@ -1489,10 +1489,10 @@
     <value>Copia E_spressione</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
-    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+    <value>Impossibile trovare il codice del metodo. Assicurarsi che il processo sia in pausa e che il metodo sia stato eseguito.</value>
   </data>
   <data name="DisassemblyCommand" xml:space="preserve">
-    <value>_Disassembly</value>
+    <value>_Smontaggio</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>

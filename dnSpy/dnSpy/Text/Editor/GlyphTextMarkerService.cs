@@ -54,14 +54,14 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
 		public event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.GlyphTextMarker)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
 		static AdornmentLayerDefinition glyphTextMarkerAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		public IEditorFormatMapService EditorFormatMapService { get; }

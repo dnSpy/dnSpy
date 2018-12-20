@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Numero massimo di elementi della matrice da mostrare</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Lunghezza massima della stringa</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Aggiungi il modificatore 'private' ai membri di tipo</value>
   </data>

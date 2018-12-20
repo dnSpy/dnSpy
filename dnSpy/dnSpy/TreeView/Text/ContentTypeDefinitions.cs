@@ -24,11 +24,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.TreeView.Text {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNode)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition TreeViewNode;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

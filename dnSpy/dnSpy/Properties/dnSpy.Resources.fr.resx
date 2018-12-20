@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Activer tous les messages d'avertissement</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Désérialiser les types depuis les ressources (unsafe)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Tout assembly peut être chargé et exécuté avec des données depuis les ressources.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Utiliser des I/O mappés en mémoire</value>
   </data>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Position de la fenêtre</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Utiliser le nouveau formateur de texte</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Le nouveau formateur de texte est plus rapide mais ne supporte pas les retours à la ligne ou tous les caractères unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Éditeur hexadécimal</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Éditeur de texte</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Bleu</value>
@@ -2049,5 +2031,8 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
     <value>Afficher l'adresse du symbole</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Timestamp :</value>
   </data>
 </root>

@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.MethodBodyEditor)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition MethodBodyEditor;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

@@ -24,12 +24,12 @@ using dndbg.Engine;
 using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	sealed class WpfDebugMessageDispatcher : IDebugMessageDispatcher {
+	sealed class DebugMessageDispatcher : IDebugMessageDispatcher {
 		readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
 		int callingEmptyQueue;
 		readonly Dispatcher dispatcher;
 
-		public WpfDebugMessageDispatcher(Dispatcher dispatcher) => this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+		public DebugMessageDispatcher(Dispatcher dispatcher) => this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
 		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 

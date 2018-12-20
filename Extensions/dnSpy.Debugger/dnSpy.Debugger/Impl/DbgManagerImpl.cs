@@ -49,7 +49,6 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override DbgDispatcher Dispatcher => dbgDispatcherProvider.Dispatcher;
-		internal DbgDispatcher2 Dispatcher2 => dbgDispatcherProvider.Dispatcher;
 		Dispatcher InternalDispatcher => dbgDispatcherProvider.InternalDispatcher;
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;

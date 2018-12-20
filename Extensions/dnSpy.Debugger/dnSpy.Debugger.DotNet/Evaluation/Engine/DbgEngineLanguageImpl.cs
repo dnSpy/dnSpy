@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			var debugInfos = state.DebugInfos;
 			lock (state.LockObj) {
-				if (debugInfos.Count > 0 && debugInfos[0].debugInfo.MethodDebugInfo.DecompilerSettingsVersion != decompiler.Settings.Version)
+				if (debugInfos.Count > 0 && debugInfos[0].debugInfo.MethodDebugInfo.DebugInfoVersion != decompiler.Settings.Version)
 					debugInfos.Clear();
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];

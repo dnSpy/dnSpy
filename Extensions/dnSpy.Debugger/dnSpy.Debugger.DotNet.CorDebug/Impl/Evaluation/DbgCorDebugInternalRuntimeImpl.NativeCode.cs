@@ -225,27 +225,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			NativeCodeInfo codeInfo = null;
 			NativeCodeKind codeKind;
-			switch (Runtime.Process.Machine) {
-			case DbgMachine.X64:
-			case DbgMachine.X86:
-				codeKind = Runtime.Process.Machine == DbgMachine.X86 ? NativeCodeKind.X86_32 : NativeCodeKind.X86_64;
+			switch (Runtime.Process.Architecture) {
+			case DbgArchitecture.X64:
+			case DbgArchitecture.X86:
+				codeKind = Runtime.Process.Architecture == DbgArchitecture.X86 ? NativeCodeKind.X86_32 : NativeCodeKind.X86_64;
 				var x86Variables = CreateVariablesX86(varHomes) ?? Array.Empty<X86Variable>();
 				if (x86Variables.Length != 0)
 					codeInfo = new X86NativeCodeInfo(x86Variables);
 				break;
 
-			case DbgMachine.Arm:
+			case DbgArchitecture.Arm:
 				codeKind = NativeCodeKind.Arm;
 				Debug.Fail("Create variables like x86/x64 code above");
 				break;
 
-			case DbgMachine.Arm64:
+			case DbgArchitecture.Arm64:
 				codeKind = NativeCodeKind.Arm64;
 				Debug.Fail("Create variables like x86/x64 code above");
 				break;
 
 			default:
-				Debug.Fail($"Unsupported machine: {Runtime.Process.Machine}");
+				Debug.Fail($"Unsupported architecture: {Runtime.Process.Architecture}");
 				return false;
 			}
 
@@ -295,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		X86Variable[] CreateVariablesX86(VariableHome[] varHomes) {
 			var x86Variables = varHomes.Length == 0 ? Array.Empty<X86Variable>() : new X86Variable[varHomes.Length];
-			var machine = Runtime.Process.Machine;
+			var architecture = Runtime.Process.Architecture;
 			for (int i = 0; i < varHomes.Length; i++) {
 				var varHome = varHomes[i];
 				bool isLocal;
@@ -318,14 +318,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				case VariableLocationType.VLT_REGISTER:
 					locationKind = X86VariableLocationKind.Register;
 					// Ignore errors, use register None
-					TryGetRegisterX86(machine, varHome.Register, out register);
+					TryGetRegisterX86(architecture, varHome.Register, out register);
 					memoryOffset = 0;
 					break;
 
 				case VariableLocationType.VLT_REGISTER_RELATIVE:
 					locationKind = X86VariableLocationKind.Memory;
 					// Ignore errors, the register is very rarely invalid (RyuJIT bug)
-					TryGetRegisterX86(machine, varHome.Register, out register);
+					TryGetRegisterX86(architecture, varHome.Register, out register);
 					memoryOffset = varHome.Offset;
 					break;
 
@@ -346,9 +346,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return x86Variables;
 		}
 
-		static bool TryGetRegisterX86(DbgMachine machine, CorDebugRegister corReg, out X86Register register) {
-			switch (machine) {
-			case DbgMachine.X86:
+		static bool TryGetRegisterX86(DbgArchitecture architecture, CorDebugRegister corReg, out X86Register register) {
+			switch (architecture) {
+			case DbgArchitecture.X86:
 				switch (corReg) {
 				case CorDebugRegister.REGISTER_X86_EIP:
 					register = X86Register.EIP;
@@ -407,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				}
 
-			case DbgMachine.X64:
+			case DbgArchitecture.X64:
 				switch (corReg) {
 				case CorDebugRegister.REGISTER_AMD64_RIP:
 					register = X86Register.RIP;
@@ -514,10 +514,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				}
 
-			case DbgMachine.Arm:
-			case DbgMachine.Arm64:
+			case DbgArchitecture.Arm:
+			case DbgArchitecture.Arm64:
 			default:
-				Debug.Fail($"Unsupported machine: {machine}");
+				Debug.Fail($"Unsupported architecture: {architecture}");
 				register = default;
 				return false;
 			}

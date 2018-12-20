@@ -29,12 +29,12 @@ namespace dnSpy.BackgroundImage {
 		readonly IWpfTextView wpfTextView;
 		IAdornmentLayer adornmentLayer;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.BackgroundImage)]
 		[LayerKind(LayerKind.Underlay)]
 		static AdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		TextViewBackgroundImageService(IWpfTextView wpfTextView, IImageSourceService imageSourceService)
 			: base(imageSourceService) {
