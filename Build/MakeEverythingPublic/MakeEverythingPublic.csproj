@@ -14,10 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="dnlib" Version="$(DnlibVersion)" />
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MSBuildNuGetVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MSBuildNuGetVersion)" />
   </ItemGroup>
