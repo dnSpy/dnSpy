@@ -21,6 +21,8 @@
     <DnSpyAssemblyInformationalVersion>v5.x.x</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2018 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
+    <!-- Update App.config whenever some of these versions change (eg. dnlib version) -->
+    <DnlibVersion>3.1.0</DnlibVersion>
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <IcedVersion>1.0.2</IcedVersion>
     <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>

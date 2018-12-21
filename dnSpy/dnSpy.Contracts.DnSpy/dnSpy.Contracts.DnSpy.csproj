@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
-    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj" />
+    <PackageReference Include="dnlib" Version="$(DnlibVersion)" />
   </ItemGroup>
 
 </Project>

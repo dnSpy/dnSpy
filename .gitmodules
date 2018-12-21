@@ -1,6 +1,3 @@
-[submodule "Libraries/dnlib"]
-	path = Libraries/dnlib
-	url = https://github.com/0xd4d/dnlib.git
 [submodule "Plugins/ILSpy.Decompiler/NRefactory"]
 	path = Extensions/ILSpy.Decompiler/NRefactory
 	url = https://github.com/0xd4d/nrefactory.git
