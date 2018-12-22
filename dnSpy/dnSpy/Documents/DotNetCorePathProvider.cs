@@ -103,6 +103,8 @@ namespace dnSpy.Documents {
 				if (info.Bitness == bitness && info.Version.Major == major) {
 					if (fpMajor == null)
 						fpMajor = info;
+					else
+						fpMajor = BestMinorVersion(minor, fpMajor, info);
 					if (info.Version.Minor == minor) {
 						if (info.HasDotNetCoreAppPath)
 							return info;
@@ -112,6 +114,27 @@ namespace dnSpy.Documents {
 				}
 			}
 			return fpMajorMinor ?? fpMajor;
+		}
+
+		static FrameworkPaths BestMinorVersion(int minor, FrameworkPaths a, FrameworkPaths b) {
+			uint da = VerDist(minor, a.Version.Minor);
+			uint db = VerDist(minor, b.Version.Minor);
+			if (da < db)
+				return a;
+			if (db < da)
+				return b;
+			if (!string.IsNullOrEmpty(b.Version.Extra))
+				return a;
+			if (!string.IsNullOrEmpty(a.Version.Extra))
+				return b;
+			return a;
+		}
+
+		// Any ver < minVer is worse than any ver >= minVer
+		static uint VerDist(int minVer, int ver) {
+			if (ver >= minVer)
+				return (uint)(ver - minVer);
+			return 0x80000000 + (uint)minVer - (uint)ver - 1;
 		}
 
 		FrameworkPaths TryGetDotNetCorePathsCore(int major, int bitness) {
