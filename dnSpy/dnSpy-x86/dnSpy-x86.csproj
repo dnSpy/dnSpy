@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\dnSpy\App.config">
-      <Link>App.config</Link>
+    <None Include="..\dnSpy\app.config">
+      <Link>app.config</Link>
     </None>
     <None Include="..\dnSpy\app.manifest">
       <Link>app.manifest</Link>

@@ -137,7 +137,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			var existingAppConfig = Options.Module.Location + ".config";
 			if (File.Exists(existingAppConfig))
-				Files.Add(new AppConfigProjectFile(filenameCreator.CreateName("App.config"), existingAppConfig));
+				Files.Add(new AppConfigProjectFile(filenameCreator.CreateName("app.config"), existingAppConfig));
 
 			applicationIcon = ApplicationIcon.TryCreate(Options.Module.Win32Resources, Path.GetFileName(Directory), filenameCreator);
 
