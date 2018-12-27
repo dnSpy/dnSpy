@@ -8,7 +8,7 @@ tab_width = 4
 
 [*.json]
 
-[App.config]
+[app.config]
 
 [*.yml]
 indent_size = 2

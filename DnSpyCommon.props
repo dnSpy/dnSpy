@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!--
         - appveyor.yml (artifacts)
-        - dnSpy/dnSpy/App.config (supportedRuntime, .NET Framework only)
+        - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
     <TargetFrameworks>net472</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
@@ -15,13 +15,13 @@
     <NeutralLanguage>en</NeutralLanguage>
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
 
-    <!-- Update App.config whenever this value changes -->
+    <!-- Update app.config whenever this value changes -->
     <DnSpyAssemblyVersion>5.0.65000.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
     <DnSpyAssemblyInformationalVersion>v5.x.x</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2018 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
-    <!-- Update App.config whenever some of these versions change (eg. dnlib version) -->
+    <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
     <DnlibVersion>3.1.0</DnlibVersion>
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <IcedVersion>1.0.2</IcedVersion>
