@@ -5453,6 +5453,24 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Replace with NOPs.
+        /// </summary>
+        public static string ReplaceNopsInstrCommand {
+            get {
+                return ResourceManager.GetString("ReplaceNopsInstrCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Replace with NOPs.
+        /// </summary>
+        public static string ReplaceNopsInstrsCommand {
+            get {
+                return ResourceManager.GetString("ReplaceNopsInstrsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run NGEN.exe if this assembly is installed in the GAC.
         /// </summary>
         public static string RerunNgenIfGacAssembly {
