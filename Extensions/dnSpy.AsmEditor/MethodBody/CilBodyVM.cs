@@ -326,6 +326,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				// Speed optimization, see comment in SimplifyAllInstructions()
 				UninstallInstructionHandlers(instrs);
 
+				Array.Sort(instrs, (a, b) => b.Index - a.Index);
 				foreach (var instr in instrs) {
 					var size = instr.GetSize();
 					for (int i = 1; i < size; i++)
