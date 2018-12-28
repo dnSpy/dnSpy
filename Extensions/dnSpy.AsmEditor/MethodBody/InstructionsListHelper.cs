@@ -73,6 +73,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 				Key = Key.N,
 			});
 			Add(new ContextMenuHandler {
+				Header = "res:ReplaceNopsInstrCommand",
+				HeaderPlural = "res:ReplaceNopsInstrsCommand",
+				Command = cilBodyVM.ReplaceInstructionWithMultipleNopsCommand,
+				Icon = null,
+				InputGestureText = "res:ShortCutKeyR",
+				Modifiers = ModifierKeys.None,
+				Key = Key.R,
+			});
+			Add(new ContextMenuHandler {
 				Header = "res:InvertBranchCommand",
 				HeaderPlural = "res:InvertBranchesCommand",
 				Command = cilBodyVM.InvertBranchCommand,
