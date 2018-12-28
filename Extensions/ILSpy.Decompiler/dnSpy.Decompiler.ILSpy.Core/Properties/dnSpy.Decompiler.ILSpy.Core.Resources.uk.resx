@@ -130,7 +130,7 @@
     <value>Порядок Декомпіляції</value>
   </data>
   <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
-    <value>Декомпілювати анонімні методи/lambda</value>
+    <value>Декомпілювати анонімні методи/lambdas</value>
   </data>
   <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
     <value>Декомпілювати async методи (async/await)</value>

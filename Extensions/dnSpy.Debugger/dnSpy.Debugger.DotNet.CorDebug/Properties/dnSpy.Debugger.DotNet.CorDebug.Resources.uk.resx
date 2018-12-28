@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Аргументи</value>
+    <value>А_ргументи</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Збірка</value>
+    <value>_Збірка</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Зупинитись на</value>
@@ -142,7 +142,7 @@
     <value>Не зупиняти</value>
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Точка входу</value>
+    <value>Точка Входу</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
     <value>Не знайдений хост .NET Core '{0}'</value>
