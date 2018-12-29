@@ -299,10 +299,10 @@ namespace dnSpy.Decompiler {
 				return ".NET Portable " + Version;
 
 			case ".NETCore":
-				return ".NET Core " + Version;
+				return "Windows Universal " + Version;
 
 			case ".NETCoreApp":
-				return ".NET Core App " + Version;
+				return ".NET Core " + Version;
 
 			case ".NETPlatform":
 				return ".NET Platform " + Version;
