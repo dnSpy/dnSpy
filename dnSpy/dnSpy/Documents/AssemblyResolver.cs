@@ -38,7 +38,6 @@ namespace dnSpy.Documents {
 		static readonly UTF8String aspNetCoreName = new UTF8String("Microsoft.AspNetCore");
 		// netstandard1.5 also uses this version number, but assume it's .NET Core
 		static readonly Version minSystemRuntimeNetCoreVersion = new Version(4, 1, 0, 0);
-		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 
 		const string TFM_netframework = ".NETFramework";
 		const string TFM_uwp = ".NETCore";
@@ -360,7 +359,7 @@ namespace dnSpy.Documents {
 			foreach (var asmRef in module.GetAssemblyRefs()) {
 				var name = asmRef.Name;
 				if (name == mscorlibName) {
-					if (asmRef.Version != invalidMscorlibVersion) {
+					if (IsValidMscorlibVersion(asmRef.Version)) {
 						if (mscorlibRef == null || asmRef.Version > mscorlibRef.Version)
 							mscorlibRef = asmRef;
 					}
@@ -441,6 +440,9 @@ namespace dnSpy.Documents {
 		static readonly Version version_4_1_0_0 = new Version(4, 1, 0, 0);
 		static readonly Version version_4_2_0_0 = new Version(4, 2, 0, 0);
 		static readonly Version version_4_2_1_0 = new Version(4, 2, 1, 0);
+
+		// Silverlight uses 5.0.5.0
+		static bool IsValidMscorlibVersion(Version version) => version != null && (uint)version.Major <= 5;
 
 		static bool StartsWith(UTF8String s, UTF8String value) {
 			var d = s?.Data;
