@@ -41,6 +41,7 @@ namespace dnSpy.Documents {
 		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 
 		const string TFM_netframework = ".NETFramework";
+		const string TFM_uwp = ".NETCore";
 		const string TFM_netcoreapp = ".NETCoreApp";
 		const string TFM_netstandard = ".NETStandard";
 		const string UnityEngineFilename = "UnityEngine.dll";
@@ -123,6 +124,7 @@ namespace dnSpy.Documents {
 			DotNetCore,
 			SelfContainedDotNetCore,
 			Unity,
+			WindowsUniversal,
 		}
 
 		sealed class FrameworkPathInfo {
@@ -177,7 +179,7 @@ namespace dnSpy.Documents {
 								newFwkKind = GetFrameworkKind_AssemblyRefs(module, frameworkName, out fwkVersion);
 							if (newFwkKind != FrameworkKind.Unknown) {
 								info.FrameworkKind = Best(info.FrameworkKind, newFwkKind);
-								if (info.FrameworkKind == FrameworkKind.DotNetCore)
+								if (info.FrameworkKind == FrameworkKind.DotNetCore && newFwkKind == FrameworkKind.DotNetCore)
 									info.FrameworkVersion = fwkVersion;
 							}
 						}
@@ -235,6 +237,8 @@ namespace dnSpy.Documents {
 				return FrameworkKind.DotNetCore;
 			if (a == FrameworkKind.Unity || b == FrameworkKind.Unity)
 				return FrameworkKind.Unity;
+			if (a == FrameworkKind.WindowsUniversal || b == FrameworkKind.WindowsUniversal)
+				return FrameworkKind.WindowsUniversal;
 			if (a == FrameworkKind.DotNetFramework4 || b == FrameworkKind.DotNetFramework4)
 				return FrameworkKind.DotNetFramework4;
 			if (a == FrameworkKind.DotNetFramework2 || b == FrameworkKind.DotNetFramework2)
@@ -336,6 +340,8 @@ namespace dnSpy.Documents {
 					return version.Major < 4 ? FrameworkKind.DotNetFramework2 : FrameworkKind.DotNetFramework4;
 				if (frameworkName == TFM_netcoreapp)
 					return FrameworkKind.DotNetCore;
+				if (frameworkName == TFM_uwp)
+					return FrameworkKind.WindowsUniversal;
 				if (!dotNetCorePathProvider.HasDotNetCore && frameworkName == TFM_netstandard)
 					return FrameworkKind.DotNetFramework4;
 				return FrameworkKind.Unknown;
@@ -512,6 +518,7 @@ namespace dnSpy.Documents {
 			case FrameworkKind.DotNetCore:
 			case FrameworkKind.Unity:
 			case FrameworkKind.SelfContainedDotNetCore:
+			case FrameworkKind.WindowsUniversal:
 				// If it's a self-contained .NET Core app, we don't need the version since we must only search
 				// the current directory.
 				Debug.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion == null);
