@@ -3,7 +3,7 @@ Original licenses of code or other libraries used by dnSpy. Some or all of them 
 ***********************************************************************************
 dnlib:
 
-Copyright (C) 2012-2017 de4dot@gmail.com
+Copyright (C) 2012-2019 de4dot@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
