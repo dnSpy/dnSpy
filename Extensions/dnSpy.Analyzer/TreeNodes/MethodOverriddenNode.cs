@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (C) 2017 HoLLy
 
     This file is part of dnSpy

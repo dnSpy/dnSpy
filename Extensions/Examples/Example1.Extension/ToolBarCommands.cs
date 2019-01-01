@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;

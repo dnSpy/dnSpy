@@ -1,4 +1,4 @@
-﻿// The strings resources is an empty class because we don't need the strings at the moment.
+// The strings resources is an empty class because we don't need the strings at the moment.
 // They're currently passed to IWaitIndicator which ignore them.
 
 namespace dnSpy.Roslyn.EditorFeatures {
