@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Utilities;

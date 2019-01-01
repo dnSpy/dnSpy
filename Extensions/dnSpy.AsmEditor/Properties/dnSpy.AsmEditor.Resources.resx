@@ -1964,6 +1964,9 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="ShortCutKeyP" xml:space="preserve">
     <value>P</value>
   </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="ShortCutKeyS" xml:space="preserve">
     <value>S</value>
   </data>
@@ -2533,5 +2536,11 @@ Most options will be re-initialized when this checkbox is clicked</value>
   </data>
   <data name="CompilerDlgTabTitle" xml:space="preserve">
     <value>Compiler</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>_Replace with NOPs</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>_Replace with NOPs</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\compiled\MakeEverythingPublic.dll" TaskName="MakeEverythingPublic.MakeEverythingPublic" />
 	<Target Name="MakeEverythingPublic" AfterTargets="ResolveAssemblyReferences">
 		<MakeEverythingPublic AssembliesToMakePublic="$(MakeEverythingPublicAssemblies)" ReferencePath="@(ReferencePath)" DestinationDirectory="$(MSBuildProjectDirectory)\obj\$(Configuration)\MakeEverythingPublic" IVTString="$(MakeEverythingPublicIVTString)">

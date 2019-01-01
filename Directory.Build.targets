@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <!-- Remove garbage files added by Microsoft.CodeAnalysis.Workspaces.Common 2.9.0+ when target is .NET Framework -->
     <!-- Also remove other stuff we don't need -->

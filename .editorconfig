@@ -1,6 +1,7 @@
 root = true
 
 [*]
+charset = utf-8
 #end_of_line =
 indent_size = 4
 indent_style = tab
@@ -8,7 +9,7 @@ tab_width = 4
 
 [*.json]
 
-[App.config]
+[app.config]
 
 [*.yml]
 indent_size = 2

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;

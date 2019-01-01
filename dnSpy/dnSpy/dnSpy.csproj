@@ -47,7 +47,7 @@
   <ItemGroup>
     <Resource Include="Images\dnSpy.ico" />
     <EmbeddedResource Include="LicenseInfo\CREDITS.txt" />
-    <None Include="App.config" />
+    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="Themes\*.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

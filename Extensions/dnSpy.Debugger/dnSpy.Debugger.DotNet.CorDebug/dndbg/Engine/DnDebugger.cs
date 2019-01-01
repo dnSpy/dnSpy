@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -202,7 +202,7 @@ namespace dndbg.Engine {
 
 			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
 			if (DebuggeeVersion.StartsWith("1."))
-				throw new NotImplementedException("Can't debug .NET 1.x assemblies. Add an App.config file to force using .NET 2.0 or later");
+				throw new NotImplementedException("Can't debug .NET 1.x assemblies. Add an app.config file to force using .NET 2.0 or later");
 
 			corDebug.Initialize();
 			corDebug.SetManagedHandler(new CorDebugManagedCallback(this));

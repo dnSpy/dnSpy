@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Documents.TreeView;

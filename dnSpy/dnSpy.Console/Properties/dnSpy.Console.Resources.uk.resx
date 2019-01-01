@@ -214,7 +214,7 @@
     <value>Неприпустимий GUID</value>
   </data>
   <data name="CmdLineAssembly" xml:space="preserve">
-    <value>Збірка</value>
+    <value>збірка</value>
   </data>
   <data name="CmdLineDescription_AsmPath" xml:space="preserve">
     <value>шляк пошуку збірки. Шляхи можут бути розділені '{0}' або ж використайте декілька --asm-path</value>
@@ -256,7 +256,7 @@
     <value>guid проекту</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>Рекурсивний пошук файлів .NET для декомпіляції</value>
+    <value>рекурсивний пошук файлів .NET для декомпіляції</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
     <value>ім'я файлу .sln</value>

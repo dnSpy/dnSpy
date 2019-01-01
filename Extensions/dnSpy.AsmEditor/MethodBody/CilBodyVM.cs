@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand SimplifyAllInstructionsCommand => new RelayCommand(a => SimplifyAllInstructions(), a => SimplifyAllInstructionsCanExecute());
 		public ICommand OptimizeAllInstructionsCommand => new RelayCommand(a => OptimizeAllInstructions(), a => OptimizeAllInstructionsCanExecute());
 		public ICommand ReplaceInstructionWithNopCommand => new RelayCommand(a => ReplaceInstructionWithNop((InstructionVM[])a), a => ReplaceInstructionWithNopCanExecute((InstructionVM[])a));
+		public ICommand ReplaceInstructionWithMultipleNopsCommand => new RelayCommand(a => ReplaceInstructionWithMultipleNops((InstructionVM[])a), a => ReplaceInstructionWithMultipleNopsCanExecute((InstructionVM[])a));
 		public ICommand InvertBranchCommand => new RelayCommand(a => InvertBranch((InstructionVM[])a), a => InvertBranchCanExecute((InstructionVM[])a));
 		public ICommand ConvertBranchToUnconditionalBranchCommand => new RelayCommand(a => ConvertBranchToUnconditionalBranch((InstructionVM[])a), a => ConvertBranchToUnconditionalBranchCanExecute((InstructionVM[])a));
 		public ICommand RemoveInstructionAndAddPopsCommand => new RelayCommand(a => RemoveInstructionAndAddPops((InstructionVM[])a), a => RemoveInstructionAndAddPopsCanExecute((InstructionVM[])a));
@@ -315,6 +316,33 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		bool ReplaceInstructionWithNopCanExecute(InstructionVM[] instrs) => instrs.Any(a => a.Code != Code.Nop);
+
+		void ReplaceInstructionWithMultipleNops(InstructionVM[] instrs) {
+			var old1 = InstructionsListVM.DisableAutoUpdateProps;
+			var old2 = DisableHasError();
+			try {
+				InstructionsListVM.DisableAutoUpdateProps = true;
+
+				// Speed optimization, see comment in SimplifyAllInstructions()
+				UninstallInstructionHandlers(instrs);
+
+				Array.Sort(instrs, (a, b) => b.Index - a.Index);
+				foreach (var instr in instrs) {
+					var size = instr.GetSize();
+					for (int i = 1; i < size; i++)
+						InstructionsListVM.Insert(instr.Index + i, CreateInstructionVM(Code.Nop));
+					instr.Code = Code.Nop;
+				}
+			}
+			finally {
+				InstallInstructionHandlers(instrs);
+				RestoreHasError(old2);
+				InstructionsListVM.DisableAutoUpdateProps = old1;
+			}
+			InstructionsUpdateIndexes(0);
+		}
+
+		bool ReplaceInstructionWithMultipleNopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => a.Code != Code.Nop);
 
 		void InvertBranch(InstructionVM[] instrs) {
 			foreach (var instr in instrs) {

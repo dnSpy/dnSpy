@@ -1,4 +1,4 @@
-﻿dnSpy credits:
+dnSpy credits:
 
 	0xd4d
 	Ki

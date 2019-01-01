@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -185,18 +185,14 @@ namespace dnSpy.Contracts.Utilities {
 						hasGAC2 = File.Exists(Path.Combine(path, @"GAC_32\mscorlib\2.0.0.0__b77a5c561934e089\mscorlib.dll")) ||
 							File.Exists(Path.Combine(path, @"GAC_64\mscorlib\2.0.0.0__b77a5c561934e089\mscorlib.dll"));
 						if (hasGAC2) {
-							gacDirInfosList.Add(new GacDirInfo(2, "", path, new string[] {
-								"GAC_32", "GAC_64", "GAC_MSIL", "GAC"
-							}));
+							gacDirInfosList.Add(new GacDirInfo(2, "", path, gacPaths4));
 						}
 					}
 
 					// .NET Framework 4.x
 					path = Path.Combine(Path.Combine(windir, "Microsoft.NET"), "assembly");
 					if (Directory.Exists(path)) {
-						gacDirInfosList.Add(new GacDirInfo(4, "v4.0_", path, new string[] {
-							"GAC_32", "GAC_64", "GAC_MSIL"
-						}));
+						gacDirInfosList.Add(new GacDirInfo(4, "v4.0_", path, gacPaths2));
 					}
 				}
 
@@ -210,6 +206,13 @@ namespace dnSpy.Contracts.Utilities {
 			GacPaths = gacDirInfos.Select(a => new GacPathInfo(a.Path, a.Version == 2 ? GacVersion.V2 : GacVersion.V4)).ToArray();
 			HasGAC2 = hasGAC2;
 		}
+		// Prefer GAC_32 if this is a 32-bit process, and GAC_64 if this is a 64-bit process
+		static readonly string[] gacPaths2 = IntPtr.Size == 4 ?
+			new string[] { "GAC_32", "GAC_64", "GAC_MSIL" } :
+			new string[] { "GAC_64", "GAC_32", "GAC_MSIL" };
+		static readonly string[] gacPaths4 = IntPtr.Size == 4 ?
+			new string[] { "GAC_32", "GAC_64", "GAC_MSIL", "GAC" } :
+			new string[] { "GAC_64", "GAC_32", "GAC_MSIL", "GAC" };
 
 		static string GetCurrentMonoPrefix() {
 			var path = typeof(object).Module.FullyQualifiedName;

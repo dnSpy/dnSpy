@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -109,8 +109,6 @@ namespace dnSpy.MainApp {
 			Exit += App_Exit;
 		}
 
-		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
-		// this case.
 		void AddAppContextFixes() {
 			// This prevents a thin line between the tab item and its content when dpi is eg. 144.
 			// It's hard to miss if you check the Options dialog box.

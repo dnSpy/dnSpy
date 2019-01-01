@@ -130,7 +130,7 @@
     <value>Зупинити при виключенні</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Відміна</value>
+    <value>_Відміна</value>
   </data>
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
     <value>Відмінити завантаження модулів?</value>

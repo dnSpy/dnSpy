@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidBoolean" xml:space="preserve">
-    <value>Значення має бути булеве значення (True або False)</value>
+    <value>Значення має бути булеве (True або False)</value>
   </data>
   <data name="InvalidChar" xml:space="preserve">
     <value>Символ повинен бути взятий в одинарні лапки (')</value>
@@ -136,13 +136,13 @@
     <value>Невідомий символ escape-послідовність: \{0}</value>
   </data>
   <data name="InvalidEscapeSequence2" xml:space="preserve">
-    <value>Невідомий символ escape-послідовність: \{0}</value>
+    <value>Невідома стрічка escape-послідовність: \{0}</value>
   </data>
   <data name="InvalidHexCharacter" xml:space="preserve">
     <value>Шістнадцятковий рядок має містити лише шістнадцяткові цифри: 0-9 і літери A-F</value>
   </data>
   <data name="InvalidHexStringSize" xml:space="preserve">
-    <value>Шістнадцятковий рядок має містити парну кількість шістнадцяткові цифр</value>
+    <value>Шістнадцятковий рядок має містити парну кількість символів</value>
   </data>
   <data name="InvalidInteger1" xml:space="preserve">
     <value>Значення не є шістнадцятковим чи цілим десятковим</value>
@@ -184,7 +184,7 @@
     <value>Значення не є беззнаковим шістнадцятковим чи цілим десятковим</value>
   </data>
   <data name="InvalidUnsignedInteger3" xml:space="preserve">
-    <value>Значення має бути між {0} та {1} (0 x{1:X}) включно</value>
+    <value>Значення має бути між {0} та {1} (0x{1:X}) включно</value>
   </data>
   <data name="InvalidUnsignedInteger4" xml:space="preserve">
     <value>Значення має бути між {0} (0x{0:X}) та {1} (0x{1:X}) включно</value>

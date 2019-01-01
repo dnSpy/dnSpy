@@ -1,4 +1,4 @@
-﻿// Ported from coreclr: RuntimeTypeHandle::CanCastTo
+// Ported from coreclr: RuntimeTypeHandle::CanCastTo
 //
 // Orig licenese header:
 //

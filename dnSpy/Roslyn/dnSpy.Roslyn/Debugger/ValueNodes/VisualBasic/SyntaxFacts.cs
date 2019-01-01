@@ -1,4 +1,4 @@
-﻿// Copied from Roslyn and ported to C#
+// Copied from Roslyn and ported to C#
 
 using System.Globalization;
 

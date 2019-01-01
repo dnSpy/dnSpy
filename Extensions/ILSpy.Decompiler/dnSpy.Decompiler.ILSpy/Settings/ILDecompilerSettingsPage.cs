@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,6 @@
 using System;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Decompiler.ILSpy.Core.Settings;
-using dnSpy.Decompiler.ILSpy.Properties;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
 	sealed class ILDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2 {

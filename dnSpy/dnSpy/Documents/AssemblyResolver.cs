@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,9 +38,9 @@ namespace dnSpy.Documents {
 		static readonly UTF8String aspNetCoreName = new UTF8String("Microsoft.AspNetCore");
 		// netstandard1.5 also uses this version number, but assume it's .NET Core
 		static readonly Version minSystemRuntimeNetCoreVersion = new Version(4, 1, 0, 0);
-		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 
 		const string TFM_netframework = ".NETFramework";
+		const string TFM_uwp = ".NETCore";
 		const string TFM_netcoreapp = ".NETCoreApp";
 		const string TFM_netstandard = ".NETStandard";
 		const string UnityEngineFilename = "UnityEngine.dll";
@@ -123,6 +123,7 @@ namespace dnSpy.Documents {
 			DotNetCore,
 			SelfContainedDotNetCore,
 			Unity,
+			WindowsUniversal,
 		}
 
 		sealed class FrameworkPathInfo {
@@ -165,18 +166,19 @@ namespace dnSpy.Documents {
 			var sourceFilename = module.Location;
 			if (!string.IsNullOrEmpty(sourceFilename)) {
 				bool isExe = (module.Characteristics & Characteristics.Dll) == 0;
+				Version fwkVersion;
 				foreach (var info in frameworkInfos) {
 					if (FileUtils.IsFileInDir(info.Directory, sourceFilename)) {
 						// The same 'module' could be passed in here multiple times, but we can't save the module instance
 						// anywhere so only update info if it's an EXE and then mark it as frozen.
 						if (isExe && !info.Frozen) {
 							info.Frozen = true;
-							var newFwkKind = GetFrameworkKind_TargetFrameworkAttribute(module, out var frameworkName, out var fwkVersion);
+							var newFwkKind = GetFrameworkKind_TargetFrameworkAttribute(module, out var frameworkName, out fwkVersion);
 							if (newFwkKind == FrameworkKind.Unknown)
 								newFwkKind = GetFrameworkKind_AssemblyRefs(module, frameworkName, out fwkVersion);
 							if (newFwkKind != FrameworkKind.Unknown) {
 								info.FrameworkKind = Best(info.FrameworkKind, newFwkKind);
-								if (info.FrameworkKind == FrameworkKind.DotNetCore)
+								if (info.FrameworkKind == FrameworkKind.DotNetCore && newFwkKind == FrameworkKind.DotNetCore)
 									info.FrameworkVersion = fwkVersion;
 							}
 						}
@@ -200,15 +202,18 @@ namespace dnSpy.Documents {
 				}
 
 				var fwkInfo = new FrameworkPathInfo(Path.GetDirectoryName(sourceFilename));
-				fwkInfo.FrameworkKind = GetFrameworkKind_Directory(fwkInfo.Directory);
+				fwkInfo.FrameworkKind = GetFrameworkKind_Directory(fwkInfo.Directory, out fwkVersion);
+				fwkInfo.FrameworkVersion = fwkVersion;
 				if (fwkInfo.FrameworkKind == FrameworkKind.Unknown) {
-					fwkInfo.FrameworkKind = GetFrameworkKind_TargetFrameworkAttribute(module, out var frameworkName, out var fwkVersion);
+					fwkInfo.FrameworkKind = GetFrameworkKind_TargetFrameworkAttribute(module, out var frameworkName, out fwkVersion);
 					fwkInfo.FrameworkVersion = fwkVersion;
 					if (fwkInfo.FrameworkKind == FrameworkKind.Unknown) {
 						fwkInfo.FrameworkKind = GetFrameworkKind_AssemblyRefs(module, frameworkName, out fwkVersion);
 						fwkInfo.FrameworkVersion = fwkVersion;
 					}
 				}
+				if (fwkInfo.FrameworkKind == FrameworkKind.Unknown)
+					fwkInfo.FrameworkVersion = null;
 				fwkInfo.Frozen = isExe;
 				fwkInfo = Add(fwkInfo);
 				if (fwkInfo.FrameworkKind == FrameworkKind.DotNetCore)
@@ -225,10 +230,14 @@ namespace dnSpy.Documents {
 		}
 
 		static FrameworkKind Best(FrameworkKind a, FrameworkKind b) {
+			if (a == FrameworkKind.SelfContainedDotNetCore || b == FrameworkKind.SelfContainedDotNetCore)
+				return FrameworkKind.SelfContainedDotNetCore;
 			if (a == FrameworkKind.DotNetCore || b == FrameworkKind.DotNetCore)
 				return FrameworkKind.DotNetCore;
 			if (a == FrameworkKind.Unity || b == FrameworkKind.Unity)
 				return FrameworkKind.Unity;
+			if (a == FrameworkKind.WindowsUniversal || b == FrameworkKind.WindowsUniversal)
+				return FrameworkKind.WindowsUniversal;
 			if (a == FrameworkKind.DotNetFramework4 || b == FrameworkKind.DotNetFramework4)
 				return FrameworkKind.DotNetFramework4;
 			if (a == FrameworkKind.DotNetFramework2 || b == FrameworkKind.DotNetFramework2)
@@ -254,12 +263,73 @@ namespace dnSpy.Documents {
 			return FrameworkKind.Unknown;
 		}
 
-		static FrameworkKind GetFrameworkKind_Directory(string directory) {
-			if (File.Exists(Path.Combine(directory, UnityEngineFilename)))
+		static FrameworkKind GetFrameworkKind_Directory(string directory, out Version version) {
+			if (File.Exists(Path.Combine(directory, UnityEngineFilename))) {
+				version = null;
 				return FrameworkKind.Unity;
-			if (File.Exists(Path.Combine(directory, SelfContainedDotNetCoreFilename)))
+			}
+			if (File.Exists(Path.Combine(directory, SelfContainedDotNetCoreFilename))) {
+				version = null;
 				return FrameworkKind.SelfContainedDotNetCore;
+			}
+
+			// Could be a runtime sub dir, eg. "<basedir>\runtimes\unix\lib\netcoreapp2.0". These assemblies
+			// don't always have a TFM attribute.
+			// Could also be the compilation output directory.
+			var dirName = Path.GetFileName(directory);
+			if (TryParseVersion("netcoreapp", dirName, out var fwkVersion)) {
+				version = fwkVersion;
+				return FrameworkKind.DotNetCore;
+			}
+			else if (TryParseNetFrameworkVersion("net", dirName, out fwkVersion)) {
+				version = fwkVersion;
+				return version.Major < 4 ? FrameworkKind.DotNetFramework2 : FrameworkKind.DotNetFramework4;
+			}
+
+			version = null;
 			return FrameworkKind.Unknown;
+		}
+
+		static bool TryParseVersion(string prefix, string tfm, out Version version) {
+			if (!tfm.StartsWith(prefix)) {
+				version = null;
+				return false;
+			}
+
+			var verStr = tfm.Substring(prefix.Length);
+			if (Version.TryParse(verStr, out var v)) {
+				version = new Version(v.Major, v.Minor, v.Build < 0 ? 0 : v.Build, v.Revision < 0 ? 0 : v.Revision);
+				return true;
+			}
+
+			version = null;
+			return false;
+		}
+
+		static bool TryParseNetFrameworkVersion(string prefix, string tfm, out Version version) {
+			if (!tfm.StartsWith(prefix)) {
+				version = null;
+				return false;
+			}
+
+			var verStr = tfm.Substring(prefix.Length);
+			if (uint.TryParse(verStr, out uint ver)) {
+				if (ver <= 9) {
+					version = new Version((int)ver, 0, 0, 0);
+					return true;
+				}
+				if (ver <= 99) {
+					version = new Version((int)(ver / 10), (int)(ver % 10), 0, 0);
+					return true;
+				}
+				if (ver <= 999) {
+					version = new Version((int)(ver / 100), (int)((ver / 10) % 10), (int)(ver % 10), 0);
+					return true;
+				}
+			}
+
+			version = null;
+			return false;
 		}
 
 		FrameworkKind GetFrameworkKind_TargetFrameworkAttribute(ModuleDef module, out string frameworkName, out Version version) {
@@ -269,6 +339,8 @@ namespace dnSpy.Documents {
 					return version.Major < 4 ? FrameworkKind.DotNetFramework2 : FrameworkKind.DotNetFramework4;
 				if (frameworkName == TFM_netcoreapp)
 					return FrameworkKind.DotNetCore;
+				if (frameworkName == TFM_uwp)
+					return FrameworkKind.WindowsUniversal;
 				if (!dotNetCorePathProvider.HasDotNetCore && frameworkName == TFM_netstandard)
 					return FrameworkKind.DotNetFramework4;
 				return FrameworkKind.Unknown;
@@ -287,7 +359,7 @@ namespace dnSpy.Documents {
 			foreach (var asmRef in module.GetAssemblyRefs()) {
 				var name = asmRef.Name;
 				if (name == mscorlibName) {
-					if (asmRef.Version != invalidMscorlibVersion) {
+					if (IsValidMscorlibVersion(asmRef.Version)) {
 						if (mscorlibRef == null || asmRef.Version > mscorlibRef.Version)
 							mscorlibRef = asmRef;
 					}
@@ -329,6 +401,19 @@ namespace dnSpy.Documents {
 				if (frameworkName != TFM_netstandard) {
 					if (module.IsClr40Exactly && systemRuntimeRef.Version >= minSystemRuntimeNetCoreVersion) {
 						version = aspNetCoreRef?.Version;
+						if (version == null) {
+							// .NET Core 1.0 or 1.1
+							if (systemRuntimeRef.Version == version_4_1_0_0)
+								version = new Version(1, 0, 0, 0);
+							// .NET Core 2.0
+							else if (systemRuntimeRef.Version == version_4_2_0_0)
+								version = new Version(2, 0, 0, 0);
+							// .NET Core 2.1, 2.2 or 3.0
+							else if (systemRuntimeRef.Version == version_4_2_1_0)
+								version = new Version(2, 1, 0, 0);
+							else
+								Debug.Fail("Unknown .NET Core version");
+						}
 						return FrameworkKind.DotNetCore;
 					}
 				}
@@ -352,6 +437,12 @@ namespace dnSpy.Documents {
 
 			return FrameworkKind.Unknown;
 		}
+		static readonly Version version_4_1_0_0 = new Version(4, 1, 0, 0);
+		static readonly Version version_4_2_0_0 = new Version(4, 2, 0, 0);
+		static readonly Version version_4_2_1_0 = new Version(4, 2, 1, 0);
+
+		// Silverlight uses 5.0.5.0
+		static bool IsValidMscorlibVersion(Version version) => version != null && (uint)version.Major <= 5;
 
 		static bool StartsWith(UTF8String s, UTF8String value) {
 			var d = s?.Data;
@@ -376,7 +467,6 @@ namespace dnSpy.Documents {
 			case FrameworkKind.Unknown:
 			case FrameworkKind.DotNetFramework2:
 			case FrameworkKind.DotNetFramework4:
-				var tempAsm = assembly;
 				int gacVersion;
 				if (!GacInfo.HasGAC2)
 					fwkKind = FrameworkKind.DotNetFramework4;
@@ -390,6 +480,7 @@ namespace dnSpy.Documents {
 				}
 				else {
 					Debug.Assert(fwkKind == FrameworkKind.Unknown);
+					var tempAsm = assembly;
 					FrameworkRedirect.ApplyFrameworkRedirect(ref tempAsm, sourceModule);
 					// OK : System.Runtime 4.0.20.0 => 4.0.0.0
 					// KO : System 4.0.0.0 => 2.0.0.0
@@ -429,6 +520,7 @@ namespace dnSpy.Documents {
 			case FrameworkKind.DotNetCore:
 			case FrameworkKind.Unity:
 			case FrameworkKind.SelfContainedDotNetCore:
+			case FrameworkKind.WindowsUniversal:
 				// If it's a self-contained .NET Core app, we don't need the version since we must only search
 				// the current directory.
 				Debug.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion == null);

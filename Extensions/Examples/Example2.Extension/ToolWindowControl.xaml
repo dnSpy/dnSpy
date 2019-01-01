@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Example2.Extension.ToolWindowControl"
+<UserControl x:Class="Example2.Extension.ToolWindowControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy">

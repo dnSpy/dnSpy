@@ -1,4 +1,4 @@
-﻿// Copied from Roslyn's SpecialType and WellKnownType enums
+// Copied from Roslyn's SpecialType and WellKnownType enums
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
