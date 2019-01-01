@@ -196,7 +196,7 @@
     <value>Замінити «new delegate-class(xxx)» на «xxx»</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Показати скриті типи і методи, створені компілятором</value>
+    <value>Показати приховані типи і методи, створені компілятором</value>
   </data>
   <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
     <value>Показати коментарі до IL інструкцій</value>

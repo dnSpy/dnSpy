@@ -256,7 +256,7 @@
     <value>guid проекту</value>
   </data>
   <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
-    <value>Рекурсивний пошук файлів .NET для декомпіляції</value>
+    <value>рекурсивний пошук файлів .NET для декомпіляції</value>
   </data>
   <data name="CmdLineDescription_SlnName" xml:space="preserve">
     <value>ім'я файлу .sln</value>
