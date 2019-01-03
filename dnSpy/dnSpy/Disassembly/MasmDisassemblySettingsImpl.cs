@@ -31,12 +31,24 @@ namespace dnSpy.Disassembly {
 			BinarySuffix = "b";
 		}
 
+		public bool AddDsPrefix32 {
+			get => addDsPrefix32;
+			set {
+				if (value != addDsPrefix32) {
+					addDsPrefix32 = value;
+					OnPropertyChanged(nameof(AddDsPrefix32));
+				}
+			}
+		}
+		bool addDsPrefix32 = true;
+
 		public MasmDisassemblySettings Clone() => CopyTo(new MasmDisassemblySettings());
 
 		public MasmDisassemblySettings CopyTo(MasmDisassemblySettings other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
+			other.AddDsPrefix32 = AddDsPrefix32;
 			return other;
 		}
 	}
@@ -54,6 +66,7 @@ namespace dnSpy.Disassembly {
 
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ReadSettings(sect);
+			AddDsPrefix32 = sect.Attribute<bool?>(nameof(AddDsPrefix32)) ?? AddDsPrefix32;
 
 			PropertyChanged += OnPropertyChanged;
 		}
@@ -63,6 +76,7 @@ namespace dnSpy.Disassembly {
 		void Save() {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			WriteSettings(sect);
+			sect.Attribute(nameof(AddDsPrefix32), AddDsPrefix32);
 		}
 	}
 }

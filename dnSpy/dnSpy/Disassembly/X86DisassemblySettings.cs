@@ -346,16 +346,16 @@ namespace dnSpy.Disassembly {
 		}
 		string digitSeparator = null;
 
-		public bool ShortNumbers {
-			get => shortNumbers;
+		public bool LeadingZeroes {
+			get => leadingZeroes;
 			set {
-				if (value != shortNumbers) {
-					shortNumbers = value;
-					OnPropertyChanged(nameof(ShortNumbers));
+				if (value != leadingZeroes) {
+					leadingZeroes = value;
+					OnPropertyChanged(nameof(LeadingZeroes));
 				}
 			}
 		}
-		bool shortNumbers = true;
+		bool leadingZeroes;
 
 		public bool UpperCaseHex {
 			get => upperCaseHex;
@@ -404,16 +404,16 @@ namespace dnSpy.Disassembly {
 		}
 		NumberBase numberBase = NumberBase.Hexadecimal;
 
-		public bool ShortBranchNumbers {
-			get => shortBranchNumbers;
+		public bool BranchLeadingZeroes {
+			get => branchLeadingZeroes;
 			set {
-				if (value != shortBranchNumbers) {
-					shortBranchNumbers = value;
-					OnPropertyChanged(nameof(ShortBranchNumbers));
+				if (value != branchLeadingZeroes) {
+					branchLeadingZeroes = value;
+					OnPropertyChanged(nameof(BranchLeadingZeroes));
 				}
 			}
 		}
-		bool shortBranchNumbers = true;
+		bool branchLeadingZeroes;
 
 		public bool SignedImmediateOperands {
 			get => signedImmediateOperands;
@@ -533,12 +533,12 @@ namespace dnSpy.Disassembly {
 			BinarySuffix = sect.Attribute<string>(nameof(BinarySuffix)) ?? BinarySuffix;
 			BinaryDigitGroupSize = sect.Attribute<int?>(nameof(BinaryDigitGroupSize)) ?? BinaryDigitGroupSize;
 			DigitSeparator = sect.Attribute<string>(nameof(DigitSeparator)) ?? DigitSeparator;
-			ShortNumbers = sect.Attribute<bool?>(nameof(ShortNumbers)) ?? ShortNumbers;
+			LeadingZeroes = sect.Attribute<bool?>(nameof(LeadingZeroes)) ?? LeadingZeroes;
 			UpperCaseHex = sect.Attribute<bool?>(nameof(UpperCaseHex)) ?? UpperCaseHex;
 			SmallHexNumbersInDecimal = sect.Attribute<bool?>(nameof(SmallHexNumbersInDecimal)) ?? SmallHexNumbersInDecimal;
 			AddLeadingZeroToHexNumbers = sect.Attribute<bool?>(nameof(AddLeadingZeroToHexNumbers)) ?? AddLeadingZeroToHexNumbers;
 			NumberBase = sect.Attribute<NumberBase?>(nameof(NumberBase)) ?? NumberBase;
-			ShortBranchNumbers = sect.Attribute<bool?>(nameof(ShortBranchNumbers)) ?? ShortBranchNumbers;
+			BranchLeadingZeroes = sect.Attribute<bool?>(nameof(BranchLeadingZeroes)) ?? BranchLeadingZeroes;
 			SignedImmediateOperands = sect.Attribute<bool?>(nameof(SignedImmediateOperands)) ?? SignedImmediateOperands;
 			SignedMemoryDisplacements = sect.Attribute<bool?>(nameof(SignedMemoryDisplacements)) ?? SignedMemoryDisplacements;
 			SignExtendMemoryDisplacements = sect.Attribute<bool?>(nameof(SignExtendMemoryDisplacements)) ?? SignExtendMemoryDisplacements;
@@ -579,12 +579,12 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(BinarySuffix), BinarySuffix);
 			sect.Attribute(nameof(BinaryDigitGroupSize), BinaryDigitGroupSize);
 			sect.Attribute(nameof(DigitSeparator), DigitSeparator);
-			sect.Attribute(nameof(ShortNumbers), ShortNumbers);
+			sect.Attribute(nameof(LeadingZeroes), LeadingZeroes);
 			sect.Attribute(nameof(UpperCaseHex), UpperCaseHex);
 			sect.Attribute(nameof(SmallHexNumbersInDecimal), SmallHexNumbersInDecimal);
 			sect.Attribute(nameof(AddLeadingZeroToHexNumbers), AddLeadingZeroToHexNumbers);
 			sect.Attribute(nameof(NumberBase), NumberBase);
-			sect.Attribute(nameof(ShortBranchNumbers), ShortBranchNumbers);
+			sect.Attribute(nameof(BranchLeadingZeroes), BranchLeadingZeroes);
 			sect.Attribute(nameof(SignedImmediateOperands), SignedImmediateOperands);
 			sect.Attribute(nameof(SignedMemoryDisplacements), SignedMemoryDisplacements);
 			sect.Attribute(nameof(SignExtendMemoryDisplacements), SignExtendMemoryDisplacements);
@@ -627,12 +627,12 @@ namespace dnSpy.Disassembly {
 			other.BinarySuffix = BinarySuffix;
 			other.BinaryDigitGroupSize = BinaryDigitGroupSize;
 			other.DigitSeparator = DigitSeparator;
-			other.ShortNumbers = ShortNumbers;
+			other.LeadingZeroes = LeadingZeroes;
 			other.UpperCaseHex = UpperCaseHex;
 			other.SmallHexNumbersInDecimal = SmallHexNumbersInDecimal;
 			other.AddLeadingZeroToHexNumbers = AddLeadingZeroToHexNumbers;
 			other.NumberBase = NumberBase;
-			other.ShortBranchNumbers = ShortBranchNumbers;
+			other.BranchLeadingZeroes = BranchLeadingZeroes;
 			other.SignedImmediateOperands = SignedImmediateOperands;
 			other.SignedMemoryDisplacements = SignedMemoryDisplacements;
 			other.SignExtendMemoryDisplacements = SignExtendMemoryDisplacements;

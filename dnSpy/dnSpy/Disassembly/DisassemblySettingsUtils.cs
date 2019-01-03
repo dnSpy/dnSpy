@@ -55,12 +55,12 @@ namespace dnSpy.Disassembly {
 			options.BinarySuffix = settings.BinarySuffix;
 			options.BinaryDigitGroupSize = settings.BinaryDigitGroupSize;
 			options.DigitSeparator = settings.DigitSeparator;
-			options.ShortNumbers = settings.ShortNumbers;
+			options.LeadingZeroes = settings.LeadingZeroes;
 			options.UpperCaseHex = settings.UpperCaseHex;
 			options.SmallHexNumbersInDecimal = settings.SmallHexNumbersInDecimal;
 			options.AddLeadingZeroToHexNumbers = settings.AddLeadingZeroToHexNumbers;
 			options.NumberBase = ToIcedNumberBase(settings.NumberBase);
-			options.ShortBranchNumbers = settings.ShortBranchNumbers;
+			options.BranchLeadingZeroes = settings.BranchLeadingZeroes;
 			options.SignedImmediateOperands = settings.SignedImmediateOperands;
 			options.SignedMemoryDisplacements = settings.SignedMemoryDisplacements;
 			options.SignExtendMemoryDisplacements = settings.SignExtendMemoryDisplacements;
