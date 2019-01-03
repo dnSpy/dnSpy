@@ -1943,11 +1943,11 @@
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
     <value>Показывать масштаб перед индексным регистром</value>
   </data>
-  <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Short numbers (branches)</value>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes (branches)</value>
   </data>
-  <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Короткие номера</value>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Show branch size</value>
@@ -1962,7 +1962,7 @@
     <value>Показывать нулевые смещения</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Signed numbers</value>
+    <value>Числа со знаком</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
     <value>Signed displacements</value>
@@ -2031,7 +2031,7 @@
     <value>Этот метод не оптимизирован</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>Показать адрес символа</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Время:</value>

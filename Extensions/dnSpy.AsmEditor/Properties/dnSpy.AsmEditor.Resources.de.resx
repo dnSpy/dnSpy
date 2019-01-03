@@ -1299,7 +1299,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_Hash</value>
   </data>
   <data name="EditSwitchInstructionOperand" xml:space="preserve">
-    <value>Bearbeite Switch Operand</value>
+    <value>Switch Operand bearbeiten</value>
   </data>
   <data name="EditTypeCommand" xml:space="preserve">
     <value>Typ bearbeiten...</value>
@@ -2534,9 +2534,9 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Compiler</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>Mit NOPs e_rsetzen</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>Mit NOPs e_rsetzen</value>
   </data>
 </root>

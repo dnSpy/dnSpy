@@ -2538,9 +2538,9 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
     <value>Fordító</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>Cse_re NOP-okra</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>Cse_re NOP-okra</value>
   </data>
 </root>
