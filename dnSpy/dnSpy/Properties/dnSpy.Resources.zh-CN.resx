@@ -1943,11 +1943,11 @@
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
     <value>在索引寄存器之前显示比例</value>
   </data>
-  <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>短数字（分支）</value>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes (branches)</value>
   </data>
-  <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>短数字</value>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>显示分支大小</value>

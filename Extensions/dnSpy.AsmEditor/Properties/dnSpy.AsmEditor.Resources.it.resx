@@ -148,7 +148,7 @@
     <value>_Versione .NET</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>_Algoritmo hash</value>
+    <value>_Algoritmo di hashing</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
     <value>_Nome</value>
@@ -196,13 +196,13 @@
     <value>C</value>
   </data>
   <data name="ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Cancella Objects</value>
+    <value>Cancella Oggetti</value>
   </data>
   <data name="ClearTypesCharacter" xml:space="preserve">
     <value>C</value>
   </data>
   <data name="ClearTypesCharacter_ToolTip" xml:space="preserve">
-    <value>Cancella Types</value>
+    <value>Cancella Tipi</value>
   </data>
   <data name="ConstantDlg_Constant" xml:space="preserve">
     <value>Costante</value>
@@ -2532,9 +2532,9 @@ Sei sicuro di volere uscire?</value>
     <value>Compilatore</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_Rimpiazza con NOPs</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_Rimpiazza con NOPs</value>
   </data>
 </root>

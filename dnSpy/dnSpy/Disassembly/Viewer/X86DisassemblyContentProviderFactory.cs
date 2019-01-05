@@ -125,7 +125,7 @@ namespace dnSpy.Disassembly.Viewer {
 							break;
 
 						case OpKind.Memory:
-							if (instr.IsIPRelativeMemoryOp)
+							if (instr.IsIPRelativeMemoryOperand)
 								addresses.Add(instr.IPRelativeMemoryAddress);
 							else {
 								switch (instr.MemoryDisplSize) {

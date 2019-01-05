@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			case II.Code.Jmp_rm64:
 				if (instr.Op0Kind != OpKind.Memory)
 					return;
-				if (instr.IsIPRelativeMemoryOp) {
+				if (instr.IsIPRelativeMemoryOperand) {
 					jmpTarget = instr.IPRelativeMemoryAddress;
 					jmpTargetIsIndirect = true;
 					return;

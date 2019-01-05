@@ -1944,11 +1944,11 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
     <value>Skala vor dem Indexregister anzeigen</value>
   </data>
-  <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Kurznummern (Zweige)</value>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes (branches)</value>
   </data>
-  <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Kurznummern</value>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Zweiggröße anzeigen</value>

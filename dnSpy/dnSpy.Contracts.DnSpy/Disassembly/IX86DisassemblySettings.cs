@@ -172,10 +172,10 @@ namespace dnSpy.Contracts.Disassembly {
 		string DigitSeparator { get; set; }
 
 		/// <summary>
-		/// Use shortest possible hexadecimal/octal/binary numbers, eg. 0xA/0Ah instead of eg. 0x0000000A/0000000Ah.
-		/// This option has no effect on branch targets, use <see cref="ShortBranchNumbers"/>.
+		/// Add leading zeroes to hexadecimal/octal/binary numbers, eg. 0x0000000A/0000000Ah vs 0xA/0Ah.
+		/// This option has no effect on branch targets, use <see cref="BranchLeadingZeroes"/>.
 		/// </summary>
-		bool ShortNumbers { get; set; }
+		bool LeadingZeroes { get; set; }
 
 		/// <summary>
 		/// Use upper case hex digits
@@ -198,9 +198,9 @@ namespace dnSpy.Contracts.Disassembly {
 		NumberBase NumberBase { get; set; }
 
 		/// <summary>
-		/// Don't add leading zeroes to branch offsets, eg. 'je 123h' vs 'je 00000123h'. Used by call near, call far, jmp near, jmp far, jcc, loop, loopcc, xbegin
+		/// Add leading zeroes to branch offsets, eg. 'je 00000123h' vs 'je 123h'. Used by call near, call far, jmp near, jmp far, jcc, loop, loopcc, xbegin
 		/// </summary>
-		bool ShortBranchNumbers { get; set; }
+		bool BranchLeadingZeroes { get; set; }
 
 		/// <summary>
 		/// Show immediate operands as signed numbers, eg. 'mov eax,FFFFFFFF' vs 'mov eax,-1'

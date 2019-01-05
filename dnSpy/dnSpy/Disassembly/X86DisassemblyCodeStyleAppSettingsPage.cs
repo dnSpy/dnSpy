@@ -56,8 +56,8 @@ namespace dnSpy.Disassembly {
 		public X86DisasmBooleanSetting AlwaysShowScale { get; }
 		public X86DisasmBooleanSetting AlwaysShowSegmentRegister { get; }
 		public X86DisasmBooleanSetting ShowZeroDisplacements { get; }
-		public X86DisasmBooleanSetting ShortNumbers { get; }
-		public X86DisasmBooleanSetting ShortBranchNumbers { get; }
+		public X86DisasmBooleanSetting LeadingZeroes { get; }
+		public X86DisasmBooleanSetting BranchLeadingZeroes { get; }
 		public X86DisasmBooleanSetting SmallHexNumbersInDecimal { get; }
 		public X86DisasmBooleanSetting AddLeadingZeroToHexNumbers { get; }
 		public X86DisasmBooleanSetting SignedImmediateOperands { get; }
@@ -142,8 +142,8 @@ namespace dnSpy.Disassembly {
 			AlwaysShowScale = AddDisasmBoolSetting(() => Settings.AlwaysShowScale, value => Settings.AlwaysShowScale = value, Instruction.Create(Code.Push_rm64, new MemoryOperand(Register.RBP, Register.RDI, 1, -0x12345678, 8, false, Register.None)));
 			AlwaysShowSegmentRegister = AddDisasmBoolSetting(() => Settings.AlwaysShowSegmentRegister, value => Settings.AlwaysShowSegmentRegister = value, Instruction.Create(Code.Push_rm64, new MemoryOperand(Register.RBP, Register.RDI, 4, -0x12345678, 8, false, Register.None)));
 			ShowZeroDisplacements = AddDisasmBoolSetting(() => Settings.ShowZeroDisplacements, value => Settings.ShowZeroDisplacements = value, Instruction.Create(Code.Push_rm64, new MemoryOperand(Register.RBP, Register.None, 1, 0, 1, false, Register.None)));
-			ShortNumbers = AddDisasmBoolSetting(() => Settings.ShortNumbers, value => Settings.ShortNumbers = value, Instruction.Create(Code.Mov_rm32_imm32, Register.EDI, 0x123));
-			ShortBranchNumbers = AddDisasmBoolSetting(() => Settings.ShortBranchNumbers, value => Settings.ShortBranchNumbers = value, Instruction.CreateBranch(Code.Je_rel8_64, 0x12345), false);
+			LeadingZeroes = AddDisasmBoolSetting(() => Settings.LeadingZeroes, value => Settings.LeadingZeroes = value, Instruction.Create(Code.Mov_rm32_imm32, Register.EDI, 0x123));
+			BranchLeadingZeroes = AddDisasmBoolSetting(() => Settings.BranchLeadingZeroes, value => Settings.BranchLeadingZeroes = value, Instruction.CreateBranch(Code.Je_rel8_64, 0x12345), false);
 			SmallHexNumbersInDecimal = AddDisasmBoolSetting(() => Settings.SmallHexNumbersInDecimal, value => Settings.SmallHexNumbersInDecimal = value, Instruction.Create(Code.Or_rm64_imm8, Register.RDX, 4));
 			AddLeadingZeroToHexNumbers = AddDisasmBoolSetting(() => Settings.AddLeadingZeroToHexNumbers, value => Settings.AddLeadingZeroToHexNumbers = value, Instruction.Create(Code.Mov_rm8_imm8, Register.AL, 0xA5));
 			SignedImmediateOperands = AddDisasmBoolSetting(() => Settings.SignedImmediateOperands, value => Settings.SignedImmediateOperands = value, Instruction.Create(Code.Or_rm64_imm8, Register.RDX, -0x12));
@@ -215,12 +215,12 @@ namespace dnSpy.Disassembly {
 			options.BinarySuffix = x86DisassemblySettings.BinarySuffix;
 			options.BinaryDigitGroupSize = x86DisassemblySettings.BinaryDigitGroupSize;
 			options.DigitSeparator = x86DisassemblySettings.DigitSeparator;
-			options.ShortNumbers = x86DisassemblySettings.ShortNumbers;
+			options.LeadingZeroes = x86DisassemblySettings.LeadingZeroes;
 			options.UpperCaseHex = x86DisassemblySettings.UpperCaseHex;
 			options.SmallHexNumbersInDecimal = x86DisassemblySettings.SmallHexNumbersInDecimal;
 			options.AddLeadingZeroToHexNumbers = x86DisassemblySettings.AddLeadingZeroToHexNumbers;
 			options.NumberBase = UseHexNumbers.Value ? Iced.Intel.NumberBase.Hexadecimal : Iced.Intel.NumberBase.Decimal;
-			options.ShortBranchNumbers = x86DisassemblySettings.ShortBranchNumbers;
+			options.BranchLeadingZeroes = x86DisassemblySettings.BranchLeadingZeroes;
 			options.SignedImmediateOperands = x86DisassemblySettings.SignedImmediateOperands;
 			options.SignedMemoryDisplacements = x86DisassemblySettings.SignedMemoryDisplacements;
 			options.SignExtendMemoryDisplacements = x86DisassemblySettings.SignExtendMemoryDisplacements;

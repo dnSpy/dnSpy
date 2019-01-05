@@ -1942,11 +1942,11 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
     <value>Afficher le facteur d'échelle avant le registre d’index</value>
   </data>
-  <data name="DisassemblySettings_ShortBranchNumbers" xml:space="preserve">
-    <value>Nombres courts (sauts)</value>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes (branches)</value>
   </data>
-  <data name="DisassemblySettings_ShortNumbers" xml:space="preserve">
-    <value>Nombres courts</value>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Afficher la taille du saut</value>
