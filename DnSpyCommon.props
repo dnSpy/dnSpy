@@ -16,9 +16,9 @@
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
 
     <!-- Update app.config whenever this value changes -->
-    <DnSpyAssemblyVersion>5.0.65000.0</DnSpyAssemblyVersion>
+    <DnSpyAssemblyVersion>6.0.0.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
-    <DnSpyAssemblyInformationalVersion>v5.x.x</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyInformationalVersion>v6.0.0</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2019 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
     <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
