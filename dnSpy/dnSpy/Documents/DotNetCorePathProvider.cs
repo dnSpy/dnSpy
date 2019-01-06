@@ -170,7 +170,17 @@ namespace dnSpy.Documents {
 			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
-				path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
+				if (string.IsNullOrEmpty(path))
+					continue;
+				try {
+					path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
+				}
+				catch (ArgumentException) {
+					continue;
+				}
+				catch (PathTooLongException) {
+					continue;
+				}
 				if (!Directory.Exists(path))
 					continue;
 				if (!hash.Add(path))
