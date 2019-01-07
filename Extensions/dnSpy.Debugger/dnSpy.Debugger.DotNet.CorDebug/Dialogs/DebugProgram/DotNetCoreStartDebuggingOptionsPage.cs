@@ -34,6 +34,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Core";
 
+		public bool UseHost {
+			get => useHost;
+			set {
+				if (useHost != value) {
+					useHost = value;
+					OnPropertyChanged(nameof(UseHost));
+					OnPropertyChanged(nameof(HostFilename));
+					UpdateIsValid();
+				}
+			}
+		}
+		bool useHost;
+
 		public string HostFilename {
 			get => hostFilename;
 			set {
@@ -58,11 +71,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		}
 		string hostArguments = string.Empty;
 
-		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
+		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename(), a => CanPickNewHostFilename);
 
 		public DotNetCoreStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
 			: base(pickFilename, pickDirectory) {
 		}
+
+		bool CanPickNewHostFilename => UseHost;
 
 		void PickNewHostFilename() {
 			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
@@ -95,6 +110,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 			if (isExe) {
 				var dncOptions = CreateOptions(breakKind);
 				Initialize(filename, dncOptions);
+				dncOptions.UseHost = !DotNetCoreGenericDebugEngineGuidProvider.IsDotNetCoreAppHostFilename(filename);
 				return dncOptions;
 			}
 			else {
@@ -110,12 +126,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		void Initialize(DotNetCoreStartDebuggingOptions options) {
 			base.Initialize(options);
+			UseHost = options.UseHost;
 			HostFilename = options.Host;
 			HostArguments = options.HostArguments;
 		}
 
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new DotNetCoreStartDebuggingOptions {
+				UseHost = UseHost,
 				Host = HostFilename,
 				HostArguments = HostArguments,
 			});
@@ -144,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		protected override string Verify(string columnName) {
 			if (columnName == nameof(HostFilename)) {
-				if (!string.IsNullOrWhiteSpace(HostFilename))
+				if (UseHost && !string.IsNullOrWhiteSpace(HostFilename))
 					return VerifyFilename(HostFilename);
 			}
 			else if (columnName == nameof(Filename))
