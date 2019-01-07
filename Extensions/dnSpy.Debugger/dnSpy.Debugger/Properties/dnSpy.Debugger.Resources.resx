@@ -1503,4 +1503,10 @@ Are you sure you want to expand it?</value>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
   </data>
+  <data name="DebugWithNonExeExtension" xml:space="preserve">
+    <value>Are you sure you want to debug this file which doesn't have a .exe extension?</value>
+  </data>
+  <data name="RunWithNonExeExtension" xml:space="preserve">
+    <value>Are you sure you want to run this file which doesn't have a .exe extension?</value>
+  </data>
 </root>
