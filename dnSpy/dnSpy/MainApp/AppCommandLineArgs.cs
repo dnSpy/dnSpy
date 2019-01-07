@@ -22,12 +22,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using dnSpy.Contracts.App;
 
 namespace dnSpy.MainApp {
 	sealed class AppCommandLineArgs : IAppCommandLineArgs {
 		const char ARG_SEP = ':';
 
+		public bool DisplayHelp { get; }
 		public string SettingsFilename { get; }
 		public IEnumerable<string> Filenames => filenames;
 		public bool SingleInstance { get; }
@@ -58,6 +60,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public AppCommandLineArgs(string[] args) {
+			DisplayHelp = false;
 			SettingsFilename = null;
 			SingleInstance = true;
 			Activate = true;
@@ -86,6 +89,10 @@ namespace dnSpy.MainApp {
 					switch (arg) {
 					case "--":
 						canParseCommands = false;
+						break;
+
+					case "--help":
+						DisplayHelp = true;
 						break;
 
 					case "--settings-file":
@@ -262,5 +269,62 @@ namespace dnSpy.MainApp {
 		}
 
 		public IEnumerable<Tuple<string, string>> GetArguments() => userArgs.Select(a => Tuple.Create(a.Key, a.Value));
+
+
+
+		public void ShowHelp() {
+
+
+			var text = GetHelpText();
+			if (GetConsoleWindow() == IntPtr.Zero) {
+				// AttachConsole(/*ParentProcess*/-1) didn't work here
+				// Console.WriteLine works, but the ScreenBuffer of a real Console will not be updated.
+
+				// Use a native msgbox instead (MsgBoxService is not set at this time)
+				System.Windows.MessageBox.Show(text, "dnSpy Commandline help");
+			} else {
+				Console.WriteLine(text);
+			}
+		}
+
+		public string GetHelpText() {
+			// USE SPACES!!
+			// MAX-ROW-SIZE: 80
+			return @"usage: dnspy [OPTIONS]
+
+Options:
+      --settings-file path        Settings filename
+      --multiple                  Allow multiple instances
+      --dont-activate,
+      --no-activate               Don't activate window
+  -l, --language string           Language, either human readable or a language
+                                  guid
+      --culture string            The culture to use. eg. en-US
+      --select string             Member to select, either an MD token or an
+                                  XML doc name
+      --new-tab                   Show the file in a new tab
+      --search string             Search string
+      --search-for string         Search type
+      --search-in string          Search location
+      --theme string              Theme name (eg. Theme_Dark) or GUID
+      --dont-load-files,
+      --no-load-files             Don't load any saved files on startup
+      --full-screen               Start in fullscreen
+      --not-full-screen           Don't start in fullscreen
+      --show-tool-window string   Tool windows to show
+      --hide-tool-window string   Tool windows to hide
+      --show-startup-time         Show start up time
+  -p, --pid number                Attach to this process, unless it's 0
+      -pn,
+      --process-name string       Attach to this process name, unless it's
+                                  empty. Can contain wildcards.
+      --jdinfo number             Address of a JIT_DEBUG_INFO structure
+                                  allocated in the target process' address
+                                  space
+";
+		}
+
+		[DllImport("kernel32.dll")]
+		private static extern IntPtr GetConsoleWindow();
 	}
 }

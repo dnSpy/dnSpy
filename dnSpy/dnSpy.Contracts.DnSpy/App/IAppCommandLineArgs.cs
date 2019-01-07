@@ -27,6 +27,9 @@ namespace dnSpy.Contracts.App {
 	/// Application command line arguments
 	/// </summary>
 	public interface IAppCommandLineArgs {
+		/// <summary>Display help</summary>
+		bool DisplayHelp { get; }
+
 		/// <summary>Settings filename</summary>
 		string SettingsFilename { get; }
 
@@ -110,5 +113,10 @@ namespace dnSpy.Contracts.App {
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<Tuple<string, string>> GetArguments();
+
+		/// <summary>
+		/// Returns the help text
+		/// </summary>
+		string GetHelpText();
 	}
 }

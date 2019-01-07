@@ -52,7 +52,13 @@ namespace dnSpy.MainApp {
 			if (!readSettings)
 				readSettings = AskReadSettings();
 
-			new App(readSettings, sw).Run();
+			var args = new AppCommandLineArgs();
+			if (args.DisplayHelp) {
+				args.ShowHelp();
+			}
+			else {
+				new App(args, readSettings, sw).Run();
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.NoInlining)]

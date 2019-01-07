@@ -90,7 +90,7 @@ namespace dnSpy.MainApp {
 
 		Task<ExportProvider> initializeMEFTask;
 		Stopwatch startupStopwatch;
-		public App(bool readSettings, Stopwatch startupStopwatch) {
+		public App(IAppCommandLineArgs args, bool readSettings, Stopwatch startupStopwatch) {
 			// PERF: Init MEF on a BG thread. Results in slightly faster startup, eg. InitializeComponent() becomes a 'free' call on this UI thread
 			initializeMEFTask = Task.Run(() => InitializeMEF(readSettings, useCache: readSettings));
 			this.startupStopwatch = startupStopwatch;
@@ -98,7 +98,7 @@ namespace dnSpy.MainApp {
 			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
 			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
 			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
-			args = new AppCommandLineArgs();
+			this.args = args;
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
 
 			AddAppContextFixes();
