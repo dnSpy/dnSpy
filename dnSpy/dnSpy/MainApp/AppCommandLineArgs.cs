@@ -270,11 +270,7 @@ namespace dnSpy.MainApp {
 
 		public IEnumerable<Tuple<string, string>> GetArguments() => userArgs.Select(a => Tuple.Create(a.Key, a.Value));
 
-
-
 		public void ShowHelp() {
-
-
 			var text = GetHelpText();
 			if (GetConsoleWindow() == IntPtr.Zero) {
 				// AttachConsole(/*ParentProcess*/-1) didn't work here
@@ -287,9 +283,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		public string GetHelpText() {
-			// USE SPACES!!
-			// MAX-ROW-SIZE: 80
+		private string GetHelpText() {
 			return @"usage: dnspy [OPTIONS]
 
 Options:

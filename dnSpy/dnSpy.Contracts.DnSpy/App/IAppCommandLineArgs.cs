@@ -115,8 +115,8 @@ namespace dnSpy.Contracts.App {
 		IEnumerable<Tuple<string, string>> GetArguments();
 
 		/// <summary>
-		/// Returns the help text
+		/// Shows the commandline help
 		/// </summary>
-		string GetHelpText();
+		void ShowHelp();
 	}
 }

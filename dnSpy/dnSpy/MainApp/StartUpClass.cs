@@ -53,12 +53,10 @@ namespace dnSpy.MainApp {
 				readSettings = AskReadSettings();
 
 			var args = new AppCommandLineArgs();
-			if (args.DisplayHelp) {
+			if (args.DisplayHelp)
 				args.ShowHelp();
-			}
-			else {
+			else
 				new App(args, readSettings, sw).Run();
-			}
 		}
 
 		[MethodImpl(MethodImplOptions.NoInlining)]
