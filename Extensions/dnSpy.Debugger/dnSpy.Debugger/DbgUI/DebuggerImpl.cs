@@ -395,7 +395,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			case DbgMessageKind.ExceptionThrown:
 				var exm = (DbgMessageExceptionThrownEventArgs)e;
-				if (exm.Exception.IsUnhandled) {
+				if (!debuggerSettings.IgnoreUnhandledExceptions && exm.Exception.IsUnhandled) {
 					exm.Pause = true;
 					UI(() => ShowUnhandledException_UI(exm));
 				}
