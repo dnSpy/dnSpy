@@ -274,7 +274,4 @@ Erro: {0}</value>
 HR: 0x{0:X8}
 Erro: 0x{1:X8}</value>
   </data>
-  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Use host executable</value>
-  </data>
 </root>

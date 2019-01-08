@@ -1944,10 +1944,10 @@
     <value>Mostrar escala antes de registro de índice</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Añadir ceros iniciales (ramas)</value>
+    <value>Add leading zeroes (branches)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Añadir ceros iniciales</value>
+    <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Mostrar tamaño de la rama</value>

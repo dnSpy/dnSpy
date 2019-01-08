@@ -274,7 +274,4 @@
 HR: 0x{0:X8}
 Помилка: 0x{1:X8}</value>
   </data>
-  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Використовувати виконавчий файл хоста</value>
-  </data>
 </root>

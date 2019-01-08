@@ -50,7 +50,7 @@ namespace dndbg.Engine {
 		public string DbgShimFilename { get; set; }
 
 		/// <summary>
-		/// Host filename or null to not use a host exe
+		/// Host filename
 		/// </summary>
 		public string HostFilename { get; set; }
 

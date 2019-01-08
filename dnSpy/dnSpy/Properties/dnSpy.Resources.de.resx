@@ -1945,10 +1945,10 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Skala vor dem Indexregister anzeigen</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Führende Nullen hinzufügen (Zweige)</value>
+    <value>Add leading zeroes (branches)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Führende Nullen hinzufügen</value>
+    <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Zweiggröße anzeigen</value>

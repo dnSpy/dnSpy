@@ -2531,9 +2531,9 @@
     <value>Compilador</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>Reemolazo con NOPs</value>
+    <value>_Replace with NOPs</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace con NOPs</value>
+    <value>_Replace with NOPs</value>
   </data>
 </root>

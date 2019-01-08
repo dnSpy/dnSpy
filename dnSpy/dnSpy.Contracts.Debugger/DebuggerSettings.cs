@@ -201,10 +201,5 @@ namespace dnSpy.Contracts.Debugger {
 		/// Step over properties and operators
 		/// </summary>
 		public abstract bool StepOverPropertiesAndOperators { get; set; }
-
-		/// <summary>
-		/// Ignore unhandled exceptions
-		/// </summary>
-		public abstract bool IgnoreUnhandledExceptions { get; set; }
 	}
 }

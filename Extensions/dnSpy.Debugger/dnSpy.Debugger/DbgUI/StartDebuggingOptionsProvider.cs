@@ -72,14 +72,14 @@ namespace dnSpy.Debugger.DbgUI {
 			return null;
 		}
 
-		public (StartDebuggingOptions options, StartDebuggingOptionsInfoFlags flags) GetStartDebuggingOptions(string defaultBreakKind) {
+		public StartDebuggingOptions GetStartDebuggingOptions(string defaultBreakKind) {
 			var breakKind = defaultBreakKind ?? PredefinedBreakKinds.DontBreak;
 			var filename = GetCurrentFilename();
 			var context = new StartDebuggingOptionsPageContext(filename);
 			var pages = GetStartDebuggingOptionsPages(context);
 			Debug.Assert(pages.Length != 0, "No debug engines!");
 			if (pages.Length == 0)
-				return default;
+				return null;
 
 			var oldOptions = mru.TryGetOptions(filename);
 			var lastOptions = mru.TryGetLastOptions();
@@ -108,10 +108,10 @@ namespace dnSpy.Debugger.DbgUI {
 			var res = dlg.ShowDialog();
 			vm.Close();
 			if (res != true)
-				return default;
+				return null;
 			var info = vm.StartDebuggingOptions;
 			mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
-			return (info.Options, info.Flags);
+			return info.Options;
 		}
 
 		static StartDebuggingOptions WithBreakKind(StartDebuggingOptions options, string breakKind) {
@@ -152,30 +152,16 @@ namespace dnSpy.Debugger.DbgUI {
 			return firstResult;
 		}
 
-		public bool CanStartWithoutDebugging(out StartDebuggingResult result) => TryGetStartWithoutDebuggingInfo(out _, out result);
-
-		bool TryGetStartWithoutDebuggingInfo(out string filename, out StartDebuggingResult result) {
-			filename = GetCurrentFilename();
-			result = StartDebuggingResult.None;
-			if (!File.Exists(filename))
-				return false;
-			if (!dbgProcessStarterService.Value.CanStart(filename, out var startResult))
-				return false;
-			if ((startResult & ProcessStarterResult.WrongExtension) != 0)
-				result |= StartDebuggingResult.WrongExtension;
-			return true;
+		public bool CanStartWithoutDebugging {
+			get {
+				var filename = GetCurrentFilename();
+				return File.Exists(filename) && dbgProcessStarterService.Value.CanStart(filename);
+			}
 		}
 
 		public bool StartWithoutDebugging(out string error) {
-			if (!TryGetStartWithoutDebuggingInfo(out var filename, out _))
-				throw new InvalidOperationException();
+			var filename = GetCurrentFilename();
 			return dbgProcessStarterService.Value.TryStart(filename, out error);
 		}
-	}
-
-	[Flags]
-	enum StartDebuggingResult {
-		None			= 0,
-		WrongExtension	= 0x00000001,
 	}
 }

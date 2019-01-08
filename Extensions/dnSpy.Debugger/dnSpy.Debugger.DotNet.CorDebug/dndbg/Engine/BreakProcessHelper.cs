@@ -28,16 +28,13 @@ namespace dndbg.Engine {
 	sealed class BreakProcessHelper {
 		readonly DnDebugger debugger;
 		readonly BreakProcessKind type;
-		readonly string filename1;
-		readonly string filename2;
+		readonly string filename;
 		DnBreakpoint breakpoint;
 
-		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename, bool isAppHost) {
+		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename) {
 			this.debugger = debugger ?? throw new ArgumentNullException(nameof(debugger));
 			this.type = type;
-			filename1 = filename;
-			if (isAppHost)
-				filename2 = Path.ChangeExtension(filename, "dll");
+			this.filename = filename;
 			AddStartupBreakpoint();
 		}
 
@@ -80,19 +77,7 @@ namespace dndbg.Engine {
 			});
 		}
 
-		bool IsOurModule(CorModule module, out string filename) {
-			if (IsModule(module, filename1)) {
-				filename = filename1;
-				return true;
-			}
-			if (IsModule(module, filename2)) {
-				filename = filename2;
-				return true;
-			}
-			filename = null;
-			return false;
-		}
-
+		bool IsOurModule(CorModule module) => IsModule(module, filename);
 		static bool IsModule(CorModule module, string filename) => module != null && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
 		void SetILBreakpoint(DnModuleId moduleId, uint token) {
@@ -108,7 +93,7 @@ namespace dndbg.Engine {
 		bool OnLoadModule(DebugEventBreakpointConditionContext ctx) {
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 			var mod = lmArgs.CorModule;
-			if (!IsOurModule(mod, out string filename))
+			if (!IsOurModule(mod))
 				return false;
 			debugger.RemoveBreakpoint(breakpoint);
 			breakpoint = null;
@@ -161,7 +146,7 @@ namespace dndbg.Engine {
 
 		string GetOtherModuleFullName(string name) {
 			try {
-				return Path.Combine(Path.GetDirectoryName(filename1), name);
+				return Path.Combine(Path.GetDirectoryName(filename), name);
 			}
 			catch {
 			}

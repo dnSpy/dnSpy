@@ -197,7 +197,6 @@ namespace dndbg.Engine {
 			IntPtr pHandleArray = IntPtr.Zero, pStringArray = IntPtr.Zero;
 			uint dwArrayLength = 0;
 
-			bool useHost = info.HostFilename != null;
 			var pi = new PROCESS_INFORMATION();
 			bool error = true, calledSetEvent = false;
 			try {
@@ -212,15 +211,10 @@ namespace dndbg.Engine {
 					inheritHandles = true;
 				}
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
-				string cmdline;
-				if (useHost)
-					cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
-				else
-					cmdline = "\"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
+				var cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
 				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment);
 				dwCreationFlags |= ProcessCreationFlags.CREATE_UNICODE_ENVIRONMENT;
-				var appName = useHost ? info.HostFilename : options.Filename;
-				bool b = NativeMethods.CreateProcess(appName ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
+				bool b = NativeMethods.CreateProcess(info.HostFilename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
 							inheritHandles, dwCreationFlags, env, options.CurrentDirectory,
 							ref si, out pi);
 				hThread = pi.hThread;

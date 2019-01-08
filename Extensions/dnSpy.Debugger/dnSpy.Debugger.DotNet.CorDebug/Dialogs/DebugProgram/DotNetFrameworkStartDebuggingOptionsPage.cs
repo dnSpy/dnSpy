@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.IO;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.StartDebugging;
@@ -78,13 +77,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new DotNetFrameworkStartDebuggingOptions());
-			var flags = StartDebuggingOptionsInfoFlags.None;
-			if (File.Exists(options.Filename)) {
-				var extension = Path.GetExtension(options.Filename);
-				if (!StringComparer.OrdinalIgnoreCase.Equals(extension, ".exe"))
-					flags |= StartDebuggingOptionsInfoFlags.WrongExtension;
-			}
-			return new StartDebuggingOptionsInfo(options, options.Filename, flags);
+			return new StartDebuggingOptionsInfo(options, options.Filename);
 		}
 
 		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {

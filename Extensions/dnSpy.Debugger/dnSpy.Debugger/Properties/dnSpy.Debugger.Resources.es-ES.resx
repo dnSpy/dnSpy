@@ -1500,7 +1500,4 @@ ERROR: {1}</value>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+4</value>
   </data>
-  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
-  </data>
 </root>

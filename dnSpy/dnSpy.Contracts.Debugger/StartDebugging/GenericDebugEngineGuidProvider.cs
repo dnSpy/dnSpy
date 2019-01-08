@@ -71,10 +71,5 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 		/// Unity
 		/// </summary>
 		public const double DotNetUnity = DotNet + 1;
-
-		/// <summary>
-		/// .NET Core
-		/// </summary>
-		public const double DotNetCore = DotNet + 2;
 	}
 }

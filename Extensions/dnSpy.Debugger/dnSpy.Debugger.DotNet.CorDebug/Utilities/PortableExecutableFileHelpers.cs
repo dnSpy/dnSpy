@@ -43,39 +43,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			return false;
 		}
 
-		public static bool IsPE(string file, out bool isExe, out bool hasDotNetMetadata) {
-			isExe = false;
-			hasDotNetMetadata = false;
-			if (!File.Exists(file))
-				return false;
-			try {
-				using (var f = File.OpenRead(file)) {
-					var r = new BinaryReader(f);
-					if (r.ReadUInt16() != 0x5A4D)
-						return false;
-					f.Position = 0x3C;
-					f.Position = r.ReadUInt32();
-					if (r.ReadUInt32() != 0x4550)
-						return false;
-					f.Position += 0x12;
-					var flags = r.ReadUInt16();
-					isExe = (flags & 0x2000) == 0;
-					ushort magic = r.ReadUInt16();
-					if (magic == 0x10B)
-						f.Position += 0xCE;
-					else if (magic == 0x20B)
-						f.Position += 0xDE;
-					else
-						return false;
-					hasDotNetMetadata = r.ReadUInt32() != 0 && r.ReadUInt32() != 0;
-					return true;
-				}
-			}
-			catch {
-			}
-			return false;
-		}
-
 		public static bool IsGuiApp(string file) {
 			if (!File.Exists(file))
 				return false;
