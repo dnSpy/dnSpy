@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -101,13 +100,6 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StartWithoutDebugging() {
 			if (!CanStartWithoutDebugging)
 				return;
-			var fileName = GetCurrentExecutableFilename();
-			if (fileName != null) {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(Path.GetExtension(fileName), ".exe"))
-					if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.RunWithNonExeExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
-						return;
-			}
-
 			if (!startDebuggingOptionsProvider.Value.StartWithoutDebugging(out var error))
 				messageBoxService.Value.Show(error);
 		}
@@ -122,12 +114,6 @@ namespace dnSpy.Debugger.DbgUI {
 			showingDebugProgramDlgBox = false;
 			if (options == null)
 				return;
-			var fileName = GetCurrentExecutableFilename();
-			if (fileName != null) {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(Path.GetExtension(fileName), ".exe"))
-					if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.DebugWithNonExeExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
-						return;
-			}
 
 			var errMsg = dbgManager.Value.Start(options);
 			if (errMsg != null)
