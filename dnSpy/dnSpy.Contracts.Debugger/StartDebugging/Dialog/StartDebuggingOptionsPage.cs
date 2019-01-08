@@ -126,7 +126,8 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <param name="filename">Filename or null</param>
-		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string filename = null, StartDebuggingOptionsInfoFlags flags = StartDebuggingOptionsInfoFlags.None) {
+		/// <param name="flags">Flags</param>
+		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string filename, StartDebuggingOptionsInfoFlags flags) {
 			Options = options ?? throw new ArgumentNullException(nameof(options));
 			Filename = filename;
 			Flags = flags;
