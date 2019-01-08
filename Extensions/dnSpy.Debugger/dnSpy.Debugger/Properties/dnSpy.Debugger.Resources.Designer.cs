@@ -1582,7 +1582,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to debug this file which doesn&apos;t have a .exe extension?.
+        ///   Looks up a localized string similar to Are you sure you want to debug this file which doesn&apos;t have a valid extension?.
         /// </summary>
         public static string DebugWithNonExeExtension {
             get {
@@ -2884,7 +2884,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to run this file which doesn&apos;t have a .exe extension?.
+        ///   Looks up a localized string similar to Are you sure you want to run this file which doesn&apos;t have a valid extension?.
         /// </summary>
         public static string RunWithNonExeExtension {
             get {
