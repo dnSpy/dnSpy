@@ -100,14 +100,6 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StartWithoutDebugging() {
 			if (!CanStartWithoutDebugging)
 				return;
-			var fileExtension = GetCurrentExecutableFilename();
-			fileExtension = fileExtension.Substring(fileExtension.Length - 4);
-			if (fileExtension != ".exe") {
-				var result = messageBoxService.Value.Show(dnSpy_Debugger_Resources.RunFileWithNonExeExtension, MsgBoxButton.Yes | MsgBoxButton.No);
-				if (result == MsgBoxButton.None || result == MsgBoxButton.No) {
-					return;
-				}
-			}
 			if (!startDebuggingOptionsProvider.Value.StartWithoutDebugging(out var error))
 				messageBoxService.Value.Show(error);
 		}
@@ -116,14 +108,6 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void DebugProgram(bool pauseAtEntryPoint) {
 			if (!CanDebugProgram)
 				return;
-			var fileExtension = GetCurrentExecutableFilename();
-			fileExtension = fileExtension.Substring(fileExtension.Length - 4);
-			if (fileExtension != ".exe") {
-				var result = messageBoxService.Value.Show(dnSpy_Debugger_Resources.DebugFileWithNonExeExtension, MsgBoxButton.Yes | MsgBoxButton.No);
-				if (result == MsgBoxButton.None || result == MsgBoxButton.No) {
-					return;
-				}
-			}
 			var breakKind = pauseAtEntryPoint ? PredefinedBreakKinds.EntryPoint : null;
 			showingDebugProgramDlgBox = true;
 			var options = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions(breakKind);
