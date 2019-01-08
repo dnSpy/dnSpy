@@ -29,10 +29,13 @@ namespace dnSpy.Debugger.Exceptions {
 	[Export(typeof(IDbgManagerStartListener))]
 	sealed class ExceptionConditionsChecker : IDbgManagerStartListener {
 		readonly Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService;
+		readonly DebuggerSettings debuggerSettings;
 
 		[ImportingConstructor]
-		ExceptionConditionsChecker(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) =>
+		ExceptionConditionsChecker(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService, DebuggerSettings debuggerSettings) {
 			this.dbgExceptionSettingsService = dbgExceptionSettingsService;
+			this.debuggerSettings = debuggerSettings;
+		}
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.Message += DbgManager_Message;
 
@@ -42,9 +45,8 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		bool ShouldBreak(DbgException exception) {
-			// Always break if it's an unhandled exception
 			if (exception.IsUnhandled)
-				return true;
+				return !debuggerSettings.IgnoreUnhandledExceptions;
 
 			var settings = dbgExceptionSettingsService.Value.GetSettings(exception.Id);
 			if (!CheckBreakFlags(settings.Flags, exception.Flags))

@@ -28,9 +28,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DotNetCoreDbgProcessStarter : DbgProcessStarter {
 		string GetPathToDotNetExeHost() => DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
 
-		public override bool IsSupported(string filename) =>
-			DotNetCoreHelpers.IsDotNetCoreExecutable(filename) &&
-			GetPathToDotNetExeHost() != null;
+		public override bool IsSupported(string filename, out ProcessStarterResult result) {
+			result = ProcessStarterResult.None;
+
+			if (!DotNetCoreHelpers.IsDotNetCoreExecutable(filename) || GetPathToDotNetExeHost() == null)
+				return false;
+
+			var extension = Path.GetExtension(filename);
+			if (!StringComparer.OrdinalIgnoreCase.Equals(extension, ".exe") && !StringComparer.OrdinalIgnoreCase.Equals(extension, ".dll"))
+				result |= ProcessStarterResult.WrongExtension;
+			return true;
+		}
 
 		public override bool TryStart(string filename, out string error) {
 			var dotnetExeFilename = GetPathToDotNetExeHost();

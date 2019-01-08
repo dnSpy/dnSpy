@@ -267,4 +267,7 @@
   <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
     <value>Une erreur du débogueur CLR s'est produite. Terminez le processus débogué et réessayez. HR : 0x{0:X8} Erreur : 0x{1:X8}</value>
   </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>Use host executable</value>
+  </data>
 </root>

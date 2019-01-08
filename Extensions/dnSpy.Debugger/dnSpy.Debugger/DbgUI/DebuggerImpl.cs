@@ -96,9 +96,9 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
 
-		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.CanStartWithoutDebugging;
+		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.CanStartWithoutDebugging(out _);
 		public override void StartWithoutDebugging() {
-			if (!CanStartWithoutDebugging)
+			if (!startDebuggingOptionsProvider.Value.CanStartWithoutDebugging(out var result))
 				return;
 			if (!startDebuggingOptionsProvider.Value.StartWithoutDebugging(out var error))
 				messageBoxService.Value.Show(error);
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DbgUI {
 				return;
 			var breakKind = pauseAtEntryPoint ? PredefinedBreakKinds.EntryPoint : null;
 			showingDebugProgramDlgBox = true;
-			var options = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions(breakKind);
+			var (options, flags) = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions(breakKind);
 			showingDebugProgramDlgBox = false;
 			if (options == null)
 				return;
@@ -395,7 +395,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			case DbgMessageKind.ExceptionThrown:
 				var exm = (DbgMessageExceptionThrownEventArgs)e;
-				if (exm.Exception.IsUnhandled) {
+				if (!debuggerSettings.IgnoreUnhandledExceptions && exm.Exception.IsUnhandled) {
 					exm.Pause = true;
 					UI(() => ShowUnhandledException_UI(exm));
 				}
