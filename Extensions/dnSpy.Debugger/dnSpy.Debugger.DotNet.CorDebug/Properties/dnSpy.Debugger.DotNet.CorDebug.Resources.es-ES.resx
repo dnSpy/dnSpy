@@ -270,4 +270,7 @@ Error: {1}</value>
     <value>Ha producido un error de depurador CLR. Termine el proceso depurado e inténtelo de nuevo. HR: 0 x{0:X8}
 Error: 0 x{1:X8}</value>
   </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>Usar anfitrión ejecutable</value>
+  </data>
 </root>

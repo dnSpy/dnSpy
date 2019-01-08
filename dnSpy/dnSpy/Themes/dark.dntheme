@@ -88,7 +88,7 @@
 		<color name="assembly" fg="#C4C4C4" />
 		<color name="assemblyexe" fg="#F0CA93" />
 		<color name="assemblymodule" fg="#B17FD7" />
-		<color name="directorypart" fg="#FFD700" />
+		<color name="directorypart" fg="#DCDCDC" />
 		<color name="filenamenoextension" fg="#569CD6" />
 		<color name="fileextension" fg="#9B9B82" />
 		<color name="error" fg="Red" />

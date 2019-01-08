@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new UnityConnectStartDebuggingOptions());
-			return new StartDebuggingOptionsInfo(options);
+			return new StartDebuggingOptionsInfo(options, null, StartDebuggingOptionsInfoFlags.None);
 		}
 	}
 }

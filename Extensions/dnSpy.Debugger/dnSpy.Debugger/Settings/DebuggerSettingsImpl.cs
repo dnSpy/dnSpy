@@ -638,6 +638,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool stepOverPropertiesAndOperators = true;
 
+		public override bool IgnoreUnhandledExceptions {
+			get {
+				lock (lockObj)
+					return ignoreUnhandledExceptions;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = ignoreUnhandledExceptions != value;
+					ignoreUnhandledExceptions = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(IgnoreUnhandledExceptions));
+					OnModified();
+				}
+			}
+		}
+		bool ignoreUnhandledExceptions;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -673,6 +692,7 @@ namespace dnSpy.Debugger.Settings {
 			other.ShowRawLocals = ShowRawLocals;
 			other.AsyncDebugging = AsyncDebugging;
 			other.StepOverPropertiesAndOperators = StepOverPropertiesAndOperators;
+			other.IgnoreUnhandledExceptions = IgnoreUnhandledExceptions;
 			return other;
 		}
 	}
@@ -722,6 +742,7 @@ namespace dnSpy.Debugger.Settings {
 			ShowRawLocals = sect.Attribute<bool?>(nameof(ShowRawLocals)) ?? ShowRawLocals;
 			AsyncDebugging = sect.Attribute<bool?>(nameof(AsyncDebugging)) ?? AsyncDebugging;
 			StepOverPropertiesAndOperators = sect.Attribute<bool?>(nameof(StepOverPropertiesAndOperators)) ?? StepOverPropertiesAndOperators;
+			IgnoreUnhandledExceptions = sect.Attribute<bool?>(nameof(IgnoreUnhandledExceptions)) ?? IgnoreUnhandledExceptions;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -762,6 +783,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(ShowRawLocals), ShowRawLocals);
 			sect.Attribute(nameof(AsyncDebugging), AsyncDebugging);
 			sect.Attribute(nameof(StepOverPropertiesAndOperators), StepOverPropertiesAndOperators);
+			sect.Attribute(nameof(IgnoreUnhandledExceptions), IgnoreUnhandledExceptions);
 		}
 	}
 }
