@@ -1582,6 +1582,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to debug this file which doesn&apos;t have a valid extension?.
+        /// </summary>
+        public static string DebugWithInvalidExtension {
+            get {
+                return ResourceManager.GetString("DebugWithInvalidExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete _All Breakpoints.
         /// </summary>
         public static string DeleteAllBreakpointsCommand {
@@ -2871,6 +2880,15 @@ namespace dnSpy.Debugger.Properties {
         public static string RunToCursorCommand {
             get {
                 return ResourceManager.GetString("RunToCursorCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to run this file which doesn&apos;t have a valid extension?.
+        /// </summary>
+        public static string RunWithInvalidExtension {
+            get {
+                return ResourceManager.GetString("RunWithInvalidExtension", resourceCulture);
             }
         }
         
