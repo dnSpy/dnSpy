@@ -1503,10 +1503,15 @@ Are you sure you want to expand it?</value>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
   </data>
+<<<<<<< HEAD
   <data name="DebugWithNonExeExtension" xml:space="preserve">
     <value>Are you sure you want to debug this file which doesn't have a .exe extension?</value>
   </data>
   <data name="RunWithNonExeExtension" xml:space="preserve">
     <value>Are you sure you want to run this file which doesn't have a .exe extension?</value>
+=======
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ignore unhandled exceptions</value>
+>>>>>>> fb611ee78c8e4538b6dd81bdf805d4cf4d2aaf0c
   </data>
 </root>

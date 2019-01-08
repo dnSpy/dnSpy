@@ -1258,6 +1258,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ignore unhandled exceptions.
+        /// </summary>
+        public static string DbgSettings_IgnoreUnhandledExceptions {
+            get {
+                return ResourceManager.GetString("DbgSettings_IgnoreUnhandledExceptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string DbgSettings_Language {

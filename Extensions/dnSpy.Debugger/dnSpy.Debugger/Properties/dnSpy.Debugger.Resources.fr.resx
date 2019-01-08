@@ -1501,4 +1501,7 @@ Voulez-vous vraiment étendre cet élément ?</value>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
   </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ignore unhandled exceptions</value>
+  </data>
 </root>
