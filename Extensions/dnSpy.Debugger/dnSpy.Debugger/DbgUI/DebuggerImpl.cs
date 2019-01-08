@@ -101,10 +101,10 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StartWithoutDebugging() {
 			if (!startDebuggingOptionsProvider.Value.CanStartWithoutDebugging(out var result))
 				return;
-			if ((result & StartDebuggingResult.WrongExtension) != 0) {
+			if ((result & StartDebuggingResult.WrongExtension) != 0)
 				if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.RunWithInvalidExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
 					return;
-			}
+
 			if (!startDebuggingOptionsProvider.Value.StartWithoutDebugging(out var error))
 				messageBoxService.Value.Show(error);
 		}
@@ -119,10 +119,9 @@ namespace dnSpy.Debugger.DbgUI {
 			showingDebugProgramDlgBox = false;
 			if (options == null)
 				return;
-			if ((flags & StartDebuggingOptionsInfoFlags.WrongExtension) != 0) {
+			if ((flags & StartDebuggingOptionsInfoFlags.WrongExtension) != 0)
 				if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.DebugWithInvalidExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
 					return;
-			}
 
 			var errMsg = dbgManager.Value.Start(options);
 			if (errMsg != null)
