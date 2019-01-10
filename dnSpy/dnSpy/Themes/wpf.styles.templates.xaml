@@ -1989,6 +1989,8 @@
                 Value="6,0,6,0"/>
         <Setter Property="Foreground"
                 Value="{DynamicResource HeaderDefaultText}"/>
+        <Setter Property="mvvm:GridViewColumnSorter.GridViewSortDirection"
+                Value="{Binding Column.(mvvm:GridViewColumnSorter.GridViewSortDirection), RelativeSource={RelativeSource Self}}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
@@ -2004,12 +2006,23 @@
                                 </Grid.RowDefinitions>
                                 <Border Grid.RowSpan="2"
                                         Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter Name="HeaderContent"
-                                                      Margin="0,0,0,1"
-                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      RecognizesAccessKey="True"
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter Name="HeaderContent"
+                                                          Margin="0,0,0,1"
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          RecognizesAccessKey="True"
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                        <Path Grid.Column="1"
+                                              x:Name="arrowPath"
+                                              VerticalAlignment="Center"
+                                              Fill="{DynamicResource HeaderGlyph}"
+                                              SnapsToDevicePixels="true" />
+                                    </Grid>
                                 </Border>
                             </Grid>
                         </Border>
@@ -2019,6 +2032,14 @@
                         </Canvas>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="mvvm:GridViewColumnSorter.GridViewSortDirection"
+                            Value="{x:Static mvvm:GridViewSortDirection.Ascending}">
+                            <Setter TargetName="arrowPath" Property="Data" Value="M0,5L4.5,0 9,5 0,5z" />
+                        </Trigger>
+                        <Trigger Property="mvvm:GridViewColumnSorter.GridViewSortDirection"
+                            Value="{x:Static mvvm:GridViewSortDirection.Descending}">
+                            <Setter TargetName="arrowPath" Property="Data" Value="M0,0L4.5,5 9,0 0,0z" />
+                        </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="true">
                             <Setter TargetName="HeaderBorder"

@@ -38,10 +38,11 @@ using dnSpy.Debugger.Utilities;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {
-	sealed class AttachToProcessVM : ViewModelBase {
+	sealed class AttachToProcessVM : ViewModelBase, IGridViewColumnDescsProvider, IComparer<ProgramVM> {
 		readonly ObservableCollection<ProgramVM> realAllItems;
 		public BulkObservableCollection<ProgramVM> AllItems { get; }
 		public ObservableCollection<ProgramVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.AttachToProcess_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
 		public ICommand SearchHelpCommand => new RelayCommand(a => searchHelp());
@@ -113,8 +114,22 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			attachToProcessContext.Formatter = programFormatterProvider.Create();
 			attachToProcessContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.Process, dnSpy_Debugger_Resources.Column_Process),
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.ProcessID, dnSpy_Debugger_Resources.Column_ProcessID),
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.ProcessTitle, dnSpy_Debugger_Resources.Column_ProcessTitle),
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.ProcessType, dnSpy_Debugger_Resources.Column_ProcessType),
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.ProcessArchitecture, dnSpy_Debugger_Resources.Column_ProcessArchitecture),
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.ProcessFilename, dnSpy_Debugger_Resources.Column_ProcessFilename),
+					new GridViewColumnDesc(AttachToProcessWindowColumnIds.ProcessCommandLine, dnSpy_Debugger_Resources.Column_ProcessCommandLine),
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => SortList();
+
 			RefreshCore();
 		}
+
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.AttachToProcessWindowProcess, "p", dnSpy_Debugger_Resources.Column_Process),
@@ -194,12 +209,11 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		}
 
 		int GetInsertionIndex(ProgramVM vm, IList<ProgramVM> list) {
-			var comparer = ProgramVMComparer.Instance;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				int c = comparer.Compare(vm, list[index]);
+				int c = Compare(vm, list[index]);
 				if (c < 0)
 					hi = index - 1;
 				else if (c > 0)
@@ -208,20 +222,6 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 					return index;
 			}
 			return hi + 1;
-		}
-
-		sealed class ProgramVMComparer : IComparer<ProgramVM> {
-			public static readonly ProgramVMComparer Instance = new ProgramVMComparer();
-			ProgramVMComparer() { }
-			public int Compare(ProgramVM x, ProgramVM y) {
-				var c = StringComparer.CurrentCultureIgnoreCase.Compare(x.Name, y.Name);
-				if (c != 0)
-					return c;
-				c = x.Id.CompareTo(y.Id);
-				if (c != 0)
-					return c;
-				return StringComparer.CurrentCultureIgnoreCase.Compare(x.RuntimeName, y.RuntimeName);
-			}
 		}
 
 		void AttachProgramOptionsAggregator_Completed(object sender, EventArgs e) {
@@ -242,10 +242,94 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			attachToProcessContext.SearchMatcher.SetSearchText(filterText);
+			SortList(filterText);
+		}
 
+		void SortList() {
+			uiDispatcher.VerifyAccess();
+			SortList(filterText);
+		}
+ 
+		void SortList(string filterText) {
+			uiDispatcher.VerifyAccess();
 			var newList = new List<ProgramVM>(GetFilteredItems(filterText));
-			newList.Sort(ProgramVMComparer.Instance);
+			newList.Sort(this);
 			AllItems.Reset(newList);
+		}
+
+		public IEnumerable<ProgramVM> Sort(IEnumerable<ProgramVM> programs) {
+			uiDispatcher.VerifyAccess();
+			var list = new List<ProgramVM>(programs);
+			list.Sort(this);
+			return list;
+		}
+
+		public int Compare(ProgramVM x, ProgramVM y) {
+			Debug.Assert(uiDispatcher.CheckAccess());
+			var (desc, dir) = Descs.SortedColumn;
+
+			int id;
+			if (desc == null || dir == GridViewSortDirection.Default) {
+				id = AttachToProcessWindowColumnIds.Default_Order;
+				dir = GridViewSortDirection.Ascending;
+			}
+			else
+				id = desc.Id;
+
+			int diff;
+			switch (id) {
+			case AttachToProcessWindowColumnIds.Default_Order:
+				diff = GetDefaultOrder(x, y);
+				break;
+
+			case AttachToProcessWindowColumnIds.Process:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
+				break;
+
+			case AttachToProcessWindowColumnIds.ProcessID:
+				diff = x.Id - y.Id;
+				break;
+
+			case AttachToProcessWindowColumnIds.ProcessTitle:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Title, y.Title);
+				break;
+
+			case AttachToProcessWindowColumnIds.ProcessType:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.RuntimeName, y.RuntimeName);
+				break;
+
+			case AttachToProcessWindowColumnIds.ProcessArchitecture:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Architecture, y.Architecture);
+				break;
+
+			case AttachToProcessWindowColumnIds.ProcessFilename:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Filename, y.Filename);
+				break;
+
+			case AttachToProcessWindowColumnIds.ProcessCommandLine:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.CommandLine, y.CommandLine);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (diff == 0 && id != AttachToProcessWindowColumnIds.Default_Order)
+				diff = GetDefaultOrder(x, y);
+			Debug.Assert(dir == GridViewSortDirection.Ascending || dir == GridViewSortDirection.Descending);
+			if (dir == GridViewSortDirection.Descending)
+				diff = -diff;
+			return diff;
+		}
+
+		static int GetDefaultOrder(ProgramVM x, ProgramVM y) {
+			int c = StringComparer.CurrentCultureIgnoreCase.Compare(x.Name, y.Name);
+			if (c != 0)
+				return c;
+			c = x.Id - y.Id;
+			if (c != 0)
+				return c;
+			return c = StringComparer.CurrentCultureIgnoreCase.Compare(x.RuntimeName, y.RuntimeName);
 		}
 
 		IEnumerable<ProgramVM> GetFilteredItems(string filterText) {
@@ -329,19 +413,50 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			var sb = new DbgStringBuilderTextWriter();
 			var formatter = attachToProcessContext.Formatter;
 			foreach (var vm in programs) {
-				formatter.WriteProcess(sb, vm);
-				sb.Write(DbgTextColor.Text, "\t");
-				formatter.WritePid(sb, vm);
-				sb.Write(DbgTextColor.Text, "\t");
-				formatter.WriteTitle(sb, vm);
-				sb.Write(DbgTextColor.Text, "\t");
-				formatter.WriteType(sb, vm);
-				sb.Write(DbgTextColor.Text, "\t");
-				formatter.WriteMachine(sb, vm);
-				sb.Write(DbgTextColor.Text, "\t");
-				formatter.WritePath(sb, vm);
-				sb.Write(DbgTextColor.Text, "\t");
-				formatter.WriteCommandLine(sb, vm);
+				bool needTab = false;
+				foreach (var column in Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+					if (column.Name == string.Empty)
+						continue;
+
+					if (needTab)
+						sb.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case AttachToProcessWindowColumnIds.Process:
+						formatter.WriteProcess(sb, vm);
+						break;
+
+					case AttachToProcessWindowColumnIds.ProcessID:
+						formatter.WritePid(sb, vm);
+						break;
+
+					case AttachToProcessWindowColumnIds.ProcessTitle:
+						formatter.WriteTitle(sb, vm);
+						break;
+
+					case AttachToProcessWindowColumnIds.ProcessType:
+						formatter.WriteType(sb, vm);
+						break;
+
+					case AttachToProcessWindowColumnIds.ProcessArchitecture:
+						formatter.WriteMachine(sb, vm);
+						break;
+
+					case AttachToProcessWindowColumnIds.ProcessFilename:
+						formatter.WritePath(sb, vm);
+						break;
+
+					case AttachToProcessWindowColumnIds.ProcessCommandLine:
+						formatter.WriteCommandLine(sb, vm);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				sb.Write(DbgTextColor.Text, Environment.NewLine);
 			}
 

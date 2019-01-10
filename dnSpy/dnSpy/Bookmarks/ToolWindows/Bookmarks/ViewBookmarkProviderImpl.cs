@@ -69,8 +69,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void UpdateBookmarks_UI() {
 			uiDispatcher.VerifyAccess();
 			if (bookmarksVM.Value.IsOpen) {
-				//TODO: This should be view order
-				var bookmarks = bookmarksVM.Value.AllItems.Select(a => a.Bookmark).ToArray();
+				var bookmarks = bookmarksVM.Value.Sort(bookmarksVM.Value.AllItems).Select(a => a.Bookmark).ToArray();
 				UpdateBookmarks_UI(bookmarks);
 			}
 			else {

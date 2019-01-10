@@ -35,19 +35,21 @@ using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
-	interface IModulesVM {
+	interface IModulesVM : IGridViewColumnDescsProvider {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		BulkObservableCollection<ModuleVM> AllItems { get; }
 		ObservableCollection<ModuleVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		IEnumerable<ModuleVM> Sort(IEnumerable<ModuleVM> modules);
 	}
 
 	[Export(typeof(IModulesVM))]
-	sealed class ModulesVM : ViewModelBase, IModulesVM, ILazyToolWindowVM {
+	sealed class ModulesVM : ViewModelBase, IModulesVM, ILazyToolWindowVM, IComparer<ModuleVM> {
 		public BulkObservableCollection<ModuleVM> AllItems { get; }
 		public ObservableCollection<ModuleVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
@@ -123,7 +125,25 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = moduleFormatterProvider.Create(),
 			};
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(ModulesWindowColumnIds.Icon, string.Empty),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Name, dnSpy_Debugger_Resources.Column_Name),
+					new GridViewColumnDesc(ModulesWindowColumnIds.OptimizedModule, dnSpy_Debugger_Resources.Column_OptimizedModule),
+					new GridViewColumnDesc(ModulesWindowColumnIds.DynamicModule, dnSpy_Debugger_Resources.Column_DynamicModule),
+					new GridViewColumnDesc(ModulesWindowColumnIds.InMemoryModule, dnSpy_Debugger_Resources.Column_InMemoryModule),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Order, dnSpy_Debugger_Resources.Column_Order),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Version, dnSpy_Debugger_Resources.Column_Version),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Timestamp, dnSpy_Debugger_Resources.Column_Timestamp),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Address, dnSpy_Debugger_Resources.Column_Address),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Process, dnSpy_Debugger_Resources.Column_Process),
+					new GridViewColumnDesc(ModulesWindowColumnIds.AppDomain, dnSpy_Debugger_Resources.Column_AppDomain),
+					new GridViewColumnDesc(ModulesWindowColumnIds.Path, dnSpy_Debugger_Resources.Column_Path),
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => SortList();
 		}
+
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ModulesWindowName, "n", dnSpy_Debugger_Resources.Column_Name),
@@ -434,13 +454,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// UI thread
 		int GetInsertionIndex_UI(ModuleVM vm) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
-			var comparer = ModuleVMComparer.Instance;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				int c = comparer.Compare(vm, list[index]);
+				int c = Compare(vm, list[index]);
 				if (c < 0)
 					hi = index - 1;
 				else if (c > 0)
@@ -457,20 +476,111 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			moduleContext.SearchMatcher.SetSearchText(filterText);
+			SortList(filterText, selectedProcess);
+		}
 
+		// UI thread
+		void SortList() {
+			moduleContext.UIDispatcher.VerifyAccess();
+			SortList(filterText, selectedProcess);
+		}
+
+		// UI thread
+		void SortList(string filterText, SimpleProcessVM selectedProcess) {
+			moduleContext.UIDispatcher.VerifyAccess();
 			var newList = new List<ModuleVM>(GetFilteredItems_UI(filterText, selectedProcess));
-			newList.Sort(ModuleVMComparer.Instance);
+			newList.Sort(this);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText, selectedProcess);
+		}
+
+		// UI thread
+		IEnumerable<ModuleVM> IModulesVM.Sort(IEnumerable<ModuleVM> modules) {
+			moduleContext.UIDispatcher.VerifyAccess();
+			var list = new List<ModuleVM>(modules);
+			list.Sort(this);
+			return list;
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
 		void InitializeNothingMatched(string filterText, SimpleProcessVM selectedProcess) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process == null);
 
-		sealed class ModuleVMComparer : IComparer<ModuleVM> {
-			public static readonly IComparer<ModuleVM> Instance = new ModuleVMComparer();
-			public int Compare(ModuleVM x, ModuleVM y) => x.Order - y.Order;
+		public int Compare(ModuleVM x, ModuleVM y) {
+			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
+			var (desc, dir) = Descs.SortedColumn;
+
+			int id;
+			if (desc == null || dir == GridViewSortDirection.Default) {
+				id = ModulesWindowColumnIds.Default_Order;
+				dir = GridViewSortDirection.Ascending;
+			}
+			else
+				id = desc.Id;
+
+			int diff;
+			switch (id) {
+			case ModulesWindowColumnIds.Icon:
+				Debug.Fail("Icon column can't be sorted");
+				diff = 0;
+				break;
+
+			case ModulesWindowColumnIds.Name:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetName_UI(x), GetName_UI(y));
+				break;
+
+			case ModulesWindowColumnIds.OptimizedModule:
+				diff = Comparer<bool?>.Default.Compare(x.Module.IsOptimized, y.Module.IsOptimized);
+				break;
+
+			case ModulesWindowColumnIds.DynamicModule:
+				diff = Comparer<bool?>.Default.Compare(x.Module.IsDynamic, y.Module.IsDynamic);
+				break;
+
+			case ModulesWindowColumnIds.InMemoryModule:
+				diff = Comparer<bool?>.Default.Compare(x.Module.IsInMemory, y.Module.IsInMemory);
+				break;
+
+			case ModulesWindowColumnIds.Order:
+				diff = x.Order - y.Order;
+				break;
+
+			case ModulesWindowColumnIds.Version:
+				diff = new ModuleVersion(x.Module.Version).CompareTo(new ModuleVersion(y.Module.Version));
+				break;
+
+			case ModulesWindowColumnIds.Timestamp:
+				diff = Comparer<DateTime?>.Default.Compare(x.Module.Timestamp, y.Module.Timestamp);
+				break;
+
+			case ModulesWindowColumnIds.Address:
+				diff = x.Module.Address.CompareTo(y.Module.Address);
+				if (diff == 0)
+					diff = x.Module.Size.CompareTo(y.Module.Size);
+				break;
+
+			case ModulesWindowColumnIds.Process:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetProcess_UI(x), GetProcess_UI(y));
+				break;
+
+			case ModulesWindowColumnIds.AppDomain:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetAppDomain_UI(x), GetAppDomain_UI(y));
+				break;
+
+			case ModulesWindowColumnIds.Path:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Module.Filename, y.Module.Filename);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (diff == 0)
+				diff = x.Order - y.Order;
+			Debug.Assert(dir == GridViewSortDirection.Ascending || dir == GridViewSortDirection.Descending);
+			if (dir == GridViewSortDirection.Descending)
+				diff = -diff;
+			return diff;
 		}
 
 		// UI thread
