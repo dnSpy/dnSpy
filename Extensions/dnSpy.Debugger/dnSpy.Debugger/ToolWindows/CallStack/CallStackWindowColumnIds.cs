@@ -17,15 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Debugger.Dialogs.AttachToProcess {
-	static class AttachToProcessWindowColumnIds {
-		public const int Default_Order = -1;
-		public const int Process = 0;
-		public const int ProcessID = 1;
-		public const int ProcessTitle = 2;
-		public const int ProcessType = 3;
-		public const int ProcessArchitecture = 4;
-		public const int ProcessFilename = 5;
-		public const int ProcessCommandLine = 6;
+namespace dnSpy.Debugger.ToolWindows.CallStack {
+	static class CallStackWindowColumnIds {
+		public const int Icon = 0;
+		public const int Name = 1;
 	}
 }

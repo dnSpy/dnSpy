@@ -134,9 +134,28 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteImage(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteName(output, vm);
+				bool needTab = false;
+				foreach (var column in callStackVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case CallStackWindowColumnIds.Icon:
+						formatter.WriteImage(output, vm);
+						break;
+
+					case CallStackWindowColumnIds.Name:
+						formatter.WriteName(output, vm);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();
