@@ -1326,7 +1326,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Visual-Basic-Array kopieren</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fülle Auswahl mit Byte...</value>
+    <value>Auswahl mit Byte füllen...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Byte</value>

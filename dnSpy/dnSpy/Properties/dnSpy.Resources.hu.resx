@@ -1945,10 +1945,10 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>Mutassa a méretezés értékét az index regiszter előtt</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>Vezető nullák hozzáadása (ágak)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>Vezető nullák hozzáadása</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Elágazás méretének mutatása</value>

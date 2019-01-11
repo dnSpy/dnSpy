@@ -275,6 +275,6 @@ HR: 0x{0:X8}
 Hiba: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Use host executable</value>
+    <value>Gazda végrehajtó használata</value>
   </data>
 </root>

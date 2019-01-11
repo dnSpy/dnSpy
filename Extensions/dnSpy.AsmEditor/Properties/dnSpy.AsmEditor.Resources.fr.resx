@@ -2532,9 +2532,9 @@ La plupart des options seront réinitialisées si cette option est cochée</valu
     <value>Compilateur</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_Remplacer avec des NOPs</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_Remplacer avec des NOPs</value>
   </data>
 </root>

@@ -409,7 +409,7 @@
     <value>路径:</value>
   </data>
   <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
-    <value>显示重复显示重复</value>
+    <value>显示重复</value>
   </data>
   <data name="OpenGAC_ShowFiles" xml:space="preserve">
     <value>正在显示 {0:n0} /{1:n0} 文件</value>
@@ -852,7 +852,7 @@
     <value>转到资源</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
-    <value>折叠 Tree_View 节点</value>
+    <value>折叠树状图节点</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
     <value>全部关闭</value>
