@@ -156,6 +156,7 @@ namespace dnSpy.Debugger.Impl {
 			var info = GetProcessName(pid);
 			Filename = info.filename ?? string.Empty;
 			Name = info.name ?? string.Empty;
+			debugging = CalculateDebugging_NoLock();
 
 			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
