@@ -1512,4 +1512,16 @@ Are you sure you want to expand it?</value>
   <data name="DebugWithInvalidExtension" xml:space="preserve">
     <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
   </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>No processes match your search filter.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all processes are shown</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Search for a process</value>
+  </data>
 </root>

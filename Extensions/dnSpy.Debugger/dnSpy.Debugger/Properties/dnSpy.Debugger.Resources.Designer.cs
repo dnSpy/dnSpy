@@ -2731,6 +2731,42 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No processes match your search filter..
+        /// </summary>
+        public static string Processes_NoMatch {
+            get {
+                return ResourceManager.GetString("Processes_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all processes are shown.
+        /// </summary>
+        public static string Processes_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Processes_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Processes_Search {
+            get {
+                return ResourceManager.GetString("Processes_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a process.
+        /// </summary>
+        public static string Processes_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Processes_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step Into.
         /// </summary>
         public static string Processes_StepIntoProcessToolTip {
