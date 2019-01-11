@@ -19,6 +19,7 @@
 
 namespace dnSpy.Debugger.ToolWindows.Modules {
 	static class ModulesWindowColumnIds {
+		public const int Default_Order = -1;
 		public const int Icon = 0;
 		public const int Name = 1;
 		public const int OptimizedModule = 2;
@@ -31,7 +32,5 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public const int Process = 9;
 		public const int AppDomain = 10;
 		public const int Path = 11;
-
-		public const int Default_Order = Order;
 	}
 }

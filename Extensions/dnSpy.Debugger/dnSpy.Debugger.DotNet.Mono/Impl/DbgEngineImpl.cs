@@ -1140,7 +1140,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return false;
 
 			var moduleData = new DbgModuleData(this, monoModule);
-			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, moduleOrder++, moduleData);
+			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, ++moduleOrder, moduleData);
 			moduleData.ModuleId = ModuleIdUtils.Create(engineModule.Module, monoModule);
 			lock (lockObj) {
 				if (!toAssemblyModules.TryGetValue(monoModule.Assembly, out var modules))

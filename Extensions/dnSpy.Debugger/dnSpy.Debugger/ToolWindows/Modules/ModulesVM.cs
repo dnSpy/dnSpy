@@ -520,6 +520,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 			int diff;
 			switch (id) {
+			case ModulesWindowColumnIds.Default_Order:
+				diff = x.Order - y.Order;
+				break;
+
 			case ModulesWindowColumnIds.Icon:
 				Debug.Fail("Icon column can't be sorted");
 				diff = 0;
@@ -542,7 +546,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				break;
 
 			case ModulesWindowColumnIds.Order:
-				diff = x.Order - y.Order;
+				diff = x.Module.Order - y.Module.Order;
 				break;
 
 			case ModulesWindowColumnIds.Version:
