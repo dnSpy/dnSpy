@@ -188,7 +188,7 @@ namespace dnSpy.Contracts.Disassembly {
 		bool SmallHexNumbersInDecimal { get; set; }
 
 		/// <summary>
-		/// Add a leading zero to numbers if there's no prefix and the number begins with hex digits A-F, eg. Ah vs 0Ah
+		/// Add a leading zero to numbers if there's no prefix and the number starts with hex digits A-F, eg. Ah vs 0Ah
 		/// </summary>
 		bool AddLeadingZeroToHexNumbers { get; set; }
 
