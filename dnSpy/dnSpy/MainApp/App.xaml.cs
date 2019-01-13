@@ -147,8 +147,8 @@ namespace dnSpy.MainApp {
 		}
 
 		static string GetCachedCompositionConfigurationFilename() {
-			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Constants.DnSpyFile, "Startup");
-			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
+			var profileDir = BGJitUtils.GetFolder();
+			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info.bin");
 		}
 
 		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {

@@ -37,10 +37,10 @@ namespace dnSpy.MainApp {
 			// Use multicore JIT.
 			// Simple test: x86: ~18% faster startup, x64: ~12% faster startup.
 			try {
-				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Constants.DnSpyFile, "Startup");
+				var profileDir = BGJitUtils.GetFolder();
 				Directory.CreateDirectory(profileDir);
 				ProfileOptimization.SetProfileRoot(profileDir);
-				ProfileOptimization.StartProfile($"startup-{IntPtr.Size * 8}.profile");
+				ProfileOptimization.StartProfile("startup.profile");
 			}
 			catch {
 			}
