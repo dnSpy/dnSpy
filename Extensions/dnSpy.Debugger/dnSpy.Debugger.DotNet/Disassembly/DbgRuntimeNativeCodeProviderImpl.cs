@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				}
 			}
 
-			var newCode = new NativeCode(nativeCode.Kind, nativeCode.Optimization, newBlocks, nativeCode.CodeInfo, nativeVariableInfo, nativeCode.MethodName);
+			var newCode = new NativeCode(nativeCode.Kind, nativeCode.Optimization, newBlocks, nativeCode.CodeInfo, nativeVariableInfo, nativeCode.MethodName, nativeCode.ModuleName);
 			var symbolResolver = new DotNetSymbolResolver(runtime);
 			result = new GetNativeCodeResult(newCode, symbolResolver, header);
 			return true;

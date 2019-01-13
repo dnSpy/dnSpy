@@ -146,7 +146,7 @@ namespace dnSpy.Disassembly.Viewer {
 			return null;
 		}
 
-		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName) {
+		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
 			if (variableInfo == null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {
@@ -161,6 +161,8 @@ namespace dnSpy.Disassembly.Viewer {
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
+			if (moduleName != null)
+				WriteComment(output, commentPrefix, moduleName);
 			if (methodName != null)
 				WriteComment(output, commentPrefix, methodName);
 			ulong codeSize = 0;
