@@ -1512,13 +1512,13 @@
     <value>Ви впевнені, що хочете відлагоджувати файл без вірного розширення?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Жоден процесс не відповідає пошуковому запиту.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Пошук</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Скинути усі критерії пошуку та показати усі процеси</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Пошук процесу</value>

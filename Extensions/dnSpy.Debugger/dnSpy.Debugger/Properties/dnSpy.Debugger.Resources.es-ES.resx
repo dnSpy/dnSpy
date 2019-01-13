@@ -1501,22 +1501,22 @@ ERROR: {1}</value>
     <value>Alt+4</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>Ignorar las excepciones no controladas</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
+    <value>¿Está seguro que desea ejecutar este archivo que no tiene una extensión válida?</value>
   </data>
   <data name="DebugWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
+    <value>¿Está seguro que desea ejecutar este archivo que no tiene una extensión válida?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Ningún hilo coincide con su filtro de búsqueda.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Buscar</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Restablecer todos los criterios de búsqueda para que se muestren todos los módulos</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Búsqueda de un proceso</value>
