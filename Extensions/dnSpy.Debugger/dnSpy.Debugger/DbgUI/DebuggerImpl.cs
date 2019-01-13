@@ -378,7 +378,9 @@ namespace dnSpy.Debugger.DbgUI {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
-			dbgManager.Message += DbgManager_Message;
+			dbgManager.MessageSetIPComplete += DbgManager_MessageSetIPComplete;
+			dbgManager.MessageUserMessage += DbgManager_MessageUserMessage;
+			dbgManager.MessageExceptionThrown += DbgManager_MessageExceptionThrown;
 			dbgManager.DbgManagerMessage += DbgManager_DbgManagerMessage;
 		}
 
@@ -390,26 +392,18 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			switch (e.Kind) {
-			case DbgMessageKind.SetIPComplete:
-				var ep = (DbgMessageSetIPCompleteEventArgs)e;
-				if (ep.Error != null)
-					UI(() => ShowError_UI(ep.Error));
-				break;
+		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
+			if (e.Error != null)
+				UI(() => ShowError_UI(e.Error));
+		}
 
-			case DbgMessageKind.UserMessage:
-				var um = (DbgMessageUserMessageEventArgs)e;
-				UI(() => ShowError_UI(um.Message));
-				break;
+		void DbgManager_MessageUserMessage(object sender, DbgMessageUserMessageEventArgs e) =>
+			UI(() => ShowError_UI(e.Message));
 
-			case DbgMessageKind.ExceptionThrown:
-				var exm = (DbgMessageExceptionThrownEventArgs)e;
-				if (!debuggerSettings.IgnoreUnhandledExceptions && exm.Exception.IsUnhandled) {
-					exm.Pause = true;
-					UI(() => ShowUnhandledException_UI(exm));
-				}
-				break;
+		void DbgManager_MessageExceptionThrown(object sender, DbgMessageExceptionThrownEventArgs e) {
+			if (!debuggerSettings.IgnoreUnhandledExceptions && e.Exception.IsUnhandled) {
+				e.Pause = true;
+				UI(() => ShowUnhandledException_UI(e));
 			}
 		}
 
