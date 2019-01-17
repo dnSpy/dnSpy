@@ -62,6 +62,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public abstract bool UseHexadecimal { get; set; }
 		public abstract bool CanSetCurrentProcess { get; }
 		public abstract void SetCurrentProcess(bool newTab);
+		public abstract bool CanResetSearchSettings { get; }
+		public abstract void ResetSearchSettings();
 	}
 
 	[Export(typeof(ProcessesOperations))]
@@ -74,10 +76,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 
-		ObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
+		BulkObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
 		ObservableCollection<ProcessVM> SelectedItems => processesVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<ProcessVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
+		IEnumerable<ProcessVM> SortedSelectedItems => processesVM.Sort(SelectedItems);
 
 		[ImportingConstructor]
 		ProcessesOperationsImpl(UIDispatcher uiDispatcher, IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService) {
@@ -95,21 +96,52 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteImage(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteName(output, vm.Process);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteId(output, vm.Process);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteTitle(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteState(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteDebugging(output, vm.Process);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteArchitecture(output, vm.Process.Architecture);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WritePath(output, vm.Process);
+				bool needTab = false;
+				foreach (var column in processesVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case ProcessesWindowColumnIds.Icon:
+						formatter.WriteImage(output, vm);
+						break;
+
+					case ProcessesWindowColumnIds.Name:
+						formatter.WriteName(output, vm.Process);
+						break;
+
+					case ProcessesWindowColumnIds.ID:
+						formatter.WriteId(output, vm.Process);
+						break;
+
+					case ProcessesWindowColumnIds.Title:
+						formatter.WriteTitle(output, vm);
+						break;
+
+					case ProcessesWindowColumnIds.State:
+						formatter.WriteState(output, vm);
+						break;
+
+					case ProcessesWindowColumnIds.Debugging:
+						formatter.WriteDebugging(output, vm.Process);
+						break;
+
+					case ProcessesWindowColumnIds.ProcessArchitecture:
+						formatter.WriteArchitecture(output, vm.Process.Architecture);
+						break;
+
+					case ProcessesWindowColumnIds.Path:
+						formatter.WritePath(output, vm.Process);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();
@@ -222,5 +254,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				}
 			}
 		}
+
+		public override bool CanResetSearchSettings => true;
+		public override void ResetSearchSettings() => processesVM.ResetSearchSettings();
 	}
 }

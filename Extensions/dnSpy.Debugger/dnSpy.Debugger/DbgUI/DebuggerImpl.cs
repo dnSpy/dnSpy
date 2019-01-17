@@ -33,6 +33,7 @@ using dnSpy.Contracts.Debugger.Attach.Dialogs;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
@@ -100,6 +101,11 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StartWithoutDebugging() {
 			if (!startDebuggingOptionsProvider.Value.CanStartWithoutDebugging(out var result))
 				return;
+			if ((result & StartDebuggingResult.WrongExtension) != 0) {
+				if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.RunWithInvalidExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
+					return;
+			}
+
 			if (!startDebuggingOptionsProvider.Value.StartWithoutDebugging(out var error))
 				messageBoxService.Value.Show(error);
 		}
@@ -114,6 +120,10 @@ namespace dnSpy.Debugger.DbgUI {
 			showingDebugProgramDlgBox = false;
 			if (options == null)
 				return;
+			if ((flags & StartDebuggingOptionsInfoFlags.WrongExtension) != 0) {
+				if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.DebugWithInvalidExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
+					return;
+			}
 
 			var errMsg = dbgManager.Value.Start(options);
 			if (errMsg != null)
@@ -368,7 +378,9 @@ namespace dnSpy.Debugger.DbgUI {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 			dbgManager.IsRunningChanged += DbgManager_IsRunningChanged;
-			dbgManager.Message += DbgManager_Message;
+			dbgManager.MessageSetIPComplete += DbgManager_MessageSetIPComplete;
+			dbgManager.MessageUserMessage += DbgManager_MessageUserMessage;
+			dbgManager.MessageExceptionThrown += DbgManager_MessageExceptionThrown;
 			dbgManager.DbgManagerMessage += DbgManager_DbgManagerMessage;
 		}
 
@@ -380,26 +392,18 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			switch (e.Kind) {
-			case DbgMessageKind.SetIPComplete:
-				var ep = (DbgMessageSetIPCompleteEventArgs)e;
-				if (ep.Error != null)
-					UI(() => ShowError_UI(ep.Error));
-				break;
+		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
+			if (e.Error != null)
+				UI(() => ShowError_UI(e.Error));
+		}
 
-			case DbgMessageKind.UserMessage:
-				var um = (DbgMessageUserMessageEventArgs)e;
-				UI(() => ShowError_UI(um.Message));
-				break;
+		void DbgManager_MessageUserMessage(object sender, DbgMessageUserMessageEventArgs e) =>
+			UI(() => ShowError_UI(e.Message));
 
-			case DbgMessageKind.ExceptionThrown:
-				var exm = (DbgMessageExceptionThrownEventArgs)e;
-				if (!debuggerSettings.IgnoreUnhandledExceptions && exm.Exception.IsUnhandled) {
-					exm.Pause = true;
-					UI(() => ShowUnhandledException_UI(exm));
-				}
-				break;
+		void DbgManager_MessageExceptionThrown(object sender, DbgMessageExceptionThrownEventArgs e) {
+			if (!debuggerSettings.IgnoreUnhandledExceptions && e.Exception.IsUnhandled) {
+				e.Pause = true;
+				UI(() => ShowUnhandledException_UI(e));
 			}
 		}
 

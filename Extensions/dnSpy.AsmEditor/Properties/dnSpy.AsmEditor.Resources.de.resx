@@ -320,10 +320,10 @@
     <comment>the delete key</comment>
   </data>
   <data name="DeleteEventCommand" xml:space="preserve">
-    <value>Lösche Event</value>
+    <value>Ereignis löschen</value>
   </data>
   <data name="DeleteEvents" xml:space="preserve">
-    <value>Lösche {0} Events</value>
+    <value>{0} Ereignisse löschen</value>
   </data>
   <data name="DeleteFieldCommand" xml:space="preserve">
     <value>Lösche Feld</value>
@@ -347,10 +347,10 @@
     <value>Bearbeite benutzerdefiniertes Attribut</value>
   </data>
   <data name="EditEventCommand" xml:space="preserve">
-    <value>Event bearbeiten...</value>
+    <value>Ereignis bearbeiten...</value>
   </data>
   <data name="EditEventCommand2" xml:space="preserve">
-    <value>Event bearbeiten</value>
+    <value>Ereignis bearbeiten</value>
   </data>
   <data name="EditFieldCommand" xml:space="preserve">
     <value>Feld bearbeiten...</value>
@@ -392,7 +392,7 @@
     <value>&lt;Fehler&gt;</value>
   </data>
   <data name="EventType" xml:space="preserve">
-    <value>Event Typ: {0}</value>
+    <value>Ereignistyp: {0}</value>
   </data>
   <data name="Event_ClearCharacter" xml:space="preserve">
     <value>C</value>
@@ -1019,20 +1019,20 @@
     <value>Alle Dateien</value>
   </data>
   <data name="AskCancelSave" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie den Speichervorgang abbrechen möchten?</value>
+    <value>Möchten Sie den Speichervorgang wirklich abbrechen?</value>
   </data>
   <data name="AskCancelSaveCloseWindow" xml:space="preserve">
     <value>Der Speichervorgang wird abgebrochen.
-Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
+Möchten Sie das Fenster wirklich schließen?</value>
   </data>
   <data name="AskDeleteField" xml:space="preserve">
-    <value>Code in einer anderen Assembly könnte auf dieses Feld verweisen. Sind Sie sicher, dass Sie das Feld löschen möchten?</value>
+    <value>Code in einer anderen Assembly könnte auf dieses Feld verweisen. Möchten Sie das Feld wirklich löschen?</value>
   </data>
   <data name="AskDeleteMethod" xml:space="preserve">
-    <value>Code in einer anderen Assembly könnte auf diese Methode verweisen. Sind Sie sicher, dass Sie die Methode löschen möchten?</value>
+    <value>Code in einer anderen Assembly könnte auf diese Methode verweisen. Möchten Sie die Methode wirklich löschen?</value>
   </data>
   <data name="AskDeleteType" xml:space="preserve">
-    <value>Code in einer anderen Assembly könnte auf diesen Typ verweisen. Sind Sie sicher, dass Sie den Typ löschen möchten?</value>
+    <value>Code in einer anderen Assembly könnte auf diesen Typ verweisen. Möchten Sie den Typ wirklich löschen?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
     <value>Es gibt eine nicht gespeicherte Datei. Möchten Sie sie vor dem Beenden speichern?</value>
@@ -1041,10 +1041,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Es gibt {0} nicht gespeicherte Dateien. Möchten Sie sie vor dem Beenden speichern?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie neue Assemblys laden und alle Änderungen verwerfen möchten?</value>
+    <value>Möchten Sie wirklich neue Assemblys laden und alle Änderungen verwerfen?</value>
   </data>
   <data name="AskReloadAssembliesLoseChanges" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie alle Assemblys neu laden und alle Änderungen verwerfen möchten?</value>
+    <value>Möchten Sie wirklich alle Assemblys neu laden und alle Änderungen verwerfen?</value>
   </data>
   <data name="AskSaveFile" xml:space="preserve">
     <value>Die Datei wurde noch nicht gespeichert. Möchten Sie sie speichern bevor Sie fortfahren?</value>
@@ -1101,10 +1101,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Erstelle einen Ausnahmefangtyp</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>Erstelle verlinkte Assembly Resource...</value>
+    <value>Assemblyverweis Ressource erstellen...</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
-    <value>Erstelle verlinkte Assembly Resource</value>
+    <value>Assemblyverweis Ressource erstellen</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
     <value>System.Data.Bitmap/Icon Ressource erstellen...</value>
@@ -1119,10 +1119,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Byte Array Ressource erstellen</value>
   </data>
   <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
-    <value>Erstelle verknüpfte Datei Resource...</value>
+    <value>Dateiverweis Ressource erstellen...</value>
   </data>
   <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
-    <value>Erstelle verknüpfte Datei Resource</value>
+    <value>Dateiverweis Ressource erstellen</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
     <value>Datei Ressource erstellen...</value>
@@ -1701,7 +1701,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>pad</value>
   </data>
   <data name="PasteRecordsCommand" xml:space="preserve">
-    <value>_Paste {0} Datensätze @ {1:X8}, RID {2}</value>
+    <value>{0} Datensätze @ {1:X8}, RID {2} _einfügen</value>
   </data>
   <data name="PropertyX" xml:space="preserve">
     <value>Eigenschaft: {0}</value>
@@ -1725,19 +1725,19 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Signatur</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
-    <value>RAW speichern {0}</value>
+    <value>{0} roh speichern</value>
   </data>
   <data name="RawSaveResourcesCommand" xml:space="preserve">
-    <value>RAW speichern {0} Ressourcen</value>
+    <value>{0} Ressourcen roh speichern</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>RAW speichern {0} Ressourcen, nutze Sub-dirs</value>
+    <value>{0} Ressourcen mit Unterverzeichnissen roh speichern</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>Nochmal</value>
+    <value>Wiederholen</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Nochmal</value>
+    <value>Wiederholen</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
     <value>_Entfernen und pop-Instruktionen hinzufügen</value>
@@ -1913,7 +1913,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>{0} Ressourcen speichern</value>
   </data>
   <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>{0} Ressourcen speichern, verwende Unterverzeichnisse</value>
+    <value>{0} Ressourcen mit Unterverzeichnissen speichern</value>
   </data>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>

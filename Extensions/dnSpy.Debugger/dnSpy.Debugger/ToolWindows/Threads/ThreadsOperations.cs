@@ -61,8 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		BulkObservableCollection<ThreadVM> AllItems => threadsVM.AllItems;
 		ObservableCollection<ThreadVM> SelectedItems => threadsVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<ThreadVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
+		IEnumerable<ThreadVM> SortedSelectedItems => threadsVM.Sort(SelectedItems);
 
 		[ImportingConstructor]
 		ThreadsOperationsImpl(IThreadsVM threadsVM, DebuggerSettings debuggerSettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService) {
@@ -77,29 +76,70 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteImage(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteId(output, vm.Thread);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteManagedId(output, vm.Thread);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteCategoryText(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteName(output, vm.Thread);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteLocation(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WritePriority(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteAffinityMask(output, vm);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteSuspendedCount(output, vm.Thread);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteProcessName(output, vm.Thread);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteAppDomain(output, vm.Thread);
-				output.Write(DbgTextColor.Text, "\t");
-				formatter.WriteState(output, vm.Thread);
+				bool needTab = false;
+				foreach (var column in threadsVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+					if (column.Name == string.Empty)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case ThreadsWindowColumnIds.Icon:
+						formatter.WriteImage(output, vm);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadID:
+						formatter.WriteId(output, vm.Thread);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadManagedId:
+						formatter.WriteManagedId(output, vm.Thread);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadCategory:
+						formatter.WriteCategoryText(output, vm);
+						break;
+
+					case ThreadsWindowColumnIds.Name:
+						formatter.WriteName(output, vm.Thread);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadLocation:
+						formatter.WriteLocation(output, vm);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadPriority:
+						formatter.WritePriority(output, vm);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadAffinityMask:
+						formatter.WriteAffinityMask(output, vm);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadSuspendedCount:
+						formatter.WriteSuspendedCount(output, vm.Thread);
+						break;
+
+					case ThreadsWindowColumnIds.ProcessName:
+						formatter.WriteProcessName(output, vm.Thread);
+						break;
+
+					case ThreadsWindowColumnIds.AppDomain:
+						formatter.WriteAppDomain(output, vm.Thread);
+						break;
+
+					case ThreadsWindowColumnIds.ThreadState:
+						formatter.WriteState(output, vm.Thread);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();

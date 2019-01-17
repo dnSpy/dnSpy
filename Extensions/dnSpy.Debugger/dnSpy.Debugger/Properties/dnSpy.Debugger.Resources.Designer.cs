@@ -1582,6 +1582,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to debug this file which doesn&apos;t have a valid extension?.
+        /// </summary>
+        public static string DebugWithInvalidExtension {
+            get {
+                return ResourceManager.GetString("DebugWithInvalidExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete _All Breakpoints.
         /// </summary>
         public static string DeleteAllBreakpointsCommand {
@@ -2722,6 +2731,42 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No processes match your search filter..
+        /// </summary>
+        public static string Processes_NoMatch {
+            get {
+                return ResourceManager.GetString("Processes_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all processes are shown.
+        /// </summary>
+        public static string Processes_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Processes_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Processes_Search {
+            get {
+                return ResourceManager.GetString("Processes_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a process.
+        /// </summary>
+        public static string Processes_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Processes_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step Into.
         /// </summary>
         public static string Processes_StepIntoProcessToolTip {
@@ -2871,6 +2916,15 @@ namespace dnSpy.Debugger.Properties {
         public static string RunToCursorCommand {
             get {
                 return ResourceManager.GetString("RunToCursorCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to run this file which doesn&apos;t have a valid extension?.
+        /// </summary>
+        public static string RunWithInvalidExtension {
+            get {
+                return ResourceManager.GetString("RunWithInvalidExtension", resourceCulture);
             }
         }
         

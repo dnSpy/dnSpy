@@ -1071,7 +1071,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				throw new StepErrorException("Internal error");
 
 			uint continueCounter = stepper.ContinueCounter;
-			var info = await dbgDotNetDebugInfoService.GetMethodDebugInfoAsync(module, token, offset);
+			var info = await dbgDotNetDebugInfoService.GetMethodDebugInfoAsync(module, token);
 			if (continueCounter != stepper.ContinueCounter)
 				throw new StepErrorException("Internal error");
 

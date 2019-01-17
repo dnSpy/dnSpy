@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1502,6 +1502,24 @@ Voulez-vous vraiment étendre cet élément ?</value>
     <value>Alt+8</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>Ignorer les exceptions non gérées</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Êtes-vous certain de vouloir exécuter ce fichier qui n’a pas une extension valide ?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir déboguer ce fichier qui n’a pas une extension valide ?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>No processes match your search filter.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Recherche</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all processes are shown</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Chercher un processus</value>
   </data>
 </root>

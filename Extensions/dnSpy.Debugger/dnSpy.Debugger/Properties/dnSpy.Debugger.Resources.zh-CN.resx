@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -265,7 +265,7 @@
     <value>在调试器启动时显示局部变量窗口</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Evita la detección del código borrado en el depurador</value>
+    <value>防止代码检测调试器</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>忽略 Debugger.Break() 和中断指令</value>
@@ -1504,6 +1504,24 @@
     <value>Alt+8</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>忽略未处理的异常</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>确定要运行此没有有效扩展名的文件吗？</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>确定要调试此没有有效扩展名的文件吗？</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>No processes match your search filter.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all processes are shown</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>搜索进程</value>
   </data>
 </root>

@@ -127,7 +127,7 @@
     <value>禁用 JIT编译优化(_D)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>启用 JIT 编译跟踪</value>
+    <value>启用 JIT 编译跟踪(_J)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
     <value>指定处理器架构(_E)</value>
@@ -139,7 +139,7 @@
     <value>可重定向(_R)</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>内容类型</value>
+    <value>内容类型(_T)</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
     <value>区域(_U)</value>
@@ -253,7 +253,7 @@
     <value>创建字段 TypeSig</value>
   </data>
   <data name="CreateFnPtrMethodSignature" xml:space="preserve">
-    <value>创建 FnPtr 方法签名</value>
+    <value>创建函数指针方法签名</value>
   </data>
   <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
     <value>创建泛型实例类型参数</value>
@@ -407,13 +407,13 @@
     <value>名称(_N)</value>
   </data>
   <data name="Event_RemoveMethod" xml:space="preserve">
-    <value>移除...</value>
+    <value>移除(_R)...</value>
   </data>
   <data name="Event_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
   </data>
   <data name="Event_SpecialName" xml:space="preserve">
-    <value>特殊名称</value>
+    <value>特殊名称(_S)</value>
   </data>
   <data name="FieldAccess_Assembly" xml:space="preserve">
     <value>程序集</value>
@@ -464,7 +464,7 @@
     <value>特殊名称(_p)</value>
   </data>
   <data name="Field_Flags_Static" xml:space="preserve">
-    <value>_Static</value>
+    <value>静态(_S)</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
     <value>初始值(_V)</value>
@@ -923,16 +923,16 @@
     <value>添加必须的C修饰符</value>
   </data>
   <data name="TypeSigCreator_FnPtr" xml:space="preserve">
-    <value>_FnPtr</value>
+    <value>函数指针(_F)</value>
   </data>
   <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
     <value>添加函数指针</value>
   </data>
   <data name="TypeSigCreator_GenericInst" xml:space="preserve">
-    <value>_GenericInst</value>
+    <value>泛型实例(_G)</value>
   </data>
   <data name="TypeSigCreator_GenericInst_ToolTip" xml:space="preserve">
-    <value>添加一个泛型类型</value>
+    <value>添加一个泛型实例类型</value>
   </data>
   <data name="TypeSigCreator_GenericsCount" xml:space="preserve">
     <value>#</value>
@@ -1259,7 +1259,7 @@
     <value>字段(_F)...</value>
   </data>
   <data name="EditOperand_Field_MemberRef" xml:space="preserve">
-    <value>字段引用成员</value>
+    <value>字段引用成员(_i)</value>
   </data>
   <data name="EditOperand_Method" xml:space="preserve">
     <value>方法(_M)...</value>
@@ -1601,7 +1601,7 @@
     <value>代码类型(_E)</value>
   </data>
   <data name="MethodBody_HeaderOffset" xml:space="preserve">
-    <value>头偏移(_F)</value>
+    <value>头部偏移(_F)</value>
   </data>
   <data name="MethodBody_HeaderRVA" xml:space="preserve">
     <value>头数据 _RVA</value>
@@ -2138,13 +2138,13 @@
     <value>特殊名称(_p)</value>
   </data>
   <data name="Method_Flags_Static" xml:space="preserve">
-    <value>_Static</value>
+    <value>静态(_S)</value>
   </data>
   <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
     <value>UnmanagedE_xport</value>
   </data>
   <data name="Method_Flags_Virtual" xml:space="preserve">
-    <value>_Virtual</value>
+    <value>虚拟(_V)</value>
   </data>
   <data name="Method_ImplFlags" xml:space="preserve">
     <value>ImplFlags</value>
@@ -2234,7 +2234,7 @@
     <value>_RTSpecialName</value>
   </data>
   <data name="Property_Flags_SpecialName" xml:space="preserve">
-    <value>特殊名称</value>
+    <value>特殊名称(_S)</value>
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
     <value>入口点(_E)</value>
@@ -2534,9 +2534,9 @@
     <value>编译器</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_用NOP替换</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>用NOP替换(_R)</value>
   </data>
 </root>

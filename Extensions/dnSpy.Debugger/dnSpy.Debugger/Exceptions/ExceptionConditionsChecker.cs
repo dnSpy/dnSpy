@@ -37,12 +37,10 @@ namespace dnSpy.Debugger.Exceptions {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.Message += DbgManager_Message;
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.MessageExceptionThrown += DbgManager_MessageExceptionThrown;
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			if (e.Kind == DbgMessageKind.ExceptionThrown)
-				e.Pause = ShouldBreak(((DbgMessageExceptionThrownEventArgs)e).Exception);
-		}
+		void DbgManager_MessageExceptionThrown(object sender, DbgMessageExceptionThrownEventArgs e) =>
+			e.Pause = ShouldBreak(e.Exception);
 
 		bool ShouldBreak(DbgException exception) {
 			if (exception.IsUnhandled)

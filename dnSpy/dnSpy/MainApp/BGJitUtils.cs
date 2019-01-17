@@ -17,21 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading.Tasks;
-using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.DotNet.Code;
+using System;
+using System.IO;
 
-namespace dnSpy.Debugger.DotNet.Code {
-	readonly struct GetMethodDebugInfoResult {
-		public DbgMethodDebugInfo DebugInfoOrNull { get; }
-		public DbgMethodDebugInfo StateMachineDebugInfoOrNull { get; }
-		public GetMethodDebugInfoResult(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull) {
-			DebugInfoOrNull = debugInfo;
-			StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
+namespace dnSpy.MainApp {
+	static class BGJitUtils {
+		public static string GetFolder() {
+#if NETCOREAPP
+			const string frameworkDir = "netcore";
+#elif NETFRAMEWORK
+			const string frameworkDir = "netframework";
+#else
+#error Unknown framework
+#endif
+			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Constants.DnSpyFile, "Startup" + (IntPtr.Size * 8).ToString(), frameworkDir);
 		}
-	}
-
-	abstract class DbgDotNetDebugInfoService {
-		public abstract Task<GetMethodDebugInfoResult> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset);
 	}
 }

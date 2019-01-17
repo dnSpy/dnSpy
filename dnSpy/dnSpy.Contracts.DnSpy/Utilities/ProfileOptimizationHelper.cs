@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Utilities {
 				hasInitialized.Add(type);
 			}
 			// ProfileOptimization.SetProfileRoot() was called when dnSpy started
-			ProfileOptimization.StartProfile(type + (IntPtr.Size == 4 ? "-32.profile" : "-64.profile"));
+			ProfileOptimization.StartProfile(type + ".profile");
 		}
 	}
 }

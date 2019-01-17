@@ -275,6 +275,6 @@ HR: 0x{0:X8}
 错误：0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Use host executable</value>
+    <value>使用宿主可执行文件</value>
   </data>
 </root>

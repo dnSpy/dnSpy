@@ -154,7 +154,7 @@
     <value>Verweis in Methode zeigen</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+    <value>Verweis in Methode zeigen (neuer _Tab)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
     <value>Gehe zu Verweis (neuer Ta_b)</value>

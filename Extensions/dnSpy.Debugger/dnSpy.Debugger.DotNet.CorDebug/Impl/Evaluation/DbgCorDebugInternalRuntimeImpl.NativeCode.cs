@@ -249,8 +249,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 			}
 
-			var methodName = reflectionMethod?.ToString();
-			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo, methodName);
+			var methodName = reflectionMethod == null ? null : reflectionMethod.ToString() + " (0x" + reflectionMethod.MetadataToken.ToString("X8") + ")";
+			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo, methodName, reflectionMethod?.Module.FullyQualifiedName);
 			return true;
 		}
 

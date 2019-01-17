@@ -1943,10 +1943,10 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
     <value>Afficher le facteur d'échelle avant le registre d’index</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>Ajouter des zéros au début (branches)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>Ajouter des zéros au début</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Afficher la taille du saut</value>

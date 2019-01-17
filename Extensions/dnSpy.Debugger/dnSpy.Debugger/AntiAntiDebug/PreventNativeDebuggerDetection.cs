@@ -75,13 +75,10 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			if (toHooks.Count != 0)
-				dbgManager.Message += DbgManager_Message;
+				dbgManager.MessageProcessCreated += DbgManager_MessageProcessCreated;
 		}
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			if (e.Kind == DbgMessageKind.ProcessCreated)
-				HookFuncs(((DbgMessageProcessCreatedEventArgs)e).Process);
-		}
+		void DbgManager_MessageProcessCreated(object sender, DbgMessageProcessCreatedEventArgs e) => HookFuncs(e.Process);
 
 		void HookFuncs(DbgProcess process) {
 			var key = new Key(process.Architecture, process.OperatingSystem);

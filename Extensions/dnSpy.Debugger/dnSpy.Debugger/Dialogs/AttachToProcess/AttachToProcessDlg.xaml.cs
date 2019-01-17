@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 					vm.PropertyChanged += AttachToProcessVM_PropertyChanged;
 					vm.AllItems.CollectionChanged += AllItems_CollectionChanged;
 					CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
-						(s2, e2) => vm.Copy(listView.SelectedItems.OfType<ProgramVM>().ToArray()),
+						(s2, e2) => vm.Copy(vm.Sort(listView.SelectedItems.OfType<ProgramVM>()).ToArray()),
 						(s2, e2) => e2.CanExecute = listView.SelectedItems.Count != 0));
 				}
 			};
