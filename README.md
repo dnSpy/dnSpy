@@ -23,7 +23,7 @@ dnSpy uses the ILSpy decompiler engine and the Roslyn (C# / Visual Basic) compil
 
 # Binaries
 
-[Latest release](https://github.com/0xd4d/dnSpy/releases)
+[Latest release](https://github.com/0xd4d/dnSpy/releases) (Note: Required .NET Runtime version is [.NET Framework 4.7.2](https://dotnet.microsoft.com/download/thank-you/net472))
 
 Latest build: [![Build status](https://ci.appveyor.com/api/projects/status/3utl4e1qkx7pamko/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
 
