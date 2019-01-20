@@ -72,6 +72,7 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <!-- TODO: re-enable once dotnet build supports COMReference
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
       <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
@@ -83,6 +84,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  -->
 
   <ItemGroup>
     <PackageReference Include="Iced" Version="$(IcedVersion)" />
