@@ -5,6 +5,7 @@ install:
 - cmd: git submodule update --init --recursive
 build_script:
 - cmd: build.cmd
+test: off
 artifacts:
 - path: dnSpy/dnSpy/bin/Release/net472
   name: dnSpy
