@@ -1,7 +1,7 @@
 <Project>
 	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\compiled\MakeEverythingPublic.dll" TaskName="MakeEverythingPublic.MakeEverythingPublic" />
 	<Target Name="MakeEverythingPublic" AfterTargets="ResolveAssemblyReferences">
-		<MakeEverythingPublic AssembliesToMakePublic="$(MakeEverythingPublicAssemblies)" ReferencePath="@(ReferencePath)" DestinationDirectory="$(MSBuildProjectDirectory)\obj\$(Configuration)\MakeEverythingPublic" IVTString="$(MakeEverythingPublicIVTString)">
+		<MakeEverythingPublic AssembliesToMakePublic="$(MakeEverythingPublicAssemblies)" ReferencePath="@(ReferencePath)" DestinationDirectory="$(IntermediateOutputPath)MakeEverythingPublic" IVTString="$(MakeEverythingPublicIVTString)">
 			<Output ItemName="_MakeEverythingPublic_OutputReferencePath" TaskParameter="OutputReferencePath" />
 		</MakeEverythingPublic>
 		<ItemGroup>
@@ -11,7 +11,7 @@
 	</Target>
 	<!-- https://github.com/dotnet/project-system/blob/master/docs/design-time-builds.md#targets-that-run-during-design-time-builds -->
 	<Target Name="MakeEverythingPublicDesignTime" AfterTargets="ResolveAssemblyReferencesDesignTime">
-		<MakeEverythingPublic AssembliesToMakePublic="$(MakeEverythingPublicAssemblies)" ReferencePath="@(ReferencePath)" DestinationDirectory="$(MSBuildProjectDirectory)\obj\$(Configuration)\MakeEverythingPublic" IVTString="$(MakeEverythingPublicIVTString)">
+		<MakeEverythingPublic AssembliesToMakePublic="$(MakeEverythingPublicAssemblies)" ReferencePath="@(ReferencePath)" DestinationDirectory="$(IntermediateOutputPath)MakeEverythingPublic" IVTString="$(MakeEverythingPublicIVTString)">
 			<Output ItemName="_MakeEverythingPublic_OutputReferencePathDesignTime" TaskParameter="OutputReferencePath" />
 		</MakeEverythingPublic>
 		<ItemGroup>

@@ -1,4 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<!-- Target dir is the same as dnSpy.exe so we'll overwrite some files when creating
+a self-contained .NET Core app (System.Security.Permissions (wrong lower version), WindowsBase
+(wrong file (15KB, should be 1.1MB))).
+
+The workaround is to add WindowsDesktop above.
+-->
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -14,7 +20,6 @@
     <OutputType>WinExe</OutputType>
     <Prefer32Bit>true</Prefer32Bit>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup>

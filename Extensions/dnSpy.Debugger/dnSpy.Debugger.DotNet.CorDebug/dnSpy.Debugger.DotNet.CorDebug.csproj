@@ -50,9 +50,14 @@
     <NetCoreDebugFilesX64 Include="..\netcorefiles\x64\**" />
   </ItemGroup>
 
-  <Target Name="CopyNetCoreDebugFiles" AfterTargets="AfterBuild">
+  <Target Name="CopyNetCoreDebugFiles_AfterBuild" AfterTargets="AfterBuild">
     <Copy SourceFiles="@(NetCoreDebugFilesX86)" DestinationFolder="$(TargetDir)debug\core\x86" />
     <Copy SourceFiles="@(NetCoreDebugFilesX64)" DestinationFolder="$(TargetDir)debug\core\x64" />
+  </Target>
+
+  <Target Name="CopyNetCoreDebugFiles_Publish" AfterTargets="Publish">
+    <Copy SourceFiles="@(NetCoreDebugFilesX86)" DestinationFolder="$(PublishDir)debug\core\x86" />
+    <Copy SourceFiles="@(NetCoreDebugFilesX64)" DestinationFolder="$(PublishDir)debug\core\x64" />
   </Target>
 
   <ItemGroup>
