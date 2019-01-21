@@ -9,6 +9,7 @@ Write-Host "Downloading latest build of .NET Core"
 Invoke-WebRequest "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-latest-win-x86.zip" -OutFile "$dotnetsdkZipFile"
 $tempPath = [System.IO.Path]::GetTempPath()
 $dotnetPath = "$tempPath" + [System.IO.Path]::GetRandomFileName()
+Write-Host "Extracting the zip file"
 Expand-Archive "$dotnetsdkZipFile" -DestinationPath "$dotnetPath" -Force
 del "$dotnetsdkZipFile"
 $dotnetExe = "$dotnetPath\dotnet.exe"
