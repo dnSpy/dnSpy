@@ -12,6 +12,13 @@ build:
 artifacts:
 - path: dnSpy/dnSpy/bin/Release/net472
   name: dnSpy
+deploy:
+- provider: GitHub
+  description: New release
+  on:
+    APPVEYOR_REPO_TAG: true
+  auth_token:
+    secure: A8Xfg1Sr7/XmTlvOyNEBQVwMARF+uyigNNJXQYq4pQFaR3Z3x0iaXGZMLlvA0oTO
 notifications:
 - provider: Email
   to:
