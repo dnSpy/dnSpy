@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy.exe to attach to 64-bit processes.
+        ///   Looks up a localized string similar to Use 64-bit dnSpy to attach to 64-bit processes.
         /// </summary>
         public static string Attach_UseDnSpy32 {
             get {
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy-x86.exe to attach to 32-bit processes.
+        ///   Looks up a localized string similar to Use 32-bit dnSpy to attach to 32-bit processes.
         /// </summary>
         public static string Attach_UseDnSpy64 {
             get {

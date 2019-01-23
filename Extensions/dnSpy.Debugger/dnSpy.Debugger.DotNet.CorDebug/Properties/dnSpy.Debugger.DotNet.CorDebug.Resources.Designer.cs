@@ -510,7 +510,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy-x86.exe to debug 32-bit applications..
+        ///   Looks up a localized string similar to Use 32-bit dnSpy to debug 32-bit applications..
         /// </summary>
         public static string UseDnSpy64ExeToDebug32 {
             get {
@@ -519,7 +519,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy.exe to debug 64-bit applications..
+        ///   Looks up a localized string similar to Use 64-bit dnSpy to debug 64-bit applications..
         /// </summary>
         public static string UseDnSpyExeToDebug64 {
             get {
