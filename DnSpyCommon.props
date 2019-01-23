@@ -35,7 +35,6 @@
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <IcedVersion>1.1.1</IcedVersion>
     <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>
-    <MSRegistryVersion>4.5.0</MSRegistryVersion>
     <MSVSCompositionNetFxAttributesVersion>15.8.98</MSVSCompositionNetFxAttributesVersion>
     <MSVSCompositionVersion>15.8.98</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
