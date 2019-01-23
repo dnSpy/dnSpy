@@ -190,7 +190,14 @@ namespace dnSpy.MainApp {
 		}
 
 		void Write(IDecompilerOutput output) {
-			output.WriteLine($"{Constants.DnSpy} {appWindow.AssemblyInformationalVersion}", BoxedTextColor.Text);
+#if NETFRAMEWORK
+			const string frameworkName = ".NET Framework";
+#elif NETCOREAPP
+			const string frameworkName = ".NET Core";
+#else
+#error Unknown target framework
+#endif
+			output.WriteLine($"{Constants.DnSpy} {appWindow.AssemblyInformationalVersion} ({frameworkName})", BoxedTextColor.Text);
 			output.WriteLine();
 			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedTextColor.Text);
 			output.WriteLine();
