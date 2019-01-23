@@ -682,7 +682,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var cex = ex as COMException;
 				const int ERROR_NOT_SUPPORTED = unchecked((int)0x80070032);
 				string errMsg;
-				if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
+				if (ex is StartDebuggerException sde) {
+					switch (sde.Error) {
+					case StartDebuggerError.UnsupportedBitness:
+						errMsg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
+						break;
+					default:
+						throw new InvalidOperationException();
+					}
+				}
+				else if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
 					errMsg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
 				else if (cex != null && cex.ErrorCode == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
 					errMsg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage());
