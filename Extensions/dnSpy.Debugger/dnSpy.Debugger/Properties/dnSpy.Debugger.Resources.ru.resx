@@ -142,10 +142,10 @@
     <value>Присоединиться к процессу</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Используйте dnSpy.exe для присоединения к 64-битным процессам</value>
+    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Используйте dnSpy-x86.exe для присоединения к 32-битным процессам</value>
+    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Прер_вать все</value>
@@ -265,7 +265,7 @@
     <value>Показать окно локальных переменных при старте дебаггера</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Запретить коду определять отладчик</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Игнорировать Debugger.Break() и другие инструкции останова</value>
@@ -1504,7 +1504,7 @@
     <value>Alt+8</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>Игнорировать необработанные исключения</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
     <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
@@ -1513,7 +1513,7 @@
     <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Нет процессов соответствующих условиям поиска.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Поиск</value>

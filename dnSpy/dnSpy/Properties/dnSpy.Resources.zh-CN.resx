@@ -1944,10 +1944,10 @@
     <value>在索引寄存器之前显示比例</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>添加前导0(分支)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>添加前导0</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>显示分支大小</value>

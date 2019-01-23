@@ -142,10 +142,10 @@
     <value>附加到进程</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>请改用dnSpy.exe来附加到64位进程</value>
+    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>请改用dnSpy-x86.exe来附加到32位进程</value>
+    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>全部中断(_K)</value>
@@ -1513,13 +1513,13 @@
     <value>确定要调试此没有有效扩展名的文件吗？</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>没有进程匹配您的搜索过滤器。</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>搜索</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>重置所有搜索条件以便显示全部进程</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>搜索进程</value>

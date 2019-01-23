@@ -142,10 +142,10 @@
     <value>Kapcsolódás folyamathoz</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Kapcsolódás 64 bites folyamathoz dnSpy.exe használatával</value>
+    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Kapcsolódás 32 bites folyamathoz dnSpy-x86.exe használatával</value>
+    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>_Megállítás mindenhol</value>
@@ -1513,13 +1513,13 @@ Biztosan ki akarja nyitni?</value>
     <value>Biztos, hogy hibakeresést végez ezen a fájlon, aminek nincs érvényes kiterjesztése?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Egy folyamat sem felel meg a keresési feltételeknek.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Keresés</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Keresési feltételek törlése, hogy minden folyamat látszódjon</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Folyamat keresése</value>

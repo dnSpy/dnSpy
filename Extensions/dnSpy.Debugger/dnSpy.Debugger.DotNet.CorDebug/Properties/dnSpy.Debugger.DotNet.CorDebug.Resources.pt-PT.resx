@@ -195,10 +195,10 @@ Erro: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Utilize dnSpy-x86.exe para depurar aplicativos de 32 bits.</value>
+    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Utilize dnSpy.exe para depurar aplicativos de 64 bits.</value>
+    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
