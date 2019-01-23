@@ -90,7 +90,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="$(MSVSCompositionVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
     <!-- Self contained .NET Core apps already ship with this DLL (not necessarily the same version, though) -->
-    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="$(DiaSymReaderVersion)" Condition=" '$(IsDotNetCore)' != 'true' " />
+    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="$(DiaSymReaderVersion)" Condition=" '$(IsSelfContainedDotNetCore)' != 'true' " />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>
 

@@ -9,8 +9,10 @@
     <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
     <IsDotNetCore>false</IsDotNetCore>
+    <IsSelfContainedDotNetCore>false</IsSelfContainedDotNetCore>
     <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
     <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
+    <IsSelfContainedDotNetCore Condition=" '$(IsDotNetCore)' == 'true' ">true</IsSelfContainedDotNetCore>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
