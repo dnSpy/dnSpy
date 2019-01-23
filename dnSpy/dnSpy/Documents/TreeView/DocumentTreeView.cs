@@ -740,7 +740,7 @@ namespace dnSpy.Documents.TreeView {
 			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
 			TreeNodeData newSelectedNode = null;
 
-/* TODO: re-enable once dotnet build supports COMReference
+#if HAS_COMREFERENCE
 			IWshRuntimeLibrary.WshShell ws = null;
 			try {
 				ws = new IWshRuntimeLibrary.WshShell();
@@ -748,10 +748,10 @@ namespace dnSpy.Documents.TreeView {
 			catch {
 				ws = null;
 			}
-*/
+#endif
 
 			for (int i = 0, j = 0; i < filenames.Length; i++) {
-/* TODO: re-enable once dotnet build supports COMReference
+#if HAS_COMREFERENCE
 				// Resolve shortcuts
 				if (ws != null) {
 					try {
@@ -766,7 +766,7 @@ namespace dnSpy.Documents.TreeView {
 						ws = null;
 					}
 				}
-*/
+#endif
 
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));
 				if (document == null)
