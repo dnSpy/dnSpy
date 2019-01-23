@@ -75,6 +75,10 @@ namespace dnSpy.MainApp.Settings {
 				bool enabled = value.Value;
 
 				var path = Assembly.GetEntryAssembly().Location;
+#if NETCOREAPP
+				// Use the native exe and not the managed file
+				path = Path.ChangeExtension(path, "exe");
+#endif
 				if (!File.Exists(path)) {
 					messageBoxService.Show("Cannot locate dnSpy!");
 					return;
