@@ -174,13 +174,26 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return state;
 		}
 
+		static bool ShouldIgnoreDebuggerDisplayAttribute(DmdType type) {
+			// We have special support for formatting KeyValuePair<K, V> and DictionaryEntry, so ignore all DebuggerDisplayAttributes.
+			// (Only Unity and older Mono versions have a DebuggerDisplayAttribute on them)
+			if (type.IsConstructedGenericType) {
+				if (type.MetadataName == "KeyValuePair`2" && type.MetadataNamespace == "System.Collections.Generic")
+					return type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2, isOptional: true);
+				return false;
+			}
+			else {
+				if (type.MetadataName == "DictionaryEntry" && type.MetadataNamespace == "System.Collections")
+					return type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_DictionaryEntry, isOptional: true);
+				return false;
+			}
+		}
+
 		(DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) GetDisplayParts(DmdType type) {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
 			Debug.Assert((object)ddaType != null);
 
-			// We have special support for formatting KeyValuePair<K, V>, so ignore all DebuggerDisplayAttributes.
-			// (Only Unity and older Mono versions have a DebuggerDisplayAttribute on it)
-			bool forceNoAttr = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2, isOptional: true);
+			bool forceNoAttr = ShouldIgnoreDebuggerDisplayAttribute(type);
 			string nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
 			if (!forceNoAttr && (object)ddaType != null) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);
