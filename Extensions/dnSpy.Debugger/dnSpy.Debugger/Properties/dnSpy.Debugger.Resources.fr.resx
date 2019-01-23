@@ -142,10 +142,10 @@
     <value>Attacher au processus</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Utilisez dnSpy.exe pour attacher au processus 64 bits</value>
+    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Utilisez dnSpy-x86.exe pour attacher au processus 32 bits</value>
+    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Tout _mettre en pause</value>
@@ -1511,13 +1511,13 @@ Voulez-vous vraiment étendre cet élément ?</value>
     <value>Êtes-vous sûr de vouloir déboguer ce fichier qui n’a pas une extension valide ?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Aucun processus ne correspond à votre filtre de recherche.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Recherche</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Réinitialiser tous les critères de recherche afin que tous les processus soient affichés</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Chercher un processus</value>

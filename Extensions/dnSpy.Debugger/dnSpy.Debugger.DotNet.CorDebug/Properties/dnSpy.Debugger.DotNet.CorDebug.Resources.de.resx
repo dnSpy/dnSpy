@@ -195,10 +195,10 @@ Fehler: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit Applikationen.</value>
+    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Verwende dnSpy.exe zum Debuggen von 64-Bit Applikationen.</value>
+    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>

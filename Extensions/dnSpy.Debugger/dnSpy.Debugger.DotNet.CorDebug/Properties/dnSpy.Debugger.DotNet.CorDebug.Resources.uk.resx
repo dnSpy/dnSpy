@@ -195,10 +195,10 @@
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Для відладки 32-бітних програм використовуйте dnSpy-x86.exe.</value>
+    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Для відладки 64-бітних програм використовуйте dnSpy.exe.</value>
+    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>«&lt;повідомлення без виключення&gt;»</value>

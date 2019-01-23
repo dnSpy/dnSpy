@@ -195,10 +195,10 @@
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>请改用 dnSpy-x86.exe 调试 32 位应用程序。</value>
+    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>请改用 dnSpy.exe 调试 64 位应用程序。</value>
+    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt; 没有异常消息 &gt;"</value>

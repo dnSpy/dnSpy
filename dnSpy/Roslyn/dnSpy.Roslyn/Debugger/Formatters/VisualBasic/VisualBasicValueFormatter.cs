@@ -24,6 +24,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Properties;
 
 namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
@@ -76,7 +77,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				int tupleArity = TypeFormatterUtils.GetTupleArity(type);
 				if (tupleArity > 0 && TryFormatTuple(value, tupleArity))
 					return;
-				if (KeyValuePairTypeUtils.IsKeyValuePair(type) && TryFormatKeyValuePair(value))
+				if (KeyValuePairTypeUtils.IsKeyValuePair(type) && TryFormatKeyValuePair(value, KeyValuePairTypeUtils.TryGetFields(value.Type)))
+					return;
+				if (DictionaryEntryTypeUtils.IsDictionaryEntry(type) && TryFormatKeyValuePair(value, DictionaryEntryTypeUtils.TryGetFields(value.Type)))
 					return;
 				if (TryFormatWithDebuggerAttributes(value))
 					return;
@@ -146,8 +149,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			return true;
 		}
 
-		bool TryFormatKeyValuePair(DbgDotNetValue value) {
-			var info = KeyValuePairTypeUtils.TryGetFields(value.Type);
+		bool TryFormatKeyValuePair(DbgDotNetValue value, (DmdFieldInfo keyField, DmdFieldInfo valueField) info) {
 			if ((object)info.keyField == null)
 				return false;
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();

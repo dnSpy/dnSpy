@@ -195,10 +195,10 @@
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Для отладки 32-битных приложений используйте dnSpy-x86.exe.</value>
+    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Для отладки 64-битных приложений используйте dnSpy.exe.</value>
+    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>«&lt;сообщение без исключения&gt;»</value>
@@ -275,6 +275,6 @@ HR: 0x{0:X8}
 Ошибка: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Use host executable</value>
+    <value>Использовать исполняемый файл хоста</value>
   </data>
 </root>

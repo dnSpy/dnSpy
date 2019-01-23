@@ -142,10 +142,10 @@
     <value>An den Prozess anhängen</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Verwende dnSpy.exe beim Anhängen an 64-bit Prozesse</value>
+    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Verwende dnSpy-x86.exe beim Anhängen an 32-bit Prozesse</value>
+    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Alle unter_brechen</value>
@@ -1513,13 +1513,13 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Möchten Sie diese Datei ohne gültige Endung wirklich debuggen?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Keine Prozesse stimmen mit dem Suchtext überein.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Suchen</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Setzen Sie alle Suchkriterien zurück, sodass alle Prozesse angezeigt werden</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Nach einem Prozess suchen</value>

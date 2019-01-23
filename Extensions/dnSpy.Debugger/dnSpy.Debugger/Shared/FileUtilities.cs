@@ -70,7 +70,11 @@ namespace dnSpy.Debugger.Shared {
 
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return baseName + ".dll";
-			return "lib" + baseName + ".so";
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				return "lib" + baseName + ".dylib";
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				return "lib" + baseName + ".so";
+			throw new InvalidOperationException("Unknown operating system");
 		}
 
 		/// <summary>

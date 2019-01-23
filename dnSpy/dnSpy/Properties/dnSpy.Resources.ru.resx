@@ -1944,13 +1944,13 @@
     <value>Показывать масштаб перед индексным регистром</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>Добавить ведущие нули (переходы)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>Добавить нули спереди</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Show branch size</value>
+    <value>Показать размер бренча</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
     <value>Показывать адрес инструкции</value>
@@ -1965,7 +1965,7 @@
     <value>Числа со знаком</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>Перемещение со знаком</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
     <value>Показывать небольшие числа как десятичные</value>
@@ -2007,7 +2007,7 @@
     <value>Синтаксис</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
-    <value>Naked registers</value>
+    <value>Голые регистры</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
     <value>Всегда показывать суффиксы размеров мнемоник</value>

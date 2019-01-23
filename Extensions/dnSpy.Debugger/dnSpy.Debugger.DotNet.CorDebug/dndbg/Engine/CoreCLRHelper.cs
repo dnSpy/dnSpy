@@ -44,7 +44,6 @@ namespace dndbg.Engine {
 		delegate int EnumerateCLRs(uint debuggeePID, out IntPtr ppHandleArrayOut, out IntPtr ppStringArrayOut, out uint pdwArrayLengthOut);
 		delegate int CreateVersionStringFromModule(uint pidDebuggee, [MarshalAs(UnmanagedType.LPWStr)] string szModuleName, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pBuffer, uint cchBuffer, out uint pdwLength);
 		delegate int CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion iDebuggerVersion, [MarshalAs(UnmanagedType.LPWStr)] string szDebuggeeVersion, [MarshalAs(UnmanagedType.IUnknown)] out object ppCordb);
-		delegate int CreateDebuggingInterfaceFromVersion([MarshalAs(UnmanagedType.LPWStr)] string szDebuggeeVersion, [MarshalAs(UnmanagedType.IUnknown)] out object ppCordb);
 
 		/// <summary>
 		/// Searches for CoreCLR runtimes in a process
@@ -251,8 +250,17 @@ namespace dndbg.Engine {
 				}
 
 				hr = dbgShimState.EnumerateCLRs(pi.dwProcessId, out pHandleArray, out pStringArray, out dwArrayLength);
-				if (hr < 0 || dwArrayLength == 0)
+				if (hr < 0 || dwArrayLength == 0) {
+					// CoreCLR doesn't give us a good error code if we try to debug a .NET Core app
+					// with an incompatible bitness:
+					//		x86 tries to debug x64: hr == 0x8007012B (ERROR_PARTIAL_COPY)
+					//		x64 tries to debug x86: hr == 0x00000000 && dwArrayLength == 0x00000000
+					if (IntPtr.Size == 4 && (uint)hr == 0x8007012B)
+						throw new StartDebuggerException(StartDebuggerError.UnsupportedBitness);
+					if (IntPtr.Size == 8 && hr == 0 && dwArrayLength == 0)
+						throw new StartDebuggerException(StartDebuggerError.UnsupportedBitness);
 					throw new Exception("Process started but no CoreCLR found");
+				}
 				var psa = (IntPtr*)pStringArray;
 				var pha = (IntPtr*)pHandleArray;
 				const int index = 0;

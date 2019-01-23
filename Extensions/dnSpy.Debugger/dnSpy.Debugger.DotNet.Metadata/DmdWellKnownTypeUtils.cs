@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the number of well known types
 		/// </summary>
-		public static int WellKnownTypesCount => 305;
+		public static int WellKnownTypesCount => 306;
 
 		static DmdWellKnownTypeUtils() {
 			toWellKnownType = new Dictionary<DmdTypeName, DmdWellKnownType>(WellKnownTypesCount, DmdTypeNameEqualityComparer.Instance);
@@ -367,6 +367,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Add(new DmdTypeName("System.Threading.Tasks", "ValueTask"), DmdWellKnownType.System_Threading_Tasks_ValueTask);
 			Add(new DmdTypeName("System.Runtime.CompilerServices", "AsyncIteratorMethodBuilder"), DmdWellKnownType.System_Runtime_CompilerServices_AsyncIteratorMethodBuilder);
 			Add(new DmdTypeName("System.Threading", "CancellationToken"), DmdWellKnownType.System_Threading_CancellationToken);
+			Add(new DmdTypeName("System.Collections", "DictionaryEntry"), DmdWellKnownType.System_Collections_DictionaryEntry);
 
 			Debug.Assert(toWellKnownType.Count == WellKnownTypesCount);
 #if DEBUG

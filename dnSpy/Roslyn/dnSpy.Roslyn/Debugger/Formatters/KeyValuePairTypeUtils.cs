@@ -26,6 +26,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		const string ValueFieldName = "value";
 
 		public static bool IsKeyValuePair(DmdType type) {
+			if (type.MetadataName != "KeyValuePair`2" || type.MetadataNamespace != "System.Collections.Generic")
+				return false;
 			if (!type.IsConstructedGenericType)
 				return false;
 			type = type.GetGenericTypeDefinition();
@@ -34,7 +36,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		public static (DmdFieldInfo keyField, DmdFieldInfo valueField) TryGetFields(DmdType type) {
 			Debug.Assert(IsKeyValuePair(type));
+			return TryGetFields(type, KeyFieldName, ValueFieldName);
+		}
 
+		public static (DmdFieldInfo keyField, DmdFieldInfo valueField) TryGetFields(DmdType type, string keyFieldName, string valueFieldName) {
 			DmdFieldInfo keyField = null;
 			DmdFieldInfo valueField = null;
 			var fields = type.DeclaredFields;
@@ -42,20 +47,18 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				var field = fields[i];
 				if (field.IsStatic || field.IsLiteral)
 					continue;
-				switch (field.Name) {
-				case KeyFieldName:
+				if (field.Name == keyFieldName) {
 					if ((object)keyField != null)
 						return (null, null);
 					keyField = field;
-					break;
-				case ValueFieldName:
+				}
+				else if (field.Name == valueFieldName) {
 					if ((object)valueField != null)
 						return (null, null);
 					valueField = field;
-					break;
-				default:
-					return (null, null);
 				}
+				else
+					return (null, null);
 			}
 
 			if ((object)keyField == null || (object)valueField == null)
