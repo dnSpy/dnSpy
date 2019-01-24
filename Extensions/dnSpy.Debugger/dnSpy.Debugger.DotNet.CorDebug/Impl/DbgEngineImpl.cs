@@ -288,8 +288,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		DbgModule TryGetModule(CorFrame frame, CorThread thread) {
-			if (frame == null)
-				frame = thread?.ActiveFrame ?? thread?.AllFrames.FirstOrDefault();
+			if (frame?.Function == null && thread != null) {
+				frame = thread.ActiveFrame;
+				if (frame?.Function == null) {
+					// Ignore the first frame(s) that have a null function. This rarely happens (eg. it
+					// happens when debugging dnSpy built for .NET Core x86)
+					frame = thread.AllFrames.FirstOrDefault(a => a.Function != null);
+				}
+			}
 			return TryGetModule(frame?.Function?.Module);
 		}
 
