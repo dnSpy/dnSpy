@@ -410,7 +410,7 @@
     <value>移除(_R)...</value>
   </data>
   <data name="Event_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
+    <value>RT特殊名称(_R)</value>
   </data>
   <data name="Event_SpecialName" xml:space="preserve">
     <value>特殊名称(_S)</value>
@@ -419,19 +419,19 @@
     <value>程序集</value>
   </data>
   <data name="FieldAccess_Family" xml:space="preserve">
-    <value>Family</value>
+    <value>家族</value>
   </data>
   <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>Family and Assembly</value>
+    <value>家族和程序集</value>
   </data>
   <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>Family or Assembly</value>
+    <value>家族或程序集</value>
   </data>
   <data name="FieldAccess_Private" xml:space="preserve">
     <value>私有</value>
   </data>
   <data name="FieldAccess_PrivateScope" xml:space="preserve">
-    <value>PrivateScope</value>
+    <value>私有作用域</value>
   </data>
   <data name="FieldAccess_Public" xml:space="preserve">
     <value>公共</value>
@@ -452,7 +452,7 @@
     <value>仅初始化(_I)</value>
   </data>
   <data name="Field_Flags_Literal" xml:space="preserve">
-    <value>_Literal</value>
+    <value>字面的(_L)</value>
   </data>
   <data name="Field_Flags_NotSerialized" xml:space="preserve">
     <value>未序列化(_Z)</value>
@@ -545,7 +545,7 @@
     <value>可选头（64 - 位）</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
-    <value>ImplMap</value>
+    <value>实现映射</value>
   </data>
   <data name="ImplMap_BestFit" xml:space="preserve">
     <value>_BestFit</value>
@@ -911,16 +911,16 @@
     <value>清除类型</value>
   </data>
   <data name="TypeSigCreator_CModOpt" xml:space="preserve">
-    <value>添加必须的C模块操作(_t)</value>
+    <value>C修饰符可选 (_T)</value>
   </data>
   <data name="TypeSigCreator_CModOpt_ToolTip" xml:space="preserve">
     <value>添加可选的C修饰符</value>
   </data>
   <data name="TypeSigCreator_CModReqd" xml:space="preserve">
-    <value>添加必须的C模块</value>
+    <value>C修饰符依赖(_M)</value>
   </data>
   <data name="TypeSigCreator_CModReqd_ToolTip" xml:space="preserve">
-    <value>添加必须的C修饰符</value>
+    <value>添加依赖的C修饰符</value>
   </data>
   <data name="TypeSigCreator_FnPtr" xml:space="preserve">
     <value>函数指针(_F)</value>
@@ -2015,7 +2015,7 @@
     <value>命名空间(_A)</value>
   </data>
   <data name="Type_PackingSize" xml:space="preserve">
-    <value>封装大小</value>
+    <value>封装大小(_Z)</value>
   </data>
   <data name="UndoCommand" xml:space="preserve">
     <value>撤消</value>
@@ -2120,16 +2120,16 @@
     <value>抽象</value>
   </data>
   <data name="Method_Flags_CheckAccessOnOverride" xml:space="preserve">
-    <value>检查是否有权限重载(Override)</value>
+    <value>检查重载权限(_K)</value>
   </data>
   <data name="Method_Flags_Final" xml:space="preserve">
-    <value>_Final</value>
+    <value>最终的(_F)</value>
   </data>
   <data name="Method_Flags_HideBySig" xml:space="preserve">
-    <value>根据签名隐藏</value>
+    <value>根据签名隐藏(_D)</value>
   </data>
   <data name="Method_Flags_RequireSecObject" xml:space="preserve">
-    <value>Re_quireSecObject</value>
+    <value>依赖安全对象(_Q)</value>
   </data>
   <data name="Method_Flags_RTSpecialName" xml:space="preserve">
     <value>RT特殊名称(_T)</value>
@@ -2141,22 +2141,22 @@
     <value>静态(_S)</value>
   </data>
   <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
-    <value>UnmanagedE_xport</value>
+    <value>非托管导出(_E)</value>
   </data>
   <data name="Method_Flags_Virtual" xml:space="preserve">
     <value>虚拟(_V)</value>
   </data>
   <data name="Method_ImplFlags" xml:space="preserve">
-    <value>ImplFlags</value>
+    <value>实现标志</value>
   </data>
   <data name="Method_ImplFlags_AggressiveInlining" xml:space="preserve">
-    <value>A_ggressiveInlining</value>
+    <value>积极性内联(_G)</value>
   </data>
   <data name="Method_ImplFlags_ForwardRef" xml:space="preserve">
-    <value>For_wardRef</value>
+    <value>预引用(_W)</value>
   </data>
   <data name="Method_ImplFlags_InternalCall" xml:space="preserve">
-    <value>Interna_lCall</value>
+    <value>内部调用(_I)</value>
   </data>
   <data name="Method_ImplFlags_NoInlining" xml:space="preserve">
     <value>不可内联(_I)</value>
@@ -2231,7 +2231,7 @@
     <value>Dll设置</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
+    <value>RT特殊名称(_R)</value>
   </data>
   <data name="Property_Flags_SpecialName" xml:space="preserve">
     <value>特殊名称(_S)</value>
@@ -2327,13 +2327,13 @@
     <value>导入(_I)</value>
   </data>
   <data name="Type_Flags_Kind" xml:space="preserve">
-    <value>_Kind</value>
+    <value>类别(_K)</value>
   </data>
   <data name="Type_Flags_Layout" xml:space="preserve">
-    <value>Layo_ut</value>
+    <value>布局(_U)</value>
   </data>
   <data name="Type_Flags_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
+    <value>RT特殊名称(_R)</value>
   </data>
   <data name="Type_Flags_Sealed" xml:space="preserve">
     <value>密封的(_d)</value>
@@ -2342,16 +2342,16 @@
     <value>语义(_S)</value>
   </data>
   <data name="Type_Flags_Serializable" xml:space="preserve">
-    <value>S_erializable</value>
+    <value>可序列化(_E)</value>
   </data>
   <data name="Type_Flags_SpecialName" xml:space="preserve">
     <value>特殊名称(_p)</value>
   </data>
   <data name="Type_Flags_String" xml:space="preserve">
-    <value>Strin_g</value>
+    <value>字串(_G)</value>
   </data>
   <data name="Type_Flags_Visibility" xml:space="preserve">
-    <value>Visibilit_y</value>
+    <value>可见性(_Y)</value>
   </data>
   <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
     <value>_WindowsRuntime</value>

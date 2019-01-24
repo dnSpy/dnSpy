@@ -142,10 +142,10 @@
     <value>附加到进程</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
+    <value>请改用64位dnspy 来调试64位应用程序。</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
+    <value>请改用32位dnspy 来调试32位应用程序。</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>全部中断(_K)</value>
