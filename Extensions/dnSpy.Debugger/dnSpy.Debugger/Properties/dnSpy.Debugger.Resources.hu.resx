@@ -142,10 +142,10 @@
     <value>Kapcsolódás folyamathoz</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
+    <value>64 bites dnSpy használata a 64 bites folyamathoz való kapcsolódáshoz</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
+    <value>32 bites dnSpy használata a 32 bites folyamathoz való kapcsolódáshoz</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>_Megállítás mindenhol</value>

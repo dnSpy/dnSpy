@@ -25,9 +25,9 @@
     <RuntimeIdentifiers>$(DnSpyRuntimeIdentifiers)</RuntimeIdentifiers>
 
     <!-- Update app.config whenever this value changes -->
-    <DnSpyAssemblyVersion>6.0.2.0</DnSpyAssemblyVersion>
+    <DnSpyAssemblyVersion>6.0.3.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
-    <DnSpyAssemblyInformationalVersion>v6.0.2</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyInformationalVersion>v6.0.3</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2019 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
     <NoWarn>NU1701</NoWarn>
@@ -37,8 +37,8 @@
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <IcedVersion>1.1.1</IcedVersion>
     <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>
-    <MSVSCompositionNetFxAttributesVersion>15.8.98</MSVSCompositionNetFxAttributesVersion>
-    <MSVSCompositionVersion>15.8.98</MSVSCompositionVersion>
+    <MSVSCompositionNetFxAttributesVersion>15.8.117</MSVSCompositionNetFxAttributesVersion>
+    <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>

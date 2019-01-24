@@ -268,6 +268,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// Linux OS
 		/// </summary>
 		Linux,
+
+		/// <summary>
+		/// FreeBSD OS
+		/// </summary>
+		FreeBSD,
 	}
 
 	/// <summary>

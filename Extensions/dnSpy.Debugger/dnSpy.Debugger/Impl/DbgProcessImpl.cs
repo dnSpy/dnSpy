@@ -288,6 +288,8 @@ namespace dnSpy.Debugger.Impl {
 				return DbgOperatingSystem.MacOS;
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 				return DbgOperatingSystem.Linux;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
+				return DbgOperatingSystem.FreeBSD;
 			throw new InvalidOperationException("Unknown operating system");
 		}
 

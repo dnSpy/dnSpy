@@ -8,7 +8,7 @@ build_script:
 test: off
 artifacts:
 - path: dnSpy/dnSpy/bin/Release/net472
-  name: dnSpy
+  name: dnSpy-net472
 - path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x86/publish
   name: dnSpy-netcore-win32
 - path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x64/publish

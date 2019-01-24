@@ -135,6 +135,8 @@ namespace dnSpy.Debugger.Attach {
 					operatingSystem = DbgOperatingSystem.MacOS;
 				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 					operatingSystem = DbgOperatingSystem.Linux;
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
+					operatingSystem = DbgOperatingSystem.FreeBSD;
 				else
 					Debug.Fail($"Unknown OS: {RuntimeInformation.OSDescription}");
 			}
