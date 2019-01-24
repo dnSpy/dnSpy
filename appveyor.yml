@@ -11,7 +11,7 @@ build:
   verbosity: normal
 artifacts:
 - path: dnSpy/dnSpy/bin/Release/net472
-  name: dnSpy
+  name: dnSpy-net472
 deploy:
 - provider: GitHub
   description: New release
