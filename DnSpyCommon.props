@@ -21,8 +21,6 @@
     <CopyLocalLockFileAssemblies Condition=" '$(IsDotNetCore)' == 'true' ">true</CopyLocalLockFileAssemblies>
     <!-- If this gets updated, also update appveyor.yml and build.ps1 -->
     <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
-    <!-- This should only be in the EXE csproj files, but then it fails during publish: https://github.com/dotnet/sdk/issues/2851 -->
-    <RuntimeIdentifiers>$(DnSpyRuntimeIdentifiers)</RuntimeIdentifiers>
 
     <!-- Update app.config whenever this value changes -->
     <DnSpyAssemblyVersion>6.0.3.0</DnSpyAssemblyVersion>

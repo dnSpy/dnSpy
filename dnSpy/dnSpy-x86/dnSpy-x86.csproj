@@ -18,6 +18,7 @@ The workaround is to add WindowsDesktop above.
     <!-- If it's .NET Core, we can only use 32-bit only or 64-bit only exes. dnSpy-x86 isn't needed. -->
     <OutputPath Condition=" '$(IsDotNetCore)' != 'true' ">..\dnSpy\bin\$(Configuration)\</OutputPath>
 
+    <RuntimeIdentifiers>$(DnSpyRuntimeIdentifiers)</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
     <Prefer32Bit>true</Prefer32Bit>
     <PlatformTarget>AnyCPU</PlatformTarget>
