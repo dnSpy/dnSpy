@@ -5,7 +5,7 @@
         - appveyor.yml (artifacts)
         - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
-    <TargetFrameworks>net472</TargetFrameworks>
+    <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
     <IsDotNetCore>false</IsDotNetCore>
     <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
@@ -14,6 +14,7 @@
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
     <!-- Update app.config whenever this value changes -->
     <DnSpyAssemblyVersion>6.0.1.0</DnSpyAssemblyVersion>

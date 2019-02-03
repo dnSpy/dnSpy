@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -16,35 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="Controls\ToolWindows\EditValueControl.xaml.cs">
-      <DependentUpon>EditValueControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MVVM\Dialogs\ProgressDlg.xaml.cs">
-      <DependentUpon>ProgressDlg.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-   </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Controls\ToolWindows\EditValueControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>

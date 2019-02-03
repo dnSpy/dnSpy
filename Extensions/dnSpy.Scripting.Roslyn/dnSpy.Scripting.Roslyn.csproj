@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -14,17 +14,7 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-
   <ItemGroup>
-    <Compile Update="Common\ScriptControl.xaml.cs">
-      <DependentUpon>ScriptControl.xaml</DependentUpon>
-    </Compile>
     <None Include="CSharpInteractive.rsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -45,13 +35,6 @@
     <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
     <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
     <ProjectReference Include="..\..\dnSpy\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Common\ScriptControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>

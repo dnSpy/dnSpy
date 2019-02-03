@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\..\DnSpyCommon.props" />
 
@@ -16,132 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml.cs">
-      <DependentUpon>BreakpointGlyphPopupControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\AttachToProcess\AttachToProcessDlg.xaml.cs">
-      <DependentUpon>AttachToProcessDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsDlg.xaml.cs">
-      <DependentUpon>ShowCodeBreakpointSettingsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\DebugProgram\DebugProgramDlg.xaml.cs">
-      <DependentUpon>DebugProgramDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Evaluation\UI\VariablesWindowControl.xaml.cs">
-      <DependentUpon>VariablesWindowControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\CallStack\CallStackControl.xaml.cs">
-      <DependentUpon>CallStackControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\CodeBreakpoints\CodeBreakpointsControl.xaml.cs">
-      <DependentUpon>CodeBreakpointsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\ModuleBreakpoints\ModuleBreakpointsControl.xaml.cs">
-      <DependentUpon>ModuleBreakpointsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Exceptions\AddExceptionControl.xaml.cs">
-      <DependentUpon>AddExceptionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Exceptions\EditExceptionConditionsDlg.xaml.cs">
-      <DependentUpon>EditExceptionConditionsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Exceptions\ExceptionControl.xaml.cs">
-      <DependentUpon>ExceptionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Memory\MemoryControl.xaml.cs">
-      <DependentUpon>MemoryControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Modules\ModulesControl.xaml.cs">
-      <DependentUpon>ModulesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Processes\ProcessesControl.xaml.cs">
-      <DependentUpon>ProcessesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="ToolWindows\Threads\ThreadsControl.xaml.cs">
-      <DependentUpon>ThreadsControl.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj" />
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
     <ProjectReference Include="..\..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Breakpoints\Code\TextEditor\BreakpointGlyphPopupControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\AttachToProcess\AttachToProcessDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\CodeBreakpoints\ShowCodeBreakpointSettingsDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\DebugProgram\DebugProgramDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Evaluation\UI\VariablesWindowControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\wpf.styles.templates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindows\CallStack\CallStackControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ToolWindows\CodeBreakpoints\CodeBreakpointsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ToolWindows\Exceptions\AddExceptionControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ToolWindows\Exceptions\EditExceptionConditionsDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ToolWindows\Exceptions\ExceptionControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindows\Memory\MemoryControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindows\ModuleBreakpoints\ModuleBreakpointsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ToolWindows\Modules\ModulesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindows\Processes\ProcessesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindows\Threads\ThreadsControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>
