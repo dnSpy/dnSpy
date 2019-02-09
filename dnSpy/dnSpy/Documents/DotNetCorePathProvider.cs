@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
 
 namespace dnSpy.Documents {
 	sealed class DotNetCorePathProvider {
@@ -170,7 +171,7 @@ namespace dnSpy.Documents {
 			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
-				if (string.IsNullOrEmpty(path))
+				if (!Directory.Exists(path))
 					continue;
 				try {
 					path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
@@ -181,8 +182,6 @@ namespace dnSpy.Documents {
 				catch (PathTooLongException) {
 					continue;
 				}
-				if (!Directory.Exists(path))
-					continue;
 				if (!hash.Add(path))
 					continue;
 				string file;
@@ -207,6 +206,7 @@ namespace dnSpy.Documents {
 			}
 		}
 
+		// NOTE: This same method exists in DotNetCoreHelpers (CorDebug project). Update both methods if this one gets updated.
 		static IEnumerable<string> GetDotNetCoreBaseDirCandidates() {
 			// Microsoft tools don't check the PATH env var, only the default locations (eg. ProgramFiles)
 			var envVars = new string[] {
@@ -230,6 +230,23 @@ namespace dnSpy.Documents {
 				yield return Path.Combine(progDir, dotnetDirName);
 			if (!string.IsNullOrEmpty(progDirX86))
 				yield return Path.Combine(progDirX86, dotnetDirName);
+
+			var regPathFormat = IntPtr.Size == 4 ?
+				@"SOFTWARE\dotnet\Setup\InstalledVersions\{0}\sdk" :
+				@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\{0}\sdk";
+			var archs = new[] { "x86", "x64" };
+			foreach (var arch in archs) {
+				var regPath = string.Format(regPathFormat, arch);
+				if (TryGetInstallLocationFromRegistry(regPath, out var installLocation))
+					yield return installLocation;
+			}
+
+			bool TryGetInstallLocationFromRegistry(string regPath, out string installLocation) {
+				using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
+					installLocation = key?.GetValue("InstallLocation") as string;
+					return installLocation != null;
+				}
+			}
 		}
 
 		static IEnumerable<FrameworkPath> GetDotNetCorePaths(string basePath, int bitness) {

@@ -663,6 +663,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					// https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/diagnosing-errors-with-managed-debugging-assistants
 					env.Add("COMPLUS_MDA", "0");
 				}
+				if (debuggerSettings.SuppressJITOptimization_SystemModules) {
+					env.Add("COMPlus_ZapDisable", "1");
+					env.Add("COMPlus_ReadyToRun", "0");
+				}
 
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
 					DebugMessageDispatcher = debuggerThread.GetDebugMessageDispatcher(),

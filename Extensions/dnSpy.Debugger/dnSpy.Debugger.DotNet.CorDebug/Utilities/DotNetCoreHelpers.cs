@@ -18,11 +18,13 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Debugger.Shared;
+using Microsoft.Win32;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
@@ -34,10 +36,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
 			if (pathEnvVar == null)
 				return null;
-			foreach (var tmp in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)) {
+			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
 				if (!Directory.Exists(path))
 					continue;
+				try {
+					path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
+				}
+				catch (ArgumentException) {
+					continue;
+				}
+				catch (PathTooLongException) {
+					continue;
+				}
 				try {
 					var file = Path.Combine(path, DotNetExeName);
 					if (!File.Exists(file))
@@ -49,6 +60,49 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 				}
 			}
 			return null;
+		}
+
+		// NOTE: This same method exists in DotNetCorePathProvider (dnSpy project). Update both methods if this one gets updated.
+		static IEnumerable<string> GetDotNetCoreBaseDirCandidates() {
+			// Microsoft tools don't check the PATH env var, only the default locations (eg. ProgramFiles)
+			var envVars = new string[] {
+				"PATH",
+				"DOTNET_ROOT(x86)",
+				"DOTNET_ROOT",
+			};
+			foreach (var envVar in envVars) {
+				var pathEnvVar = Environment.GetEnvironmentVariable(envVar) ?? string.Empty;
+				foreach (var path in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries))
+					yield return path;
+			}
+
+			// Check default locations
+			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
+				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
+			const string dotnetDirName = "dotnet";
+			if (!string.IsNullOrEmpty(progDir))
+				yield return Path.Combine(progDir, dotnetDirName);
+			if (!string.IsNullOrEmpty(progDirX86))
+				yield return Path.Combine(progDirX86, dotnetDirName);
+
+			var regPathFormat = IntPtr.Size == 4 ?
+				@"SOFTWARE\dotnet\Setup\InstalledVersions\{0}\sdk" :
+				@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\{0}\sdk";
+			var archs = new[] { "x86", "x64" };
+			foreach (var arch in archs) {
+				var regPath = string.Format(regPathFormat, arch);
+				if (TryGetInstallLocationFromRegistry(regPath, out var installLocation))
+					yield return installLocation;
+			}
+
+			bool TryGetInstallLocationFromRegistry(string regPath, out string installLocation) {
+				using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
+					installLocation = key?.GetValue("InstallLocation") as string;
+					return installLocation != null;
+				}
+			}
 		}
 
 		public static string GetDebugShimFilename(int bitness) {
