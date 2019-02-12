@@ -463,6 +463,7 @@ namespace dnSpy.Documents {
 			if (fwkKind == FrameworkKind.DotNetCore && !dotNetCorePathProvider.HasDotNetCore)
 				fwkKind = FrameworkKind.DotNetFramework4;
 			IDsDocument document;
+			IDsDocument existingDocument;
 			switch (fwkKind) {
 			case FrameworkKind.Unknown:
 			case FrameworkKind.DotNetFramework2:
@@ -489,7 +490,7 @@ namespace dnSpy.Documents {
 					gacVersion = -1;
 				}
 
-				var existingDocument = documentService.FindAssembly(assembly);
+				existingDocument = documentService.FindAssembly(assembly);
 				if (existingDocument != null)
 					return existingDocument;
 
@@ -527,6 +528,12 @@ namespace dnSpy.Documents {
 				document = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
 				if (document != null)
 					return documentService.GetOrAddCanDispose(document, assembly);
+
+				// If it already exists in assembly explorer, use it
+				existingDocument = documentService.FindAssembly(assembly);
+				if (existingDocument != null)
+					return existingDocument;
+
 				break;
 
 			default:
