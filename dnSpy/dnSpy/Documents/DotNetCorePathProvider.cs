@@ -220,17 +220,6 @@ namespace dnSpy.Documents {
 					yield return path;
 			}
 
-			// Check default locations
-			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
-				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
-			const string dotnetDirName = "dotnet";
-			if (!string.IsNullOrEmpty(progDir))
-				yield return Path.Combine(progDir, dotnetDirName);
-			if (!string.IsNullOrEmpty(progDirX86))
-				yield return Path.Combine(progDirX86, dotnetDirName);
-
 			var regPathFormat = IntPtr.Size == 4 ?
 				@"SOFTWARE\dotnet\Setup\InstalledVersions\{0}\sdk" :
 				@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\{0}\sdk";
@@ -247,6 +236,17 @@ namespace dnSpy.Documents {
 					return installLocation != null;
 				}
 			}
+
+			// Check default locations
+			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
+				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
+			const string dotnetDirName = "dotnet";
+			if (!string.IsNullOrEmpty(progDir))
+				yield return Path.Combine(progDir, dotnetDirName);
+			if (!string.IsNullOrEmpty(progDirX86))
+				yield return Path.Combine(progDirX86, dotnetDirName);
 		}
 
 		static IEnumerable<FrameworkPath> GetDotNetCorePaths(string basePath, int bitness) {
