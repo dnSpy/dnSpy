@@ -1507,10 +1507,10 @@
     <value>忽略未处理的异常</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
-    <value>确定要运行此没有有效扩展名的文件吗？</value>
+    <value>确定要运行此无有效扩展名的文件吗？</value>
   </data>
   <data name="DebugWithInvalidExtension" xml:space="preserve">
-    <value>确定要调试此没有有效扩展名的文件吗？</value>
+    <value>确定要调试此无有效扩展名的文件吗？</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
     <value>没有进程匹配您的搜索过滤器。</value>

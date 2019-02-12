@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppendObject" xml:space="preserve">
-    <value>Додати об'єкт</value>
+    <value>Додати Об'єкт</value>
   </data>
   <data name="AppendType" xml:space="preserve">
     <value>Додати тип</value>
@@ -133,22 +133,22 @@
     <value>Архітектура проц_есора вказана</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>Відкритий ключ</value>
+    <value>Відкритий _Ключ</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
     <value>_Retargetable</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>Тип вмістимого</value>
+    <value>Тип _вмістимого</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
-    <value>Локаль</value>
+    <value>Л_окаль</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
     <value>Версія .NET</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>Хеш алгоритм</value>
+    <value>_Хеш алгоритм</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
     <value>Назва</value>
@@ -169,10 +169,10 @@
     <value>Додати...</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Відміна</value>
+    <value>_Відміна</value>
   </data>
   <data name="Button_Delete" xml:space="preserve">
-    <value>Видалити</value>
+    <value>_Видалити</value>
   </data>
   <data name="Button_Edit" xml:space="preserve">
     <value>Редагувати...</value>
@@ -187,7 +187,7 @@
     <value>Очистити</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
     <value>Тип властивості/поля</value>
@@ -238,7 +238,7 @@
     <value>Створити користувацький атрибут</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
-    <value>Створити подію...</value>
+    <value>Створити Подію...</value>
   </data>
   <data name="CreateEventCommand2" xml:space="preserve">
     <value>Створити подію</value>

@@ -195,10 +195,10 @@
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
+    <value>از dnSpy 32 بیت برای اشکال‌زدایی برنامه‌های 32 بیتی استفاده نمایید.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
+    <value>از dnSpy 64 بیت برای اشکال‌زدایی برنامه‌های 64 بیتی استفاده نمایید.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>
@@ -275,6 +275,6 @@ HR: 0x{0:X8}
 Error: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Use host executable</value>
+    <value>استفاده از میزبان اجرایی</value>
   </data>
 </root>

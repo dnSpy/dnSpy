@@ -539,7 +539,7 @@
     <value>Datei-Header</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Optionaler Header (32-bit)</value>
+    <value>Optionaler Header (32-Bit)</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
     <value>Optionaler Header (64-bit)</value>
@@ -1758,7 +1758,7 @@ Möchten Sie das Fenster wirklich schließen?</value>
     <value>24-bit</value>
   </data>
   <data name="Resource_ColorDepth_32Bit" xml:space="preserve">
-    <value>32-bit</value>
+    <value>32-Bit</value>
   </data>
   <data name="Resource_ColorDepth_4Bit" xml:space="preserve">
     <value>4-bit</value>
