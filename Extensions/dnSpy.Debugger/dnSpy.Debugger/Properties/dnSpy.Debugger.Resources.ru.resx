@@ -1507,10 +1507,10 @@
     <value>Игнорировать необработанные исключения</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
+    <value>Вы уверены, что вы хотите запустить этот файл, который не имеет допустимое расширение?</value>
   </data>
   <data name="DebugWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
+    <value>Вы уверены, что вы хотите запустить этот файл, который не имеет допустимое расширение?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
     <value>Нет процессов соответствующих условиям поиска.</value>
@@ -1519,7 +1519,7 @@
     <value>Поиск</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Сбросить все критерии поиска, чтобы отображались все процессы</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Поиск процесса</value>

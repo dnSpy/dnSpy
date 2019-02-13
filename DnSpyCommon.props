@@ -31,10 +31,11 @@
     <NoWarn>NU1701</NoWarn>
 
     <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
-    <DnlibVersion>3.1.0</DnlibVersion>
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
+    <DnlibVersion>3.1.0</DnlibVersion>
     <IcedVersion>1.1.1</IcedVersion>
     <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>
+    <MSDiagRuntimeVersion>1.0.3</MSDiagRuntimeVersion>
     <MSVSCompositionNetFxAttributesVersion>15.8.117</MSVSCompositionNetFxAttributesVersion>
     <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>

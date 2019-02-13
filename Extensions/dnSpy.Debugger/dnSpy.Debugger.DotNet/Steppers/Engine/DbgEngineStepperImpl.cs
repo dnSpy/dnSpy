@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (result.DebugInfoOrNull != null) {
 				if (!frame.TryGetLocation(out var module, out var token, out var offset))
 					throw new InvalidOperationException();
-				bool skipMethod = offset == 0 && AreIteratorsDecompiled && CompilerUtils.IsIgnoredIteratorStateMachineMethod(result.DebugInfoOrNull.Method);
+				bool skipMethod = (offset == 0 || offset == DbgDotNetInstructionOffsetConstants.PROLOG) && AreIteratorsDecompiled && CompilerUtils.IsIgnoredIteratorStateMachineMethod(result.DebugInfoOrNull.Method);
 				if (!skipMethod) {
 					var currentStatement = result.DebugInfoOrNull.GetSourceStatementByCodeOffset(offset);
 					if (currentStatement == null) {
@@ -402,7 +402,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		DbgILSpan[] TryCreateMethodBodySpans(DbgDotNetEngineStepperFrameInfo frame) {
-			if (!frame.TryGetLocation(out var module, out var token, out var offset))
+			if (!frame.TryGetLocation(out var module, out var token, out _))
 				return null;
 			DbgEvaluationInfo evalInfo = null;
 			try {
@@ -525,7 +525,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 				// If we're at the start of the method we may need to skip the first hidden instructions.
 				// If it's an async kickoff method, we need to set a BP in MoveNext() and continue the process.
-				if (offset == 0) {
+				if (offset == 0 || offset == DbgDotNetInstructionOffsetConstants.PROLOG) {
 					if (debuggerSettings.AsyncDebugging) {
 						var newResult = await GetStepRangesAsync(frame, returnValues: false);
 						if (newResult.DebugInfoOrNull != null && newResult.StateMachineDebugInfoOrNull?.AsyncInfo != null) {
@@ -550,7 +550,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 				// Check if we didn't step into a new method. frame.Equals() isn't always 100% reliable
 				// so we also check the offset. If it's not 0, we didn't step into it.
-				inSameFrame = origModule == module && origToken == token && (offset != 0 || prevFrame.Equals(frame));
+				inSameFrame = origModule == module && origToken == token && ((offset != 0 && offset != DbgDotNetInstructionOffsetConstants.PROLOG) || prevFrame.Equals(frame));
 				if (inSameFrame && !Contains(origResult.StatementRanges, offset))
 					break;
 
@@ -569,7 +569,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					}
 				}
 
-				inSameFrame = origModule == module && origToken == token && (offset != 0 || prevFrame.Equals(frame));
+				inSameFrame = origModule == module && origToken == token && ((offset != 0 && offset != DbgDotNetInstructionOffsetConstants.PROLOG) || prevFrame.Equals(frame));
 				if (!inSameFrame || !Contains(origResult.StatementRanges, offset))
 					break;
 			}
@@ -698,7 +698,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					Debug.Assert(frame != null);
 					if (frame == null)
 						return thread;
-					if (!frame.TryGetLocation(out var module, out var token, out uint offset))
+					if (!frame.TryGetLocation(out var module, out var token, out _))
 						throw new InvalidOperationException();
 
 					keepLooping = CompilerUtils.IsBaseWrapperMethod(module, token);
@@ -751,7 +751,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 						var newFrame = stepper.TryGetFrameInfo(thread);
 						Debug.Assert(newFrame != null);
-						if (newFrame != null && newFrame.TryGetLocation(out var newModule, out var newToken, out var newOffset)) {
+						if (newFrame != null && newFrame.TryGetLocation(out var newModule, out var newToken, out _)) {
 							Debug.Assert(newModule == module && asyncState.ResumeToken == newToken);
 							if (result.DebugInfoOrNull != null && newModule == module && asyncState.ResumeToken == newToken)
 								thread = await StepOverHiddenInstructionsAsync(newFrame, result);
@@ -1016,7 +1016,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					Debug.Assert(frame != null);
 					if (frame == null)
 						return thread;
-					if (!frame.TryGetLocation(out var module, out var token, out uint offset))
+					if (!frame.TryGetLocation(out var module, out var token, out _))
 						throw new InvalidOperationException();
 
 					keepLooping = CompilerUtils.IsBaseWrapperMethod(module, token);
@@ -1094,10 +1094,19 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				if (returnValues && debuggerSettings.ShowReturnValues && frame.SupportsReturnValues)
 					instructions = GetInstructions(info.DebugInfoOrNull.Method, exactCodeRanges) ?? Array.Empty<DbgILInstruction[]>();
 			}
-			if (codeRanges.Length == 0)
-				codeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
-			if (exactCodeRanges.Length == 0)
-				exactCodeRanges = new[] { new DbgCodeRange(offset, offset + 1) };
+			if (codeRanges.Length == 0 || exactCodeRanges.Length == 0) {
+				DbgCodeRange defCodeRange;
+				if (offset == DbgDotNetInstructionOffsetConstants.PROLOG)
+					defCodeRange = new DbgCodeRange(0, 1);
+				else if (offset == DbgDotNetInstructionOffsetConstants.EPILOG)
+					defCodeRange = new DbgCodeRange(0xFFFFFFFE, 0xFFFFFFFF);
+				else
+					defCodeRange = new DbgCodeRange(offset, offset + 1);
+				if (codeRanges.Length == 0)
+					codeRanges = new[] { defCodeRange };
+				if (exactCodeRanges.Length == 0)
+					exactCodeRanges = new[] { defCodeRange };
+			}
 			return new GetStepRangesAsyncResult(info.DebugInfoOrNull, info.StateMachineDebugInfoOrNull, frame, codeRanges, exactCodeRanges, instructions);
 		}
 

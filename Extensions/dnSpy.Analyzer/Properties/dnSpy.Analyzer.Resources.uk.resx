@@ -154,7 +154,7 @@
     <value>Показати посилання на метод</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Показати посилання в методі (Нова Вкладка)</value>
+    <value>Показати посилання в методі (Нова _Вкладка)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
     <value>Перейти до посилання (Нова Вкладка)</value>
