@@ -57,6 +57,17 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 
 		public string Title { get; }
 
+		public override bool HasError => hasError;
+		bool hasError;
+
+		void UpdateHasError() {
+			var value = SelectedItems.Count == 0;
+			if (hasError != value) {
+				hasError = value;
+				HasErrorUpdated();
+			}
+		}
+
 		public bool HasMessageText => !string.IsNullOrEmpty(MessageText);
 		public string MessageText { get; }
 
@@ -103,6 +114,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			realAllItems = new ObservableCollection<ProgramVM>();
 			AllItems = new BulkObservableCollection<ProgramVM>();
 			SelectedItems = new ObservableCollection<ProgramVM>();
+			SelectedItems.CollectionChanged += (_, e) => { UpdateHasError(); };
 			this.uiDispatcher = uiDispatcher ?? throw new ArgumentNullException(nameof(uiDispatcher));
 			uiDispatcher.VerifyAccess();
 			this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
@@ -127,6 +139,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			};
 			Descs.SortedColumnChanged += (a, b) => SortList();
 
+			UpdateHasError();
 			RefreshCore();
 		}
 
@@ -243,6 +256,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 				filterText = string.Empty;
 			attachToProcessContext.SearchMatcher.SetSearchText(filterText);
 			SortList(filterText);
+			if (SelectedItems.Count == 0 && AllItems.Count > 0)
+				SelectedItems.Add(AllItems[0]);
 		}
 
 		void SortList() {
