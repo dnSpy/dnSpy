@@ -57,11 +57,9 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 
 		public string Title { get; }
 
-		/// <inheritdoc />
-		public override bool HasError {
-			get => hasError;
-		}
+		public override bool HasError => hasError;
 		bool hasError;
+
 		void UpdateHasError() {
 			var value = SelectedItems.Count == 0;
 			if (hasError != value) {
