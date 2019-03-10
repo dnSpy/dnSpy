@@ -191,7 +191,7 @@ namespace dndbg.Engine {
 			const int E_UNEXPECTED = unchecked((int)0x8000FFFF);
 			// E_FAIL if nothing is found
 			const int E_FAIL = unchecked((int)0x80004005);
-			Debug.Assert(hr == 0 || hr == CordbgErrors.CORDBG_E_INVALID_OPCODE || hr == CordbgErrors.CORDBG_E_UNSUPPORTED || hr == E_UNEXPECTED || hr == E_FAIL);
+			Debug.Assert(hr == 0 || hr == CordbgErrors.CORDBG_E_INVALID_OPCODE || hr == CordbgErrors.CORDBG_E_UNSUPPORTED || hr == CordbgErrors.META_E_BAD_SIGNATURE || hr == E_UNEXPECTED || hr == E_FAIL);
 			if (hr < 0)
 				return Array.Empty<uint>();
 			if (totalSize == 0)
