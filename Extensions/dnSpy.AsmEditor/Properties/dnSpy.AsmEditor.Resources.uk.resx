@@ -124,7 +124,7 @@
     <value>Додати тип</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>Вимкнути оптимізатор JIT-компіляції</value>
+    <value>_Вимкнути оптимізатор JIT-компіляції</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
     <value>Ввімкнути відслідковування _JIT-компіляції</value>
@@ -139,34 +139,34 @@
     <value>_Retargetable</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>Тип _вмістимого</value>
+    <value>Тип _Вмістимого</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
     <value>Л_окаль</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
-    <value>Версія .NET</value>
+    <value>В_ерсія .NET</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>_Хеш алгоритм</value>
+    <value>_Хеш Алгоритм</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
-    <value>Архітектура процесора</value>
+    <value>Архітектура пр_оцесора</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
-    <value>Відкритий ключ</value>
+    <value>_Відкритий ключ</value>
   </data>
   <data name="AssemblyDlg_Main_Version" xml:space="preserve">
     <value>_Версія</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
-    <value>Додати</value>
+    <value>_Додати</value>
   </data>
   <data name="Button_Add2" xml:space="preserve">
-    <value>Додати...</value>
+    <value>_Додати...</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
     <value>_Відміна</value>
@@ -175,10 +175,10 @@
     <value>_Видалити</value>
   </data>
   <data name="Button_Edit" xml:space="preserve">
-    <value>Редагувати...</value>
+    <value>_Редагувати...</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>ОК</value>
+    <value>_ОК</value>
   </data>
   <data name="Button_Remove" xml:space="preserve">
     <value>_Видалити</value>
@@ -211,10 +211,10 @@
     <value>Аргументи конструктора</value>
   </data>
   <data name="CopyAsTextCommand" xml:space="preserve">
-    <value>Копіювати як текст</value>
+    <value>Копіювати як те_кст</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Копіювати</value>
+    <value>Копіюв_ати</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
     <value>Копіювати байти IL</value>
@@ -404,7 +404,7 @@
     <value>Викликати...</value>
   </data>
   <data name="Event_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="Event_RemoveMethod" xml:space="preserve">
     <value>_Видалити</value>
@@ -470,7 +470,7 @@
     <value>Початкове значення</value>
   </data>
   <data name="Field_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="Field_Offset" xml:space="preserve">
     <value>Офсет</value>
@@ -497,7 +497,7 @@
     <value>Використовувати лише якщо заголовок метаданих версії 1.1 (0x0101). Інакше Тип ігнорується</value>
   </data>
   <data name="GP_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="GP_Number" xml:space="preserve">
     <value>Число</value>
@@ -564,7 +564,7 @@
     <value>Модуль</value>
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="ImplMap_NoMangle" xml:space="preserve">
     <value>Без манглювання</value>
@@ -675,7 +675,7 @@
     <value>Класс ініціалізації для ModuleRef</value>
   </data>
   <data name="MemberRef_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="MemberRef_Type" xml:space="preserve">
     <value>_Тип</value>
@@ -759,7 +759,7 @@
     <value>O_ut</value>
   </data>
   <data name="ParamDef_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="ParamDef_Sequence" xml:space="preserve">
     <value>_Послідовність</value>
@@ -1639,10 +1639,10 @@
     <value>Сігнатура</value>
   </data>
   <data name="Method_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="Module_DotNetVersion" xml:space="preserve">
-    <value>Версія .NET</value>
+    <value>В_ерсія .NET</value>
   </data>
   <data name="Module_EntryPoint" xml:space="preserve">
     <value>Точка входу</value>
@@ -1672,13 +1672,13 @@
     <value>Перемістити типи в пустий простір імен</value>
   </data>
   <data name="Namespace_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="NetModule_DotNetVersion" xml:space="preserve">
-    <value>Версія .NET</value>
+    <value>В_ерсія .NET</value>
   </data>
   <data name="NetModule_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="NodesUseHexEditorMsg" xml:space="preserve">
     <value>Всі нижчележачі вузли дерева використовують Hex-редактор для змін PE-файлу</value>
@@ -1714,7 +1714,7 @@
     <value>Getters</value>
   </data>
   <data name="Property_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="Property_OtherMethods" xml:space="preserve">
     <value>Інші методи</value>
@@ -1771,7 +1771,7 @@
     <value>_Data</value>
   </data>
   <data name="Resource_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="Resource_Size" xml:space="preserve">
     <value>_Размір</value>
@@ -2008,7 +2008,7 @@
     <value>Розмір к_ласу</value>
   </data>
   <data name="Type_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="Type_Namespace" xml:space="preserve">
     <value>Простір імен</value>

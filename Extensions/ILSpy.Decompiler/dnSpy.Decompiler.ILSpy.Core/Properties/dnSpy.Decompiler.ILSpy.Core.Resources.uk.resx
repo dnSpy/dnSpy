@@ -121,7 +121,7 @@
     <value>Додати за допомогою декларацій</value>
   </data>
   <data name="DecompilerSettings_AllowFieldInitializers" xml:space="preserve">
-    <value>Дозволити ініціалізатори полів</value>
+    <value>Дозволити ініціалізатори поля</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
     <value>Завжди генерувати exception змінні в catch-блоках, якщо ти не Object</value>
@@ -220,7 +220,7 @@
     <value>Сортувати методи, поля, властивості, події і типи</value>
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Помістити директиви 'System' на початок при сортуванні</value>
+    <value>Помістити 'System'-ні директиви на початок при сортуванні</value>
   </data>
   <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
     <value>Додати модифікатор 'internal' до типів</value>

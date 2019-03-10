@@ -136,7 +136,7 @@
     <value>IP адреса</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Робоча директорія</value>
+    <value>_Робоча директорія</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
     <value>Створити процес</value>

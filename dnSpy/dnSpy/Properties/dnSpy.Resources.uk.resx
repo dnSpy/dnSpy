@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About_Issues" xml:space="preserve">
-    <value>Проблеми</value>
+    <value>_Проблеми</value>
   </data>
   <data name="About_LatestBuild" xml:space="preserve">
-    <value>Остання _збірка</value>
+    <value>Остання _Збірка</value>
   </data>
   <data name="About_LatestRelease" xml:space="preserve">
-    <value>_Останній реліз</value>
+    <value>_Останній Реліз</value>
   </data>
   <data name="About_Menu" xml:space="preserve">
     <value>_Про</value>
   </data>
   <data name="About_SourceCode" xml:space="preserve">
-    <value>Джерельний Код</value>
+    <value>_Джерельний Код</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
     <value>Про програму</value>
@@ -184,7 +184,7 @@
     <value>Закрити групу Табів</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Копіювати</value>
+    <value>Копіюв_ати</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -442,7 +442,7 @@
     <value>Відкрити список</value>
   </data>
   <data name="OpenList_AskForName" xml:space="preserve">
-    <value>Назва</value>
+    <value>_Назва</value>
   </data>
   <data name="OpenList_Files_Column" xml:space="preserve">
     <value>Файли</value>

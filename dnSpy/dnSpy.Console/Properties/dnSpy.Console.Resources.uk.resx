@@ -235,7 +235,7 @@
     <value>не використовувати GAC для пошуку збірок. Корисно із --no-stdlib</value>
   </data>
   <data name="CmdLineDescription_NoResources" xml:space="preserve">
-    <value>не розпаковуувати ресурси</value>
+    <value>не розпаковувати ресурси</value>
   </data>
   <data name="CmdLineDescription_NoResX" xml:space="preserve">
     <value>не створювати .resx файли</value>
