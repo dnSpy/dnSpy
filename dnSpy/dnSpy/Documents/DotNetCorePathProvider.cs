@@ -221,8 +221,8 @@ namespace dnSpy.Documents {
 			}
 
 			var regPathFormat = IntPtr.Size == 4 ?
-				@"SOFTWARE\dotnet\Setup\InstalledVersions\{0}\sdk" :
-				@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\{0}\sdk";
+				@"SOFTWARE\dotnet\Setup\InstalledVersions\{0}" :
+				@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\{0}";
 			var archs = new[] { "x86", "x64" };
 			foreach (var arch in archs) {
 				var regPath = string.Format(regPathFormat, arch);
