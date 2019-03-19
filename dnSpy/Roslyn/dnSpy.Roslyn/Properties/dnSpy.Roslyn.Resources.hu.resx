@@ -120,6 +120,33 @@
   <data name="ClassesToolTip" xml:space="preserve">
     <value>Osztályok</value>
   </data>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>Nem biztonságos kód engedélyezése</value>
+  </data>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>Aritmetikai túlcsordulás/alulcsordulás ellenőrzése</value>
+  </data>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>Visual Basic futtató környezet beágyazása</value>
+  </data>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>Kód optimalizálása</value>
+  </data>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>Opció összehasonlítás: bináris</value>
+  </data>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>Explicit opció</value>
+  </data>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>Kikövetkeztetett opció</value>
+  </data>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>Kényszerített opció</value>
+  </data>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>Feltételes fordítási szimbólumok</value>
+  </data>
   <data name="CompletionSet_All" xml:space="preserve">
     <value>Mind</value>
   </data>

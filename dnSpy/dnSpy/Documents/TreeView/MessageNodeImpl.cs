@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 
 		readonly ImageReference imgRef;
 
-		public MessageNodeImpl(ITreeNodeGroup treeNodeGroup, Guid guid, in ImageReference imgRef, string msg) {
+		public MessageNodeImpl(ITreeNodeGroup treeNodeGroup, Guid guid, ImageReference imgRef, string msg) {
 			TreeNodeGroup = treeNodeGroup;
 			Guid = guid;
 			this.imgRef = imgRef;

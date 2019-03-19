@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -191,7 +191,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 						options &= ~DbgValueFormatterOptions.DigitSeparators;
 						break;
 					case EditExpression:
-						options |= ~DbgValueFormatterOptions.Edit;
+						options |= DbgValueFormatterOptions.Edit;
 						break;
 					case ToString:
 						options |= DbgValueFormatterOptions.ToString;

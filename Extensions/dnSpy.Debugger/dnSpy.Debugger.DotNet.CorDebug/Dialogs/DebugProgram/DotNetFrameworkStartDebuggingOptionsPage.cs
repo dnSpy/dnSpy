@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.IO;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.StartDebugging;
@@ -77,7 +78,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new DotNetFrameworkStartDebuggingOptions());
-			return new StartDebuggingOptionsInfo(options, options.Filename);
+			var flags = StartDebuggingOptionsInfoFlags.None;
+			if (File.Exists(options.Filename)) {
+				var extension = Path.GetExtension(options.Filename);
+				if (!StringComparer.OrdinalIgnoreCase.Equals(extension, ".exe"))
+					flags |= StartDebuggingOptionsInfoFlags.WrongExtension;
+			}
+			return new StartDebuggingOptionsInfo(options, options.Filename, flags);
 		}
 
 		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {

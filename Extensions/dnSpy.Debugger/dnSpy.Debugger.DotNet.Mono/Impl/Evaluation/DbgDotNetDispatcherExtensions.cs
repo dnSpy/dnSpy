@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,12 +23,9 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	static class DbgDotNetDispatcherExtensions {
-		public static void InvokeRethrow(this DbgDotNetDispatcher dispatcher, Action callback) =>
-			dispatcher.InvokeRethrow<object>(() => { callback(); return null; });
-
-		public static T InvokeRethrow<T>(this DbgDotNetDispatcher dispatcher, Func<T> callback) {
+		public static bool TryInvokeRethrow<T>(this DbgDotNetDispatcher dispatcher, Func<T> callback, out T result) {
 			ExceptionDispatchInfo exceptionInfo = null;
-			var res = dispatcher.Invoke(() => {
+			bool success = dispatcher.TryInvoke(() => {
 				T res2;
 				try {
 					res2 = callback();
@@ -38,9 +35,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					res2 = default;
 				}
 				return res2;
-			});
+			}, out result);
 			exceptionInfo?.Throw();
-			return res;
+			return success;
 		}
 	}
 }

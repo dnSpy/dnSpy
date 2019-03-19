@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Operations {
 			readonly HexFindOptions options;
 			/*readonly*/ CancellationToken cancellationToken;
 
-			public FindAllCoreEnumerable(ByteHexSearchService owner, HexBufferSpan searchRange, in HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
+			public FindAllCoreEnumerable(ByteHexSearchService owner, HexBufferSpan searchRange, HexBufferPoint startingPosition, HexFindOptions options, CancellationToken cancellationToken) {
 				this.owner = owner;
 				this.searchRange = searchRange;
 				this.startingPosition = startingPosition;

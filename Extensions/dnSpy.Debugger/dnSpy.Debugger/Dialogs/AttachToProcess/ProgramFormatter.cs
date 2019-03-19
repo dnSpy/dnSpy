@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,8 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {
@@ -30,12 +32,12 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		ProgramFormatter() { }
 		internal static ProgramFormatter Create_DONT_USE() => new ProgramFormatter();
 
-		public void WriteProcess(ITextColorWriter output, ProgramVM vm) => output.WriteFilename(vm.Name);
-		public void WritePid(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.Number, vm.Id.ToString());
-		public void WriteTitle(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.String, vm.Title);
-		public void WriteType(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.Text, vm.RuntimeName);
-		public void WriteMachine(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.Text, vm.Architecture);
-		public void WritePath(ITextColorWriter output, ProgramVM vm) => output.WriteFilename(vm.Filename);
-		public void WriteCommandLine(ITextColorWriter output, ProgramVM vm) => output.Write(BoxedTextColor.Text, vm.CommandLine);
+		public void WriteProcess(IDbgTextWriter output, ProgramVM vm) => new DbgTextColorWriter(output).WriteFilename(vm.Name);
+		public void WritePid(IDbgTextWriter output, ProgramVM vm) => output.Write(DbgTextColor.Number, vm.Id.ToString());
+		public void WriteTitle(IDbgTextWriter output, ProgramVM vm) => output.Write(DbgTextColor.String, vm.Title);
+		public void WriteType(IDbgTextWriter output, ProgramVM vm) => output.Write(DbgTextColor.Text, vm.RuntimeName);
+		public void WriteMachine(IDbgTextWriter output, ProgramVM vm) => output.Write(DbgTextColor.Text, vm.Architecture);
+		public void WritePath(IDbgTextWriter output, ProgramVM vm) => new DbgTextColorWriter(output).WriteFilename(vm.Filename);
+		public void WriteCommandLine(IDbgTextWriter output, ProgramVM vm) => output.Write(DbgTextColor.Text, vm.CommandLine);
 	}
 }

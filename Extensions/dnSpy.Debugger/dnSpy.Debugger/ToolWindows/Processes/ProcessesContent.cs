@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
@@ -34,6 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		void OnVisible();
 		void OnHidden();
 		void Focus();
+		void FocusSearchTextBox();
 		ListView ListView { get; }
 		ProcessesOperations Operations { get; }
 	}
@@ -61,6 +63,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			public string DetachToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_DetachToolTip, null);
 			public string TerminateToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_TerminateToolTip, null);
 			public string AttachToProcessToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_AttachToProcessToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlAltP);
+			public string SearchToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_Search_ToolTip, dnSpy_Debugger_Resources.ShortCutKeyCtrlF);
+			public string ResetSearchSettingsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.Processes_ResetSearchSettings_ToolTip, null);
+			public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
 			public ICommand ContinueProcessCommand => new RelayCommand(a => Operations.ContinueProcess(), a => Operations.CanContinueProcess);
 			public ICommand BreakProcessCommand => new RelayCommand(a => Operations.BreakProcess(), a => Operations.CanBreakProcess);
@@ -70,19 +75,28 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			public ICommand DetachCommand => new RelayCommand(a => Operations.DetachProcess(), a => Operations.CanDetachProcess);
 			public ICommand TerminateCommand => new RelayCommand(a => Operations.TerminateProcess(), a => Operations.CanTerminateProcess);
 			public ICommand AttachToProcessCommand => new RelayCommand(a => Operations.AttachToProcess(), a => Operations.CanAttachToProcess);
+			public ICommand ResetSearchSettingsCommand => new RelayCommand(a => Operations.ResetSearchSettings(), a => Operations.CanResetSearchSettings);
+			public ICommand SearchHelpCommand => new RelayCommand(a => SearchHelp());
 
-			public ControlVM(IProcessesVM vm, ProcessesOperations operations) {
+			readonly IMessageBoxService messageBoxService;
+			readonly DependencyObject control;
+
+			public ControlVM(IProcessesVM vm, ProcessesOperations operations, IMessageBoxService messageBoxService, DependencyObject control) {
 				VM = vm;
 				Operations = operations;
+				this.messageBoxService = messageBoxService;
+				this.control = control;
 			}
+
+			void SearchHelp() => messageBoxService.Show(VM.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 		}
 
 		[ImportingConstructor]
-		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, ProcessesOperations processesOperations) {
+		ProcessesContent(IWpfCommandService wpfCommandService, IProcessesVM processesVM, ProcessesOperations processesOperations, IMessageBoxService messageBoxService) {
 			Operations = processesOperations;
 			processesControl = new ProcessesControl();
 			this.processesVM = processesVM;
-			processesControl.DataContext = new ControlVM(processesVM, processesOperations);
+			processesControl.DataContext = new ControlVM(processesVM, processesOperations, messageBoxService, processesControl);
 			processesControl.ProcessesListViewDoubleClick += ProcessesControl_ProcessesListViewDoubleClick;
 
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_PROCESSES_CONTROL, processesControl);
@@ -95,6 +109,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				Operations.SetCurrentProcess(newTab);
 		}
 
+		public void FocusSearchTextBox() => processesControl.FocusSearchTextBox();
 		public void Focus() => UIUtilities.FocusSelector(processesControl.ListView);
 		public void OnClose() => processesVM.IsOpen = false;
 		public void OnShow() => processesVM.IsOpen = true;

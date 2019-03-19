@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,8 +25,8 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.DnSpy.Properties;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Properties;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;

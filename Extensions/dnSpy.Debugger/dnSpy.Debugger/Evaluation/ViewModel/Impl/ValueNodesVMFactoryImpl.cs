@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,13 +32,16 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	[Export(typeof(IDbgManagerStartListener))]
 	sealed class ValueNodesVMFactoryImpl_DbgManagerStartListener : IDbgManagerStartListener {
+		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<ValueNodesVMFactoryImpl> valueNodesVMFactoryImpl;
 
 		[ImportingConstructor]
-		ValueNodesVMFactoryImpl_DbgManagerStartListener(Lazy<ValueNodesVMFactoryImpl> valueNodesVMFactoryImpl) =>
+		ValueNodesVMFactoryImpl_DbgManagerStartListener(UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactoryImpl> valueNodesVMFactoryImpl) {
+			this.uiDispatcher = uiDispatcher;
 			this.valueNodesVMFactoryImpl = valueNodesVMFactoryImpl;
+		}
 
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => valueNodesVMFactoryImpl.Value.OnStart(dbgManager);
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => uiDispatcher.UI(() => valueNodesVMFactoryImpl.Value.OnStart(dbgManager));
 	}
 
 	[Export(typeof(ValueNodesVMFactory))]

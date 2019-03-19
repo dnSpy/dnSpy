@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -163,7 +163,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool CanDecompileBaml => UnpackResources && canDecompileBaml;
 		readonly bool canDecompileBaml;
 
-		public bool CanCreateResX => UnpackResources && TheState == State.Editing;
+		public bool CanCreateResX => UnpackResources && TheState == State.Editing && false;// See ProjectModuleOptions.CreateResX
 
 		public string FilesToExportMessage {
 			get => filesToExportMessage;

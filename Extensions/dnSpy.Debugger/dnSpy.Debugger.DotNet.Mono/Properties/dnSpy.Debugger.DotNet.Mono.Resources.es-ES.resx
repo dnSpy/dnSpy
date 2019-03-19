@@ -121,7 +121,7 @@
     <value>A_rgumentos</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamble</value>
+    <value>_Ensamblado</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Romper en</value>
@@ -160,7 +160,7 @@
     <value>No se pudo encontrar {0}</value>
   </data>
   <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
-    <value>No pudo conectarse con el proceso de depurado</value>
+    <value>No pudo conectarse al proceso de depurado</value>
   </data>
   <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
     <value>No se pudo encontrar el proceso depurado</value>
@@ -181,13 +181,13 @@
     <value>Detenido</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+    <value>DetenciónRequerida</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
     <value>Suspendido</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>Suspender consulta</value>
+    <value>Suspensión requerida</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
     <value>Sin comenzar</value>
@@ -208,28 +208,28 @@
     <value>Esta ejecución no soporta llamadas a métodos genéricos</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
-    <value>No es posible escribir a 'esto'</value>
+    <value>No es posible escribir a 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Miembro no puede accederse debido a limitaciones de tiempo de ejecución</value>
+    <value>El miembro no puede ser accedido debido a limitaciones de tiempo de ejecución</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>No se pudo establecer la siguiente instrucción.</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Proceso se ha detenido y _waiting para el depurador</value>
+    <value>Proceso se ha detenido y esta _esperando al depurador</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
     <value>El tiempo de ejecución no admite la configuración de una nueva declaración</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Adjuntar a _Proceso ({0})...</value>
+    <value>Adjuntar a Proceso ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>Editor</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Utilice el cuadro de diálogo Adjuntar al proceso (Unidad) para adjuntarlo a construcciones de depuración</value>
+    <value>Utilice el cuadro de diálogo Adjuntar al proceso (Unity) para adjuntarlo a construcciones de depuración</value>
   </data>
   <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
     <value>No se puede fijar un punto de ruptura cuando el proceso está en pausa.</value>

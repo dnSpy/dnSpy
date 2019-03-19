@@ -120,6 +120,33 @@
   <data name="ClassesToolTip" xml:space="preserve">
     <value>Classes</value>
   </data>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>Allow unsafe code</value>
+  </data>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>Check for arithmetic overflow/underflow</value>
+  </data>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>Embed Visual Basic runtime</value>
+  </data>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>Optimize code</value>
+  </data>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>Option compare: binary</value>
+  </data>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>Option explicit</value>
+  </data>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>Option infer</value>
+  </data>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>Option strict</value>
+  </data>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>Conditional compilation symbols</value>
+  </data>
   <data name="CompletionSet_All" xml:space="preserve">
     <value>All</value>
   </data>

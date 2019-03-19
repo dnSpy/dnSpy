@@ -154,7 +154,7 @@
     <value>Verweis in Methode zeigen</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+    <value>Verweis in Methode zeigen (neuer _Tab)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
     <value>Gehe zu Verweis (neuer Ta_b)</value>
@@ -175,7 +175,7 @@
     <value>Überschreibt</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblys</value>
+    <value>Analysiert Assemblies</value>
   </data>
   <data name="PropertyGetterTreeNode" xml:space="preserve">
     <value>holen</value>

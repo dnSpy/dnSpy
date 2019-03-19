@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	[Flags]
 	public enum FormatterOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		ShowModuleNames				= 0x00000001,
 		ShowParameterTypes			= 0x00000002,
 		ShowParameterNames			= 0x00000004,
@@ -47,6 +47,6 @@ namespace dnSpy.Contracts.Decompiler {
 			ShowReturnTypes |
 			ShowIntrinsicTypeKeywords |
 			ShowFieldLiteralValues,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

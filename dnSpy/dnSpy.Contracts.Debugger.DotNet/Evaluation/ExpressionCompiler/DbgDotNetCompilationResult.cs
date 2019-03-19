@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="resultFlags">Result flags</param>
 		/// <param name="index">Parameter/local index or -1 if unknown</param>
 		/// <returns></returns>
-		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, in DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo customTypeInfo = null, ReadOnlyCollection<string> formatSpecifiers = null, DbgDotNetCompiledExpressionResultFlags resultFlags = DbgDotNetCompiledExpressionResultFlags.None, int index = -1) {
+		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo customTypeInfo = null, ReadOnlyCollection<string> formatSpecifiers = null, DbgDotNetCompiledExpressionResultFlags resultFlags = DbgDotNetCompiledExpressionResultFlags.None, int index = -1) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			return new DbgDotNetCompiledExpressionResult {
@@ -184,7 +184,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="name">Display name shown in the UI</param>
 		/// <param name="errorMessage">Error message, see also <see cref="PredefinedEvaluationErrorMessages"/></param>
 		/// <returns></returns>
-		public static DbgDotNetCompiledExpressionResult CreateError(string expression, in DbgDotNetText name, string errorMessage) {
+		public static DbgDotNetCompiledExpressionResult CreateError(string expression, DbgDotNetText name, string errorMessage) {
 			if (name.Parts == null)
 				throw new ArgumentException();
 			return new DbgDotNetCompiledExpressionResult {

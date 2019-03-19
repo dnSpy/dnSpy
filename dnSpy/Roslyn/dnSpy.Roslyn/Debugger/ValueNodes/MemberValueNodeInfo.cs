@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -95,7 +95,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 						if (ca.ConstructorArguments.Count == 1) {
 							var arg = ca.ConstructorArguments[0];
 							if (arg.Value is int) {
-								flags = flags & ~MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask;
+								flags &= ~MemberValueNodeInfoFlags.DebuggerBrowsableState_Mask;
 								switch ((DebuggerBrowsableState)(int)arg.Value) {
 								case DebuggerBrowsableState.Never:
 									flags |= MemberValueNodeInfoFlags.DebuggerBrowsableState_Never;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Exceptions;
@@ -29,7 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		UIDispatcher UIDispatcher { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
-		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		ExceptionFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		DbgExceptionSettingsService ExceptionSettingsService { get; }
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public UIDispatcher UIDispatcher { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
-		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public ExceptionFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public DbgExceptionSettingsService ExceptionSettingsService { get; }
@@ -52,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
-			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			ExceptionSettingsService = exceptionSettingsService;
 			ExceptionFormatterService = exceptionFormatterService;
 			SearchMatcher = searchMatcher;

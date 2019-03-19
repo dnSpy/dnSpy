@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,10 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Disassembly;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -296,7 +299,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		int GetHashCode(DbgDotNetValue value);
 
 		/// <summary>
-		/// Gets an object ID's value
+		/// Gets an object ID's value or null if there was an error
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectId">Object id created by this class</param>
@@ -310,6 +313,30 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="b">Value #2</param>
 		/// <returns></returns>
 		bool? Equals(DbgDotNetValue a, DbgDotNetValue b);
+
+		/// <summary>
+		/// Tries to get the native code
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="nativeCode">Updated with the native code if successful</param>
+		/// <returns></returns>
+		bool TryGetNativeCode(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode);
+
+		/// <summary>
+		/// Tries to get the native code
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <param name="nativeCode">Updated with the native code if successful</param>
+		/// <returns></returns>
+		bool TryGetNativeCode(DmdMethodBase method, out DbgDotNetNativeCode nativeCode);
+
+		/// <summary>
+		/// Tries to get a symbol
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="result">Updated with the symbol if successful</param>
+		/// <returns></returns>
+		bool TryGetSymbol(ulong address, out SymbolResolverResult result);
 	}
 
 	/// <summary>
@@ -358,6 +385,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Async step with object ids isn't supported
 		/// </summary>
 		NoAsyncStepObjectId		= 0x00000008,
+
+		/// <summary>
+		/// It's possible to get the native code of jitted managed methods
+		/// </summary>
+		NativeMethodBodies		= 0x00000010,
 	}
 
 	/// <summary>

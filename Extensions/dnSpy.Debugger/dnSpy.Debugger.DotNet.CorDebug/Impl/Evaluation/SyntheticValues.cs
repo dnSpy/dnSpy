@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public override DmdType Type { get; }
 		readonly DbgDotNetRawValue rawValue;
 
-		public SyntheticValue(DmdType type, in DbgDotNetRawValue rawValue) {
+		public SyntheticValue(DmdType type, DbgDotNetRawValue rawValue) {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			this.rawValue = rawValue;
 		}

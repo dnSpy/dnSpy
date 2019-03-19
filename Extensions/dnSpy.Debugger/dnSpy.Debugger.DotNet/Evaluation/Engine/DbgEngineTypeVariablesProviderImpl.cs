@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,8 +39,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return GetNodesCore(evalInfo, options);
 			return GetNodes(dispatcher, evalInfo, options);
 
-			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2) =>
-				dispatcher2.InvokeRethrow(() => GetNodesCore(evalInfo2, options2));
+			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetNodesCore(evalInfo2, options2), out var result))
+					result = Array.Empty<DbgEngineValueNode>();
+				return result;
+			}
 		}
 
 		DbgEngineValueNode[] GetNodesCore(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {

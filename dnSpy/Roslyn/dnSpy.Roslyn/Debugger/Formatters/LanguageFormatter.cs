@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,24 +19,24 @@
 
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	abstract class LanguageFormatter : DbgDotNetFormatter {
-		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
-			output.Write(BoxedTextColor.DebugExceptionName, AliasConstants.ExceptionName);
+		public override void FormatExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
+			output.Write(DbgTextColor.ExceptionName, AliasConstants.ExceptionName);
 
-		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
-			output.Write(BoxedTextColor.DebugStowedExceptionName, AliasConstants.StowedExceptionName);
+		public override void FormatStowedExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
+			output.Write(DbgTextColor.StowedExceptionName, AliasConstants.StowedExceptionName);
 
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) {
+		public override void FormatReturnValueName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
 			if (id == 0)
-				output.Write(BoxedTextColor.DebugReturnValueName, AliasConstants.ReturnValueName);
+				output.Write(DbgTextColor.ReturnValueName, AliasConstants.ReturnValueName);
 			else
-				output.Write(BoxedTextColor.DebugReturnValueName, AliasConstants.ReturnValueName + id.ToString());
+				output.Write(DbgTextColor.ReturnValueName, AliasConstants.ReturnValueName + id.ToString());
 		}
 
-		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
-			output.Write(BoxedTextColor.DebugObjectIdName, AliasConstants.ObjectIdName + id.ToString());
+		public override void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
+			output.Write(DbgTextColor.ObjectIdName, AliasConstants.ObjectIdName + id.ToString());
 	}
 }

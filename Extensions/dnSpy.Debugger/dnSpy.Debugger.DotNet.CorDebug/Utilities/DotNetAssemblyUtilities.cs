@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.IO;
 using dnlib.DotNet;
+using dnlib.PE;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetAssemblyUtilities {
@@ -27,8 +28,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			if (!File.Exists(filename))
 				return 0;
 			try {
-				using (var module = ModuleDefMD.Load(filename))
-					return module.GetPointerSize(IntPtr.Size, 4) * 8;
+				using (var peImage = new PEImage(filename)) {
+					var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+					if (dotNetDir.VirtualAddress == 0 || dotNetDir.Size < 0x48) {
+						switch (peImage.ImageNTHeaders.FileHeader.Machine) {
+						case Machine.I386:
+						case Machine.ARMNT:
+							return 32;
+						case Machine.AMD64:
+						case Machine.IA64:
+						case Machine.ARM64:
+							return 64;
+						}
+					}
+					else {
+						using (var module = ModuleDefMD.Load(peImage))
+							return module.GetPointerSize(IntPtr.Size, 4) * 8;
+					}
+				}
 			}
 			catch {
 			}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -121,7 +121,7 @@ namespace dnSpy.Text.Editor {
 		void StartBrowser(Uri uri) {
 			try {
 				if (uri.IsAbsoluteUri)
-					Process.Start(uri.AbsoluteUri);
+					Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
 			}
 			catch {
 				messageBoxService.Show(dnSpy_Resources.CouldNotStartBrowser);

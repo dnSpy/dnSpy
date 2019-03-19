@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,13 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Method statements
+	/// Method debug info
 	/// </summary>
 	public sealed class MethodDebugInfo {
 		/// <summary>
@@ -125,58 +123,6 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		/// <summary>
-		/// Gets step ranges
-		/// </summary>
-		/// <param name="sourceILSpans">Source statement spans</param>
-		/// <returns></returns>
-		public ILSpan[] GetRanges(ILSpan[] sourceILSpans) {
-			var list = new List<ILSpan>(sourceILSpans.Length + GetUnusedILSpans().Length + 1);
-			list.AddRange(sourceILSpans);
-			list.AddRange(GetUnusedILSpans());
-			return ILSpan.OrderAndCompactList(list).ToArray();
-		}
-
-		/// <summary>
-		/// Gets unused step ranges
-		/// </summary>
-		/// <returns></returns>
-		public ILSpan[] GetUnusedRanges() => GetUnusedILSpans();
-
-		ILSpan[] GetUnusedILSpans() {
-			if (cachedUnusedILSpans != null)
-				return cachedUnusedILSpans;
-			var list = new List<ILSpan>(Statements.Length);
-			foreach (var s in Statements)
-				list.Add(s.ILSpan);
-			return cachedUnusedILSpans = GetUnusedILSpans(list).ToArray();
-		}
-		ILSpan[] cachedUnusedILSpans;
-
-		List<ILSpan> GetUnusedILSpans(List<ILSpan> list) {
-			uint codeSize = (uint)Method.Body.GetCodeSize();
-			list = ILSpan.OrderAndCompact(list);
-			var res = new List<ILSpan>();
-			if (list.Count == 0) {
-				if (codeSize > 0)
-					res.Add(new ILSpan(0, codeSize));
-				return res;
-			}
-			uint prevEnd = 0;
-			for (int i = 0; i < list.Count; i++) {
-				var span = list[i];
-				Debug.Assert(span.Start >= prevEnd);
-				uint length = span.Start - prevEnd;
-				if (length > 0)
-					res.Add(new ILSpan(prevEnd, length));
-				prevEnd = span.End;
-			}
-			Debug.Assert(prevEnd <= codeSize);
-			if (prevEnd < codeSize)
-				res.Add(new ILSpan(prevEnd, codeSize - prevEnd));
-			return res;
-		}
-
-		/// <summary>
 		/// Gets a <see cref="SourceStatement"/>
 		/// </summary>
 		/// <param name="lineStart">Offset of start of line</param>
@@ -232,36 +178,6 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 			return null;
 		}
-
-		/// <summary>
-		/// Gets all ILSpans of a statement
-		/// </summary>
-		/// <param name="statementSpan">Statement span</param>
-		/// <returns></returns>
-		public ILSpan[] GetILSpansOfStatement(TextSpan statementSpan) {
-			if (statementsDict == null)
-				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
-			if (statementsDict.TryGetValue(statementSpan, out var list)) {
-				var spans = list.ToArray();
-#if DEBUG
-				for (int i = 1; i < spans.Length; i++)
-					Debug.Assert(spans[i - 1].End <= spans[i].Start);
-#endif
-				return spans;
-			}
-			return Array.Empty<ILSpan>();
-		}
-		Dictionary<TextSpan, SmallList<ILSpan>> statementsDict;
-
-		static Dictionary<TextSpan, SmallList<ILSpan>> CreateStatementsDict(SourceStatement[] statements) {
-			var dict = new Dictionary<TextSpan, SmallList<ILSpan>>(statements.Length);
-			foreach (var statement in statements) {
-				dict.TryGetValue(statement.TextSpan, out var list);
-				list.Add(statement.ILSpan);
-				dict[statement.TextSpan] = list;
-			}
-			return dict;
-		}
 	}
 
 	/// <summary>
@@ -282,31 +198,5 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Async method state machine
 		/// </summary>
 		AsyncMethod,
-	}
-
-	struct SmallList<T> {
-		T firstValue;
-		bool hasFirstValue;
-		List<T> list;
-
-		public void Add(T value) {
-			if (!hasFirstValue) {
-				firstValue = value;
-				hasFirstValue = true;
-			}
-			else {
-				if (list == null)
-					list = new List<T>(2) { firstValue };
-				list.Add(value);
-			}
-		}
-
-		public T[] ToArray() {
-			if (list != null)
-				return list.ToArray();
-			if (hasFirstValue)
-				return new[] { firstValue };
-			return Array.Empty<T>();
-		}
 	}
 }

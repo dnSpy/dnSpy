@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,8 @@ namespace dnSpy.Debugger.Attach {
 		public override string Name => attachableProcessInfo.Name;
 		public override string Title => attachableProcessInfo.Title;
 		public override string Filename => attachableProcessInfo.Filename;
-		public override string Architecture => attachableProcessInfo.Architecture;
+		public override DbgArchitecture Architecture => attachableProcessInfo.Architecture;
+		public override DbgOperatingSystem OperatingSystem => attachableProcessInfo.OperatingSystem;
 
 		readonly DbgManager dbgManager;
 		readonly AttachProgramOptions attachProgramOptions;

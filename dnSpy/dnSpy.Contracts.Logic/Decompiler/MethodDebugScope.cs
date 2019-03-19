@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -177,7 +177,7 @@ namespace dnSpy.Contracts.Decompiler {
 			VBImportScopeKind = importScopeKind;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static ImportInfo CreateNamespace(string @namespace) => new ImportInfo(ImportInfoKind.Namespace, target: @namespace);
 		public static ImportInfo CreateNamespace(string @namespace, string externAlias) => new ImportInfo(ImportInfoKind.Namespace, target: @namespace, externAlias: externAlias);
 		public static ImportInfo CreateType(string type) => new ImportInfo(ImportInfoKind.Type, target: type);
@@ -193,7 +193,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public static ImportInfo CreateNamespace(string @namespace, VBImportScopeKind importScopeKind) => new ImportInfo(ImportInfoKind.Namespace, target: @namespace, importScopeKind: importScopeKind);
 		public static ImportInfo CreateMethodToken(string token, VBImportScopeKind importScopeKind) => new ImportInfo(ImportInfoKind.MethodToken, target: token, importScopeKind: importScopeKind);
 		public static ImportInfo CreateDefaultNamespace(string @namespace) => new ImportInfo(ImportInfoKind.DefaultNamespace, target: @namespace);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
 	/// <summary>

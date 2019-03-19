@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public Task<AttachableProcess[]> GetAttachableProcessesAsync(CancellationToken cancellationToken = default) =>
-			GetAttachableProcessesAsync(null, null, cancellationToken);
+			GetAttachableProcessesAsync(null, null, null, cancellationToken);
 
 		/// <summary>
 		/// Gets all programs that can be attached to
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public Task<AttachableProcess[]> GetAttachableProcessesAsync(string processName, CancellationToken cancellationToken = default) =>
-			GetAttachableProcessesAsync(string.IsNullOrEmpty(processName) ? null : new[] { processName }, null, cancellationToken);
+			GetAttachableProcessesAsync(string.IsNullOrEmpty(processName) ? null : new[] { processName }, null, null, cancellationToken);
 
 		/// <summary>
 		/// Gets all programs that can be attached to
@@ -50,6 +50,18 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="providerNames"><see cref="AttachProgramOptionsProviderFactory"/> names, see <see cref="PredefinedAttachProgramOptionsProviderNames"/></param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, string[] providerNames, CancellationToken cancellationToken = default);
+		public Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, string[] providerNames, CancellationToken cancellationToken = default) =>
+			GetAttachableProcessesAsync(processNames, null, providerNames, cancellationToken);
+
+		/// <summary>
+		/// Gets all programs that can be attached to
+		/// </summary>
+		/// <param name="processNames">Process names or null/empty to match any process name. The process name can
+		/// include wildcards (* and ?)</param>
+		/// <param name="processIds">Process ids or null/empty to match any process id</param>
+		/// <param name="providerNames"><see cref="AttachProgramOptionsProviderFactory"/> names, see <see cref="PredefinedAttachProgramOptionsProviderNames"/></param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		/// <returns></returns>
+		public abstract Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, int[] processIds, string[] providerNames, CancellationToken cancellationToken = default);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
 	[Export(typeof(CallStackFormatterProvider))]
@@ -40,13 +40,13 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		internal static CallStackFormatter Create_DONT_USE(bool useHex) => new CallStackFormatter(useHex);
 
-		public void WriteImage(ITextColorWriter output, StackFrameVM vm) {
+		public void WriteImage(IDbgTextWriter output, StackFrameVM vm) {
 			if (vm.IsActive)
-				output.Write(BoxedTextColor.Text, ">");
+				output.Write(DbgTextColor.Text, ">");
 			else
-				output.Write(BoxedTextColor.Text, " ");
+				output.Write(DbgTextColor.Text, " ");
 		}
 
-		public void WriteName(ITextColorWriter output, StackFrameVM vm) => vm.CachedOutput.WriteTo(output);
+		public void WriteName(IDbgTextWriter output, StackFrameVM vm) => vm.CachedOutput.WriteTo(output);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	[Export(typeof(ModuleBreakpointFormatterProvider))]
@@ -33,24 +33,24 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		internal static ModuleBreakpointFormatter Create_DONT_USE() => new ModuleBreakpointFormatter();
 
-		void WriteInt32Decimal(ITextColorWriter output, int? value) {
+		void WriteInt32Decimal(IDbgTextWriter output, int? value) {
 			if (value == null)
 				return;
-			output.Write(BoxedTextColor.Number, value.Value.ToString());
+			output.Write(DbgTextColor.Number, value.Value.ToString());
 		}
 
-		void WriteBoolean(ITextColorWriter output, bool? value) {
+		void WriteBoolean(IDbgTextWriter output, bool? value) {
 			if (value == null)
 				return;
 			output.WriteYesNo(value.Value);
 		}
 
-		internal void WriteIsEnabled(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsEnabled);
-		internal void WriteModuleName(ITextColorWriter output, DbgModuleBreakpoint bp) => output.Write(BoxedTextColor.String, bp.ModuleName ?? string.Empty);
-		internal void WriteDynamic(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsDynamic);
-		internal void WriteInMemory(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsInMemory);
-		internal void WriteOrder(ITextColorWriter output, DbgModuleBreakpoint bp) => WriteInt32Decimal(output, bp.Order);
-		internal void WriteProcessName(ITextColorWriter output, DbgModuleBreakpoint bp) => output.Write(BoxedTextColor.String, bp.ProcessName ?? string.Empty);
-		internal void WriteAppDomainName(ITextColorWriter output, DbgModuleBreakpoint bp) => output.Write(BoxedTextColor.String, bp.AppDomainName ?? string.Empty);
+		internal void WriteIsEnabled(IDbgTextWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsEnabled);
+		internal void WriteModuleName(IDbgTextWriter output, DbgModuleBreakpoint bp) => output.Write(DbgTextColor.String, bp.ModuleName ?? string.Empty);
+		internal void WriteDynamic(IDbgTextWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsDynamic);
+		internal void WriteInMemory(IDbgTextWriter output, DbgModuleBreakpoint bp) => WriteBoolean(output, bp.IsInMemory);
+		internal void WriteOrder(IDbgTextWriter output, DbgModuleBreakpoint bp) => WriteInt32Decimal(output, bp.Order);
+		internal void WriteProcessName(IDbgTextWriter output, DbgModuleBreakpoint bp) => output.Write(DbgTextColor.String, bp.ProcessName ?? string.Empty);
+		internal void WriteAppDomainName(IDbgTextWriter output, DbgModuleBreakpoint bp) => output.Write(DbgTextColor.String, bp.AppDomainName ?? string.Empty);
 	}
 }

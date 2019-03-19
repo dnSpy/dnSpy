@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,6 +35,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -45,7 +46,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="" Width="16">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CallStackWindowColumnIds.Icon}" Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <!-- Using just a DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
@@ -70,7 +71,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CallStackWindowColumnIds.Name}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding NameObject, Mode=OneWay, Converter={StaticResource callStackColumnConverter}}" />

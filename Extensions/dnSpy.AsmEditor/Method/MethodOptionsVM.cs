@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -137,6 +137,11 @@ namespace dnSpy.AsmEditor.Method {
 		public bool NoOptimization {
 			get => GetFlagValue(MethodImplAttributes.NoOptimization);
 			set => SetFlagValue(MethodImplAttributes.NoOptimization, value);
+		}
+
+		public bool AggressiveOptimization {
+			get => GetFlagValue(MethodImplAttributes.AggressiveOptimization);
+			set => SetFlagValue(MethodImplAttributes.AggressiveOptimization, value);
 		}
 
 		bool GetFlagValue(MethodImplAttributes flag) => (ImplAttributes & flag) != 0;

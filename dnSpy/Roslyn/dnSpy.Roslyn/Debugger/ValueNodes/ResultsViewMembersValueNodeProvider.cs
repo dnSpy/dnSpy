@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Properties;
 
@@ -36,8 +36,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override string ImageName => PredefinedDbgValueNodeImageNames.ResultsView;
 		public override DbgDotNetText ValueText => valueText;
 
-		static readonly DbgDotNetText valueText = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ExpandResultsViewMessage));
-		static readonly DbgDotNetText resultsViewName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ResultsView));
+		static readonly DbgDotNetText valueText = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ExpandResultsViewMessage));
+		static readonly DbgDotNetText resultsViewName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_ResultsView));
 
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DmdType enumerableType;
@@ -173,7 +173,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
 			CreateValueNode(evalInfo, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, formatSpecifiers);
 
-		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, in DbgDotNetValueResult valueResult) {
+		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);
 			if (noResultsNode != null) {
 				valueResult.Value?.Dispose();

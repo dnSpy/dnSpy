@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Hex.HexGroups {
 		readonly struct OptionKey : IEquatable<OptionKey> {
 			readonly SubGroupKey subGroupKey;
 			readonly string name;
-			public OptionKey(in SubGroupKey subGroupKey, string name) {
+			public OptionKey(SubGroupKey subGroupKey, string name) {
 				this.subGroupKey = subGroupKey;
 				this.name = name;
 			}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly struct StringInfo {
 			public StringZ String { get; }
 			public uint[] Tokens { get; }
-			public StringInfo(in StringZ span, uint[] tokens) {
+			public StringInfo(StringZ span, uint[] tokens) {
 				String = span;
 				Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
 			}

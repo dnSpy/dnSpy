@@ -187,7 +187,7 @@
     <value>Ausführungsmodul zurücksetzen.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Leere den Bildschirm</value>
+    <value>Bildschirminhalt löschen</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
     <value>Verlauf vorwärts</value>
@@ -250,7 +250,7 @@
     <value>Zurücksetzen der Ausführungsumgebung</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>Leere den Bildschirm</value>
+    <value>Bildschirminhalt löschen</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Strg+L</value>

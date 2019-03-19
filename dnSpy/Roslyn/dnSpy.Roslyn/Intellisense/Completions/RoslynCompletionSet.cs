@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -16,8 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-//TODO: Use CompletionService.FilterItems() when it becomes public (probably in Roslyn 2.0)
 
 using System;
 using System.Collections.Generic;
@@ -60,9 +58,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			}
 		}
 
-		public static RoslynCompletionSet Create(IImageMonikerService imageMonikerService, IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, string moniker, string displayName, ITrackingSpan applicableTo) {
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
+		public static RoslynCompletionSet Create(IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, string moniker, string displayName, ITrackingSpan applicableTo) {
 			if (mruCompletionService == null)
 				throw new ArgumentNullException(nameof(mruCompletionService));
 			if (completionList == null)
@@ -78,7 +74,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			if (applicableTo == null)
 				throw new ArgumentNullException(nameof(applicableTo));
 			var completions = new List<Completion>(completionList.Items.Length);
-			var remainingFilters = new List<(RoslynIntellisenseFilter filter, int index)>(RoslynIntellisenseFilters.CreateFilters(imageMonikerService).Select((a, index) => (a, index)));
+			var remainingFilters = new List<(RoslynIntellisenseFilter filter, int index)>(RoslynIntellisenseFilters.CreateFilters().Select((a, index) => (a, index)));
 			var filters = new List<(RoslynIntellisenseFilter filter, int index)>(remainingFilters.Count);
 			foreach (var item in completionList.Items) {
 				if (string.IsNullOrEmpty(item.DisplayText))
@@ -93,7 +89,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						}
 					}
 				}
-				completions.Add(new RoslynCompletion(imageMonikerService, item));
+				completions.Add(new RoslynCompletion(item));
 			}
 			filters.Sort((a, b) => a.index - b.index);
 			var completionBuilders = new List<Completion>();

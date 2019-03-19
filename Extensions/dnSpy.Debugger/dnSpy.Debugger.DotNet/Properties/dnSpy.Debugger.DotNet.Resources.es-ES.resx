@@ -136,10 +136,10 @@
     <value>¿Módulos de carga para cancelar?</value>
   </data>
   <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
-    <value>No se puede evaluar expresiones al marco de pila actual es un marco de pila nativa</value>
+    <value>No se pueden evaluar expresiones al marco de pila actual, es un marco de pila nativa</value>
   </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
-    <value>No se puede evaluar variables de Decompiler generado</value>
+    <value>No se pueden evaluar variables generadas por el Decompilor</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>IL {0} offset</value>
@@ -148,7 +148,7 @@
     <value>línea {0} carácter {1}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Error de depurador interno</value>
+    <value>Error interno del depurador</value>
   </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Cargar el módulo. Esto podría tomar un tiempo si se trata de un gran módulo.</value>
@@ -160,16 +160,16 @@
     <value>'{0}' lanzó una excepción de tipo '{1}'</value>
   </data>
   <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
-    <value>Los metadatos del módulo no se encuentra o no es válido</value>
+    <value>Los metadatos del módulo no se encuentran o no son válidos</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Debe interrumpir el proceso antes de que se pueden cargar módulos dinámicos.</value>
   </data>
   <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
-    <value>Ningún objeto en la dirección dada</value>
+    <value>No existe ningún objeto en la dirección dada</value>
   </data>
   <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
-    <value>No es una excepción en el subproceso actual</value>
+    <value>No hay excepción en el subproceso actual</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Recargar todos los cuerpos de método</value>
@@ -178,7 +178,7 @@
     <value>Valor de retorno no está disponible actualmente</value>
   </data>
   <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
-    <value>Paso en: pisando operador '{0}'.</value>
+    <value>Paso en: pisando sobre el operador '{0}'.</value>
   </data>
   <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
     <value>Paso en: pisando sobre la propiedad '{0}'.</value>

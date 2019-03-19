@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,12 +49,12 @@ namespace dndbg.DotNet {
 		string Filename { get; }
 
 		/// <summary>
-		/// Returns true if <paramref name="module"/> is the manifest (first) module
+		/// Returns true if module is the manifest (first) module
 		/// </summary>
 		bool IsManifestModule { get; }
 
 		/// <summary>
-		/// Creates a method body reader. If <paramref name="module"/> is a dynamic module, the
+		/// Creates a method body reader. If module is a dynamic module, the
 		/// RVA in the method record is an RVA relative to the dynamic module which is not known
 		/// by the module. The address can be found in
 		/// <c>CorModule.GetFunctionFromToken(mdToken).ILCode.Address</c>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Default <see cref="WpfHexView"/> options
 	/// </summary>
 	public static class DefaultWpfHexViewOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string ForceClearTypeIfNeededName = "WpfHexView/ForceClearTypeIfNeeded";
 		public static readonly VSTE.EditorOptionKey<bool> ForceClearTypeIfNeededId = new VSTE.EditorOptionKey<bool>(ForceClearTypeIfNeededName);
 		// Must match the text editor option name since we create a temp ITextView for the HexView
@@ -42,6 +42,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> UseReducedOpacityForHighContrastOptionId = new VSTE.EditorOptionKey<bool>(UseReducedOpacityForHighContrastOptionName);
 		public const string ZoomLevelName = "WpfHexView/ZoomLevel";
 		public static readonly VSTE.EditorOptionKey<double> ZoomLevelId = new VSTE.EditorOptionKey<double>(ZoomLevelName);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

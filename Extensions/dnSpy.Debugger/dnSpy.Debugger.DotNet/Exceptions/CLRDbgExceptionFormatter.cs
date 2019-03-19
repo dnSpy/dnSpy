@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,27 +18,27 @@
 */
 
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.DotNet.Exceptions {
 	[ExportDbgExceptionFormatter(PredefinedExceptionCategories.DotNet)]
 	sealed class CLRDbgExceptionFormatter : DbgExceptionFormatter {
-		public override bool WriteName(ITextColorWriter writer, in DbgExceptionDefinition definition) {
+		public override bool WriteName(IDbgTextWriter writer, DbgExceptionDefinition definition) {
 			var fullName = definition.Id.Name;
 			if (!string.IsNullOrEmpty(fullName)) {
 				var nsParts = fullName.Split(nsSeps);
 				int pos = 0;
-				var partColor = BoxedTextColor.Namespace;
+				var partColor = DbgTextColor.Namespace;
 				for (int i = 0; i < nsParts.Length - 1; i++) {
 					var ns = nsParts[i];
 					var sep = fullName[pos + ns.Length];
 					if (sep == '+')
-						partColor = BoxedTextColor.Type;
+						partColor = DbgTextColor.Type;
 					writer.Write(partColor, ns);
-					writer.Write(BoxedTextColor.Operator, sep.ToString());
+					writer.Write(DbgTextColor.Operator, sep.ToString());
 					pos += ns.Length + 1;
 				}
-				writer.Write(BoxedTextColor.Type, nsParts[nsParts.Length - 1]);
+				writer.Write(DbgTextColor.Type, nsParts[nsParts.Length - 1]);
 			}
 			return true;
 		}

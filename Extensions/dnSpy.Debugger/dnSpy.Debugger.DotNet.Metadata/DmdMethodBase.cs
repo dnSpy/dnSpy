@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract bool ContainsGenericParameters { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsIL => (MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) == DmdMethodImplAttributes.IL;
 		public bool IsNative => (MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) == DmdMethodImplAttributes.Native;
 		public bool IsOPTIL => (MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) == DmdMethodImplAttributes.OPTIL;
@@ -101,6 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsNoInlining => (MethodImplementationFlags & DmdMethodImplAttributes.NoInlining) != 0;
 		public bool IsAggressiveInlining => (MethodImplementationFlags & DmdMethodImplAttributes.AggressiveInlining) != 0;
 		public bool IsNoOptimization => (MethodImplementationFlags & DmdMethodImplAttributes.NoOptimization) != 0;
+		public bool IsAggressiveOptimization => (MethodImplementationFlags & DmdMethodImplAttributes.AggressiveOptimization) != 0;
 
 		public bool IsPublic => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.Public;
 		public bool IsPrivate => (Attributes & DmdMethodAttributes.MemberAccessMask) == DmdMethodAttributes.Private;
@@ -123,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool RequireSecObject => (Attributes & DmdMethodAttributes.RequireSecObject) != 0;
 		public bool IsReuseSlot => (Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.ReuseSlot;
 		public bool IsNewSlot => (Attributes & DmdMethodAttributes.VtableLayoutMask) == DmdMethodAttributes.NewSlot;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the RVA of the method body or native code or 0 if none
@@ -217,10 +218,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public abstract object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMethodBase left, DmdMethodBase right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 		public static bool operator !=(DmdMethodBase left, DmdMethodBase right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

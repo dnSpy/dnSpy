@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -171,10 +171,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public virtual DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdMemberInfo left, DmdMemberInfo right) => left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 		public static bool operator !=(DmdMemberInfo left, DmdMemberInfo right) => !(left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right));
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

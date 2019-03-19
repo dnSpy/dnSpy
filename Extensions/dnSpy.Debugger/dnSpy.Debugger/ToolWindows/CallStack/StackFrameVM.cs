@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,9 @@ using System.Globalization;
 using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Text;
@@ -191,6 +191,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.message = message ?? throw new ArgumentNullException(nameof(message));
 		}
 
-		protected override ClassifiedTextCollection CreateName() => new ClassifiedTextCollection(new[] { new ClassifiedText(BoxedTextColor.Error, message) });
+		protected override ClassifiedTextCollection CreateName() => new ClassifiedTextCollection(new[] { new ClassifiedText(DbgTextColor.Error, message) });
 	}
 }

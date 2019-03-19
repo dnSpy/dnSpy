@@ -1,4 +1,4 @@
-﻿dnSpy credits:
+dnSpy credits:
 
 	0xd4d
 	Ki
@@ -58,3 +58,23 @@ Hungarian:
 
 	Gábor Mizda
 	Krisztián Szilágyi
+
+French:
+
+	Kévin Drapel
+	Adwelean
+
+Italian:
+
+	debugasm
+	andreabr
+	Marco Fornaro
+
+Ukrainian:
+
+	IamHappy (mrmx2013)
+
+Persian:
+
+	RezaHNA
+	Rex Prog

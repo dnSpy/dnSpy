@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,12 +20,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System.Windows.Threading;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed class WpfDebugMessageDispatcher : IDebugMessageDispatcher {
-		internal const DispatcherPriority DispPriority = DispatcherPriority.Send;
-
 		readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
 		int callingEmptyQueue;
 		readonly Dispatcher dispatcher;
@@ -44,10 +42,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				EmptyQueue();
 			else if (callingEmptyQueue == 0) {
 				Interlocked.Increment(ref callingEmptyQueue);
-				disp.BeginInvoke(DispPriority, new Action(() => {
+				disp.BeginInvoke(() => {
 					Interlocked.Decrement(ref callingEmptyQueue);
 					EmptyQueue();
-				}));
+				});
 			}
 		}
 
@@ -68,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return null;
 			}
 			bool timedOutTmp = true;
-			var res = disp.Invoke(() => DispatchQueueCore(waitTime, out timedOutTmp), DispPriority);
+			var res = disp.Invoke(() => DispatchQueueCore(waitTime, out timedOutTmp));
 			timedOut = timedOutTmp;
 			return res;
 		}
@@ -127,7 +125,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 	interface IDebugMessageDispatcher {
 		/// <summary>
-		/// Executes <see cref="action"/> on the engine thread.
+		/// Executes <paramref name="action"/> on the engine thread.
 		/// </summary>
 		/// <param name="action">Code to execute on the dndbg thread</param>
 		void ExecuteAsync(Action action);

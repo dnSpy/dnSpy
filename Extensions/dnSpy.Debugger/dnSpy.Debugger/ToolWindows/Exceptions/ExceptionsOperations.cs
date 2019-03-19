@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
@@ -59,8 +59,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		BulkObservableCollection<ExceptionVM> AllItems => exceptionsVM.AllItems;
 		ObservableCollection<ExceptionVM> SelectedItems => exceptionsVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<ExceptionVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
+		IEnumerable<ExceptionVM> SortedSelectedItems => exceptionsVM.Sort(SelectedItems);
 
 		[ImportingConstructor]
 		ExceptionsOperationsImpl(IAppWindow appWindow, IExceptionsVM exceptionsVM, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {
@@ -71,14 +70,37 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteName(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteCategory(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteConditions(output, vm);
+				bool needTab = false;
+				foreach (var column in exceptionsVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+					if (column.Name == string.Empty)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case ExceptionsWindowColumnIds.BreakWhenThrown:
+						formatter.WriteName(output, vm);
+						break;
+
+					case ExceptionsWindowColumnIds.Category:
+						formatter.WriteCategory(output, vm);
+						break;
+
+					case ExceptionsWindowColumnIds.Conditions:
+						formatter.WriteConditions(output, vm);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var typeReferences = new DmdType[res.Length];
 
 			var sb = ObjectCache.AllocStringBuilder();
-			var output = new StringBuilderTextColorOutput(sb);
+			var output = new DbgStringBuilderTextWriter(sb);
 			int w = 0;
 			foreach (var alias in aliases) {
 				output.Reset();

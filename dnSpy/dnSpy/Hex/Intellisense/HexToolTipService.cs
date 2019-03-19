@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -254,7 +254,7 @@ namespace dnSpy.Hex.Intellisense {
 			return TryCreateToolTipInfoCollection(position, tagAggregator.GetTags(new HexBufferSpan(position, 1)).ToArray());
 		}
 
-		HexToolTipInfoCollection TryCreateToolTipInfoCollection(in HexBufferPoint position, IHexTagSpan<HexToolTipStructureSpanTag>[] tagSpans) {
+		HexToolTipInfoCollection TryCreateToolTipInfoCollection(HexBufferPoint position, IHexTagSpan<HexToolTipStructureSpanTag>[] tagSpans) {
 			if (tagSpans.Length == 0)
 				return null;
 			var toolTipInfos = new List<HexToolTipInfo>(tagSpans.Length);

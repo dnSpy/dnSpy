@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,11 +33,11 @@ namespace dnSpy.Hex.Adornments {
 		readonly HexSpaceReservationManager spaceReservationManager;
 		HexSpaceReservationAgent toolTipAgent;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexSpaceReservationManagerDefinition))]
 		[VSUTIL.Name(PredefinedHexSpaceReservationManagerNames.ToolTip)]
 		static readonly HexSpaceReservationManagerDefinition toolTipSpaceReservationManagerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public HexToolTipProviderImpl(WpfHexView wpfHexView) {
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));

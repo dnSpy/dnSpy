@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		readonly DbgDotNetValue value;
 		readonly string imageName;
 
-		public InstanceMembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, in DbgDotNetText name, string expression, bool addParens, DmdType slotType, DbgDotNetValue value, in MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions, string imageName)
+		public InstanceMembersValueNodeProvider(LanguageValueNodeFactory valueNodeFactory, DbgDotNetText name, string expression, bool addParens, DmdType slotType, DbgDotNetValue value, MemberValueNodeInfoCollection membersCollection, DbgValueNodeEvaluationOptions evalOptions, string imageName)
 			: base(valueNodeFactory, name, expression, membersCollection, evalOptions) {
 			this.addParens = addParens;
 			this.slotType = slotType;

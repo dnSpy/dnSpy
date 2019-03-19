@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,6 +37,7 @@ namespace dndbg.Engine {
 		public const int CORDBG_E_IL_VAR_NOT_AVAILABLE = unchecked((int)0x80131304);
 		public const int CORDBG_E_INVALID_OPCODE = unchecked((int)0x80131C4D);
 		public const int CORDBG_E_UNSUPPORTED = unchecked((int)0x80131C4E);
+		public const int META_E_BAD_SIGNATURE = unchecked((int)0x80131192);
 
 		public static bool IsCantEvaluateError(int hr) => hr == CORDBG_E_ILLEGAL_IN_NATIVE_CODE ||
 					hr == CORDBG_E_ILLEGAL_AT_GC_UNSAFE_POINT ||

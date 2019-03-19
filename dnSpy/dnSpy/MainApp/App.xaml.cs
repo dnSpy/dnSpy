@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,7 +75,7 @@ namespace dnSpy.MainApp {
 
 		static void ShowException(Exception ex) {
 			string msg = ex?.ToString() ?? "Unknown exception";
-			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show(msg, Constants.DnSpy, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
@@ -91,11 +91,12 @@ namespace dnSpy.MainApp {
 		Task<ExportProvider> initializeMEFTask;
 		Stopwatch startupStopwatch;
 		public App(bool readSettings, Stopwatch startupStopwatch) {
+			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
+
 			// PERF: Init MEF on a BG thread. Results in slightly faster startup, eg. InitializeComponent() becomes a 'free' call on this UI thread
 			initializeMEFTask = Task.Run(() => InitializeMEF(readSettings, useCache: readSettings));
 			this.startupStopwatch = startupStopwatch;
 
-			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
 			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
 			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
 			args = new AppCommandLineArgs();
@@ -109,12 +110,21 @@ namespace dnSpy.MainApp {
 			Exit += App_Exit;
 		}
 
-		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
-		// this case.
 		void AddAppContextFixes() {
 			// This prevents a thin line between the tab item and its content when dpi is eg. 144.
 			// It's hard to miss if you check the Options dialog box.
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
+
+#if NETFRAMEWORK
+			// Workaround for a bug
+			//		Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace=true
+			//		https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/runtime/4.7-4.7.1#resizing-a-grid-can-hang
+			// Repro: DPI=120%, .NET Framework 4.7.1, open the File, View, or Window menus
+			//		https://github.com/0xd4d/dnSpy/issues/734
+			//		https://github.com/0xd4d/dnSpy/issues/735
+			// This has been fixed in .NET Core 3.0 and .NET Framework 4.8
+			AppContext.SetSwitch("Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace", true);
+#endif
 		}
 
 		ExportProvider InitializeMEF(bool readSettings, bool useCache) {
@@ -138,8 +148,8 @@ namespace dnSpy.MainApp {
 		}
 
 		static string GetCachedCompositionConfigurationFilename() {
-			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
-			return Path.Combine(profileDir, "dnSpy-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
+			var profileDir = BGJitUtils.GetFolder();
+			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info.bin");
 		}
 
 		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
@@ -273,6 +283,9 @@ namespace dnSpy.MainApp {
 		}
 
 		Assembly[] GetAssemblies() {
+#if NETCOREAPP
+			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+#endif
 			var list = new List<Assembly>();
 			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
@@ -302,6 +315,10 @@ namespace dnSpy.MainApp {
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
 			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+#if NETCOREAPP
+			foreach (var file in files)
+				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file));
+#endif
 			var asms = new List<Assembly>();
 			foreach (var file in files) {
 				try {
@@ -408,14 +425,14 @@ namespace dnSpy.MainApp {
 		}
 		static readonly IntPtr COPYDATASTRUCT_dwData = new IntPtr(0x11C9B152);
 		static readonly IntPtr COPYDATASTRUCT_result = new IntPtr(0x615F9D6E);
-		const string COPYDATASTRUCT_HEADER = "dnSpy";	// One line only
+		const string COPYDATASTRUCT_HEADER = Constants.DnSpy;	// One line only
 
 		void SwitchToOtherInstance() => EnumWindows(EnumWindowsHandler, IntPtr.Zero);
 
 		unsafe bool EnumWindowsHandler(IntPtr hWnd, IntPtr lParam) {
 			var sb = new StringBuilder(256);
 			GetWindowText(hWnd, sb, sb.Capacity);
-			if (sb.ToString().StartsWith("dnSpy ", StringComparison.Ordinal)) {
+			if (sb.ToString().StartsWith(Constants.DnSpy + " ", StringComparison.Ordinal)) {
 				var args = Environment.GetCommandLineArgs();
 				args[0] = COPYDATASTRUCT_HEADER;
 				var msg = string.Join(Environment.NewLine, args);

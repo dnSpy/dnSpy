@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,8 +22,10 @@ using System.Collections.Generic;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class AssemblyNameEqualityComparer : IEqualityComparer<IDmdAssemblyName> {
-		public static readonly AssemblyNameEqualityComparer Instance = new AssemblyNameEqualityComparer();
-		AssemblyNameEqualityComparer() { }
+		readonly bool ignorePublicKeyToken;
+
+		public AssemblyNameEqualityComparer(bool ignorePublicKeyToken) =>
+			this.ignorePublicKeyToken = ignorePublicKeyToken;
 
 		static readonly byte[][] systemPublicKeyTokens;
 
@@ -49,10 +51,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!StringComparer.OrdinalIgnoreCase.Equals(x.CultureName ?? string.Empty, y.CultureName ?? string.Empty))
 				return false;
 
-			return PublicKeyTokenEquals(x.GetPublicKeyToken(), y.GetPublicKeyToken());
+			return ignorePublicKeyToken || PublicKeyTokenEquals(x.GetPublicKeyToken(), y.GetPublicKeyToken());
 		}
 
-		internal static bool PublicKeyTokenEquals(byte[] a, byte[] b) {
+		static bool PublicKeyTokenEquals(byte[] a, byte[] b) {
 			if (a == null)
 				a = Array.Empty<byte>();
 			if (b == null)
@@ -90,6 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
 			// Version number is ignored, see Equals()
 			hc ^= (obj.CultureName ?? string.Empty).GetHashCode();
+			// PublicKeyToken is ignored
 			return hc;
 		}
 	}

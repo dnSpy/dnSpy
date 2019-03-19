@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System.Globalization;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
@@ -113,7 +113,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) => false;
+		public virtual bool FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) => false;
 
 		/// <summary>
 		/// Formats the value column. Returns false if nothing was written to <paramref name="output"/>
@@ -124,7 +124,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) => false;
+		public virtual bool FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) => false;
 
 		/// <summary>
 		/// Formats the expected type. Returns false if nothing was written to <paramref name="output"/>
@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatExpectedType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) => false;
+		public virtual bool FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) => false;
 
 		/// <summary>
 		/// Formats the actual type. Returns false if nothing was written to <paramref name="output"/>
@@ -148,6 +148,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatActualType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) => false;
+		public virtual bool FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) => false;
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,8 +49,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override DbgEngineValueNodeFactory ValueNodeFactory { get; }
 
 		readonly DbgMethodDebugInfoProvider dbgMethodDebugInfoProvider;
-		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly IDecompiler decompiler;
+
+		readonly DbgDotNetExpressionCompiler expressionCompiler;
 		readonly IDebuggerDisplayAttributeEvaluator debuggerDisplayAttributeEvaluator;
 
 		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMethodDebugInfoProvider dbgMethodDebugInfoProvider, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgAliasProvider dbgAliasProvider, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
@@ -96,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				refreshedVersion = module.RefreshedVersion;
 			}
 
-			public DbgLanguageDebugInfoKey(in ModuleId moduleId, uint token) {
+			public DbgLanguageDebugInfoKey(ModuleId moduleId, uint token) {
 				this.token = token;
 				this.moduleId = moduleId;
 				module = null;
@@ -141,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			var debugInfos = state.DebugInfos;
 			lock (state.LockObj) {
-				if (debugInfos.Count > 0 && debugInfos[0].debugInfo.MethodDebugInfo.DecompilerSettingsVersion != decompiler.Settings.Version)
+				if (debugInfos.Count > 0 && debugInfos[0].debugInfo.MethodDebugInfo.DebugInfoVersion != decompiler.Settings.Version)
 					debugInfos.Clear();
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
@@ -174,12 +175,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var runtime = context.Runtime.GetDotNetRuntime();
 			if (location.DbgModule == null || !runtime.TryGetMethodToken(location.DbgModule, (int)location.Token, out int methodToken, out int localVarSigTok)) {
 				methodToken = (int)location.Token;
-				localVarSigTok = (int)result.LocalVarSigTok;
+				localVarSigTok = (int)((result.StateMachineDebugInfoOrNull ?? result.DebugInfoOrNull)?.Method.Body?.LocalVarSigTok ?? 0);
 			}
 
-			// We don't support EnC so the version is always 1
-			const int methodVersion = 1;
-			return new DbgLanguageDebugInfo(result.DebugInfoOrNull, methodToken, localVarSigTok, methodVersion, location.Offset);
+			return new DbgLanguageDebugInfo(result.DebugInfoOrNull, methodToken, localVarSigTok, result.MethodVersion, location.Offset);
 		}
 	}
 }

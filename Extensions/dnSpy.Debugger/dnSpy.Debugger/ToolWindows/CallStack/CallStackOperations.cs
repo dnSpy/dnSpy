@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,15 +24,18 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
+using dnSpy.Debugger.Disassembly;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
 	abstract class CallStackOperations {
@@ -96,6 +99,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly ICallStackVM callStackVM;
 		readonly DebuggerSettings debuggerSettings;
 		readonly CallStackDisplaySettings callStackDisplaySettings;
+		readonly IMessageBoxService messageBoxService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
@@ -103,16 +107,18 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		readonly Lazy<DbgManager> dbgManager;
 		readonly Lazy<DbgLanguageService> dbgLanguageService;
+		readonly Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService;
 
 		ObservableCollection<StackFrameVM> AllItems => callStackVM.AllItems;
 		ObservableCollection<StackFrameVM> SelectedItems => callStackVM.SelectedItems;
 		IEnumerable<StackFrameVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Index);
 
 		[ImportingConstructor]
-		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgManager> dbgManager, Lazy<DbgLanguageService> dbgLanguageService) {
+		CallStackOperationsImpl(ICallStackVM callStackVM, DebuggerSettings debuggerSettings, CallStackDisplaySettings callStackDisplaySettings, IMessageBoxService messageBoxService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgManager> dbgManager, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService) {
 			this.callStackVM = callStackVM;
 			this.debuggerSettings = debuggerSettings;
 			this.callStackDisplaySettings = callStackDisplaySettings;
+			this.messageBoxService = messageBoxService;
 			this.referenceNavigatorService = referenceNavigatorService;
 			this.dbgCallStackService = dbgCallStackService;
 			this.showCodeBreakpointSettingsService = showCodeBreakpointSettingsService;
@@ -120,16 +126,36 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
 			this.dbgManager = dbgManager;
 			this.dbgLanguageService = dbgLanguageService;
+			this.dbgShowNativeCodeService = dbgShowNativeCodeService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteImage(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteName(output, vm);
+				bool needTab = false;
+				foreach (var column in callStackVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case CallStackWindowColumnIds.Icon:
+						formatter.WriteImage(output, vm);
+						break;
+
+					case CallStackWindowColumnIds.Name:
+						formatter.WriteName(output, vm);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();
@@ -167,12 +193,21 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			referenceNavigatorService.Value.GoTo(vm.Frame.Location, options);
 		}
 
-		public override bool CanGoToDisassembly => false;
+		public override bool CanGoToDisassembly {
+			get {
+				if (SelectedItems.Count != 1)
+					return false;
+				if (!(SelectedItems[0] is NormalStackFrameVM vm))
+					return false;
+				return dbgShowNativeCodeService.Value.CanShowNativeCode(vm.Frame);
+			}
+		}
 		public override void GoToDisassembly() {
 			if (!CanGoToDisassembly)
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
-			//TODO:
+			if (!dbgShowNativeCodeService.Value.ShowNativeCode(vm.Frame))
+				messageBoxService.Show(dnSpy_Debugger_Resources.Error_CouldNotShowDisassembly);
 		}
 
 		public override bool CanRunToCursor =>

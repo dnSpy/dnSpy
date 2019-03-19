@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,8 +26,8 @@ using dnSpy.Debugger.DotNet.CorDebug.Native;
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	static class DebuggableProcesses {
 		static readonly int currentProcessId = Process.GetCurrentProcess().Id;
-		public static IEnumerable<Process> GetProcesses(CancellationToken cancellationToken) {
-			var processes = Process.GetProcesses();
+		public static IEnumerable<Process> GetProcesses(int[] processIds, Func<Process, bool> isValidProcess, CancellationToken cancellationToken) {
+			var processes = GetProcesses(processIds);
 			try {
 				foreach (var process in processes) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -46,19 +46,57 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 							continue;
 					}
 					if (Environment.Is64BitOperatingSystem) {
-						if (NativeMethods.IsWow64Process(process.Handle, out bool isWow64Process)) {
-							if ((IntPtr.Size == 4) != isWow64Process)
-								continue;
+						try {
+							if (NativeMethods.IsWow64Process(process.Handle, out bool isWow64Process)) {
+								if ((IntPtr.Size == 4) != isWow64Process)
+									continue;
+							}
+						}
+						catch (InvalidOperationException) {
+							continue;
 						}
 					}
 					if (process.HasExited)
 						continue;
+					if (isValidProcess != null) {
+						if (!isValidProcess(process) || process.HasExited)
+							continue;
+					}
 					yield return process;
 				}
 			}
 			finally {
 				foreach (var p in processes)
 					p.Dispose();
+			}
+		}
+
+		static Process[] GetProcesses(int[] processIds) {
+			if (processIds.Length == 0)
+				return Process.GetProcesses();
+			var processes = new Process[processIds.Length];
+			try {
+				int w = 0;
+				for (int i = 0; i < processIds.Length; i++) {
+					try {
+						processes[w] = Process.GetProcessById(processIds[i]);
+					}
+					catch (InvalidOperationException) {
+						continue;
+					}
+					catch (ArgumentException) {
+						continue;
+					}
+					w++;
+				}
+				if (w != processes.Length)
+					Array.Resize(ref processes, w);
+				return processes;
+			}
+			catch {
+				foreach (var p in processes)
+					p?.Dispose();
+				throw;
 			}
 		}
 	}

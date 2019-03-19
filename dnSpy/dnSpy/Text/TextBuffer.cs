@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,9 +63,9 @@ namespace dnSpy.Text {
 		public event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;
 		public event EventHandler<TextContentChangingEventArgs> Changing;
 		public event EventHandler PostChanged;
-#pragma warning disable 0067
+#pragma warning disable CS0067
 		public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;//TODO: Use this event
-#pragma warning restore 0067
+#pragma warning restore CS0067
 
 		event EventHandler<TextContentChangedEventArgs> ITextBuffer2.ChangedOnBackground {
 			add => throw new NotImplementedException();

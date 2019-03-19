@@ -286,16 +286,16 @@
     <value>ruta de acceso</value>
   </data>
   <data name="ExampleDescription1" xml:space="preserve">
-    <value>Decompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+    <value>Descompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
   </data>
   <data name="ExampleDescription2" xml:space="preserve">
-    <value>Decompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+    <value>Descompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
   </data>
   <data name="ExampleDescription3" xml:space="preserve">
     <value>Decompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>Decompiles el miembro con token 0x06000123</value>
+    <value>Descompiles el miembro con token 0x06000123</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
     <value>Decompiles System.Int32 de mscorlib</value>

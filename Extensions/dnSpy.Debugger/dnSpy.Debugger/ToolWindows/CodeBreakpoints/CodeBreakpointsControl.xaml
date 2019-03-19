@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -97,6 +97,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -107,7 +108,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.Name}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid ToolTip="{Binding ErrorToolTip}">
@@ -131,42 +132,42 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Labels}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.Labels}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Labels}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding LabelsObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" EditableValue="{Binding LabelsEditableValue}" EditValueProvider="{Binding LabelsEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Condition}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.Condition}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Condition}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ConditionObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_HitCount}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.HitCount}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_HitCount}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding HitCountObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Filter}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.Filter}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Filter}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding FilterObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_WhenHit}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.WhenHit}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_WhenHit}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding WhenHitObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Module}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:CodeBreakpointsColumnIds.Module}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Module}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ModuleObject, Mode=OneWay, Converter={StaticResource codeBreakpointColumnConverter}}" />

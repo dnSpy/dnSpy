@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public StringBuilderDecompilerOutput MainOutput { get; } = new StringBuilderDecompilerOutput();
 		}
 
-		public EditAssemblyVM(in EditCodeVMOptions options) : base(options, null) => StartDecompile();
+		public EditAssemblyVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
 			new EditAssemblyDecompileCodeState();
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Task.FromResult(result);
 		}
 
-		protected override void Import(ModuleImporter importer, in CompilationResult result) =>
-			importer.Import(result.RawFile, result.DebugFile, ModuleImporterOptions.ReplaceModuleAssemblyAttributes | ModuleImporterOptions.ReplaceAssemblyDeclSecurities);
+		protected override void Import(ModuleImporter importer, CompilationResult result) =>
+			importer.Import(result.RawFile, result.DebugFile, ModuleImporterOptions.ReplaceModuleAssemblyAttributes | ModuleImporterOptions.ReplaceAssemblyDeclSecurities | ModuleImporterOptions.ReplaceExportedTypes);
 	}
 }

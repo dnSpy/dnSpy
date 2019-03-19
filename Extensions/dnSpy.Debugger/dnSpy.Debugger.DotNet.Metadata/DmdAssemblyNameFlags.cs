@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdAssemblyNameFlags {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		None						= 0,
 		PublicKey					= 1,
 		PA_None						= 0x0000,
@@ -45,6 +45,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		ContentType_Default			= 0x0000,
 		ContentType_WindowsRuntime	= 0x0200,
 		ContentType_Mask			= 0x0E00,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

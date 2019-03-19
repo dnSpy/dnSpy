@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,10 +46,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		}
 		static readonly ReadOnlyCollection<DbgExceptionConditionSettings> emptyConditionsCollection = new ReadOnlyCollection<DbgExceptionConditionSettings>(Array.Empty<DbgExceptionConditionSettings>());
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgExceptionSettings left, DbgExceptionSettings right) => left.Equals(right);
 		public static bool operator !=(DbgExceptionSettings left, DbgExceptionSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

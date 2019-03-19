@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -83,6 +83,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 						foundIds.Remove(playerId);
 						continue;
 					}
+					if (!ProcessUtils.IsValidProcess(context, pid.Value, null))
+						continue;
 					ipAddress = "127.0.0.1";
 					yield return new UnityAttachProgramOptionsImpl(pid.Value, ipAddress, port, "Unity (" + id + ")");
 				}

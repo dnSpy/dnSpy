@@ -169,7 +169,7 @@
     <value>No se puede convertir la entrada para el tipo deseado: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Cerca de todos los grupos de pestaña menos este</value>
+    <value>Cerrar todos los grupos de pestaña menos este</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
     <value>Cierre _Todas Menos Esta</value>
@@ -205,7 +205,7 @@
     <value>Cancelar</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Decompilando...</value>
+    <value>Descompilando...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
     <value>Tipos Derivados</value>
@@ -480,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Habilitar todos los mensajes de advertencia</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Deserializar los tipos en recursos (inseguro)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Cualquier ensamblado podría ser cargado y ejecutado con los datos de los recursos.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Utilizar ficheros de mappeo en memoria I/O</value>
   </data>
@@ -559,7 +553,7 @@
     <value>Se ha producido un error desconocido</value>
   </data>
   <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
-    <value>Use grupos de pestaña Horizontal</value>
+    <value>Use grupos de pestaña Horizontales</value>
   </data>
   <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
     <value>Uso de grupos de la pestaña Vertical</value>
@@ -722,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Posición de la ventana</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Utilice el nuevo formateador de texto</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>El formateador de texto nuevo es más rápido pero no soporta resumen o todos los caracteres unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Editor Hexadecimal</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Editor de texto</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Azul</value>
@@ -1113,7 +1095,7 @@
     <value>Integrar con explorador de Windows</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Aviso (necesitada reiniciar)</value>
+    <value>Aviso (necesita reiniciar)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
     <value>Con un solo clic expande los nodos</value>
@@ -1915,5 +1897,143 @@
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
     <value>Permite más de una instancia (reiniciar)</value>
+  </data>
+  <data name="DisassemblerDlgTabTitle" xml:space="preserve">
+    <value>Desensamblador</value>
+  </data>
+  <data name="CodeStyleDlgTabTitle" xml:space="preserve">
+    <value>Estilo de Código</value>
+  </data>
+  <data name="DisassemblySettings_AddLabels" xml:space="preserve">
+    <value>Añadir etiqueta</value>
+  </data>
+  <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
+    <value>Añadir líder '0' a hexadecimales números si es necesario</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
+    <value>Mostrar siempre el tamaño de los operandos de memoria</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
+    <value>Muestra siempre el valor de escala</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
+    <value>Mostrar registros de segmento</value>
+  </data>
+  <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
+    <value>Separador de dígitos</value>
+  </data>
+  <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
+    <value>Añadir una línea en blanco entre los bloques de</value>
+  </data>
+  <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
+    <value>Prefijo de número hexagonal</value>
+  </data>
+  <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
+    <value>Sufijo de número hexagonal</value>
+  </data>
+  <data name="DisassemblySettings_NewTab" xml:space="preserve">
+    <value>Mostrar desensamblado en una pestaña nueva</value>
+  </data>
+  <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
+    <value>Columna de operando</value>
+  </data>
+  <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
+    <value>Direcciones relativas a RIP</value>
+  </data>
+  <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
+    <value>Mostrar escala antes de registro de índice</value>
+  </data>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Añadir ceros iniciales (ramas)</value>
+  </data>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Añadir ceros iniciales</value>
+  </data>
+  <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
+    <value>Mostrar tamaño de la rama</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
+    <value>Mostrar dirección de instrucción</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
+    <value>Ver instrucción bytes</value>
+  </data>
+  <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
+    <value>Mostrar cero desplazamientos</value>
+  </data>
+  <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
+    <value>Números firmados</value>
+  </data>
+  <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
+    <value>Desplazamientos firmados</value>
+  </data>
+  <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
+    <value>Ver pequeños números en decimal</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
+    <value>Espacio después de los soportes del operando de memoria</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
+    <value>Espacio después de separador operando</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
+    <value>Espacio entre '+'</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
+    <value>Espacio entre '+'</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
+    <value>Todo letras mayúsculas</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
+    <value>Mayúscula número hexadecimal</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
+    <value>Letras mayúsculas</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
+    <value>Mnemónicos de mayúsculas</value>
+  </data>
+  <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
+    <value>Prefijos de mayúscula</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
+    <value>Registro en mayúscula</value>
+  </data>
+  <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
+    <value>Pseudo instrucciones</value>
+  </data>
+  <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
+    <value>Sintaxis de</value>
+  </data>
+  <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
+    <value>Registros desnudos</value>
+  </data>
+  <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
+    <value>Mostrar siempre el sufijo de tamaño mnemónico</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
+    <value>Espacio después de los soportes del operando de memoria</value>
+  </data>
+  <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
+    <value>Números hexadecimales</value>
+  </data>
+  <data name="Disassembly_TabTitle" xml:space="preserve">
+    <value>Desensamblado</value>
+  </data>
+  <data name="DisassemblySettings_ShowCode" xml:space="preserve">
+    <value>Mostrar código descompilado</value>
+  </data>
+  <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
+    <value>Mostrar código IL</value>
+  </data>
+  <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
+    <value>El método no está optimizado</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Mostrar la dirección del símbolo</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Fecha/Hora:</value>
   </data>
 </root>

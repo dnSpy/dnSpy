@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,10 +23,11 @@
         xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
         xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
         xmlns:p="clr-namespace:dnSpy.Properties"
+        xmlns:ds="clr-namespace:dnSpy.MainApp"
         ResizeMode="NoResize"
         SizeToContent="Height"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-        Title="dnSpy" Width="300">
+        Title="{x:Static ds:Constants.DnSpy}" Width="300">
     <Grid FocusManager.FocusedElement="{Binding ElementName=textBox}">
         <Grid.Resources>
             <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />

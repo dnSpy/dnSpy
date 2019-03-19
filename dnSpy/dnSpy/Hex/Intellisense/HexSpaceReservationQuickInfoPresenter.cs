@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Hex.Intellisense {
 
 		public HexBufferSpanSelection PresentationSpan => presentationSpan;
 
-		void SetPresentationSpan(HexBufferSpanSelection newValue, in HexCellPosition triggerPoint) {
+		void SetPresentationSpan(HexBufferSpanSelection newValue, HexCellPosition triggerPoint) {
 			// Make sure that the popup is shown in the right column
 			newValue = new HexBufferSpanSelection(newValue.BufferSpan, HexSpanSelectionFlags.Cell | (triggerPoint.Column == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii));
 			if (!presentationSpan.Equals(newValue)) {

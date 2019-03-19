@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,10 +18,9 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Threading;
-using System.Windows.Threading;
 using dndbg.Engine;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DebuggerThread {
@@ -32,19 +31,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		AutoResetEvent callDispatcherRunEvent;
 		readonly string threadName;
 
-		WpfDebugMessageDispatcher WpfDebugMessageDispatcher {
+		DebugMessageDispatcher DebugMessageDispatcher {
 			get {
-				if (__wpfDebugMessageDispatcher == null)
-					Interlocked.CompareExchange(ref __wpfDebugMessageDispatcher, new WpfDebugMessageDispatcher(Dispatcher), null);
-				return __wpfDebugMessageDispatcher;
+				if (__debugMessageDispatcher == null)
+					Interlocked.CompareExchange(ref __debugMessageDispatcher, new DebugMessageDispatcher(Dispatcher), null);
+				return __debugMessageDispatcher;
 			}
 		}
-		volatile WpfDebugMessageDispatcher __wpfDebugMessageDispatcher;
+		volatile DebugMessageDispatcher __debugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
-			// We use WpfDebugMessageDispatcher in BeginInvoke()
-			Debug.Assert(DispPriority == WpfDebugMessageDispatcher.DispPriority);
-
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -65,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void DebuggerThreadProc(AutoResetEvent autoResetEvent) {
 			Thread.CurrentThread.Name = threadName;
-			Dispatcher = Dispatcher.CurrentDispatcher;
+			Dispatcher = new Dispatcher();
 			autoResetEvent.Set();
 
 			callDispatcherRunEvent.WaitOne();
@@ -82,22 +78,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
 			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
+				Dispatcher.BeginInvokeShutdown();
 		}
 
-		public IDebugMessageDispatcher GetDebugMessageDispatcher() => WpfDebugMessageDispatcher;
+		public IDebugMessageDispatcher GetDebugMessageDispatcher() => DebugMessageDispatcher;
 
 		public bool HasShutdownStarted => Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished;
 		public bool CheckAccess() => Dispatcher.CheckAccess();
 		public void VerifyAccess() => Dispatcher.VerifyAccess();
-		const DispatcherPriority DispPriority = DispatcherPriority.Send;
 		public T Invoke<T>(Func<T> callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			return Dispatcher.Invoke(callback, DispPriority);
+			return Dispatcher.Invoke(callback);
 		}
 		public void Invoke(Action callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			Dispatcher.Invoke(callback, DispPriority);
+			Dispatcher.Invoke(callback);
 		}
 		public void BeginInvoke(Action callback) {
 			if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished) {
@@ -105,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				// which will notify DbgManager. It will then call engine.Run() which must
 				// continue the process even if we're func evaluating. If we use Dispatcher,
 				// we'll block here since WpfDebugMessageDispatcher is waiting for an event.
-				WpfDebugMessageDispatcher.ExecuteAsync(callback);
+				DebugMessageDispatcher.ExecuteAsync(callback);
 			}
 		}
 	}

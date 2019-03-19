@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <see cref="DbgThread.State"/> values
 	/// </summary>
 	public static class CorThreadUserStates {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly string StopRequested = nameof(StopRequested);
 		public static readonly string SuspendRequested = nameof(SuspendRequested);
 		public static readonly string Background = nameof(Background);
@@ -32,6 +32,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public static readonly string Suspended = nameof(Suspended);
 		public static readonly string UnsafePoint = nameof(UnsafePoint);
 		public static readonly string ThreadPool = nameof(ThreadPool);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,6 +53,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public static readonly Guid ShowPdbInfo_GUID = new Guid("2E19D17C-1994-4CA3-914B-1D690E3EA29E");
 		/// <summary />
 		public static readonly string ShowPdbInfo_NAME = "pdb-info";
+
+		/// <summary />
+		public static readonly Guid MaxStringLength_GUID = new Guid("405901FA-47E5-497F-A4DF-0FE5C3677287");
+		/// <summary />
+		public static readonly string MaxStringLength_NAME = "max-string-length";
 
 		/// <summary />
 		public static readonly Guid MemberOrder_GUID = new Guid("8E6FE77A-2BCB-4F34-A41B-7F097560A211");

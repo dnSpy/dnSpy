@@ -1064,7 +1064,7 @@
     <value>Ensamblado</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
-    <value>Convertir la ensamblado en NetMódulo</value>
+    <value>Convertir ensamblado en NetMódulo</value>
   </data>
   <data name="ConvertUncondBranchCommand" xml:space="preserve">
     <value>Convertir a _Rama Incondicional</value>
@@ -1957,6 +1957,9 @@
   <data name="ShortCutKeyP" xml:space="preserve">
     <value>P</value>
   </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="ShortCutKeyS" xml:space="preserve">
     <value>S</value>
   </data>
@@ -2375,7 +2378,7 @@
     <value>Editar código</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Decompilando...</value>
+    <value>Descompilando...</value>
   </data>
   <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
     <value>Código</value>
@@ -2523,5 +2526,14 @@
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Ejecuta NGEN.exe si este ensamblado está instalado en el GAC</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compilador</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>Reemolazo con NOPs</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>_Replace con NOPs</value>
   </data>
 </root>

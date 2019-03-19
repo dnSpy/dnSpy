@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -126,19 +126,19 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		void Save(ISettingsSection section, in DbgCodeBreakpointCondition settings) {
+		void Save(ISettingsSection section, DbgCodeBreakpointCondition settings) {
 			section.Attribute("Kind", settings.Kind);
 			section.Attribute("Condition", settings.Condition);
 		}
 
-		void Save(ISettingsSection section, in DbgCodeBreakpointHitCount settings) {
+		void Save(ISettingsSection section, DbgCodeBreakpointHitCount settings) {
 			section.Attribute("Kind", settings.Kind);
 			section.Attribute("Count", settings.Count);
 		}
 
-		void Save(ISettingsSection section, in DbgCodeBreakpointFilter settings) => section.Attribute("Filter", settings.Filter);
+		void Save(ISettingsSection section, DbgCodeBreakpointFilter settings) => section.Attribute("Filter", settings.Filter);
 
-		void Save(ISettingsSection section, in DbgCodeBreakpointTrace settings) {
+		void Save(ISettingsSection section, DbgCodeBreakpointTrace settings) {
 			section.Attribute("Message", settings.Message);
 			if (!settings.Continue)
 				section.Attribute("Continue", settings.Continue);

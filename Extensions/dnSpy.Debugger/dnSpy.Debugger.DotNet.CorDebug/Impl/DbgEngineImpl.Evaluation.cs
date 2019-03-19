@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -224,8 +224,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var args = argsCount == 0 ? Array.Empty<CorValue>() : new CorValue[argsCount];
 					w = 0;
 					DmdType origType;
+					var declType = method.DeclaringType;
 					if (hiddenThisArg) {
-						var declType = method.DeclaringType;
 						if (method is DmdMethodInfo m)
 							declType = m.GetBaseDefinition().DeclaringType;
 						var val = converter.Convert(obj, declType, out origType);
@@ -245,11 +245,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						throw new InvalidOperationException();
 
 					// Derefence/unbox the values here now that they can't get neutered
-					w = hiddenThisArg ? 1 : 0;
-					for (int i = 0; i < arguments.Length; i++) {
-						var paramType = paramTypes[i];
-						var arg = args[w];
-						if (paramType.IsValueType || paramType.IsPointer || paramType.IsFunctionPointer) {
+					for (int i = 0; i < args.Length; i++) {
+						DmdType argType;
+						if (!hiddenThisArg)
+							argType = paramTypes[i];
+						else if (i == 0)
+							argType = declType;
+						else
+							argType = paramTypes[i - 1];
+						var arg = args[i];
+						if (argType.IsValueType || argType.IsPointer || argType.IsFunctionPointer) {
 							if (arg.IsReference) {
 								if (arg.IsNull)
 									throw new InvalidOperationException();
@@ -262,12 +267,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 								if (arg == null)
 									return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 							}
-							args[w] = arg;
+							args[i] = arg;
 						}
-						w++;
 					}
-					if (args.Length != w)
-						throw new InvalidOperationException();
 
 					var res = newObj ?
 						dnEval.CallConstructor(func, typeArgs, args, out hr) :

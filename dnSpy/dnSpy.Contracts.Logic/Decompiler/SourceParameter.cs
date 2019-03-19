@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public TypeSig Type { get; }
 
 		/// <summary>
-		/// Gets the hoisted field or null if it's not a hoisted local/parameter
+		/// Gets the hoisted field or null if it's not a hoisted parameter
 		/// </summary>
 		public FieldDef HoistedField { get; }
 

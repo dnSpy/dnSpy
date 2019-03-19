@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,8 +30,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
-            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+        <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True" img:DsImage.BackgroundBrush="{DynamicResource EnvironmentCommandBarIcon}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0 3" Orientation="Horizontal">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type img:DsImage}" BasedOn="{StaticResource {x:Type img:DsImage}}">
                         <Style.Triggers>
@@ -68,17 +74,31 @@
                 <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding AttachToProcessCommand}" ToolTip="{Binding AttachToProcessToolTip}">
                     <img:DsImage ImageReference="{x:Static img:DsImages.Process}"/>
                 </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+            </StackPanel>
+            <Label Grid.Column="1" Margin="0 0 0 0" VerticalAlignment="Center" Content="{x:Static p:dnSpy_Debugger_Resources.Processes_Search}" ToolTip="{Binding SearchToolTip}" />
+            <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding VM.FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding SearchToolTip}" />
+            <StackPanel Grid.Column="3" Margin="2 3 0 3" Orientation="Horizontal">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding SearchHelpCommand}" ToolTip="{Binding SearchHelpToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.StatusHelp}"/>
+                </Button>
             </StackPanel>
         </Grid>
         <ListView
-            Name="listView"
             Grid.Row="1"
+            Visibility="{Binding VM.SomethingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Name="listView"
             MouseDoubleClick="ListView_MouseDoubleClick"
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -89,7 +109,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="" Width="16">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.Icon}" Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <!-- Using just a DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
@@ -105,49 +125,49 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.Name}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ID}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.ID}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ID}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding IdObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Title}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.Title}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Title}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TitleObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_State}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.State}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_State}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding StateObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Debugging}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.Debugging}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Debugging}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding DebuggingObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.ProcessArchitecture}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding MachineObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
+                                <ContentPresenter Content="{Binding ArchitectureObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ProcessesWindowColumnIds.Path}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource processColumnConverter}}" />
@@ -157,5 +177,16 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Grid Grid.Row="1" Visibility="{Binding VM.NothingMatched, Converter={StaticResource BooleanToVisibilityConverter}}"
+              mvvm:InitDataTemplateAP.Initialize="True"
+              Background="{DynamicResource GridViewBackground}"
+              img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="{x:Static p:dnSpy_Debugger_Resources.Processes_NoMatch}"/>
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding ResetSearchSettingsCommand}" ToolTip="{Binding ResetSearchSettingsToolTip}">
+                    <img:DsImage ImageReference="{x:Static img:DsImages.ClearWindowContent}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

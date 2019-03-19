@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.Text;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Text {
 	/// <summary>
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// Writes all text and colors to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Output</param>
-		public void WriteTo(ITextColorWriter output) {
+		public void WriteTo(IDbgTextWriter output) {
 			foreach (var part in Parts)
 				output.Write(part.Color, part.Text);
 		}
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// <summary>
 		/// Gets the color
 		/// </summary>
-		public object Color { get; }
+		public DbgTextColor Color { get; }
 
 		/// <summary>
 		/// Gets the text
@@ -90,8 +90,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public DbgDotNetTextPart(object color, string text) {
-			Color = color ?? throw new ArgumentNullException(nameof(color));
+		public DbgDotNetTextPart(DbgTextColor color, string text) {
+			Color = color;
 			Text = text ?? throw new ArgumentNullException(nameof(text));
 		}
 	}

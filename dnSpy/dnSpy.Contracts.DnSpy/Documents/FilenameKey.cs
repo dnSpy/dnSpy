@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,6 +32,11 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		public FilenameKey(string filename) => this.filename = GetFullPath(filename);
+
+		FilenameKey(string filename, bool dummy) => this.filename = filename;
+
+		// PERF: Path.GetFullPath() is slow so if we know that FilenameKey.GetFullPath() == filename, use this method instead
+		internal static FilenameKey CreateFullPath(string filename) => new FilenameKey(filename, false);
 
 		static string GetFullPath(string filename) {
 			try {

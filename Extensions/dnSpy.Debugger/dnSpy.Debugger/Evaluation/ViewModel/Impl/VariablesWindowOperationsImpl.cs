@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,9 @@ using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Evaluation.Watch;
 using dnSpy.Debugger.Properties;
@@ -99,20 +99,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return;
 
 			//TODO: Show a progress dlg box and allow the user to cancel it if it's taking too long
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			var expressions = new List<string>();
 			foreach (var node in SortedSelectedNodes(vm)) {
 				if (node.RawNode.CanEvaluateExpression)
 					expressions.Add(node.RawNode.Expression);
 				var formatter = node.Context.Formatter;
 				formatter.WriteExpander(output, node);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				// Add an extra tab here to emulate VS output
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteName(output, node);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteValueAndObjectId(output, node, out _);
-				output.Write(BoxedTextColor.Text, "\t");
+				output.Write(DbgTextColor.Text, "\t");
 				formatter.WriteType(output, node);
 				output.WriteLine();
 			}
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				return;
 
 			//TODO: Show a progress dlg box and allow the user to cancel it if it's taking too long
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			int count = 0;
 			foreach (var node in SortedSelectedNodes(vm)) {
 				if (count > 0)

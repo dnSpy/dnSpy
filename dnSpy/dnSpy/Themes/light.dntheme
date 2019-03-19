@@ -88,7 +88,7 @@
 		<color name="assembly" fg="#414141" />
 		<color name="assemblyexe" fg="#C17B19" />
 		<color name="assemblymodule" fg="#642C8F" />
-		<color name="directorypart" fg="#216F85" />
+		<color name="directorypart" fg="Black" />
 		<color name="filenamenoextension" fg="#990000" />
 		<color name="fileextension" fg="#3366CC" />
 		<color name="error" fg="Red" />
@@ -300,5 +300,22 @@
 		<color name="debuggerdisplayattributeeval" fg="#2E387C" />
 		<color name="debuggernostringquoteseval" fg="#2E387C" />
 		<color name="debugviewpropertyname" fg="#996633" />
+		<color name="asmcomment" fg="#008000" />
+		<color name="asmdirective" fg="#6F42C1" />
+		<color name="asmprefix" fg="#D73A49" />
+		<color name="asmmnemonic" fg="#D73A49" />
+		<color name="asmkeyword" fg="#6F42C1" />
+		<color name="asmoperator" fg="#000000" />
+		<color name="asmpunctuation" fg="#000000" />
+		<color name="asmnumber" fg="#5B2DA8" />
+		<color name="asmregister" fg="#E36209" />
+		<color name="asmselectorvalue" fg="#5B2DA8" />
+		<color name="asmlabeladdress" fg="#5B2DA8" />
+		<color name="asmfunctionaddress" fg="#5B2DA8" />
+		<color name="asmlabel" fg="#663300" />
+		<color name="asmfunction" fg="#339966" />
+		<color name="asmdata" fg="#CC3399" />
+		<color name="asmaddress" fg="#5B2DA8" />
+		<color name="asmhexbytes" fg="#000000" />
 	</colors>
 </theme>

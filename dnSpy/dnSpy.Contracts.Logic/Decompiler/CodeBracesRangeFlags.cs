@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	[Flags]
 	public enum CodeBracesRangeFlags {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		BraceKind_None				= 0,
 		BraceKind_Parentheses		= 0x00000001,
 		BraceKind_CurlyBraces		= 0x00000002,
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Decompiler {
 		SquareBrackets				= BraceKind_SquareBrackets | BlockKind_None,
 		CurlyBraces					= BraceKind_CurlyBraces | BlockKind_None,
 		OtherBraces					= BraceKind_OtherBraces | BlockKind_None,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
 	/// <summary>

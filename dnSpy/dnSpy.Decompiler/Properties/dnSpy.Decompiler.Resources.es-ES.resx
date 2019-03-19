@@ -199,7 +199,7 @@
     <value>Tiempo de ejecución:</value>
   </data>
   <data name="Decompile_ThisAssemblyContainsUnmanagedCode" xml:space="preserve">
-    <value>Este ensamblado contiene código nativo.</value>
+    <value>Este ensamblaje contiene un código no administrado.</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Fecha/Hora:</value>

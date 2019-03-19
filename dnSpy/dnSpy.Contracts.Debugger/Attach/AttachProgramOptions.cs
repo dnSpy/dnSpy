@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,9 +70,14 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		public virtual string CommandLine => null;
 
 		/// <summary>
-		/// Processor architecture (eg. <see cref="PredefinedArchitectureNames.X86"/>) or null to use the default value
+		/// Processor architecture or null to use the default value
 		/// </summary>
-		public virtual string Architecture => null;
+		public virtual DbgArchitecture? Architecture => null;
+
+		/// <summary>
+		/// Operating system or null to use the default value
+		/// </summary>
+		public virtual DbgOperatingSystem? OperatingSystem => null;
 
 		/// <summary>
 		/// Gets all options required to attach to the process

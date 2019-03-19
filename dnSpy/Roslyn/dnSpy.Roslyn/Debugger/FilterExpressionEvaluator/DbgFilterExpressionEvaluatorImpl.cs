@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,8 @@ using System.Linq;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Roslyn.Properties;
 using dnSpy.Roslyn.Text;
@@ -118,7 +119,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			return new DbgFilterExpressionEvaluatorResult(evalResult);
 		}
 
-		public override void Write(ITextColorWriter output, string expr) {
+		public override void Write(IDbgTextWriter output, string expr) {
 			using (var workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices)) {
 				var projectId = ProjectId.CreateNewId();
 				var (filterText, exprOffset) = CreateFilterClassSource(expr);
@@ -141,12 +142,12 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 				var propColor = RoslynClassificationTypes.Default.InstanceProperty;
 				foreach (var info in classifier.GetColors(textSpan)) {
 					if (pos < info.Span.Start)
-						output.Write(BoxedTextColor.Text, expr.Substring(pos - textSpan.Start, info.Span.Start - pos));
-					output.Write(info.Color == paramColor ? propColor : info.Color, expr.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
+						output.Write(DbgTextColor.Text, expr.Substring(pos - textSpan.Start, info.Span.Start - pos));
+					output.Write(ColorConverter.ToDebuggerColor(info.Color == paramColor ? propColor : info.Color), expr.Substring(info.Span.Start - textSpan.Start, info.Span.Length));
 					pos = info.Span.End;
 				}
 				if (pos < textSpan.End)
-					output.Write(BoxedTextColor.Text, expr.Substring(pos - textSpan.Start, textSpan.End - pos));
+					output.Write(DbgTextColor.Text, expr.Substring(pos - textSpan.Start, textSpan.End - pos));
 			}
 		}
 

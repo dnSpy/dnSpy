@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
@@ -58,13 +58,13 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="options">Options</param>
-		public abstract void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options);
+		public abstract void WriteName(IDbgTextWriter output, DbgBreakpointLocationFormatterOptions options);
 
 		/// <summary>
 		/// Writes the module shown in the Module column
 		/// </summary>
 		/// <param name="output">Output</param>
-		public abstract void WriteModule(ITextColorWriter output);
+		public abstract void WriteModule(IDbgTextWriter output);
 
 		/// <summary>
 		/// Called when this instance isn't needed anymore

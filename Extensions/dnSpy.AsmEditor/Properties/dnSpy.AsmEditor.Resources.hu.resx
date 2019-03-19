@@ -1964,6 +1964,9 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
   <data name="ShortCutKeyP" xml:space="preserve">
     <value>P</value>
   </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="ShortCutKeyS" xml:space="preserve">
     <value>S</value>
   </data>
@@ -2530,5 +2533,14 @@ A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet vált
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>NGEN.exe futtatása, ha ez a szerelvény a GAC-ba van telepítve</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Fordító</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>Cse_re NOP-okra</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>Cse_re NOP-okra</value>
   </data>
 </root>

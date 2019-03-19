@@ -1,195 +1,62 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{083DE7BE-F315-4C7A-98B8-775428D4D20D}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Debugger.DotNet.Mono</RootNamespace>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <AssemblyName>dnSpy.Debugger.DotNet.Mono.x</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\..\dnSpy\dnSpy\bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1685</NoWarn>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\dnSpy\dnSpy\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1685</NoWarn>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="CallStack\DbgEngineStackWalkerImpl.cs" />
-    <Compile Include="CallStack\ILDbgEngineStackFrame.cs" />
-    <Compile Include="CallStack\NullDbgEngineStackWalker.cs" />
-    <Compile Include="CallStack\StackFrameData.cs" />
-    <Compile Include="Dialogs\AttachToProcess\UnityAttachProgramOptionsImpl.cs" />
-    <Compile Include="Dialogs\AttachToProcess\UnityDataReceiver.cs" />
-    <Compile Include="Dialogs\AttachToProcess\UnityEditorAttachProgramOptionsProvider.cs" />
-    <Compile Include="Dialogs\AttachToProcess\UnityPlayerAttachProgramOptionsProvider.cs" />
-    <Compile Include="Dialogs\DebuggingUnityGamesHelper.cs" />
-    <Compile Include="Dialogs\DebugMenuCommands.cs" />
-    <Compile Include="Dialogs\DebugProgram\BreakProcessKindsUtils.cs" />
-    <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\MonoConnectStartDebuggingOptionsPageBase.cs" />
-    <Compile Include="Dialogs\DebugProgram\MonoStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\MonoStartDebuggingOptionsPageBase.cs" />
-    <Compile Include="Dialogs\DebugProgram\PortableExecutableFileHelpers.cs" />
-    <Compile Include="Dialogs\DebugProgram\StartDebuggingOptionsPageProviderImpl.cs" />
-    <Compile Include="Dialogs\DebugProgram\UnityConnectStartDebuggingOptionsPage.cs" />
-    <Compile Include="Dialogs\DebugProgram\UnityGenericDebugEngineGuidProvider.cs" />
-    <Compile Include="Dialogs\DebugProgram\UnityStartDebuggingOptionsPage.cs" />
-    <Compile Include="Impl\Attach\MonoAttachToProgramOptionsBase.cs" />
-    <Compile Include="Impl\Attach\UnityAttachToProgramOptions.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Breakpoints.cs" />
-    <Compile Include="Impl\DbgEngineImpl.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Evaluation.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Steppers.cs" />
-    <Compile Include="Impl\DbgEngineImpl.Threads.cs" />
-    <Compile Include="Impl\DbgEngineImplDependencies.cs" />
-    <Compile Include="Impl\DbgEngineProviderImpl.cs" />
-    <Compile Include="Impl\DbgModuleMemoryRefreshedNotifierImpl.cs" />
-    <Compile Include="Impl\DbgMonoDebugInternalAppDomainImpl.cs" />
-    <Compile Include="Impl\DbgMonoDebugInternalModuleImpl.cs" />
-    <Compile Include="Impl\DebuggerThread.cs" />
-    <Compile Include="Impl\DmdDispatcherImpl.cs" />
-    <Compile Include="Impl\DotNetMonoRuntimeId.cs" />
-    <Compile Include="Impl\EvalReflectionUtils.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherExtensions.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetDispatcherImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetEngineObjectIdFactoryImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetObjectIdImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetRawValueFactory.cs" />
-    <Compile Include="Impl\Evaluation\DbgDotNetValueImpl.cs" />
-    <Compile Include="Impl\Evaluation\DbgMonoDebugInternalRuntimeImpl.cs" />
-    <Compile Include="Impl\Evaluation\DmdEvaluatorImpl.cs" />
-    <Compile Include="Impl\Evaluation\EvalArgumentConverter.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ClassHook.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ClassHookInfo.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\ClassHookProvider.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\IMonoDebugRuntime.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\MonoDebugValueConverterImpl.cs" />
-    <Compile Include="Impl\Evaluation\Hooks\System_String.cs" />
-    <Compile Include="Impl\Evaluation\MemberMirrorUtils.cs" />
-    <Compile Include="Impl\Evaluation\MethodCache.cs" />
-    <Compile Include="Impl\Evaluation\MonoDebugTypeCreator.cs" />
-    <Compile Include="Impl\Evaluation\MonoValueFactory.cs" />
-    <Compile Include="Impl\Evaluation\MonoValueTypeCreator.cs" />
-    <Compile Include="Impl\Evaluation\SyntheticValues.cs" />
-    <Compile Include="Impl\Evaluation\ValueLocations.cs" />
-    <Compile Include="Impl\Evaluation\ValueUtils.cs" />
-    <Compile Include="Impl\ExceptionUtils.cs" />
-    <Compile Include="Impl\FuncEvalFactory.cs" />
-    <Compile Include="Impl\ModuleCreator.cs" />
-    <Compile Include="Impl\ModuleIdUtils.cs" />
-    <Compile Include="Impl\MonoExeFinder.cs" />
-    <Compile Include="Impl\MonoTypeLoader.cs" />
-    <Compile Include="Impl\NativeMethods.cs" />
-    <Compile Include="Impl\NetUtils.cs" />
-    <Compile Include="Impl\ObjectConstants.cs" />
-    <Compile Include="Impl\PortableExecutableFileHelpers.cs" />
-    <Compile Include="Impl\PortableExecutableHelper.cs" />
-    <Compile Include="Impl\ReflectionTypeCreator.cs" />
-    <Compile Include="Impl\ThreadMirrorUtils.cs" />
-    <Compile Include="Impl\ThreadProperties.cs" />
-    <Compile Include="Impl\TypeCache.cs" />
-    <Compile Include="Impl\WpfDebugMessageDispatcher.cs" />
-    <Compile Include="Metadata\DbgAssemblyInfoProviderImpl.cs" />
-    <Compile Include="Metadata\DbgModuleIdProviderImpl.cs" />
-    <Compile Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs">
+    <Compile Include="..\dnSpy.Debugger\Shared\Dispatcher.cs" Link="Shared\Dispatcher.cs" />
+    <Compile Include="..\dnSpy.Debugger\Shared\FileUtilities.cs" Link="Shared\FileUtilities.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Debugger.DotNet.Mono.Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steppers\DbgDotNetEngineStepperImpl.cs" />
-    <Compile Include="Steppers\DbgDotNetStepperBreakpointImpl.cs" />
-    <Compile Include="TheExtension.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.Mono\dnSpy.Contracts.Debugger.DotNet.Mono.csproj">
-      <Project>{7b58f062-7ed0-4af1-90bb-beb509e3bd68}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet.Mono</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
-      <Project>{2376E072-101F-4900-8770-79C6DFFBD0FB}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
-      <Project>{c92217e8-a68e-4f8d-9b98-d7328e89daf1}</Project>
-      <Name>dnSpy.Contracts.Debugger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
-      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
-      <Name>dnSpy.Contracts.DnSpy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
-      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
-      <Name>dnSpy.Contracts.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj">
-      <Project>{fcd8913d-85a0-479e-9689-70fea52c6dcb}</Project>
-      <Name>dnSpy.Debugger.DotNet.Metadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj">
-      <Project>{57b5039f-30cc-4eaa-9d55-1b9a07ac8a69}</Project>
-      <Name>Mono.Debugger.Soft</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.resx">
+    <EmbeddedResource Update="Properties\dnSpy.Debugger.DotNet.Mono.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Debugger.DotNet.Mono.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.de.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.es-ES.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Debugger.DotNet.Mono.Resources.hu.resx" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet.Mono\dnSpy.Contracts.Debugger.DotNet.Mono.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
+    <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
+    <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj" />
+    <ProjectReference Include="..\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
   <ItemGroup>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

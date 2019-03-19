@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 	/// Classification types used by <see cref="RoslynClassifier"/>
 	/// </summary>
 	public sealed class RoslynClassificationTypes {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public readonly object Comment;
 		public readonly object Delegate;
 		public readonly object Enum;
@@ -85,7 +85,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		public readonly object XmlLiteralName;
 		public readonly object XmlLiteralProcessingInstruction;
 		public readonly object XmlLiteralText;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the default instance

@@ -409,7 +409,7 @@
     <value>路径:</value>
   </data>
   <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
-    <value>显示重复显示重复</value>
+    <value>显示重复</value>
   </data>
   <data name="OpenGAC_ShowFiles" xml:space="preserve">
     <value>正在显示 {0:n0} /{1:n0} 文件</value>
@@ -479,12 +479,6 @@
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>启用所有警告信息</value>
-  </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>反序列化资源中的类型 （不安全）</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>可以从资源中的数据里加载任意程序集并运行.</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>使用内存映射 I/O</value>
@@ -723,18 +717,6 @@
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>窗口位置</value>
   </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>使用新版文本格式化程序</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>新版文本格式化程序速度快，但不支持自动换行以及 unicode 字符（如中文字符）。</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>HEX 编辑器</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>文本编辑器</value>
-  </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>蓝色(_B)</value>
   </data>
@@ -870,7 +852,7 @@
     <value>转到资源</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
-    <value>折叠 Tree_View 节点</value>
+    <value>折叠树状图节点</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
     <value>全部关闭</value>
@@ -1128,7 +1110,7 @@
     <value>代码编辑器</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>选项卡</value>
+    <value>制表符</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
     <value>将Tab转换为空格(_P)</value>
@@ -1915,5 +1897,143 @@
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
     <value>允许多个实例 (需要重新启动)</value>
+  </data>
+  <data name="DisassemblerDlgTabTitle" xml:space="preserve">
+    <value>反汇编器</value>
+  </data>
+  <data name="CodeStyleDlgTabTitle" xml:space="preserve">
+    <value>代码风格</value>
+  </data>
+  <data name="DisassemblySettings_AddLabels" xml:space="preserve">
+    <value>添加标签</value>
+  </data>
+  <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
+    <value>如有必要，在十六进制数前加 '0'</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
+    <value>总是显示内存操作数的大小</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
+    <value>总是显示标量的值</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
+    <value>总是显示段寄存器</value>
+  </data>
+  <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
+    <value>数字分隔符</value>
+  </data>
+  <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
+    <value>在代码块之间添加空行</value>
+  </data>
+  <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
+    <value>十六进制前缀</value>
+  </data>
+  <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
+    <value>十六进制后缀</value>
+  </data>
+  <data name="DisassemblySettings_NewTab" xml:space="preserve">
+    <value>在新标签页中显示反汇编</value>
+  </data>
+  <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
+    <value>操作数 列</value>
+  </data>
+  <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
+    <value>RIP 相对地址</value>
+  </data>
+  <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
+    <value>在索引寄存器之前显示比例</value>
+  </data>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>添加前导0(分支)</value>
+  </data>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>添加前导0</value>
+  </data>
+  <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
+    <value>显示分支大小</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
+    <value>显示指令地址</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
+    <value>显示指令字节</value>
+  </data>
+  <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
+    <value>显示零位移</value>
+  </data>
+  <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
+    <value>有符号数字</value>
+  </data>
+  <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
+    <value>带符号位移</value>
+  </data>
+  <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
+    <value>以十进制显示较小数字</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
+    <value>内存操作数括号后的空格</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
+    <value>在操作数分隔符后加空格</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
+    <value>'+' 之间的空格</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
+    <value>'*' 之间的空格</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
+    <value>全部大写</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
+    <value>大写十六进制数</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
+    <value>大写关键字</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
+    <value>大写助记符</value>
+  </data>
+  <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
+    <value>大写前缀</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
+    <value>大写寄存器</value>
+  </data>
+  <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
+    <value>伪指令</value>
+  </data>
+  <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
+    <value>语法</value>
+  </data>
+  <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
+    <value>裸寄存器</value>
+  </data>
+  <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
+    <value>始终显示助记符大小后缀</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
+    <value>内存操作数逗号后的空格</value>
+  </data>
+  <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
+    <value>十六进制数</value>
+  </data>
+  <data name="Disassembly_TabTitle" xml:space="preserve">
+    <value>反汇编</value>
+  </data>
+  <data name="DisassemblySettings_ShowCode" xml:space="preserve">
+    <value>显示反编译代码</value>
+  </data>
+  <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
+    <value>显示 IL 代码</value>
+  </data>
+  <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
+    <value>此方法未优化</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>显示符号地址</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>时间戳:</value>
   </data>
 </root>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,6 +51,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// Assembly declared security attributes replace target assembly's declared security attributes
 		/// </summary>
 		ReplaceAssemblyDeclSecurities			= 0x00000002,
+
+		/// <summary>
+		/// All exported types replace the target assembly's exported types
+		/// </summary>
+		ReplaceExportedTypes					= 0x00000004,
 	}
 
 	sealed partial class ModuleImporter {
@@ -71,6 +76,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public CustomAttribute[] NewAssemblyCustomAttributes { get; private set; }
 		public DeclSecurity[] NewAssemblyDeclSecurities { get; private set; }
 		public CustomAttribute[] NewModuleCustomAttributes { get; private set; }
+		public ExportedType[] NewExportedTypes { get; private set; }
 		public Version NewAssemblyVersion { get; private set; }
 		public Resource[] NewResources { get; private set; }
 
@@ -127,11 +133,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			public ExtraImportedTypeData(TypeDef compiledType) => CompiledType = compiledType;
 		}
 
-		const SigComparerOptions SIG_COMPARER_OPTIONS = SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
+		const SigComparerOptions SIG_COMPARER_BASE_OPTIONS = SigComparerOptions.IgnoreModifiers;
+		const SigComparerOptions SIG_COMPARER_OPTIONS = SIG_COMPARER_BASE_OPTIONS | SigComparerOptions.TypeRefCanReferenceGlobalType | SigComparerOptions.PrivateScopeIsComparable;
 
 		public ModuleImporter(ModuleDef targetModule, IAssemblyResolver assemblyResolver) {
-			this.targetModule = targetModule;
-			this.assemblyResolver = assemblyResolver;
+			this.targetModule = targetModule ?? throw new ArgumentNullException(nameof(targetModule));
+			this.assemblyResolver = assemblyResolver ?? throw new ArgumentNullException(nameof(assemblyResolver));
 			diagnostics = new List<CompilerDiagnostic>();
 			newNonNestedImportedTypes = new List<NewImportedType>();
 			nonNestedMergedImportedTypes = new List<MergedImportedType>();
@@ -159,7 +166,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			throw new ModuleImporterAbortedException();
 		}
 
-		ModuleDefMD LoadModule(byte[] rawGeneratedModule, in DebugFileResult debugFile) {
+		ModuleDefMD LoadModule(byte[] rawGeneratedModule, DebugFileResult debugFile) {
 			var opts = new ModuleCreationOptions();
 			opts.TryToLoadPdbFromDisk = false;
 			opts.Context = new ModuleContext(assemblyResolver, new Resolver(assemblyResolver));
@@ -182,7 +189,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				break;
 			}
 
-			return ModuleDefMD.Load(rawGeneratedModule, opts);
+			var module = ModuleDefMD.Load(rawGeneratedModule, opts);
+			if (module.Assembly == null && targetModule.Assembly is AssemblyDef targetAsm) {
+				var asm = new AssemblyDefUser(targetAsm.Name, targetAsm.Version, targetAsm.PublicKey, targetAsm.Culture);
+				asm.Attributes = targetAsm.Attributes;
+				asm.HashAlgorithm = targetAsm.HashAlgorithm;
+				asm.Modules.Add(module);
+			}
+			return module;
 		}
 
 		static void RemoveDuplicates(List<CustomAttribute> attributes, string fullName) {
@@ -342,7 +356,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="options">Options</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, ModuleImporterOptions options) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, ModuleImporterOptions options) {
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			AddGlobalTypeMembers(sourceModule.GlobalType);
@@ -380,6 +394,12 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
+			if ((options & ModuleImporterOptions.ReplaceExportedTypes) != 0) {
+				var exportedTypes = new List<ExportedType>();
+				ImportExportedTypes(exportedTypes);
+				NewExportedTypes = exportedTypes.ToArray();
+			}
+
 			ImportResources();
 			SetSourceModule(null);
 		}
@@ -391,7 +411,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
@@ -401,6 +421,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var newType = FindSourceType(targetType);
 			if (newType.DeclaringType != null)
 				throw new ArgumentException("Type must not be nested");
+			RenamePropEventAccessors(newType, targetType);
 
 			if (!newType.IsGlobalModuleType)
 				AddGlobalTypeMembers(sourceModule.GlobalType);
@@ -433,7 +454,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetType">Original type that was edited</param>
-		public void ImportNewMembers(byte[] rawGeneratedModule, in DebugFileResult debugFile, TypeDef targetType) {
+		public void ImportNewMembers(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
 			if (targetType.DeclaringType != null)
@@ -443,6 +464,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var newType = FindSourceType(targetType);
 			if (newType.DeclaringType != null)
 				throw new ArgumentException("Type must not be nested");
+			RenamePropEventAccessors(newType, targetType);
 
 			if (!newType.IsGlobalModuleType)
 				AddGlobalTypeMembers(sourceModule.GlobalType);
@@ -634,7 +656,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="rawGeneratedModule">Raw bytes of compiled assembly</param>
 		/// <param name="debugFile">Debug file</param>
 		/// <param name="targetMethod">Original method that was edited</param>
-		public void Import(byte[] rawGeneratedModule, in DebugFileResult debugFile, MethodDef targetMethod) {
+		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, MethodDef targetMethod) {
 			if (targetMethod.Module != targetModule)
 				throw new InvalidOperationException();
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
@@ -643,6 +665,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var newMethodNonNestedDeclType = newMethod.DeclaringType;
 			while (newMethodNonNestedDeclType.DeclaringType != null)
 				newMethodNonNestedDeclType = newMethodNonNestedDeclType.DeclaringType;
+			RenamePropEventAccessors(newMethod.DeclaringType, targetMethod.DeclaringType);
 
 			AddEditedMethod(newMethod, targetMethod);
 			if (!newMethodNonNestedDeclType.IsGlobalModuleType)
@@ -660,6 +683,76 @@ namespace dnSpy.AsmEditor.Compiler {
 			SetSourceModule(null);
 		}
 
+		// A getter in the original module could have a different name than usual, eg. prop='Prop' but getter = 'random_name'.
+		// The C# compiler will call get_Prop, so rename get_Prop to the original name ('random_name')
+		void RenamePropEventAccessors(TypeDef newType, TypeDef targetType) {
+			for (;;) {
+				if (newType.DeclaringType == null && targetType.DeclaringType == null)
+					break;
+				newType = newType.DeclaringType;
+				targetType = targetType.DeclaringType;
+				if (newType == null || targetType == null)
+					throw new InvalidOperationException();
+			}
+
+			var sigComparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS | SigComparerOptions.CompareDeclaringTypes, targetModule);
+			var propComparer = new ImportPropertyEqualityComparer(sigComparer);
+			var eventComparer = new ImportEventEqualityComparer(sigComparer);
+			var targetProps = new Dictionary<PropertyDef, PropertyDef>(propComparer);
+			var targetEvents = new Dictionary<EventDef, EventDef>(eventComparer);
+			foreach (var t in GetTypes(targetType)) {
+				foreach (var p in t.Properties)
+					targetProps[p] = p;
+				foreach (var e in t.Events)
+					targetEvents[e] = e;
+			}
+			foreach (var t in GetTypes(newType)) {
+				foreach (var p in t.Properties) {
+					if (targetProps.TryGetValue(p, out var origProp)) {
+						Rename(p.GetMethod, origProp.GetMethod);
+						Rename(p.SetMethod, origProp.SetMethod);
+					}
+				}
+				foreach (var e in t.Events) {
+					if (targetEvents.TryGetValue(e, out var origEvent)) {
+						Rename(e.AddMethod, origEvent.AddMethod);
+						Rename(e.InvokeMethod, origEvent.InvokeMethod);
+						Rename(e.RemoveMethod, origEvent.RemoveMethod);
+					}
+				}
+			}
+		}
+
+		static void Rename(MethodDef newMethod, MethodDef targetMethod) {
+			if (newMethod == null || targetMethod == null)
+				return;
+			newMethod.Name = targetMethod.Name;
+		}
+
+		static IEnumerable<TypeDef> GetTypes(TypeDef type) {
+			yield return type;
+			foreach (var t in type.GetTypes())
+				yield return t;
+		}
+
+		static UTF8String GetMethodName(MethodDef method) {
+			foreach (var p in method.DeclaringType.Properties) {
+				if (p.GetMethod == method)
+					return "get_" + p.Name;
+				if (p.SetMethod == method)
+					return "set_" + p.Name;
+			}
+			foreach (var e in method.DeclaringType.Events) {
+				if (e.AddMethod == method)
+					return "add_" + e.Name;
+				if (e.RemoveMethod == method)
+					return "remove_" + e.Name;
+				if (e.InvokeMethod == method)
+					return "raise_" + e.Name;
+			}
+			return method.Name;
+		}
+
 		MethodDef FindSourceMethod(MethodDef targetMethod) {
 			var newType = sourceModule.Find(targetMethod.Module.Import(targetMethod.DeclaringType));
 			if (newType == null)
@@ -668,7 +761,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			// Don't check type scopes or we won't be able to find methods with edited nested types.
 			const SigComparerOptions comparerFlags = SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareTypeScope;
 
-			var newMethod = newType.FindMethod(targetMethod.Name, targetMethod.MethodSig, comparerFlags, targetMethod.Module);
+			var newMethod = newType.FindMethod(GetMethodName(targetMethod), targetMethod.MethodSig, comparerFlags, targetMethod.Module);
 			if (newMethod != null)
 				return newMethod;
 
@@ -1131,7 +1224,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep1(IEnumerable<MergedImportedType> importedTypes) {
-			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
+			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
 
@@ -1262,7 +1355,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep2(IEnumerable<MergedImportedType> importedTypes) {
-			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, 0, targetModule));
+			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
 
@@ -2178,6 +2271,44 @@ namespace dnSpy.AsmEditor.Compiler {
 				return Import(modRef, true);
 
 			throw new InvalidOperationException();
+		}
+
+		void ImportExportedTypes(List<ExportedType> exportedTypes) {
+			var toNewExportedType = new Dictionary<ExportedType, ExportedType>(sourceModule.ExportedTypes.Count);
+			var toNewImpl = new Dictionary<IImplementation, IImplementation>();
+			foreach (var et in sourceModule.ExportedTypes) {
+				var newEt = targetModule.UpdateRowId(new ExportedTypeUser(targetModule, et.TypeDefId, et.TypeNamespace, et.Name, et.Attributes, null));
+				exportedTypes.Add(newEt);
+				toNewExportedType.Add(et, newEt);
+				toNewImpl.Add(et, newEt);
+			}
+			foreach (var kv in toNewExportedType) {
+				var et = kv.Key;
+				var newEt = kv.Value;
+				var origImpl = et.Implementation;
+				if (origImpl == null)
+					continue;
+				if (!toNewImpl.TryGetValue(origImpl, out var newImpl)) {
+					switch (origImpl) {
+					case FileDef file:
+						newImpl = targetModule.UpdateRowId(new FileDefUser(file.Name, file.Flags, file.HashValue));
+						break;
+
+					case AssemblyRef asmRef:
+						newImpl = targetModule.UpdateRowId(new AssemblyRefUser(asmRef.Name, asmRef.Version, asmRef.PublicKeyOrToken, asmRef.Culture));
+						break;
+
+					case ExportedType declType:
+						// Should never happen since it should only reference an ExportedType that exists in ExportedTypes property
+						throw new InvalidOperationException();
+
+					default:
+						throw new InvalidOperationException();
+					}
+					toNewImpl.Add(origImpl, newImpl);
+				}
+				newEt.Implementation = newImpl;
+			}
 		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using System.Globalization;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
@@ -154,7 +154,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			if (!sortParameters && !sortLocals)
 				return variables;
 
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			if (debuggerSettings.GroupParametersAndLocalsTogether)
 				return variables.OrderBy(a => GetName(evalInfo, output, a.ValueNode, nameFormatterOptions, cultureInfo), StringComparer.OrdinalIgnoreCase).ToArray();
 			else {
@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
-		string GetName(DbgEvaluationInfo evalInfo, StringBuilderTextColorOutput output, DbgValueNode valueNode, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		string GetName(DbgEvaluationInfo evalInfo, DbgStringBuilderTextWriter output, DbgValueNode valueNode, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			output.Reset();
 			valueNode.FormatName(evalInfo, output, options, cultureInfo);
 			return output.ToString();

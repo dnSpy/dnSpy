@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,6 +39,10 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(newTab: false), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.None, Key.Enter);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(newTab: true), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.Control, Key.Enter);
 			cmds.Add(new RelayCommand(a => processesContent.Value.Operations.SetCurrentProcess(newTab: true), a => processesContent.Value.Operations.CanSetCurrentProcess), ModifierKeys.Shift, Key.Enter);
+
+			cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DEBUGGER_PROCESSES_CONTROL);
+			cmds.Add(new RelayCommand(a => processesContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
+			cmds.Add(new RelayCommand(a => processesContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
 	}
 

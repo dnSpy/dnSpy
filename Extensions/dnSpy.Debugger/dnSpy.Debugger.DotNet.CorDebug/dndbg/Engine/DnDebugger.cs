@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -202,7 +202,7 @@ namespace dndbg.Engine {
 
 			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
 			if (DebuggeeVersion.StartsWith("1."))
-				throw new NotImplementedException("Can't debug .NET 1.x assemblies. Add an App.config file to force using .NET 2.0 or later");
+				throw new NotImplementedException("Can't debug .NET 1.x assemblies. Add an app.config file to force using .NET 2.0 or later");
 
 			corDebug.Initialize();
 			corDebug.SetManagedHandler(new CorDebugManagedCallback(this));
@@ -258,15 +258,14 @@ namespace dndbg.Engine {
 
 		// Could be called from any thread
 		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) => debugMessageDispatcher.ExecuteAsync(() => {
-			DebugCallbackEventArgs e;
 			try {
-				e = func();
+				var e = func();
+				OnManagedCallbackInDebuggerThread(e);
 			}
 			catch {
 				// most likely debugger has already stopped
 				return;
 			}
-			OnManagedCallbackInDebuggerThread(e);
 		});
 
 		// Same as above method but called by CreateProcess, LoadModule, CreateAppDomain because
@@ -275,15 +274,12 @@ namespace dndbg.Engine {
 			using (var ev = new ManualResetEvent(false)) {
 				debugMessageDispatcher.ExecuteAsync(() => {
 					try {
-						DebugCallbackEventArgs e;
-						try {
-							e = func();
-						}
-						catch {
-							// most likely debugger has already stopped
-							return;
-						}
+						var e = func();
 						OnManagedCallbackInDebuggerThread(e);
+					}
+					catch {
+						// most likely debugger has already stopped
+						return;
 					}
 					finally {
 						ev.Set();
@@ -1101,7 +1097,7 @@ namespace dndbg.Engine {
 				throw new Exception("Could not create an ICorDebug instance");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, clrPath, debuggeeVersion, null, isAttach: false);
 			if (options.BreakProcessKind != BreakProcessKind.None)
-				new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
+				new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename, false);
 			dbg.CreateProcess(options);
 			return dbg;
 		}
@@ -1125,7 +1121,7 @@ namespace dndbg.Engine {
 					var dbg = new DnDebugger(cd, options.DebugOptions, options.DebugMessageDispatcher, coreclrFilename, null, version, isAttach: false);
 					(dbg.outputPipe, dbg.errorPipe) = pipeInfo;
 					if (options.BreakProcessKind != BreakProcessKind.None)
-						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename);
+						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename, clrType.HostFilename == null);
 					cd.DebugActiveProcess((int)pid, 0, out var comProcess);
 					var dnProcess = dbg.TryAdd(comProcess);
 					if (dnProcess != null)
@@ -1471,7 +1467,7 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		public DnILCodeBreakpoint CreateBreakpoint(in DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
+		public DnILCodeBreakpoint CreateBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnILCodeBreakpoint(module, token, offset, cond);
 			ilCodeBreakpointList.Add(module, bp);
@@ -1480,7 +1476,7 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		public DnNativeCodeBreakpoint CreateNativeBreakpoint(in DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
+		public DnNativeCodeBreakpoint CreateNativeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond) {
 			DebugVerifyThread();
 			var bp = new DnNativeCodeBreakpoint(module, token, offset, cond);
 			nativeCodeBreakpointList.Add(module, bp);

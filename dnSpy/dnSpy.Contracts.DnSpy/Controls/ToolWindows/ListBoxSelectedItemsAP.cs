@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace dnSpy.Contracts.Controls.ToolWindows {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public sealed class ListBoxSelectedItemsAP {
 		public static readonly DependencyProperty SelectedItemsVMProperty = DependencyProperty.RegisterAttached(
 			"SelectedItemsVM", typeof(IList), typeof(ListBoxSelectedItemsAP), new UIPropertyMetadata(null, SelectedItemsVMPropertyChangedCallback));
@@ -143,5 +143,5 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			}
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

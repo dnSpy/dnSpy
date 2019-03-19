@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,10 +18,10 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Text {
-	sealed class ClassifiedTextWriter : ITextColorWriter {
+	sealed class ClassifiedTextWriter : IDbgTextWriter {
 		readonly List<ClassifiedText> result;
 
 		public ClassifiedTextWriter() => result = new List<ClassifiedText>();
@@ -38,8 +38,7 @@ namespace dnSpy.Debugger.Text {
 
 		public void Clear() => result.Clear();
 
-		public void Write(object color, string text) => result.Add(new ClassifiedText(color, text));
-		void ITextColorWriter.Write(TextColor color, string text) => result.Add(new ClassifiedText(color.Box(), text));
+		public void Write(DbgTextColor color, string text) => result.Add(new ClassifiedText(color, text));
 
 		public bool Equals(ClassifiedTextCollection collection) {
 			if (collection.IsDefault)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -249,7 +249,7 @@ namespace dnSpy.Documents.Tabs {
 		static void SearchMsdn(string address) {
 			if (!string.IsNullOrEmpty(address)) {
 				try {
-					Process.Start(address);
+					Process.Start(new ProcessStartInfo(address) { UseShellExecute = true });
 				}
 				catch { }
 			}

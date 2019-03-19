@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,13 +22,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 	struct VisualBasicTypeFormatter {
-		readonly ITextColorWriter output;
+		readonly IDbgTextWriter output;
 		readonly TypeFormatterOptions options;
 		readonly CultureInfo cultureInfo;
 		const int MAX_RECURSION = 200;
@@ -55,19 +55,19 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		bool ShowIntrinsicTypeKeywords => (options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0;
 		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
 
-		public VisualBasicTypeFormatter(ITextColorWriter output, TypeFormatterOptions options, CultureInfo cultureInfo) {
+		public VisualBasicTypeFormatter(IDbgTextWriter output, TypeFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.options = options;
 			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
 			recursionCounter = 0;
 		}
 
-		void OutputWrite(string s, object color) => output.Write(color, s);
+		void OutputWrite(string s, DbgTextColor color) => output.Write(color, s);
 
-		void WriteSpace() => OutputWrite(" ", BoxedTextColor.Text);
+		void WriteSpace() => OutputWrite(" ", DbgTextColor.Text);
 
 		void WriteCommaSpace() {
-			OutputWrite(",", BoxedTextColor.Punctuation);
+			OutputWrite(",", DbgTextColor.Punctuation);
 			WriteSpace();
 		}
 
@@ -89,8 +89,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				return ToFormattedHexNumber(value.ToString("X8"));
 		}
 
-		void WriteUInt32(uint value) => OutputWrite(FormatUInt32(value), BoxedTextColor.Number);
-		void WriteInt32(int value) => OutputWrite(FormatInt32(value), BoxedTextColor.Number);
+		void WriteUInt32(uint value) => OutputWrite(FormatUInt32(value), DbgTextColor.Number);
+		void WriteInt32(int value) => OutputWrite(FormatInt32(value), DbgTextColor.Number);
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
 			"#Const", "#Else", "#ElseIf", "#End", "#If", "AddHandler", "AddressOf",
@@ -122,7 +122,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			return IdentifierEscaper.Escape(id);
 		}
 
-		void WriteIdentifier(string id, object color) => OutputWrite(GetFormattedIdentifier(id), color);
+		void WriteIdentifier(string id, DbgTextColor color) => OutputWrite(GetFormattedIdentifier(id), color);
 
 		public void Format(DmdType type, DbgDotNetValue value) {
 			if ((object)type == null)
@@ -150,75 +150,75 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 						var aryValue = tuple.value;
 						uint elementCount;
 						if (aryType.IsVariableBoundArray) {
-							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
+							OutputWrite(ARRAY_OPEN_PAREN, DbgTextColor.Punctuation);
 							int rank = Math.Min(aryType.GetArrayRank(), MAX_ARRAY_RANK);
 							if (rank <= 0)
-								OutputWrite("???", BoxedTextColor.Error);
+								OutputWrite("???", DbgTextColor.Error);
 							else {
 								if (aryValue == null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
 									dimensionInfos = null;
 								if (ShowArrayValueSizes && dimensionInfos != null && dimensionInfos.Length == rank) {
 									for (int i = 0; i < rank; i++) {
 										if (i > 0) {
-											OutputWrite(",", BoxedTextColor.Punctuation);
+											OutputWrite(",", DbgTextColor.Punctuation);
 											WriteSpace();
 										}
 										if (dimensionInfos[i].BaseIndex == 0)
 											WriteUInt32(dimensionInfos[i].Length);
 										else {
 											WriteInt32(dimensionInfos[i].BaseIndex);
-											OutputWrite("..", BoxedTextColor.Operator);
+											OutputWrite("..", DbgTextColor.Operator);
 											WriteInt32(dimensionInfos[i].BaseIndex + (int)dimensionInfos[i].Length - 1);
 										}
 									}
 								}
 								else {
 									if (rank == 1)
-										OutputWrite("*", BoxedTextColor.Operator);
-									OutputWrite(TypeFormatterUtils.GetArrayCommas(rank), BoxedTextColor.Punctuation);
+										OutputWrite("*", DbgTextColor.Operator);
+									OutputWrite(TypeFormatterUtils.GetArrayCommas(rank), DbgTextColor.Punctuation);
 								}
 							}
-							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
+							OutputWrite(ARRAY_CLOSE_PAREN, DbgTextColor.Punctuation);
 						}
 						else {
 							Debug.Assert(aryType.IsSZArray);
-							OutputWrite(ARRAY_OPEN_PAREN, BoxedTextColor.Punctuation);
+							OutputWrite(ARRAY_OPEN_PAREN, DbgTextColor.Punctuation);
 							if (ShowArrayValueSizes && aryValue != null && !aryValue.IsNull) {
 								if (aryValue.GetArrayCount(out elementCount))
 									WriteUInt32(elementCount);
 							}
-							OutputWrite(ARRAY_CLOSE_PAREN, BoxedTextColor.Punctuation);
+							OutputWrite(ARRAY_CLOSE_PAREN, DbgTextColor.Punctuation);
 						}
 					}
 					break;
 
 				case DmdTypeSignatureKind.Pointer:
 					Format(type.GetElementType(), null);
-					OutputWrite("*", BoxedTextColor.Operator);
+					OutputWrite("*", DbgTextColor.Operator);
 					break;
 
 				case DmdTypeSignatureKind.ByRef:
-					OutputWrite(BYREF_KEYWORD, BoxedTextColor.Keyword);
+					OutputWrite(BYREF_KEYWORD, DbgTextColor.Keyword);
 					WriteSpace();
 					Format(type.GetElementType(), disposeThisValue = value?.LoadIndirect().Value);
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:
-					WriteIdentifier(type.MetadataName, BoxedTextColor.TypeGenericParameter);
+					WriteIdentifier(type.MetadataName, DbgTextColor.TypeGenericParameter);
 					break;
 
 				case DmdTypeSignatureKind.MethodGenericParameter:
-					WriteIdentifier(type.MetadataName, BoxedTextColor.MethodGenericParameter);
+					WriteIdentifier(type.MetadataName, DbgTextColor.MethodGenericParameter);
 					break;
 
 				case DmdTypeSignatureKind.Type:
 				case DmdTypeSignatureKind.GenericInstance:
 					if (type.IsNullable) {
 						Format(type.GetNullableElementType(), null);
-						OutputWrite("?", BoxedTextColor.Operator);
+						OutputWrite("?", DbgTextColor.Operator);
 					}
 					else if (TypeFormatterUtils.IsTupleType(type)) {
-						OutputWrite(TUPLE_OPEN_PAREN, BoxedTextColor.Punctuation);
+						OutputWrite(TUPLE_OPEN_PAREN, DbgTextColor.Punctuation);
 						var tupleType = type;
 						int tupleIndex = 0;
 						for (;;) {
@@ -228,7 +228,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 							else
 								break;
 						}
-						OutputWrite(TUPLE_CLOSE_PAREN, BoxedTextColor.Punctuation);
+						OutputWrite(TUPLE_CLOSE_PAREN, DbgTextColor.Punctuation);
 					}
 					else {
 						var genericArgs = type.GetGenericArguments();
@@ -255,7 +255,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 								WriteTypeName(typesList[i], i == 0 ? keywordType : KeywordType.NoKeyword);
 								WriteGenericArguments(typesList[i], genericArgs, ref genericArgsIndex);
 								if (i != 0)
-									OutputWrite(".", BoxedTextColor.Operator);
+									OutputWrite(".", DbgTextColor.Operator);
 							}
 						}
 					}
@@ -265,7 +265,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					var sig = type.GetFunctionPointerMethodSignature();
 					Format(sig.ReturnType, null);
 					WriteSpace();
-					OutputWrite(METHOD_OPEN_PAREN, BoxedTextColor.Punctuation);
+					OutputWrite(METHOD_OPEN_PAREN, DbgTextColor.Punctuation);
 					var types = sig.GetParameterTypes();
 					for (int i = 0; i < types.Count; i++) {
 						if (i > 0)
@@ -276,13 +276,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					if (types.Count > 0) {
 						if (sig.GetParameterTypes().Count > 0)
 							WriteCommaSpace();
-						OutputWrite("...", BoxedTextColor.Punctuation);
+						OutputWrite("...", DbgTextColor.Punctuation);
 						for (int i = 0; i < types.Count; i++) {
 							WriteCommaSpace();
 							Format(types[i], null);
 						}
 					}
-					OutputWrite(METHOD_CLOSE_PAREN, BoxedTextColor.Punctuation);
+					OutputWrite(METHOD_CLOSE_PAREN, DbgTextColor.Punctuation);
 					break;
 
 				default:
@@ -304,8 +304,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		void WriteGenericArguments(DmdType type, IList<DmdType> genericArgs, ref int genericArgsIndex) {
 			var gas = type.GetGenericArguments();
 			if (genericArgsIndex < genericArgs.Count && genericArgsIndex < gas.Count) {
-				OutputWrite(GENERICS_OPEN_PAREN, BoxedTextColor.Punctuation);
-				OutputWrite(GENERICS_OF_KEYWORD, BoxedTextColor.Keyword);
+				OutputWrite(GENERICS_OPEN_PAREN, DbgTextColor.Punctuation);
+				OutputWrite(GENERICS_OF_KEYWORD, DbgTextColor.Keyword);
 				WriteSpace();
 				int startIndex = genericArgsIndex;
 				for (int j = startIndex; j < genericArgs.Count && j < gas.Count; j++, genericArgsIndex++) {
@@ -313,7 +313,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 						WriteCommaSpace();
 					Format(genericArgs[j], null);
 				}
-				OutputWrite(GENERICS_CLOSE_PAREN, BoxedTextColor.Punctuation);
+				OutputWrite(GENERICS_CLOSE_PAREN, DbgTextColor.Punctuation);
 			}
 		}
 
@@ -321,7 +321,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			var args = type.GetGenericArguments();
 			Debug.Assert(0 < args.Count && args.Count <= TypeFormatterUtils.MAX_TUPLE_ARITY);
 			if (args.Count > TypeFormatterUtils.MAX_TUPLE_ARITY) {
-				OutputWrite("???", BoxedTextColor.Error);
+				OutputWrite("???", DbgTextColor.Error);
 				return null;
 			}
 			for (int i = 0; i < args.Count && i < TypeFormatterUtils.MAX_TUPLE_ARITY - 1; i++) {
@@ -330,9 +330,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				//TODO: Write tuple name used in source
 				string fieldName = null;
 				if (fieldName != null) {
-					OutputWrite(fieldName, BoxedTextColor.InstanceField);
+					OutputWrite(fieldName, DbgTextColor.InstanceField);
 					WriteSpace();
-					OutputWrite("As", BoxedTextColor.Keyword);
+					OutputWrite("As", DbgTextColor.Keyword);
 					WriteSpace();
 				}
 				Format(args[i], null);
@@ -350,30 +350,30 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			if (string.IsNullOrEmpty(ns))
 				return;
 			foreach (var nsPart in ns.Split(namespaceSeparators)) {
-				WriteIdentifier(nsPart, BoxedTextColor.Namespace);
-				OutputWrite(".", BoxedTextColor.Operator);
+				WriteIdentifier(nsPart, DbgTextColor.Namespace);
+				OutputWrite(".", DbgTextColor.Operator);
 			}
 		}
 		static readonly char[] namespaceSeparators = new[] { '.' };
 
 		void WriteTypeName(DmdType type, KeywordType keywordType) {
 			switch (keywordType) {
-			case KeywordType.Boolean:	OutputWrite("Boolean", BoxedTextColor.Keyword); return;
-			case KeywordType.Byte:		OutputWrite("Byte", BoxedTextColor.Keyword); return;
-			case KeywordType.Char:		OutputWrite("Char", BoxedTextColor.Keyword); return;
-			case KeywordType.Date:		OutputWrite("Date", BoxedTextColor.Keyword); return;
-			case KeywordType.Decimal:	OutputWrite("Decimal", BoxedTextColor.Keyword); return;
-			case KeywordType.Double:	OutputWrite("Double", BoxedTextColor.Keyword); return;
-			case KeywordType.Integer:	OutputWrite("Integer", BoxedTextColor.Keyword); return;
-			case KeywordType.Long:		OutputWrite("Long", BoxedTextColor.Keyword); return;
-			case KeywordType.Object:	OutputWrite("Object", BoxedTextColor.Keyword); return;
-			case KeywordType.SByte:		OutputWrite("SByte", BoxedTextColor.Keyword); return;
-			case KeywordType.Short:		OutputWrite("Short", BoxedTextColor.Keyword); return;
-			case KeywordType.Single:	OutputWrite("Single", BoxedTextColor.Keyword); return;
-			case KeywordType.String:	OutputWrite("String", BoxedTextColor.Keyword); return;
-			case KeywordType.UInteger:	OutputWrite("UInteger", BoxedTextColor.Keyword); return;
-			case KeywordType.ULong:		OutputWrite("ULong", BoxedTextColor.Keyword); return;
-			case KeywordType.UShort:	OutputWrite("UShort", BoxedTextColor.Keyword); return;
+			case KeywordType.Boolean:	OutputWrite("Boolean", DbgTextColor.Keyword); return;
+			case KeywordType.Byte:		OutputWrite("Byte", DbgTextColor.Keyword); return;
+			case KeywordType.Char:		OutputWrite("Char", DbgTextColor.Keyword); return;
+			case KeywordType.Date:		OutputWrite("Date", DbgTextColor.Keyword); return;
+			case KeywordType.Decimal:	OutputWrite("Decimal", DbgTextColor.Keyword); return;
+			case KeywordType.Double:	OutputWrite("Double", DbgTextColor.Keyword); return;
+			case KeywordType.Integer:	OutputWrite("Integer", DbgTextColor.Keyword); return;
+			case KeywordType.Long:		OutputWrite("Long", DbgTextColor.Keyword); return;
+			case KeywordType.Object:	OutputWrite("Object", DbgTextColor.Keyword); return;
+			case KeywordType.SByte:		OutputWrite("SByte", DbgTextColor.Keyword); return;
+			case KeywordType.Short:		OutputWrite("Short", DbgTextColor.Keyword); return;
+			case KeywordType.Single:	OutputWrite("Single", DbgTextColor.Keyword); return;
+			case KeywordType.String:	OutputWrite("String", DbgTextColor.Keyword); return;
+			case KeywordType.UInteger:	OutputWrite("UInteger", DbgTextColor.Keyword); return;
+			case KeywordType.ULong:		OutputWrite("ULong", DbgTextColor.Keyword); return;
+			case KeywordType.UShort:	OutputWrite("UShort", DbgTextColor.Keyword); return;
 
 			case KeywordType.NoKeyword:
 				break;

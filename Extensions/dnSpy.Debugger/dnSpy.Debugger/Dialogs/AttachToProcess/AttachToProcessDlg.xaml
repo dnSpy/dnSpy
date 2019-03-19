@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -66,6 +66,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding}"
             SelectionMode="Extended"
             ItemsSource="{Binding AllItems}">
             <ListView.Resources>
@@ -73,50 +74,50 @@
                 <local:ProgramColumnConverter x:Key="programColumnConverter" />
             </ListView.Resources>
             <ListView.View>
-                <GridView AllowsColumnReorder="False">
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.Process}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ProcessObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessID}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessID}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessID}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding IdObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessTitle}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessTitle}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessTitle}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TitleObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessType}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessType}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessType}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding RuntimeNameObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessArchitecture}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ArchitectureObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessFilename}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessFilename}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessFilename}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessCommandLine}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessCommandLine}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessCommandLine}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding CommandLineObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />

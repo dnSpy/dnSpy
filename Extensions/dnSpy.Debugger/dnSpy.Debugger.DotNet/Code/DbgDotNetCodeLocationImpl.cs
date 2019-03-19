@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
 		readonly DbgDotNetCodeLocationFactoryImpl factory;
 
-		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, in ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) {
+		public DbgDotNetCodeLocationImpl(DbgDotNetCodeLocationFactoryImpl factory, ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) {
 			this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 			Module = module;
 			Token = token;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -414,7 +414,7 @@ namespace dnSpy.Settings.Dialog {
 			readonly Guid parentGuid;
 			readonly ImageReference icon;
 
-			public AppSettingsPageContainer(string title, double order, Guid guid, Guid parentGuid, in ImageReference icon) {
+			public AppSettingsPageContainer(string title, double order, Guid guid, Guid parentGuid, ImageReference icon) {
 				this.title = title;
 				this.order = order;
 				this.guid = guid;

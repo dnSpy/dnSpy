@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="module">Module</param>
 		/// <param name="token">Token of method</param>
 		/// <param name="offset">IL offset in method body, or one of <see cref="PROLOG"/>, <see cref="EPILOG"/></param>
-		public DotNetMethodBodyReference(in ModuleId module, uint token, uint offset) {
+		public DotNetMethodBodyReference(ModuleId module, uint token, uint offset) {
 			Module = module;
 			Token = token;
 			Offset = offset;
@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <param name="token">Token</param>
-		public DotNetTokenReference(in ModuleId module, uint token) {
+		public DotNetTokenReference(ModuleId module, uint token) {
 			Module = module;
 			Token = token;
 		}

@@ -195,10 +195,10 @@ Error: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use dnSpy-x86.exe to debug 32-bit applications.</value>
+    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use dnSpy.exe to debug 64-bit applications.</value>
+    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;no exception message&gt;"</value>
@@ -273,5 +273,8 @@ Error: {0}</value>
 
 HR: 0x{0:X8}
 Error: 0x{1:X8}</value>
+  </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>Use host executable</value>
   </data>
 </root>

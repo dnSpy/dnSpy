@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -64,11 +64,13 @@ namespace dnSpy.Roslyn.Compiler {
 		protected abstract string TextViewRole { get; }
 		protected abstract string ContentType { get; }
 		protected abstract string LanguageName { get; }
-		protected abstract CompilationOptions CompilationOptions { get; }
 		protected abstract ParseOptions ParseOptions { get; }
 		public abstract string FileExtension { get; }
 		protected abstract string AppearanceCategory { get; }
 
+		protected abstract bool SupportsNetModule { get; }
+
+		readonly CompilationKind kind;
 		readonly ICodeEditorProvider codeEditorProvider;
 		readonly List<RoslynCodeDocument> documents;
 		readonly IRoslynDocumentationProviderFactory docFactory;
@@ -79,6 +81,7 @@ namespace dnSpy.Roslyn.Compiler {
 		AdhocWorkspace workspace;
 
 		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+			this.kind = kind;
 			this.codeEditorProvider = codeEditorProvider ?? throw new ArgumentNullException(nameof(codeEditorProvider));
 			this.docFactory = docFactory ?? throw new ArgumentNullException(nameof(docFactory));
 			this.roslynDocumentChangedService = roslynDocumentChangedService ?? throw new ArgumentNullException(nameof(roslynDocumentChangedService));
@@ -87,6 +90,35 @@ namespace dnSpy.Roslyn.Compiler {
 			projectId = ProjectId.CreateNewId();
 			loadedDocuments = new HashSet<DocumentId>();
 		}
+
+		OutputKind GetDefaultOutputKind(CompilationKind kind) {
+			if (!SupportsNetModule)
+				return OutputKind.DynamicallyLinkedLibrary;
+
+			switch (kind) {
+			case CompilationKind.EditAssembly:
+				// We can't use netmodule when editing assembly attributes since the compiler won't add an assembly for obvious reasons
+				return OutputKind.DynamicallyLinkedLibrary;
+
+			case CompilationKind.EditMethod:
+			case CompilationKind.AddClass:
+			case CompilationKind.EditClass:
+			case CompilationKind.AddMembers:
+				// Use a netmodule to prevent the compiler from adding assembly attributes. Sometimes the compiler must
+				// add assembly attributes but the attributes have missing members and the compiler can't compile the code.
+				//	error CS0656: Missing compiler required member 'System.Runtime.CompilerServices.CompilationRelaxationsAttribute..ctor'
+				//	error CS0656: Missing compiler required member 'System.Runtime.CompilerServices.RuntimeCompatibilityAttribute..ctor'
+				// If unsafe code is enabled, it will try to add even more attributes.
+				return OutputKind.NetModule;
+
+			default:
+				Debug.Fail($"Unknown {nameof(CompilationKind)}: {kind}");
+				goto case CompilationKind.EditMethod;
+			}
+		}
+
+		protected abstract CompilationOptions CreateCompilationOptions(OutputKind outputKind);
+		protected abstract CompilationOptions CreateCompilationOptionsNoAttributes(CompilationOptions compilationOptions);
 
 		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
@@ -97,8 +129,7 @@ namespace dnSpy.Roslyn.Compiler {
 			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
 			var refs = projectInfo.AssemblyReferences.Select(a => a.CreateMetadataReference(docFactory)).ToArray();
 
-			var compilationOptions = CompilationOptions
-				.WithOptimizationLevel(OptimizationLevel.Release)
+			var compilationOptions = CreateCompilationOptions(GetDefaultOutputKind(kind))
 				.WithPlatform(GetPlatform(projectInfo.Platform))
 				.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
 			if (projectInfo.PublicKey != null) {
@@ -200,6 +231,26 @@ namespace dnSpy.Roslyn.Compiler {
 			var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
 			if (compilation == null)
 				throw new InvalidOperationException("Project returned a null Compilation");
+
+			var result = Compile(compilation, cancellationToken);
+			if (result.Success)
+				return result;
+
+			// We allow unsafe code but the compiler tries to add extra attributes to the assembly. Sometimes
+			// the corlib doesn't have the required members and the compiler fails to compile the code.
+			// Let's try again but without unsafe code.
+			var noAttrOptions = CreateCompilationOptionsNoAttributes(compilation.Options);
+			if (noAttrOptions != compilation.Options) {
+				var compilation2 = compilation.WithOptions(noAttrOptions);
+				var result2 = Compile(compilation2, cancellationToken);
+				if (result2.Success)
+					return result2;
+			}
+
+			return result;
+		}
+
+		CompilationResult Compile(Compilation compilation, CancellationToken cancellationToken) {
 			var peStream = new MemoryStream();
 			MemoryStream pdbStream = null;
 			var emitOpts = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);

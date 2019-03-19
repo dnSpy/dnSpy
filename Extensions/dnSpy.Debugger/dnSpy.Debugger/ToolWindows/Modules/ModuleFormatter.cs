@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,8 @@
 using System.ComponentModel.Composition;
 using System.Globalization;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 
@@ -42,62 +44,62 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		internal static ModuleFormatter Create_DONT_USE(bool useHex) => new ModuleFormatter(useHex);
 
-		void WriteFilename(ITextColorWriter output, DbgModule module, string filename) {
+		void WriteFilename(IDbgTextWriter output, DbgModule module, string filename) {
 			if (module.IsDynamic || module.IsInMemory)
 				filename = FormatterUtils.FilterName(filename, 300);
-			output.WriteFilename(filename);
+			new DbgTextColorWriter(output).WriteFilename(filename);
 		}
 
-		public void WriteName(ITextColorWriter output, DbgModule module) => WriteFilename(output, module, module.Name);
-		public void WritePath(ITextColorWriter output, DbgModule module) => WriteFilename(output, module, module.Filename);
-		public void WriteOptimized(ITextColorWriter output, DbgModule module) => output.WriteYesNoOrNA(module.IsOptimized);
-		public void WriteDynamic(ITextColorWriter output, DbgModule module) => output.WriteYesNo(module.IsDynamic);
-		public void WriteInMemory(ITextColorWriter output, DbgModule module) => output.WriteYesNo(module.IsInMemory);
-		public void WriteProcess(ITextColorWriter output, DbgModule module) => output.Write(module.Process, useHex);
-		public void WriteAppDomain(ITextColorWriter output, DbgModule module) => output.Write(module.AppDomain);
+		public void WriteName(IDbgTextWriter output, DbgModule module) => WriteFilename(output, module, module.Name);
+		public void WritePath(IDbgTextWriter output, DbgModule module) => WriteFilename(output, module, module.Filename);
+		public void WriteOptimized(IDbgTextWriter output, DbgModule module) => output.WriteYesNoOrNA(module.IsOptimized);
+		public void WriteDynamic(IDbgTextWriter output, DbgModule module) => output.WriteYesNo(module.IsDynamic);
+		public void WriteInMemory(IDbgTextWriter output, DbgModule module) => output.WriteYesNo(module.IsInMemory);
+		public void WriteProcess(IDbgTextWriter output, DbgModule module) => output.Write(module.Process, useHex);
+		public void WriteAppDomain(IDbgTextWriter output, DbgModule module) => output.Write(module.AppDomain);
 
 		// Order is always in decimal (same as VS)
-		public void WriteOrder(ITextColorWriter output, DbgModule module) => output.Write(BoxedTextColor.Number, module.Order.ToString());
+		public void WriteOrder(IDbgTextWriter output, DbgModule module) => output.Write(DbgTextColor.Number, module.Order.ToString());
 
-		public void WriteVersion(ITextColorWriter output, DbgModule module) {
+		public void WriteVersion(IDbgTextWriter output, DbgModule module) {
 			var versionString = module.Version;
 			if (versionString != null) {
 				const int MAX_VER_LEN = 100;
 				if (versionString.Length <= MAX_VER_LEN)
-					output.Write(BoxedTextColor.Text, versionString);
+					output.Write(DbgTextColor.Text, versionString);
 				else
-					output.Write(BoxedTextColor.Text, versionString.Substring(0, MAX_VER_LEN) + "[...]");
+					output.Write(DbgTextColor.Text, versionString.Substring(0, MAX_VER_LEN) + "[...]");
 			}
 		}
 
-		public void WriteTimestamp(ITextColorWriter output, DbgModule module) {
+		public void WriteTimestamp(IDbgTextWriter output, DbgModule module) {
 			var date = module.Timestamp;
 			if (date != null) {
 				var dateString = date.Value.ToLocalTime().ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(BoxedTextColor.Text, dateString);
+				output.Write(DbgTextColor.Text, dateString);
 			}
 			else
-				output.Write(BoxedTextColor.Error, dnSpy_Debugger_Resources.UnknownValue);
+				output.Write(DbgTextColor.Error, dnSpy_Debugger_Resources.UnknownValue);
 		}
 
-		public void WriteAddress(ITextColorWriter output, DbgModule module) {
+		public void WriteAddress(IDbgTextWriter output, DbgModule module) {
 			ulong addr = module.Address;
 			ulong endAddr = addr + module.Size;
 			if (!module.HasAddress)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Module_NoAddress);
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.Module_NoAddress);
 			else {
 				WriteAddress(output, module, addr);
-				output.Write(BoxedTextColor.Operator, "-");
+				output.Write(DbgTextColor.Operator, "-");
 				WriteAddress(output, module, endAddr);
 			}
 		}
 
-		void WriteAddress(ITextColorWriter output, DbgModule module, ulong addr) {
+		void WriteAddress(IDbgTextWriter output, DbgModule module, ulong addr) {
 			// Addresses are always in hex
 			if (module.Process.Bitness == 32)
-				output.Write(BoxedTextColor.Number, addr.ToString("X8"));
+				output.Write(DbgTextColor.Number, addr.ToString("X8"));
 			else
-				output.Write(BoxedTextColor.Number, addr.ToString("X16"));
+				output.Write(DbgTextColor.Number, addr.ToString("X16"));
 		}
 	}
 }

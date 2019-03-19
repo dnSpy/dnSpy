@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.CallStack {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			this.dbgManager = dbgManager;
 			dbgManager.CurrentThreadChanged += DbgManager_CurrentThreadChanged;
-			dbgManager.Message += DbgManager_Message;
+			dbgManager.MessageSetIPComplete += DbgManager_MessageSetIPComplete;
 		}
 
 		// Note that dbgManager can be null if called before debugging has started
@@ -94,12 +94,9 @@ namespace dnSpy.Debugger.CallStack {
 			FramesChanged?.Invoke(this, new FramesChangedEventArgs(framesChanged: false, activeFrameIndexChanged: true));
 		}
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			if (e.Kind == DbgMessageKind.SetIPComplete) {
-				var ep = (DbgMessageSetIPCompleteEventArgs)e;
-				if (ep.FramesInvalidated && dbgManager.CurrentThread.Current == ep.Thread)
-					RefreshAllFrames_DbgThread();
-			}
+		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
+			if (e.FramesInvalidated && dbgManager.CurrentThread.Current == e.Thread)
+				RefreshAllFrames_DbgThread();
 		}
 
 		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) {

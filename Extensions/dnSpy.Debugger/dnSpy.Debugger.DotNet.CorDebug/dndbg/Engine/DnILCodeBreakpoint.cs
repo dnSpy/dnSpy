@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 	sealed class DnILCodeBreakpoint : DnCodeBreakpoint {
 		internal Func<ILCodeBreakpointConditionContext, bool> Condition { get; }
 
-		internal DnILCodeBreakpoint(in DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)
+		internal DnILCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)
 			: base(module, token, offset) => Condition = cond ?? defaultCond;
 		static readonly Func<ILCodeBreakpointConditionContext, bool> defaultCond = a => true;
 

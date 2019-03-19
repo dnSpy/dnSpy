@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				versionNumber = point.Position.Snapshot.Version.VersionNumber;
 			}
 
-			public bool IsSamePoint(in MouseReferenceInfo other) =>
+			public bool IsSamePoint(MouseReferenceInfo other) =>
 				other.virtualSpaces == virtualSpaces &&
 				other.position == position &&
 				other.versionNumber == versionNumber;
@@ -102,7 +102,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			oldModifierKeys = Keyboard.Modifiers;
 		}
 
-		bool CanClick(MouseEventArgs e, in MouseReferenceInfo? newRef) {
+		bool CanClick(MouseEventArgs e, MouseReferenceInfo? newRef) {
 			if (newRef == null || !newRef.Value.IsClickable)
 				return false;
 			if (clickedRef == null)

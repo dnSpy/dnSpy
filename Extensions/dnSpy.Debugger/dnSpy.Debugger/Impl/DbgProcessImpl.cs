@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,11 +24,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Shared;
 using dnSpy.Debugger.Utilities;
 using Microsoft.Win32.SafeHandles;
 
@@ -37,7 +38,8 @@ namespace dnSpy.Debugger.Impl {
 		public override DbgManager DbgManager => owner;
 		public override int Id { get; }
 		public override int Bitness { get; }
-		public override DbgMachine Machine { get; }
+		public override DbgArchitecture Architecture { get; }
+		public override DbgOperatingSystem OperatingSystem { get; }
 		public override string Filename { get; }
 		public override string Name { get; }
 
@@ -146,13 +148,15 @@ namespace dnSpy.Debugger.Impl {
 				NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
 			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
 			if (hProcess.IsInvalid)
-				throw new InvalidOperationException($"Couldn't open process {pid}");
+				throw new InvalidOperationException($"Couldn't open process {pid}, error: 0x{Marshal.GetLastWin32Error():X8}");
 
 			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
-			Machine = GetMachine(Bitness);
+			Architecture = GetArchitecture(Bitness);
+			OperatingSystem = GetOperatingSystem();
 			var info = GetProcessName(pid);
 			Filename = info.filename ?? string.Empty;
 			Name = info.name ?? string.Empty;
+			debugging = CalculateDebugging_NoLock();
 
 			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
@@ -253,13 +257,40 @@ namespace dnSpy.Debugger.Impl {
 			return (filename, name);
 		}
 
-		static DbgMachine GetMachine(int bitness) {
-			// We only allow debugging on the same computer and this is x86 or x64
-			switch (bitness) {
-			case 32: return DbgMachine.X86;
-			case 64: return DbgMachine.X64;
-			default: throw new ArgumentOutOfRangeException(nameof(bitness));
+		static DbgArchitecture GetArchitecture(int bitness) {
+			// We only allow debugging on the same computer
+			switch (RuntimeInformation.ProcessArchitecture) {
+			case System.Runtime.InteropServices.Architecture.X86:
+			case System.Runtime.InteropServices.Architecture.X64:
+				if (bitness == 32)
+					return DbgArchitecture.X86;
+				if (bitness == 64)
+					return DbgArchitecture.X64;
+				throw new ArgumentOutOfRangeException(nameof(bitness));
+
+			case System.Runtime.InteropServices.Architecture.Arm:
+			case System.Runtime.InteropServices.Architecture.Arm64:
+				if (bitness == 32)
+					return DbgArchitecture.Arm;
+				if (bitness == 64)
+					return DbgArchitecture.Arm64;
+				throw new ArgumentOutOfRangeException(nameof(bitness));
+
+			default:
+				throw new InvalidOperationException($"Unknown CPU arch: {RuntimeInformation.ProcessArchitecture}");
 			}
+		}
+
+		static DbgOperatingSystem GetOperatingSystem() {
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return DbgOperatingSystem.Windows;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				return DbgOperatingSystem.MacOS;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				return DbgOperatingSystem.Linux;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
+				return DbgOperatingSystem.FreeBSD;
+			throw new InvalidOperationException("Unknown operating system");
 		}
 
 		public unsafe override void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) {
@@ -278,6 +309,10 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void ReadMemory(ulong address, void* destination, int size) {
+			if (destination == null && size != 0)
+				throw new ArgumentNullException(nameof(destination));
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
 			var dest = (byte*)destination;
 			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue)) {
 				Clear(dest, size);

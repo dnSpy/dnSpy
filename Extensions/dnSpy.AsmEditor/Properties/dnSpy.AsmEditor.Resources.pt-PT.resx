@@ -1963,6 +1963,9 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   <data name="ShortCutKeyP" xml:space="preserve">
     <value>P</value>
   </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="ShortCutKeyS" xml:space="preserve">
     <value>S</value>
   </data>
@@ -2529,5 +2532,14 @@ A maioria das opções serão re-inicializados quando essa caixa de seleção é
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
     <value>Run NGEN.exe if this assembly is installed in the GAC</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compiler</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>_Replace with NOPs</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>_Replace with NOPs</value>
   </data>
 </root>

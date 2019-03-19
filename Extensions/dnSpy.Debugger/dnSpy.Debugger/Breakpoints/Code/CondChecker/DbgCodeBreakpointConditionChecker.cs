@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,12 +26,12 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointConditionChecker {
-		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointCondition condition);
+		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition);
 	}
 
 	[Export(typeof(DbgCodeBreakpointConditionChecker))]
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				readonly DbgRawAddressValue address;
 				readonly string valueType;
 
-				public AddressSavedValue(in DbgRawAddressValue address, string valueType) {
+				public AddressSavedValue(DbgRawAddressValue address, string valueType) {
 					this.address = address;
 					this.valueType = valueType;
 				}
@@ -189,7 +189,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointCondition condition) {
+		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition) {
 			var expression = condition.Condition;
 			Debug.Assert(expression != null);
 			if (expression == null)
@@ -264,12 +264,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			const DbgValueFormatterTypeOptions options = DbgValueFormatterTypeOptions.IntrinsicTypeKeywords | DbgValueFormatterTypeOptions.Namespaces | DbgValueFormatterTypeOptions.Tokens;
 			const CultureInfo cultureInfo = null;
 			var sb = ObjectCache.AllocStringBuilder();
-			var output = new StringBuilderTextColorOutput(sb);
+			var output = new DbgStringBuilderTextWriter(sb);
 			language.Formatter.FormatType(evalInfo, output, value, options, cultureInfo);
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		BreakpointState GetState(DbgBoundCodeBreakpoint boundBreakpoint, DbgLanguage language, DbgStackFrame frame, in DbgCodeBreakpointCondition condition, CancellationToken cancellationToken) {
+		BreakpointState GetState(DbgBoundCodeBreakpoint boundBreakpoint, DbgLanguage language, DbgStackFrame frame, DbgCodeBreakpointCondition condition, CancellationToken cancellationToken) {
 			var state = boundBreakpoint.GetOrCreateData<BreakpointState>();
 			if (state.Language != language || state.Condition != condition) {
 				state.Language = language;

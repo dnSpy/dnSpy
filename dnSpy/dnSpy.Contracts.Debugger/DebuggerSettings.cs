@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -77,6 +77,16 @@ namespace dnSpy.Contracts.Debugger {
 		/// true to prevent detection of managed debuggers
 		/// </summary>
 		public abstract bool PreventManagedDebuggerDetection { get; set; }
+
+		/// <summary>
+		/// true to patch IsDebuggerPresent() so it can't be used to detect native debuggers
+		/// </summary>
+		public abstract bool AntiIsDebuggerPresent { get; set; }
+
+		/// <summary>
+		/// true to patch CheckRemoteDebuggerPresent() so it can't be used to detect native debuggers
+		/// </summary>
+		public abstract bool AntiCheckRemoteDebuggerPresent { get; set; }
 
 		/// <summary>
 		/// true to ignore break instructions and <see cref="System.Diagnostics.Debugger.Break"/> method calls
@@ -191,5 +201,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Step over properties and operators
 		/// </summary>
 		public abstract bool StepOverPropertiesAndOperators { get; set; }
+
+		/// <summary>
+		/// Ignore unhandled exceptions
+		/// </summary>
+		public abstract bool IgnoreUnhandledExceptions { get; set; }
 	}
 }

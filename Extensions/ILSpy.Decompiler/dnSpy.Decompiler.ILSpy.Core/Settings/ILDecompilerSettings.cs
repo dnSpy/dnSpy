@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,6 +75,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 						() => ilSettings.ShowPdbInfo, a => ilSettings.ShowPdbInfo = a) {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowPdbInfo,
 				Name = DecompilerOptionConstants.ShowPdbInfo_NAME,
+			};
+			yield return new DecompilerOption<int>(DecompilerOptionConstants.MaxStringLength_GUID,
+						() => ilSettings.MaxStringLength, a => ilSettings.MaxStringLength = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxStringLength,
+				Name = DecompilerOptionConstants.MaxStringLength_NAME,
 			};
 		}
 

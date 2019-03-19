@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -110,10 +110,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 		BulkObservableCollection<BookmarkVM> AllItems => bookmarksVM.AllItems;
 		ObservableCollection<BookmarkVM> SelectedItems => bookmarksVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<BookmarkVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
-		//TODO: This should be view order
-		IEnumerable<BookmarkVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
+		IEnumerable<BookmarkVM> SortedSelectedItems => bookmarksVM.Sort(SelectedItems);
+		IEnumerable<BookmarkVM> SortedAllItems => bookmarksVM.Sort(AllItems);
 
 		[ImportingConstructor]
 		BookmarksOperationsImpl(IBookmarksVM bookmarksVM, BookmarkDisplaySettings bookmarkDisplaySettings, Lazy<BookmarksService> bookmarksService, Lazy<BookmarkLocationSerializerService> bookmarkLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<BookmarkSerializerService> bookmarkSerializerService, Lazy<TextViewBookmarkService> textViewBookmarkService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<BookmarkNavigator> bookmarkNavigator) {
@@ -135,13 +133,38 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			var output = new StringBuilderTextColorOutput();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteName(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteLabels(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteLocation(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteModule(output, vm);
+				bool needTab = false;
+				foreach (var column in bookmarksVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+					if (column.Name == string.Empty)
+						continue;
+
+					if (needTab)
+						output.Write(BoxedTextColor.Text, "\t");
+					switch (column.Id) {
+					case BookmarksWindowColumnIds.Name:
+						formatter.WriteName(output, vm);
+						break;
+
+					case BookmarksWindowColumnIds.Labels:
+						formatter.WriteLabels(output, vm);
+						break;
+
+					case BookmarksWindowColumnIds.Location:
+						formatter.WriteLocation(output, vm);
+						break;
+
+					case BookmarksWindowColumnIds.Module:
+						formatter.WriteModule(output, vm);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();

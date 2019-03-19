@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ using dnSpy.Hex.MEF;
 
 namespace dnSpy.Hex.Tagging {
 	[Export(typeof(HexTaggerFactory))]
-	public sealed class HexTaggerFactory {
+	sealed class HexTaggerFactory {
 		readonly Lazy<HexTaggerProvider, INamedTaggerMetadata>[] hexBufferTaggerProviders;
 		readonly Lazy<HexViewTaggerProvider, IViewTaggerMetadata>[] hexViewTaggerProviders;
 

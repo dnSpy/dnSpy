@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Editor {
 	}
 
 	sealed class CurrentLineHighlighter {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.CurrentLineHighlighter)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.GlyphTextMarker)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Outlining)]
 		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		readonly WpfHexView wpfHexView;
 		readonly VSTC.IEditorFormatMap editorFormatMap;

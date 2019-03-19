@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 using System.Collections.ObjectModel;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
@@ -84,22 +84,22 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			}
 		}
 
-		public static object GetColor(DmdType type, bool canBeModule) {
+		public static DbgTextColor GetColor(DmdType type, bool canBeModule) {
 			if (canBeModule && (object)type.DeclaringType == null && type.IsSealed && type.IsAbstract)
-				return BoxedTextColor.Module;
+				return DbgTextColor.Module;
 			if (type.IsInterface)
-				return BoxedTextColor.Interface;
+				return DbgTextColor.Interface;
 			if (type.IsEnum)
-				return BoxedTextColor.Enum;
+				return DbgTextColor.Enum;
 			if (type.IsValueType)
-				return BoxedTextColor.ValueType;
+				return DbgTextColor.ValueType;
 			if (type.BaseType == type.AppDomain.System_MulticastDelegate)
-				return BoxedTextColor.Delegate;
+				return DbgTextColor.Delegate;
 			if (type.IsSealed && type.IsAbstract && type.BaseType == type.AppDomain.System_Object)
-				return BoxedTextColor.StaticType;
+				return DbgTextColor.StaticType;
 			if (type.IsSealed)
-				return BoxedTextColor.SealedType;
-			return BoxedTextColor.Type;
+				return DbgTextColor.SealedType;
+			return DbgTextColor.Type;
 		}
 
 		public static string RemoveGenericTick(string s) {
@@ -136,7 +136,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return (null, AccessorKind.None);
 		}
 
-		static object GetColor(DmdMethodInfo method, object staticValue, object instanceValue) {
+		static DbgTextColor GetColor(DmdMethodInfo method, DbgTextColor staticValue, DbgTextColor instanceValue) {
 			if ((object)method == null)
 				return instanceValue;
 			if (method.IsStatic)
@@ -144,21 +144,21 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return instanceValue;
 		}
 
-		public static object GetColor(DmdPropertyInfo property) =>
-			GetColor(property.GetMethod ?? property.SetMethod, BoxedTextColor.StaticProperty, BoxedTextColor.InstanceProperty);
+		public static DbgTextColor GetColor(DmdPropertyInfo property) =>
+			GetColor(property.GetMethod ?? property.SetMethod, DbgTextColor.StaticProperty, DbgTextColor.InstanceProperty);
 
-		public static object GetColor(DmdEventInfo @event) =>
-			GetColor(@event.AddMethod ?? @event.RemoveMethod, BoxedTextColor.StaticEvent, BoxedTextColor.InstanceEvent);
+		public static DbgTextColor GetColor(DmdEventInfo @event) =>
+			GetColor(@event.AddMethod ?? @event.RemoveMethod, DbgTextColor.StaticEvent, DbgTextColor.InstanceEvent);
 
-		public static object GetColor(DmdMethodBase method, bool canBeModule) {
+		public static DbgTextColor GetColor(DmdMethodBase method, bool canBeModule) {
 			if (method is DmdConstructorInfo)
 				return GetColor(method.DeclaringType, canBeModule);
 			if (method.IsStatic) {
 				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
-					return BoxedTextColor.ExtensionMethod;
-				return BoxedTextColor.StaticMethod;
+					return DbgTextColor.ExtensionMethod;
+				return DbgTextColor.StaticMethod;
 			}
-			return BoxedTextColor.InstanceMethod;
+			return DbgTextColor.InstanceMethod;
 		}
 
 		public static bool TryGetMethodName(string name, out string containingMethodName, out string localFunctionName) {

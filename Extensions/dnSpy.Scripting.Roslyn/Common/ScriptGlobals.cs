@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -79,7 +78,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public Dispatcher UIDispatcher => dispatcher;
 		public void UI(Action action) => dispatcher.UI(action);
 		public T UI<T>(Func<T> func) => dispatcher.UI(func);
-		public void Break() => Debugger.Break();
+		public void Break() => System.Diagnostics.Debugger.Break();
 		public T Resolve<T>() => owner.ServiceLocator.Resolve<T>();
 		public T TryResolve<T>() => owner.ServiceLocator.TryResolve<T>();
 

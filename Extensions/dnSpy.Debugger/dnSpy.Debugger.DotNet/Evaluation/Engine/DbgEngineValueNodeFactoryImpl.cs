@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,8 +43,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return CreateCore(evalInfo, expressions);
 			return Create(dispatcher, evalInfo, expressions);
 
-			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgExpressionEvaluationInfo[] expressions2) =>
-				dispatcher2.InvokeRethrow(() => CreateCore(evalInfo2, expressions2));
+			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgExpressionEvaluationInfo[] expressions2) {
+				if (!dispatcher2.TryInvokeRethrow(() => CreateCore(evalInfo2, expressions2), out var result))
+					result = Array.Empty<DbgEngineValueNode>();
+				return result;
+			}
 		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions) {
@@ -80,8 +83,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return CreateCore(evalInfo, objectIds, options);
 			return Create(dispatcher, evalInfo, objectIds, options);
 
-			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgEngineObjectId[] objectIds2, DbgValueNodeEvaluationOptions options2) =>
-				dispatcher2.InvokeRethrow(() => CreateCore(evalInfo2, objectIds2, options2));
+			DbgEngineValueNode[] Create(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgEngineObjectId[] objectIds2, DbgValueNodeEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => CreateCore(evalInfo2, objectIds2, options2), out var result))
+					result = Array.Empty<DbgEngineValueNode>();
+				return result;
+			}
 		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationInfo evalInfo, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options) {
@@ -99,7 +105,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					var name = output.CreateAndReset();
 					var expression = name.ToString();
 
-					res[i] = valueNodeFactory.Create(evalInfo, name, objectIdValue, null, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type);
+					if (objectIdValue == null)
+						res[i] = valueNodeFactory.CreateError(evalInfo, name, "Could not get Object ID value", expression, false);
+					else
+						res[i] = valueNodeFactory.Create(evalInfo, name, objectIdValue, null, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type);
 				}
 				ObjectCache.Free(ref output);
 				return res;

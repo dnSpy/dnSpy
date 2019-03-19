@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy.exe to attach to 64-bit processes.
+        ///   Looks up a localized string similar to Use 64-bit dnSpy to attach to 64-bit processes.
         /// </summary>
         public static string Attach_UseDnSpy32 {
             get {
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy-x86.exe to attach to 32-bit processes.
+        ///   Looks up a localized string similar to Use 32-bit dnSpy to attach to 32-bit processes.
         /// </summary>
         public static string Attach_UseDnSpy64 {
             get {
@@ -1186,11 +1186,11 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Prevent code from detecting a managed debugger.
+        ///   Looks up a localized string similar to Prevent code from detecting the debugger.
         /// </summary>
-        public static string DbgSettings_DisableManagedDebuggerDetection {
+        public static string DbgSettings_DisableDebuggerDetection {
             get {
-                return ResourceManager.GetString("DbgSettings_DisableManagedDebuggerDetection", resourceCulture);
+                return ResourceManager.GetString("DbgSettings_DisableDebuggerDetection", resourceCulture);
             }
         }
         
@@ -1254,6 +1254,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DbgSettings_IgnoreBreakInstructions {
             get {
                 return ResourceManager.GetString("DbgSettings_IgnoreBreakInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore unhandled exceptions.
+        /// </summary>
+        public static string DbgSettings_IgnoreUnhandledExceptions {
+            get {
+                return ResourceManager.GetString("DbgSettings_IgnoreUnhandledExceptions", resourceCulture);
             }
         }
         
@@ -1573,6 +1582,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to debug this file which doesn&apos;t have a valid extension?.
+        /// </summary>
+        public static string DebugWithInvalidExtension {
+            get {
+                return ResourceManager.GetString("DebugWithInvalidExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete _All Breakpoints.
         /// </summary>
         public static string DeleteAllBreakpointsCommand {
@@ -1668,6 +1686,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DisableBreakpointCommand3 {
             get {
                 return ResourceManager.GetString("DisableBreakpointCommand3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Disassembly.
+        /// </summary>
+        public static string DisassemblyCommand {
+            get {
+                return ResourceManager.GetString("DisassemblyCommand", resourceCulture);
             }
         }
         
@@ -1857,6 +1884,15 @@ namespace dnSpy.Debugger.Properties {
         public static string Error_CantEvalWhenUnhandledExceptionHasOccurred {
             get {
                 return ResourceManager.GetString("Error_CantEvalWhenUnhandledExceptionHasOccurred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find the method&apos;s code. Make sure that the process is paused and that the method has been jitted..
+        /// </summary>
+        public static string Error_CouldNotShowDisassembly {
+            get {
+                return ResourceManager.GetString("Error_CouldNotShowDisassembly", resourceCulture);
             }
         }
         
@@ -2202,15 +2238,6 @@ namespace dnSpy.Debugger.Properties {
         public static string GlyphToolTip_Location {
             get {
                 return ResourceManager.GetString("GlyphToolTip_Location", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Go To Disassembly.
-        /// </summary>
-        public static string GoToDisassemblyCommand {
-            get {
-                return ResourceManager.GetString("GoToDisassemblyCommand", resourceCulture);
             }
         }
         
@@ -2704,6 +2731,42 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No processes match your search filter..
+        /// </summary>
+        public static string Processes_NoMatch {
+            get {
+                return ResourceManager.GetString("Processes_NoMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all search criteria so that all processes are shown.
+        /// </summary>
+        public static string Processes_ResetSearchSettings_ToolTip {
+            get {
+                return ResourceManager.GetString("Processes_ResetSearchSettings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Processes_Search {
+            get {
+                return ResourceManager.GetString("Processes_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search for a process.
+        /// </summary>
+        public static string Processes_Search_ToolTip {
+            get {
+                return ResourceManager.GetString("Processes_Search_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step Into.
         /// </summary>
         public static string Processes_StepIntoProcessToolTip {
@@ -2857,6 +2920,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to run this file which doesn&apos;t have a valid extension?.
+        /// </summary>
+        public static string RunWithInvalidExtension {
+            get {
+                return ResourceManager.GetString("RunWithInvalidExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save Module....
         /// </summary>
         public static string SaveModuleCommand {
@@ -2943,6 +3015,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShortCutKeyAlt6 {
             get {
                 return ResourceManager.GetString("ShortCutKeyAlt6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+8.
+        /// </summary>
+        public static string ShortCutKeyAlt8 {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAlt8", resourceCulture);
             }
         }
         

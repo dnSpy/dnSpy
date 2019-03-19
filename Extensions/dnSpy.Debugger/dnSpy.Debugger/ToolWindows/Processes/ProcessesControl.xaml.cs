@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,13 +20,26 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed partial class ProcessesControl : UserControl {
 		public ListView ListView => listView;
+		public TextBox SearchTextBox => searchTextBox;
 
-		public ProcessesControl() => InitializeComponent();
+		public ProcessesControl() {
+			InitializeComponent();
+			SearchTextBox.GotKeyboardFocus += SearchTextBox_GotKeyboardFocus;
+		}
+
+		void SearchTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SearchTextBox.SelectAll()));
+
+		public void FocusSearchTextBox() {
+			SearchTextBox.Focus();
+			SearchTextBox.SelectAll();
+		}
 
 		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Commands {
 		public ICommandInfoProvider Provider { get; }
 		public CommandInfo Command { get; }
 
-		public ProviderAndCommand(ICommandInfoProvider provider, in CommandInfo cmd) {
+		public ProviderAndCommand(ICommandInfoProvider provider, CommandInfo cmd) {
 			Provider = provider ?? throw new ArgumentNullException(nameof(provider));
 			Command = cmd;
 		}

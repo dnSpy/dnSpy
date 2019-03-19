@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public readonly struct KeyInput : IEquatable<KeyInput> {
 		public static readonly KeyInput Default = new KeyInput(Key.None, ModifierKeys.None);
 
@@ -76,5 +76,5 @@ namespace dnSpy.Contracts.Command {
 			return Key.ToString();
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

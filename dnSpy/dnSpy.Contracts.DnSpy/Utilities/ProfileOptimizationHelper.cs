@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Utilities {
 				hasInitialized.Add(type);
 			}
 			// ProfileOptimization.SetProfileRoot() was called when dnSpy started
-			ProfileOptimization.StartProfile(type + (IntPtr.Size == 4 ? "-32.profile" : "-64.profile"));
+			ProfileOptimization.StartProfile(type + ".profile");
 		}
 	}
 }

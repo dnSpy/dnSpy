@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,11 +33,19 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="s">Identifier string</param>
 		/// <returns></returns>
-		public static string Truncate(string s) {
-			if (s == null || s.Length <= MAX_IDENTIFIER_LENGTH)
+		public static string Truncate(string s) => Truncate(s, MAX_IDENTIFIER_LENGTH);
+
+		/// <summary>
+		/// Truncates the length of <paramref name="s"/> if it's too long
+		/// </summary>
+		/// <param name="s">Identifier string</param>
+		/// <param name="maxLength">Max length</param>
+		/// <returns></returns>
+		public static string Truncate(string s, int maxLength) {
+			if (s == null || s.Length <= maxLength)
 				return s;
 
-			return s.Substring(0, MAX_IDENTIFIER_LENGTH) + "…";
+			return s.Substring(0, maxLength) + "…";
 		}
 
 		/// <summary>
@@ -45,17 +53,26 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="id">Identifier</param>
 		/// <returns></returns>
-		public static string Escape(string id) {
+		public static string Escape(string id) => Escape(id, MAX_IDENTIFIER_LENGTH, allowSpaces: false);
+
+		/// <summary>
+		/// Escapes an identifier
+		/// </summary>
+		/// <param name="id">Identifier</param>
+		/// <param name="maxLength">Max length</param>
+		/// <param name="allowSpaces">true to allow spaces</param>
+		/// <returns></returns>
+		public static string Escape(string id, int maxLength, bool allowSpaces) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;
 
 			// Common case is a valid string
 			int i = 0;
-			if (id.Length <= MAX_IDENTIFIER_LENGTH) {
+			if (id.Length <= maxLength) {
 				for (; ; i++) {
 					if (i >= id.Length)
 						return id;
-					if (!IsValidChar(id[i]))
+					if (!IsValidChar(id[i], allowSpaces))
 						break;
 				}
 			}
@@ -67,27 +84,29 @@ namespace dnSpy.Contracts.Decompiler {
 
 			for (; i < id.Length; i++) {
 				char c = id[i];
-				if (!IsValidChar(c))
-					sb.Append(string.Format(@"\u{0:X4}", (ushort)c));
+				if (!IsValidChar(c, allowSpaces)) {
+					sb.Append(@"\u");
+					sb.Append(((ushort)c).ToString("X4"));
+				}
 				else
 					sb.Append(c);
-				if (sb.Length >= MAX_IDENTIFIER_LENGTH)
+				if (sb.Length >= maxLength)
 					break;
 			}
 
-			if (sb.Length > MAX_IDENTIFIER_LENGTH) {
-				sb.Length = MAX_IDENTIFIER_LENGTH;
+			if (sb.Length > maxLength) {
+				sb.Length = maxLength;
 				sb.Append('…');
 			}
 
 			return sb.ToString();
 		}
 
-		static bool IsValidChar(char c) {
+		static bool IsValidChar(char c, bool allowSpaces) {
 			if (0x21 <= c && c <= 0x7E)
 				return true;
 			if (c <= 0x20)
-				return false;
+				return c == ' ' && allowSpaces;
 
 			switch (char.GetUnicodeCategory(c)) {
 			case UnicodeCategory.UppercaseLetter:

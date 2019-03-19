@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,6 +38,126 @@ namespace dnSpy.Contracts.Debugger {
 		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
 		/// </summary>
 		public abstract event EventHandler<DbgMessageEventArgs> Message;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageProcessCreatedEventArgs> MessageProcessCreated;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageProcessExitedEventArgs> MessageProcessExited;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageRuntimeCreatedEventArgs> MessageRuntimeCreated;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageRuntimeExitedEventArgs> MessageRuntimeExited;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageAppDomainLoadedEventArgs> MessageAppDomainLoaded;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageAppDomainUnloadedEventArgs> MessageAppDomainUnloaded;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageModuleLoadedEventArgs> MessageModuleLoaded;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageModuleUnloadedEventArgs> MessageModuleUnloaded;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageThreadCreatedEventArgs> MessageThreadCreated;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageThreadExitedEventArgs> MessageThreadExited;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageExceptionThrownEventArgs> MessageExceptionThrown;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageEntryPointBreakEventArgs> MessageEntryPointBreak;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageProgramMessageEventArgs> MessageProgramMessage;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageBoundBreakpointEventArgs> MessageBoundBreakpoint;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageProgramBreakEventArgs> MessageProgramBreak;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageStepCompleteEventArgs> MessageStepComplete;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageSetIPCompleteEventArgs> MessageSetIPComplete;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageUserMessageEventArgs> MessageUserMessage;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageBreakEventArgs> MessageBreak;
+
+		/// <summary>
+		/// Raised on the debugger thread when there's a new message.
+		/// The listeners can pause the debugged program by setting <see cref="DbgMessageEventArgs.Pause"/> to true.
+		/// </summary>
+		public abstract event EventHandler<DbgMessageAsyncProgramMessageEventArgs> MessageAsyncProgramMessage;
 
 		/// <summary>
 		/// Starts debugging. Returns an error string if it failed to create a debug engine, or null on success.

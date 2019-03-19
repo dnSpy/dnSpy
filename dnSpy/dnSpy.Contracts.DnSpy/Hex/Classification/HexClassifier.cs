@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// </summary>
 		/// <param name="result">Updated with classifications</param>
 		/// <param name="context">Context</param>
-		public abstract void GetClassificationSpans(List<HexClassificationSpan> result, in HexClassificationContext context);
+		public abstract void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context);
 
 		/// <summary>
 		/// Classifies text synchronously
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <param name="result">Updated with classifications</param>
 		/// <param name="context">Context</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public virtual void GetClassificationSpans(List<HexClassificationSpan> result, in HexClassificationContext context, CancellationToken cancellationToken) =>
+		public virtual void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context, CancellationToken cancellationToken) =>
 			GetClassificationSpans(result, context);
 
 		/// <summary>

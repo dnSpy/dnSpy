@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,10 +22,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
         xmlns:p="clr-namespace:dnSpy.Properties"
+        xmlns:ds="clr-namespace:dnSpy.MainApp"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Title="dnSpy" MinWidth="400" MaxWidth="1000">
+        Title="{x:Static ds:Constants.DnSpy}" MinWidth="400" MaxWidth="1000">
     <Grid>
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />

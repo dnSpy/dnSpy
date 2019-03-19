@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module id</param>
 		/// <param name="mdToken">Token</param>
-		public ModuleTokenId(in ModuleId module, MDToken mdToken)
+		public ModuleTokenId(ModuleId module, MDToken mdToken)
 			: this(module, mdToken.Raw) {
 		}
 
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module id</param>
 		/// <param name="token">Token</param>
-		public ModuleTokenId(in ModuleId module, uint token) {
+		public ModuleTokenId(ModuleId module, uint token) {
 			this.module = module;
 			this.token = token;
 		}
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module id</param>
 		/// <param name="token">Token</param>
-		public ModuleTokenId(in ModuleId module, int token) {
+		public ModuleTokenId(ModuleId module, int token) {
 			this.module = module;
 			this.token = (uint)token;
 		}

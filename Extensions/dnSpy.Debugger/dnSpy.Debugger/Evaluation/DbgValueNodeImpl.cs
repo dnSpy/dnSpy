@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.Evaluation {
 			engineValueNode.Format(evalInfo, options, cultureInfo);
 		}
 
-		DbgValueNodeAssignmentResult CreateResult(in DbgEngineValueNodeAssignmentResult result) {
+		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {
 			if (result.Error != null) {
 				if (engineValueNode.Value != value?.EngineValue)
 					throw new InvalidOperationException();

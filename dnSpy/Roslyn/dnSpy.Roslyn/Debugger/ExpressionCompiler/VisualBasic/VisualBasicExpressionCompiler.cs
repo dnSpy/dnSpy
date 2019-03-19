@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,11 +21,11 @@ using System;
 using System.Collections.Immutable;
 using System.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Decompiler;
 using dnSpy.Debugger.DotNet.Metadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
@@ -43,12 +43,12 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 			public VisualBasicMetadataContext MetadataContext;
 		}
 
-		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, MethodDebugScope scope, out string defaultNamespaceName) {
+		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string defaultNamespaceName) {
 			var fileLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
 			var projectLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
 			defaultNamespaceName = null;
 			foreach (var info in scope.Imports) {
-				var builder = info.VBImportScopeKind == VBImportScopeKind.Project ? projectLevelBuilder : fileLevelBuilder;
+				var builder = info.VBImportScopeKind == DbgVBImportScopeKind.Project ? projectLevelBuilder : fileLevelBuilder;
 				AddDSEEImportRecord(builder, info, ref defaultNamespaceName);
 			}
 			if (defaultNamespaceName == null)
@@ -61,7 +61,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
-			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
+			state.MetadataContext = new VisualBasicMetadataContext(evalCtx.Compilation, evalCtx);
 
 			var compileResult = evalCtx.CompileAssignment(target, expression, CreateAliases(aliases), out var resultProperties, out var errorMessage);
 			return CreateCompilationResult(target, compileResult, resultProperties, errorMessage, DbgDotNetText.Empty);
@@ -72,7 +72,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
-			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
+			state.MetadataContext = new VisualBasicMetadataContext(evalCtx.Compilation, evalCtx);
 
 			if ((options & DbgEvaluationOptions.RawLocals) == 0) {
 				var asmBytes = evalCtx.CompileGetLocals(false, ImmutableArray<Alias>.Empty, out var localsInfo, out var typeName, out var errorMessage);
@@ -89,11 +89,11 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 			var getMethodDebugInfo = CreateGetMethodDebugInfo(state, langDebugInfo);
 			var evalCtx = EvaluationContext.CreateMethodContext(state.MetadataContext, metadataBlocks, null, getMethodDebugInfo, method.Module.Mvid ?? Guid.Empty, methodToken, methodVersion, langDebugInfo.ILOffset, localVarSigTok);
 
-			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, evalInfo.CancellationToken);
+			return CompileExpressionCore(aliases, expression, options, state, evalCtx, evalInfo.CancellationToken);
 		}
 
-		DbgDotNetCompilationResult CompileExpressionCore(DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, VisualBasicEvalContextState state, ImmutableArray<MetadataBlock> metadataBlocks, EvaluationContext evalCtx, CancellationToken cancellationToken) {
-			state.MetadataContext = new VisualBasicMetadataContext(metadataBlocks, evalCtx);
+		DbgDotNetCompilationResult CompileExpressionCore(DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options, VisualBasicEvalContextState state, EvaluationContext evalCtx, CancellationToken cancellationToken) {
+			state.MetadataContext = new VisualBasicMetadataContext(evalCtx.Compilation, evalCtx);
 			var compilationFlags = DkmEvaluationFlags.None;
 			if ((options & DbgEvaluationOptions.Expression) != 0)
 				compilationFlags |= DkmEvaluationFlags.TreatAsExpression;
@@ -141,8 +141,8 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 
 		public override DbgDotNetCompilationResult CompileTypeExpression(DbgEvaluationInfo evalInfo, DmdType type, DbgModuleReference[] references, DbgDotNetAlias[] aliases, string expression, DbgEvaluationOptions options) {
 			GetTypeCompilationState<VisualBasicEvalContextState>(evalInfo, references, out var state, out var metadataBlocks);
-			var evalCtx = EvaluationContext.CreateTypeContext(state.MetadataContext, metadataBlocks, type.Module.ModuleVersionId, type.MetadataToken);
-			return CompileExpressionCore(aliases, expression, options, state, metadataBlocks, evalCtx, evalInfo.CancellationToken);
+			var evalCtx = EvaluationContext.CreateTypeContext(state.MetadataContext.Compilation, type.Module.ModuleVersionId, type.MetadataToken);
+			return CompileExpressionCore(aliases, expression, options, state, evalCtx, evalInfo.CancellationToken);
 		}
 
 		internal override string GetVariableName(string metadataName, bool isThis) {

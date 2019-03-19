@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>A_rgumentos</value>
+    <value>A_rguments</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
     <value>_Assembly</value>
@@ -205,13 +205,13 @@
     <value>Transição Nativa</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>This runtime doesn't support calling generic methods</value>
+    <value>Este ambiente de execução não suporta chamadas a métodos genéricos</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
     <value>Não é possível escrever para 'this'</value>
   </data>
   <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
-    <value>Member can't be accessed due to runtime limitations</value>
+    <value>O membro não pode ser acedido devido a limitações do ambiente de execução</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
     <value>Não foi possível definir a próxima instrução.</value>
@@ -223,16 +223,16 @@
     <value>The runtime doesn't support setting a new statement</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Attach to Process ({0})...</value>
+    <value>Anexar ao Processo ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>Editor</value>
   </data>
   <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
-    <value>Use the Attach to Process (Unity) dialog box to attach to debug builds</value>
+    <value>Utilizar a caixa de dialogo Anexar ao Processo (Unity) para depurar compilações</value>
   </data>
   <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
-    <value>Can't set a breakpoint when the process is paused.</value>
+    <value>Não é possível definir um breakpoint quando o processo está em pausa.</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
     <value>E_xecutable</value>
@@ -244,9 +244,9 @@
     <value>_Timeout (s)</value>
   </data>
   <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
-    <value>This is for Unity Debug builds only</value>
+    <value>Isto é apenas para depuração de compilações de Unity</value>
   </data>
   <data name="DebuggingUnityGamesText" xml:space="preserve">
-    <value>Debugging Unity Games</value>
+    <value>Depuração de jogos Unity</value>
   </data>
 </root>

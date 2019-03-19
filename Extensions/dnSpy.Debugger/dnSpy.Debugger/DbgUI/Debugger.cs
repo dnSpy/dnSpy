@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,6 +57,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StepOverCurrentProcess();
 		public abstract bool CanStepOutCurrentProcess { get; }
 		public abstract void StepOutCurrentProcess();
+		public abstract bool CanGoToDisassembly { get; }
+		public abstract void GoToDisassembly();
 		public abstract bool CanToggleCreateBreakpoint { get; }
 		public abstract void ToggleCreateBreakpoint();
 		public abstract ToggleCreateBreakpointKind GetToggleCreateBreakpointKind();

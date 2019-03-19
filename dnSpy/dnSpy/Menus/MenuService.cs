@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -353,7 +353,7 @@ namespace dnSpy.Menus {
 			return menuItem;
 		}
 
-		static void Add16x16Image(MenuItem menuItem, in ImageReference imageReference, bool? enable = null) {
+		static void Add16x16Image(MenuItem menuItem, ImageReference imageReference, bool? enable = null) {
 			var image = new DsImage { ImageReference = imageReference };
 			menuItem.Icon = image;
 			if (enable == false)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,6 +44,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
+		internal AssemblyNameEqualityComparer AssemblyNameEqualityComparer => assemblyNameEqualityComparer;
+		readonly AssemblyNameEqualityComparer assemblyNameEqualityComparer;
+
 		// Assemblies lock fields
 		readonly object assembliesLockObj;
 		readonly List<DmdAssemblyImpl> assemblies;
@@ -80,7 +83,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			exportedTypeLockObj = new object();
 			assemblies = new List<DmdAssemblyImpl>();
 			simpleNameToAssembly = new Dictionary<string, DmdAssemblyImpl>(StringComparer.OrdinalIgnoreCase);
-			assemblyNameToAssembly = new Dictionary<IDmdAssemblyName, DmdAssemblyImpl>(AssemblyNameEqualityComparer.Instance);
+			// Ignore PKT, see comment in DmdSigComparer: bool Equals(IDmdAssemblyName a, IDmdAssemblyName b)
+			assemblyNameEqualityComparer = new AssemblyNameEqualityComparer(ignorePublicKeyToken: true);
+			assemblyNameToAssembly = new Dictionary<IDmdAssemblyName, DmdAssemblyImpl>(assemblyNameEqualityComparer);
 			fullyResolvedTypes = new Dictionary<DmdType, DmdType>(new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.CompareDeclaringType | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CompareGenericParameterDeclaringMember));
 			toModuleTypeDict = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
 			toModuleTypeDictIgnoreCase = new Dictionary<DmdModule, Dictionary<DmdType, DmdTypeDef>>();
@@ -89,11 +94,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			wellKnownMemberResolver = new WellKnownMemberResolver(this);
 			assemblyLoadedListeners = new List<AssemblyLoadedListener>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
-			metadataReaderFactory = CreateDmdMetadataReader;
+			metadataReaderFactory = CreateMetadataReader;
 			Id = id;
 		}
 
-		DmdMetadataReader CreateDmdMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
+		DmdMetadataReader CreateMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (lzmd == null)
@@ -113,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			throw new NotSupportedException($"Unknown lazy metadata: {lzmd.GetType()}");
 		}
 
-		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, in DmdCreateAssemblyInfo assemblyInfo) {
+		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo) {
 			if (getMetadata == null)
 				throw new ArgumentNullException(nameof(getMetadata));
 			if (assemblyInfo.FullyQualifiedName == null || assemblyInfo.AssemblyLocation == null)
@@ -324,7 +329,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return true;
 		}
 
-		static DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, IDmdAssemblyName name) {
+		DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, IDmdAssemblyName name) {
 			// Try to avoid reading the metadata in case we're debugging a program with lots of assemblies.
 
 			// We first loop over all disk file assemblies since we can check simpleName without accessing metadata.
@@ -335,7 +340,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					continue;
 
 				// Access metadata (when calling GetName())
-				if (name == null || AssemblyNameEqualityComparer.Instance.Equals(assembly.GetName(), name))
+				if (name == null || AssemblyNameEqualityComparer.Equals(assembly.GetName(), name))
 					return assembly;
 			}
 
@@ -348,7 +353,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					if (StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.GetName().Name))
 						return assembly;
 				}
-				else if (AssemblyNameEqualityComparer.Instance.Equals(assembly.GetName(), name))
+				else if (AssemblyNameEqualityComparer.Equals(assembly.GetName(), name))
 					return assembly;
 			}
 			return null;
@@ -985,7 +990,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdTypeDef TryLookup(DmdAssemblyImpl assembly, DmdTypeRef typeRef, bool ignoreCase) =>
 			Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
 
-
 		internal DmdTypeDef TryLookup(DmdModuleImpl module, DmdTypeRef typeRef, bool ignoreCase) =>
 			Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
@@ -1076,11 +1080,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
 			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			if (ifaces == null) {
-				lock (assembliesLockObj) {
-					Debug.Assert(CorLib != null, "CorLib hasn't been loaded yet!");
-					if (CorLib == null)
-						return Array.Empty<DmdType>();
-				}
+				Debug.Assert(CorLib != null, "CorLib hasn't been loaded yet!");
+				if (CorLib == null)
+					return Array.Empty<DmdType>();
 				var list = ObjectPools.AllocListOfType();
 				foreach (var wellKnownType in possibleWellKnownSZArrayInterfaces) {
 					// These interfaces should only be in corlib since the CLR needs them.

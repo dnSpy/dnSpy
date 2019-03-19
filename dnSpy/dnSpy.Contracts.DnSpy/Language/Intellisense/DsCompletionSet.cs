@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// <see cref="Completion"/> collection
 	/// </summary>
-	public class DsCompletionSet : CompletionSet2 {
+	public class DsCompletionSet : CompletionSet {
 		readonly Completion[] allCompletions;
 		readonly Completion[] allCompletionBuilders;
 		readonly FilteredCompletionCollection filteredCompletions;
@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		/// <summary>
+		/// Gets the filters
+		/// </summary>
+		public virtual IReadOnlyList<DsIntellisenseFilter> Filters { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		protected DsCompletionSet() { }
@@ -69,12 +74,13 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="completions">Completion items</param>
 		/// <param name="completionBuilders">Completion builders</param>
 		/// <param name="filters">Filters or null</param>
-		public DsCompletionSet(string moniker, string displayName, ITrackingSpan applicableTo, IEnumerable<Completion> completions, IEnumerable<Completion> completionBuilders, IReadOnlyList<IIntellisenseFilter> filters)
-			: base(moniker, displayName, applicableTo, Array.Empty<Completion>(), Array.Empty<Completion>(), filters ?? Array.Empty<IIntellisenseFilter>()) {
+		public DsCompletionSet(string moniker, string displayName, ITrackingSpan applicableTo, IEnumerable<Completion> completions, IEnumerable<Completion> completionBuilders, IReadOnlyList<DsIntellisenseFilter> filters)
+			: base(moniker, displayName, applicableTo, Array.Empty<Completion>(), Array.Empty<Completion>()) {
 			allCompletions = completions.ToArray();
 			allCompletionBuilders = completionBuilders.ToArray();
 			filteredCompletions = new FilteredCompletionCollection(allCompletions);
 			filteredCompletionBuilders = new FilteredCompletionCollection(allCompletionBuilders);
+			Filters = filters ?? Array.Empty<DsIntellisenseFilter>();
 		}
 
 		string SearchText {
@@ -108,7 +114,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public virtual ICompletionFilter CreateCompletionFilter(string searchText) => new CompletionFilter(searchText);
 
 		/// <summary>
-		/// Uses <see cref="CompletionSet2.Filters"/> to filter <paramref name="completions"/>
+		/// Uses <see cref="DsCompletionSet.Filters"/> to filter <paramref name="completions"/>
 		/// </summary>
 		/// <param name="filteredResult">Result</param>
 		/// <param name="completions">Completion items to filter</param>

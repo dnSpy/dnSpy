@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -93,6 +93,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -103,49 +104,49 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.IsEnabled}" Header="">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding IsEnabled}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}" Width="150">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.Name}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding ModuleNameObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding ModuleNameEditableValue}" EditValueProvider="{Binding ModuleNameEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.DynamicModule}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox Focusable="False" IsChecked="{Binding IsDynamic}" IsThreeState="True" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.InMemoryModule}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox Focusable="False" IsChecked="{Binding IsInMemory}" IsThreeState="True" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}" Width="100">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.Order}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding OrderObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding OrderEditableValue}" EditValueProvider="{Binding OrderEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}" Width="150">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.Process}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding ProcessNameObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding ProcessNameEditableValue}" EditValueProvider="{Binding ProcessNameEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}" Width="150">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.AppDomain}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding AppDomainNameObject, Mode=OneWay, Converter={StaticResource moduleBreakpointColumnConverter}}" EditableValue="{Binding AppDomainNameEditableValue}" EditValueProvider="{Binding AppDomainNameEditValueProvider}" />

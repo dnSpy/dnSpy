@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -221,9 +221,9 @@ namespace dnSpy.Text.Editor {
 			if (brush.CanFreeze)
 				brush.Freeze();
 			Background = brush;
-#pragma warning disable 0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 			var ft = new FormattedText("8", defaultProps.CultureInfo, FlowDirection.LeftToRight, defaultProps.Typeface, defaultProps.FontRenderingEmSize, defaultProps.ForegroundBrush, null, textFormattingMode);
-#pragma warning restore 0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
 			currentMaxLineDigits = GetMaxLineDigits();
 			int maxLineNumberValue = Math.Min(int.MaxValue, (int)(Math.Pow(10, currentMaxLineDigits) - 1));
 			// Just in case non-digits are part of the string, calculate max string length

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,18 +91,16 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		[ImportingConstructor]
-		DocumentTreeView(ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider)
-			: this(true, null, treeViewService, decompilerService, documentService, documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, appSettings, dsDocumentNodeProviders, mefFinders, treeViewNodeTextElementProvider) {
+		DocumentTreeView(ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider)
+			: this(true, null, treeViewService, decompilerService, documentService, documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, dsDocumentNodeProviders, mefFinders, treeViewNodeTextElementProvider) {
 		}
 
 		readonly IDecompilerService decompilerService;
 		readonly IDocumentTreeViewSettings documentTreeViewSettings;
-		readonly IAppSettings appSettings;
 
-		public DocumentTreeView(bool isGlobal, IDocumentTreeNodeFilter filter, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProvider, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
+		public DocumentTreeView(bool isGlobal, IDocumentTreeNodeFilter filter, ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentService documentService, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProvider, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.decompilerService = decompilerService;
 			this.documentTreeViewSettings = documentTreeViewSettings;
-			this.appSettings = appSettings;
 
 			context = new DocumentTreeNodeDataContext(this, resourceNodeFactory, filter ?? FilterNothingDocumentTreeNodeFilter.Instance, treeViewNodeTextElementProvider) {
 				SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight,
@@ -111,7 +109,7 @@ namespace dnSpy.Documents.TreeView {
 				ShowAssemblyPublicKeyToken = documentTreeViewSettings.ShowAssemblyPublicKeyToken,
 				ShowToken = documentTreeViewSettings.ShowToken,
 				Decompiler = decompilerService.Decompiler,
-				UseNewRenderer = appSettings.UseNewRenderer_DocumentTreeView,
+				UseNewRenderer = false,
 				DeserializeResources = documentTreeViewSettings.DeserializeResources,
 				CanDragAndDrop = isGlobal,
 			};
@@ -137,7 +135,6 @@ namespace dnSpy.Documents.TreeView {
 			documentService.CollectionChanged += DocumentService_CollectionChanged;
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			documentTreeViewSettings.PropertyChanged += DocumentTreeViewSettings_PropertyChanged;
-			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 
 			WpfCommands = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);
 
@@ -173,7 +170,6 @@ namespace dnSpy.Documents.TreeView {
 			DocumentService.CollectionChanged -= DocumentService_CollectionChanged;
 			decompilerService.DecompilerChanged -= DecompilerService_DecompilerChanged;
 			documentTreeViewSettings.PropertyChanged -= DocumentTreeViewSettings_PropertyChanged;
-			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
 			TreeView.SelectItems(Array.Empty<TreeNodeData>());
 			DocumentService.Clear();
 			TreeView.Root.Children.Clear();
@@ -184,14 +180,6 @@ namespace dnSpy.Documents.TreeView {
 		void RefilterNodes() {
 			context.FilterVersion++;
 			((RootNode)TreeView.Root.Data).Refilter();
-		}
-
-		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var appSettings = (IAppSettings)sender;
-			if (e.PropertyName == nameof(appSettings.UseNewRenderer_DocumentTreeView)) {
-				context.UseNewRenderer = appSettings.UseNewRenderer_DocumentTreeView;
-				RefreshNodes();
-			}
 		}
 
 		void InitializeDocumentTreeNodeGroups() {
@@ -751,7 +739,31 @@ namespace dnSpy.Documents.TreeView {
 			var existingFiles = new HashSet<string>(DocumentService.GetDocuments().Select(a => a.Filename ?? string.Empty), StringComparer.OrdinalIgnoreCase);
 			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
 			TreeNodeData newSelectedNode = null;
+
+			IWshRuntimeLibrary.WshShell ws = null;
+			try {
+				ws = new IWshRuntimeLibrary.WshShell();
+			}
+			catch {
+				ws = null;
+			}
+
 			for (int i = 0, j = 0; i < filenames.Length; i++) {
+				// Resolve shortcuts
+				if (ws != null) {
+					try {
+						// The method seems to only accept files with a lnk extension. If it has no such
+						// extension, it's not a shortcut and we won't get a slow thrown exception.
+						if (filenames[i].EndsWith(".lnk", StringComparison.OrdinalIgnoreCase)) {
+							var sc = (IWshRuntimeLibrary.IWshShortcut)ws.CreateShortcut(filenames[i]);
+							filenames[i] = sc.TargetPath;
+						}
+					}
+					catch {
+						ws = null;
+					}
+				}
+
 				var document = DocumentService.TryCreateOnly(DsDocumentInfo.CreateDocument(filenames[i]));
 				if (document == null)
 					continue;

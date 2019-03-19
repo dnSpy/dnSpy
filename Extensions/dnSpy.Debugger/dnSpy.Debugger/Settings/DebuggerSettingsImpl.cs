@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -181,6 +181,44 @@ namespace dnSpy.Debugger.Settings {
 			}
 		}
 		bool preventManagedDebuggerDetection = true;
+
+		public override bool AntiIsDebuggerPresent {
+			get {
+				lock (lockObj)
+					return antiIsDebuggerPresent;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = antiIsDebuggerPresent != value;
+					antiIsDebuggerPresent = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(AntiIsDebuggerPresent));
+					OnModified();
+				}
+			}
+		}
+		bool antiIsDebuggerPresent = true;
+
+		public override bool AntiCheckRemoteDebuggerPresent {
+			get {
+				lock (lockObj)
+					return antiCheckRemoteDebuggerPresent;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = antiCheckRemoteDebuggerPresent != value;
+					antiCheckRemoteDebuggerPresent = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(AntiCheckRemoteDebuggerPresent));
+					OnModified();
+				}
+			}
+		}
+		bool antiCheckRemoteDebuggerPresent = true;
 
 		public override bool IgnoreBreakInstructions {
 			get {
@@ -600,6 +638,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool stepOverPropertiesAndOperators = true;
 
+		public override bool IgnoreUnhandledExceptions {
+			get {
+				lock (lockObj)
+					return ignoreUnhandledExceptions;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = ignoreUnhandledExceptions != value;
+					ignoreUnhandledExceptions = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(IgnoreUnhandledExceptions));
+					OnModified();
+				}
+			}
+		}
+		bool ignoreUnhandledExceptions;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -611,6 +668,8 @@ namespace dnSpy.Debugger.Settings {
 			other.PropertyEvalAndFunctionCalls = PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = UseStringConversionFunction;
 			other.PreventManagedDebuggerDetection = PreventManagedDebuggerDetection;
+			other.AntiIsDebuggerPresent = AntiIsDebuggerPresent;
+			other.AntiCheckRemoteDebuggerPresent = AntiCheckRemoteDebuggerPresent;
 			other.IgnoreBreakInstructions = IgnoreBreakInstructions;
 			other.BreakAllProcesses = BreakAllProcesses;
 			other.EnableManagedDebuggingAssistants = EnableManagedDebuggingAssistants;
@@ -633,6 +692,7 @@ namespace dnSpy.Debugger.Settings {
 			other.ShowRawLocals = ShowRawLocals;
 			other.AsyncDebugging = AsyncDebugging;
 			other.StepOverPropertiesAndOperators = StepOverPropertiesAndOperators;
+			other.IgnoreUnhandledExceptions = IgnoreUnhandledExceptions;
 			return other;
 		}
 	}
@@ -658,6 +718,8 @@ namespace dnSpy.Debugger.Settings {
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>(nameof(PropertyEvalAndFunctionCalls)) ?? PropertyEvalAndFunctionCalls;
 			UseStringConversionFunction = sect.Attribute<bool?>(nameof(UseStringConversionFunction)) ?? UseStringConversionFunction;
 			PreventManagedDebuggerDetection = sect.Attribute<bool?>(nameof(PreventManagedDebuggerDetection)) ?? PreventManagedDebuggerDetection;
+			AntiIsDebuggerPresent = sect.Attribute<bool?>(nameof(AntiIsDebuggerPresent)) ?? AntiIsDebuggerPresent;
+			AntiCheckRemoteDebuggerPresent = sect.Attribute<bool?>(nameof(AntiCheckRemoteDebuggerPresent)) ?? AntiCheckRemoteDebuggerPresent;
 			IgnoreBreakInstructions = sect.Attribute<bool?>(nameof(IgnoreBreakInstructions)) ?? IgnoreBreakInstructions;
 			BreakAllProcesses = sect.Attribute<bool?>(nameof(BreakAllProcesses)) ?? BreakAllProcesses;
 			EnableManagedDebuggingAssistants = sect.Attribute<bool?>(nameof(EnableManagedDebuggingAssistants)) ?? EnableManagedDebuggingAssistants;
@@ -680,6 +742,7 @@ namespace dnSpy.Debugger.Settings {
 			ShowRawLocals = sect.Attribute<bool?>(nameof(ShowRawLocals)) ?? ShowRawLocals;
 			AsyncDebugging = sect.Attribute<bool?>(nameof(AsyncDebugging)) ?? AsyncDebugging;
 			StepOverPropertiesAndOperators = sect.Attribute<bool?>(nameof(StepOverPropertiesAndOperators)) ?? StepOverPropertiesAndOperators;
+			IgnoreUnhandledExceptions = sect.Attribute<bool?>(nameof(IgnoreUnhandledExceptions)) ?? IgnoreUnhandledExceptions;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -696,6 +759,8 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(PropertyEvalAndFunctionCalls), PropertyEvalAndFunctionCalls);
 			sect.Attribute(nameof(UseStringConversionFunction), UseStringConversionFunction);
 			sect.Attribute(nameof(PreventManagedDebuggerDetection), PreventManagedDebuggerDetection);
+			sect.Attribute(nameof(AntiIsDebuggerPresent), AntiIsDebuggerPresent);
+			sect.Attribute(nameof(AntiCheckRemoteDebuggerPresent), AntiCheckRemoteDebuggerPresent);
 			sect.Attribute(nameof(IgnoreBreakInstructions), IgnoreBreakInstructions);
 			sect.Attribute(nameof(BreakAllProcesses), BreakAllProcesses);
 			sect.Attribute(nameof(EnableManagedDebuggingAssistants), EnableManagedDebuggingAssistants);
@@ -718,6 +783,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(ShowRawLocals), ShowRawLocals);
 			sect.Attribute(nameof(AsyncDebugging), AsyncDebugging);
 			sect.Attribute(nameof(StepOverPropertiesAndOperators), StepOverPropertiesAndOperators);
+			sect.Attribute(nameof(IgnoreUnhandledExceptions), IgnoreUnhandledExceptions);
 		}
 	}
 }

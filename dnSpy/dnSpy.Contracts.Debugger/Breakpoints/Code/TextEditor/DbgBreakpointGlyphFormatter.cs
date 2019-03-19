@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// <param name="breakpoint">Breakpoint</param>
 		/// <param name="textView">Text view</param>
 		/// <param name="span">Span of breakpoint marker in the document</param>
-		public abstract bool WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span);
+		public abstract bool WriteLocation(IDbgTextWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span);
 	}
 
 	/// <summary>Metadata</summary>

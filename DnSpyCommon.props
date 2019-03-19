@@ -1,0 +1,48 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+        - appveyor.yml (artifacts)
+        - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
+    NOTE: Update the ABOVE files when TargetFrameworks is updated -->
+    <TargetFrameworks>net472</TargetFrameworks>
+    <IsDotNetFramework>false</IsDotNetFramework>
+    <IsDotNetCore>false</IsDotNetCore>
+    <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
+    <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
+    <Features>strict</Features>
+    <LangVersion>latest</LangVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
+
+    <!-- Update app.config whenever this value changes -->
+    <DnSpyAssemblyVersion>6.0.3.0</DnSpyAssemblyVersion>
+    <!-- This is shown in the title bar -->
+    <DnSpyAssemblyInformationalVersion>v6.0.3</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyCopyright>Copyright (C) 2014-2019 de4dot@gmail.com</DnSpyAssemblyCopyright>
+
+    <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
+    <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
+    <DnlibVersion>3.1.0</DnlibVersion>
+    <IcedVersion>1.1.1</IcedVersion>
+    <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>
+    <MSDiagRuntimeVersion>1.0.3</MSDiagRuntimeVersion>
+    <MSRegistryVersion>4.5.0</MSRegistryVersion>
+    <MSVSCompositionNetFxAttributesVersion>15.8.117</MSVSCompositionNetFxAttributesVersion>
+    <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>
+    <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
+    <MSVSTextVersion>15.5.27130</MSVSTextVersion>
+    <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
+    <RoslynVersion>2.10.0</RoslynVersion>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+
+</Project>

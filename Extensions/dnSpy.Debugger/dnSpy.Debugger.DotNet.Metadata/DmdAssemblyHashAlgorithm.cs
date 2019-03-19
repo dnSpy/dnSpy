@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,13 +22,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Assembly hash algorithm
 	/// </summary>
 	public enum DmdAssemblyHashAlgorithm : uint {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		None				= 0,
 		MD5					= 0x8003,
 		SHA1				= 0x8004,
 		SHA256				= 0x800C,
 		SHA384				= 0x800D,
 		SHA512				= 0x800E,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

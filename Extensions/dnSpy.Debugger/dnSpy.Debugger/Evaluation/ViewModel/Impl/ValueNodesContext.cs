@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Debugger.UI;
 using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		DbgValueNodeReader ValueNodeReader { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
-		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		int UIVersion { get; }
 		ValueNodeFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public DbgValueNodeReader ValueNodeReader { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
-		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public int UIVersion { get; set; }
 		public ValueNodeFormatter Formatter { get; }
 		public bool SyntaxHighlight { get; set; }
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			ValueNodeReader = dbgValueNodeReader;
 			ClassificationFormatMap = classificationFormatMap;
 			TextBlockContentInfoFactory = textBlockContentInfoFactory;
-			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			Formatter = new ValueNodeFormatter();
 			ValueNodeFormatParameters = new DbgValueNodeFormatParameters();
 			FormatCulture = formatCulture;

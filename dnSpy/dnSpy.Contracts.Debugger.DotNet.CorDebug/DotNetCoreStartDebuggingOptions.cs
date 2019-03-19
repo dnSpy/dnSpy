@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,12 +26,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// </summary>
 	public sealed class DotNetCoreStartDebuggingOptions : CorDebugStartDebuggingOptions {
 		/// <summary>
+		/// If true, use <see cref="Host"/> (eg. dotnet.exe). If false, <see cref="Host"/>
+		/// isn't used and <see cref="CorDebugStartDebuggingOptions.Filename"/> should be
+		/// a native executable (eg. a renamed apphost.exe) that knows how to start the runtime.
+		/// </summary>
+		public bool UseHost { get; set; } = true;
+
+		/// <summary>
 		/// Path to host (eg. dotnet.exe) or null if dnSpy should try to find dotnet.exe
 		/// </summary>
 		public string Host { get; set; }
 
 		/// <summary>
-		/// Host arguments (eg. "exec" if .NET Core's dotnext.exe is used)
+		/// Host arguments (eg. "exec" if .NET Core's dotnet.exe is used)
 		/// </summary>
 		public string HostArguments { get; set; }
 
@@ -50,6 +57,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
+			other.UseHost = UseHost;
 			other.Host = Host;
 			other.HostArguments = HostArguments;
 			return other;

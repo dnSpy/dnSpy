@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +29,7 @@ using System.Text;
 namespace Test {
 	internal class Program {
 		static T GetMember<T>(Func<string, BindingFlags, T> func, string name) =>
-			return func(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+			func(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
 		static Assembly GetDeclAssembly(Type type) {
 			if (type.IsDefined(typeof(TypeForwardedFromAttribute), false)) {

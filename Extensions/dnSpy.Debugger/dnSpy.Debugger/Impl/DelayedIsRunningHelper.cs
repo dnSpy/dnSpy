@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 using System;
-using System.Windows.Threading;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	interface IIsRunningProvider {
@@ -37,8 +37,7 @@ namespace dnSpy.Debugger.Impl {
 		public DelayedIsRunningHelper(IIsRunningProvider owner, Dispatcher dispatcher, Action raiseDelayedIsRunningChanged_DbgThread) {
 			this.owner = owner;
 			this.raiseDelayedIsRunningChanged_DbgThread = raiseDelayedIsRunningChanged_DbgThread;
-			timer = new DispatcherTimer(DispatcherPriority.Send, dispatcher);
-			timer.Interval = TimeSpan.FromMilliseconds(delayedIsRunningMilliseconds);
+			timer = new DispatcherTimer(dispatcher, TimeSpan.FromMilliseconds(delayedIsRunningMilliseconds));
 			timer.Tick += Timer_Tick_DbgThread;
 			owner.IsDebuggingChanged += OnIsDebuggingChanged;
 			owner.IsRunningChanged += OnIsRunningChanged;

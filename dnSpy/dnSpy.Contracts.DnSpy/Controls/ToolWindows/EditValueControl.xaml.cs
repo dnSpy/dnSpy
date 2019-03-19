@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 
 namespace dnSpy.Contracts.Controls.ToolWindows {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public sealed partial class EditValueControl : UserControl {
 		public static readonly DependencyProperty ReadOnlyContentProperty =
 			DependencyProperty.Register(nameof(ReadOnlyContent), typeof(object), typeof(EditValueControl),
@@ -231,5 +231,5 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			editableValue.SetText(e.NewText);
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

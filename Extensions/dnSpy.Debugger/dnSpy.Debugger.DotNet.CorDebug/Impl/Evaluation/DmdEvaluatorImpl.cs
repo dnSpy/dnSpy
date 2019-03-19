@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return dnValue;
 		}
 
-		object GetValueThrow(in DbgDotNetValueResult result) {
+		object GetValueThrow(DbgDotNetValueResult result) {
 			if (result.ErrorMessage != null)
 				throw new DmdEvaluatorException(result.ErrorMessage);
 			if (result.ValueIsException) {

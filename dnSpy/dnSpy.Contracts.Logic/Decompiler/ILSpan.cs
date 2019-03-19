@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		sealed class ILSpanComparer : IComparer<ILSpan> {
-			public static readonly IComparer<ILSpan> Instance = new ILSpanComparer();
+			public static readonly ILSpanComparer Instance = new ILSpanComparer();
 			public int Compare(ILSpan x, ILSpan y) {
 				int c = unchecked((int)x.Start - (int)y.Start);
 				if (c != 0)

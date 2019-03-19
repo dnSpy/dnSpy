@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,6 +78,18 @@ namespace dnSpy.Contracts.App {
 
 		/// <summary>Show start up time</summary>
 		bool ShowStartupTime { get; }
+
+		/// <summary>Attach to this process, unless it's 0</summary>
+		int DebugAttachPid { get; }
+
+		/// <summary>Event handle duplicated into the postmortem debugger process</summary>
+		uint DebugEvent { get; }
+
+		/// <summary>Address of a JIT_DEBUG_INFO structure allocated in the target process' address space (https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/-jdinfo--use-jit-debug-info-) </summary>
+		ulong JitDebugInfo { get; }
+
+		/// <summary>Attach to this process name, unless it's empty. Can contain wildcards.</summary>
+		string DebugAttachProcess { get; }
 
 		/// <summary>
 		/// Returns true if the argument is present

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="startLinePosition">Start line position</param>
 		/// <param name="endLinePosition">End line position</param>
-		public LineLocationSpan(in LineLocation startLinePosition, in LineLocation endLinePosition) {
+		public LineLocationSpan(LineLocation startLinePosition, LineLocation endLinePosition) {
 			StartLinePosition = startLinePosition;
 			EndLinePosition = endLinePosition;
 		}

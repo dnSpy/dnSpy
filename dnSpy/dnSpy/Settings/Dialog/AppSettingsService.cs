@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,12 +46,12 @@ namespace dnSpy.Settings.Dialog {
 		Guid? lastSelectedGuid;
 		ShowAppSettingsDialog showAppSettings;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.OptionsDialogText)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition OptionsDialogTextContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		[ImportingConstructor]
 		AppSettingsService(IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, IAppWindow appWindow, ITreeViewService treeViewService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {

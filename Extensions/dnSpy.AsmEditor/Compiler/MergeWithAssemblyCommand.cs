@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public IAssembly Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
-			public ModuleResult(IAssembly assembly, byte[] bytes, in DebugFileResult debugFile) {
+			public ModuleResult(IAssembly assembly, byte[] bytes, DebugFileResult debugFile) {
 				Assembly = assembly;
 				RawBytes = bytes;
 				DebugFile = debugFile;

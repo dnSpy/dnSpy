@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Default <see cref="HexView"/> options
 	/// </summary>
 	public static class DefaultHexViewOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string ShowOffsetColumnName = "HexView/ShowOffsetColumn";
 		public static readonly VSTE.EditorOptionKey<bool> ShowOffsetColumnId = new VSTE.EditorOptionKey<bool>(ShowOffsetColumnName);
 		public const string ShowValuesColumnName = "HexView/ShowValuesColumn";
@@ -85,6 +85,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<int> EncodingCodePageId = new VSTE.EditorOptionKey<int>(EncodingCodePageName);
 		public const string HighlightStructureUnderMouseCursorName = "HexView/HighlightStructureUnderMouseCursor";
 		public static readonly VSTE.EditorOptionKey<bool> HighlightStructureUnderMouseCursorId = new VSTE.EditorOptionKey<bool>(HighlightStructureUnderMouseCursorName);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

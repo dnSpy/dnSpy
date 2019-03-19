@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Images {
 	/// </summary>
 	public static class DsImagesAttribute {
 		const string Prefix = "img:" + DsImages.ImagesAssemblyName + ",";
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string Add = Prefix + DsImageStrings.Add;
 		public const string AddReference = Prefix + DsImageStrings.AddReference;
 		public const string AdvancedBreakpointDisabled = Prefix + DsImageStrings.AdvancedBreakpointDisabled;
@@ -268,6 +268,6 @@ namespace dnSpy.Contracts.Images {
 		public const string XMLFile = Prefix + DsImageStrings.XMLFile;
 		public const string XMLSchema = Prefix + DsImageStrings.XMLSchema;
 		public const string XSLTransform = Prefix + DsImageStrings.XSLTransform;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

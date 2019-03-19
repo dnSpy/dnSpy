@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -111,14 +111,14 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.ColumnLineSeparator)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Selection, Before = PredefinedHexAdornmentLayers.Text)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.TextMarker)]
 		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public ColumnLineSeparatorService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
 			if (editorFormatMapService == null)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -93,7 +93,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			}
 		}
 
-		void OnBookmarksAdded_UI(in CollectionChangedEventArgs<Bookmark> e) {
+		void OnBookmarksAdded_UI(CollectionChangedEventArgs<Bookmark> e) {
 			uiDispatcher.VerifyAccess();
 			if (!e.Added)
 				throw new InvalidOperationException();

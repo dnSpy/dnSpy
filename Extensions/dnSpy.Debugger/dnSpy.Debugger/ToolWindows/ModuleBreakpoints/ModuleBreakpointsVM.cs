@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
@@ -36,19 +37,21 @@ using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
-	interface IModuleBreakpointsVM {
+	interface IModuleBreakpointsVM : IGridViewColumnDescsProvider {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		BulkObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		IEnumerable<ModuleBreakpointVM> Sort(IEnumerable<ModuleBreakpointVM> moduleBreakpoints);
 	}
 
 	[Export(typeof(IModuleBreakpointsVM))]
-	sealed class ModuleBreakpointsVM : ViewModelBase, IModuleBreakpointsVM, ILazyToolWindowVM {
+	sealed class ModuleBreakpointsVM : ViewModelBase, IModuleBreakpointsVM, ILazyToolWindowVM, IComparer<ModuleBreakpointVM> {
 		public BulkObservableCollection<ModuleBreakpointVM> AllItems { get; }
 		public ObservableCollection<ModuleBreakpointVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
@@ -154,6 +157,18 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = moduleBreakpointFormatterProvider.Create(),
 			};
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.IsEnabled, string.Empty) { CanBeSorted = true },
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.Name, dnSpy_Debugger_Resources.Column_Name),
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.DynamicModule, dnSpy_Debugger_Resources.Column_DynamicModule),
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.InMemoryModule, dnSpy_Debugger_Resources.Column_InMemoryModule),
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.Order, dnSpy_Debugger_Resources.Column_Order),
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.Process, dnSpy_Debugger_Resources.Column_Process),
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.AppDomain, dnSpy_Debugger_Resources.Column_AppDomain),
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => SortList();
 		}
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
@@ -304,13 +319,12 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		// UI thread
 		int GetInsertionIndex_UI(ModuleBreakpointVM vm) {
 			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
-			var comparer = ModuleBreakpointVMComparer.Instance;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				int c = comparer.Compare(vm, list[index]);
+				int c = Compare(vm, list[index]);
 				if (c < 0)
 					hi = index - 1;
 				else if (c > 0)
@@ -327,20 +341,92 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			moduleBreakpointContext.SearchMatcher.SetSearchText(filterText);
+			SortList(filterText);
+		}
 
+		// UI thread
+		void SortList() {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			SortList(filterText);
+		}
+
+		// UI thread
+		void SortList(string filterText) {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
 			var newList = new List<ModuleBreakpointVM>(GetFilteredItems_UI(filterText));
-			newList.Sort(ModuleBreakpointVMComparer.Instance);
+			newList.Sort(this);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText);
+		}
+
+		// UI thread
+		IEnumerable<ModuleBreakpointVM> IModuleBreakpointsVM.Sort(IEnumerable<ModuleBreakpointVM> moduleBreakpoints) {
+			moduleBreakpointContext.UIDispatcher.VerifyAccess();
+			var list = new List<ModuleBreakpointVM>(moduleBreakpoints);
+			list.Sort(this);
+			return list;
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText);
 		void InitializeNothingMatched(string filterText) =>
 			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
 
-		sealed class ModuleBreakpointVMComparer : IComparer<ModuleBreakpointVM> {
-			public static readonly IComparer<ModuleBreakpointVM> Instance = new ModuleBreakpointVMComparer();
-			public int Compare(ModuleBreakpointVM x, ModuleBreakpointVM y) => x.Order - y.Order;
+		public int Compare(ModuleBreakpointVM x, ModuleBreakpointVM y) {
+			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
+			var (desc, dir) = Descs.SortedColumn;
+
+			int id;
+			if (desc == null || dir == GridViewSortDirection.Default) {
+				id = ModuleBreakpointsWindowColumnIds.Default_Order;
+				dir = GridViewSortDirection.Ascending;
+			}
+			else
+				id = desc.Id;
+
+			int diff;
+			switch (id) {
+			case ModuleBreakpointsWindowColumnIds.Default_Order:
+				diff = x.Order - y.Order;
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.IsEnabled:
+				diff = Comparer<bool>.Default.Compare(x.IsEnabled, y.IsEnabled);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.Name:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.ModuleBreakpoint.ModuleName, y.ModuleBreakpoint.ModuleName);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.DynamicModule:
+				diff = Comparer<bool?>.Default.Compare(x.IsDynamic, y.IsDynamic);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.InMemoryModule:
+				diff = Comparer<bool?>.Default.Compare(x.IsInMemory, y.IsInMemory);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.Order:
+				diff = Comparer<int?>.Default.Compare(x.ModuleBreakpoint.Order, y.ModuleBreakpoint.Order);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.Process:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.ModuleBreakpoint.ProcessName, y.ModuleBreakpoint.ProcessName);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.AppDomain:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.ModuleBreakpoint.AppDomainName, y.ModuleBreakpoint.AppDomainName);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (diff == 0)
+				diff = x.Order - y.Order;
+			Debug.Assert(dir == GridViewSortDirection.Ascending || dir == GridViewSortDirection.Descending);
+			if (dir == GridViewSortDirection.Descending)
+				diff = -diff;
+			return diff;
 		}
 
 		// UI thread
@@ -368,7 +454,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			sbOutput.Reset();
 			return moduleBreakpointContext.SearchMatcher.IsMatchAll(allStrings);
 		}
-		readonly StringBuilderTextColorOutput sbOutput = new StringBuilderTextColorOutput();
+		readonly DbgStringBuilderTextWriter sbOutput = new DbgStringBuilderTextWriter();
 
 		// UI thread
 		string GetModuleName_UI(ModuleBreakpointVM vm) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,14 +18,17 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Debugger.Shared;
+using Microsoft.Win32;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
-		public const string DotNetExeName = "dotnet.exe";
+		public static readonly string DotNetExeName = FileUtilities.GetNativeExeFilename("dotnet");
 
 		public static string GetPathToDotNetExeHost(int bitness) {
 			if (bitness != 32 && bitness != 64)
@@ -33,15 +36,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
 			if (pathEnvVar == null)
 				return null;
-			foreach (var tmp in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)) {
+			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
 				if (!Directory.Exists(path))
 					continue;
 				try {
+					path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
+				}
+				catch (ArgumentException) {
+					continue;
+				}
+				catch (PathTooLongException) {
+					continue;
+				}
+				try {
 					var file = Path.Combine(path, DotNetExeName);
 					if (!File.Exists(file))
 						continue;
-					if (GetPeFileBitness(file) == bitness)
+					if (FileUtilities.GetNativeFileBitness(file) == bitness)
 						return file;
 				}
 				catch {
@@ -50,29 +62,53 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			return null;
 		}
 
-		static int GetPeFileBitness(string file) {
-			using (var f = File.OpenRead(file)) {
-				var r = new BinaryReader(f);
-				if (r.ReadUInt16() != 0x5A4D)
-					return -1;
-				f.Position = 0x3C;
-				f.Position = r.ReadUInt32();
-				if (r.ReadUInt32() != 0x4550)
-					return -1;
-				f.Position += 0x14;
-				ushort magic = r.ReadUInt16();
-				if (magic == 0x10B)
-					return 32;
-				if (magic == 0x20B)
-					return 64;
-				return -1;
+		// NOTE: This same method exists in DotNetCorePathProvider (dnSpy project). Update both methods if this one gets updated.
+		static IEnumerable<string> GetDotNetCoreBaseDirCandidates() {
+			// Microsoft tools don't check the PATH env var, only the default locations (eg. ProgramFiles)
+			var envVars = new string[] {
+				"PATH",
+				"DOTNET_ROOT(x86)",
+				"DOTNET_ROOT",
+			};
+			foreach (var envVar in envVars) {
+				var pathEnvVar = Environment.GetEnvironmentVariable(envVar) ?? string.Empty;
+				foreach (var path in pathEnvVar.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries))
+					yield return path;
 			}
+
+			var regPathFormat = IntPtr.Size == 4 ?
+				@"SOFTWARE\dotnet\Setup\InstalledVersions\{0}" :
+				@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\{0}";
+			var archs = new[] { "x86", "x64" };
+			foreach (var arch in archs) {
+				var regPath = string.Format(regPathFormat, arch);
+				if (TryGetInstallLocationFromRegistry(regPath, out var installLocation))
+					yield return installLocation;
+			}
+
+			bool TryGetInstallLocationFromRegistry(string regPath, out string installLocation) {
+				using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
+					installLocation = key?.GetValue("InstallLocation") as string;
+					return installLocation != null;
+				}
+			}
+
+			// Check default locations
+			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
+				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
+			const string dotnetDirName = "dotnet";
+			if (!string.IsNullOrEmpty(progDir))
+				yield return Path.Combine(progDir, dotnetDirName);
+			if (!string.IsNullOrEmpty(progDirX86))
+				yield return Path.Combine(progDirX86, dotnetDirName);
 		}
 
 		public static string GetDebugShimFilename(int bitness) {
 			var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			basePath = Path.Combine(basePath, "debug", "core");
-			const string filename = "dbgshim.dll";
+			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
 			switch (bitness) {
 			case 32:	return Path.Combine(basePath, "x86", filename);
 			case 64:	return Path.Combine(basePath, "x64", filename);
@@ -88,8 +124,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			try {
 				using (var peImage = new PEImage(filename)) {
 					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
-						return false;
-					if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories.Length <= 14)
 						return false;
 					var dd = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 					if (dd.VirtualAddress == 0 || dd.Size < 0x48)

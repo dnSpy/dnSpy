@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -167,11 +167,11 @@ namespace dnSpy.Contracts.Controls {
 					}
 					var origin = new Point(x, 0);
 
-#pragma warning disable 0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 					var glyphRun = new GlyphRun(
 						gl, 0, false, fontSize, glyphIndexes, origin, advanceWidths,
 						null, null, null, null, null, null);
-#pragma warning restore 0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
 					runs.Add((run, glyphRun, trailWhitespace, trailWhitespaceWidth));
 
 					x += totalWidth + trailWhitespaceWidth;
@@ -277,13 +277,13 @@ namespace dnSpy.Contracts.Controls {
 				//
 			}
 
-#pragma warning disable 0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 			static GlyphRun Clone(GlyphRun run, Point origin) => new GlyphRun(
 					run.GlyphTypeface, run.BidiLevel, run.IsSideways,
 					run.FontRenderingEmSize, run.GlyphIndices, origin,
 					run.AdvanceWidths, run.GlyphOffsets, run.Characters,
 					run.DeviceFontName, run.ClusterMap, run.CaretStops, run.Language);
-#pragma warning restore 0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
 
 			public override void Draw(DrawingContext drawingContext, Point origin, InvertAxes inversion) {
 				foreach (var entry in entries) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.Threading;
-using System.Windows.Threading;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DebuggerThread {
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void DebuggerThreadProc(AutoResetEvent autoResetEvent) {
 			Thread.CurrentThread.Name = threadName;
-			Dispatcher = Dispatcher.CurrentDispatcher;
+			Dispatcher = new Dispatcher();
 			autoResetEvent.Set();
 
 			callDispatcherRunEvent.WaitOne();
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Impl {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
 			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
+				Dispatcher.BeginInvokeShutdown();
 		}
 	}
 }

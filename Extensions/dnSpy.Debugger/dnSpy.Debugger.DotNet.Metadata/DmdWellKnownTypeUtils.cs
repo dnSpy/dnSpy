@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the number of well known types
 		/// </summary>
-		public static int WellKnownTypesCount => 286;
+		public static int WellKnownTypesCount => 306;
 
 		static DmdWellKnownTypeUtils() {
 			toWellKnownType = new Dictionary<DmdTypeName, DmdWellKnownType>(WellKnownTypesCount, DmdTypeNameEqualityComparer.Instance);
@@ -348,6 +348,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Add(new DmdTypeName("System", "ObsoleteAttribute"), DmdWellKnownType.System_ObsoleteAttribute);
 			Add(new DmdTypeName("System", "Span`1"), DmdWellKnownType.System_Span_T);
 			Add(new DmdTypeName("System.Runtime.InteropServices", "GCHandle"), DmdWellKnownType.System_Runtime_InteropServices_GCHandle);
+			Add(new DmdTypeName("System.Runtime.CompilerServices", "NullableAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_NullableAttribute);
+			Add(new DmdTypeName("System", "ReadOnlySpan`1"), DmdWellKnownType.System_ReadOnlySpan_T);
+			Add(new DmdTypeName("System.Runtime.CompilerServices", "IsUnmanagedAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_IsUnmanagedAttribute);
+			Add(new DmdTypeName("Microsoft.VisualBasic", "Conversion"), DmdWellKnownType.Microsoft_VisualBasic_Conversion);
+			Add(new DmdTypeName("System", "Index"), DmdWellKnownType.System_Index);
+			Add(new DmdTypeName("System", "Range"), DmdWellKnownType.System_Range);
+			Add(new DmdTypeName("System.Runtime.CompilerServices", "AsyncIteratorStateMachineAttribute"), DmdWellKnownType.System_Runtime_CompilerServices_AsyncIteratorStateMachineAttribute);
+			Add(new DmdTypeName("System", "IAsyncDisposable"), DmdWellKnownType.System_IAsyncDisposable);
+			Add(new DmdTypeName("System.Collections.Generic", "IAsyncEnumerable`1"), DmdWellKnownType.System_Collections_Generic_IAsyncEnumerable_T);
+			Add(new DmdTypeName("System.Collections.Generic", "IAsyncEnumerator`1"), DmdWellKnownType.System_Collections_Generic_IAsyncEnumerator_T);
+			Add(new DmdTypeName("System.Threading.Tasks.Sources", "ManualResetValueTaskSourceCore`1"), DmdWellKnownType.System_Threading_Tasks_Sources_ManualResetValueTaskSourceCore_T);
+			Add(new DmdTypeName("System.Threading.Tasks.Sources", "ValueTaskSourceStatus"), DmdWellKnownType.System_Threading_Tasks_Sources_ValueTaskSourceStatus);
+			Add(new DmdTypeName("System.Threading.Tasks.Sources", "ValueTaskSourceOnCompletedFlags"), DmdWellKnownType.System_Threading_Tasks_Sources_ValueTaskSourceOnCompletedFlags);
+			Add(new DmdTypeName("System.Threading.Tasks.Sources", "IValueTaskSource`1"), DmdWellKnownType.System_Threading_Tasks_Sources_IValueTaskSource_T);
+			Add(new DmdTypeName("System.Threading.Tasks.Sources", "IValueTaskSource"), DmdWellKnownType.System_Threading_Tasks_Sources_IValueTaskSource);
+			Add(new DmdTypeName("System.Threading.Tasks", "ValueTask`1"), DmdWellKnownType.System_Threading_Tasks_ValueTask_T);
+			Add(new DmdTypeName("System.Threading.Tasks", "ValueTask"), DmdWellKnownType.System_Threading_Tasks_ValueTask);
+			Add(new DmdTypeName("System.Runtime.CompilerServices", "AsyncIteratorMethodBuilder"), DmdWellKnownType.System_Runtime_CompilerServices_AsyncIteratorMethodBuilder);
+			Add(new DmdTypeName("System.Threading", "CancellationToken"), DmdWellKnownType.System_Threading_CancellationToken);
+			Add(new DmdTypeName("System.Collections", "DictionaryEntry"), DmdWellKnownType.System_Collections_DictionaryEntry);
 
 			Debug.Assert(toWellKnownType.Count == WellKnownTypesCount);
 #if DEBUG

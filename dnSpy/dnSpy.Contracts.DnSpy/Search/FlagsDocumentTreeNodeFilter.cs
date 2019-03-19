@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="flags">Flags</param>
 		public FlagsDocumentTreeNodeFilter(VisibleMembersFlags flags) => this.flags = flags;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public override DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef) {
 			bool isMatch = (flags & VisibleMembersFlags.AssemblyRef) != 0;
 			if (!isMatch)
@@ -358,6 +358,6 @@ namespace dnSpy.Contracts.Search {
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
 			return new DocumentTreeNodeFilterResult(FilterType.Visible, isMatch);
 		}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

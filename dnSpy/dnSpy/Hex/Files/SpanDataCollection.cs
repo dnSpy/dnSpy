@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files {
 			return lo < list.Count ? lo : -1;
 		}
 
-		public void Add(in SpanData<TData> data) {
+		public void Add(SpanData<TData> data) {
 			spanDataList.Add(data);
 			SortList();
 		}

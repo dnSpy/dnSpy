@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
@@ -37,19 +38,21 @@ using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
-	interface ICodeBreakpointsVM {
+	interface ICodeBreakpointsVM : IGridViewColumnDescsProvider {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		BulkObservableCollection<CodeBreakpointVM> AllItems { get; }
 		ObservableCollection<CodeBreakpointVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
+		IEnumerable<CodeBreakpointVM> Sort(IEnumerable<CodeBreakpointVM> breakpoints);
 	}
 
 	[Export(typeof(ICodeBreakpointsVM))]
-	sealed class CodeBreakpointsVM : ViewModelBase, ICodeBreakpointsVM, ILazyToolWindowVM {
+	sealed class CodeBreakpointsVM : ViewModelBase, ICodeBreakpointsVM, ILazyToolWindowVM, IComparer<CodeBreakpointVM> {
 		public BulkObservableCollection<CodeBreakpointVM> AllItems { get; }
 		public ObservableCollection<CodeBreakpointVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
@@ -112,7 +115,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		[ImportingConstructor]
 		CodeBreakpointsVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, UIDispatcher uiDispatcher, CodeBreakpointFormatterProvider codeBreakpointFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgBreakpointLocationFormatterService> dbgBreakpointLocationFormatterService, BreakpointConditionsFormatter breakpointConditionsFormatter, EditValueProviderService editValueProviderService, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService) {
 			uiDispatcher.VerifyAccess();
-			sbOutput = new StringBuilderTextColorOutput();
+			sbOutput = new DbgStringBuilderTextWriter();
 			realAllItems = new List<CodeBreakpointVM>();
 			AllItems = new BulkObservableCollection<CodeBreakpointVM>();
 			SelectedItems = new ObservableCollection<CodeBreakpointVM>();
@@ -130,7 +133,20 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = codeBreakpointFormatterProvider.Create(),
 			};
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.Name, dnSpy_Debugger_Resources.Column_Name),
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.Labels, dnSpy_Debugger_Resources.Column_Labels),
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.Condition, dnSpy_Debugger_Resources.Column_Condition),
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.HitCount, dnSpy_Debugger_Resources.Column_HitCount),
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.Filter, dnSpy_Debugger_Resources.Column_Filter),
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.WhenHit, dnSpy_Debugger_Resources.Column_WhenHit),
+					new GridViewColumnDesc(CodeBreakpointsColumnIds.Module, dnSpy_Debugger_Resources.Column_Module),
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => SortList();
 		}
+
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.CodeBreakpointsWindowName, "n", dnSpy_Debugger_Resources.Column_Name),
@@ -391,13 +407,12 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		// UI thread
 		int GetInsertionIndex_UI(CodeBreakpointVM vm) {
 			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
-			var comparer = CodeBreakpointVMComparer.Instance;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				int c = comparer.Compare(vm, list[index]);
+				int c = Compare(vm, list[index]);
 				if (c < 0)
 					hi = index - 1;
 				else if (c > 0)
@@ -414,20 +429,92 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			codeBreakpointContext.SearchMatcher.SetSearchText(filterText);
+			SortList(filterText);
+		}
 
+		// UI thread
+		void SortList() {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			SortList(filterText);
+		}
+
+		// UI thread
+		void SortList(string filterText) {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			var newList = new List<CodeBreakpointVM>(GetFilteredItems_UI(filterText));
-			newList.Sort(CodeBreakpointVMComparer.Instance);
+			newList.Sort(this);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText);
+		}
+
+		// UI thread
+		IEnumerable<CodeBreakpointVM> ICodeBreakpointsVM.Sort(IEnumerable<CodeBreakpointVM> breakpoints) {
+			codeBreakpointContext.UIDispatcher.VerifyAccess();
+			var list = new List<CodeBreakpointVM>(breakpoints);
+			list.Sort(this);
+			return list;
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText);
 		void InitializeNothingMatched(string filterText) =>
 			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
 
-		sealed class CodeBreakpointVMComparer : IComparer<CodeBreakpointVM> {
-			public static readonly IComparer<CodeBreakpointVM> Instance = new CodeBreakpointVMComparer();
-			public int Compare(CodeBreakpointVM x, CodeBreakpointVM y) => x.Order - y.Order;
+		public int Compare(CodeBreakpointVM x, CodeBreakpointVM y) {
+			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
+			var (desc, dir) = Descs.SortedColumn;
+
+			int id;
+			if (desc == null || dir == GridViewSortDirection.Default) {
+				id = CodeBreakpointsColumnIds.Default_Order;
+				dir = GridViewSortDirection.Ascending;
+			}
+			else
+				id = desc.Id;
+
+			int diff;
+			switch (id) {
+			case CodeBreakpointsColumnIds.Default_Order:
+				diff = x.Order - y.Order;
+				break;
+
+			case CodeBreakpointsColumnIds.Name:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetName_UI(x), GetName_UI(y));
+				break;
+
+			case CodeBreakpointsColumnIds.Labels:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetLabels_UI(x), GetLabels_UI(y));
+				break;
+
+			case CodeBreakpointsColumnIds.Condition:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetCondition_UI(x), GetCondition_UI(y));
+				break;
+
+			case CodeBreakpointsColumnIds.HitCount:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetHitCount_UI(x), GetHitCount_UI(y));
+				break;
+
+			case CodeBreakpointsColumnIds.Filter:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetFilter_UI(x), GetFilter_UI(y));
+				break;
+
+			case CodeBreakpointsColumnIds.WhenHit:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetWhenHit_UI(x), GetWhenHit_UI(y));
+				break;
+
+			case CodeBreakpointsColumnIds.Module:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetModule_UI(x), GetModule_UI(y));
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (diff == 0)
+				diff = x.Order - y.Order;
+			Debug.Assert(dir == GridViewSortDirection.Ascending || dir == GridViewSortDirection.Descending);
+			if (dir == GridViewSortDirection.Descending)
+				diff = -diff;
+			return diff;
 		}
 
 		// UI thread
@@ -458,7 +545,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			sbOutput.Reset();
 			return codeBreakpointContext.SearchMatcher.IsMatchAll(allStrings);
 		}
-		readonly StringBuilderTextColorOutput sbOutput;
+		readonly DbgStringBuilderTextWriter sbOutput;
 
 		// UI thread
 		string GetName_UI(CodeBreakpointVM vm) {

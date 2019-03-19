@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Extension;

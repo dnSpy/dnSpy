@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -547,6 +547,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				field.Add(new BooleanHexBitField("NoOptimization", 6));
 				field.Add(new BooleanHexBitField("PreserveSig", 7));
 				field.Add(new BooleanHexBitField("AggressiveInlining", 8));
+				field.Add(new BooleanHexBitField("AggressiveOptimization", 9));
 				field.Add(new BooleanHexBitField("InternalCall", 12));
 				return field;
 			}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Predefined hex view roles
 	/// </summary>
 	public static class PredefinedHexViewRoles {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		const string prefix = "hex-";
 		public const string Analyzable = prefix + nameof(Analyzable);
 		public const string Debuggable = prefix + nameof(Debuggable);
@@ -44,6 +44,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string HexEditorGroup = prefix + nameof(HexEditorGroup);
 		public const string HexEditorGroupDefault = prefix + nameof(HexEditorGroupDefault);
 		public const string HexEditorGroupDebuggerMemory = prefix + nameof(HexEditorGroupDebuggerMemory);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

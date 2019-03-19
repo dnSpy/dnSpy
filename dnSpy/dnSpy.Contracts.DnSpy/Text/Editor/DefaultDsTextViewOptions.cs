@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// Default <see cref="ITextView"/> options
 	/// </summary>
 	public static class DefaultDsTextViewOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string CanChangeOverwriteModeName = "ITextView/CanChangeOverwriteMode";
 		public static readonly EditorOptionKey<bool> CanChangeOverwriteModeId = new EditorOptionKey<bool>(CanChangeOverwriteModeName);
 		public const string CanChangeUseVisibleWhitespaceName = "ITextView/CanChangeUseVisibleWhitespace";
@@ -56,6 +56,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		public static readonly EditorOptionKey<bool> RemoveExtraTextLineVerticalPixelsId = new EditorOptionKey<bool>(RemoveExtraTextLineVerticalPixelsName);
 		public const string BlockStructureLineKindName = "ITextView/BlockStructureLineKind";
 		public static readonly EditorOptionKey<BlockStructureLineKind> BlockStructureLineKindId = new EditorOptionKey<BlockStructureLineKind>(BlockStructureLineKindName);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

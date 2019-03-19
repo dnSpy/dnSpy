@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,22 @@ using System.Diagnostics;
 
 namespace dnSpy.Contracts.Debugger.StartDebugging {
 	/// <summary>
+	/// Process starter result flags
+	/// </summary>
+	[Flags]
+	public enum ProcessStarterResult {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// The file extension is not the normal extension
+		/// </summary>
+		WrongExtension			= 0x00000001,
+	}
+
+	/// <summary>
 	/// Starts a process without debugging
 	/// </summary>
 	public abstract class DbgProcessStarter {
@@ -30,8 +46,9 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 		/// Checks if this instance supports starting the executable
 		/// </summary>
 		/// <param name="filename">Filename</param>
+		/// <param name="result">Contains extra information if it's a supported file</param>
 		/// <returns></returns>
-		public abstract bool IsSupported(string filename);
+		public abstract bool IsSupported(string filename, out ProcessStarterResult result);
 
 		/// <summary>
 		/// Starts the executable. Returns false and an error message if it failed or throws an exception

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
@@ -92,6 +93,95 @@ namespace dndbg.Engine {
 			return infos;
 		}
 
+		public unsafe ILToNativeMap[] GetILToNativeMapping() {
+			int hr = obj.GetILToNativeMapping(0, out uint cMap, IntPtr.Zero);
+			if (hr < 0)
+				return Array.Empty<ILToNativeMap>();
+			var infos = new ILToNativeMap[cMap];
+			if (cMap != 0) {
+				fixed (void* p = &infos[0])
+					hr = obj.GetILToNativeMapping(cMap, out cMap, new IntPtr(p));
+				if (hr < 0)
+					return Array.Empty<ILToNativeMap>();
+			}
+			return infos;
+		}
+
+		public unsafe VariableHome[] GetVariables() {
+			if (!(obj is ICorDebugCode4 c4))
+				return Array.Empty<VariableHome>();
+
+			var list = new List<VariableHome>();
+
+			int hr = c4.EnumerateVariableHomes(out var varEnum);
+			if (hr < 0)
+				return Array.Empty<VariableHome>();
+			var varHomeArray = new ICorDebugVariableHome[1];
+			const int E_FAIL = unchecked((int)0x80004005);
+			for (;;) {
+				hr = varEnum.Next((uint)varHomeArray.Length, varHomeArray, out uint count);
+				if (hr < 0 || count == 0)
+					break;
+
+				var varHome = varHomeArray[0];
+				bool error = false;
+				VariableHome varInfo = default;
+
+				hr = varHome.GetSlotIndex(out varInfo.SlotIndex);
+				if (hr == E_FAIL)
+					varInfo.SlotIndex = -1;
+				else if (hr < 0)
+					error = true;
+
+				hr = varHome.GetArgumentIndex(out varInfo.ArgumentIndex);
+				if (hr == E_FAIL)
+					varInfo.ArgumentIndex = -1;
+				else if (hr < 0)
+					error = true;
+
+				hr = varHome.GetLiveRange(out uint startOffset, out uint endOffset);
+				if (hr < 0 || startOffset > endOffset)
+					error = true;
+				varInfo.StartOffset = startOffset;
+				varInfo.Length = endOffset - startOffset;
+
+				hr = varHome.GetLocationType(out varInfo.LocationType);
+				if (hr < 0)
+					error = true;
+
+				switch (varInfo.LocationType) {
+				case VariableLocationType.VLT_REGISTER:
+					hr = varHome.GetRegister(out varInfo.Register);
+					if (hr < 0)
+						error = true;
+					varInfo.Offset = 0;
+					break;
+
+				case VariableLocationType.VLT_REGISTER_RELATIVE:
+					hr = varHome.GetRegister(out varInfo.Register);
+					if (hr < 0)
+						error = true;
+					hr = varHome.GetOffset(out varInfo.Offset);
+					if (hr < 0)
+						error = true;
+					break;
+
+				case VariableLocationType.VLT_INVALID:
+					break;
+
+				default:
+					Debug.Fail($"Unknown location type: {varInfo.LocationType}");
+					continue;
+				}
+				if (error)
+					return Array.Empty<VariableHome>();
+
+				list.Add(varInfo);
+			}
+
+			return list.Count == 0 ? Array.Empty<VariableHome>() : list.ToArray();
+		}
+
 		public unsafe uint[] GetReturnValueLiveOffset(uint ilOffset) {
 			var c3 = obj as ICorDebugCode3;
 			if (c3 == null)
@@ -101,7 +191,7 @@ namespace dndbg.Engine {
 			const int E_UNEXPECTED = unchecked((int)0x8000FFFF);
 			// E_FAIL if nothing is found
 			const int E_FAIL = unchecked((int)0x80004005);
-			Debug.Assert(hr == 0 || hr == CordbgErrors.CORDBG_E_INVALID_OPCODE || hr == CordbgErrors.CORDBG_E_UNSUPPORTED || hr == E_UNEXPECTED || hr == E_FAIL);
+			Debug.Assert(hr == 0 || hr == CordbgErrors.CORDBG_E_INVALID_OPCODE || hr == CordbgErrors.CORDBG_E_UNSUPPORTED || hr == CordbgErrors.META_E_BAD_SIGNATURE || hr == E_UNEXPECTED || hr == E_FAIL);
 			if (hr < 0)
 				return Array.Empty<uint>();
 			if (totalSize == 0)
@@ -127,5 +217,15 @@ namespace dndbg.Engine {
 		public bool Equals(CorCode other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
 		public override bool Equals(object obj) => Equals(obj as CorCode);
 		public override int GetHashCode() => RawObject.GetHashCode();
+	}
+
+	struct VariableHome {
+		public int SlotIndex;
+		public int ArgumentIndex;
+		public ulong StartOffset;
+		public uint Length;
+		public VariableLocationType LocationType;
+		public CorDebugRegister Register;
+		public int Offset;
 	}
 }

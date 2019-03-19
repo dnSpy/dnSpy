@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,39 +19,27 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
-	abstract class DbgDispatcher2 : DbgDispatcher {
-		public abstract T Invoke<T>(Func<T> callback);
-	}
-
 	[Export(typeof(DbgDispatcher))]
-	sealed class DbgDispatcherImpl : DbgDispatcher2 {
-		const DispatcherPriority execPriority = DispatcherPriority.Send;
+	sealed class DbgDispatcherImpl : DbgDispatcher {
 		readonly DebuggerThread debuggerThread;
 
-		internal Dispatcher WpfDispatcher => debuggerThread.Dispatcher;
+		internal Dispatcher Dispatcher => debuggerThread.Dispatcher;
 
 		public DbgDispatcherImpl() {
 			debuggerThread = new DebuggerThread("Debugger");
 			debuggerThread.CallDispatcherRun();
 		}
 
-		public override bool CheckAccess() => WpfDispatcher.CheckAccess();
+		public override bool CheckAccess() => Dispatcher.CheckAccess();
 
 		public override void BeginInvoke(Action callback) {
-			if (WpfDispatcher.HasShutdownStarted || WpfDispatcher.HasShutdownFinished)
+			if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
 				return;
-			WpfDispatcher.BeginInvoke(execPriority, callback);
-		}
-
-		public override T Invoke<T>(Func<T> callback) {
-			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
-			if (WpfDispatcher.HasShutdownStarted || WpfDispatcher.HasShutdownFinished)
-				return default;
-			return WpfDispatcher.Invoke(callback, execPriority);
+			Dispatcher.BeginInvoke(callback);
 		}
 	}
 }

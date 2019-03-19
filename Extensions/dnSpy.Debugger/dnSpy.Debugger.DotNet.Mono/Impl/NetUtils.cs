@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,16 +28,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		[StructLayout(LayoutKind.Sequential)]
 		struct MIB_TCPTABLE2 {
-#pragma warning disable 0649
+#pragma warning disable CS0649
 			public uint dwNumEntries;
 			public MIB_TCPROW2 table;
-#pragma warning restore 0649
+#pragma warning restore CS0649
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
 		struct MIB_TCPROW2 {
 			public const uint SIZE = 0x1C;
-#pragma warning disable 0649
+#pragma warning disable CS0649
 			public uint dwState;
 			public uint dwLocalAddr;
 			public uint dwLocalPort;
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public uint dwRemotePort;
 			public uint dwOwningPid;
 			public TCP_CONNECTION_OFFLOAD_STATE dwOffloadState;
-#pragma warning restore 0649
+#pragma warning restore CS0649
 		}
 
 		enum TCP_CONNECTION_OFFLOAD_STATE {

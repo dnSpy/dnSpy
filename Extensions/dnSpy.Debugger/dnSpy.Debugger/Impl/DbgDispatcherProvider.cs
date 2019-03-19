@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,13 +19,14 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
+using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgDispatcherProvider))]
 	sealed class DbgDispatcherProvider {
-		public Dispatcher WpfDispatcher => dbgDispatcher.WpfDispatcher;
-		public DbgDispatcher2 Dispatcher => dbgDispatcher;
+		public Dispatcher InternalDispatcher => dbgDispatcher.Dispatcher;
+		public DbgDispatcher Dispatcher => dbgDispatcher;
 
 		readonly DbgDispatcherImpl dbgDispatcher;
 

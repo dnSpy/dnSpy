@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,38 +19,38 @@
 
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodeFormatter {
 		public DbgObjectIdService ObjectIdService { get; set; }
 		public DbgLanguage Language { get; set; }
 
-		public void WriteExpander(ITextColorWriter output, ValueNode vm) {
+		public void WriteExpander(IDbgTextWriter output, ValueNode vm) {
 			if (vm.TreeNode.LazyLoading)
-				output.Write(BoxedTextColor.Text, "+");
+				output.Write(DbgTextColor.Text, "+");
 			else if (vm.TreeNode.Children.Count == 0) {
 				// VS prints nothing
 			}
 			else if (vm.TreeNode.IsExpanded)
-				output.Write(BoxedTextColor.Text, "-");
+				output.Write(DbgTextColor.Text, "-");
 			else
-				output.Write(BoxedTextColor.Text, "+");
+				output.Write(DbgTextColor.Text, "+");
 		}
 
-		public void WriteName(ITextColorWriter output, ValueNode vm) => vm.CachedName.WriteTo(output);
+		public void WriteName(IDbgTextWriter output, ValueNode vm) => vm.CachedName.WriteTo(output);
 
-		public void WriteValueAndObjectId(ITextColorWriter output, ValueNode vm, out bool textChanged) {
+		public void WriteValueAndObjectId(IDbgTextWriter output, ValueNode vm, out bool textChanged) {
 			WriteValue(output, vm, out textChanged);
 			WriteObjectId(output, vm);
 		}
 
-		public void WriteValue(ITextColorWriter output, ValueNode vm, out bool textChanged) {
+		public void WriteValue(IDbgTextWriter output, ValueNode vm, out bool textChanged) {
 			vm.CachedValue.WriteTo(output);
 			textChanged = !vm.OldCachedValue.IsDefault && !vm.OldCachedValue.Equals(vm.CachedValue);
 		}
 
-		public void WriteObjectId(ITextColorWriter output, ValueNode vm) {
+		public void WriteObjectId(IDbgTextWriter output, ValueNode vm) {
 			Debug.Assert(ObjectIdService != null);
 			if (ObjectIdService == null)
 				return;
@@ -65,28 +65,28 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					return;
 				var objectId = ObjectIdService.GetObjectId(value);
 				if (objectId != null) {
-					output.WriteSpace();
-					output.Write(BoxedTextColor.Punctuation, "{");
+					output.Write(DbgTextColor.Text, " ");
+					output.Write(DbgTextColor.Punctuation, "{");
 					var evalInfo = vmImpl.Context.EvaluationInfo;
 					Debug.Assert(evalInfo != null);
 					if (evalInfo == null)
-						output.Write(BoxedTextColor.Error, "???");
+						output.Write(DbgTextColor.Error, "???");
 					else
 						language.Formatter.FormatObjectIdName(evalInfo.Context, output, objectId.Id);
-					output.Write(BoxedTextColor.Punctuation, "}");
+					output.Write(DbgTextColor.Punctuation, "}");
 				}
 			}
 		}
 
-		public void WriteType(ITextColorWriter output, ValueNode vm) {
+		public void WriteType(IDbgTextWriter output, ValueNode vm) {
 			vm.CachedExpectedType.WriteTo(output);
 			var cachedActualType = vm.CachedActualType_OrDefaultInstance;
 			// If it's default, expected type == actual type
 			if (!cachedActualType.IsDefault) {
-				output.WriteSpace();
-				output.Write(BoxedTextColor.Error, "{");
+				output.Write(DbgTextColor.Text, " ");
+				output.Write(DbgTextColor.Error, "{");
 				cachedActualType.WriteTo(output);
-				output.Write(BoxedTextColor.Error, "}");
+				output.Write(DbgTextColor.Error, "}");
 			}
 		}
 	}

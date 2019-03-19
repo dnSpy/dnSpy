@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="getMetadata">Called to provide the metadata</param>
 		/// <param name="assemblyInfo">Assembly info</param>
 		/// <returns></returns>
-		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, in DmdCreateAssemblyInfo assemblyInfo);
+		public abstract DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo);
 
 		/// <summary>
 		/// Creates an assembly. The first created assembly must be the corlib (<see cref="DmdAppDomain.CorLib"/>)
@@ -359,7 +359,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		internal abstract DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorlib);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public DmdType System_Object => GetWellKnownType(DmdWellKnownType.System_Object);
 		public DmdType System_Enum => GetWellKnownType(DmdWellKnownType.System_Enum);
 		public DmdType System_MulticastDelegate => GetWellKnownType(DmdWellKnownType.System_MulticastDelegate);
@@ -404,7 +404,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdType System_IAsyncResult => GetWellKnownType(DmdWellKnownType.System_IAsyncResult);
 		public DmdType System_AsyncCallback => GetWellKnownType(DmdWellKnownType.System_AsyncCallback);
 		public DmdType System_Type => GetWellKnownType(DmdWellKnownType.System_Type);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Returns a cached type if present else the input type

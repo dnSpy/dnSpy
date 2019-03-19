@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Machine
 	/// </summary>
 	public enum DmdImageFileMachine {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Unknown		= 0,
 		I386		= 0x014C,
 		R3000		= 0x0162,
@@ -53,6 +53,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		M32R		= 0x9041,
 		ARM64		= 0xAA64,
 		CEE			= 0xC0EE,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -193,6 +193,7 @@ namespace dnSpy.Contracts.Debugger {
 		public override string ToString() {
 			switch (Kind) {
 			case DbgBreakInfoKind.Unknown:
+			case DbgBreakInfoKind.Connected:
 			default:
 				return Kind.ToString();
 

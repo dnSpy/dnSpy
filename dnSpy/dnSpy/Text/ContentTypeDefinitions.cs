@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.Any)]
 		static readonly ContentTypeDefinition AnyContentTypeDefinition;
@@ -89,6 +89,11 @@ namespace dnSpy.Text {
 		static readonly ContentTypeDefinition ILContentTypeDefinition;
 
 		[Export]
+		[Name(ContentTypes.Assembler)]
+		[BaseDefinition(ContentTypes.Code)]
+		static readonly ContentTypeDefinition AssemblerContentTypeDefinition;
+
+		[Export]
 		[Name(ContentTypes.RoslynCode)]
 		[BaseDefinition(ContentTypes.Code)]
 		static readonly ContentTypeDefinition RoslynCodeContentTypeDefinition;
@@ -124,6 +129,6 @@ namespace dnSpy.Text {
 		[Name(ContentTypes.AboutDnSpy)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition AboutDnSpyContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

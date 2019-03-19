@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,9 @@ using dnSpy.Contracts.Settings.HexEditor;
 
 namespace dnSpy.Hex.HexEditor {
 	static class HexEditorOptionsDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[ExportHexEditorOptionsDefinition("res:HexEditorGroup_Default", PredefinedHexViewRoles.HexEditorGroupDefault, AppSettingsConstants.GUID_HEX_EDITOR_DEFAULT, typeof(HexEditorOptionsDefinitions))]
 		static readonly HexEditorOptionsDefinition defaultHexEditorOptionsDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,11 +23,11 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Analyzer {
 	static class ContentTypeDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNodeAnalyzer)]
 		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
 		static readonly ContentTypeDefinition TreeViewNodeAnalyzer;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

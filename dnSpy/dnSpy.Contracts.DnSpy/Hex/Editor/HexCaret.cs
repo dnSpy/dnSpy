@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -291,7 +291,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="hexView">Hex view</param>
 		/// <param name="oldPosition">Old position</param>
 		/// <param name="newPosition">New position</param>
-		public HexCaretPositionChangedEventArgs(HexView hexView, in HexCaretPosition oldPosition, in HexCaretPosition newPosition) {
+		public HexCaretPositionChangedEventArgs(HexView hexView, HexCaretPosition oldPosition, HexCaretPosition newPosition) {
 			if (oldPosition.IsDefault)
 				throw new ArgumentException();
 			if (newPosition.IsDefault)

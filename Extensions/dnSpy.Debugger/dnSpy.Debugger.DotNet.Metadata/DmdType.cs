@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract DmdTypeAttributes Attributes { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsNotPublic => (Attributes & DmdTypeAttributes.VisibilityMask) == DmdTypeAttributes.NotPublic;
 		public bool IsPublic => (Attributes & DmdTypeAttributes.VisibilityMask) == DmdTypeAttributes.Public;
 		public bool IsNestedPublic => (Attributes & DmdTypeAttributes.VisibilityMask) == DmdTypeAttributes.NestedPublic;
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsUnicodeClass => (Attributes & DmdTypeAttributes.StringFormatMask) == DmdTypeAttributes.UnicodeClass;
 		public bool IsAutoClass => (Attributes & DmdTypeAttributes.StringFormatMask) == DmdTypeAttributes.AutoClass;
 		public bool IsCustomFormatClass => (Attributes & DmdTypeAttributes.StringFormatMask) == DmdTypeAttributes.CustomFormatClass;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// true if this type is <see cref="Nullable{T}"/>
@@ -1071,6 +1071,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract int GenericParameterPosition { get; }
 
 		/// <summary>
+		/// true if it's a non constructed type with a TypeDef token
+		/// </summary>
+		public bool IsTypeDefinition => TypeSignatureKind == DmdTypeSignatureKind.Type;// Also if it's a TypeRef since it can be resolved to a TypeDef
+
+		/// <summary>
+		/// true if it's a generic type parameter
+		/// </summary>
+		public bool IsGenericTypeParameter => TypeSignatureKind == DmdTypeSignatureKind.TypeGenericParameter;
+
+		/// <summary>
+		/// true if it's a generic method parameter
+		/// </summary>
+		public bool IsGenericMethodParameter => TypeSignatureKind == DmdTypeSignatureKind.MethodGenericParameter;
+
+		/// <summary>
 		/// true if this type contains generic parameters
 		/// </summary>
 		public bool ContainsGenericParameters => CalculateContainsGenericParameters(this);
@@ -1352,8 +1367,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if this is a by-ref like value type
 		/// </summary>
 		public bool IsByRefLike =>
-			//TODO: Only tested with .NET Core 2.1 preview, it's possible that this will fail on .NET Framework with certain types,
-			// eg. ArgIterator, ByReference<T>, RuntimeArgumentHandle, TypedReference
+			//TODO: .NET Core adds this attribute to by ref like types, but .NET Framework does not, eg.
+			//		ArgIterator, RuntimeArgumentHandle, TypedReference
 			CustomAttributesHelper.IsDefined(this, "System.Runtime.CompilerServices.IsByRefLikeAttribute", inherit: false);
 
 		/// <summary>
@@ -1388,10 +1403,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public sealed override DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdType left, DmdType right) => DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
 		public static bool operator !=(DmdType left, DmdType right) => !DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

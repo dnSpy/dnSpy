@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.references = references ?? throw new ArgumentNullException(nameof(references));
 		}
 
-		Span? IDotNetSpanMap.ToSpan(in ModuleId module, uint token, uint ilOffset) {
+		Span? IDotNetSpanMap.ToSpan(ModuleId module, uint token, uint ilOffset) {
 			if (toMethodDebugInfo == null) {
 				toMethodDebugInfo = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 				foreach (var info in methodDebugInfos) {
@@ -62,7 +62,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new Span(textSpan.Start, textSpan.Length);
 		}
 
-		Span? IDotNetSpanMap.ToSpan(in ModuleId module, uint token) {
+		Span? IDotNetSpanMap.ToSpan(ModuleId module, uint token) {
 			if (toTokenInfo == null) {
 				toTokenInfo = new Dictionary<ModuleTokenId, Span>();
 				foreach (var data in references) {

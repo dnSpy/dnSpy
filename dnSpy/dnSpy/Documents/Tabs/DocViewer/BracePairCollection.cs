@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -96,7 +96,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	readonly struct BracePairResultCollection : IEquatable<BracePairResultCollection> {
 		public readonly BracePairResult First;
 		public readonly BracePairResult? Second;
-		public BracePairResultCollection(in BracePairResult first, in BracePairResult? second) {
+		public BracePairResultCollection(BracePairResult first, BracePairResult? second) {
 			First = first;
 			Second = second;
 		}

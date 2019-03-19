@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
 			var riid = typeof(DEMH.ICLRMetaHost).GUID;
 			var mh = (DEMH.ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
-			foreach (var process in DebuggableProcesses.GetProcesses(context.CancellationToken)) {
+			foreach (var process in DebuggableProcesses.GetProcesses(context.ProcessIds, context.IsValidProcess, context.CancellationToken)) {
 				int hr = mh.EnumerateLoadedRuntimes(process.Handle, out var iter);
 				if (hr >= 0) {
 					for (;;) {

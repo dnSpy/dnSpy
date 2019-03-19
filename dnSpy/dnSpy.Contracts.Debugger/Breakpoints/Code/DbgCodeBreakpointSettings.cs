@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,10 +55,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		public ReadOnlyCollection<string> Labels { get; set; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -156,10 +156,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Condition = condition ?? throw new ArgumentNullException(nameof(condition));
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointCondition left, DbgCodeBreakpointCondition right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointCondition left, DbgCodeBreakpointCondition right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -232,10 +232,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Count = count;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointHitCount left, DbgCodeBreakpointHitCount right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointHitCount left, DbgCodeBreakpointHitCount right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -279,10 +279,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <param name="filter">Filter</param>
 		public DbgCodeBreakpointFilter(string filter) => Filter = filter ?? throw new ArgumentNullException(nameof(filter));
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointFilter left, DbgCodeBreakpointFilter right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointFilter left, DbgCodeBreakpointFilter right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -335,10 +335,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Continue = @continue;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointTrace left, DbgCodeBreakpointTrace right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointTrace left, DbgCodeBreakpointTrace right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>

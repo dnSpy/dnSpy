@@ -1,0 +1,28 @@
+version: x.x.{build}
+image: Visual Studio 2017
+configuration: Release
+install:
+- cmd: git submodule update --init --recursive
+before_build:
+- cmd: appveyor-retry nuget restore
+build:
+  project: dnSpy.sln
+  parallel: true
+  verbosity: normal
+artifacts:
+- path: dnSpy/dnSpy/bin/Release/net472
+  name: dnSpy-net472
+deploy:
+- provider: GitHub
+  description: New release
+  on:
+    APPVEYOR_REPO_TAG: true
+  auth_token:
+    secure: A8Xfg1Sr7/XmTlvOyNEBQVwMARF+uyigNNJXQYq4pQFaR3Z3x0iaXGZMLlvA0oTO
+notifications:
+- provider: Email
+  to:
+  - de4dot@gmail.com
+  on_build_success: false
+  on_build_failure: true
+  on_build_status_changed: false

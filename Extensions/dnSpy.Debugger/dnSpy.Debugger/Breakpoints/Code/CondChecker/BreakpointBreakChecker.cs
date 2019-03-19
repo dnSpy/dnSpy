@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,15 +40,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			this.dbgCodeBreakpointTraceMessagePrinter = dbgCodeBreakpointTraceMessagePrinter;
 		}
 
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.Message += DbgManager_Message;
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.MessageBoundBreakpoint += DbgManager_MessageBoundBreakpoint;
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			if (e.Kind == DbgMessageKind.BoundBreakpoint) {
-				var be = (DbgMessageBoundBreakpointEventArgs)e;
-				e.Pause = ShouldBreak(be.BoundBreakpoint, be.Thread);
-				if (e.Pause && be.BoundBreakpoint.Breakpoint.IsOneShot)
-					be.BoundBreakpoint.Breakpoint.Remove();
-			}
+		void DbgManager_MessageBoundBreakpoint(object sender, DbgMessageBoundBreakpointEventArgs e) {
+			e.Pause = ShouldBreak(e.BoundBreakpoint, e.Thread);
+			if (e.Pause && e.BoundBreakpoint.Breakpoint.IsOneShot)
+				e.BoundBreakpoint.Breakpoint.Remove();
 		}
 
 		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {

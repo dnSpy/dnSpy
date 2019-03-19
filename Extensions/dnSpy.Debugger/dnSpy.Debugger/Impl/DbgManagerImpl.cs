@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,12 +22,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.Exceptions;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	[Export(typeof(DbgManager))]
@@ -35,9 +35,114 @@ namespace dnSpy.Debugger.Impl {
 		static int currentProcessId = Process.GetCurrentProcess().Id;
 
 		public override event EventHandler<DbgMessageEventArgs> Message;
+		public override event EventHandler<DbgMessageProcessCreatedEventArgs> MessageProcessCreated;
+		public override event EventHandler<DbgMessageProcessExitedEventArgs> MessageProcessExited;
+		public override event EventHandler<DbgMessageRuntimeCreatedEventArgs> MessageRuntimeCreated;
+		public override event EventHandler<DbgMessageRuntimeExitedEventArgs> MessageRuntimeExited;
+		public override event EventHandler<DbgMessageAppDomainLoadedEventArgs> MessageAppDomainLoaded;
+		public override event EventHandler<DbgMessageAppDomainUnloadedEventArgs> MessageAppDomainUnloaded;
+		public override event EventHandler<DbgMessageModuleLoadedEventArgs> MessageModuleLoaded;
+		public override event EventHandler<DbgMessageModuleUnloadedEventArgs> MessageModuleUnloaded;
+		public override event EventHandler<DbgMessageThreadCreatedEventArgs> MessageThreadCreated;
+		public override event EventHandler<DbgMessageThreadExitedEventArgs> MessageThreadExited;
+		public override event EventHandler<DbgMessageExceptionThrownEventArgs> MessageExceptionThrown;
+		public override event EventHandler<DbgMessageEntryPointBreakEventArgs> MessageEntryPointBreak;
+		public override event EventHandler<DbgMessageProgramMessageEventArgs> MessageProgramMessage;
+		public override event EventHandler<DbgMessageBoundBreakpointEventArgs> MessageBoundBreakpoint;
+		public override event EventHandler<DbgMessageProgramBreakEventArgs> MessageProgramBreak;
+		public override event EventHandler<DbgMessageStepCompleteEventArgs> MessageStepComplete;
+		public override event EventHandler<DbgMessageSetIPCompleteEventArgs> MessageSetIPComplete;
+		public override event EventHandler<DbgMessageUserMessageEventArgs> MessageUserMessage;
+		public override event EventHandler<DbgMessageBreakEventArgs> MessageBreak;
+		public override event EventHandler<DbgMessageAsyncProgramMessageEventArgs> MessageAsyncProgramMessage;
+
 		void RaiseMessage_DbgThread(ref DbgBreakInfoCollectionBuilder builder, DbgMessageEventArgs e) {
 			Dispatcher.VerifyAccess();
 			Message?.Invoke(this, e);
+			switch (e.Kind) {
+			case DbgMessageKind.ProcessCreated:
+				MessageProcessCreated?.Invoke(this, (DbgMessageProcessCreatedEventArgs)e);
+				break;
+
+			case DbgMessageKind.ProcessExited:
+				MessageProcessExited?.Invoke(this, (DbgMessageProcessExitedEventArgs)e);
+				break;
+
+			case DbgMessageKind.RuntimeCreated:
+				MessageRuntimeCreated?.Invoke(this, (DbgMessageRuntimeCreatedEventArgs)e);
+				break;
+
+			case DbgMessageKind.RuntimeExited:
+				MessageRuntimeExited?.Invoke(this, (DbgMessageRuntimeExitedEventArgs)e);
+				break;
+
+			case DbgMessageKind.AppDomainLoaded:
+				MessageAppDomainLoaded?.Invoke(this, (DbgMessageAppDomainLoadedEventArgs)e);
+				break;
+
+			case DbgMessageKind.AppDomainUnloaded:
+				MessageAppDomainUnloaded?.Invoke(this, (DbgMessageAppDomainUnloadedEventArgs)e);
+				break;
+
+			case DbgMessageKind.ModuleLoaded:
+				MessageModuleLoaded?.Invoke(this, (DbgMessageModuleLoadedEventArgs)e);
+				break;
+
+			case DbgMessageKind.ModuleUnloaded:
+				MessageModuleUnloaded?.Invoke(this, (DbgMessageModuleUnloadedEventArgs)e);
+				break;
+
+			case DbgMessageKind.ThreadCreated:
+				MessageThreadCreated?.Invoke(this, (DbgMessageThreadCreatedEventArgs)e);
+				break;
+
+			case DbgMessageKind.ThreadExited:
+				MessageThreadExited?.Invoke(this, (DbgMessageThreadExitedEventArgs)e);
+				break;
+
+			case DbgMessageKind.ExceptionThrown:
+				MessageExceptionThrown?.Invoke(this, (DbgMessageExceptionThrownEventArgs)e);
+				break;
+
+			case DbgMessageKind.EntryPointBreak:
+				MessageEntryPointBreak?.Invoke(this, (DbgMessageEntryPointBreakEventArgs)e);
+				break;
+
+			case DbgMessageKind.ProgramMessage:
+				MessageProgramMessage?.Invoke(this, (DbgMessageProgramMessageEventArgs)e);
+				break;
+
+			case DbgMessageKind.BoundBreakpoint:
+				MessageBoundBreakpoint?.Invoke(this, (DbgMessageBoundBreakpointEventArgs)e);
+				break;
+
+			case DbgMessageKind.ProgramBreak:
+				MessageProgramBreak?.Invoke(this, (DbgMessageProgramBreakEventArgs)e);
+				break;
+
+			case DbgMessageKind.StepComplete:
+				MessageStepComplete?.Invoke(this, (DbgMessageStepCompleteEventArgs)e);
+				break;
+
+			case DbgMessageKind.SetIPComplete:
+				MessageSetIPComplete?.Invoke(this, (DbgMessageSetIPCompleteEventArgs)e);
+				break;
+
+			case DbgMessageKind.UserMessage:
+				MessageUserMessage?.Invoke(this, (DbgMessageUserMessageEventArgs)e);
+				break;
+
+			case DbgMessageKind.Break:
+				MessageBreak?.Invoke(this, (DbgMessageBreakEventArgs)e);
+				break;
+
+			case DbgMessageKind.AsyncProgramMessage:
+				MessageAsyncProgramMessage?.Invoke(this, (DbgMessageAsyncProgramMessageEventArgs)e);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
 			if (e.Pause)
 				builder.Add(e);
 		}
@@ -46,11 +151,11 @@ namespace dnSpy.Debugger.Impl {
 			Dispatcher.VerifyAccess();
 			var msg = new DbgMessageUserMessageEventArgs(messageKind, message);
 			Message?.Invoke(this, msg);
+			MessageUserMessage?.Invoke(this, msg);
 		}
 
 		public override DbgDispatcher Dispatcher => dbgDispatcherProvider.Dispatcher;
-		internal DbgDispatcher2 Dispatcher2 => dbgDispatcherProvider.Dispatcher;
-		Dispatcher WpfDispatcher => dbgDispatcherProvider.WpfDispatcher;
+		Dispatcher InternalDispatcher => dbgDispatcherProvider.InternalDispatcher;
 
 		public override event EventHandler<DbgCollectionChangedEventArgs<DbgProcess>> ProcessesChanged;
 		public override DbgProcess[] Processes {
@@ -184,7 +289,7 @@ namespace dnSpy.Debugger.Impl {
 			this.dbgEngineProviders = dbgEngineProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.dbgManagerStartListeners = dbgManagerStartListeners.ToArray();
 			this.dbgModuleMemoryRefreshedNotifiers = dbgModuleMemoryRefreshedNotifiers.ToArray();
-			new DelayedIsRunningHelper(this, WpfDispatcher, RaiseDelayedIsRunningChanged_DbgThread);
+			new DelayedIsRunningHelper(this, InternalDispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
 
 		// DbgManager thread
@@ -360,7 +465,7 @@ namespace dnSpy.Debugger.Impl {
 					}
 				}
 				bool shouldDetach = startKind == DbgStartKind.Attach;
-				process = new DbgProcessImpl(this, WpfDispatcher, pid, CalculateProcessState(null), shouldDetach);
+				process = new DbgProcessImpl(this, InternalDispatcher, pid, CalculateProcessState(null), shouldDetach);
 				processes.Add(process);
 			}
 			ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(process, added: true));
@@ -1054,10 +1159,10 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
-			DbgThread(() => DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(e));
+			DbgThread(() => DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_DbgThread(e));
 
 		public override event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;
-		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_CorDebug(in ModulesRefreshedEventArgs e) {
+		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_DbgThread(ModulesRefreshedEventArgs e) {
 			Dispatcher.VerifyAccess();
 			foreach (var module in e.Modules)
 				((DbgModuleImpl)module).RaiseRefreshed();

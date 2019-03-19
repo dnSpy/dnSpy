@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 	/// <summary>
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="id">Exception id</param>
-		public abstract void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id);
+		public abstract void FormatExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id);
 
 		/// <summary>
 		/// Formats a stowed exception name
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="id">Stowed exception id</param>
-		public abstract void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id);
+		public abstract void FormatStowedExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id);
 
 		/// <summary>
 		/// Formats a return value name
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="id">Return value id</param>
-		public abstract void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id);
+		public abstract void FormatReturnValueName(DbgEvaluationContext context, IDbgTextWriter output, uint id);
 
 		/// <summary>
 		/// Formats an object ID name
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="output">Output</param>
 		/// <param name="id">Object id</param>
-		public abstract void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id);
+		public abstract void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id);
 
 		/// <summary>
 		/// Formats a stack frame
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="options">Stack frame options</param>
 		/// <param name="valueOptions">Value option</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void FormatFrame(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo);
+		public abstract void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo);
 
 		/// <summary>
 		/// Formats a value
@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo);
+		public abstract void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo);
 
 		/// <summary>
 		/// Formats a value's type
@@ -86,6 +86,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void FormatType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo);
+		public abstract void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo);
 	}
 }

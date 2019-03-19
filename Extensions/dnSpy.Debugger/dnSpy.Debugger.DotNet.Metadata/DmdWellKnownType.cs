@@ -1,11 +1,11 @@
-﻿// Copied from Roslyn's SpecialType and WellKnownType enums
+// Copied from Roslyn's SpecialType and WellKnownType enums
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Well known types
 	/// </summary>
 	public enum DmdWellKnownType {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		// Roslyn: SpecialType
 		System_Object,
 		System_Enum,
@@ -319,9 +319,30 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		System_Span_T,
 		System_Runtime_InteropServices_GCHandle,
 
+		System_Runtime_CompilerServices_NullableAttribute,
+		System_ReadOnlySpan_T,
+		System_Runtime_CompilerServices_IsUnmanagedAttribute,
+		Microsoft_VisualBasic_Conversion,
+		System_Index,
+		System_Range,
+		System_Runtime_CompilerServices_AsyncIteratorStateMachineAttribute,
+		System_IAsyncDisposable,
+		System_Collections_Generic_IAsyncEnumerable_T,
+		System_Collections_Generic_IAsyncEnumerator_T,
+		System_Threading_Tasks_Sources_ManualResetValueTaskSourceCore_T,
+		System_Threading_Tasks_Sources_ValueTaskSourceStatus,
+		System_Threading_Tasks_Sources_ValueTaskSourceOnCompletedFlags,
+		System_Threading_Tasks_Sources_IValueTaskSource_T,
+		System_Threading_Tasks_Sources_IValueTaskSource,
+		System_Threading_Tasks_ValueTask_T,
+		System_Threading_Tasks_ValueTask,
+		System_Runtime_CompilerServices_AsyncIteratorMethodBuilder,
+		System_Threading_CancellationToken,
+		System_Collections_DictionaryEntry,
+
 		// When adding more types, update DmdWellKnownTypeUtils
 
 		None = -1,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

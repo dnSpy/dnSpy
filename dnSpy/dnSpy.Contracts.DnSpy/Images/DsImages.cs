@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Images {
 	public static class DsImages {
 		internal const string ImagesAssemblyName = "dnSpy.Images";
 		static readonly Assembly assembly = System.Reflection.Assembly.Load(ImagesAssemblyName);
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static ImageReference Add { get; } = new ImageReference(assembly, DsImageStrings.Add);
 		public static ImageReference AddReference { get; } = new ImageReference(assembly, DsImageStrings.AddReference);
 		public static ImageReference AdvancedBreakpointDisabled { get; } = new ImageReference(assembly, DsImageStrings.AdvancedBreakpointDisabled);
@@ -271,6 +271,6 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference XMLFile { get; } = new ImageReference(assembly, DsImageStrings.XMLFile);
 		public static ImageReference XMLSchema { get; } = new ImageReference(assembly, DsImageStrings.XMLSchema);
 		public static ImageReference XSLTransform { get; } = new ImageReference(assembly, DsImageStrings.XSLTransform);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,9 +22,9 @@ using dnSpy.Contracts.Settings.Fonts;
 
 namespace dnSpy.Output {
 	static class ThemeFontSettingsDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.OutputWindow, FontType.TextEditor)]
 		static readonly ThemeFontSettingsDefinition outputWindowThemeFontSettingsDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

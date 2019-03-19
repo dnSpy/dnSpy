@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return location;
 		}
 
-		string GetMethodAsString(in ModuleId moduleId, uint token) {
+		string GetMethodAsString(ModuleId moduleId, uint token) {
 			var module = dbgMetadataService.Value.TryGetMetadata(moduleId, DbgLoadModuleOptions.AutoLoaded);
 			return (module?.ResolveToken(token) as MethodDef)?.ToString();
 		}

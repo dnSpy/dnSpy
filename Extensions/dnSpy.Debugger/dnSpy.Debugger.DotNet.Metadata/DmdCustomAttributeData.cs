@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -177,10 +177,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return typed ? Value.ToString() : "(" + ArgumentType.Name + ")" + Value.ToString();
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdCustomAttributeTypedArgument left, DmdCustomAttributeTypedArgument right) => left.Equals(right);
 		public static bool operator !=(DmdCustomAttributeTypedArgument left, DmdCustomAttributeTypedArgument right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
@@ -239,10 +239,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			TypedValue = typedArgument;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdCustomAttributeNamedArgument left, DmdCustomAttributeNamedArgument right) => left.Equals(right);
 		public static bool operator !=(DmdCustomAttributeNamedArgument left, DmdCustomAttributeNamedArgument right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

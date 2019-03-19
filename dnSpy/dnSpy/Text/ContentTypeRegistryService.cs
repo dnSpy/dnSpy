@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,6 +27,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	[Export(typeof(IContentTypeRegistryService))]
+	[Export(typeof(IContentTypeRegistryService2))]
 	sealed class ContentTypeRegistryService : IContentTypeRegistryService2 {
 		const string UnknownContentTypeName = "UNKNOWN";
 		const string TextPrefix = "text/";

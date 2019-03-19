@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -73,6 +73,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -83,7 +84,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="" Width="16">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Icon}" Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <!-- Using just a DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
@@ -99,77 +100,77 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Name}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_OptimizedModule}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.OptimizedModule}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_OptimizedModule}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding OptimizedObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.DynamicModule}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_DynamicModule}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding DynamicObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.InMemoryModule}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_InMemoryModule}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding InMemoryObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Order}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding OrderObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Version}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Version}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Version}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding VersionObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Timestamp}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Timestamp}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Timestamp}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TimestampObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Address}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Address}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Address}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AddressObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Process}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ProcessObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.AppDomain}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AppDomainObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModulesWindowColumnIds.Path}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Path}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource moduleColumnConverter}}" />

@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -82,6 +82,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -92,7 +93,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="" Width="16">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.Icon}" Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <!-- Using just a DsImage doesn't work without getting an image multiplied by DPI-factor (eg. 2 if 192 DPI),
@@ -108,21 +109,21 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadID}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadID}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadID}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding IdObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadManagedId}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadManagedId}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadManagedId}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding ManagedIdObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadCategory}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadCategory}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadCategory}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -144,7 +145,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.Name}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl EditableValue="{Binding NameEditableValue}" EditValueProvider="{Binding NameEditValueProvider}">
@@ -155,49 +156,49 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadLocation}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadLocation}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadLocation}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding LocationObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadPriority}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadPriority}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadPriority}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding PriorityObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadAffinityMask}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadAffinityMask}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadAffinityMask}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding AffinityMaskObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadSuspendedCount}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadSuspendedCount}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadSuspendedCount}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding SuspendedCountObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessName}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ProcessName}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessName}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding ProcessNameObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.AppDomain}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_AppDomain}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding AppDomainObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadState}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ThreadsWindowColumnIds.ThreadState}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ThreadState}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <uiwpf:SmartTextBlock ContentInfo="{Binding StateObject, Mode=OneWay, Converter={StaticResource threadColumnConverter}}" />

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,24 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	static class MemberUtils {
-		public static object GetColor(DmdFieldInfo field) {
+		public static DbgTextColor GetColor(DmdFieldInfo field) {
 			if (field.ReflectedType.IsEnum)
-				return BoxedTextColor.EnumField;
+				return DbgTextColor.EnumField;
 			if (field.IsLiteral)
-				return BoxedTextColor.LiteralField;
+				return DbgTextColor.LiteralField;
 			if (field.IsStatic)
-				return BoxedTextColor.StaticField;
-			return BoxedTextColor.InstanceField;
+				return DbgTextColor.StaticField;
+			return DbgTextColor.InstanceField;
 		}
 
-		public static object GetColor(DmdPropertyInfo property) {
+		public static DbgTextColor GetColor(DmdPropertyInfo property) {
 			var methodSig = (property.GetGetMethod(DmdGetAccessorOptions.All) ?? property.GetSetMethod(DmdGetAccessorOptions.All))?.GetMethodSignature() ?? property.GetMethodSignature();
-			return methodSig.HasThis ? BoxedTextColor.InstanceProperty : BoxedTextColor.StaticProperty;
+			return methodSig.HasThis ? DbgTextColor.InstanceProperty : DbgTextColor.StaticProperty;
 		}
 	}
 }

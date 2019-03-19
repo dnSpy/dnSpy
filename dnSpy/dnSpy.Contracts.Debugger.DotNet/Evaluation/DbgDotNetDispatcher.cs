@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading.Tasks;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
@@ -46,6 +47,22 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public abstract void BeginInvoke(Action callback);
 
 		/// <summary>
+		/// Executes code asynchronously on the dispatcher thread. This method returns immediately even if
+		/// it happens to be called on the dispatcher thread.
+		/// </summary>
+		/// <param name="callback">Code to execute</param>
+		/// <returns></returns>
+		public bool TryBeginInvoke(Action callback) {
+			try {
+				BeginInvoke(callback);
+				return true;
+			}
+			catch (TaskCanceledException) {
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Executes code on the dispatcher thread
 		/// </summary>
 		/// <typeparam name="T">Return type</typeparam>
@@ -56,7 +73,32 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Executes code on the dispatcher thread
 		/// </summary>
+		/// <typeparam name="T">Return type</typeparam>
+		/// <param name="callback">Code to execute</param>
+		/// <param name="result">Result if successful</param>
+		/// <returns></returns>
+		public bool TryInvoke<T>(Func<T> callback, out T result) {
+			try {
+				result = Invoke(callback);
+				return true;
+			}
+			catch (TaskCanceledException) {
+				result = default;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Executes code on the dispatcher thread
+		/// </summary>
 		/// <param name="callback">Code to execute</param>
 		public void Invoke(Action callback) => Invoke<object>(() => { callback(); return null; });
+
+		/// <summary>
+		/// Executes code on the dispatcher thread
+		/// </summary>
+		/// <param name="callback">Code to execute</param>
+		/// <returns></returns>
+		public bool TryInvoke(Action callback) => TryInvoke<object>(() => { callback(); return null; }, out _);
 	}
 }

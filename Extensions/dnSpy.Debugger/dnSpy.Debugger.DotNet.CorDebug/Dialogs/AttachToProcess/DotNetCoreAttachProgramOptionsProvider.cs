@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,7 @@ using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore)]
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 
 	sealed class DotNetCoreAttachProgramOptionsProvider : AttachProgramOptionsProvider {
 		public override IEnumerable<AttachProgramOptions> Create(AttachProgramOptionsProviderContext context) {
-			foreach (var process in DebuggableProcesses.GetProcesses(context.CancellationToken)) {
+			foreach (var process in DebuggableProcesses.GetProcesses(context.ProcessIds, context.IsValidProcess, context.CancellationToken)) {
 				ProcessModule[] modules;
 				try {
 					modules = process.Modules.Cast<ProcessModule>().ToArray();
@@ -45,10 +46,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 				catch {
 					continue;
 				}
+				var coreclrFilename = FileUtilities.GetNativeDllFilename("coreclr");
 				foreach (var module in modules) {
 					var moduleFilename = module.FileName;
 					var dllName = Path.GetFileName(moduleFilename);
-					if (dllName.Equals("coreclr.dll", StringComparison.OrdinalIgnoreCase)) {
+					if (dllName.Equals(coreclrFilename, StringComparison.OrdinalIgnoreCase)) {
 						foreach (var info in TryGetCoreCLRInfos(process, moduleFilename)) {
 							context.CancellationToken.ThrowIfCancellationRequested();
 							yield return info;

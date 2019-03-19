@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.MVVM {
 	/// Use it on all long-lived <see cref="ItemsControl"/>s (eg. <see cref="ListView"/>, <see cref="ListBox"/>, etc)
 	/// </summary>
 	public sealed class AutomationPeerMemoryLeakWorkaround {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly DependencyProperty InitializeProperty = DependencyProperty.RegisterAttached(
 			"Initialize", typeof(bool), typeof(AutomationPeerMemoryLeakWorkaround), new UIPropertyMetadata(false, InitializePropertyChangedCallback));
 
@@ -116,6 +116,6 @@ namespace dnSpy.Contracts.MVVM {
 				// AutomationPeer is one big memory leak
 			}
 		}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

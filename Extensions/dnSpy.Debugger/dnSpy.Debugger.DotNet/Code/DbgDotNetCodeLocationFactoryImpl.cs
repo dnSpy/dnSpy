@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		[ImportingConstructor]
 		DbgDotNetCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
 
-		public override DbgDotNetCodeLocation Create(in ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) =>
+		public override DbgDotNetCodeLocation Create(ModuleId module, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping) =>
 			new DbgDotNetCodeLocationImpl(this, module, token, offset, ilOffsetMapping);
 	}
 }

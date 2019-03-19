@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			bool isDynamic = dnModule.IsDynamic;
 			bool isInMemory = dnModule.IsInMemory;
 			bool? isOptimized = CalculateIsOptimized(dnModule);
-			int order = dnModule.UniqueId;
+			int order = dnModule.UniqueId + 1;// 0-based to 1-based
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
 
 			var reflectionAppDomain = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;

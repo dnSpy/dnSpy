@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -96,7 +96,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		ComplexData GetStructure(in BlobDataInfo info, HexPosition position) {
+		ComplexData GetStructure(BlobDataInfo info, HexPosition position) {
 			var pos = info.Span.Start;
 			var lengthStart = pos;
 			var len = ReadCompressedUInt32(ref pos) ?? -1;

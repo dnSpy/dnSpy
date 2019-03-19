@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -163,7 +163,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 		static readonly List<HexLinePart> emptyLineParts = new List<HexLinePart>();
 
-		void Add(List<HexLinePart> list, int column, in HexClassificationSpan cspan, VST.Span lineExtent) {
+		void Add(List<HexLinePart> list, int column, HexClassificationSpan cspan, VST.Span lineExtent) {
 			if (cspan.Span.Length == 0)
 				return;
 			int startOffs = lineExtent.Start;

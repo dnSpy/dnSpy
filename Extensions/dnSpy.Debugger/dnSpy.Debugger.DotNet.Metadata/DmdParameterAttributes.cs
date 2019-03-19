@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdParameterAttributes : ushort {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		None				= 0,
 		In					= 0x0001,
 		Out					= 0x0002,
@@ -34,6 +34,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Optional			= 0x0010,
 		HasDefault			= 0x1000,
 		HasFieldMarshal		= 0x2000,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

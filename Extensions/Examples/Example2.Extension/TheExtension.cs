@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using dnSpy.Contracts.Extension;
 
 // Each extension should export one class implementing IExtension

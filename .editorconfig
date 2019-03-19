@@ -1,15 +1,15 @@
 root = true
 
 [*]
+charset = utf-8
 #end_of_line =
 indent_size = 4
 indent_style = tab
-insert_final_newline = true
 tab_width = 4
 
 [*.json]
 
-[App.config]
+[app.config]
 
 [*.yml]
 indent_size = 2
@@ -29,6 +29,8 @@ indent_style = space
 indent_style = space
 
 [*.{cs,vb}]
+insert_final_newline = true
+
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
 dotnet_style_coalesce_expression = true:suggestion

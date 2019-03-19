@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -128,7 +128,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 		readonly FlagInfo flagInfo;
 		readonly bool isFlag;
 
-		public EditFlagsFieldCommand(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, in FlagInfo flagInfo, bool isFlag)
+		public EditFlagsFieldCommand(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, FlagInfo flagInfo, bool isFlag)
 			: base(hexBufferFileServiceFactory) {
 			if (flagInfo.IsEnumName)
 				throw new ArgumentOutOfRangeException(nameof(flagInfo));
@@ -219,7 +219,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 	sealed class EditEnumFieldCommand : EditFieldCommandTargetMenuItemBase {
 		readonly EnumFieldInfo enumFieldInfo;
 
-		public EditEnumFieldCommand(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, in EnumFieldInfo enumFieldInfo)
+		public EditEnumFieldCommand(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, EnumFieldInfo enumFieldInfo)
 			: base(hexBufferFileServiceFactory) => this.enumFieldInfo = enumFieldInfo;
 
 		public override bool IsChecked(EditFieldCommandContext context) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				Identifier = identifier;
 			}
 
-			public bool Equals(in Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
+			public bool Equals(Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
 		}
 
 		static Info? GetInfo(DmdType td) {

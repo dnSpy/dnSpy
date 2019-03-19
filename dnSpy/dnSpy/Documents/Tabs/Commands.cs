@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -258,7 +258,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			var args = $"/select,{filename}";
 			try {
-				Process.Start(new ProcessStartInfo("explorer.exe", args));
+				Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = false });
 			}
 			catch (IOException) {
 			}

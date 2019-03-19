@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,8 +26,8 @@ using System.Windows;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Debugger.Properties;
 using Microsoft.VisualStudio.Text;
@@ -69,40 +69,40 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		string GetToolTipContent(DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 
 			var msg = breakpoint.BoundBreakpointsMessage;
 			if (msg.Severity != DbgBoundCodeBreakpointSeverity.None) {
-				output.Write(BoxedTextColor.Error, msg.Message);
+				output.Write(DbgTextColor.Error, msg.Message);
 				output.WriteLine();
 				output.WriteLine();
 			}
 
-			output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Location);
-			output.Write(BoxedTextColor.Text, ": ");
+			output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Location);
+			output.Write(DbgTextColor.Text, ": ");
 			WriteLocation(output, breakpoint, textView, span);
 
 			const string INDENTATION = "    ";
 			if (breakpoint.Condition != null || breakpoint.HitCount != null || breakpoint.Filter != null) {
 				output.WriteLine();
 				output.WriteLine();
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Conditions);
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Conditions);
 
 				if (breakpoint.Condition != null) {
 					output.WriteLine();
-					output.Write(BoxedTextColor.Text, INDENTATION);
+					output.Write(DbgTextColor.Text, INDENTATION);
 					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Condition.Value);
 				}
 
 				if (breakpoint.HitCount != null) {
 					output.WriteLine();
-					output.Write(BoxedTextColor.Text, INDENTATION);
+					output.Write(DbgTextColor.Text, INDENTATION);
 					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value, dbgCodeBreakpointHitCountService.GetHitCount(breakpoint));
 				}
 
 				if (breakpoint.Filter != null) {
 					output.WriteLine();
-					output.Write(BoxedTextColor.Text, INDENTATION);
+					output.Write(DbgTextColor.Text, INDENTATION);
 					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Filter.Value);
 				}
 			}
@@ -110,29 +110,29 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (breakpoint.Trace != null) {
 				output.WriteLine();
 				output.WriteLine();
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Actions);
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Actions);
 
 				if (!breakpoint.Trace.Value.Continue) {
 					output.WriteLine();
-					output.Write(BoxedTextColor.Text, INDENTATION);
-					output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoints_GlyphMargin_BreakWhenBreakpointHit);
+					output.Write(DbgTextColor.Text, INDENTATION);
+					output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.Breakpoints_GlyphMargin_BreakWhenBreakpointHit);
 				}
 
 				output.WriteLine();
-				output.Write(BoxedTextColor.Text, INDENTATION);
+				output.Write(DbgTextColor.Text, INDENTATION);
 				breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Trace.Value);
 			}
 
 			return output.ToString();
 		}
 
-		void WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
+		void WriteLocation(IDbgTextWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
 			foreach (var lz in dbgBreakpointGlyphFormatters) {
 				if (lz.Value.WriteLocation(output, breakpoint, textView, span))
 					return;
 			}
 			Debug.Fail("Missing BP location writer");
-			output.Write(BoxedTextColor.Error, "???");
+			output.Write(DbgTextColor.Error, "???");
 		}
 
 		public override IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract DmdParameterAttributes Attributes { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsIn => (Attributes & DmdParameterAttributes.In) != 0;
 		public bool IsOut => (Attributes & DmdParameterAttributes.Out) != 0;
 		public bool IsLcid => (Attributes & DmdParameterAttributes.Lcid) != 0;
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool IsOptional => (Attributes & DmdParameterAttributes.Optional) != 0;
 		public bool HasDefault => (Attributes & DmdParameterAttributes.HasDefault) != 0;
 		public bool HasFieldMarshal => (Attributes & DmdParameterAttributes.HasFieldMarshal) != 0;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the owner method or property
@@ -164,10 +164,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, Member.AppDomain));
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdParameterInfo left, DmdParameterInfo right) => DmdMemberInfoEqualityComparer.DefaultParameter.Equals(left, right);
 		public static bool operator !=(DmdParameterInfo left, DmdParameterInfo right) => !DmdMemberInfoEqualityComparer.DefaultParameter.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -198,7 +198,7 @@ namespace dnSpy.ToolBars {
 			return new ToolBarButtonVM(cmd, commandTarget, header, toolTip, imgRef);
 		}
 
-		object CreateToggleButton(Binding binding, ICommand command, IInputElement commandTarget, string header, string toolTip, in ImageReference imgRef) {
+		object CreateToggleButton(Binding binding, ICommand command, IInputElement commandTarget, string header, string toolTip, ImageReference imgRef) {
 			var sp = new StackPanel();
 			sp.Orientation = Orientation.Horizontal;
 			if (!imgRef.IsDefault)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						}
 					}
 				}
-				var kickoffMethodName = GetKickoffMethodName(method.DeclaringType);
+				var kickoffMethodName = (object)type == null ? null : GetKickoffMethodName(method.DeclaringType);
 				if (!string.IsNullOrEmpty(kickoffMethodName)) {
 					DmdMethodBase possibleKickoffMethod = null;
 					int methodGenArgs = method.ReflectedType.GetGenericArguments().Count - type.GetGenericArguments().Count;

@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -197,7 +197,7 @@ namespace dnSpy.Controls {
 				expander.Visibility = newVis;
 		}
 
-		static bool ImageReference_Equals(in ImageReference a, in ImageReference b) => a.Assembly == b.Assembly && a.Name == b.Name;
+		static bool ImageReference_Equals(ImageReference a, ImageReference b) => a.Assembly == b.Assembly && a.Name == b.Name;
 
 		protected override void Node_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			base.Node_PropertyChanged(sender, e);

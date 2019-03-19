@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,6 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		readonly DecompilerSettings decompilerSettings;
 
 		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
-		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;
 		public DecompilerSettings Settings => decompilerSettings;
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
 		public override Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
@@ -167,6 +166,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			if (g.ForceShowAllMembers != d.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.ShowMember;
 			if (g.SortSystemUsingStatementsFirst != d.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
 			if (g.MaxArrayElements != d.MaxArrayElements) flags |= RefreshFlags.CSharp;
+			if (g.MaxStringLength != d.MaxStringLength) flags |= RefreshFlags.CSharp;
 			if (g.SortCustomAttributes != d.SortCustomAttributes) flags |= RefreshFlags.CSharp;
 			if (g.UseSourceCodeOrder != d.UseSourceCodeOrder) flags |= RefreshFlags.CSharp;
 			if (g.AllowFieldInitializers != d.AllowFieldInitializers) flags |= RefreshFlags.CSharp;

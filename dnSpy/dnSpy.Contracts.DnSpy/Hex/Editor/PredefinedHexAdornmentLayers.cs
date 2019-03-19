@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Predefined hex adornment layer names
 	/// </summary>
 	public static class PredefinedHexAdornmentLayers {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		const string prefix = "hex-";
 		public const string BottomLayer = prefix + nameof(BottomLayer);
 		public const string TopLayer = prefix + nameof(TopLayer);
@@ -39,6 +39,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string IntraTextAdornment = prefix + nameof(IntraTextAdornment);
 		public const string ColumnLineSeparator = prefix + nameof(ColumnLineSeparator);
 		public const string ActiveColumnHighlighter = prefix + nameof(ActiveColumnHighlighter);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

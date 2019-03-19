@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System.Collections.ObjectModel;
 using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 	// The formatters need to evaluate expressions from DebuggerDisplayAttributes but they can't do it
 	// without some help. It's .NET specific and I don't want to add a new public API on ExpressionEvaluator
@@ -62,5 +62,5 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 			Error = null;
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

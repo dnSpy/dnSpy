@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -119,7 +119,13 @@ namespace dnSpy.MainApp {
 			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(sc.UIObject);
-			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
+			AddTitleInfo(IntPtr.Size == 4 ? "32-bit" : "64-bit");
+#if NETCOREAPP
+			AddTitleInfo(".NET Core");
+#endif
+#if DEBUG
+			AddTitleInfo("Debug Build");
+#endif
 			if (IsAdministrator())
 				AddTitleInfo(dnSpy_Resources.User_Administrator);
 			wpfCommandService.Add(ControlConstants.GUID_MAINWINDOW, mainWindow);
@@ -189,10 +195,7 @@ namespace dnSpy.MainApp {
 
 		void UpdateTitle() => mainWindow.Title = GetDefaultTitle();
 
-		string GetDefaultTitle() {
-			var t = $"dnSpy {AssemblyInformationalVersion} ({string.Join(", ", titleInfos.ToArray())})";
-			return t;
-		}
+		string GetDefaultTitle() => $"{Constants.DnSpy} {AssemblyInformationalVersion} ({string.Join(", ", titleInfos.ToArray())})";
 		readonly List<string> titleInfos = new List<string>();
 
 		public void AddTitleInfo(string info) {

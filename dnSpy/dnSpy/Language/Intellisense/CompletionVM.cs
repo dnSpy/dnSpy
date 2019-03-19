@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,20 +34,16 @@ namespace dnSpy.Language.Intellisense {
 
 		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ?? (attributeIcons = CreateAttributeIcons());
 		IEnumerable<CompletionIconVM> attributeIcons;
-		readonly IImageMonikerService imageMonikerService;
 
-		public CompletionVM(Completion completion, IImageMonikerService imageMonikerService) {
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
+		public CompletionVM(Completion completion) {
 			Completion = completion ?? throw new ArgumentNullException(nameof(completion));
 			Completion.Properties.AddProperty(typeof(CompletionVM), this);
-			ImageUIObject = CreateImageUIObject(completion, imageMonikerService);
-			this.imageMonikerService = imageMonikerService;
+			ImageUIObject = CreateImageUIObject(completion);
 		}
 
-		static object CreateImageUIObject(Completion completion, IImageMonikerService imageMonikerService) {
-			var c3 = completion as Completion3;
-			if (c3 == null) {
+		static object CreateImageUIObject(Completion completion) {
+			var dsCompletion = completion as DsCompletion;
+			if (dsCompletion == null) {
 				var iconSource = completion.IconSource;
 				if (iconSource == null)
 					return null;
@@ -58,15 +54,15 @@ namespace dnSpy.Language.Intellisense {
 				};
 			}
 
-			var imageReference = imageMonikerService.ToImageReference(c3.IconMoniker);
+			var imageReference = dsCompletion.ImageReference;
 			if (imageReference.IsDefault)
 				return null;
 			return new DsImage { ImageReference = imageReference };
 		}
 
-		static object CreateImageUIObject(CompletionIcon icon, IImageMonikerService imageMonikerService) {
-			var icon2 = icon as CompletionIcon2;
-			if (icon2 == null) {
+		static object CreateImageUIObject(CompletionIcon icon) {
+			var dsIcon = icon as DsCompletionIcon;
+			if (dsIcon == null) {
 				var iconSource = icon.IconSource;
 				if (iconSource == null)
 					return null;
@@ -77,11 +73,11 @@ namespace dnSpy.Language.Intellisense {
 				};
 			}
 
-			var imageReference = imageMonikerService.ToImageReference(icon2.IconMoniker);
+			var imageReference = dsIcon.ImageReference;
 			if (imageReference.IsDefault)
 				return null;
 			var image = new DsImage { ImageReference = imageReference };
-			if (!((icon as IDsCompletionIcon)?.ThemeImage ?? false)) {
+			if (!dsIcon.ThemeImage) {
 				DsImage.SetBackgroundColor(image, null);
 				DsImage.SetBackgroundBrush(image, null);
 			}
@@ -102,7 +98,7 @@ namespace dnSpy.Language.Intellisense {
 				return Array.Empty<CompletionIconVM>();
 			var list = new List<CompletionIconVM>();
 			foreach (var icon in icons) {
-				var imageUIObject = CreateImageUIObject(icon, imageMonikerService);
+				var imageUIObject = CreateImageUIObject(icon);
 				if (imageUIObject != null)
 					list.Add(new CompletionIconVM(imageUIObject));
 			}

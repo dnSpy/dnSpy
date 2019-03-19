@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
@@ -49,8 +49,7 @@ namespace dnSpy.Debugger.Impl {
 					if (processes.Count == 0)
 						raiseEvent = true;
 					else {
-						timer = new DispatcherTimer(DispatcherPriority.Send, owner.WpfDispatcher);
-						timer.Interval = TimeSpan.FromMilliseconds(stopDebuggingTimeoutMilliseconds);
+						timer = new DispatcherTimer(owner.InternalDispatcher, TimeSpan.FromMilliseconds(stopDebuggingTimeoutMilliseconds));
 						timer.Tick += Timer_Tick_DbgThread;
 						timer.Start();
 						owner.StopDebuggingAll();

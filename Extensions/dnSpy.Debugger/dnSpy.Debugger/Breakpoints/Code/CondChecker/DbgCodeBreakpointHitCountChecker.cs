@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,12 +24,12 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgCodeBreakpointHitCountChecker {
-		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointHitCount hitCount, int currentHitCount);
+		public abstract DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointHitCount hitCount, int currentHitCount);
 	}
 
 	[Export(typeof(DbgCodeBreakpointHitCountChecker))]
 	sealed class DbgCodeBreakpointHitCountCheckerImpl : DbgCodeBreakpointHitCountChecker {
-		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointHitCount hitCount, int currentHitCount) {
+		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointHitCount hitCount, int currentHitCount) {
 			switch (hitCount.Kind) {
 			case DbgCodeBreakpointHitCountKind.Equals:
 				return new DbgCodeBreakpointCheckResult(currentHitCount == hitCount.Count);

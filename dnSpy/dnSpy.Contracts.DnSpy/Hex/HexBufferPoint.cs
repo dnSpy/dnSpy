@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexPosition Difference(HexBufferPoint other) => other - this;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static HexPosition operator -(HexBufferPoint left, HexBufferPoint right) => left.Position - right.Position;
 		public static HexBufferPoint operator -(HexBufferPoint point, HexPosition value) => point.Subtract(value);
 		public static HexBufferPoint operator +(HexBufferPoint point, HexPosition value) => point.Add(value);
@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Hex {
 		public static bool operator <=(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) <= 0;
 		public static bool operator >(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) > 0;
 		public static bool operator >=(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) >= 0;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance with <paramref name="other"/>

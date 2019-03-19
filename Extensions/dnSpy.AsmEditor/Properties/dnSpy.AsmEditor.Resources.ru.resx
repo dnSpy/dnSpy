@@ -133,16 +133,16 @@
     <value>Архитектура проц_ессора указана</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>Публичный _ключ</value>
+    <value>Открытый _ключ</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>_Retargetable</value>
+    <value>_Перенаправляемый</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
     <value>Тип _содержимого</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
-    <value>_Локаль</value>
+    <value>_Культура</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
     <value>_Версия .NET</value>
@@ -548,7 +548,7 @@
     <value>Реализация</value>
   </data>
   <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>_BestFit</value>
+    <value>_Лучшее Совпадение</value>
   </data>
   <data name="ImplMap_CallingConvention" xml:space="preserve">
     <value>Согл_Выз</value>
@@ -1958,6 +1958,9 @@
   <data name="ShortCutKeyP" xml:space="preserve">
     <value>P</value>
   </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="ShortCutKeyS" xml:space="preserve">
     <value>S</value>
   </data>
@@ -2520,9 +2523,18 @@
     <value>Добавить члены класса ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
-    <value>Copy Unkno_wn Metadata Streams</value>
+    <value>Копировать неопознанн_ые потоки метаданных</value>
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
-    <value>Run NGEN.exe if this assembly is installed in the GAC</value>
+    <value>Запустить _NGEN.exe, если эта сборка установлена в GAC</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Компилятор</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>_Заменить NOP-ами</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>_Заменить NOP-ами</value>
   </data>
 </root>

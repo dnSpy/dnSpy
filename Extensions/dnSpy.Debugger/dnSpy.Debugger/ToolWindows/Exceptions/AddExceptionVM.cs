@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		sealed class ExceptionCategoryVM : ViewModelBase {
 			public string DisplayName => Definition.ShortDisplayName;
 			public DbgExceptionCategoryDefinition Definition { get; }
-			public ExceptionCategoryVM(in DbgExceptionCategoryDefinition definition) => Definition = definition;
+			public ExceptionCategoryVM(DbgExceptionCategoryDefinition definition) => Definition = definition;
 		}
 
 		public AddExceptionVM(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) {

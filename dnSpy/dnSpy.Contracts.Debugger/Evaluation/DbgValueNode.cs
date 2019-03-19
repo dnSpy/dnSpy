@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.Globalization;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo = null) =>
+		public void FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo = null) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				NameOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				NameFormatterOptions = options,
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatValue(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) =>
+		public void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
@@ -145,7 +145,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatExpectedType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public void FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatActualType(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public void FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
@@ -217,22 +217,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Used when writing the name or null if it's not written
 		/// </summary>
-		ITextColorWriter NameOutput { get; }
+		IDbgTextWriter NameOutput { get; }
 
 		/// <summary>
 		/// Used when writing the value or null if it's not written
 		/// </summary>
-		ITextColorWriter ValueOutput { get; }
+		IDbgTextWriter ValueOutput { get; }
 
 		/// <summary>
 		/// Used when writing the expected type ("field" type) or null if it's not written
 		/// </summary>
-		ITextColorWriter ExpectedTypeOutput { get; }
+		IDbgTextWriter ExpectedTypeOutput { get; }
 
 		/// <summary>
 		/// Used when writing the actual type (value type) or null if it's not written
 		/// </summary>
-		ITextColorWriter ActualTypeOutput { get; }
+		IDbgTextWriter ActualTypeOutput { get; }
 
 		/// <summary>
 		/// Name formatter options
@@ -261,10 +261,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	}
 
 	sealed class DbgValueNodeFormatParameters : IDbgValueNodeFormatParameters {
-		public ITextColorWriter NameOutput { get; set; }
-		public ITextColorWriter ValueOutput { get; set; }
-		public ITextColorWriter ExpectedTypeOutput { get; set; }
-		public ITextColorWriter ActualTypeOutput { get; set; }
+		public IDbgTextWriter NameOutput { get; set; }
+		public IDbgTextWriter ValueOutput { get; set; }
+		public IDbgTextWriter ExpectedTypeOutput { get; set; }
+		public IDbgTextWriter ActualTypeOutput { get; set; }
 		public DbgValueFormatterOptions NameFormatterOptions { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
 		public DbgValueFormatterOptions TypeFormatterOptions { get; set; }

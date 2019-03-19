@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using dnlib.DotNet;
-using Microsoft.Win32;
 
 namespace dnSpy.Contracts.Utilities {
 	/// <summary>
@@ -48,31 +47,76 @@ namespace dnSpy.Contracts.Utilities {
 	}
 
 	/// <summary>
+	/// GAC version
+	/// </summary>
+	public enum GacVersion {
+		/// <summary>
+		/// .NET Framework 1.0-3.5
+		/// </summary>
+		V2,
+
+		/// <summary>
+		/// .NET Framework 4.0+
+		/// </summary>
+		V4,
+	}
+
+	/// <summary>
+	/// GAC path info
+	/// </summary>
+	public readonly struct GacPathInfo {
+		/// <summary>
+		/// Path of dir containing assemblies
+		/// </summary>
+		public readonly string Path;
+
+		/// <summary>
+		/// GAC version
+		/// </summary>
+		public readonly GacVersion Version;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="path">Path</param>
+		/// <param name="version">Version</param>
+		public GacPathInfo(string path, GacVersion version) {
+			Path = path ?? throw new ArgumentNullException(nameof(path));
+			Version = version;
+		}
+	}
+
+	/// <summary>
 	/// GAC
 	/// </summary>
 	public static class GacInfo {
 		/// <summary>
 		/// All GAC paths
 		/// </summary>
-		public static string[] GacPaths { get; }
+		public static GacPathInfo[] GacPaths { get; }
 
 		/// <summary>
 		/// Other GAC paths
 		/// </summary>
-		public static string[] OtherGacPaths { get; }
+		public static GacPathInfo[] OtherGacPaths { get; }
 
 		/// <summary>
 		/// WinMD paths
 		/// </summary>
 		public static string[] WinmdPaths { get; }
 
+		/// <summary>
+		/// Checks if .NET 2.0-3.5 GAC exists
+		/// </summary>
+		public static bool HasGAC2 { get; }
+
 		sealed class GacDirInfo {
 			public readonly int Version;
 			public readonly string Path;
 			public readonly string Prefix;
-			public readonly IList<string> SubDirs;
+			public readonly string[] SubDirs;
 
-			public GacDirInfo(int version, string prefix, string path, IList<string> subDirs) {
+			public GacDirInfo(int version, string prefix, string path, string[] subDirs) {
 				Version = version;
 				Prefix = prefix;
 				Path = path;
@@ -80,7 +124,6 @@ namespace dnSpy.Contracts.Utilities {
 			}
 		}
 		static readonly GacDirInfo[] gacDirInfos;
-		static readonly string[] extraMonoPaths;
 		static readonly string[] monoVerDirs = new string[] {
 			// The "-api" dirs are reference assembly dirs.
 			"4.5", @"4.5\Facades", "4.5-api", @"4.5-api\Facades", "4.0", "4.0-api",
@@ -90,12 +133,14 @@ namespace dnSpy.Contracts.Utilities {
 
 		static GacInfo() {
 			var gacDirInfosList = new List<GacDirInfo>();
-			var newOtherGacPaths = new List<string>();
+			var newOtherGacPaths = new List<GacPathInfo>();
 			var newWinmdPaths = new List<string>();
 
+			bool hasGAC2;
 			if (Type.GetType("Mono.Runtime") != null) {
+				hasGAC2 = false;
 				var dirs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-				var extraMonoPathsList = new List<string>();
+				var extraMonoPathsList = new List<GacPathInfo>();
 				foreach (var prefix in FindMonoPrefixes()) {
 					var dir = Path.Combine(Path.Combine(Path.Combine(prefix, "lib"), "mono"), "gac");
 					if (dirs.ContainsKey(dir))
@@ -114,7 +159,7 @@ namespace dnSpy.Contracts.Utilities {
 						foreach (var d in verDir.Split(new char[] { '\\' }))
 							dir2 = Path.Combine(dir2, d);
 						if (Directory.Exists(dir2))
-							extraMonoPathsList.Add(dir2);
+							extraMonoPathsList.Add(new GacPathInfo(dir2, GacVersion.V4));
 					}
 				}
 
@@ -123,45 +168,34 @@ namespace dnSpy.Contracts.Utilities {
 					foreach (var tmp in paths.Split(Path.PathSeparator)) {
 						var path = tmp.Trim();
 						if (path != string.Empty && Directory.Exists(path))
-							extraMonoPathsList.Add(path);
+							extraMonoPathsList.Add(new GacPathInfo(path, GacVersion.V4));
 					}
 				}
-				extraMonoPaths = extraMonoPathsList.ToArray();
-				newOtherGacPaths.AddRange(extraMonoPaths);
+				newOtherGacPaths.AddRange(extraMonoPathsList);
 			}
 			else {
+				hasGAC2 = false;
 				var windir = Environment.GetEnvironmentVariable("WINDIR");
 				if (!string.IsNullOrEmpty(windir)) {
 					string path;
 
-					// .NET 1.x and 2.x
+					// .NET Framework 1.x and 2.x
 					path = Path.Combine(windir, "assembly");
 					if (Directory.Exists(path)) {
-						gacDirInfosList.Add(new GacDirInfo(2, "", path, new string[] {
-							"GAC_32", "GAC_64", "GAC_MSIL", "GAC"
-						}));
+						hasGAC2 = File.Exists(Path.Combine(path, @"GAC_32\mscorlib\2.0.0.0__b77a5c561934e089\mscorlib.dll")) ||
+							File.Exists(Path.Combine(path, @"GAC_64\mscorlib\2.0.0.0__b77a5c561934e089\mscorlib.dll"));
+						if (hasGAC2) {
+							gacDirInfosList.Add(new GacDirInfo(2, "", path, gacPaths4));
+						}
 					}
 
-					// .NET 4.x
+					// .NET Framework 4.x
 					path = Path.Combine(Path.Combine(windir, "Microsoft.NET"), "assembly");
 					if (Directory.Exists(path)) {
-						gacDirInfosList.Add(new GacDirInfo(4, "v4.0_", path, new string[] {
-							"GAC_32", "GAC_64", "GAC_MSIL"
-						}));
+						gacDirInfosList.Add(new GacDirInfo(4, "v4.0_", path, gacPaths2));
 					}
-
-					AddIfExists(newOtherGacPaths, windir, @"Microsoft.NET\Framework\v1.1.4322");
-					AddIfExists(newOtherGacPaths, windir, @"Microsoft.NET\Framework\v1.0.3705");
 				}
 
-				foreach (var path in GetDotNetInstallDirectories())
-					AddIfExists(newOtherGacPaths, path, string.Empty);
-
-				var dirPF = Environment.GetEnvironmentVariable("ProgramFiles");
-				AddWinMDPaths(newWinmdPaths, dirPF);
-				var dirPFx86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
-				if (!StringComparer.OrdinalIgnoreCase.Equals(dirPF, dirPFx86))
-					AddWinMDPaths(newWinmdPaths, dirPFx86);
 				AddIfExists(newWinmdPaths, Environment.SystemDirectory, "WinMetadata");
 			}
 
@@ -169,8 +203,16 @@ namespace dnSpy.Contracts.Utilities {
 			WinmdPaths = newWinmdPaths.ToArray();
 
 			gacDirInfos = gacDirInfosList.ToArray();
-			GacPaths = gacDirInfos.Select(a => a.Path).ToArray();
+			GacPaths = gacDirInfos.Select(a => new GacPathInfo(a.Path, a.Version == 2 ? GacVersion.V2 : GacVersion.V4)).ToArray();
+			HasGAC2 = hasGAC2;
 		}
+		// Prefer GAC_32 if this is a 32-bit process, and GAC_64 if this is a 64-bit process
+		static readonly string[] gacPaths2 = IntPtr.Size == 4 ?
+			new string[] { "GAC_32", "GAC_64", "GAC_MSIL" } :
+			new string[] { "GAC_64", "GAC_32", "GAC_MSIL" };
+		static readonly string[] gacPaths4 = IntPtr.Size == 4 ?
+			new string[] { "GAC_32", "GAC_64", "GAC_MSIL", "GAC" } :
+			new string[] { "GAC_64", "GAC_32", "GAC_MSIL", "GAC" };
 
 		static string GetCurrentMonoPrefix() {
 			var path = typeof(object).Module.FullyQualifiedName;
@@ -192,55 +234,7 @@ namespace dnSpy.Contracts.Utilities {
 			}
 		}
 
-		static IEnumerable<string> GetDotNetInstallDirectories() {
-			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-			try {
-				using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework")) {
-					var path = key == null ? null : key.GetValue("InstallRoot") as string;
-					if (Directory.Exists(path))
-						hash.Add(path);
-				}
-			}
-			catch {
-			}
-			try {
-				using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\.NETFramework")) {
-					var path = key == null ? null : key.GetValue("InstallRoot") as string;
-					if (Directory.Exists(path))
-						hash.Add(path);
-				}
-			}
-			catch {
-			}
-			var dirs = hash.ToArray();
-			hash.Clear();
-			hash.Add(Path.GetDirectoryName(typeof(int).Assembly.Location));
-			foreach (var tmp in dirs) {
-				// Remove last backslash
-				var dir = Path.Combine(Path.GetDirectoryName(tmp), Path.GetFileName(tmp));
-				hash.Add(dir);
-				var name = Path.GetFileName(dir);
-				if (name.Equals("Framework", StringComparison.OrdinalIgnoreCase) || name.Equals("Framework64", StringComparison.OrdinalIgnoreCase)) {
-					var d = Path.GetDirectoryName(dir);
-					hash.Add(Path.Combine(d, "Framework"));
-					hash.Add(Path.Combine(d, "Framework64"));
-				}
-			}
-			return hash;
-		}
-
-		static void AddWinMDPaths(IList<string> paths, string path) {
-			if (string.IsNullOrEmpty(path))
-				return;
-
-			// Add latest versions first since all the Windows.winmd files have the same assembly name
-			AddIfExists(paths, path, @"Windows Kits\10\UnionMetadata");
-			AddIfExists(paths, path, @"Windows Kits\8.1\References\CommonConfiguration\Neutral");
-			AddIfExists(paths, path, @"Windows Kits\8.0\References\CommonConfiguration\Neutral");
-		}
-
-		static void AddIfExists(IList<string> paths, string basePath, string extraPath) {
+		static void AddIfExists(List<string> paths, string basePath, string extraPath) {
 			var path = Path.Combine(basePath, extraPath);
 			if (Directory.Exists(path))
 				paths.Add(path);
@@ -254,12 +248,12 @@ namespace dnSpy.Contracts.Utilities {
 		public static bool IsGacPath(string filename) {
 			if (!File.Exists(filename))
 				return false;
-			foreach (var p in GacPaths) {
-				if (IsSubPath(p, filename))
+			foreach (var info in GacPaths) {
+				if (IsSubPath(info.Path, filename))
 					return true;
 			}
-			foreach (var p in OtherGacPaths) {
-				if (IsSubPath(p, filename))
+			foreach (var info in OtherGacPaths) {
+				if (IsSubPath(info.Path, filename))
 					return true;
 			}
 			return false;
@@ -281,7 +275,15 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		public static string FindInGac(IAssembly asm) {
+		public static string FindInGac(IAssembly asm) => FindInGac(asm, -1);
+
+		/// <summary>
+		/// Finds an assembly in the GAC
+		/// </summary>
+		/// <param name="asm">Assembly</param>
+		/// <param name="version">2, 4, or -1</param>
+		/// <returns></returns>
+		public static string FindInGac(IAssembly asm, int version) {
 			if (asm == null)
 				return null;
 			var pkt = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
@@ -289,6 +291,8 @@ namespace dnSpy.Contracts.Utilities {
 				return null;
 
 			foreach (var info in gacDirInfos) {
+				if (version != -1 && version != info.Version)
+					continue;
 				foreach (var name in GetAssemblies(info, pkt, asm))
 					return name;
 			}

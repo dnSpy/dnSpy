@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -16,6 +16,12 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+// .NET Core 3.0:
+// 'UnmanagedType.IDispatch' is obsolete: 'Marshalling as IDispatch may be unavailable in future releases.'
+// 'UnmanagedType.SafeArray' is obsolete: 'Marshalling as SafeArray may be unavailable in future releases.'
+// 'VarEnum' is obsolete: 'Marshalling VARIANTs may be unavailable in future releases.'
+#pragma warning disable CS0618
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;

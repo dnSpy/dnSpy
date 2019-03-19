@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,10 +39,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract DmdEventAttributes Attributes { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsSpecialName => (Attributes & DmdEventAttributes.SpecialName) != 0;
 		public bool IsRTSpecialName => (Attributes & DmdEventAttributes.RTSpecialName) != 0;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the event handler type
@@ -166,10 +166,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public abstract DmdMethodInfo GetRaiseMethod(DmdGetAccessorOptions options);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdEventInfo left, DmdEventInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 		public static bool operator !=(DmdEventInfo left, DmdEventInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

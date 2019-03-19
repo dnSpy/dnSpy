@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (fields.Length == 1) {
 				// Newer Mono using .NET Core source code
 
-				if (fields[0].Name != "dateData")
+				if (fields[0].Name != "dateData" && fields[0].Name != "_dateData")
 					return default;
 				if (values[0] is PrimitiveValue pv && pv.Value is ulong) {
 					if (DateTime_ctor_UInt64 != null)

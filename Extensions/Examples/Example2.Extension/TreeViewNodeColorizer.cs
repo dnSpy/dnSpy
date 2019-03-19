@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Documents.TreeView;
@@ -18,7 +18,7 @@ namespace Example2.Extension {
 
 		// Disable compiler warnings. The fields aren't referenced, just exported so
 		// the metadata can be added to some table. The fields will always be null.
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		// Export the classes that define the name, and base types
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(UnderlineClassificationType)]
@@ -29,7 +29,7 @@ namespace Example2.Extension {
 		[Name(LightgreenBackgroundClassificationType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LightgreenBackgroundClassificationTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		// Export the classes that define the colors and order
 		[Export(typeof(EditorFormatDefinition))]

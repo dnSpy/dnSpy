@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -80,7 +80,7 @@ namespace dnSpy.Hex.Editor {
 				Select(newAnchorPoint, newActivePoint, alignPoints: true);
 		}
 
-		HexBufferPoint Filter(in HexBufferPoint position) {
+		HexBufferPoint Filter(HexBufferPoint position) {
 			if (position < HexView.BufferLines.BufferStart)
 				return HexView.BufferLines.BufferStart;
 			if (position > HexView.BufferLines.BufferEnd)
@@ -167,7 +167,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		static HexCell GetCell(HexBufferLineFormatter bufferLines, in HexBufferPoint position) {
+		static HexCell GetCell(HexBufferLineFormatter bufferLines, HexBufferPoint position) {
 			var line = bufferLines.GetLineFromPosition(position);
 			var cell = line.ValueCells.GetCell(position);
 			if (cell == null && position == line.BufferEnd && position > line.BufferStart)

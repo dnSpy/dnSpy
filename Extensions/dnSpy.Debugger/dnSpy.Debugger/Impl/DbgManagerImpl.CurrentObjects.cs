@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.Impl {
 			public DbgCurrentThread(DbgManagerImpl owner) => this.owner = owner;
 		}
 
-		void RaiseCurrentObjectEvents_DbgThread(in DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs, in DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs, in DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs) {
+		void RaiseCurrentObjectEvents_DbgThread(DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs, DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs, DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs) {
 			Dispatcher.VerifyAccess();
 			if (processEventArgs.CurrentChanged || processEventArgs.BreakChanged)
 				CurrentProcessChanged?.Invoke(this, processEventArgs);

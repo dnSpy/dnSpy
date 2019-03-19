@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,8 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 
@@ -43,43 +45,45 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		internal static ProcessFormatter Create_DONT_USE(bool useHex) => new ProcessFormatter(useHex);
 
-		public void WriteImage(ITextColorWriter output, ProcessVM vm) {
+		public void WriteImage(IDbgTextWriter output, ProcessVM vm) {
 			if (vm.IsCurrentProcess)
-				output.Write(BoxedTextColor.Text, ">");
+				output.Write(DbgTextColor.Text, ">");
 		}
 
-		public void WriteName(ITextColorWriter output, DbgProcess process) => output.WriteFilename(process.Name);
-		public void WriteTitle(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.String, vm.Title);
-		public void WriteState(ITextColorWriter output, ProcessVM vm) => output.Write(BoxedTextColor.EnumField, GetStateText(vm.CachedState));
-		public void WritePath(ITextColorWriter output, DbgProcess process) => output.WriteFilename(process.Filename);
+		public void WriteName(IDbgTextWriter output, DbgProcess process) => new DbgTextColorWriter(output).WriteFilename(process.Name);
+		public void WriteTitle(IDbgTextWriter output, ProcessVM vm) => output.Write(DbgTextColor.String, vm.Title);
+		public void WriteState(IDbgTextWriter output, ProcessVM vm) => output.Write(DbgTextColor.EnumField, GetStateText(vm.CachedState));
+		public void WritePath(IDbgTextWriter output, DbgProcess process) => new DbgTextColorWriter(output).WriteFilename(process.Filename);
 
-		public void WriteDebugging(ITextColorWriter output, DbgProcess process) {
+		public void WriteDebugging(IDbgTextWriter output, DbgProcess process) {
 			bool comma = false;
 			foreach (var s in process.Debugging) {
 				if (comma)
-					output.Write(BoxedTextColor.Text, ", ");
+					output.Write(DbgTextColor.Text, ", ");
 				comma = true;
-				output.Write(BoxedTextColor.Text, s);
+				output.Write(DbgTextColor.Text, s);
 			}
 		}
 
-		public void WriteMachine(ITextColorWriter output, DbgMachine machine) => output.Write(BoxedTextColor.Text, GetMachineString(machine));
+		public void WriteArchitecture(IDbgTextWriter output, DbgArchitecture architecture) => output.Write(DbgTextColor.Text, GetArchitectureString(architecture));
 
-		static string GetMachineString(DbgMachine machine) {
-			switch (machine) {
-			case DbgMachine.X86:		return "x86";
-			case DbgMachine.X64:		return "x64";
+		static string GetArchitectureString(DbgArchitecture architecture) {
+			switch (architecture) {
+			case DbgArchitecture.X86:		return "x86";
+			case DbgArchitecture.X64:		return "x64";
+			case DbgArchitecture.Arm:		return "ARM";
+			case DbgArchitecture.Arm64:		return "ARM64";
 			default:
-				Debug.Fail($"Unknown arch: {machine}");
+				Debug.Fail($"Unknown arch: {architecture}");
 				return "???";
 			}
 		}
 
-		public void WriteId(ITextColorWriter output, DbgProcess process) {
+		public void WriteId(IDbgTextWriter output, DbgProcess process) {
 			if (useHex)
-				output.Write(BoxedTextColor.Number, "0x" + process.Id.ToString("X8"));
+				output.Write(DbgTextColor.Number, "0x" + process.Id.ToString("X8"));
 			else
-				output.Write(BoxedTextColor.Number, process.Id.ToString());
+				output.Write(DbgTextColor.Number, process.Id.ToString());
 		}
 
 		static string GetStateText(DbgProcessState state) {

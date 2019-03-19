@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,11 +20,11 @@
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	static class DbgDotNetEngineValueNodeFactoryExtensions {
-		internal static readonly DbgDotNetText errorName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Error, "<error>"));
+		internal static readonly DbgDotNetText errorName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, "<error>"));
 
 		public static DbgEngineValueNode[] CreateInternalErrorResult(this DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo) {
 			return new DbgEngineValueNode[] {

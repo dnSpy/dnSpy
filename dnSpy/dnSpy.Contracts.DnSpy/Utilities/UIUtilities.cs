@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,6 +70,14 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="s"></param>
 		/// <returns></returns>
 		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s).Replace("_", "__");
+
+		/// <summary>
+		/// Truncates the string after <paramref name="length"/> characters and adds an elipsis at the end.
+		/// </summary>
+		/// <param name="s"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public static string TruncateWithElipsis(string s, int length = 50) => (s.Length > length ? s.Substring(0, length) + "..." : s);
 
 		/// <summary>
 		/// Gives a <see cref="Selector"/> focus

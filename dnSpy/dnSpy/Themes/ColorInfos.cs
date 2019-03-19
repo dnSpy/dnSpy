@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -2200,6 +2200,23 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.DebuggerDisplayAttributeEval, ""),
 							new BrushColorInfo(ColorType.DebuggerNoStringQuotesEval, ""),
 							new BrushColorInfo(ColorType.DebugViewPropertyName, ""),
+							new BrushColorInfo(ColorType.AsmComment, ""),
+							new BrushColorInfo(ColorType.AsmDirective, ""),
+							new BrushColorInfo(ColorType.AsmPrefix, ""),
+							new BrushColorInfo(ColorType.AsmMnemonic, ""),
+							new BrushColorInfo(ColorType.AsmKeyword, ""),
+							new BrushColorInfo(ColorType.AsmOperator, ""),
+							new BrushColorInfo(ColorType.AsmPunctuation, ""),
+							new BrushColorInfo(ColorType.AsmNumber, ""),
+							new BrushColorInfo(ColorType.AsmRegister, ""),
+							new BrushColorInfo(ColorType.AsmSelectorValue, ""),
+							new BrushColorInfo(ColorType.AsmLabelAddress, ""),
+							new BrushColorInfo(ColorType.AsmFunctionAddress, ""),
+							new BrushColorInfo(ColorType.AsmLabel, ""),
+							new BrushColorInfo(ColorType.AsmFunction, ""),
+							new BrushColorInfo(ColorType.AsmData, ""),
+							new BrushColorInfo(ColorType.AsmAddress, ""),
+							new BrushColorInfo(ColorType.AsmHexBytes, ""),
 						},
 					},
 				},

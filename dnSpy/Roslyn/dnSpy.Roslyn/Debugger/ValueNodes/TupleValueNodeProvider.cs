@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override string Expression => nodeInfo.Expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Structure;
 		public override bool? HasChildren => tupleFields.Length > 0;
-		static readonly DbgDotNetText tupleName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Punctuation, "()"));
+		static readonly DbgDotNetText tupleName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Punctuation, "()"));
 
 		readonly bool addParens;
 		readonly DmdType slotType;
@@ -89,7 +89,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 						valueResult = default;
 					}
 
-					var name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.InstanceField, info.DefaultName));
+					var name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.InstanceField, info.DefaultName));
 					DbgDotNetValueNode newNode;
 					if (errorMessage != null)
 						newNode = valueNodeFactory.CreateError(evalInfo, name, errorMessage, expression, false);

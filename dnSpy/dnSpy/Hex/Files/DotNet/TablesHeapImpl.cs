@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -159,6 +159,8 @@ namespace dnSpy.Hex.Files.DotNet {
 				}
 				if (i >= maxPresentTables)
 					rows = 0;
+				// Mono ignores the high byte
+				rows &= 0x00FFFFFF;
 				sizes[i] = rows;
 				if (i < rowsCount.Length)
 					rowsCount[i] = rows;

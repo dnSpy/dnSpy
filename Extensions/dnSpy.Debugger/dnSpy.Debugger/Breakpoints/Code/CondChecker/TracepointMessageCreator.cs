@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
@@ -45,16 +45,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 	}
 
-	sealed class StringBuilderTextColorWriter : ITextColorWriter {
+	sealed class StringBuilderTextColorWriter : IDbgTextWriter {
 		StringBuilder sb;
 		public void SetStringBuilder(StringBuilder sb) => this.sb = sb;
-		public void Write(object color, string text) => sb.Append(text);
-		public void Write(TextColor color, string text) => sb.Append(text);
+		public void Write(DbgTextColor color, string text) => sb.Append(text);
 	}
 
 	abstract class TracepointMessageCreator {
-		public abstract string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointTrace trace);
-		public abstract void Write(ITextColorWriter output, in DbgCodeBreakpointTrace trace);
+		public abstract string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace);
+		public abstract void Write(IDbgTextWriter output, DbgCodeBreakpointTrace trace);
 	}
 
 	[Export(typeof(TracepointMessageCreator))]
@@ -124,7 +123,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		public override string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, in DbgCodeBreakpointTrace trace) {
+		public override string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
 			if (boundBreakpoint == null)
 				throw new ArgumentNullException(nameof(boundBreakpoint));
 			var text = trace.Message;
@@ -339,7 +338,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		void Write(string s) => output.Append(s);
 		void WriteError() => Write("???");
 
-		public override void Write(ITextColorWriter output, in DbgCodeBreakpointTrace trace) {
+		public override void Write(IDbgTextWriter output, DbgCodeBreakpointTrace trace) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			var msg = trace.Message ?? string.Empty;
@@ -348,13 +347,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			foreach (var part in parsed.Parts) {
 				switch (part.Kind) {
 				case TracepointMessageKind.WriteText:
-					output.Write(BoxedTextColor.String, msg.Substring(pos, part.Length));
+					output.Write(DbgTextColor.String, msg.Substring(pos, part.Length));
 					break;
 
 				case TracepointMessageKind.WriteEvaluatedExpression:
-					output.Write(BoxedTextColor.Punctuation, msg.Substring(pos, 1));
-					output.Write(BoxedTextColor.Text, msg.Substring(pos + 1, part.Length - 2));
-					output.Write(BoxedTextColor.Punctuation, msg.Substring(pos + part.Length - 1, 1));
+					output.Write(DbgTextColor.Punctuation, msg.Substring(pos, 1));
+					output.Write(DbgTextColor.Text, msg.Substring(pos + 1, part.Length - 2));
+					output.Write(DbgTextColor.Punctuation, msg.Substring(pos + part.Length - 1, 1));
 					break;
 
 				case TracepointMessageKind.WriteAddress:
@@ -371,7 +370,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				case TracepointMessageKind.WriteProcessName:
 				case TracepointMessageKind.WriteThreadId:
 				case TracepointMessageKind.WriteThreadName:
-					output.Write(BoxedTextColor.Keyword, msg.Substring(pos, part.Length));
+					output.Write(DbgTextColor.Keyword, msg.Substring(pos, part.Length));
 					break;
 
 				default: throw new InvalidOperationException();

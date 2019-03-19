@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override string Expression => valueInfo.Expression;
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Array;
 		public override bool? HasChildren => arrayCount > 0;
-		static readonly DbgDotNetText arrayName = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.Punctuation, "[]"));
+		static readonly DbgDotNetText arrayName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Punctuation, "[]"));
 
 		readonly DbgDotNetValueNodeProviderFactory owner;
 		readonly bool addParens;
@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 							var info = CSharpDynamicPropertyHelper.GetRealValue(evalInfo, newValue.Value);
 							if (info.name != null) {
 								newValue.Value.Dispose();
-								name = new DbgDotNetText(new DbgDotNetTextPart(BoxedTextColor.DebugViewPropertyName, info.name));
+								name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.DebugViewPropertyName, info.name));
 								expression = valueNodeFactory.GetFieldExpression(expression, info.valueField.Name, null, false);
 								newNode = valueNodeFactory.Create(evalInfo, name, info.value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false);
 							}

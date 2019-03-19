@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.Tags;
 
 namespace dnSpy.Roslyn.Intellisense.Completions {
 	enum CompletionKind {
@@ -102,7 +102,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		public static CompletionKind ToCompletionKind(this ImmutableArray<string> tags) {
 			foreach (var tag in tags) {
 				switch (tag) {
-				case CompletionTags.Class:
+				case WellKnownTags.Class:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.ClassProtected;
 					case Accessibility.Internal:	return CompletionKind.ClassInternal;
@@ -113,7 +113,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Class;
 					}
 
-				case CompletionTags.Constant:
+				case WellKnownTags.Constant:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.ConstantProtected;
 					case Accessibility.Internal:	return CompletionKind.ConstantInternal;
@@ -124,7 +124,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Constant;
 					}
 
-				case CompletionTags.Delegate:
+				case WellKnownTags.Delegate:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.DelegateProtected;
 					case Accessibility.Internal:	return CompletionKind.DelegateInternal;
@@ -135,7 +135,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Delegate;
 					}
 
-				case CompletionTags.Enum:
+				case WellKnownTags.Enum:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.EnumProtected;
 					case Accessibility.Internal:	return CompletionKind.EnumInternal;
@@ -146,7 +146,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Enum;
 					}
 
-				case CompletionTags.Event:
+				case WellKnownTags.Event:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.EventProtected;
 					case Accessibility.Internal:	return CompletionKind.EventInternal;
@@ -157,7 +157,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Event;
 					}
 
-				case CompletionTags.ExtensionMethod:
+				case WellKnownTags.ExtensionMethod:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.ExtensionMethodProtected;
 					case Accessibility.Internal:	return CompletionKind.ExtensionMethodInternal;
@@ -168,7 +168,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.ExtensionMethod;
 					}
 
-				case CompletionTags.Field:
+				case WellKnownTags.Field:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.FieldProtected;
 					case Accessibility.Internal:	return CompletionKind.FieldInternal;
@@ -179,7 +179,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Field;
 					}
 
-				case CompletionTags.Interface:
+				case WellKnownTags.Interface:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.InterfaceProtected;
 					case Accessibility.Internal:	return CompletionKind.InterfaceInternal;
@@ -190,7 +190,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Interface;
 					}
 
-				case CompletionTags.Method:
+				case WellKnownTags.Method:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.MethodProtected;
 					case Accessibility.Internal:	return CompletionKind.MethodInternal;
@@ -201,7 +201,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Method;
 					}
 
-				case CompletionTags.Module:
+				case WellKnownTags.Module:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.ModuleProtected;
 					case Accessibility.Internal:	return CompletionKind.ModuleInternal;
@@ -212,7 +212,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Module;
 					}
 
-				case CompletionTags.Operator:
+				case WellKnownTags.Operator:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.OperatorProtected;
 					case Accessibility.Internal:	return CompletionKind.OperatorInternal;
@@ -223,7 +223,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Operator;
 					}
 
-				case CompletionTags.Property:
+				case WellKnownTags.Property:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.PropertyProtected;
 					case Accessibility.Internal:	return CompletionKind.PropertyInternal;
@@ -234,7 +234,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Property;
 					}
 
-				case CompletionTags.Structure:
+				case WellKnownTags.Structure:
 					switch (GetAccessibility(tags)) {
 					case Accessibility.Protected:	return CompletionKind.StructureProtected;
 					case Accessibility.Internal:	return CompletionKind.StructureInternal;
@@ -245,7 +245,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Structure;
 					}
 
-				case CompletionTags.File:
+				case WellKnownTags.File:
 					switch (GetLanguage(tags)) {
 					case Language.CSharp:			return CompletionKind.FileCSharp;
 					case Language.VisualBasic:		return CompletionKind.FileVisualBasic;
@@ -254,7 +254,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Unknown;
 					}
 
-				case CompletionTags.Project:
+				case WellKnownTags.Project:
 					switch (GetLanguage(tags)) {
 					case Language.CSharp:			return CompletionKind.ProjectCSharp;
 					case Language.VisualBasic:		return CompletionKind.ProjectVisualBasic;
@@ -263,21 +263,21 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 						return CompletionKind.Unknown;
 					}
 
-				case CompletionTags.EnumMember:		return CompletionKind.EnumMember;
-				case CompletionTags.Assembly:		return CompletionKind.Assembly;
-				case CompletionTags.Parameter:		return CompletionKind.Parameter;
-				case CompletionTags.RangeVariable:	return CompletionKind.RangeVariable;
-				case CompletionTags.Intrinsic:		return CompletionKind.Intrinsic;
-				case CompletionTags.Keyword:		return CompletionKind.Keyword;
-				case CompletionTags.Label:			return CompletionKind.Label;
-				case CompletionTags.Local:			return CompletionKind.Local;
-				case CompletionTags.Namespace:		return CompletionKind.Namespace;
-				case CompletionTags.Folder:			return CompletionKind.Folder;
-				case CompletionTags.Reference:		return CompletionKind.Reference;
-				case CompletionTags.TypeParameter:	return CompletionKind.TypeParameter;
-				case CompletionTags.Snippet:		return CompletionKind.Snippet;
-				case CompletionTags.Error:			return CompletionKind.StatusError;
-				case CompletionTags.Warning:		return CompletionKind.StatusWarning;
+				case WellKnownTags.EnumMember:		return CompletionKind.EnumMember;
+				case WellKnownTags.Assembly:		return CompletionKind.Assembly;
+				case WellKnownTags.Parameter:		return CompletionKind.Parameter;
+				case WellKnownTags.RangeVariable:	return CompletionKind.RangeVariable;
+				case WellKnownTags.Intrinsic:		return CompletionKind.Intrinsic;
+				case WellKnownTags.Keyword:			return CompletionKind.Keyword;
+				case WellKnownTags.Label:			return CompletionKind.Label;
+				case WellKnownTags.Local:			return CompletionKind.Local;
+				case WellKnownTags.Namespace:		return CompletionKind.Namespace;
+				case WellKnownTags.Folder:			return CompletionKind.Folder;
+				case WellKnownTags.Reference:		return CompletionKind.Reference;
+				case WellKnownTags.TypeParameter:	return CompletionKind.TypeParameter;
+				case WellKnownTags.Snippet:			return CompletionKind.Snippet;
+				case WellKnownTags.Error:			return CompletionKind.StatusError;
+				case WellKnownTags.Warning:			return CompletionKind.StatusWarning;
 				case "StatusInformation":			return CompletionKind.StatusInformation;
 				}
 			}
@@ -285,13 +285,13 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		}
 
 		static Accessibility GetAccessibility(ImmutableArray<string> tags) {
-			if (tags.Contains(CompletionTags.Public))
+			if (tags.Contains(WellKnownTags.Public))
 				return Accessibility.Public;
-			if (tags.Contains(CompletionTags.Protected))
+			if (tags.Contains(WellKnownTags.Protected))
 				return Accessibility.Protected;
-			if (tags.Contains(CompletionTags.Internal))
+			if (tags.Contains(WellKnownTags.Internal))
 				return Accessibility.Internal;
-			if (tags.Contains(CompletionTags.Private))
+			if (tags.Contains(WellKnownTags.Private))
 				return Accessibility.Private;
 			return Accessibility.None;
 		}

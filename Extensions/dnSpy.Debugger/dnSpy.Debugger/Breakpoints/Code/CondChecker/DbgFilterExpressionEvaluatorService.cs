@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,14 +22,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgFilterExpressionEvaluatorService {
 		public abstract bool HasExpressionEvaluator { get; }
 		public abstract string IsValidExpression(string expr);
 		public abstract DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider);
-		public abstract void Write(ITextColorWriter output, string expr);
+		public abstract void Write(IDbgTextWriter output, string expr);
 	}
 
 	[Export(typeof(DbgFilterExpressionEvaluatorService))]
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return dbgFilterExpressionEvaluator?.Value.Evaluate(expr, variableProvider) ?? new DbgFilterExpressionEvaluatorResult(NoFEEError);
 		}
 
-		public override void Write(ITextColorWriter output, string expr) {
+		public override void Write(IDbgTextWriter output, string expr) {
 			if (output == null)
 				throw new ArgumentNullException(nameof(output));
 			if (expr == null)
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (dbgFilterExpressionEvaluator != null)
 				dbgFilterExpressionEvaluator.Value.Write(output, expr);
 			else
-				output.Write(BoxedTextColor.Error, expr);
+				output.Write(DbgTextColor.Error, expr);
 		}
 	}
 }

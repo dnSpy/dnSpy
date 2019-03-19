@@ -133,10 +133,10 @@
     <value>Valor debe ser un número de punto flotante de 64 bits</value>
   </data>
   <data name="InvalidEscapeSequence" xml:space="preserve">
-    <value>Secuencia de escape de carácter desconocido: \{0}</value>
+    <value>Secuencia de escape de carácter desconocida: \{0}</value>
   </data>
   <data name="InvalidEscapeSequence2" xml:space="preserve">
-    <value>Secuencia de escape de cadena desconocido: \{0}</value>
+    <value>Secuencia de escape de cadena desconocida: \{0}</value>
   </data>
   <data name="InvalidHexCharacter" xml:space="preserve">
     <value>Una cadena hexadecimal debe contener sólo dígitos hexadecimales: 0-9 y A-F</value>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Exceptions;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.Properties;
 
@@ -33,25 +33,25 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ExceptionFormatter() { }
 		internal static ExceptionFormatter Create_DONT_USE() => new ExceptionFormatter();
 
-		public void WriteName(ITextColorWriter output, ExceptionVM vm) =>
+		public void WriteName(IDbgTextWriter output, ExceptionVM vm) =>
 			vm.Context.ExceptionFormatterService.WriteName(output, vm.Definition, includeDescription: true);
 
-		public void WriteCategory(ITextColorWriter output, ExceptionVM vm) {
+		public void WriteCategory(IDbgTextWriter output, ExceptionVM vm) {
 			if (vm.Context.ExceptionSettingsService.TryGetCategoryDefinition(vm.Definition.Id.Category, out var def))
-				output.Write(BoxedTextColor.Text, def.DisplayName);
+				output.Write(DbgTextColor.Text, def.DisplayName);
 			else
 				WriteError(output);
 		}
 
-		void WriteError(ITextColorWriter output) => output.Write(BoxedTextColor.Error, "???");
+		void WriteError(IDbgTextWriter output) => output.Write(DbgTextColor.Error, "???");
 
-		public void WriteConditions(ITextColorWriter output, ExceptionVM vm) {
+		public void WriteConditions(IDbgTextWriter output, ExceptionVM vm) {
 			var conditions = vm.Settings.Conditions;
 			for (int i = 0; i < conditions.Count; i++) {
 				if (i != 0) {
-					output.WriteSpace();
-					output.Write(BoxedTextColor.Keyword, dnSpy_Debugger_Resources.Exception_Conditions_And);
-					output.WriteSpace();
+					output.Write(DbgTextColor.Text, " ");
+					output.Write(DbgTextColor.Keyword, dnSpy_Debugger_Resources.Exception_Conditions_And);
+					output.Write(DbgTextColor.Text, " ");
 				}
 				var cond = conditions[i];
 				switch (cond.ConditionType) {
@@ -70,10 +70,10 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			}
 		}
 
-		void WriteQuotedString(ITextColorWriter output, string text, string s) {
-			output.Write(BoxedTextColor.Text, text);
-			output.WriteSpace();
-			output.Write(BoxedTextColor.String, SimpleTypeConverter.ToString(s, true));
+		void WriteQuotedString(IDbgTextWriter output, string text, string s) {
+			output.Write(DbgTextColor.Text, text);
+			output.Write(DbgTextColor.Text, " ");
+			output.Write(DbgTextColor.String, SimpleTypeConverter.ToString(s, true));
 		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		DbgDispatcher Dispatcher => Process.DbgManager.Dispatcher;
 
-		public DbgExceptionImpl(DbgRuntime runtime, in DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module) {
+		public DbgExceptionImpl(DbgRuntime runtime, DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module) {
 			if (id.IsDefaultId)
 				throw new ArgumentException();
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));

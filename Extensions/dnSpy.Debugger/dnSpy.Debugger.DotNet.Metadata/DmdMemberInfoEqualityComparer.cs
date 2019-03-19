@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="options">Options</param>
 		public DmdMemberInfoEqualityComparer(DmdSigComparerOptions options) => this.options = options;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool Equals(DmdMemberInfo x, DmdMemberInfo y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdMemberInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdType x, DmdType y) => new DmdSigComparer(options).Equals(x, y);
@@ -98,6 +98,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public int GetHashCode(IDmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdCustomModifier x, DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

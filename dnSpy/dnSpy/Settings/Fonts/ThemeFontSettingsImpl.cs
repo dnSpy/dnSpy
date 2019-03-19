@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Settings.Fonts {
 		readonly DefaultFontInfo defaultFontInfo;
 		FontSettings active;
 
-		public ThemeFontSettingsImpl(string name, FontType fontType, in DefaultFontInfo defaultFontInfo) {
+		public ThemeFontSettingsImpl(string name, FontType fontType, DefaultFontInfo defaultFontInfo) {
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			FontType = fontType;
 			toSettings = new Dictionary<Guid, FontSettingsImpl>();

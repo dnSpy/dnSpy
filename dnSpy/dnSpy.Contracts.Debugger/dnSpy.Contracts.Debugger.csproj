@@ -1,204 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Contracts.Debugger</RootNamespace>
-    <AssemblyName>dnSpy.Contracts.Debugger</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\dnSpy.Contracts.Debugger.XML</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1685</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\dnSpy.Contracts.Debugger.XML</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1685</NoWarn>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="AttachToProgramOptions.cs" />
-    <Compile Include="Attach\AttachableProcess.cs" />
-    <Compile Include="Attach\AttachableProcessesService.cs" />
-    <Compile Include="Attach\AttachProgramOptions.cs" />
-    <Compile Include="Attach\AttachProgramOptionsProvider.cs" />
-    <Compile Include="Attach\AttachProgramOptionsProviderFactory.cs" />
-    <Compile Include="Attach\Dialogs\ShowAttachToProcessDialog.cs" />
-    <Compile Include="Attach\Dialogs\ShowAttachToProcessDialogOptions.cs" />
-    <Compile Include="Attach\PredefinedArchitectureNames.cs" />
-    <Compile Include="Attach\PredefinedAttachProgramOptionsProviderNames.cs" />
-    <Compile Include="Breakpoints\Code\DbgBoundCodeBreakpoint.cs" />
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatter.cs" />
-    <Compile Include="Breakpoints\Code\DbgBreakpointLocationFormatterProvider.cs" />
-    <Compile Include="Breakpoints\Code\DbgCodeBreakpoint.cs" />
-    <Compile Include="Breakpoints\Code\DbgCodeBreakpointDisplaySettings.cs" />
-    <Compile Include="Breakpoints\Code\DbgCodeBreakpointHitCountService.cs" />
-    <Compile Include="Breakpoints\Code\DbgCodeBreakpointOptions.cs" />
-    <Compile Include="Breakpoints\Code\DbgCodeBreakpointSettings.cs" />
-    <Compile Include="Breakpoints\Code\DbgCodeBreakpointsService.cs" />
-    <Compile Include="Breakpoints\Code\Dialogs\ShowCodeBreakpointSettingsService.cs" />
-    <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterEEVariableProvider.cs" />
-    <Compile Include="Breakpoints\Code\FilterExpressionEvaluator\DbgFilterExpressionEvaluator.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphFormatter.cs" />
-    <Compile Include="Breakpoints\Code\TextEditor\DbgBreakpointGlyphTextMarkerLocationProvider.cs" />
-    <Compile Include="Breakpoints\Modules\DbgModuleBreakpoint.cs" />
-    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointInfo.cs" />
-    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointSettings.cs" />
-    <Compile Include="Breakpoints\Modules\DbgModuleBreakpointsService.cs" />
-    <Compile Include="CallStack\DbgCallStackService.cs" />
-    <Compile Include="CallStack\DbgStackFrame.cs" />
-    <Compile Include="CallStack\DbgStackWalker.cs" />
-    <Compile Include="CallStack\TextEditor\DbgStackFrameGlyphTextMarkerLocationInfoProvider.cs" />
-    <Compile Include="CallStack\TextEditor\DbgStackFrameTextViewMarker.cs" />
-    <Compile Include="Code\DbgCodeLocation.cs" />
-    <Compile Include="Code\DbgCodeLocationSerializer.cs" />
-    <Compile Include="Code\PredefinedDbgCodeLocationTypes.cs" />
-    <Compile Include="Code\TextEditor\DbgTextViewCodeLocationProvider.cs" />
-    <Compile Include="DbgAppDomain.cs" />
-    <Compile Include="DbgCollectionChangedEventArgs.cs" />
-    <Compile Include="DbgDispatcher.cs" />
-    <Compile Include="DbgEnvironment.cs" />
-    <Compile Include="DbgImageLayout.cs" />
-    <Compile Include="DbgInternalAppDomain.cs" />
-    <Compile Include="DbgInternalModule.cs" />
-    <Compile Include="DbgInternalRuntime.cs" />
-    <Compile Include="DbgManager.cs" />
-    <Compile Include="DbgMessageEventArgs.cs" />
-    <Compile Include="DbgModule.cs" />
-    <Compile Include="DbgModuleMemoryRefreshedNotifier.cs" />
-    <Compile Include="DbgObject.cs" />
-    <Compile Include="DbgProcess.cs" />
-    <Compile Include="DbgRuntime.cs" />
-    <Compile Include="DbgStateInfo.cs" />
-    <Compile Include="DbgThread.cs" />
-    <Compile Include="DebuggerSettings.cs" />
-    <Compile Include="DebugProgramOptions.cs" />
-    <Compile Include="Engine\CallStack\DbgEngineStackFrame.cs" />
-    <Compile Include="Engine\CallStack\DbgEngineStackWalker.cs" />
-    <Compile Include="Engine\DbgEngine.cs" />
-    <Compile Include="Engine\DbgEngineAppDomain.cs" />
-    <Compile Include="Engine\DbgEngineBoundCodeBreakpoint.cs" />
-    <Compile Include="Engine\DbgEngineMessage.cs" />
-    <Compile Include="Engine\DbgEngineMessageFlags.cs" />
-    <Compile Include="Engine\DbgEngineMessageKind.cs" />
-    <Compile Include="Engine\DbgEngineModule.cs" />
-    <Compile Include="Engine\DbgEngineProvider.cs" />
-    <Compile Include="Engine\DbgEngineRuntimeInfo.cs" />
-    <Compile Include="Engine\DbgEngineThread.cs" />
-    <Compile Include="Engine\DbgObjectFactory.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineExpressionEvaluator.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineFormatter.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineLanguage.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineLanguageProvider.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineObjectId.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineObjectIdFactory.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineValue.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineValueNode.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineValueNodeFactory.cs" />
-    <Compile Include="Engine\Evaluation\DbgEngineValueNodeProvider.cs" />
-    <Compile Include="Engine\Evaluation\PredefinedEvaluationErrorMessages.cs" />
-    <Compile Include="Engine\Steppers\DbgEngineStepKind.cs" />
-    <Compile Include="Engine\Steppers\DbgEngineStepper.cs" />
-    <Compile Include="Evaluation\DbgEvaluationContext.cs" />
-    <Compile Include="Evaluation\DbgEvaluationInfo.cs" />
-    <Compile Include="Evaluation\DbgExpressionEvaluationInfo.cs" />
-    <Compile Include="Evaluation\DbgExpressionEvaluator.cs" />
-    <Compile Include="Evaluation\DbgFormatter.cs" />
-    <Compile Include="Evaluation\DbgLanguage.cs" />
-    <Compile Include="Evaluation\DbgLanguageService.cs" />
-    <Compile Include="Evaluation\DbgObjectId.cs" />
-    <Compile Include="Evaluation\DbgObjectIdService.cs" />
-    <Compile Include="Evaluation\DbgStackFrameFormatterOptions.cs" />
-    <Compile Include="Evaluation\DbgValue.cs" />
-    <Compile Include="Evaluation\DbgValueFormatterOptions.cs" />
-    <Compile Include="Evaluation\DbgValueFormatterTypeOptions.cs" />
-    <Compile Include="Evaluation\DbgValueNode.cs" />
-    <Compile Include="Evaluation\DbgValueNodeEvaluationOptions.cs" />
-    <Compile Include="Evaluation\DbgValueNodeFactory.cs" />
-    <Compile Include="Evaluation\DbgValueNodeProvider.cs" />
-    <Compile Include="Evaluation\PredefinedDbgLanguageNames.cs" />
-    <Compile Include="Evaluation\PredefinedDbgValueNodeImageNames.cs" />
-    <Compile Include="Evaluation\PredefinedFormatSpecifiers.cs" />
-    <Compile Include="Exceptions\DbgException.cs" />
-    <Compile Include="Exceptions\DbgExceptionCategoryDefinition.cs" />
-    <Compile Include="Exceptions\DbgExceptionCategoryDefinitionFlags.cs" />
-    <Compile Include="Exceptions\DbgExceptionConditionSettings.cs" />
-    <Compile Include="Exceptions\DbgExceptionDefinition.cs" />
-    <Compile Include="Exceptions\DbgExceptionDefinitionFlags.cs" />
-    <Compile Include="Exceptions\DbgExceptionDefinitionProvider.cs" />
-    <Compile Include="Exceptions\DbgExceptionEventFlags.cs" />
-    <Compile Include="Exceptions\DbgExceptionFormatter.cs" />
-    <Compile Include="Exceptions\DbgExceptionId.cs" />
-    <Compile Include="Exceptions\DbgExceptionSettings.cs" />
-    <Compile Include="Exceptions\DbgExceptionSettingsService.cs" />
-    <Compile Include="Exceptions\PredefinedExceptionCategories.cs" />
-    <Compile Include="IDbgManagerStartListener.cs" />
-    <Compile Include="PredefinedDbgRuntimeGuids.cs" />
-    <Compile Include="PredefinedDbgRuntimeKindGuids.cs" />
-    <Compile Include="PredefinedDebugTags.cs" />
-    <Compile Include="PredefinedThreadKinds.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="References\DbgLoadModuleReference.cs" />
-    <Compile Include="References\DbgLoadModuleReferenceHandler.cs" />
-    <Compile Include="RuntimeId.cs" />
-    <Compile Include="StartDebuggingOptions.cs" />
-    <Compile Include="StartDebugging\DbgProcessStarter.cs" />
-    <Compile Include="StartDebugging\Dialog\PredefinedStartDebuggingOptionsPageDisplayOrders.cs" />
-    <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPage.cs" />
-    <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageContext.cs" />
-    <Compile Include="StartDebugging\Dialog\StartDebuggingOptionsPageProvider.cs" />
-    <Compile Include="StartDebugging\GenericDebugEngineGuidProvider.cs" />
-    <Compile Include="StartDebugging\PredefinedGenericDebugEngineGuids.cs" />
-    <Compile Include="Steppers\DbgStepKind.cs" />
-    <Compile Include="Steppers\DbgStepper.cs" />
-    <Compile Include="ThreadCategoryProvider.cs" />
+    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
+    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
-      <Link>Properties\AssemblyInfo.Shared.cs</Link>
-    </Compile>
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
-      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
-      <Name>dnSpy.Contracts.DnSpy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
-      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
-      <Name>dnSpy.Contracts.Logic</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -155,6 +155,8 @@ namespace dnSpy.Debugger.Evaluation {
 			if (Runtime.IsClosed || value.IsClosed)
 				return null;
 			lock (lockObj) {
+				if (objectIds.Count == 0)
+					return null;
 				if (objectIds.TryGetValue(value, out var objectId))
 					return objectId;
 				return null;

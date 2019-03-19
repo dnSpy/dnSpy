@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Intellisense {
 			quickInfoBroker.TriggerQuickInfo(hexView, triggerPoint, trackMouse: true);
 		}
 
-		bool Intersects(in HexBufferSpanSelection span, in HexCellPosition point) {
+		bool Intersects(HexBufferSpanSelection span, HexCellPosition point) {
 			if (span.IsDefault)
 				return false;
 			if (point.BufferPosition.Buffer != span.BufferSpan.Buffer)

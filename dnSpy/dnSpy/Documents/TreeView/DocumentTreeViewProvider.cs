@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
@@ -43,13 +42,12 @@ namespace dnSpy.Documents.TreeView {
 		readonly IDotNetImageService dotNetImageService;
 		readonly IWpfCommandService wpfCommandService;
 		readonly IResourceNodeFactory resourceNodeFactory;
-		readonly IAppSettings appSettings;
 		readonly Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>[] dsDocumentNodeProviders;
 		readonly Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>[] mefFinders;
 		readonly ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider;
 
 		[ImportingConstructor]
-		DocumentTreeViewProvider(ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentServiceProvider documentServiceProvider, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
+		DocumentTreeViewProvider(ITreeViewService treeViewService, IDecompilerService decompilerService, IDsDocumentServiceProvider documentServiceProvider, IDocumentTreeViewSettings documentTreeViewSettings, IMenuService menuService, IDotNetImageService dotNetImageService, IWpfCommandService wpfCommandService, IResourceNodeFactory resourceNodeFactory, [ImportMany] IEnumerable<Lazy<IDsDocumentNodeProvider, IDsDocumentNodeProviderMetadata>> dsDocumentNodeProviders, [ImportMany] IEnumerable<Lazy<IDocumentTreeNodeDataFinder, IDocumentTreeNodeDataFinderMetadata>> mefFinders, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.treeViewService = treeViewService;
 			this.decompilerService = decompilerService;
 			this.documentServiceProvider = documentServiceProvider;
@@ -58,13 +56,12 @@ namespace dnSpy.Documents.TreeView {
 			this.dotNetImageService = dotNetImageService;
 			this.wpfCommandService = wpfCommandService;
 			this.resourceNodeFactory = resourceNodeFactory;
-			this.appSettings = appSettings;
 			this.dsDocumentNodeProviders = dsDocumentNodeProviders.ToArray();
 			this.mefFinders = mefFinders.ToArray();
 			this.treeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
 		}
 
 		public IDocumentTreeView Create(IDocumentTreeNodeFilter filter) =>
-			new DocumentTreeView(false, filter, treeViewService, decompilerService, documentServiceProvider.Create(), documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, appSettings, dsDocumentNodeProviders.ToArray(), mefFinders.ToArray(), treeViewNodeTextElementProvider);
+			new DocumentTreeView(false, filter, treeViewService, decompilerService, documentServiceProvider.Create(), documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, dsDocumentNodeProviders.ToArray(), mefFinders.ToArray(), treeViewNodeTextElementProvider);
 	}
 }

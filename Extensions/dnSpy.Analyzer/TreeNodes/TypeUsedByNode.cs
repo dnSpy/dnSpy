@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -61,7 +61,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		EntityNode HandleSpecialMethodNode(MethodDef method, in SourceRef? sourceRef) {
+		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
 			if (property != null)
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };

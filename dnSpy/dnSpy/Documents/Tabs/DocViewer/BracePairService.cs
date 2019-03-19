@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -326,7 +326,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		void RefreshTags(in BracePairResult? a) {
+		void RefreshTags(BracePairResult? a) {
 			if (a != null) {
 				RefreshTags(a.Value.Left);
 				RefreshTags(a.Value.Right);

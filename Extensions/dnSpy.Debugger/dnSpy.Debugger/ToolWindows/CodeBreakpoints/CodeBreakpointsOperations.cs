@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,11 +28,12 @@ using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.Dialogs;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Code;
+using dnSpy.Debugger.Disassembly;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.UI;
 
@@ -96,16 +97,15 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		readonly Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService;
+		readonly Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService;
 
 		BulkObservableCollection<CodeBreakpointVM> AllItems => codeBreakpointsVM.AllItems;
 		ObservableCollection<CodeBreakpointVM> SelectedItems => codeBreakpointsVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<CodeBreakpointVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
-		//TODO: This should be view order
-		IEnumerable<CodeBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
+		IEnumerable<CodeBreakpointVM> SortedSelectedItems => codeBreakpointsVM.Sort(SelectedItems);
+		IEnumerable<CodeBreakpointVM> SortedAllItems => codeBreakpointsVM.Sort(AllItems);
 
 		[ImportingConstructor]
-		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService) {
+		CodeBreakpointsOperationsImpl(ICodeBreakpointsVM codeBreakpointsVM, DbgCodeBreakpointDisplaySettings dbgCodeBreakpointDisplaySettings, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService, Lazy<DbgCodeLocationSerializerService> dbgCodeLocationSerializerService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickFilename pickFilename, IMessageBoxService messageBoxService, Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService, Lazy<DbgCodeBreakpointSerializerService> dbgCodeBreakpointSerializerService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCodeBreakpointHitCountService> dbgCodeBreakpointHitCountService, Lazy<DbgShowNativeCodeService> dbgShowNativeCodeService) {
 			this.codeBreakpointsVM = codeBreakpointsVM;
 			this.dbgCodeBreakpointDisplaySettings = dbgCodeBreakpointDisplaySettings;
 			this.dbgCodeBreakpointsService = dbgCodeBreakpointsService;
@@ -117,26 +117,58 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.dbgCodeBreakpointSerializerService = dbgCodeBreakpointSerializerService;
 			this.referenceNavigatorService = referenceNavigatorService;
 			this.dbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
+			this.dbgShowNativeCodeService = dbgShowNativeCodeService;
 		}
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteName(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteLabels(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteCondition(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteHitCount(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteFilter(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteWhenHit(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteModule(output, vm);
+				bool needTab = false;
+				foreach (var column in codeBreakpointsVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+					if (column.Name == string.Empty)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case CodeBreakpointsColumnIds.Name:
+						formatter.WriteName(output, vm);
+						break;
+
+					case CodeBreakpointsColumnIds.Labels:
+						formatter.WriteLabels(output, vm);
+						break;
+
+					case CodeBreakpointsColumnIds.Condition:
+						formatter.WriteCondition(output, vm);
+						break;
+
+					case CodeBreakpointsColumnIds.HitCount:
+						formatter.WriteHitCount(output, vm);
+						break;
+
+					case CodeBreakpointsColumnIds.Filter:
+						formatter.WriteFilter(output, vm);
+						break;
+
+					case CodeBreakpointsColumnIds.WhenHit:
+						formatter.WriteWhenHit(output, vm);
+						break;
+
+					case CodeBreakpointsColumnIds.Module:
+						formatter.WriteModule(output, vm);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();
@@ -244,11 +276,22 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			referenceNavigatorService.Value.GoTo(SelectedItems[0].CodeBreakpoint.Location, options);
 		}
 
-		public override bool CanGoToDisassembly => false;
+		public override bool CanGoToDisassembly {
+			get {
+				if (SelectedItems.Count != 1)
+					return false;
+				var boundBps = SelectedItems[0].CodeBreakpoint.BoundBreakpoints;
+				return boundBps.Length > 0 && dbgShowNativeCodeService.Value.CanShowNativeCode(boundBps[0]);
+			}
+		}
 		public override void GoToDisassembly() {
 			if (!CanGoToDisassembly)
 				return;
-			//TODO:
+			var boundBps = SelectedItems[0].CodeBreakpoint.BoundBreakpoints;
+			if (boundBps.Length == 0)
+				return;
+			if (!dbgShowNativeCodeService.Value.ShowNativeCode(boundBps[0]))
+				messageBoxService.Show(dnSpy_Debugger_Resources.Error_CouldNotShowDisassembly);
 		}
 
 		public override bool CanEditSettings => SelectedItems.Count > 0;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,18 +25,18 @@ using System.Text;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	readonly struct DebuggerDisplayAttributeFormatter {
 		readonly DbgEvaluationInfo evalInfo;
 		readonly LanguageFormatter languageFormatter;
-		readonly ITextColorWriter output;
+		readonly IDbgTextWriter output;
 		readonly DbgValueFormatterOptions options;
 		readonly CultureInfo cultureInfo;
 
-		public DebuggerDisplayAttributeFormatter(DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public DebuggerDisplayAttributeFormatter(DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
 			Debug.Assert((options & DbgValueFormatterOptions.NoDebuggerDisplay) == 0);
 			this.evalInfo = evalInfo;
 			this.languageFormatter = languageFormatter;
@@ -121,7 +121,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			var evaluator = evalInfo.Context.GetDebuggerDisplayAttributeEvaluator();
 			foreach (var part in displayParts) {
 				if ((part.Flags & DisplayPartFlags.EvaluateText) == 0)
-					output.Write(BoxedTextColor.DebuggerDisplayAttributeEval, part.Text);
+					output.Write(DbgTextColor.DebuggerDisplayAttributeEval, part.Text);
 				else {
 					object eeState = typeState.GetExpressionEvaluatorState(evalInfo.Context.Language.ExpressionEvaluator, part.Text);
 					DbgDotNetEvalResult evalRes = default;
@@ -129,9 +129,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						var evalInfo2 = new DbgEvaluationInfo(typeState.TypeContext, evalInfo.Frame, evalInfo.CancellationToken);
 						evalRes = evaluator.Evaluate(evalInfo2, value, part.Text, DbgEvaluationOptions.Expression, eeState);
 						if (evalRes.Error != null) {
-							output.Write(BoxedTextColor.Error, "<<<");
-							output.Write(BoxedTextColor.Error, evalRes.Error);
-							output.Write(BoxedTextColor.Error, ">>>");
+							output.Write(DbgTextColor.Error, "<<<");
+							output.Write(DbgTextColor.Error, evalRes.Error);
+							output.Write(DbgTextColor.Error, ">>>");
 						}
 						else {
 							// Prevent recursive calls
@@ -174,13 +174,26 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return state;
 		}
 
+		static bool ShouldIgnoreDebuggerDisplayAttribute(DmdType type) {
+			// We have special support for formatting KeyValuePair<K, V> and DictionaryEntry, so ignore all DebuggerDisplayAttributes.
+			// (Only Unity and older Mono versions have a DebuggerDisplayAttribute on them)
+			if (type.IsConstructedGenericType) {
+				if (type.MetadataName == "KeyValuePair`2" && type.MetadataNamespace == "System.Collections.Generic")
+					return type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2, isOptional: true);
+				return false;
+			}
+			else {
+				if (type.MetadataName == "DictionaryEntry" && type.MetadataNamespace == "System.Collections")
+					return type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_DictionaryEntry, isOptional: true);
+				return false;
+			}
+		}
+
 		(DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) GetDisplayParts(DmdType type) {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
 			Debug.Assert((object)ddaType != null);
 
-			// We have special support for formatting KeyValuePair<K, V>, so ignore all DebuggerDisplayAttributes.
-			// (Only Unity and older Mono versions have a DebuggerDisplayAttribute on it)
-			bool forceNoAttr = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_Generic_KeyValuePair_T2);
+			bool forceNoAttr = ShouldIgnoreDebuggerDisplayAttribute(type);
 			string nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
 			if (!forceNoAttr && (object)ddaType != null) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);

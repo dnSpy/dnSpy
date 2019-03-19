@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using dnlib.DotNet;
 
 namespace dnSpy.Roslyn.Compiler {
@@ -26,6 +27,7 @@ namespace dnSpy.Roslyn.Compiler {
 		Unknown,
 		DotNetFramework2,
 		DotNetFramework4,
+		DotNetCore,
 		Unity2,
 		Unity4,
 	}
@@ -33,8 +35,8 @@ namespace dnSpy.Roslyn.Compiler {
 	static class FrameworkDetector {
 		public static FrameworkKind GetFrameworkKind(ModuleDef module) {
 			var corlib = module.CorLibTypes.AssemblyRef;
-			var asmName = UTF8String.ToSystemStringOrEmpty(module.Assembly?.Name);
-			if (CheckAssemblyName(unityAssemblyNames, asmName)) {
+			var moduleLocation = module.Location;
+			if (File.Exists(moduleLocation) && File.Exists(Path.Combine(Path.GetDirectoryName(moduleLocation), "UnityEngine.dll"))) {
 				Debug.Assert(corlib.Version.Major == 2 || corlib.Version.Major == 4);
 				return corlib.Version.Major == 2 ? FrameworkKind.Unity2 : FrameworkKind.Unity4;
 			}
@@ -49,6 +51,8 @@ namespace dnSpy.Roslyn.Compiler {
 					Debug.Fail("Unknown .NET Framework version");
 					return FrameworkKind.Unknown;
 				}
+				if (info.framework == ".NETCoreApp")
+					return FrameworkKind.DotNetCore;
 
 				return FrameworkKind.Unknown;
 			}
@@ -58,6 +62,13 @@ namespace dnSpy.Roslyn.Compiler {
 				return FrameworkKind.DotNetFramework2;
 			case "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089":
 				return FrameworkKind.DotNetFramework4;
+			}
+
+			switch (corlib.Name) {
+			case "System.Runtime":
+				if (corlib.Version >= new Version(4, 1, 0, 0))
+					return FrameworkKind.DotNetCore;
+				break;
 			}
 
 			return FrameworkKind.Unknown;
@@ -113,18 +124,5 @@ namespace dnSpy.Roslyn.Compiler {
 
 			return (framework, versionStr, profile);
 		}
-
-		static bool CheckAssemblyName(string[] names, string name) {
-			foreach (var n in names) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(n, name))
-					return true;
-			}
-			return false;
-		}
-
-		static readonly string[] unityAssemblyNames = new string[] {
-			"Assembly-CSharp",
-			"Assembly-CSharp-firstpass",
-		};
 	}
 }

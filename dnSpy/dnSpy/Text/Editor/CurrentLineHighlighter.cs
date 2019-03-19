@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class CurrentLineHighlighter {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.CurrentLineHighlighter)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
@@ -64,7 +64,7 @@ namespace dnSpy.Text.Editor {
 		[Order(Before = PredefinedDsAdornmentLayers.GlyphTextMarker)]
 		[Order(After = PredefinedAdornmentLayers.Outlining)]
 		static AdornmentLayerDefinition theAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
 		readonly IEditorFormatMap editorFormatMap;

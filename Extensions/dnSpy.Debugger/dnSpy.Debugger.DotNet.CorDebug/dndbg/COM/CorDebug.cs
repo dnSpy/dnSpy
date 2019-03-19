@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,8 +23,8 @@ using System.Security;
 using System.Text;
 using dndbg.Engine;
 
-#pragma warning disable 0108 // Member hides inherited member; missing new keyword
-#pragma warning disable 0649
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+#pragma warning disable CS0649
 namespace dndbg.COM.CorDebug {
 	enum CorDebugInterfaceVersion {
 		CorDebugInvalidVersion = 0,
@@ -169,6 +169,16 @@ namespace dndbg.COM.CorDebug {
 		public uint Length;
 		uint pad;
 	};
+	struct ILToNativeMap {
+		public uint ilOffset;
+		public uint nativeStartOffset;
+		public uint nativeEndOffset;
+	}
+	enum CorDebugIlToNativeMappingTypes {
+		NO_MAPPING = -1,
+		PROLOG     = -2,
+		EPILOG     = -3
+	}
 	[StructLayout(LayoutKind.Sequential)]
 	struct CorDebugExceptionObjectStackFrame {
 		[MarshalAs(UnmanagedType.Interface)]
@@ -801,7 +811,8 @@ namespace dndbg.COM.CorDebug {
 		void GetCode([In] uint startOffset, [In] uint endOffset, [In] uint cBufferAlloc, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode buffer, out uint pcBufferSize);
 		[PreserveSig]
 		int GetVersionNumber(out uint nVersion);
-		void GetILToNativeMapping([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode map);
+		[PreserveSig]
+		int GetILToNativeMapping([In] uint cMap, out uint pcMap, [Out] IntPtr map);
 		void GetEnCRemapSequencePoints([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode offsets);
 	}
 	[Guid("5F696509-452F-4436-A3FE-4D11FE7E2347"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -817,6 +828,45 @@ namespace dndbg.COM.CorDebug {
 	interface ICorDebugCode3 {
 		[PreserveSig]
 		int GetReturnValueLiveOffset([In] uint ILoffset, [In] uint bufferSize, out uint pFetched, [MarshalAs(UnmanagedType.LPArray)] [Out] uint[] pOffsets);
+	}
+	[Guid("18221FA4-20CB-40FA-B19D-9F91C4FA8C14"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugCode4 {
+		[PreserveSig]
+		int EnumerateVariableHomes([MarshalAs(UnmanagedType.Interface)] out ICorDebugVariableHomeEnum ppEnum);
+	}
+	[Guid("E76B7A57-4F7A-4309-85A7-5D918C3DEAF7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugVariableHomeEnum : ICorDebugEnum {
+		void Skip([In] uint celt);
+		void Reset();
+		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
+		void GetCount(out uint pcelt);
+		[PreserveSig]
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.LPArray)] [Out] ICorDebugVariableHome[] homes, out uint pceltFetched);
+	};
+	enum VariableLocationType {
+		VLT_REGISTER,
+		VLT_REGISTER_RELATIVE,
+		VLT_INVALID
+	}
+	[Guid("50847B8D-F43F-41B0-924C-6383A5F2278B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugVariableHome {
+		[PreserveSig]
+		int GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
+		[PreserveSig]
+		int GetSlotIndex(out int pSlotIndex);
+		[PreserveSig]
+		int GetArgumentIndex(out int pArgumentIndex);
+		[PreserveSig]
+		int GetLiveRange(out uint pStartOffset, out uint pEndOffset);
+		[PreserveSig]
+		int GetLocationType(out VariableLocationType pLocationType);
+		[PreserveSig]
+		int GetRegister(out CorDebugRegister pRegister);
+		[PreserveSig]
+		int GetOffset(out int pOffset);
 	}
 	[Guid("55E96461-9645-45E4-A2FF-0367877ABCDE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]
@@ -1977,5 +2027,5 @@ namespace dndbg.COM.CorDebug {
 		AlwaysShowUpdates
 	}
 }
-#pragma warning restore 0649
-#pragma warning restore 0108 // Member hides inherited member; missing new keyword
+#pragma warning restore CS0649
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword

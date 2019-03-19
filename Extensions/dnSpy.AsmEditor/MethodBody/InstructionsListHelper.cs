@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -71,6 +71,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 				InputGestureText = "res:ShortCutKeyN",
 				Modifiers = ModifierKeys.None,
 				Key = Key.N,
+			});
+			Add(new ContextMenuHandler {
+				Header = "res:ReplaceNopsInstrCommand",
+				HeaderPlural = "res:ReplaceNopsInstrsCommand",
+				Command = cilBodyVM.ReplaceInstructionWithMultipleNopsCommand,
+				Icon = null,
+				InputGestureText = "res:ShortCutKeyR",
+				Modifiers = ModifierKeys.None,
+				Key = Key.R,
 			});
 			Add(new ContextMenuHandler {
 				Header = "res:InvertBranchCommand",

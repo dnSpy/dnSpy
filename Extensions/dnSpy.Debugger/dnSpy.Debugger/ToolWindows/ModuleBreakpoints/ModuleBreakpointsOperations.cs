@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,9 @@ using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Breakpoints.Modules;
 using dnSpy.Debugger.UI;
 
@@ -85,10 +85,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		BulkObservableCollection<ModuleBreakpointVM> AllItems => moduleBreakpointsVM.AllItems;
 		ObservableCollection<ModuleBreakpointVM> SelectedItems => moduleBreakpointsVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<ModuleBreakpointVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
-		//TODO: This should be view order
-		IEnumerable<ModuleBreakpointVM> SortedAllItems => AllItems.OrderBy(a => a.Order);
+		IEnumerable<ModuleBreakpointVM> SortedSelectedItems => moduleBreakpointsVM.Sort(SelectedItems);
+		IEnumerable<ModuleBreakpointVM> SortedAllItems => moduleBreakpointsVM.Sort(AllItems);
 
 		[ImportingConstructor]
 		ModuleBreakpointsOperationsImpl(IModuleBreakpointsVM moduleBreakpointsVM, DebuggerSettings debuggerSettings, Lazy<DbgModuleBreakpointsService> dbgModuleBreakpointsService, Lazy<ISettingsServiceFactory> settingsServiceFactory, IPickSaveFilename pickSaveFilename, IPickFilename pickFilename, IMessageBoxService messageBoxService) {
@@ -103,22 +101,51 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteIsEnabled(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteModuleName(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteDynamic(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteInMemory(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteOrder(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteProcessName(output, vm.ModuleBreakpoint);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteAppDomainName(output, vm.ModuleBreakpoint);
+				bool needTab = false;
+				foreach (var column in moduleBreakpointsVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case ModuleBreakpointsWindowColumnIds.IsEnabled:
+						formatter.WriteIsEnabled(output, vm.ModuleBreakpoint);
+						break;
+
+					case ModuleBreakpointsWindowColumnIds.Name:
+						formatter.WriteModuleName(output, vm.ModuleBreakpoint);
+						break;
+
+					case ModuleBreakpointsWindowColumnIds.DynamicModule:
+						formatter.WriteDynamic(output, vm.ModuleBreakpoint);
+						break;
+
+					case ModuleBreakpointsWindowColumnIds.InMemoryModule:
+						formatter.WriteInMemory(output, vm.ModuleBreakpoint);
+						break;
+
+					case ModuleBreakpointsWindowColumnIds.Order:
+						formatter.WriteOrder(output, vm.ModuleBreakpoint);
+						break;
+
+					case ModuleBreakpointsWindowColumnIds.Process:
+						formatter.WriteProcessName(output, vm.ModuleBreakpoint);
+						break;
+
+					case ModuleBreakpointsWindowColumnIds.AppDomain:
+						formatter.WriteAppDomainName(output, vm.ModuleBreakpoint);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();

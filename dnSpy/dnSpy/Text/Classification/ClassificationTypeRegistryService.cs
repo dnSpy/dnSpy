@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -116,10 +116,10 @@ namespace dnSpy.Text.Classification {
 		}
 
 		const string TRANSIENT_NAME = "(TRANSIENT)";
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export, Name(TRANSIENT_NAME)]
 		static ClassificationTypeDefinition _transientClassificationTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public IClassificationType CreateClassificationType(string type, IEnumerable<IClassificationType> baseTypes) {
 			if (baseTypes == null)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,8 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using dnlib.DotNet.MD;
+using dnlib.PE;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -172,6 +174,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 #endif
 
 			public DbgModuleReferenceImpl(DbgRawMetadata dbgRawMetadata, Guid moduleVersionId, DmdModule moduleForToString, int refreshedVersion) {
+				PatchMetadata(dbgRawMetadata);
 				this.dbgRawMetadata = dbgRawMetadata;
 				ModuleVersionId = moduleVersionId;
 				this.refreshedVersion = refreshedVersion;
@@ -180,11 +183,25 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 #endif
 			}
 
+			unsafe static void PatchMetadata(DbgRawMetadata rawMd) {
+				try {
+					using (var peImage = new PEImage(rawMd.Address, (uint)rawMd.Size, rawMd.IsFileLayout ? ImageLayout.File : ImageLayout.Memory, true)) {
+						using (var md = MetadataFactory.CreateMetadata(peImage))
+							new MetadataFixer(md, (void*)rawMd.Address).Fix();
+					}
+				}
+				catch (BadImageFormatException) {
+				}
+				catch (IOException) {
+				}
+			}
+
 			internal void Update(int version) {
 				if (refreshedVersion != version) {
 					refreshedVersion = version;
 					generationId = Guid.NewGuid();
 					dbgRawMetadata.UpdateMemory();
+					PatchMetadata(dbgRawMetadata);
 				}
 			}
 

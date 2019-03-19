@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,6 +30,6 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="imageReference">Image reference</param>
 		/// <param name="options">Image options</param>
 		/// <returns></returns>
-		BitmapSource GetImage(in ImageReference imageReference, ImageOptions options);
+		BitmapSource GetImage(ImageReference imageReference, ImageOptions options);
 	}
 }

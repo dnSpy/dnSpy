@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,8 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the method debug info
 		/// </summary>
-		public MethodDebugInfo MethodDebugInfo { get; }
+		public DbgMethodDebugInfo MethodDebugInfo { get; }
 
 		/// <summary>
 		/// Gets the method token
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="localVarSigTok">Method local variables signature token</param>
 		/// <param name="methodVersion">Method version number, a 1-based number</param>
 		/// <param name="ilOffset">IL offset</param>
-		public DbgLanguageDebugInfo(MethodDebugInfo methodDebugInfo, int methodToken, int localVarSigTok, int methodVersion, uint ilOffset) {
+		public DbgLanguageDebugInfo(DbgMethodDebugInfo methodDebugInfo, int methodToken, int localVarSigTok, int methodVersion, uint ilOffset) {
 			if (methodVersion < 1)
 				throw new ArgumentOutOfRangeException(nameof(methodVersion));
 			MethodDebugInfo = methodDebugInfo ?? throw new ArgumentNullException(nameof(methodDebugInfo));

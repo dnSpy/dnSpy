@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:cssettings="clr-namespace:dnSpy.Roslyn.Compiler.CSharp"
+                    xmlns:vbsettings="clr-namespace:dnSpy.Roslyn.Compiler.VisualBasic"
+                    xmlns:p="clr-namespace:dnSpy.Roslyn.Properties;assembly=dnSpy.Roslyn"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DataTemplate DataType="{x:Type cssettings:CSharpCompilerSettingsPage}">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 0 0" Target="{Binding ElementName=preprocSymsTextBox}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_PreprocessorSymbols}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="preprocSymsTextBox" Text="{Binding Settings.PreprocessorSymbols, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.Optimize}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_Optimize}"/>
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.CheckOverflow}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_CheckOverflow}"/>
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.AllowUnsafe}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_AllowUnsafe}"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vbsettings:VisualBasicCompilerSettingsPage}">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 0 0" Target="{Binding ElementName=preprocSymsTextBox}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_PreprocessorSymbols}" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="preprocSymsTextBox" Text="{Binding Settings.PreprocessorSymbols, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.Optimize}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_Optimize}"/>
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.OptionExplicit}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_OptionExplicit}"/>
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.OptionInfer}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_OptionInfer}"/>
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.OptionStrict}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_OptionStrict}"/>
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.OptionCompareBinary}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_OptionCompareBinary}"/>
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.EmbedVBRuntime}" Content="{x:Static p:dnSpy_Roslyn_Resources.CompilerSettings_EmbedVBRuntime}"/>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

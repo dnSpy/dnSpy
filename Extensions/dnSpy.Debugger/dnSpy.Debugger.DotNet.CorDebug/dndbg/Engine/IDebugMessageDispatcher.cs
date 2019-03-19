@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System;
 namespace dndbg.Engine {
 	interface IDebugMessageDispatcher {
 		/// <summary>
-		/// Executes <see cref="action"/> on the engine thread.
+		/// Executes <paramref name="action"/> on the engine thread.
 		/// </summary>
 		/// <param name="action">Code to execute on the dndbg thread</param>
 		void ExecuteAsync(Action action);

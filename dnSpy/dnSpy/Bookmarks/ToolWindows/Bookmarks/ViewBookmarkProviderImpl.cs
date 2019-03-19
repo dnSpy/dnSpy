@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -64,13 +64,12 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) =>
 			// Add an extra UI() so it's guaranteed to be called after BookmarksVM's handler
 			UI(() => UI(() => BookmarksService_BookmarksChanged_UI(e)));
-		void BookmarksService_BookmarksChanged_UI(in CollectionChangedEventArgs<Bookmark> e) => UpdateBookmarks_UI();
+		void BookmarksService_BookmarksChanged_UI(CollectionChangedEventArgs<Bookmark> e) => UpdateBookmarks_UI();
 
 		void UpdateBookmarks_UI() {
 			uiDispatcher.VerifyAccess();
 			if (bookmarksVM.Value.IsOpen) {
-				//TODO: This should be view order
-				var bookmarks = bookmarksVM.Value.AllItems.Select(a => a.Bookmark).ToArray();
+				var bookmarks = bookmarksVM.Value.Sort(bookmarksVM.Value.AllItems).Select(a => a.Bookmark).ToArray();
 				UpdateBookmarks_UI(bookmarks);
 			}
 			else {

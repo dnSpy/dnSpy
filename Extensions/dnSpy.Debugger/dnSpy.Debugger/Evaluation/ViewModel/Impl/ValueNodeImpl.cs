@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,9 +24,9 @@ using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
@@ -251,7 +251,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			Context.ExpressionToEdit = null;
 			if (text != null)
 				return new EditableValueTextInfo(text, EditValueFlags.None);
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions | DbgValueFormatterOptions.Edit;
 			RawNode.FormatValue(Context.EvaluationInfo, output, options, Context.FormatCulture);
 			return new EditableValueTextInfo(output.ToString());

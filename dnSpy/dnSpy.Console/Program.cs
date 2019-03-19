@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,11 +29,11 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using dnlib.DotNet;
+using dnSpy.Console.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Decompiler.MSBuild;
-using dnSpy_Console.Properties;
 
 namespace dnSpy_Console {
 	[Serializable]
@@ -199,7 +199,7 @@ namespace dnSpy_Console {
 			userGacPaths = new List<string>();
 			gacFiles = new List<string>();
 			decompilationContext = new DecompilationContext();
-			moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
+			moduleContext = ModuleDef.CreateModuleContext(); // Same as dnSpy.exe
 			assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
 			assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
 			assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe

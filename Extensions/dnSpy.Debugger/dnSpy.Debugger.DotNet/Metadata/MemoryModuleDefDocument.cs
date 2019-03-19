@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		readonly DbgInMemoryModuleServiceImpl owner;
 		readonly byte[] data;
 
-		MemoryModuleDefDocument(DbgInMemoryModuleServiceImpl owner, in ModuleId moduleId, DbgProcess process, ulong address, byte[] data, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
+		MemoryModuleDefDocument(DbgInMemoryModuleServiceImpl owner, ModuleId moduleId, DbgProcess process, ulong address, byte[] data, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			ModuleId = moduleId;

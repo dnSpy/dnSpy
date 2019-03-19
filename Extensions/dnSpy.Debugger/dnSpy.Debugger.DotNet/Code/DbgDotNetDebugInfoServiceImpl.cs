@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,6 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using dnlib.DotNet;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.Metadata;
@@ -33,6 +32,10 @@ using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Code {
+	abstract class DbgDotNetDebugInfoService {
+		public abstract Task<MethodDebugInfoResult> GetMethodDebugInfoAsync(DbgModule module, uint token);
+	}
+
 	[Export(typeof(DbgDotNetDebugInfoService))]
 	sealed class DbgDotNetDebugInfoServiceImpl : DbgDotNetDebugInfoService {
 		readonly UIDispatcher uiDispatcher;
@@ -54,18 +57,18 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		void UI(Action callback) => uiDispatcher.UI(callback);
 
-		public override Task<GetMethodDebugInfoResult> GetMethodDebugInfoAsync(DbgModule module, uint token, uint offset) {
+		public override Task<MethodDebugInfoResult> GetMethodDebugInfoAsync(DbgModule module, uint token) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
-			var tcs = new TaskCompletionSource<GetMethodDebugInfoResult>();
-			UI(() => GetMethodDebugInfo_UI(module, token, offset, tcs));
+			var tcs = new TaskCompletionSource<MethodDebugInfoResult>();
+			UI(() => GetMethodDebugInfo_UI(module, token, tcs));
 			return tcs.Task;
 		}
 
-		void GetMethodDebugInfo_UI(DbgModule module, uint token, uint offset, TaskCompletionSource<GetMethodDebugInfoResult> tcs) {
+		void GetMethodDebugInfo_UI(DbgModule module, uint token, TaskCompletionSource<MethodDebugInfoResult> tcs) {
 			uiDispatcher.VerifyAccess();
 			try {
-				var info = TryGetMethodDebugInfo_UI(module, token, offset);
+				var info = TryGetMethodDebugInfo_UI(module, token);
 				tcs.SetResult(info);
 			}
 			catch (Exception ex) {
@@ -73,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		GetMethodDebugInfoResult TryGetMethodDebugInfo_UI(DbgModule module, uint token, uint offset) {
+		MethodDebugInfoResult TryGetMethodDebugInfo_UI(DbgModule module, uint token) {
 			uiDispatcher.VerifyAccess();
 			var tab = documentTabService.Value.GetOrCreateActiveTab();
 			var documentViewer = tab.TryGetDocumentViewer();
@@ -82,33 +85,24 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (moduleId == null)
 				return default;
 
-			uint refNavOffset;
-			if (offset == DbgDotNetInstructionOffsetConstants.EPILOG) {
-				refNavOffset = DotNetReferenceNavigator.EPILOG;
-				var mod = dbgMetadataService.TryGetMetadata(module, DbgLoadModuleOptions.AutoLoaded);
-				if (mod?.ResolveToken(token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
-					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
-				else
-					return default;
-			}
-			else if (offset == DbgDotNetInstructionOffsetConstants.PROLOG) {
-				refNavOffset = DotNetReferenceNavigator.PROLOG;
-				offset = 0;
-			}
-			else
-				refNavOffset = offset;
-
 			var key = new ModuleTokenId(moduleId.Value, token);
-			var info = methodDebugService.TryGetMethodDebugInfo(key);
-			MethodDebugInfo stateMachineDebugInfoOrNull = null;
-			if (info == null) {
+			var decompilerDebugInfo = methodDebugService.TryGetMethodDebugInfo(key);
+			DbgMethodDebugInfo debugInfo;
+			DbgMethodDebugInfo stateMachineDebugInfoOrNull = null;
+			int methodVersion;
+			if (decompilerDebugInfo != null) {
+				methodVersion = 1;
+				debugInfo = DbgMethodDebugInfoUtils.ToDbgMethodDebugInfo(decompilerDebugInfo);
+			}
+			else {
 				var cancellationToken = CancellationToken.None;
 				var result = dbgMethodDebugInfoProvider.Value.GetMethodDebugInfo(decompilerService.Value.Decompiler, module, token, cancellationToken);
-				info = result.DebugInfoOrNull;
+				methodVersion = result.MethodVersion;
+				debugInfo = result.DebugInfoOrNull;
 				stateMachineDebugInfoOrNull = result.StateMachineDebugInfoOrNull;
 			}
 
-			return new GetMethodDebugInfoResult(info, stateMachineDebugInfoOrNull);
+			return new MethodDebugInfoResult(methodVersion, debugInfo, stateMachineDebugInfoOrNull);
 		}
 	}
 }

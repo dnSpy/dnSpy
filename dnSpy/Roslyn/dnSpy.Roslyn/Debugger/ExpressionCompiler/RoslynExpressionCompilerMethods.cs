@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
 
 namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 	static class RoslynExpressionCompilerMethods {
-		public static void GetAllScopes(MethodDebugScope rootScope, List<MethodDebugScope> stack, List<MethodDebugScope> allScopes, List<MethodDebugScope> containingScopes, uint ilOffset) {
+		public static void GetAllScopes(DbgMethodDebugScope rootScope, List<DbgMethodDebugScope> stack, List<DbgMethodDebugScope> allScopes, List<DbgMethodDebugScope> containingScopes, uint ilOffset) {
 			stack.Add(rootScope);
 			while (stack.Count > 0) {
 				var scope = stack[stack.Count - 1];
@@ -21,14 +21,14 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			}
 		}
 
-		public static Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan GetReuseSpan(List<MethodDebugScope> scopes, uint ilOffset) {
+		public static Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan GetReuseSpan(List<DbgMethodDebugScope> scopes, uint ilOffset) {
 			return MethodContextReuseConstraints.CalculateReuseSpan(
 				(int)ilOffset,
 				Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan.MaxValue,
 				scopes.Select(scope => new Microsoft.CodeAnalysis.ExpressionEvaluator.ILSpan(scope.Span.Start, scope.Span.End)));
 		}
 
-		public static ImmutableArray<string> GetLocalNames(int totalLocals, List<MethodDebugScope> scopes, CompilerGeneratedVariableInfo[] compilerGeneratedVariables) {
+		public static ImmutableArray<string> GetLocalNames(int totalLocals, List<DbgMethodDebugScope> scopes, CompilerGeneratedVariableInfo[] compilerGeneratedVariables) {
 			if (totalLocals == 0)
 				return ImmutableArray<string>.Empty;
 			var res = new string[totalLocals];
@@ -36,10 +36,10 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				foreach (var local in scope.Locals) {
 					if (local.IsDecompilerGenerated)
 						continue;
-					if (local.Local == null)
+					if (local.Index < 0)
 						continue;
 
-					res[local.Local.Index] = local.Name;
+					res[local.Index] = local.Name;
 				}
 			}
 			foreach (var info in compilerGeneratedVariables) {

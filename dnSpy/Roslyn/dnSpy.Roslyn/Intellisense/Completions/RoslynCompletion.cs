@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,14 +21,13 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
 using Microsoft.CodeAnalysis.Completion;
-using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.CodeAnalysis.Tags;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Roslyn.Intellisense.Completions {
 	sealed class RoslynCompletion : DsCompletion, ICustomCommit {
 		public CompletionItem CompletionItem { get; }
 		public RoslynCompletionSet CompletionSet { get; set; }
-		readonly IImageMonikerService imageMonikerService;
 
 		public override string Description {
 			// Need to return a non-empty string or no tooltip is shown
@@ -36,13 +35,11 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			set { }
 		}
 
-		public RoslynCompletion(IImageMonikerService imageMonikerService, CompletionItem completionItem)
-			: base(completionItem.DisplayText, completionItem.FilterText) {
-			this.imageMonikerService = imageMonikerService;
+		public RoslynCompletion(CompletionItem completionItem)
+			: base(completionItem.DisplayText, completionItem.FilterText) =>
 			CompletionItem = completionItem;
-		}
 
-		protected override ImageMoniker GetIconMoniker() => imageMonikerService.ToImageMoniker(CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? default);
+		protected override ImageReference GetImageReference() => CompletionImageHelper.GetImageReference(CompletionItem.Tags) ?? default;
 
 		public override IEnumerable<CompletionIcon> AttributeIcons {
 			get => GetAttributeIcons();
@@ -50,8 +47,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		}
 
 		IEnumerable<CompletionIcon> GetAttributeIcons() {
-			if (CompletionItem.Tags.Contains(CompletionTags.Warning))
-				return new[] { new CompletionIcon2(imageMonikerService.ToImageMoniker(DsImages.StatusWarning), null, null) };
+			if (CompletionItem.Tags.Contains(WellKnownTags.Warning))
+				return new[] { new DsCompletionIcon(DsImages.StatusWarning) };
 			return null;
 		}
 

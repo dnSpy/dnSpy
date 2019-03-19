@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Predefined hex margin names
 	/// </summary>
 	public static class PredefinedHexMarginNames {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		const string prefix = "hex-";
 		public const string Left = prefix + nameof(Left);
 		public const string Right = prefix + nameof(Right);
@@ -43,6 +43,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public const string Suggestion = prefix + nameof(Suggestion);
 		public const string ZoomControl = prefix + nameof(ZoomControl);
 		public const string BottomRightCorner = prefix + nameof(BottomRightCorner);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

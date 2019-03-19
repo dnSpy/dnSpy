@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,12 +24,12 @@ namespace dnSpy.Contracts.Text.Editor {
 	/// Default <see cref="IReplEditor"/> options
 	/// </summary>
 	public static class DefaultReplEditorOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string RefreshScreenOnChangeName = "IReplEditor/RefreshScreenOnChange";
 		public static readonly EditorOptionKey<bool> RefreshScreenOnChangeId = new EditorOptionKey<bool>(RefreshScreenOnChangeName);
 		public const string RefreshScreenOnChangeWaitMilliSecondsName = "IReplEditor/RefreshScreenOnChangeWaitMilliSeconds";
 		public static readonly EditorOptionKey<int> RefreshScreenOnChangeWaitMilliSecondsId = new EditorOptionKey<int>(RefreshScreenOnChangeWaitMilliSecondsName);
 		public const int DefaultRefreshScreenOnChangeWaitMilliSeconds = DefaultDsTextViewOptions.DefaultRefreshScreenOnChangeWaitMilliSeconds;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

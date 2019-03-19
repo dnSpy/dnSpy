@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ using dnSpy.Debugger.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
-	interface IExceptionsVM {
+	interface IExceptionsVM : IGridViewColumnDescsProvider {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		BulkObservableCollection<ExceptionVM> AllItems { get; }
@@ -47,12 +47,14 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ExceptionCategoryVM SelectedCategory { get; set; }
 		bool IsAddingExceptions { get; set; }
 		string GetSearchHelpText();
+		IEnumerable<ExceptionVM> Sort(IEnumerable<ExceptionVM> exceptions);
 	}
 
 	[Export(typeof(IExceptionsVM))]
-	sealed class ExceptionsVM : ViewModelBase, IExceptionsVM, ILazyToolWindowVM {
+	sealed class ExceptionsVM : ViewModelBase, IExceptionsVM, ILazyToolWindowVM, IComparer<ExceptionsVM.ExceptionVMCached> {
 		public BulkObservableCollection<ExceptionVM> AllItems { get; }
 		public ObservableCollection<ExceptionVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
@@ -156,7 +158,16 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				Formatter = exceptionFormatterProvider.Create(),
 			};
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(ExceptionsWindowColumnIds.BreakWhenThrown, dnSpy_Debugger_Resources.Column_BreakWhenThrown),
+					new GridViewColumnDesc(ExceptionsWindowColumnIds.Category, dnSpy_Debugger_Resources.Column_Category),
+					new GridViewColumnDesc(ExceptionsWindowColumnIds.Conditions, dnSpy_Debugger_Resources.Column_Conditions),
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => SortList();
 		}
+
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.ExceptionSettingsWindowName, "n", dnSpy_Debugger_Resources.Column_BreakWhenThrown),
@@ -321,14 +332,13 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		// UI thread
 		int GetInsertionIndex_UI(ExceptionVMCached vmc) {
 			Debug.Assert(exceptionContext.UIDispatcher.CheckAccess());
-			var comparer = ExceptionVMCachedComparer.Instance;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
 				var otherc = CreateCached_UI(list[index]);
-				int c = comparer.Compare(vmc, otherc);
+				int c = Compare(vmc, otherc);
 				if (c < 0)
 					hi = index - 1;
 				else if (c > 0)
@@ -366,16 +376,100 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			exceptionContext.SearchMatcher.SetSearchText(filterText);
+			SortList(filterText, showOnlyEnabledExceptions, selectedCategory);
+		}
 
+		// UI thread
+		void SortList() {
+			exceptionContext.UIDispatcher.VerifyAccess();
+			SortList(filterText, showOnlyEnabledExceptions, selectedCategory);
+		}
+ 
+		// UI thread
+		void SortList(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) {
+			exceptionContext.UIDispatcher.VerifyAccess();
 			var newList = new List<ExceptionVMCached>(GetFilteredItems_UI(selectedCategory, filterText, showOnlyEnabledExceptions));
-			newList.Sort(ExceptionVMCachedComparer.Instance);
+			newList.Sort(this);
 			AllItems.Reset(newList.Select(a => a.VM));
 			InitializeNothingMatched(filterText, showOnlyEnabledExceptions, selectedCategory);
+		}
+
+		// UI thread
+		IEnumerable<ExceptionVM> IExceptionsVM.Sort(IEnumerable<ExceptionVM> exceptions) {
+			exceptionContext.UIDispatcher.VerifyAccess();
+			var list = new List<ExceptionVMCached>(exceptions.Select(a => CreateCached_UI(a)));
+			list.Sort(this);
+			return list.Select(a => a.VM);
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, showOnlyEnabledExceptions, selectedCategory);
 		void InitializeNothingMatched(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && !showOnlyEnabledExceptions && selectedCategory == exceptionCategories.FirstOrDefault());
+
+		int IComparer<ExceptionVMCached>.Compare(ExceptionVMCached x, ExceptionVMCached y) => Compare(x, y);
+		int Compare(ExceptionVMCached x, ExceptionVMCached y) {
+			Debug.Assert(exceptionContext.UIDispatcher.CheckAccess());
+			var (desc, dir) = Descs.SortedColumn;
+
+			int id;
+			if (desc == null || dir == GridViewSortDirection.Default) {
+				id = ExceptionsWindowColumnIds.Default_Order;
+				dir = GridViewSortDirection.Ascending;
+			}
+			else
+				id = desc.Id;
+
+			int diff;
+			switch (id) {
+			case ExceptionsWindowColumnIds.Default_Order:
+				diff = GetDefaultOrder(x, y);
+				break;
+
+			case ExceptionsWindowColumnIds.BreakWhenThrown:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
+				break;
+
+			case ExceptionsWindowColumnIds.Category:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
+				break;
+
+			case ExceptionsWindowColumnIds.Conditions:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(x.Conditions, y.Conditions);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (diff == 0 && id != ExceptionsWindowColumnIds.Default_Order)
+				diff = GetDefaultOrder(x, y);
+			Debug.Assert(dir == GridViewSortDirection.Ascending || dir == GridViewSortDirection.Descending);
+			if (dir == GridViewSortDirection.Descending)
+				diff = -diff;
+			return diff;
+		}
+
+		static int GetDefaultOrder(ExceptionVMCached x, ExceptionVMCached y) {
+			if (x == y)
+				return 0;
+
+			var c = StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
+			if (c != 0)
+				return c;
+
+			var xid = x.VM.Definition.Id;
+			var yid = y.VM.Definition.Id;
+			if (xid.IsDefaultId != yid.IsDefaultId) {
+				if (xid.IsDefaultId)
+					return -1;
+				Debug.Assert(yid.IsDefaultId);
+				return 1;
+			}
+			else if (xid.IsDefaultId)
+				return StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
+
+			return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
+		}
 
 		sealed class ExceptionVMCached {
 			public ExceptionVM VM { get; }
@@ -391,31 +485,6 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			string conditions;
 			string[] allStrings;
 			public ExceptionVMCached(ExceptionVM vm) => VM = vm;
-		}
-
-		sealed class ExceptionVMCachedComparer : IComparer<ExceptionVMCached> {
-			public static readonly IComparer<ExceptionVMCached> Instance = new ExceptionVMCachedComparer();
-			public int Compare(ExceptionVMCached x, ExceptionVMCached y) {
-				if (x == y)
-					return 0;
-
-				var c = StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
-				if (c != 0)
-					return c;
-
-				var xid = x.VM.Definition.Id;
-				var yid = y.VM.Definition.Id;
-				if (xid.IsDefaultId != yid.IsDefaultId) {
-					if (xid.IsDefaultId)
-						return -1;
-					Debug.Assert(yid.IsDefaultId);
-					return 1;
-				}
-				else if (xid.IsDefaultId)
-					return StringComparer.OrdinalIgnoreCase.Compare(x.Category, y.Category);
-
-				return StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
-			}
 		}
 
 		// UI thread

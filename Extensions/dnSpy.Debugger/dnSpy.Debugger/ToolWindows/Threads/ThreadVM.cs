@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,9 +26,9 @@ using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				stackWalker = Thread.CreateStackWalker();
 				frames = stackWalker.GetNextStackFrames(1);
 				if (frames.Length == 0)
-					return new ClassifiedTextCollection(new[] { new ClassifiedText(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable) });
+					return new ClassifiedTextCollection(new[] { new ClassifiedText(DbgTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable) });
 				else {
 					Debug.Assert(frames.Length == 1);
 					var frame = frames[0];

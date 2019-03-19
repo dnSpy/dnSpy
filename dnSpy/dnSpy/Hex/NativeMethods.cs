@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,7 +75,7 @@ namespace dnSpy.Hex {
 		public const uint MEM_RESERVE = 0x2000;
 
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern uint GetProcessId(IntPtr hThread);
+		public static extern uint GetProcessId(IntPtr hProcess);
 
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]

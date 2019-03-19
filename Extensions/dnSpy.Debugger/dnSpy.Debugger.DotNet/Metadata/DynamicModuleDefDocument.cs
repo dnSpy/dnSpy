@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static IDsDocumentNameKey CreateKey(DbgModule module) => new DocKey(module);
 		public override bool IsActive => !DbgModule.IsClosed;
 
-		public DynamicModuleDefDocument(in ModuleId moduleId, DbgModule module, ModuleDef moduleDef, bool loadSyms)
+		public DynamicModuleDefDocument(ModuleId moduleId, DbgModule module, ModuleDef moduleDef, bool loadSyms)
 			: base(moduleDef, loadSyms) {
 			ModuleId = moduleId;
 			DbgModule = module;

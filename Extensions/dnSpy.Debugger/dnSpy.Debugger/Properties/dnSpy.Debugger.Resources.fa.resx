@@ -1,0 +1,1527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>افزودن نقطه شکست</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>افزودن استثناء</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&amp; lt؛ در دسترس نیست &amp; gt؛</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>_رفع عیوب</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>در حال بهبودی</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>مایل به حذف تمام نقاط شکست هستید?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>پیوست به _پردازش...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>پیوستن به _پردازش</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>توقف همه</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>_نقاط شکست</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>_افزودن</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_انصراف</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_موافق</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>_نوسازی</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>_تماس پیوسته</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>حداکثر تعداد فریم های که توسط dnSpy ساپورت میشود فراتر رفته است.</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>آدرس</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>AppDomain</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dynamic</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>در حافظه</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>نام</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>بهینه شده</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>سفارش</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>مسیر</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>پردازش</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>معماری</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>نام فایل</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>شناسه</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>نوع</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>وابستگی ماسک</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>شاخه</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>شناسه</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>مکان</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>شناسه مدیریت‌شده</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>اولویت</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>وضعیت</value>
+  </data>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>تعداد معلق</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>برچسب زمان</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>نوع</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>ارزش</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>نسخه</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>_ادامه دادن</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>کپی</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>رفع عیوب برنامه</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>نمایش پنجره Locals زمانی که فرایند اشکال زدایی آغاز شد</value>
+  </data>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Prevent code from detecting the debugger</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>نادیده گرفتن Debugger.Break و دستورات توقف</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>فعال نمودن ارزیابی ویژگی و دیگر صدازدن های توابع مجازی</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>دیباگ فایل‌های لود شده از حافظه (نادیده گرفتن فایل های درون دیسک)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>صدازدن تابع تبدیل رشته روی شیء در پنجره متغیر ها</value>
+  </data>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_شروع اشکال زدایی...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>دیباگر</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>_دیباگ {0}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>استثنا</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>استثنا نامشخص</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>حذف _تمام نقاط توقف</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>حذف نقطه توقف</value>
+  </data>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>جدا شدن از همه</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>غیرفعال کردن تمام نقاط توقف</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>فعالسازی تمام نقاط توقف</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>_فعالسازی نقطه توقف</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>فعالسازی نقطه توقف</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>خطایی رخ داده است:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>نمیتوان ارزیابی نمود مگر اینکه دیباگر متوقف شود</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>نمیتوان ارزیابی انجام داد هنگامی که خطای ناامن رخ داده</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>ناتوانی در شروع '{0}'
+خطا: {1}</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>تنظیمات استثنا</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>حذف استثنا از لیست</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>بازگردانی لیست به تنظیمات پیش فرض</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>جستجو برای استثنا</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>نمایش تنها استثناهای فعال</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>معلق کردن</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>رفتن به _دیس اسمبلی</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>_برو به Module</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>نمایش _هگزادسیمال</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>اضافه کردن _Watch</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>_بستن فرزندان</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>بستن _والدین</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>_Locals</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>کپی مقدار</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>_ویرایش مقدار</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>بازکردن _فرزندان</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>_ذخیره...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>خطا در ذخیره‌ داده در '{0}'
+خطا: {1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>این مورد شامل بیش از {0} فرزند است و هنگام بازشدن تعداد قابل نمایش محدود خواهد بود
+
+آیا مطمئن هستید که می خواهید آن را باز کنید؟</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>نمی ارزیابی کرد هنگامی که نخ در نقطه ناامن قرار دارد. یک گام یا اجرا تا زمانی که به نقطه توقف برسد.</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>در حال حاضر امکان صدازدن خواص و متودها وجود ندارد</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>زمان ارزیابی تمام و غیر فعال شد تا زمانی که دیباگ برنامه را ادامه دهید.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>مهلت ارزیابی تمام شد</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>_حافظه</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>کپی نام فایل</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>ذخیره Modules</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>ذخیره Module</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>M_odules</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;بدون آدرس&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_باز کردن محتویات فولدر</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>بازکردن ماژول از حافظه</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>تغییرنام</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>_راه اندازی مجدد</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>بازیابی پیشفرض</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>اجرا تا به _مکان نما</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>ذخیره Module...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>ذخیره {0} Modules...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>انتخاب _همه</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>تنظیم گام _بعدی</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>نمایش در پنجره حافظه</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>نمایش IP</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>نمایش نام های _ماژول</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>نمایش فضاهای نام</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>نمایش _گام بعدی</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>نمایش نوع بازگشتی</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>نمایش نام های _پارامتر</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>نمایش _تایپ های پارامتر</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>نمایش _مقادیر پارامتر</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>نمایش انواع بازگشت</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>نمایش توکن ها(Tokens)</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>نمایش نوع ذاتی کلمات کلیدی</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>شروع _بدون دیباگ نمودن</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>آماده</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>در حال اجرا...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>گام به _داخل</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>گام به _خارج</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>گام به _مافوق</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>متوقف کردن _دیباگ</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>_تعویض به فریم</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>_تعویض به ترد</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>_تورم</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>_تردها</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>ترد اصلی</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>ترد خاتمه داده شده</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>مجمع نخ ها</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>ترد ناشناخته</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>ترد کارگر</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&amp; lt؛ در دسترس نیست &amp; gt؛</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;بینام&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>بیشتر از حد معمول</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>زیر حد معمول</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>بالاترین</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>کمترین</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>معمولی</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>تغییر وضعیت نقطه توقف</value>
+  </data>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>متوقف کردن همه</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>ادامه</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>ادامه</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>دیباگ یک برنامه</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>راه اندازی مجدد</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>نمایش گام بعدی</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>شروع</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>گام به داخل</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>گام به خارج</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>گام به مافوق</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>متوقف کردن دیباگ</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>نقاط توقف</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Call Stack</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>تنظیمات استثنا</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>متغیرهای محلی</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>حافظه 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>حافظه {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>حافظه _{0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>حافظه {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>ماژول ها</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>ترد ها</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>خیر</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>بله</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>قالب برجسته</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>بازکردن ماژول ها</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>بازکردن {0} ماژول ها</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>نمایش تایپ های پارامتر</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>دیباگر</value>
+  </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>دیباگ</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>پیام _خطا</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>پیام های _بارگزاری ماژول</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>پیام های _تخلیه کردن ماژول</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>پیام خروج _پروسس</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>_خروجی برنامه</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>_گام فیلتر کردن پیام ها</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>پیامهای خروج از _نخ</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>پیام های MDA</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>اطلاعات اظافی: {0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>خطای: '{0}' در {1} رخ داده است</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>یک خطای ناامن '{0}' در {1} رخ داده است</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>برنامه '{0}' با کد {1} (0x{1:x}) خارج شده است.</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>نخ 0x{0:x} با کد {1} (0x{1:x}) خارج شده است.</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>بارگذاری شد '{0} '.</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>دستیار مدیریت اشکال زدایی '{0}' مشکلی در "{1}" را شناسایی کرده است.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>تخلیه شد '{0} '.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;پیام خطایی وجود ندارد&gt;"</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>مکان</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>پنجره حافظه</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>ویرایشگر هگز (پنجره حافظه)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>موتور _دیباگ</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_پنجره ها</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>_خروجی</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>خاتمه دادن به همه</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_مشاهده</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>مشاهده 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>مشاهده {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>مشاهده _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>مشاهده {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_تنظیمات...</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
+    <value>Ctrl+Alt+Z</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>_پروسس ها</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>_پروسس ها</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>در حال بهبودی</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>شناسه</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>وضعیت</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>توقف</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>در حال اجرا</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>پیوستن به _پردازش</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>جدا شدن از پروسس</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>خاتمه دادن به پروسس</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>_جدا شدن از پروسس</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>جدا شدن از پروسس _هنگام توقف دیباگ</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>_خاتمه دادن به پروسس</value>
+  </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>پردازش</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>نام پروسس</value>
+  </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;همه {0} در لیست وجود ندارد&gt;</value>
+  </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>ویرایش شروط</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>شروط</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>توقف هنگامی که پرتاب خطا رخ داد</value>
+  </data>
+  <data name="Column_Category" xml:space="preserve">
+    <value>شاخه</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>و</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>نام ماژول برابر است</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>نام ماژول برابر نیست</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>تنظیم مجدد تمام معیار به طوری که همه خطاها نمایش داده شده</value>
+  </data>
+  <data name="Exceptions_AllCategories" xml:space="preserve">
+    <value>تمام</value>
+  </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>ویرایش شروط...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>خطاها</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_یافتن</value>
+  </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>خطایی مطابق با فیلتر پیدا نشد.</value>
+  </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>جزئیات خطا</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>نام نمی تواند خالی باشد</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>ویرایش شروط</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>_اضافه کردن شرط</value>
+  </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>نقطه توقف ماژولی(Module)</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>نقاط توقف ماژولی(Module)</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>درج نقطه توقف</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>حذف نقطه توقف</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>ویرایش نام AppDomain</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>ویرایش نام ماژول</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>ویرایش ترتیب بارگذاری ماژول</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>ویرایش نام پروسس</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>حذف تمام نقاط توقف</value>
+  </data>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>حذف نقطه توقف</value>
+  </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>غیرفعال کردن نقطه توقف</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>فعالسازی نقطه توقف</value>
+  </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>توقف همه پروسس ها هنگامی که یک پروسس متوقف شد</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
+    <value>Ctrl+Alt+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
+    <value>Ctrl+Alt+F11</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+F11</value>
+  </data>
+  <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
+    <value>گام به داخل (پروسس فعلی)</value>
+  </data>
+  <data name="StepOutCurrentProcessCommand" xml:space="preserve">
+    <value>گام به خارج (پروسس فعلی)</value>
+  </data>
+  <data name="StepOverCurrentProcessCommand" xml:space="preserve">
+    <value>گام به مافوق (پروسس فعلی)</value>
+  </data>
+  <data name="Processes_BreakProcessToolTip" xml:space="preserve">
+    <value>توقف پروسس</value>
+  </data>
+  <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
+    <value>ادامه پروسس</value>
+  </data>
+  <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
+    <value>گام به داخل</value>
+  </data>
+  <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
+    <value>گام به خارج</value>
+  </data>
+  <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
+    <value>گام به مافوق</value>
+  </data>
+  <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
+    <value>گام های فقط پروسس فعلی</value>
+  </data>
+  <data name="BreakProcessCommand" xml:space="preserve">
+    <value>_متوقف کردن پروسس</value>
+  </data>
+  <data name="ContinueProcessCommand" xml:space="preserve">
+    <value>_ادامه پروسس</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>جستجو برای یک پروسس</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_خودرویی</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>خروجی رفتن همه نقاط توقف مطابق معیارهای جستجوی کنونی</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>وارد کردن نقاط توقف از فایل</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_استخراج گزینه انتخاب شده...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>هیچ نقطه توقفی مطابق با فیلتر پیدا نشد.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>جستجو برای نقطه توقف</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>حذف همه نقاط توقف مطابق معیارهای جستجوی کنونی</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>تنظیم مجدد تمام معیار به طوری که همه نقاط توقف نمایش داده شده</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>فعال یا غیر فعال کردن همه نقاط توقف مطابق معیارهای جستجوی کنونی</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>تمام</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>ماژولی مطابق با فیلتر پیدا نشد.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>جستجو برای یک ماژول</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>تنظیم مجدد تمام معیار به طوری که همه ماژول ها نمایش داده شده</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>پردازش</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>کمک</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>شرط</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>فیلتر</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>تعداد اصابت</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>زمانی که اصابت کرد</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>رفتن به دیس اسمبلی</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>رفتن به سورس کد</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>رفتن به سورس کد</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(بدون شرط)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>هنگامی که '{0}' تغییر کرده است</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>هنگامی که '{0}' درست است</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(خالی)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>هنگامی که شمارنده برخورد چندین {0} باشد</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>هنگامی که شمارنده برخورد مساوی {0} باشد</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>هنگامی که شمارنده برخورد بزرگتر یا مساوی {0} باشد</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>همیشه متوقف شو</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>توقف</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>چاپ پیام '{0} '</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>_تنظیمات</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>تنظیمات نقطه توقف</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>درست است</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>هنگام تغییر</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>مضربی است از</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>عبارت _شرطی</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_فیلتر</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_تعداد اصابت</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>_ثبت پیغام</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>عملیات:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>شروط:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>عبارت شرطی:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' تغییر کرده است</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' درست است</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>فیلتر: '{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>شمارنده برخورد چندین {0} است</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>شمارنده برخورد مساوی {0} است</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>شمارنده برخورد بزرگتر یا مساوی {0} است</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>پیام '{0}'، به پنجره خروجی</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>غیر فعال کردن نقطه توقف</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>فعالسازی نقطه توقف</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>تنظیمات...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>متوقف ساختن</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>ادامه خطا</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>_استخراج...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>_تنظیمات...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>شروع اشکال زدایی</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>توقف و چاپ خطا '{0}'</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>تابع را نمیتوان یافت: {0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>نقطه توقف در حال حاضر عمل نخواهد کرد. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>ماژول بارگذاری نشده یا هیچ نمادی برای این ماژول بارگذاری نشده.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>قادر به ایجاد نقطه توقف نیست.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>برچسب‌ها</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>ویرایش برچسب‌ها</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>فریز کردن نخ‌ها(Threads)</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>نخی مطابق با فیلتر پیدا نشد.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>فرآیند</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>تنظیم مجدد تمام معیار به طوری که همه نخ ها نمایش داده شده</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>جستجو برای نخ(Thread)</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>تورم نخ ها</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>همه</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>برچسب‌ها</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>ویرایش برچسب‌ها</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>در حال حاضر {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>ریست تعداد اصابت</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>راهنما</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>متغیر هایی که میتوان استفاده نمود:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>مثال: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>فرار دنباله: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>استفاده از {xxx} برای زمان بندی خطا xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>مثال: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>کلمات ذیل میتواند مورد استفاده قرار گیرد:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_نقطه توقف</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>درج نقطه توقف</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>درج نقطه پیگیری</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_باز کردن این فریم</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>این گام بعدیست که اجرا خواهد شد.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>این گام بعدیست که اجرا خواهد شد زمانی که نخ از تابع حاضر بازگردد.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>فعال کردن Managed Debugging Assistants (به اختصار MDA)</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>نمیتوان گام: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>پروسس در حالت مکث نیست</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>خودکار</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>متغیرهایی که تغییر کرده اند را در پنجره متغییرها برجسته کن</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_ایجاد شناسه شیء</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>زبان</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>موتور اشکال زدایی</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>زبان</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>حذف همه</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>حذف _دیدبان</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_جای گذاری</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>این اصطلاح باعث اثرات جانبی و باعث ارزیابی نشدن میشود</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>برای زمانبندی روی این دکمه کلیک کنید.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>نمیتوان این اصطلاح را ارزیابی نمود</value>
+  </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>حذف شناسه شیء</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>نشان دادن ساختار خام اشیاء در پنجره متغیرها</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;نامشخص&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>تازه‌سازی</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>گروه پارامترها و متغیرهای محلی باهم</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>نشان دادن متغیرهای تولید شده توسط کامپایلر</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>نشان دادن متغیرهای تولید شده توسط دیکامپایلر</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>مرتب سازی متغیرها</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>مرتب سازی پارامترها</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>پنهان کردن اعضای تولید شده توسط کامپایلر</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>اصطلاح تابع ضمنی توسط کاربر خاموش شد</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>توجه به attributes که اعضا رو مخفی می کنند</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>خطای دیباگر داخلی</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>تابع ارزیابی اصطلاح نیازمند اجرای همه نخ ها می باشد.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>جدا کننده های رقمی</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>خط فرمان</value>
+  </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>نمیتوان مقداری از متغیرهای محلی یا آرگومان دریافت نمود زیرا اشاره گر این دستور جود ندارد، احتمالا به خاطر این است که بهینه شده است.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>پیام: {0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>خطا: {0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>یک خطای ناامن در {0} ({1}) رخ داده است</value>
+  </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>نقطه توقف</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>اصطلاح نقطه توقف باید یک اصطلاح بولی باشد</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>سرکوب بهینه سازی JIT در هنگام بارگذری ماژول</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>ماژول های برنامه</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>ماژول های سیستم</value>
+  </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>رانتایم نمی تواند این عبارت را ارزیابی کند.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>فعال یا غیر فعال کردن همه exception های مطابق معیارهای جستجوی کنونی</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>_غیرفعال کردن نقطه توقف</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>اضافه کردن خطا به لیست</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>می خواهید دیباگ را متوقف کنید؟</value>
+  </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>دادن فوکس به پروسس درحال دیباگ</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>بازکردن تمام ماژول ها</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>پنهان کردن اعضای منسوخ در پنجره متغیرها</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>نمایش مقادیر بازگشتی</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>تغییر مسیر خروجی کنسول GUI اپلیکیشن به پنجره خروجی</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>دیباگ راحت تر فایل</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>اعضای عمومی</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>نمایش خام متغیرها</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>فعال کردن دیباگ async</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>گام به مافوق خواص و اپراتورها</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>کپی کردن _عبارت</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>روش کد گزاری پیدا نمی شود. اطمینان حاصل کنید که پردازش متوقف شده است و روش نابودشده است.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_جداسازی</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ignore unhandled exceptions</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>No processes match your search filter.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all processes are shown</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>جستجو برای یک پروسس</value>
+  </data>
+</root>

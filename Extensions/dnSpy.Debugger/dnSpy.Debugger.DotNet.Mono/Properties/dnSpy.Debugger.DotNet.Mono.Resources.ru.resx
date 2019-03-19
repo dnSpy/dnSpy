@@ -139,7 +139,7 @@
     <value>_Рабочий каталог</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>Создать Процесс</value>
+    <value>CreateProcess</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
     <value>Не прерывать</value>
@@ -223,7 +223,7 @@
     <value>Среда выполнения не поддерживает установку нового оператора</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>Присоединение к процессу ({0})...</value>
+    <value>Присоединиться к процессу ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>Редактор</value>

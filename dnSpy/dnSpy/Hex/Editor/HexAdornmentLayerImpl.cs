@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexLayerKind layerKind;
 		readonly Canvas canvas;
 
-		public HexAdornmentLayerImpl(WpfHexView hexView, HexLayerKind layerKind, in MetadataAndOrder<IAdornmentLayersMetadata> info) {
+		public HexAdornmentLayerImpl(WpfHexView hexView, HexLayerKind layerKind, MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			canvas = new Canvas();
 			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			this.layerKind = layerKind;

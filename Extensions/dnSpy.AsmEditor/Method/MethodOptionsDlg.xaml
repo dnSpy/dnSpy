@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -83,6 +83,7 @@
                                 <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoInlining}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_NoInlining}" />
                                 <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding AggressiveInlining}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_AggressiveInlining}" />
                                 <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoOptimization}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_NoOptimization}" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding AggressiveOptimization}" Content="AggressiveOptimization" />
                             </Grid>
                         </GroupBox>
 

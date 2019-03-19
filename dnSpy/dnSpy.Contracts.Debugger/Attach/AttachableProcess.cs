@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,9 +65,14 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		public abstract string Filename { get; }
 
 		/// <summary>
-		/// Processor architecture (eg. <see cref="PredefinedArchitectureNames.X86"/>)
+		/// Processor architecture
 		/// </summary>
-		public abstract string Architecture { get; }
+		public abstract DbgArchitecture Architecture { get; }
+
+		/// <summary>
+		/// Operating system
+		/// </summary>
+		public abstract DbgOperatingSystem OperatingSystem { get; }
 
 		/// <summary>
 		/// Gets all options required to attach to the process

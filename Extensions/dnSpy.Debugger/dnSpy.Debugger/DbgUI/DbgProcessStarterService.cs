@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
 	abstract class DbgProcessStarterService {
-		public abstract bool CanStart(string filename);
+		public abstract bool CanStart(string filename, out ProcessStarterResult result);
 		public abstract bool TryStart(string filename, out string error);
 	}
 
@@ -39,13 +39,15 @@ namespace dnSpy.Debugger.DbgUI {
 		DbgProcessStarterServiceImpl([ImportMany] IEnumerable<Lazy<DbgProcessStarter, IDbgProcessStarterMetadata>> processStarters) =>
 			this.processStarters = processStarters.OrderBy(a => a.Metadata.Order).ToArray();
 
-		public override bool CanStart(string filename) {
+		public override bool CanStart(string filename, out ProcessStarterResult result) {
 			if (filename == null)
 				throw new ArgumentNullException(nameof(filename));
 			foreach (var lz in processStarters) {
-				if (lz.Value.IsSupported(filename))
+				if (lz.Value.IsSupported(filename, out result))
 					return true;
 			}
+
+			result = ProcessStarterResult.None;
 			return false;
 		}
 
@@ -71,7 +73,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		bool TryStartCore(string filename, out string error) {
 			foreach (var lz in processStarters) {
-				if (lz.Value.IsSupported(filename))
+				if (lz.Value.IsSupported(filename, out _))
 					return lz.Value.TryStart(filename, out error);
 			}
 

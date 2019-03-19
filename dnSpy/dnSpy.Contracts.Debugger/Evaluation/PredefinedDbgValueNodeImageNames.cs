@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// Image names returned by <see cref="DbgValueNode"/>
 	/// </summary>
 	public static class PredefinedDbgValueNodeImageNames {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string Edit = nameof(Edit);
 		public const string Information = nameof(Information);
 		public const string Warning = nameof(Warning);
@@ -133,6 +133,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string EventFamilyAndAssembly = nameof(EventFamilyAndAssembly);
 		public const string EventFamilyOrAssembly = nameof(EventFamilyOrAssembly);
 		public const string EventCompilerControlled = nameof(EventCompilerControlled);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

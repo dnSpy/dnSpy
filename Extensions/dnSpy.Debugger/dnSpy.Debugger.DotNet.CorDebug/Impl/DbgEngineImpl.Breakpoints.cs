@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public ModuleId Module { get; }
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
-			public BoundBreakpointData(DbgEngineImpl engine, in ModuleId module, DnCodeBreakpoint breakpoint) {
+			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module, DnCodeBreakpoint breakpoint) {
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Module = module;
 				Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));

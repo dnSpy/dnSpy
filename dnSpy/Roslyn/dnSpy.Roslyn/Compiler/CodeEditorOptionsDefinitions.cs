@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,12 +23,12 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Roslyn.Compiler {
 	static class CodeEditorOptionsDefinitions {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[ExportCodeEditorOptionsDefinition("C#", ContentTypes.CSharpRoslyn, AppSettingsConstants.GUID_CODE_EDITOR_CSHARP_ROSLYN)]
 		static readonly CodeEditorOptionsDefinition csharpCodeEditorOptionsDefinition;
 
 		[ExportCodeEditorOptionsDefinition("Visual Basic", ContentTypes.VisualBasicRoslyn, AppSettingsConstants.GUID_CODE_EDITOR_VISUAL_BASIC_ROSLYN)]
 		static readonly CodeEditorOptionsDefinition visualBasicCodeEditorOptionsDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 	}
 }

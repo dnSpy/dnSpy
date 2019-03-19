@@ -1,5 +1,5 @@
 <!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,6 +60,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -78,15 +79,17 @@
             <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="cwdTextBox" Text="{Binding WorkingDirectory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickWorkingDirectoryCommand}" />
 
-            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_Host}" Target="{Binding ElementName=hostTextBox}" />
-            <TextBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="hostTextBox" Text="{Binding HostFilename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickHostFilenameCommand}" />
+            <CheckBox Grid.Row="3" Grid.ColumnSpan="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_UseHostExecutable}" IsChecked="{Binding UseHost}" />
 
-            <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_HostArgs}" Target="{Binding ElementName=hostArgsTextBox}" />
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="hostArgsTextBox" Text="{Binding HostArguments, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_Host}" Target="{Binding ElementName=hostTextBox}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="hostTextBox" Text="{Binding HostFilename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding UseHost}" />
+            <Button Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickHostFilenameCommand}" />
 
-            <Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
-            <ComboBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
+            <Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_HostArgs}" Target="{Binding ElementName=hostArgsTextBox}" />
+            <TextBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Name="hostArgsTextBox" Text="{Binding HostArguments, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding UseHost}" />
+
+            <Label Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_DotNet_CorDebug_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
+            <ComboBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
         </Grid>
     </DataTemplate>
 

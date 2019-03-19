@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Files {
 		readonly NumberFormatter numberFormatterShort;
 		readonly NumberFormatter tokenFormatter;
 
-		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, in NumberFormatter arrayIndexFormatter, in NumberFormatter numberFormatter) {
+		public HexFieldFormatterImpl(HexTextWriter writer, HexFieldFormatterOptions options, NumberFormatter arrayIndexFormatter, NumberFormatter numberFormatter) {
 			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
 			this.options = options;
 			this.arrayIndexFormatter = arrayIndexFormatter;

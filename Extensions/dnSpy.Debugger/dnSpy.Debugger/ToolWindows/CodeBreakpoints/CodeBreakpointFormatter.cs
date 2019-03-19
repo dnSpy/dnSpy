@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	[Export(typeof(CodeBreakpointFormatterProvider))]
@@ -37,24 +37,24 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public const char LabelsSeparatorChar = ',';
 		static readonly string LabelsSeparatorString = LabelsSeparatorChar.ToString();
 
-		internal void WriteLabels(ITextColorWriter output, CodeBreakpointVM vm) {
+		internal void WriteLabels(IDbgTextWriter output, CodeBreakpointVM vm) {
 			bool needSep = false;
 			foreach (var label in vm.CodeBreakpoint.Labels ?? emptyLabels) {
 				if (needSep) {
-					output.Write(BoxedTextColor.Text, LabelsSeparatorString);
-					output.WriteSpace();
+					output.Write(DbgTextColor.Text, LabelsSeparatorString);
+					output.Write(DbgTextColor.Text, " ");
 				}
 				needSep = true;
-				output.Write(BoxedTextColor.Text, label);
+				output.Write(DbgTextColor.Text, label);
 			}
 		}
 		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
-		internal void WriteName(ITextColorWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteName(output, vm.Context.BreakpointLocationFormatterOptions);
-		internal void WriteCondition(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Condition);
-		internal void WriteHitCount(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.HitCount, vm.Context.DbgCodeBreakpointHitCountService.GetHitCount(vm.CodeBreakpoint));
-		internal void WriteFilter(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Filter);
-		internal void WriteWhenHit(ITextColorWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Trace);
-		internal void WriteModule(ITextColorWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteModule(output);
+		internal void WriteName(IDbgTextWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteName(output, vm.Context.BreakpointLocationFormatterOptions);
+		internal void WriteCondition(IDbgTextWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Condition);
+		internal void WriteHitCount(IDbgTextWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.HitCount, vm.Context.DbgCodeBreakpointHitCountService.GetHitCount(vm.CodeBreakpoint));
+		internal void WriteFilter(IDbgTextWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Filter);
+		internal void WriteWhenHit(IDbgTextWriter output, CodeBreakpointVM vm) => vm.Context.BreakpointConditionsFormatter.Write(output, vm.CodeBreakpoint.Trace);
+		internal void WriteModule(IDbgTextWriter output, CodeBreakpointVM vm) => vm.BreakpointLocationFormatter.WriteModule(output);
 	}
 }

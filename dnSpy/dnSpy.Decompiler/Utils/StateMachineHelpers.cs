@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -129,8 +129,12 @@ namespace dnSpy.Decompiler.Utils {
 				var disposeMethod = FindDispose(ctor.DeclaringType);
 				if (disposeMethod == null)
 					continue;
-				if (!disposeMethod.CustomAttributes.IsDefined("System.Diagnostics.DebuggerHiddenAttribute"))
-					continue;
+				if (!disposeMethod.CustomAttributes.IsDefined("System.Diagnostics.DebuggerHiddenAttribute")) {
+					// This attribute isn't always present. Make sure the type has a compiler generated name
+					var name = ctor.DeclaringType.Name.String;
+					if (!name.StartsWith("<") && !name.StartsWith("VB$StateMachine_"))
+						continue;
+				}
 
 				return ctor.DeclaringType;
 			}

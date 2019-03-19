@@ -127,7 +127,7 @@
     <value>Применяется к</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Кем назначено</value>
+    <value>Назначается в</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Коп_ировать</value>
@@ -169,7 +169,7 @@
     <value>Вызвано в</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Перегружен в</value>
+    <value>Перегружено в</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
     <value>Переопределения</value>
@@ -184,10 +184,10 @@
     <value>set</value>
   </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Кем вызвано</value>
+    <value>Вызывается в</value>
   </data>
   <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Кем читается</value>
+    <value>Читается в</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
     <value>_Убрать</value>

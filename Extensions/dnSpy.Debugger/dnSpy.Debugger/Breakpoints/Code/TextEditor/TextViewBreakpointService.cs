@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				res = result;
 		}
 
-		DbgCodeBreakpoint[] GetBreakpoints(in DbgTextViewBreakpointLocationResult locations) {
+		DbgCodeBreakpoint[] GetBreakpoints(DbgTextViewBreakpointLocationResult locations) {
 			var list = new List<DbgCodeBreakpoint>();
 			foreach (var loc in locations.Locations) {
 				var bp = dbgCodeBreakpointsService.Value.TryGetBreakpoint(loc);
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		void ToggleCreateBreakpoint(in ToggleCreateBreakpointInfoResult info) {
+		void ToggleCreateBreakpoint(ToggleCreateBreakpointInfoResult info) {
 			using (info) {
 				switch (info.kind) {
 				case ToggleCreateBreakpointKind.Add:

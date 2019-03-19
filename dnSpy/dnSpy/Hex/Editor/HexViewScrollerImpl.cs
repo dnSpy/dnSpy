@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Editor {
 			EnsureSpanVisibleCore(new HexLineSpan(line, span), options);
 		}
 
-		void EnsureSpanVisibleCore(in HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
+		void EnsureSpanVisibleCore(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
 			if (lineSpan.BufferSpan.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 
@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Editor {
 			EnsureSpanVisibleX(lineSpan, options);
 		}
 
-		void EnsureSpanVisibleX(in HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
+		void EnsureSpanVisibleX(HexLineSpan lineSpan, VSTE.EnsureSpanVisibleOptions options) {
 			var span = lineSpan.BufferSpan;
 			if (hexView.ViewportWidth == 0)
 				return;

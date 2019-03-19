@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,6 +52,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// </summary>
 		/// <param name="evalOptions">Evaluation options</param>
 		/// <param name="nodeEvalOptions">Value node evaluation options</param>
+		/// <param name="nameFormatterOptions">Name formatter options</param>
 		/// <returns></returns>
 		public abstract GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -153,7 +153,7 @@ namespace dnSpy.Hex.Editor {
 			public HexColumnType Column { get; }
 			public HexValuesDisplayFormat ValuesFormat { get; }
 
-			public SavedValue(HexValuesDisplayFormat valuesFormat, int size, in HexCellPosition cellPosition, HexBufferSpan cellBufferSpan) {
+			public SavedValue(HexValuesDisplayFormat valuesFormat, int size, HexCellPosition cellPosition, HexBufferSpan cellBufferSpan) {
 				ValuesFormat = valuesFormat;
 				Data = new byte[size];
 				TempData = new byte[size];
@@ -168,7 +168,7 @@ namespace dnSpy.Hex.Editor {
 				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data);
 			}
 
-			public bool TryUpdate(in HexCellPosition cellPosition, HexBufferLine line, HexCell cell) {
+			public bool TryUpdate(HexCellPosition cellPosition, HexBufferLine line, HexCell cell) {
 				if (cell == null)
 					return false;
 				var oldBufferSpan = BufferSpan;

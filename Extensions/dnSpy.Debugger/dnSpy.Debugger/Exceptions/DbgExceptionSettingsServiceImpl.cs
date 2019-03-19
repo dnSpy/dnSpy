@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Exceptions {
 		sealed class ExceptionInfo {
 			public DbgExceptionDefinition Definition { get; }
 			public DbgExceptionSettings Settings { get; set; }
-			public ExceptionInfo(in DbgExceptionDefinition definition, in DbgExceptionSettings settings) {
+			public ExceptionInfo(DbgExceptionDefinition definition, DbgExceptionSettings settings) {
 				Definition = definition;
 				Settings = settings;
 			}
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.Exceptions {
 				ExceptionsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>(added.ToArray(), added: true));
 		}
 
-		public override bool TryGetDefinition(in DbgExceptionId id, out DbgExceptionDefinition definition) {
+		public override bool TryGetDefinition(DbgExceptionId id, out DbgExceptionDefinition definition) {
 			if (id.Category == null)
 				throw new ArgumentException();
 			lock (lockObj) {
@@ -175,7 +175,7 @@ namespace dnSpy.Debugger.Exceptions {
 			return false;
 		}
 
-		public override bool TryGetSettings(in DbgExceptionId id, out DbgExceptionSettings settings) {
+		public override bool TryGetSettings(DbgExceptionId id, out DbgExceptionSettings settings) {
 			if (id.Category == null)
 				throw new ArgumentException();
 			lock (lockObj) {
@@ -188,7 +188,7 @@ namespace dnSpy.Debugger.Exceptions {
 			return false;
 		}
 
-		public override DbgExceptionSettings GetSettings(in DbgExceptionId id) {
+		public override DbgExceptionSettings GetSettings(DbgExceptionId id) {
 			if (id.Category == null)
 				throw new ArgumentException();
 			lock (lockObj) {

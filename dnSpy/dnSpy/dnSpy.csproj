@@ -1,1282 +1,147 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{722257A9-1B14-4D63-B886-18A4229AF4EB}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>dnSpy</RootNamespace>
-    <AssemblyName>dnSpy</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <OutputType>WinExe</OutputType>
     <Prefer32Bit>false</Prefer32Bit>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1685</NoWarn>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1685</NoWarn>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
+
   <PropertyGroup>
-    <StartupObject>dnSpy.MainApp.StartUpClass</StartupObject>
     <ApplicationIcon>Images\dnSpy.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="BackgroundImage\BackgroundImageOptionDefinitions.cs" />
-    <Compile Include="BackgroundImage\BackgroundImageOptionDefinitionService.cs" />
-    <Compile Include="BackgroundImage\BackgroundImageService.cs" />
-    <Compile Include="BackgroundImage\BackgroundImageSettings.cs" />
-    <Compile Include="BackgroundImage\BackgroundImageSettingsService.cs" />
-    <Compile Include="BackgroundImage\DefaultRawSettings.cs" />
-    <Compile Include="BackgroundImage\Dialog\AppSettingsPageImpl.cs" />
-    <Compile Include="BackgroundImage\HexViewBackgroundImageService.cs" />
-    <Compile Include="BackgroundImage\ImageSourceService.cs" />
-    <Compile Include="BackgroundImage\ImageSourceServiceProvider.cs" />
-    <Compile Include="BackgroundImage\RawSettings.cs" />
-    <Compile Include="BackgroundImage\TextViewBackgroundImageService.cs" />
-    <Compile Include="BackgroundImage\WpfHexViewCreationListenerImpl.cs" />
-    <Compile Include="BackgroundImage\WpfTextViewCreationListener.cs" />
-    <Compile Include="Bookmarks\BookmarkImageUtilities.cs" />
-    <Compile Include="Bookmarks\Commands\AppMenuCommands.cs" />
-    <Compile Include="Bookmarks\Commands\MainMenuOperations.cs" />
-    <Compile Include="Bookmarks\DotNet\BookmarkFormatterService.cs" />
-    <Compile Include="Bookmarks\DotNet\BookmarkLocationFormatterProviderImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\BookmarkLocationSerializerImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\DotNetBookmarkFactoryImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocationFactory.cs" />
-    <Compile Include="Bookmarks\DotNet\DotNetBookmarkLocationFormatter.cs" />
-    <Compile Include="Bookmarks\DotNet\DotNetMethodBodyBookmarkLocationImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\DotNetReferenceConverter.cs" />
-    <Compile Include="Bookmarks\DotNet\DotNetTokenBookmarkLocationImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\IDotNetBookmarkLocation.cs" />
-    <Compile Include="Bookmarks\DotNet\TextEditor\BookmarkDocumentProviderImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\TextEditor\BookmarkGlyphTextMarkerLocationProviderImpl.cs" />
-    <Compile Include="Bookmarks\DotNet\TextEditor\DeleteBookmarksInRemovedModules.cs" />
-    <Compile Include="Bookmarks\DotNet\TextEditor\TextViewDotNetMethodBodyBookmarkLocationProvider.cs" />
-    <Compile Include="Bookmarks\DotNet\TextEditor\TextViewDotNetTokenBookmarkLocationProvider.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarkDisplaySettingsBase.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarkImpl.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarkLocationFormatterService.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarkLocationSerializerService.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarkSerializerService.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarksListSettings.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarksSerializer.cs" />
-    <Compile Include="Bookmarks\Impl\BookmarksServiceImpl.cs" />
-    <Compile Include="Bookmarks\Navigator\BookmarkNavigatorImpl.cs" />
-    <Compile Include="Bookmarks\Navigator\ViewBookmarkProvider.cs" />
-    <Compile Include="Bookmarks\Settings\BookmarksAppSettingsPage.cs" />
-    <Compile Include="Bookmarks\Settings\BookmarksSettingsImpl.cs" />
-    <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerHandler.cs" />
-    <Compile Include="Bookmarks\TextEditor\BookmarkGlyphTextMarkerLocationProviderService.cs" />
-    <Compile Include="Bookmarks\TextEditor\BookmarkInfo.cs" />
-    <Compile Include="Bookmarks\TextEditor\BookmarkMarker.cs" />
-    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerBookmarksOperations.cs" />
-    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandInfoProvider.cs" />
-    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandTargetFilter.cs" />
-    <Compile Include="Bookmarks\TextEditor\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
-    <Compile Include="Bookmarks\TextEditor\TextViewBookmarkService.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkColumnConverter.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkContext.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkFormatter.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksContent.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml.cs">
+    <Compile Remove="MainApp\DevBuildWarning.cs" />
+    <None Include="MainApp\DevBuildWarning.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj" />
+    <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj" />
+    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />
+    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
+    <ProjectReference Include="..\dnSpy.Images\dnSpy.Images.csproj" />
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.CSharp.EditorFeatures\dnSpy.Roslyn.CSharp.EditorFeatures.csproj" />
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj" />
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj" />
+    <ProjectReference Include="..\dnSpy.Decompiler\dnSpy.Decompiler.csproj" />
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj" />
+    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\dnSpy.ico" />
+    <EmbeddedResource Include="LicenseInfo\CREDITS.txt" />
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="Themes\*.dntheme">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="FileLists\*.FileList.xml;LicenseInfo\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml.cs">
       <DependentUpon>BookmarksControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksOperations.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksToolWindowContent.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarksVM.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\BookmarkVM.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\Commands.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\SearchTextClassifierProvider.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\TextViewTaggers.cs" />
-    <Compile Include="Bookmarks\ToolWindows\Bookmarks\ViewBookmarkProviderImpl.cs" />
-    <Compile Include="Bookmarks\ToolWindows\LazyToolWindowVMHelper.cs" />
-    <Compile Include="Bookmarks\UI\BulkObservableCollection.cs" />
-    <Compile Include="Bookmarks\UI\ContentTypeDefinitions.cs" />
-    <Compile Include="Bookmarks\UI\FormatterObject.cs" />
-    <Compile Include="Commands\CommandService.cs" />
-    <Compile Include="Commands\DefaultCommandInfoProvider.cs" />
-    <Compile Include="Commands\KeyShortcutCollection.cs" />
-    <Compile Include="Commands\ProviderAndCommand.cs" />
-    <Compile Include="Commands\RegisteredCommandElement.cs" />
-    <Compile Include="Controls\DpiService.cs" />
-    <Compile Include="Controls\FastTreeNodeView.cs" />
-    <Compile Include="Controls\IStackedContentChild.cs" />
-    <Compile Include="Controls\Screen.cs" />
-    <Compile Include="Controls\StackedContent.cs" />
-    <Compile Include="Controls\StackedContentState.cs" />
-    <Compile Include="Controls\SysMenuButton.cs" />
-    <Compile Include="Controls\TabButton.cs" />
-    <Compile Include="Controls\TextElementFactory.cs" />
-    <Compile Include="Controls\WindowDpiChangedEventArgs.cs" />
-    <Compile Include="Controls\WinSysButton.cs" />
-    <Compile Include="Controls\WpfCommands.cs" />
-    <Compile Include="Controls\WpfCommandService.cs" />
-    <Compile Include="Controls\WpfFocusService.cs" />
-    <Compile Include="Controls\ZoomSelector.cs" />
-    <Compile Include="Culture\Commands.cs" />
-    <Compile Include="Culture\CultureService.cs" />
-    <Compile Include="Culture\CultureSettings.cs" />
-    <Compile Include="Culture\LanguageInfo.cs" />
-    <Compile Include="Decompiler\DecompilerAppSettingsPageContainer.cs" />
-    <Compile Include="Decompiler\DecompilerService.cs" />
-    <Compile Include="Decompiler\DecompilerServiceSettings.cs" />
-    <Compile Include="Decompiler\DummyDecompiler.cs" />
-    <Compile Include="Decompiler\MethodDebugService.cs" />
-    <Compile Include="Documents\AssemblyResolver.cs" />
-    <Compile Include="Documents\DefaultDsDocumentLoader.cs" />
-    <Compile Include="Documents\DefaultDsDocumentProvider.cs" />
-    <Compile Include="Documents\DotNetCorePathProvider.cs" />
-    <Compile Include="Documents\DsDocumentLoader.cs" />
-    <Compile Include="Documents\DsDocumentService.cs" />
-    <Compile Include="Documents\DsDocumentServiceAppSettingsModifiedListener.cs" />
-    <Compile Include="Documents\DsDocumentServiceProvider.cs" />
-    <Compile Include="Documents\DsDocumentServiceSettings.cs" />
-    <Compile Include="Documents\FrameworkPath.cs" />
-    <Compile Include="Documents\IDsDocumentLoader.cs" />
-    <Compile Include="Documents\MethodAnnotations.cs" />
-    <Compile Include="Documents\ReferenceNavigatorServiceImpl.cs" />
-    <Compile Include="Documents\Tabs\AppCommandLineArgsHandler.cs" />
-    <Compile Include="Documents\Tabs\AsyncShowResult.cs" />
-    <Compile Include="Documents\Tabs\Commands.cs" />
-    <Compile Include="Documents\Tabs\CopyTokenCommand.cs" />
-    <Compile Include="Documents\Tabs\DecompilationCache.cs" />
-    <Compile Include="Documents\Tabs\DefaultDecompileNode.cs" />
-    <Compile Include="Documents\Tabs\DefaultDocumentList.cs" />
-    <Compile Include="Documents\Tabs\DefaultDocumentTabContentProvider.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\ContentTypeDefinitions.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\DocumentListColumnConverter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\DocumentListPrinter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\DocumentListVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
+    <Compile Update="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
       <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Documents\Tabs\Dialogs\ExportToProjectSettings.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\ExportToProjectVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\GACFileColumnConverter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\GACFileFinder.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\GACFilePrinter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\GACFileVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml.cs">
+    <Compile Update="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml.cs">
       <DependentUpon>OpenDocumentListDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListTextClassifier.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListTextClassifierContext.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentListVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenDocumentsHelper.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenFromGAC.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
+    <Compile Update="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
       <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACTextClassifier.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACTextClassifierContext.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\OpenFromGACVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\TabColumnConverter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\TabPrinter.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\TabsDlg.xaml.cs">
+    <Compile Update="Documents\Tabs\Dialogs\TabsDlg.xaml.cs">
       <DependentUpon>TabsDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Documents\Tabs\Dialogs\TabsVM.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\TabsVMSettings.cs" />
-    <Compile Include="Documents\Tabs\Dialogs\TabVM.cs" />
-    <Compile Include="Documents\Tabs\DocTabReferenceNavigator.cs" />
-    <Compile Include="Documents\Tabs\DocumentList.cs" />
-    <Compile Include="Documents\Tabs\DocumentListLoader.cs" />
-    <Compile Include="Documents\Tabs\DocumentListService.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabContentFactoryContext.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabContentFactoryService.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabSerializer.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabService.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabServiceLoader.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabServiceSettings.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabUIContextLocator.cs" />
-    <Compile Include="Documents\Tabs\DocumentTabUIContextLocatorProvider.cs" />
-    <Compile Include="Documents\Tabs\DocumentTreeNodeDecompiler.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BlockStructureCollection.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BlockStructureDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BlockStructureDocumentViewerListener.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BlockStructureServiceDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BracePairCollection.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BracePairDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\BracePairService.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Commands.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DebugInfoDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DecompileDocumentTabContent.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DecompileNodeContext.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewer.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandInfoProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandTargetFilter.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerCommandTargetFilterProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerContentFactory.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerControl.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerDotNetSpanMap.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerHighlightReferencesTagger.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerMouseProcessor.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerOutput.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerService.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentViewerUIElementService.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\DocumentWriterService.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\GlyphTextMarkerServiceDocumentViewerListener.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\HighlightRelatedKeywordsDocumentViewerReferenceEnabler.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\LazyBlockStructureCollection.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\LineSeparatorCollection.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\LineSeparatorDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\LineSeparatorViewTagger.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\OpCodeReferenceHandler.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\AdvancedAppSettingsPage.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsPageContainer.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\AppSettingsPageProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\ContentTypeOptionDefinitionProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\DocumentViewerOptions.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\DocumentViewerOptionsService.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\GeneralAppSettingsPage.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\IDocumentViewerOptions.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\ScrollBarsAppSettingsPage.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\TabsAppSettingsPage.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\Settings\TextViewOptionsGroupNameProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\SpanDataCollectionUtilities.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\SpanDataReferenceInfoExtensions.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\SpanReferenceDocumentViewerCustomDataProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipSettings.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\CodeToolTipWriter.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\DnlibReferenceDocumentViewerToolTipProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\DocumentViewerToolTipService.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\ToolTips\ToolTipProviderContext.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\WaitAdorner.xaml.cs">
+    <Compile Update="Documents\Tabs\DocViewer\WaitAdorner.xaml.cs">
       <DependentUpon>WaitAdorner.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Documents\Tabs\DocViewer\XmlDocumentWriter.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\XmlParser.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\XmlParser.DocumentViewerToolTipProvider.cs" />
-    <Compile Include="Documents\Tabs\DocViewer\XmlParser.XamlAttributeParser.cs" />
-    <Compile Include="Documents\Tabs\DsDocumentInfoSerializer.cs" />
-    <Compile Include="Documents\Tabs\EntryPointCommands.cs" />
-    <Compile Include="Documents\Tabs\GoToTokenCommand.cs" />
-    <Compile Include="Documents\Tabs\Hex\HexReferenceHandlerImpl.cs" />
-    <Compile Include="Documents\Tabs\IDecompilationCache.cs" />
-    <Compile Include="Documents\Tabs\IDocumentTabUIContextLocatorProvider.cs" />
-    <Compile Include="Documents\Tabs\NavigationCommands.cs" />
-    <Compile Include="Documents\Tabs\NodeDecompiler.cs" />
-    <Compile Include="Documents\Tabs\NodeReferenceDocumentTabContentProvider.cs" />
-    <Compile Include="Documents\Tabs\NullObjects.cs" />
-    <Compile Include="Documents\Tabs\RedecompileTabs.cs" />
-    <Compile Include="Documents\Tabs\RefreshResourcesCommand.cs" />
-    <Compile Include="Documents\Tabs\ResourceCommands.cs" />
-    <Compile Include="Documents\Tabs\SaveCommands.cs" />
-    <Compile Include="Documents\Tabs\SaveService.cs" />
-    <Compile Include="Documents\Tabs\SearchMsdnCommand.cs" />
-    <Compile Include="Documents\Tabs\SerializedTabs.cs" />
-    <Compile Include="Documents\Tabs\Settings\AssemblyExplorerAppSettingsPage.cs" />
-    <Compile Include="Documents\Tabs\TabCommands.cs" />
-    <Compile Include="Documents\Tabs\TabContentImpl.cs" />
-    <Compile Include="Documents\Tabs\TabHistory.cs" />
-    <Compile Include="Documents\Tabs\TreeNodeReferenceDocumentTabContentProvider.cs" />
-    <Compile Include="Documents\TargetFrameworkAttributeInfo.cs" />
-    <Compile Include="Documents\TreeView\AssemblyDocumentNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\AssemblyReferenceNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\BaseTypeFolderNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\BaseTypeNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\ContentTypeDefinitions.cs" />
-    <Compile Include="Documents\TreeView\DefaultDsDocumentNodeProvider.cs" />
-    <Compile Include="Documents\TreeView\DerivedTypeNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\DerivedTypesFinder.cs" />
-    <Compile Include="Documents\TreeView\DerivedTypesFolderNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeNodeDataContext.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeNodeGroups.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeView.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeViewAppSettingsConstants.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeViewAppSettingsModifiedListener.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeViewProvider.cs" />
-    <Compile Include="Documents\TreeView\DocumentTreeViewSettings.cs" />
-    <Compile Include="Documents\TreeView\EventNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\FieldNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\MessageNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\MethodNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\ModuleDocumentNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\ModuleReferenceNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\NamespaceNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\PEDocumentNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\PropertyNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\ReferencesFolderNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\ResourcesFolderNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\Resources\BuiltInResourceElementNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\Resources\ImageResourceNode.cs" />
-    <Compile Include="Documents\TreeView\Resources\ResourceElementSetNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\Resources\ResourceNodeFactory.cs" />
-    <Compile Include="Documents\TreeView\Resources\SerializedImageListStreamerResourceElementNode.cs" />
-    <Compile Include="Documents\TreeView\Resources\SerializedImageResourceElementNode.cs" />
-    <Compile Include="Documents\TreeView\Resources\UnknownResourceNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
-    <Compile Include="Documents\TreeView\RootNode.cs" />
-    <Compile Include="Documents\TreeView\TypeNodeImpl.cs" />
-    <Compile Include="Documents\TreeView\UnknownDocumentNodeImpl.cs" />
-    <Compile Include="Events\WeakEventList.cs" />
-    <Compile Include="Extension\ExtensionConfig.cs" />
-    <Compile Include="Extension\ExtensionConfigReader.cs" />
-    <Compile Include="Extension\ExtensionService.cs" />
-    <Compile Include="Extension\LoadedExtension.cs" />
-    <Compile Include="Hex\Adornments\HexToolTipProviderFactoryImpl.cs" />
-    <Compile Include="Hex\Adornments\HexToolTipProviderImpl.cs" />
-    <Compile Include="Hex\ByteArrayHexBufferStream.cs" />
-    <Compile Include="Hex\Classification\DnSpy\ContentTypeDefinitions.cs" />
-    <Compile Include="Hex\Classification\DnSpy\HexTextElementCreatorImpl.cs" />
-    <Compile Include="Hex\Classification\DnSpy\HexTextElementCreatorProviderImpl.cs" />
-    <Compile Include="Hex\Classification\HexBufferClassifierAggregator.cs" />
-    <Compile Include="Hex\Classification\HexClassificationFormatMapServiceImpl.cs" />
-    <Compile Include="Hex\Classification\HexClassifierAggregator.cs" />
-    <Compile Include="Hex\Classification\HexClassifierAggregatorServiceImpl.cs" />
-    <Compile Include="Hex\Classification\HexEditorFormatMapServiceImpl.cs" />
-    <Compile Include="Hex\Classification\HexTextView.cs" />
-    <Compile Include="Hex\Classification\HexViewClassificationFormatMap.cs" />
-    <Compile Include="Hex\Classification\HexViewClassifierAggregator.cs" />
-    <Compile Include="Hex\Classification\HexViewClassifierAggregatorServiceImpl.cs" />
-    <Compile Include="Hex\Classification\HexViewEditorFormatMap.cs" />
-    <Compile Include="Hex\Commands\CommandInfoProvider.cs" />
-    <Compile Include="Hex\Commands\CommandTargetFilter.cs" />
-    <Compile Include="Hex\Commands\GoToMetadataDlg.xaml.cs">
+    <Compile Update="Hex\Commands\GoToMetadataDlg.xaml.cs">
       <DependentUpon>GoToMetadataDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\Commands\GoToMetadataVM.cs" />
-    <Compile Include="Hex\Commands\GoToPositionDlg.xaml.cs">
+    <Compile Update="Hex\Commands\GoToPositionDlg.xaml.cs">
       <DependentUpon>GoToPositionDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\Commands\GoToPositionVM.cs" />
-    <Compile Include="Hex\Commands\HexCommandConstants.cs" />
-    <Compile Include="Hex\Commands\HexCommandIds.cs" />
-    <Compile Include="Hex\Commands\HexCommandIdsExtensions.cs" />
-    <Compile Include="Hex\Commands\HexCommandOperations.cs" />
-    <Compile Include="Hex\Commands\HexCommandOperationsFactoryService.cs" />
-    <Compile Include="Hex\Commands\HexPositionVM.cs" />
-    <Compile Include="Hex\Commands\Integer64VM.cs" />
-    <Compile Include="Hex\Commands\LocalSettingsDlg.xaml.cs">
+    <Compile Update="Hex\Commands\LocalSettingsDlg.xaml.cs">
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\Commands\LocalSettingsVM.cs" />
-    <Compile Include="Hex\Commands\SelectDlg.xaml.cs">
+    <Compile Update="Hex\Commands\SelectDlg.xaml.cs">
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\Commands\SelectVM.cs" />
-    <Compile Include="Hex\Commands\SettingsConstants.cs" />
-    <Compile Include="Hex\ContextMenuCommands\Commands.cs" />
-    <Compile Include="Hex\ContextMenuCommands\EditFieldCommand.cs" />
-    <Compile Include="Hex\Editor\ActiveColumnHighlighter.cs" />
-    <Compile Include="Hex\Editor\BottomControlMargin.cs" />
-    <Compile Include="Hex\Editor\BottomRightCornerMargin.cs" />
-    <Compile Include="Hex\Editor\ColumnLineSeparators.cs" />
-    <Compile Include="Hex\Editor\CopyWpfHexViewCreationListener.cs" />
-    <Compile Include="Hex\Editor\CurrentLineHighlighter.cs" />
-    <Compile Include="Hex\Editor\CurrentValueHighlighter.cs" />
-    <Compile Include="Hex\Editor\DefaultHexEditorCommandInfoProvider.cs" />
-    <Compile Include="Hex\Editor\DefaultHexMouseProcessor.cs" />
-    <Compile Include="Hex\Editor\DefaultHexViewCommandTarget.cs" />
-    <Compile Include="Hex\Editor\DefaultHexViewMouseProcessor.cs" />
-    <Compile Include="Hex\Editor\HexAdornmentLayerCollection.cs" />
-    <Compile Include="Hex\Editor\HexAdornmentLayerDefinitionService.cs" />
-    <Compile Include="Hex\Editor\HexAdornmentLayerDefinitionServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexAdornmentLayerElementImpl.cs" />
-    <Compile Include="Hex\Editor\HexAdornmentLayerImpl.cs" />
-    <Compile Include="Hex\Editor\HexCaretImpl.cs" />
-    <Compile Include="Hex\Editor\HexCaretLayer.cs" />
-    <Compile Include="Hex\Editor\HexContextMenuInitializer.cs" />
-    <Compile Include="Hex\Editor\HexEditorFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexEditorOptions.cs" />
-    <Compile Include="Hex\Editor\HexEditorOptionsFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexGlyphMargin.cs" />
-    <Compile Include="Hex\Editor\HexGroups\HexEditorGroupFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexImageReferenceGlyphFactoryProvider.cs" />
-    <Compile Include="Hex\Editor\HexIntraTextAdornmentService.cs" />
-    <Compile Include="Hex\Editor\HexKeyProcessorCollection.cs" />
-    <Compile Include="Hex\Editor\HexMarginContextMenuServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexMarkerHelper.cs" />
-    <Compile Include="Hex\Editor\HexMarkerService.cs" />
-    <Compile Include="Hex\Editor\HexMouseLocation.cs" />
-    <Compile Include="Hex\Editor\HexMouseProcessorCollection.cs" />
-    <Compile Include="Hex\Editor\HexPopupHelper.cs" />
-    <Compile Include="Hex\Editor\HexPopupSpaceReservationAgent.cs" />
-    <Compile Include="Hex\Editor\HexReferenceHandlerServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexScrollMapFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Editor\HexScrollMapImpl.cs" />
-    <Compile Include="Hex\Editor\HexSelectionExtensions.cs" />
-    <Compile Include="Hex\Editor\HexSelectionImpl.cs" />
-    <Compile Include="Hex\Editor\HexSelectionLayer.cs" />
-    <Compile Include="Hex\Editor\HexSpaceReservationManagerImpl.cs" />
-    <Compile Include="Hex\Editor\HexSpaceReservationStack.cs" />
-    <Compile Include="Hex\Editor\HexSpaceReservationStackImpl.cs" />
-    <Compile Include="Hex\Editor\HexSpaceReservationStackProvider.cs" />
-    <Compile Include="Hex\Editor\HexSpaceReservationStackProviderImpl.cs" />
-    <Compile Include="Hex\Editor\HexStructureInfoAggregatorFactoryImpl.cs" />
-    <Compile Include="Hex\Editor\HexStructureInfoAggregatorImpl.cs" />
-    <Compile Include="Hex\Editor\HexToolTipStructureSpanTagger.cs" />
-    <Compile Include="Hex\Editor\HexViewExtensions.cs" />
-    <Compile Include="Hex\Editor\HexViewLineExtensions.cs" />
-    <Compile Include="Hex\Editor\HexViewMouseProcessorCollection.cs" />
-    <Compile Include="Hex\Editor\HexViewScrollerImpl.cs" />
-    <Compile Include="Hex\Editor\HorizontalScrollBarContainerMargin.cs" />
-    <Compile Include="Hex\Editor\HorizontalScrollBarMargin.cs" />
-    <Compile Include="Hex\Editor\KeyboardWpfHexViewCreationListener.cs" />
-    <Compile Include="Hex\Editor\LeftSelectionMargin.cs" />
-    <Compile Include="Hex\Editor\MetadataAndOrder.cs" />
-    <Compile Include="Hex\Editor\MouseWpfHexViewCreationListener.cs" />
-    <Compile Include="Hex\Editor\OffsetCursorProvider.cs" />
-    <Compile Include="Hex\Editor\RightControlMargin.cs" />
-    <Compile Include="Hex\Editor\Search\CommandTargetFilter.cs" />
-    <Compile Include="Hex\Editor\Search\CommandTargetFilterProvider.cs" />
-    <Compile Include="Hex\Editor\Search\DataParser.cs" />
-    <Compile Include="Hex\Editor\Search\HexDataKind.cs" />
-    <Compile Include="Hex\Editor\Search\HexMarkerTagger.cs" />
-    <Compile Include="Hex\Editor\Search\HexSearchServiceFactory.cs" />
-    <Compile Include="Hex\Editor\Search\HexViewSearchService.cs" />
-    <Compile Include="Hex\Editor\Search\HexViewSearchServiceProvider.cs" />
-    <Compile Include="Hex\Editor\Search\SearchControl.xaml.cs">
+    <Compile Update="Hex\Editor\Search\SearchControl.xaml.cs">
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\Editor\Search\SearchSettings.cs" />
-    <Compile Include="Hex\Editor\SelectionUtilities.cs" />
-    <Compile Include="Hex\Editor\SpacerMargin.cs" />
-    <Compile Include="Hex\Editor\TextLayer.cs" />
-    <Compile Include="Hex\Editor\VerticalScrollBarContainerMargin.cs" />
-    <Compile Include="Hex\Editor\VerticalScrollBarMargin.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewConstants.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewContainerMargin.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewHostImpl.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewImpl.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewImpl.LayoutHelper.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewImpl.MouseHoverHelper.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewLineCollectionImpl.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionImpl.cs" />
-    <Compile Include="Hex\Editor\WpfHexViewMarginProviderCollectionProviderImpl.cs" />
-    <Compile Include="Hex\Editor\ZoomControlMargin.cs" />
-    <Compile Include="Hex\Files\DefaultHexStructureInfoProvider.cs" />
-    <Compile Include="Hex\Files\DnSpy\DefaultHexFileStructureInfoProvider.cs" />
-    <Compile Include="Hex\Files\DnSpy\DotNetHexFileImageReferenceProvider.cs" />
-    <Compile Include="Hex\Files\DnSpy\DotNetHexFileStructureInfoProvider.cs" />
-    <Compile Include="Hex\Files\DnSpy\HexReferenceConverterImpl.cs" />
-    <Compile Include="Hex\Files\DnSpy\ImageReferenceUtils.cs" />
-    <Compile Include="Hex\Files\DnSpy\ToolTipCreatorImpl.cs" />
-    <Compile Include="Hex\Files\DnSpy\ToolTipObjectFactoryImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\BlobHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetCor20DataImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetEmbeddedResourceImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetHeadersImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetHeapsReader.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetHexFileStructureInfoProvider.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderDataImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetMetadataHeaderReader.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetMetadataHeadersImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetMethodProviderImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetMultiFileResourceHeaderDataImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetMultiFileResourcesImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetResourceProviderImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetStorageStreamImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetStructureProvider.cs" />
-    <Compile Include="Hex\Files\DotNet\DotNetTableSizes.cs" />
-    <Compile Include="Hex\Files\DotNet\ExceptionClause.cs" />
-    <Compile Include="Hex\Files\DotNet\ExceptionHandlerTable.cs" />
-    <Compile Include="Hex\Files\DotNet\FatMethodBodyImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\GUIDHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\HotHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\IDotNetHeap.cs" />
-    <Compile Include="Hex\Files\DotNet\InvalidMethodBodyImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\MethodBodyInfo.cs" />
-    <Compile Include="Hex\Files\DotNet\MethodBodyReader.cs" />
-    <Compile Include="Hex\Files\DotNet\MethodSection.cs" />
-    <Compile Include="Hex\Files\DotNet\MultiResourceStructureProviderFactory.cs" />
-    <Compile Include="Hex\Files\DotNet\NameUtils.cs" />
-    <Compile Include="Hex\Files\DotNet\PdbHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\PdbStreamHeaderDataImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\StorageStreamHeader.cs" />
-    <Compile Include="Hex\Files\DotNet\StringsHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\TableRecordDataFactory.cs" />
-    <Compile Include="Hex\Files\DotNet\TablesHeaderDataImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\TablesHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\TinyMethodBodyImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\UnknownHeapImpl.cs" />
-    <Compile Include="Hex\Files\DotNet\USHeapImpl.cs" />
-    <Compile Include="Hex\Files\HexBufferFileImpl.cs" />
-    <Compile Include="Hex\Files\HexBufferFileServiceFactoryImpl.cs" />
-    <Compile Include="Hex\Files\HexBufferFileServiceImpl.cs" />
-    <Compile Include="Hex\Files\HexFieldFormatterImpl.cs" />
-    <Compile Include="Hex\Files\HexFileStructureInfoServiceFactoryImpl.cs" />
-    <Compile Include="Hex\Files\HexFileStructureInfoServiceImpl.cs" />
-    <Compile Include="Hex\Files\NumberFormatter.cs" />
-    <Compile Include="Hex\Files\PE\DataDirectoryDataUtils.cs" />
-    <Compile Include="Hex\Files\PE\ImageSectionHeader.cs" />
-    <Compile Include="Hex\Files\PE\PeDosHeaderDataImpl.cs" />
-    <Compile Include="Hex\Files\PE\PeFileHeaderDataImpl.cs" />
-    <Compile Include="Hex\Files\PE\PeHeadersImpl.cs" />
-    <Compile Include="Hex\Files\PE\PeHeadersReader.cs" />
-    <Compile Include="Hex\Files\PE\PeHexFileStructureInfoProvider.cs" />
-    <Compile Include="Hex\Files\PE\PeOptionalHeader32DataImpl.cs" />
-    <Compile Include="Hex\Files\PE\PeOptionalHeader64DataImpl.cs" />
-    <Compile Include="Hex\Files\PE\PeSectionDataImpl.cs" />
-    <Compile Include="Hex\Files\PE\PeStructureProvider.cs" />
-    <Compile Include="Hex\Files\SpanDataCollection.cs" />
-    <Compile Include="Hex\Files\ToolTips\HexToolTipContentCreatorImpl.cs" />
-    <Compile Include="Hex\Formatting\FormattedHexSourceFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Formatting\HexAndAdornmentSequencerFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Formatting\HexAndAdornmentSequencerImpl.cs" />
-    <Compile Include="Hex\Formatting\HexFormattedLineImpl.cs" />
-    <Compile Include="Hex\Formatting\HexFormattedLineSourceImpl.cs" />
-    <Compile Include="Hex\Formatting\HexHtmlBuilder.cs" />
-    <Compile Include="Hex\Formatting\HexHtmlBuilderServiceImpl.cs" />
-    <Compile Include="Hex\Formatting\HexLinePart.cs" />
-    <Compile Include="Hex\Formatting\HexLinePartsCollection.cs" />
-    <Compile Include="Hex\Formatting\HexLinePartsTextSource.cs" />
-    <Compile Include="Hex\Formatting\HexLineTransformProviderService.cs" />
-    <Compile Include="Hex\Formatting\PhysicalLine.cs" />
-    <Compile Include="Hex\Formatting\PhysicalLineCache.cs" />
-    <Compile Include="Hex\HexBufferFactoryServiceImpl.cs" />
-    <Compile Include="Hex\HexBufferImpl.cs" />
-    <Compile Include="Hex\HexBufferLineFormatterFactoryServiceImpl.cs" />
-    <Compile Include="Hex\HexBufferLineFormatterImpl.cs" />
-    <Compile Include="Hex\HexBufferLineImpl.cs" />
-    <Compile Include="Hex\HexBufferStreamFactoryServiceImpl.cs" />
-    <Compile Include="Hex\HexCachedBufferStreamImpl.cs" />
-    <Compile Include="Hex\HexEditImpl.cs" />
-    <Compile Include="Hex\HexEditor\AdvancedAppSettingsPage.cs" />
-    <Compile Include="Hex\HexEditor\AppSettingsPageContainer.cs" />
-    <Compile Include="Hex\HexEditor\AppSettingsPageProvider.cs" />
-    <Compile Include="Hex\HexEditor\GeneralAppSettingsPage.cs" />
-    <Compile Include="Hex\HexEditor\HexEditorOptions.cs" />
-    <Compile Include="Hex\HexEditor\HexEditorOptionsDefinitions.cs" />
-    <Compile Include="Hex\HexEditor\HexEditorOptionsService.cs" />
-    <Compile Include="Hex\HexEditor\HexViewOptionsGroupNameProviderImpl.cs" />
-    <Compile Include="Hex\HexEditor\MainAppSettingsPage.cs" />
-    <Compile Include="Hex\HexEditor\ScrollBarsAppSettingsPage.cs" />
-    <Compile Include="Hex\HexEditor\TagOptionDefinitionProviderImpl.cs" />
-    <Compile Include="Hex\HexGroups\HexViewGroupOption.cs" />
-    <Compile Include="Hex\HexGroups\HexViewGroupOptionCollection.cs" />
-    <Compile Include="Hex\HexGroups\HexViewOptionsGroupImpl.cs" />
-    <Compile Include="Hex\HexGroups\HexViewOptionsGroupServiceImpl.cs" />
-    <Compile Include="Hex\HexGroups\OptionsStorage.cs" />
-    <Compile Include="Hex\HexOffsetFormatter.cs" />
-    <Compile Include="Hex\HexProcessSimpleBufferStream.cs" />
-    <Compile Include="Hex\HexValueFormatter.cs" />
-    <Compile Include="Hex\HexVersionImpl.cs" />
-    <Compile Include="Hex\Intellisense\DnSpy\QuickInfoCommandTargetFilter.cs" />
-    <Compile Include="Hex\Intellisense\HexIntellisenseControllerService.cs" />
-    <Compile Include="Hex\Intellisense\HexIntellisensePresenterFactoryService.cs" />
-    <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackImpl.CommandTargetFilter.cs" />
-    <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackImpl.cs" />
-    <Compile Include="Hex\Intellisense\HexIntellisenseSessionStackMapServiceImpl.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoBrokerImpl.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoController.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoControllerProvider.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoPresenter.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoPresenterBase.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoPresenterControl.xaml.cs">
+    <Compile Update="Hex\Intellisense\HexQuickInfoPresenterControl.xaml.cs">
       <DependentUpon>HexQuickInfoPresenterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Hex\Intellisense\HexQuickInfoPresenterProvider.cs" />
-    <Compile Include="Hex\Intellisense\HexQuickInfoSessionImpl.cs" />
-    <Compile Include="Hex\Intellisense\HexSpaceReservationQuickInfoPresenter.cs" />
-    <Compile Include="Hex\Intellisense\HexToolTipService.cs" />
-    <Compile Include="Hex\Intellisense\SpaceReservationManagerDefinitions.cs" />
-    <Compile Include="Hex\MEF\Metadata.cs" />
-    <Compile Include="Hex\NativeMethods.cs" />
-    <Compile Include="Hex\NormalizedHexBufferSpanCollectionExtensions.cs" />
-    <Compile Include="Hex\Operations\ByteHexSearchService.cs" />
-    <Compile Include="Hex\Operations\ClipboardUtils.cs" />
-    <Compile Include="Hex\Operations\HexEditorOperationsFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Operations\HexEditorOperationsImpl.cs" />
-    <Compile Include="Hex\Operations\HexSearchServiceImpl.cs" />
-    <Compile Include="Hex\Operations\HexSearchServiceProviderImpl.cs" />
-    <Compile Include="Hex\Operations\MDUtils.cs" />
-    <Compile Include="Hex\Operations\StringHexSearchService.cs" />
-    <Compile Include="Hex\Operations\Utf16StringHexSearchService.cs" />
-    <Compile Include="Hex\Operations\Utf8StringHexSearchService.cs" />
-    <Compile Include="Hex\Settings\AdvancedAppSettingsPageBase.cs" />
-    <Compile Include="Hex\Settings\CommonEditorOptions.cs" />
-    <Compile Include="Hex\Settings\GeneralAppSettingsPageBase.cs" />
-    <Compile Include="Hex\Settings\ScrollBarsAppSettingsPageBase.cs" />
-    <Compile Include="Hex\Tagging\DefaultTagger.cs" />
-    <Compile Include="Hex\Tagging\HexBufferTagAggregator.cs" />
-    <Compile Include="Hex\Tagging\HexBufferTagAggregatorFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Tagging\HexTaggerFactory.cs" />
-    <Compile Include="Hex\Tagging\HexViewTagAggregator.cs" />
-    <Compile Include="Hex\Tagging\HexViewTagAggregatorFactoryServiceImpl.cs" />
-    <Compile Include="Hex\Tagging\TagAggregator.cs" />
-    <Compile Include="Images\DefaultImageSourceInfoProvider.cs" />
-    <Compile Include="Images\DotNetImageService.cs" />
-    <Compile Include="Images\DsImageBitmapScalingModeConverter.cs" />
-    <Compile Include="Images\DsImageConverter.cs" />
-    <Compile Include="Images\ImageReferenceHelper.cs" />
-    <Compile Include="Images\ImageService.cs" />
-    <Compile Include="Images\ThemedImageCreator.cs" />
-    <Compile Include="Language\Intellisense\CollectionBooleanToVisibilityConverter.cs" />
-    <Compile Include="Language\Intellisense\CompletionBroker.cs" />
-    <Compile Include="Language\Intellisense\CompletionCollectionVM.cs" />
-    <Compile Include="Language\Intellisense\CompletionIconVM.cs" />
-    <Compile Include="Language\Intellisense\CompletionPresenter.cs" />
-    <Compile Include="Language\Intellisense\CompletionPresenterControl.xaml.cs">
+    <Compile Update="Language\Intellisense\CompletionPresenterControl.xaml.cs">
       <DependentUpon>CompletionPresenterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Language\Intellisense\CompletionPresenterProvider.cs" />
-    <Compile Include="Language\Intellisense\CompletionSession.cs" />
-    <Compile Include="Language\Intellisense\CompletionSessionCommandTargetFilter.cs" />
-    <Compile Include="Language\Intellisense\CompletionSuffixTextClassifier.cs" />
-    <Compile Include="Language\Intellisense\CompletionTextConverter.cs" />
-    <Compile Include="Language\Intellisense\CompletionTextElementProvider.cs" />
-    <Compile Include="Language\Intellisense\CompletionTextElementProviderService.cs" />
-    <Compile Include="Language\Intellisense\CompletionVM.cs" />
-    <Compile Include="Language\Intellisense\ContentTypeDefinitions.cs" />
-    <Compile Include="Language\Intellisense\CurrentLineSpaceReservationService.cs" />
-    <Compile Include="Language\Intellisense\FilterMatchCompletionClassifierProvider.cs" />
-    <Compile Include="Language\Intellisense\FilterToolTipConverter.cs" />
-    <Compile Include="Language\Intellisense\FilterVM.cs" />
-    <Compile Include="Language\Intellisense\ICompletionTextElementProvider.cs" />
-    <Compile Include="Language\Intellisense\ICompletionTextElementProviderService.cs" />
-    <Compile Include="Language\Intellisense\ImageMonikerService.cs" />
-    <Compile Include="Language\Intellisense\IntellisenseControllerService.cs" />
-    <Compile Include="Language\Intellisense\IntellisensePresenterFactoryService.cs" />
-    <Compile Include="Language\Intellisense\IntellisenseSessionHelper.cs" />
-    <Compile Include="Language\Intellisense\IntellisenseSessionStack.CommandTargetFilter.cs" />
-    <Compile Include="Language\Intellisense\IntellisenseSessionStack.cs" />
-    <Compile Include="Language\Intellisense\IntellisenseSessionStackMapService.cs" />
-    <Compile Include="Language\Intellisense\PresenterMouseProcessor.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoBroker.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoController.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoControllerProvider.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoPresenter.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoPresenterBase.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoPresenterControl.xaml.cs">
+    <Compile Update="Language\Intellisense\QuickInfoPresenterControl.xaml.cs">
       <DependentUpon>QuickInfoPresenterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Language\Intellisense\QuickInfoPresenterProvider.cs" />
-    <Compile Include="Language\Intellisense\QuickInfoSession.cs" />
-    <Compile Include="Language\Intellisense\SignatureHelpBroker.cs" />
-    <Compile Include="Language\Intellisense\SignatureHelpCurrentParameterTagger.cs" />
-    <Compile Include="Language\Intellisense\SignatureHelpPresenter.cs" />
-    <Compile Include="Language\Intellisense\SignatureHelpPresenterControl.xaml.cs">
+    <Compile Update="Language\Intellisense\SignatureHelpPresenterControl.xaml.cs">
       <DependentUpon>SignatureHelpPresenterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Language\Intellisense\SignatureHelpPresenterProvider.cs" />
-    <Compile Include="Language\Intellisense\SignatureHelpSession.cs" />
-    <Compile Include="Language\Intellisense\SpaceReservationManagerDefinitions.cs" />
-    <Compile Include="Language\Intellisense\SpaceReservationQuickInfoPresenter.cs" />
-    <Compile Include="Language\Intellisense\TrackingSpanHelpers.cs" />
-    <Compile Include="Language\Intellisense\WpfUtils.cs" />
-    <Compile Include="MainApp\AboutCommands.cs" />
-    <Compile Include="MainApp\AboutScreen.cs" />
-    <Compile Include="MainApp\App.xaml.cs">
+    <Compile Update="MainApp\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\AppCommandLineArgs.cs" />
-    <Compile Include="MainApp\AppCommandLineArgsHandler.cs" />
-    <Compile Include="MainApp\AppSettings.cs" />
-    <Compile Include="MainApp\AppStatusBar.cs" />
-    <Compile Include="MainApp\AppToolBar.cs" />
-    <Compile Include="MainApp\AppWindow.cs" />
-    <Compile Include="MainApp\AskDlg.xaml.cs">
+    <Compile Update="MainApp\AskDlg.xaml.cs">
       <DependentUpon>AskDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\AskVM.cs" />
-    <Compile Include="MainApp\CachedMefInfo.cs" />
-    <None Include="MainApp\DevBuildWarning.cs" />
-    <Compile Include="MainApp\DocumentTreeViewWindowContent.cs" />
-    <Compile Include="MainApp\DsLoaderControl.xaml.cs">
+    <Compile Update="MainApp\DsLoaderControl.xaml.cs">
       <DependentUpon>DsLoaderControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\DsLoaderService.cs" />
-    <Compile Include="MainApp\DsToolWindowServiceCommands.cs" />
-    <Compile Include="MainApp\MainWindow.xaml.cs">
+    <Compile Update="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\MainWindowControl.cs" />
-    <Compile Include="MainApp\MessageBoxService.cs" />
-    <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
+    <Compile Update="MainApp\MsgBoxDlg.xaml.cs">
       <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\MsgBoxVM.cs" />
-    <Compile Include="MainApp\ResourceManagerTokenCacheImpl.cs" />
-    <Compile Include="MainApp\SavedWindowState.cs" />
-    <Compile Include="MainApp\Settings\EnvironmentAppSettingsPageContainer.cs" />
-    <Compile Include="MainApp\Settings\FontAppSettingsPage.cs" />
-    <Compile Include="MainApp\Settings\GeneralAppSettingsPage.cs" />
-    <Compile Include="MainApp\Settings\WindowsExplorerIntegration.cs" />
-    <Compile Include="MainApp\StartUpClass.cs" />
-    <Compile Include="MainApp\ToolBarCommands.cs" />
-    <Compile Include="MainApp\ViewCommands.cs" />
-    <Compile Include="Menus\AppMenus.cs" />
-    <Compile Include="Menus\ContextMenuProvider.cs" />
-    <Compile Include="Menus\MenuItemContext.cs" />
-    <Compile Include="Menus\MenuService.cs" />
-    <Compile Include="Metadata\ModuleIdProvider.cs" />
-    <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
-    <Compile Include="Output\CachedWriter.cs" />
-    <Compile Include="Output\Commands.cs" />
-    <Compile Include="Output\DefaultOutputOptions.cs" />
-    <Compile Include="Output\EditorOptionDefinitions.cs" />
-    <Compile Include="Output\NotPresentOutputWriter.cs" />
-    <Compile Include="Output\NullOutputTextPane.cs" />
-    <Compile Include="Output\OutputBufferVM.cs" />
-    <Compile Include="Output\OutputCommands.cs" />
-    <Compile Include="Output\OutputContent.cs" />
-    <Compile Include="Output\OutputControl.xaml.cs">
+    <Compile Update="Output\OutputControl.xaml.cs">
       <DependentUpon>OutputControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Output\OutputService.cs" />
-    <Compile Include="Output\OutputServiceSettings.cs" />
-    <Compile Include="Output\OutputToolWindowContent.cs" />
-    <Compile Include="Output\Settings\AdvancedAppSettingsPage.cs" />
-    <Compile Include="Output\Settings\AppSettingsPageContainer.cs" />
-    <Compile Include="Output\Settings\AppSettingsPageProvider.cs" />
-    <Compile Include="Output\Settings\ContentTypeOptionDefinitionProvider.cs" />
-    <Compile Include="Output\Settings\GeneralAppSettingsPage.cs" />
-    <Compile Include="Output\Settings\IOutputWindowOptions.cs" />
-    <Compile Include="Output\Settings\OptionChangedEventArgs.cs" />
-    <Compile Include="Output\Settings\OutputWindowOptions.cs" />
-    <Compile Include="Output\Settings\OutputWindowOptionsService.cs" />
-    <Compile Include="Output\Settings\ScrollBarsAppSettingsPage.cs" />
-    <Compile Include="Output\Settings\TabsAppSettingsPage.cs" />
-    <Compile Include="Output\Settings\TextViewOptionsGroupNameProvider.cs" />
-    <Compile Include="Output\TextAppearanceCategoryDefinitions.cs" />
-    <Compile Include="Output\ThemeFontSettingsDefinitions.cs" />
-    <Compile Include="Properties\AssemblyInfo.Shared.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <AppDesigner Include="Properties\" />
-    <Compile Include="Properties\dnSpy.Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Scripting\ServiceLocator.cs" />
-    <Compile Include="Search\AppCommandLineArgsHandler.cs" />
-    <Compile Include="Search\BooleanToThicknessConverter.cs" />
-    <Compile Include="Search\Commands.cs" />
-    <Compile Include="Search\ContentTypeDefinitions.cs" />
-    <Compile Include="Search\DocumentSearcher.cs" />
-    <Compile Include="Search\DocumentSearcherProvider.cs" />
-    <Compile Include="Search\FilterSearcher.cs" />
-    <Compile Include="Search\FilterSearcherOptions.cs" />
-    <Compile Include="Search\SearchControl.xaml.cs">
+    <Compile Update="Search\SearchControl.xaml.cs">
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Search\SearchControlVM.cs" />
-    <Compile Include="Search\SearchResult.cs" />
-    <Compile Include="Search\SearchResultContext.cs" />
-    <Compile Include="Search\SearchService.cs" />
-    <Compile Include="Search\SearchSettings.cs" />
-    <Compile Include="Search\SearchToolWindowContent.cs" />
-    <Compile Include="Search\SearchType.cs" />
-    <Compile Include="Search\SearchTypeVM.cs" />
-    <Compile Include="Settings\AppearanceCategory\FontAndColorOptionsProviderImpl.cs" />
-    <Compile Include="Settings\AppearanceCategory\ITextAppearanceCategoryService.cs" />
-    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategory.cs" />
-    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategoryDefinitions.cs" />
-    <Compile Include="Settings\AppearanceCategory\TextAppearanceCategoryService.cs" />
-    <Compile Include="Settings\Dialog\AppRefreshSettings.cs" />
-    <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
+    <Compile Update="Settings\Dialog\AppSettingsDlg.xaml.cs">
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\Dialog\AppSettingsPageVM.cs" />
-    <Compile Include="Settings\Dialog\AppSettingsSearchTextClassifier.cs" />
-    <Compile Include="Settings\Dialog\AppSettingsService.cs" />
-    <Compile Include="Settings\Dialog\AppSettingsTextClassifierContext.cs" />
-    <Compile Include="Settings\Dialog\AppSettingsTreeViewNodeClassifierContext.cs" />
-    <Compile Include="Settings\Dialog\AppSettingsTreeViewNodeSearchTextClassifier.cs" />
-    <Compile Include="Settings\Dialog\ContentConverterPresenter.cs" />
-    <Compile Include="Settings\Dialog\ContentConverterProperties.cs" />
-    <Compile Include="Settings\Dialog\ContentTypeDefinitions.cs" />
-    <Compile Include="Settings\Dialog\IContentConverter.cs" />
-    <Compile Include="Settings\Dialog\PageContext.cs" />
-    <Compile Include="Settings\Dialog\SearchMatcher.cs" />
-    <Compile Include="Settings\Dialog\SettingsAppCommandLineArgsHandler.cs" />
-    <Compile Include="Settings\Dialog\ShowAppSettingsDialog.cs" />
-    <Compile Include="Settings\Dialog\ShowOptionsCommand.cs" />
-    <Compile Include="Settings\Dialog\UIHelpers.cs" />
-    <Compile Include="Settings\Fonts\DefaultFontInfo.cs" />
-    <Compile Include="Settings\Fonts\FontSettingsImpl.cs" />
-    <Compile Include="Settings\Fonts\ThemeFontSettingsDefinitions.cs" />
-    <Compile Include="Settings\Fonts\ThemeFontSettingsImpl.cs" />
-    <Compile Include="Settings\Fonts\ThemeFontSettingsSerializer.cs" />
-    <Compile Include="Settings\Fonts\ThemeFontSettingsServiceImpl.cs" />
-    <Compile Include="Settings\SectionAttributes.cs" />
-    <Compile Include="Settings\SettingsSection.cs" />
-    <Compile Include="Settings\SettingsSectionProvider.cs" />
-    <Compile Include="Settings\SettingsService.cs" />
-    <Compile Include="Settings\SettingsService2.cs" />
-    <Compile Include="Settings\SettingsServiceFactory.cs" />
-    <Compile Include="Settings\XmlSettingsConstants.cs" />
-    <Compile Include="Settings\XmlSettingsReader.cs" />
-    <Compile Include="Settings\XmlSettingsWriter.cs" />
-    <Compile Include="Settings\XmlUtils.cs" />
-    <Compile Include="Tabs\TabElementZoomer.cs" />
-    <Compile Include="Tabs\TabGroup.cs" />
-    <Compile Include="Tabs\TabGroupService.cs" />
-    <Compile Include="Tabs\TabItemImpl.cs" />
-    <Compile Include="Tabs\TabService.cs" />
-    <Compile Include="Tabs\TabServiceProvider.cs" />
-    <Compile Include="Tabs\TabUtils.cs" />
-    <Compile Include="Text\Adornments\ToolTipProvider.cs" />
-    <Compile Include="Text\Adornments\ToolTipProviderFactory.cs" />
-    <Compile Include="Text\AvalonEdit\CharRope.cs" />
-    <Compile Include="Text\AvalonEdit\DocumentLine.cs" />
-    <Compile Include="Text\AvalonEdit\DocumentLineTree.cs" />
-    <Compile Include="Text\AvalonEdit\ImmutableStack.cs" />
-    <Compile Include="Text\AvalonEdit\ITextSource.cs" />
-    <Compile Include="Text\AvalonEdit\LineManager.cs" />
-    <Compile Include="Text\AvalonEdit\LineNode.cs" />
-    <Compile Include="Text\AvalonEdit\NewLineFinder.cs" />
-    <Compile Include="Text\AvalonEdit\Rope.cs" />
-    <Compile Include="Text\AvalonEdit\RopeNode.cs" />
-    <Compile Include="Text\AvalonEdit\RopeTextSource.cs" />
-    <Compile Include="Text\AvalonEdit\SimpleSegment.cs" />
-    <Compile Include="Text\AvalonEdit\TextDocument.cs" />
-    <Compile Include="Text\CachedColorsList.cs" />
-    <Compile Include="Text\CachedColorsListTagger.cs" />
-    <Compile Include="Text\Classification\CategoryClassificationFormatMap.cs" />
-    <Compile Include="Text\Classification\CategoryEditorFormatMap.cs" />
-    <Compile Include="Text\Classification\CategoryEditorFormatMapUpdater.cs" />
-    <Compile Include="Text\Classification\ClassificationFontUtils.cs" />
-    <Compile Include="Text\Classification\ClassificationFormatMapService.cs" />
-    <Compile Include="Text\Classification\ClassificationType.cs" />
-    <Compile Include="Text\Classification\ClassificationTypeRegistryService.cs" />
-    <Compile Include="Text\Classification\ClassifierAggregator.cs" />
-    <Compile Include="Text\Classification\ClassifierAggregatorBase.cs" />
-    <Compile Include="Text\Classification\ClassifierAggregatorService.cs" />
-    <Compile Include="Text\Classification\ClassifierTagger.cs" />
-    <Compile Include="Text\Classification\ClassifierTaggerProvider.cs" />
-    <Compile Include="Text\Classification\DefaultTextClassifierProvider.cs" />
-    <Compile Include="Text\Classification\EditorFormatDefinitionExtensions.cs" />
-    <Compile Include="Text\Classification\EditorFormatDefinitionService.cs" />
-    <Compile Include="Text\Classification\EditorFormatMapService.cs" />
-    <Compile Include="Text\Classification\NullClassifier.cs" />
-    <Compile Include="Text\Classification\TextClassifierAggregator.cs" />
-    <Compile Include="Text\Classification\TextClassifierAggregatorService.cs" />
-    <Compile Include="Text\Classification\TextElementProvider.cs" />
-    <Compile Include="Text\Classification\ThemeClassificationFormatDefinitions.cs" />
-    <Compile Include="Text\Classification\ThemeClassificationTypeService.cs" />
-    <Compile Include="Text\Classification\ViewClassificationFormatMap.cs" />
-    <Compile Include="Text\Classification\ViewClassifierAggregator.cs" />
-    <Compile Include="Text\Classification\ViewClassifierAggregatorService.cs" />
-    <Compile Include="Text\Classification\ViewEditorFormatMap.cs" />
-    <Compile Include="Text\CodeEditor\AdvancedAppSettingsPage.cs" />
-    <Compile Include="Text\CodeEditor\AppSettingsPageContainer.cs" />
-    <Compile Include="Text\CodeEditor\AppSettingsPageProvider.cs" />
-    <Compile Include="Text\CodeEditor\CodeEditorOptions.cs" />
-    <Compile Include="Text\CodeEditor\CodeEditorOptionsService.cs" />
-    <Compile Include="Text\CodeEditor\ContentTypeOptionDefinitionProvider.cs" />
-    <Compile Include="Text\CodeEditor\GeneralAppSettingsPage.cs" />
-    <Compile Include="Text\CodeEditor\ICodeEditorOptions.cs" />
-    <Compile Include="Text\CodeEditor\LanguageAppSettingsPage.cs" />
-    <Compile Include="Text\CodeEditor\ScrollBarsAppSettingsPage.cs" />
-    <Compile Include="Text\CodeEditor\TabsAppSettingsPage.cs" />
-    <Compile Include="Text\CodeEditor\TextViewOptionsGroupNameProvider.cs" />
-    <Compile Include="Text\ColorUtils.cs" />
-    <Compile Include="Text\ContentType.cs" />
-    <Compile Include="Text\ContentTypeDefinitions.cs" />
-    <Compile Include="Text\ContentTypeExtensions.cs" />
-    <Compile Include="Text\ContentTypeRegistryService.cs" />
-    <Compile Include="Text\ContentTypeRegistryServiceExtensions.cs" />
-    <Compile Include="Text\Editor\AdornmentLayer.cs" />
-    <Compile Include="Text\Editor\AdornmentLayerCollection.cs" />
-    <Compile Include="Text\Editor\AdornmentLayerDefinitionService.cs" />
-    <Compile Include="Text\Editor\AdornmentLayerElement.cs" />
-    <Compile Include="Text\Editor\BlockStructureService.cs" />
-    <Compile Include="Text\Editor\BottomControlMargin.cs" />
-    <Compile Include="Text\Editor\BottomRightCornerMargin.cs" />
-    <Compile Include="Text\Editor\BoxSelectionHelper.cs" />
-    <Compile Include="Text\Editor\CodeEditor.cs" />
-    <Compile Include="Text\Editor\CodeEditorProvider.cs" />
-    <Compile Include="Text\Editor\CommonGuidObjectsProvider.cs" />
-    <Compile Include="Text\Editor\ContextMenuInitializer.cs" />
-    <Compile Include="Text\Editor\CopyWpfTextViewCreationListener.cs" />
-    <Compile Include="Text\Editor\CurrentLineHighlighter.cs" />
-    <Compile Include="Text\Editor\CustomLineNumberMargin.cs" />
-    <Compile Include="Text\Editor\DefaultEditorOptionDefinitions.cs" />
-    <Compile Include="Text\Editor\DefaultMouseProcessor.cs" />
-    <Compile Include="Text\Editor\DefaultReplEditorOptionDefinitions.cs" />
-    <Compile Include="Text\Editor\DefaultSmartIndent.cs" />
-    <Compile Include="Text\Editor\DefaultTextEditorCommandInfoProvider.cs" />
-    <Compile Include="Text\Editor\DefaultTextViewCommandTarget.cs" />
-    <Compile Include="Text\Editor\DefaultTextViewEditorOptionDefinitions.cs" />
-    <Compile Include="Text\Editor\DefaultTextViewMouseProcessor.cs" />
-    <Compile Include="Text\Editor\DefaultWpfViewEditorOptionDefinitions.cs" />
-    <Compile Include="Text\Editor\DsScrollBar.cs" />
-    <Compile Include="Text\Editor\EditorOptions.cs" />
-    <Compile Include="Text\Editor\EditorOptionsFactoryService.cs" />
-    <Compile Include="Text\Editor\EditorPositionState.cs" />
-    <Compile Include="Text\Editor\GlyphMargin.cs" />
-    <Compile Include="Text\Editor\GlyphTextMarkerService.cs" />
-    <Compile Include="Text\Editor\GlyphTextMarkerServiceMouseProcessor.cs" />
-    <Compile Include="Text\Editor\GlyphTextViewMarkerClassificationTagger.cs" />
-    <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTagger.cs" />
-    <Compile Include="Text\Editor\GlyphTextViewMarkerGlyphTextMarkerTagger.cs" />
-    <Compile Include="Text\Editor\GlyphTextViewMarkerService.cs" />
-    <Compile Include="Text\Editor\GoToCommand.cs" />
-    <Compile Include="Text\Editor\HorizontalScrollBarContainerMargin.cs" />
-    <Compile Include="Text\Editor\HorizontalScrollBarMargin.cs" />
-    <Compile Include="Text\Editor\IAdornmentLayerDefinitionService.cs" />
-    <Compile Include="Text\Editor\IGlyphTextMarkerServiceImpl.cs" />
-    <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearch.cs" />
-    <Compile Include="Text\Editor\IncrementalSearch\IncrementalSearchFactoryService.cs" />
-    <Compile Include="Text\Editor\IndentHelper.cs" />
-    <Compile Include="Text\Editor\IntraTextAdornmentService.cs" />
-    <Compile Include="Text\Editor\IReplEditor2.cs" />
-    <Compile Include="Text\Editor\ISpaceReservationStack.cs" />
-    <Compile Include="Text\Editor\ISpaceReservationStackProvider.cs" />
-    <Compile Include="Text\Editor\IWpfTextViewConnectionListenerServiceProvider.cs" />
-    <Compile Include="Text\Editor\KeyboardWpfTextViewCreationListener.cs" />
-    <Compile Include="Text\Editor\KeyProcessorCollection.cs" />
-    <Compile Include="Text\Editor\LeftSelectionMargin.cs" />
-    <Compile Include="Text\Editor\LineCompressor.cs" />
-    <Compile Include="Text\Editor\LineNumberMargin.cs" />
-    <Compile Include="Text\Editor\LineNumberMarginBase.cs" />
-    <Compile Include="Text\Editor\LineSeparatorService.cs" />
-    <Compile Include="Text\Editor\LogEditor.cs" />
-    <Compile Include="Text\Editor\LogEditorProvider.cs" />
-    <Compile Include="Text\Editor\MarginContextMenuService.cs" />
-    <Compile Include="Text\Editor\MarkerHelper.cs" />
-    <Compile Include="Text\Editor\MetadataAndOrder.cs" />
-    <Compile Include="Text\Editor\MouseLocation.cs" />
-    <Compile Include="Text\Editor\MouseProcessorCollection.cs" />
-    <Compile Include="Text\Editor\MouseWpfTextViewCreationListener.cs" />
-    <Compile Include="Text\Editor\NullRegisteredCommandElement.cs" />
-    <Compile Include="Text\Editor\Operations\TextViewUndoManager.cs" />
-    <Compile Include="Text\Editor\Operations\TextViewUndoManagerProvider.cs" />
-    <Compile Include="Text\Editor\Operations\UndoRedoCommandTargetFilter.cs" />
-    <Compile Include="Text\Editor\OptionsHelpers.cs" />
-    <Compile Include="Text\Editor\OutputTextPaneCommandInfoProvider.cs" />
-    <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilter.cs" />
-    <Compile Include="Text\Editor\OutputTextPaneCommandTargetFilterProvider.cs" />
-    <Compile Include="Text\Editor\OutputTextPaneUtils.cs" />
-    <Compile Include="Text\Editor\PopupHelper.cs" />
-    <Compile Include="Text\Editor\PopupSpaceReservationAgent.cs" />
-    <Compile Include="Text\Editor\ReplBufferKind.cs" />
-    <Compile Include="Text\Editor\ReplCommandInfoProvider.cs" />
-    <Compile Include="Text\Editor\ReplCommands.cs" />
-    <Compile Include="Text\Editor\ReplCommandTargetFilter.cs" />
-    <Compile Include="Text\Editor\ReplCommandTargetFilterProvider.cs" />
-    <Compile Include="Text\Editor\ReplEditor.cs" />
-    <Compile Include="Text\Editor\ReplEditorProvider.cs" />
-    <Compile Include="Text\Editor\ReplEditorReplaceListener.cs" />
-    <Compile Include="Text\Editor\ReplSubBuffer.cs" />
-    <Compile Include="Text\Editor\ResourceDictionaryUtilities.cs" />
-    <Compile Include="Text\Editor\RightControlMargin.cs" />
-    <Compile Include="Text\Editor\ScrollMap.cs" />
-    <Compile Include="Text\Editor\ScrollMapFactoryService.cs" />
-    <Compile Include="Text\Editor\Search\CommandTargetFilter.cs" />
-    <Compile Include="Text\Editor\Search\CommandTargetFilterProvider.cs" />
-    <Compile Include="Text\Editor\Search\SearchControl.xaml.cs">
+    <Compile Update="Text\Editor\Search\SearchControl.xaml.cs">
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Text\Editor\Search\SearchService.cs" />
-    <Compile Include="Text\Editor\Search\SearchServiceProvider.cs" />
-    <Compile Include="Text\Editor\Search\SearchSettings.cs" />
-    <Compile Include="Text\Editor\Search\TextMarkerTagger.cs" />
-    <Compile Include="Text\Editor\Search\WpfTextViewCreationListener.cs" />
-    <Compile Include="Text\Editor\SelectionUtilities.cs" />
-    <Compile Include="Text\Editor\SmartIndentationService.cs" />
-    <Compile Include="Text\Editor\SpaceReservationManager.cs" />
-    <Compile Include="Text\Editor\SpaceReservationStack.cs" />
-    <Compile Include="Text\Editor\SpaceReservationStackProvider.cs" />
-    <Compile Include="Text\Editor\SpacerMargin.cs" />
-    <Compile Include="Text\Editor\SystemTextCaret.cs" />
-    <Compile Include="Text\Editor\TextCaret.cs" />
-    <Compile Include="Text\Editor\TextCaretLayer.cs" />
-    <Compile Include="Text\Editor\TextEditorFactoryService.cs" />
-    <Compile Include="Text\Editor\TextFormattingUtilities.cs" />
-    <Compile Include="Text\Editor\TextLayer.cs" />
-    <Compile Include="Text\Editor\TextMarkerService.cs" />
-    <Compile Include="Text\Editor\TextReferenceCommandInfoProvider.cs" />
-    <Compile Include="Text\Editor\TextSelection.cs" />
-    <Compile Include="Text\Editor\TextSelectionExtensions.cs" />
-    <Compile Include="Text\Editor\TextSelectionLayer.cs" />
-    <Compile Include="Text\Editor\TextSnapshotLineExtensions.cs" />
-    <Compile Include="Text\Editor\TextViewExtensions.cs" />
-    <Compile Include="Text\Editor\TextViewLineExtensions.cs" />
-    <Compile Include="Text\Editor\TextViewModel.cs" />
-    <Compile Include="Text\Editor\TextViewMouseProcessorCollection.cs" />
-    <Compile Include="Text\Editor\TextViewRoleSet.cs" />
-    <Compile Include="Text\Editor\UriClassificationTagger.cs" />
-    <Compile Include="Text\Editor\UriFinder.cs" />
-    <Compile Include="Text\Editor\UriHelper.cs" />
-    <Compile Include="Text\Editor\UriMouseProcessor.cs" />
-    <Compile Include="Text\Editor\UriQuickInfoSourceProvider.cs" />
-    <Compile Include="Text\Editor\UriTagger.cs" />
-    <Compile Include="Text\Editor\UriWpfTextViewCreationListener.cs" />
-    <Compile Include="Text\Editor\VerticalScrollBarContainerMargin.cs" />
-    <Compile Include="Text\Editor\VerticalScrollBarMargin.cs" />
-    <Compile Include="Text\Editor\ViewScroller.cs" />
-    <Compile Include="Text\Editor\WpfTextView.cs" />
-    <Compile Include="Text\Editor\WpfTextView.LayoutHelper.cs" />
-    <Compile Include="Text\Editor\WpfTextView.MouseHoverHelper.cs" />
-    <Compile Include="Text\Editor\WpfTextViewConnectionListenerService.cs" />
-    <Compile Include="Text\Editor\WpfTextViewConnectionListenerServiceProvider.cs" />
-    <Compile Include="Text\Editor\WpfTextViewConstants.cs" />
-    <Compile Include="Text\Editor\WpfTextViewContainerMargin.cs" />
-    <Compile Include="Text\Editor\WpfTextViewExtensions.cs" />
-    <Compile Include="Text\Editor\WpfTextViewHost.cs" />
-    <Compile Include="Text\Editor\WpfTextViewLineCollection.cs" />
-    <Compile Include="Text\Editor\WpfTextViewMarginProviderCollection.cs" />
-    <Compile Include="Text\Editor\WpfTextViewMarginProviderCollectionProvider.cs" />
-    <Compile Include="Text\Editor\ZoomControlMargin.cs" />
-    <Compile Include="Text\Formatting\FormattedLineSource.cs" />
-    <Compile Include="Text\Formatting\FormattedTextCache.cs" />
-    <Compile Include="Text\Formatting\FormattedTextSourceFactoryService.cs" />
-    <Compile Include="Text\Formatting\HtmlBuilder.cs" />
-    <Compile Include="Text\Formatting\HtmlBuilderService.cs" />
-    <Compile Include="Text\Formatting\ITextFormatterProvider.cs" />
-    <Compile Include="Text\Formatting\ITextParagraphPropertiesFactoryServiceSelector.cs" />
-    <Compile Include="Text\Formatting\LinePart.cs" />
-    <Compile Include="Text\Formatting\LinePartsCollection.cs" />
-    <Compile Include="Text\Formatting\LinePartsTextSource.cs" />
-    <Compile Include="Text\Formatting\LineTransformProviderService.cs" />
-    <Compile Include="Text\Formatting\PhysicalLine.cs" />
-    <Compile Include="Text\Formatting\PhysicalLineCache.cs" />
-    <Compile Include="Text\Formatting\TextAndAdornmentCollection.cs" />
-    <Compile Include="Text\Formatting\TextAndAdornmentSequencer.cs" />
-    <Compile Include="Text\Formatting\TextAndAdornmentSequencerFactoryService.cs" />
-    <Compile Include="Text\Formatting\TextFormatterProvider.cs" />
-    <Compile Include="Text\Formatting\TextFormattingRunPropertiesExtensions.cs" />
-    <Compile Include="Text\Formatting\TextLineExtensions.cs" />
-    <Compile Include="Text\Formatting\TextParagraphPropertiesFactoryServiceSelector.cs" />
-    <Compile Include="Text\Formatting\TextSequenceElement.cs" />
-    <Compile Include="Text\Formatting\WpfTextViewLine.cs" />
-    <Compile Include="Text\Groups\OptionsStorage.cs" />
-    <Compile Include="Text\Groups\TextViewGroupOption.cs" />
-    <Compile Include="Text\Groups\TextViewGroupOptionCollection.cs" />
-    <Compile Include="Text\Groups\TextViewOptionsGroup.cs" />
-    <Compile Include="Text\Groups\TextViewOptionsGroupService.cs" />
-    <Compile Include="Text\MappingPoint.cs" />
-    <Compile Include="Text\MappingSpan.cs" />
-    <Compile Include="Text\MEF\Metadata.cs" />
-    <Compile Include="Text\NormalizedTextChangeCollection.cs" />
-    <Compile Include="Text\OffsetAndCachedColors.cs" />
-    <Compile Include="Text\Operations\AnyTextStructureNavigator.cs" />
-    <Compile Include="Text\Operations\AnyTextStructureNavigatorProvider.cs" />
-    <Compile Include="Text\Operations\ChangeInfo.cs" />
-    <Compile Include="Text\Operations\EditorOperations.cs" />
-    <Compile Include="Text\Operations\EditorOperationsFactoryService.cs" />
-    <Compile Include="Text\Operations\EditorOptionsExtensions.cs" />
-    <Compile Include="Text\Operations\ReplEditorOperations.cs" />
-    <Compile Include="Text\Operations\TextBufferUndoManager.cs" />
-    <Compile Include="Text\Operations\TextBufferUndoManagerProvider.cs" />
-    <Compile Include="Text\Operations\TextSearchNavigator.cs" />
-    <Compile Include="Text\Operations\TextSearchNavigatorFactoryService.cs" />
-    <Compile Include="Text\Operations\TextSearchService.cs" />
-    <Compile Include="Text\Operations\TextStructureNavigator.cs" />
-    <Compile Include="Text\Operations\TextStructureNavigatorSelectorService.cs" />
-    <Compile Include="Text\Operations\TextUndoHistory.cs" />
-    <Compile Include="Text\Operations\TextUndoHistoryRegistry.cs" />
-    <Compile Include="Text\Operations\TextUndoPrimitive.cs" />
-    <Compile Include="Text\Operations\TextUndoTransaction.cs" />
-    <Compile Include="Text\Operations\WordParser.cs" />
-    <Compile Include="Text\Projection\BufferGraph.cs" />
-    <Compile Include="Text\Projection\BufferGraphFactoryService.cs" />
-    <Compile Include="Text\ProviderSelector.cs" />
-    <Compile Include="Text\Repl\AdvancedAppSettingsPage.cs" />
-    <Compile Include="Text\Repl\AppSettingsPageContainer.cs" />
-    <Compile Include="Text\Repl\AppSettingsPageProvider.cs" />
-    <Compile Include="Text\Repl\ContentTypeOptionDefinitionProvider.cs" />
-    <Compile Include="Text\Repl\GeneralAppSettingsPage.cs" />
-    <Compile Include="Text\Repl\IReplOptions.cs" />
-    <Compile Include="Text\Repl\LanguageAppSettingsPage.cs" />
-    <Compile Include="Text\Repl\ReplOptions.cs" />
-    <Compile Include="Text\Repl\ReplOptionsService.cs" />
-    <Compile Include="Text\Repl\ScrollBarsAppSettingsPage.cs" />
-    <Compile Include="Text\Repl\TabsAppSettingsPage.cs" />
-    <Compile Include="Text\Repl\TextViewOptionsGroupNameProvider.cs" />
-    <Compile Include="Text\Settings\AdvancedAppSettingsPageBase.cs" />
-    <Compile Include="Text\Settings\CommonEditorOptions.cs" />
-    <Compile Include="Text\Settings\GeneralAppSettingsPageBase.cs" />
-    <Compile Include="Text\Settings\ICommonEditorOptions.cs" />
-    <Compile Include="Text\Settings\ScrollBarsAppSettingsPageBase.cs" />
-    <Compile Include="Text\Settings\TabsAppSettingsPageBase.cs" />
-    <Compile Include="Text\SimpleTextImage.cs" />
-    <Compile Include="Text\Tagging\BufferTagAggregatorFactoryService.cs" />
-    <Compile Include="Text\Tagging\ITaggerFactory.cs" />
-    <Compile Include="Text\Tagging\TagAggregatorBase.cs" />
-    <Compile Include="Text\Tagging\TaggerFactory.cs" />
-    <Compile Include="Text\Tagging\TextBufferTagAggregator.cs" />
-    <Compile Include="Text\Tagging\TextViewTagAggregator.cs" />
-    <Compile Include="Text\Tagging\ViewTagAggregatorFactoryService.cs" />
-    <Compile Include="Text\Tagging\Xml\TaggerClassificationTypes.cs" />
-    <Compile Include="Text\Tagging\Xml\XamlAttributeValueClassifier.cs" />
-    <Compile Include="Text\Tagging\Xml\XamlTagger.cs" />
-    <Compile Include="Text\Tagging\Xml\XamlTaggerClassificationTypes.cs" />
-    <Compile Include="Text\Tagging\Xml\XmlClassifier.cs" />
-    <Compile Include="Text\Tagging\Xml\XmlTagger.cs" />
-    <Compile Include="Text\Tagging\Xml\XmlTaggerBase.cs" />
-    <Compile Include="Text\Tagging\Xml\XmlTaggerClassificationTypes.cs" />
-    <Compile Include="Text\TextBuffer.cs" />
-    <Compile Include="Text\TextBufferFactoryService.cs" />
-    <Compile Include="Text\TextChange.cs" />
-    <Compile Include="Text\TextDataModel.cs" />
-    <Compile Include="Text\TextEdit.cs" />
-    <Compile Include="Text\TextImage.cs" />
-    <Compile Include="Text\TextImageFactoryService.cs" />
-    <Compile Include="Text\TextImageUtils.cs" />
-    <Compile Include="Text\TextImageVersion.cs" />
-    <Compile Include="Text\TextSnapshot.cs" />
-    <Compile Include="Text\TextSnapshotLine.cs" />
-    <Compile Include="Text\TextVersion.cs" />
-    <Compile Include="Text\TrackingPoint.cs" />
-    <Compile Include="Text\TrackingSpan.cs" />
-    <Compile Include="Text\UnicodeUtilities.cs" />
-    <Compile Include="Text\WPF\BrushComparer.cs" />
-    <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
-    <Compile Include="Themes\Color.cs" />
-    <Compile Include="Themes\ColorInfo.cs" />
-    <Compile Include="Themes\ColorInfos.cs" />
-    <Compile Include="Themes\Theme.cs" />
-    <Compile Include="Themes\ThemeColor.cs" />
-    <Compile Include="Themes\ThemeHelpers.cs" />
-    <Compile Include="Themes\ThemeService.cs" />
-    <Compile Include="Themes\ThemeSettings.cs" />
-    <Compile Include="Themes\ThemesMenu.cs" />
-    <Compile Include="ToolBars\ToolBarButtonVM.cs" />
-    <Compile Include="ToolBars\ToolBarItemContext.cs" />
-    <Compile Include="ToolBars\ToolBarService.cs" />
-    <Compile Include="ToolWindows\TabContentImpl.cs" />
-    <Compile Include="ToolWindows\ToolWindowGroup.cs" />
-    <Compile Include="ToolWindows\ToolWindowGroupService.cs" />
-    <Compile Include="ToolWindows\ToolWindowService.cs" />
-    <Compile Include="ToolWindows\ToolWindowServiceProvider.cs" />
-    <Compile Include="TreeView\DsSharpTreeNode.cs" />
-    <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
-    <Compile Include="TreeView\Text\ContentTypeDefinitions.cs" />
-    <Compile Include="TreeView\Text\TreeViewNodeTextElementProvider.cs" />
-    <Compile Include="TreeView\TreeNodeDataImpl.cs" />
-    <Compile Include="TreeView\TreeNodeImpl.cs" />
-    <Compile Include="TreeView\TreeViewImpl.cs" />
-    <Compile Include="TreeView\TreeViewService.cs" />
-    <Compile Include="UI\UIDispatcher.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\dnSpy.Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.zh-CN.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.pt-PT.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.de.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.es-ES.resx" />
-    <EmbeddedResource Include="Properties\dnSpy.Resources.hu.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
-      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj">
-      <Project>{2376e072-101f-4900-8770-79c6dffbd0fb}</Project>
-      <Name>dnSpy.Contracts.Debugger.DotNet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj">
-      <Project>{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}</Project>
-      <Name>dnSpy.Contracts.Debugger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj">
-      <Project>{cb6f6372-9479-41e2-83a8-07854326bca8}</Project>
-      <Name>dnSpy.Contracts.DnSpy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj">
-      <Project>{BB748E78-376F-429A-8D83-9A8946EC179F}</Project>
-      <Name>dnSpy.Contracts.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Images\dnSpy.Images.csproj">
-      <Project>{83bbd76b-4ecd-42e1-bf9c-af8114e52317}</Project>
-      <Name>dnSpy.Images</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.CSharp.EditorFeatures\dnSpy.Roslyn.CSharp.EditorFeatures.csproj">
-      <Project>{b7cd7df8-1723-43d2-8b8a-063ba033e203}</Project>
-      <Name>dnSpy.Roslyn.CSharp.EditorFeatures</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj">
-      <Project>{f10a60da-4716-45f6-ab2e-4690440c0c7c}</Project>
-      <Name>dnSpy.Roslyn.EditorFeatures</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj">
-      <Project>{844eef8a-c7b6-4299-8cf0-4bd21dddd4a8}</Project>
-      <Name>dnSpy.Roslyn</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy.Decompiler\dnSpy.Decompiler.csproj">
-      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>dnSpy.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj">
-      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
-      <Name>ICSharpCode.TreeView</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj">
-      <Project>{30057546-ded0-450e-89c3-0354b4ff9ccd}</Project>
-      <Name>dnSpy.Roslyn.VisualBasic.EditorFeatures</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="app.manifest" />
-    <None Include="project.json" />
-    <None Include="Themes\blue.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\dark.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\hc.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\light.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LicenseInfo\CREDITS.txt">
-      <Visible>false</Visible>
-    </EmbeddedResource>
-  </ItemGroup>
+
   <ItemGroup>
     <Page Include="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1378,21 +243,40 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+
   <ItemGroup>
-    <Resource Include="Images\dnSpy.ico" />
+    <Compile Update="Properties\dnSpy.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
-  <!-- TODO: We don't need the arm binary. Once we switch from project.json to PackageReference, we probably won't need this hack -->
-  <Target Name="DnSpyRemoveArmBinaries" DependsOnTargets="ResolveNuGetPackageAssets" AfterTargets="ResolveNuGetPackageAssets">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Remove="$(NuGetPackageRoot)**\Microsoft.DiaSymReader.Native.arm.dll" />
-    </ItemGroup>
-  </Target>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\EmbedInteropTypes.targets" />
+
   <ItemGroup>
-    <None Include="FileLists\*.FileList.xml;LicenseInfo\*">
-      <Visible>false</Visible>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Update="Properties\dnSpy.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Iced" Version="$(IcedVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="$(MSVSCompositionVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
+    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="$(DiaSymReaderVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
+  </ItemGroup>
+
 </Project>

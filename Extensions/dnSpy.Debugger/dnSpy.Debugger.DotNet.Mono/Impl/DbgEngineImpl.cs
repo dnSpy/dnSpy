@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Debugger;
@@ -332,14 +331,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						connectionPort = (ushort)port;
 					}
 
-					const string dnSpyUnityDebugEnvVarName = "DNSPY_UNITY_DBG";
-					Debug.Assert(!connectionAddress.Contains(" "));
-					var sb = new StringBuilder();
-					sb.Append($"--debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort},defer=y");
-					if (!debuggerSettings.PreventManagedDebuggerDetection)
-						sb.Append(",no-hide-debugger");
-					var envVarValue = sb.ToString();
-
 					var psi = new ProcessStartInfo {
 						FileName = startUnityOptions.Filename,
 						Arguments = startUnityOptions.CommandLine,
@@ -353,7 +344,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var env = new Dictionary<string, string>();
 					foreach (var kv in startUnityOptions.Environment.Environment)
 						psi.Environment[kv.Key] = kv.Value;
-					psi.Environment[dnSpyUnityDebugEnvVarName] = envVarValue;
+
+					// Which version is it? Who knows, set both env vars.
+					const string ENV_VAR_NAME_V0 = "DNSPY_UNITY_DBG";
+					const string ENV_VAR_NAME_V1 = "DNSPY_UNITY_DBG2";
+					string envVarValue;
+					Debug.Assert(!connectionAddress.Contains(" "));
+
+					// Unity 4.x - 2018.x+ (.NET 2.0-3.5 assemblies)
+					envVarValue = $"--debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort},defer=y";
+					if (!debuggerSettings.PreventManagedDebuggerDetection)
+						envVarValue += ",no-hide-debugger";
+					psi.Environment[ENV_VAR_NAME_V0] = envVarValue;
+
+					// Unity 5.5+ versions (.NET 4.x assemblies)
+					envVarValue = $"--debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort},suspend=n";
+					if (!debuggerSettings.PreventManagedDebuggerDetection)
+						envVarValue += ",no-hide-debugger";
+					psi.Environment[ENV_VAR_NAME_V1] = envVarValue;
+
 					using (var process = Process.Start(psi)) {
 						expectedPid = process.Id;
 						ReadConsoleOutput(psi, process);
@@ -409,15 +418,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					if (elapsedTime >= connectionTimeout)
 						throw new CouldNotConnectException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
 					try {
-						var asyncConn = VirtualMachineManager.BeginConnect(endPoint, null);
-						if (!asyncConn.AsyncWaitHandle.WaitOne(connectionTimeout - elapsedTime)) {
-							VirtualMachineManager.CancelConnection(asyncConn);
+						var cts = new CancellationTokenSource(connectionTimeout - elapsedTime);
+						var asyncConn = VirtualMachineManager.ConnectAsync(endPoint, null, cts.Token);
+						if (!asyncConn.Wait(connectionTimeout - elapsedTime))
 							throw new CouldNotConnectException(GetCouldNotConnectErrorMessage(connectionAddress, connectionPort, filename));
-						}
-						else {
-							vm = VirtualMachineManager.EndConnect(asyncConn);
-							break;
-						}
+						vm = asyncConn.Result;
+						break;
 					}
 					catch (SocketException sex) when (sex.SocketErrorCode == SocketError.ConnectionRefused) {
 						// Retry it in case it takes a while for mono.exe to initialize or if it hasn't started yet
@@ -449,6 +455,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				string msg;
 				if (ex is CouldNotConnectException)
 					msg = defaultCouldNotConnectMessage ?? ex.Message;
+				else if (ex is OperationCanceledException)
+					msg = dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotConnectToProcess;
 				else if (ex is StartException)
 					msg = ex.Message;
 				else {
@@ -1132,7 +1140,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return false;
 
 			var moduleData = new DbgModuleData(this, monoModule);
-			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, moduleOrder++, moduleData);
+			var engineModule = ModuleCreator.CreateModule(this, objectFactory, appDomain, monoModule, ++moduleOrder, moduleData);
 			moduleData.ModuleId = ModuleIdUtils.Create(engineModule.Module, monoModule);
 			lock (lockObj) {
 				if (!toAssemblyModules.TryGetValue(monoModule.Assembly, out var modules))

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		public DotNetBookmarkLocationFormatter Formatter { get; set; }
 
-		public DotNetTokenBookmarkLocationImpl(in ModuleId module, uint token) {
+		public DotNetTokenBookmarkLocationImpl(ModuleId module, uint token) {
 			Module = module;
 			Token = token;
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="filter"></param>
 		public ChainDocumentTreeNodeFilter(IDocumentTreeNodeFilter filter) => this.filter = filter;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public virtual DocumentTreeNodeFilterResult GetResult(FieldDef field) => filter.GetResult(field);
 		public virtual DocumentTreeNodeFilterResult GetResult(PropertyDef prop) => filter.GetResult(prop);
 		public virtual DocumentTreeNodeFilterResult GetResult(EventDef evt) => filter.GetResult(evt);
@@ -63,6 +63,6 @@ namespace dnSpy.Contracts.Search {
 		public virtual DocumentTreeNodeFilterResult GetResult(IDsDocument document) => filter.GetResult(document);
 		public virtual DocumentTreeNodeFilterResult GetResultParamDefs(MethodDef method) => filter.GetResultParamDefs(method);
 		public virtual DocumentTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => filter.GetResultAttributes(hca);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

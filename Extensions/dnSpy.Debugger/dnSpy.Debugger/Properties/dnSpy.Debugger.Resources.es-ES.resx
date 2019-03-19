@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -133,19 +133,19 @@
     <value>Depurando</value>
   </data>
   <data name="AskDeleteAllBreakpoints" xml:space="preserve">
-    <value>¿Quieres eliminar todos tus archivos de seguridad guardados?</value>
+    <value>¿Quieres eliminar todos los puntos de ruptura guardados?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
     <value>Adjuntar a _Proceso...</value>
   </data>
   <data name="Attach_AttachToProcess" xml:space="preserve">
-    <value>Adjuntar al proceso de</value>
+    <value>Adjuntar al proceso</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Utilice dnSpy.exe para conectar a los procesos de 64 bits</value>
+    <value>Utilice dnSpy de 64-bit para conectar a los procesos de 64 bits</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Uso dnSpy-x86.exe para unir a los procesos de 32 bits</value>
+    <value>Utilice dnSpy de 32-bit para conectar a procesos de 32 bits</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Rompe_r todos</value>
@@ -169,7 +169,7 @@
     <value>Pila de _llamadas</value>
   </data>
   <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
-    <value>Ha superado el número máximo de marcos de pila apoyado por dnSpy.</value>
+    <value>Ha superado el número máximo de marcos de pila apoyados por dnSpy.</value>
   </data>
   <data name="Column_Address" xml:space="preserve">
     <value>Dirección</value>
@@ -238,7 +238,7 @@
     <value>Estado</value>
   </data>
   <data name="Column_ThreadSuspendedCount" xml:space="preserve">
-    <value>Número de veces suspendido</value>
+    <value>Cuenta suspendida</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
     <value>Fecha y hora</value>
@@ -262,19 +262,19 @@
     <value>Depurar el programa</value>
   </data>
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
-    <value>Mostrar la ventana de los lugareños cuando se inicia el depurador</value>
+    <value>Mostrar la ventana local cuando se inicia el depurador</value>
   </data>
-  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
     <value>Evita que el código detecte un depurador administrado</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
-    <value>Caso omiso de Debugger.Break() y romper las instrucciones</value>
+    <value>Ignorar Debugger.Break () y romper instrucciones</value>
   </data>
   <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
     <value>Permitir la evaluación de la propiedad y otras llamadas de función implícita</value>
   </data>
   <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
-    <value>Archivos cargados desde la memoria del proceso de depuración (desactivar para usar archivos de disco)</value>
+    <value>Archivos cargados desde la memoria del proceso de depuración (desactivar para usar archivos en disco)</value>
   </data>
   <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
     <value>Llamar a función de conversión de cadenas en objetos en ventanas de variables</value>
@@ -327,7 +327,7 @@
 {0}</value>
   </data>
   <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
-    <value>No se puede evaluar a menos que el depurador se detiene</value>
+    <value>No se puede evaluar a menos que el depurador se detenga</value>
   </data>
   <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
     <value>No se puede evaluar cuando ha ocurrido una excepción no controlada</value>
@@ -348,16 +348,13 @@
     <value>Buscar</value>
   </data>
   <data name="Exceptions_Search_ToolTip" xml:space="preserve">
-    <value>Búsqueda para una excepción</value>
+    <value>Búsqueda de una excepción</value>
   </data>
   <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
     <value>Mostrar sólo las excepciones habilitadas</value>
   </data>
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>_Congelar</value>
-  </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>Ir a desensamblar</value>
   </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>Ir a desensamblar</value>
@@ -397,7 +394,7 @@
 ERROR: {1}</value>
   </data>
   <data name="Locals_Ask_TooManyItems" xml:space="preserve">
-    <value>Este artículo contiene más de {0} artículos de hijos y se limitará a mostrar ese número de artículos cuando se expande. ¿Está seguro que desea expandirlo?</value>
+    <value>Este artículo contiene más de {0} artículos hijos y se limitará a mostrar ese número de artículos cuando se expande. ¿Está seguro que desea expandirlo?</value>
   </data>
   <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
     <value>No se puede evaluar cuando el subproceso está en un punto peligroso. Paso una vez o hasta que llega a un punto de interrupción.</value>
@@ -406,7 +403,7 @@ ERROR: {1}</value>
     <value>Actualmente no es posible llamar a métodos y propiedades</value>
   </data>
   <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
-    <value>Evaluación ha agotado el tiempo y se ha deshabilitado hasta que continúe el programa depurado.</value>
+    <value>La evaluación ha agotado el tiempo y se ha deshabilitado hasta que continúe el programa depurado.</value>
   </data>
   <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
     <value>Agotado el tiempo de evaluación</value>
@@ -739,7 +736,7 @@ ERROR: {1}</value>
     <value>Módulos abiertos</value>
   </data>
   <data name="LoadXModulesCommand" xml:space="preserve">
-    <value>Módulos de {0} abierta</value>
+    <value>Abrir {0} Módulos</value>
   </data>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
     <value>Mostrar tipos de parámetros</value>
@@ -787,16 +784,16 @@ ERROR: {1}</value>
     <value>El programa '{0}' ha salido con código {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
-    <value>Ha salido de la 0x{0:x} de hilo con código {1} (0x{1:x}).</value>
+    <value>El hilo 0x {0: x} ha salido con el código {1} (0x {1: x}).</value>
   </data>
   <data name="DebugLogLoadModule" xml:space="preserve">
     <value>Cargar '{0}'.</value>
   </data>
   <data name="DebugLogMDA" xml:space="preserve">
-    <value>Gestión depuración asistente '{0}' ha detectado un problema en '{1}'.</value>
+    <value>El Asistente de depuración administrado '{0}' detectó un problema en '{1}'.</value>
   </data>
   <data name="DebugLogUnloadModule" xml:space="preserve">
-    <value>Cargar '{0}'.</value>
+    <value>Descargado '{0}'.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt; ningún mensaje de la excepción &gt;"</value>
@@ -871,7 +868,7 @@ ERROR: {1}</value>
     <value>Ejecutando</value>
   </data>
   <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
-    <value>Adjuntar al proceso de</value>
+    <value>Adjuntar al proceso</value>
   </data>
   <data name="Processes_DetachToolTip" xml:space="preserve">
     <value>Separar el proceso de</value>
@@ -886,7 +883,7 @@ ERROR: {1}</value>
     <value>_Separar el proceso de</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
-    <value>Separar _Cuando la depuración dejó de funcionar</value>
+    <value>Separar _Cuando la depuración deje de funcionar</value>
   </data>
   <data name="TerminateProcessCommand" xml:space="preserve">
     <value>Terminar proceso</value>
@@ -1054,7 +1051,7 @@ ERROR: {1}</value>
     <value>_Exportar seleccionado...</value>
   </data>
   <data name="Breakpoints_NoMatch" xml:space="preserve">
-    <value>No hay puntos de corte coincide con el filtro de búsqueda.</value>
+    <value>Ningún punto de interrupción coincide con su filtro de búsqueda.</value>
   </data>
   <data name="Breakpoints_Search" xml:space="preserve">
     <value>Buscar</value>
@@ -1075,7 +1072,7 @@ ERROR: {1}</value>
     <value>Todos</value>
   </data>
   <data name="Modules_NoMatch" xml:space="preserve">
-    <value>No hay marcadores coinciden con el filtro de búsqueda.</value>
+    <value>No hay marcadores coincidentes con el filtro de búsqueda.</value>
   </data>
   <data name="Modules_Search" xml:space="preserve">
     <value>Buscar</value>
@@ -1126,13 +1123,13 @@ ERROR: {1}</value>
     <value>(ninguno)</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
-    <value>cuando la cuenta de golpe es un múltiplo de {0}</value>
+    <value>cuando el recuento de aciertos es un múltiplo de {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
-    <value>cuando la cuenta golpe es igual a {0}</value>
+    <value>cuando el recuento de aciertos es igual a {0}</value>
   </data>
   <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
-    <value>cuando hit count es mayor o igual a {0}</value>
+    <value>cuando el recuento de aciertos es mayor o igual que {0}</value>
   </data>
   <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
     <value>romper siempre</value>
@@ -1234,7 +1231,7 @@ ERROR: {1}</value>
     <value>La función no se encuentra: {0}</value>
   </data>
   <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
-    <value>El punto de interrupción en la actualidad no se verá afectado. {0}</value>
+    <value>Actualmente el punto de interrupción no se verá afectado. {0}</value>
   </data>
   <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
     <value>El módulo no ha sido cargado o no símbolos hayan sido cargados para este módulo.</value>
@@ -1363,7 +1360,7 @@ ERROR: {1}</value>
     <value>_Pegar</value>
   </data>
   <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
-    <value>Esta expresión causa efectos secundarios y no se evaluará</value>
+    <value>Esta expresión causa efectos colaterales y no se evaluará</value>
   </data>
   <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
     <value>Haga clic en este botón para evaluar ahora.</value>
@@ -1375,7 +1372,7 @@ ERROR: {1}</value>
     <value>Eliminar ID de objeto</value>
   </data>
   <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
-    <value>Mostrar estructura cruda de objetos en ventanas de variables</value>
+    <value>Mostrar la estructura sin procesar de los objetos en ventanas de variables</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt; desconocido &gt;</value>
@@ -1387,10 +1384,10 @@ ERROR: {1}</value>
     <value>Agrupar parámetros y locales</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>Mostrar las variables del compilador generada</value>
+    <value>Mostrar las variables generadas por el compilador</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>Mostrar variables de decompiler generado</value>
+    <value>Mostrar variables generadas por el decompiler</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
     <value>Ordenar locales</value>
@@ -1399,19 +1396,19 @@ ERROR: {1}</value>
     <value>Ordenar parámetros</value>
   </data>
   <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
-    <value>Ocultar a miembros de compilador generada</value>
+    <value>Ocultar a miembros generados por el compilador</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
-    <value>Evaluación de la función implícita es desactivado por el usuario</value>
+    <value>La evaluación de la función implícita es desactivada por el usuario</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>Atributos de respeto que esconden a los miembros de</value>
+    <value>Respete los atributos que ocultan a los miembros</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Error de depurador interno</value>
+    <value>Error interno del depurador</value>
   </data>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
-    <value>La evaluación de la función requiere todos los subprocesos para ejecutar.</value>
+    <value>La evaluación de la función requiere todos los subprocesos para ejecutarse.</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
     <value>Separadores de dígitos</value>
@@ -1420,7 +1417,7 @@ ERROR: {1}</value>
     <value>Línea de comandos</value>
   </data>
   <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
-    <value>No puede obtener el valor de la variable local o argumento porque posiblemente no está disponible en este puntero de instrucción, porque se ha optimizado lejos.</value>
+    <value>No se puede obtener el valor de la variable local o argumento porque posiblemente no está disponible en este puntero de instrucción, porque se ha optimizado fuera.</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
     <value>Mensaje de: {0}</value>
@@ -1468,7 +1465,7 @@ ERROR: {1}</value>
     <value>Abrir todos los módulos</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>Ocultar los miembros obsoletos en variables windiws</value>
+    <value>Ocultar los miembros obsoletos en variables windows</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
     <value>Mostar valores devueltos</value>
@@ -1486,12 +1483,42 @@ ERROR: {1}</value>
     <value>Mostrar primarios locales</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Habilitar la depuración asincrónica de código fuente</value>
+    <value>Habilitar la depuración asincrónica</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
     <value>Paso sobre propiedades y operadores</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>E_xpresión copia</value>
+    <value>Copiar E_xpresión</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>No se pudo encontrar el código del método. Asegúrese de que el proceso se ha detenido y que el método ha sido compilado mediante jit.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Desensamblado</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ignorar las excepciones no controladas</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>¿Está seguro que desea ejecutar este archivo que no tiene una extensión válida?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>¿Está seguro que desea ejecutar este archivo que no tiene una extensión válida?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Ningún hilo coincide con su filtro de búsqueda.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Restablecer todos los criterios de búsqueda para que se muestren todos los módulos</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Búsqueda de un proceso</value>
   </data>
 </root>

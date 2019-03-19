@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
-	interface ICallStackVM {
+	interface ICallStackVM : IGridViewColumnDescsProvider {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		ObservableCollection<StackFrameVM> AllItems { get; }
@@ -48,6 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 	sealed class CallStackVM : ViewModelBase, ICallStackVM, ILazyToolWindowVM {
 		public ObservableCollection<StackFrameVM> AllItems { get; }
 		public ObservableCollection<StackFrameVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
@@ -93,6 +94,13 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				StackFrameFormatterOptions = GetStackFrameFormatterOptions(),
 				ValueFormatterOptions = GetValueFormatterOptions(),
 			};
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(CallStackWindowColumnIds.Icon, string.Empty) { CanBeSorted = false },
+					new GridViewColumnDesc(CallStackWindowColumnIds.Name, dnSpy_Debugger_Resources.Column_Name) { CanBeSorted = false },
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => throw new InvalidOperationException();
 		}
 
 		// random thread
@@ -364,7 +372,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// UI thread
-		void UpdateFrames_UI(in DbgCallStackFramesInfo framesInfo, DbgThread thread) {
+		void UpdateFrames_UI(DbgCallStackFramesInfo framesInfo, DbgThread thread) {
 			callStackContext.UIDispatcher.VerifyAccess();
 
 			ClearUsedBreakpoints_UI();

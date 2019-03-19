@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -62,6 +62,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly CustomAttribute[] newModuleCustomAttributes;
 		readonly CustomAttribute[] origAssemblyCustomAttributes;
 		readonly CustomAttribute[] origModuleCustomAttributes;
+		readonly ExportedType[] newExportedTypes;
+		readonly ExportedType[] origExportedTypes;
 		readonly Version newAssemblyVersion;
 		readonly Version origAssemblyVersion;
 
@@ -82,6 +84,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			newAssemblyDeclSecurities = importer.NewAssemblyDeclSecurities;
 			newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
 			newModuleCustomAttributes = importer.NewModuleCustomAttributes;
+			newExportedTypes = importer.NewExportedTypes;
 			newAssemblyVersion = importer.NewAssemblyVersion;
 			if (newAssemblyDeclSecurities != null)
 				origAssemblyDeclSecurities = modNode.Document.AssemblyDef?.DeclSecurities.ToArray();
@@ -89,6 +92,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				origAssemblyCustomAttributes = modNode.Document.AssemblyDef?.CustomAttributes.ToArray();
 			if (newModuleCustomAttributes != null)
 				origModuleCustomAttributes = modNode.Document.ModuleDef.CustomAttributes.ToArray();
+			if (newExportedTypes != null)
+				origExportedTypes = modNode.Document.ModuleDef.ExportedTypes.ToArray();
 			if (newAssemblyVersion != null)
 				origAssemblyVersion = modNode.Document.AssemblyDef?.Version;
 
@@ -112,6 +117,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Execute() {
+			bool refresh = false;
 			for (int i = 0; i < newTypeNodeCreators.Length; i++)
 				newTypeNodeCreators[i].Add();
 			for (int i = 0; i < existingTypeNodeUpdaters.Length; i++)
@@ -131,18 +137,31 @@ namespace dnSpy.AsmEditor.Compiler {
 				foreach (var ca in newModuleCustomAttributes)
 					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
 			}
+			if (origExportedTypes != null && newExportedTypes != null) {
+				modNode.Document.ModuleDef.ExportedTypes.Clear();
+				foreach (var et in newExportedTypes)
+					modNode.Document.ModuleDef.ExportedTypes.Add(et);
+			}
 			if (newAssemblyVersion != null && origAssemblyVersion != null) {
 				modNode.Document.AssemblyDef.Version = newAssemblyVersion;
-				asmNode?.TreeNode.RefreshUI();
+				refresh = true;
 			}
 			resourceNodeCreator?.Add();
+			if (refresh)
+				asmNode?.TreeNode.RefreshUI();
 		}
 
 		public void Undo() {
+			bool refresh = false;
 			resourceNodeCreator?.Remove();
 			if (newAssemblyVersion != null && origAssemblyVersion != null) {
 				modNode.Document.AssemblyDef.Version = origAssemblyVersion;
-				asmNode?.TreeNode.RefreshUI();
+				refresh = true;
+			}
+			if (origExportedTypes != null && newExportedTypes != null) {
+				modNode.Document.ModuleDef.ExportedTypes.Clear();
+				foreach (var et in origExportedTypes)
+					modNode.Document.ModuleDef.ExportedTypes.Add(et);
 			}
 			if (origModuleCustomAttributes != null && newModuleCustomAttributes != null) {
 				modNode.Document.ModuleDef.CustomAttributes.Clear();
@@ -163,6 +182,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				existingTypeNodeUpdaters[i].Remove();
 			for (int i = newTypeNodeCreators.Length - 1; i >= 0; i--)
 				newTypeNodeCreators[i].Remove();
+			if (refresh)
+				asmNode?.TreeNode.RefreshUI();
 		}
 
 		public IEnumerable<object> ModifiedObjects {

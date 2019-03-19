@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdMemberTypes {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Constructor			= 0x00000001,
 		Event				= 0x00000002,
 		Field				= 0x00000004,
@@ -35,6 +35,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Custom				= 0x00000040,
 		NestedType			= 0x00000080,
 		All					= Constructor | Event | Field | Method | Property | TypeInfo | Custom | NestedType,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

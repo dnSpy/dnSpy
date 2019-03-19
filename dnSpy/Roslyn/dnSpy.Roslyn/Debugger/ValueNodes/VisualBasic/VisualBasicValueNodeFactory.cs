@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System.Text;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Debugger.Formatters;
 
@@ -48,7 +48,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			if ((object)castType == null)
 				return;
 			sb.Append(", ");
-			new Formatters.VisualBasic.VisualBasicTypeFormatter(new StringBuilderTextColorOutput(sb), TypeFormatterOptions, null).Format(castType, null);
+			new Formatters.VisualBasic.VisualBasicTypeFormatter(new DbgStringBuilderTextWriter(sb), TypeFormatterOptions, null).Format(castType, null);
 			sb.Append(')');
 		}
 
@@ -104,16 +104,16 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 
 		protected override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
 
-		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, ITextColorWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property) {
+		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property) {
 			var typeFormatter = new Formatters.VisualBasic.VisualBasicTypeFormatter(output, typeOptions.ToTypeFormatterOptions(), null);
 			typeFormatter.Format(method.DeclaringType, null);
 			var valueFormatter = new Formatters.VisualBasic.VisualBasicPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
-			output.Write(BoxedTextColor.Operator, ".");
+			output.Write(DbgTextColor.Operator, ".");
 			if ((object)property != null) {
 				output.Write(MemberUtils.GetColor(property), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(property.Name));
 				valueFormatter.WriteTokenComment(property.MetadataToken);
-				output.Write(BoxedTextColor.Operator, ".");
-				output.Write(BoxedTextColor.Keyword, "Get");
+				output.Write(DbgTextColor.Operator, ".");
+				output.Write(DbgTextColor.Keyword, "Get");
 				valueFormatter.WriteTokenComment(method.MetadataToken);
 			}
 			else {
@@ -121,9 +121,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 				if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
 					for (int i = 0; i < operatorInfo.Length; i++) {
 						if (i > 0)
-							output.WriteSpace();
+							output.Write(DbgTextColor.Text, " ");
 						var s = operatorInfo[i];
-						output.Write('A' <= s[0] && s[0] <= 'Z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator, s);
+						output.Write('A' <= s[0] && s[0] <= 'Z' ? DbgTextColor.Keyword : DbgTextColor.Operator, s);
 					}
 					WriteGenericMethodArguments(output, method, typeFormatter);
 				}
@@ -135,21 +135,21 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			}
 		}
 
-		void WriteGenericMethodArguments(ITextColorWriter output, DmdMethodBase method, Formatters.VisualBasic.VisualBasicTypeFormatter typeFormatter) {
+		void WriteGenericMethodArguments(IDbgTextWriter output, DmdMethodBase method, Formatters.VisualBasic.VisualBasicTypeFormatter typeFormatter) {
 			var genArgs = method.GetGenericArguments();
 			if (genArgs.Count == 0)
 				return;
-			output.Write(BoxedTextColor.Punctuation, GenericsParenOpen);
-			output.Write(BoxedTextColor.Keyword, Keyword_Of);
-			output.WriteSpace();
+			output.Write(DbgTextColor.Punctuation, GenericsParenOpen);
+			output.Write(DbgTextColor.Keyword, Keyword_Of);
+			output.Write(DbgTextColor.Text, " ");
 			for (int i = 0; i < genArgs.Count; i++) {
 				if (i > 0) {
-					output.Write(BoxedTextColor.Punctuation, ",");
-					output.WriteSpace();
+					output.Write(DbgTextColor.Punctuation, ",");
+					output.Write(DbgTextColor.Text, " ");
 				}
 				typeFormatter.Format(genArgs[i], null);
 			}
-			output.Write(BoxedTextColor.Punctuation, GenericsParenClose);
+			output.Write(DbgTextColor.Punctuation, GenericsParenClose);
 		}
 	}
 }

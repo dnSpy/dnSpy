@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,9 +22,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// <see cref="HexGlyphFactoryProvider"/> names
 	/// </summary>
 	public static class PredefinedHexGlyphFactoryProviderNames {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		const string prefix = "hex-";
 		public const string HexImageReference = prefix + nameof(HexImageReference);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		public override DbgCodeBreakpoint[] Create(DbgDotNetBreakpointInfo[] breakpoints) =>
 			dbgCodeBreakpointsService.Value.Add(breakpoints.Select(a => new DbgCodeBreakpointInfo(dbgDotNetCodeLocationFactory.Create(a.Module, a.Token, a.Offset), a.Settings)).ToArray());
 
-		public override DbgCodeBreakpoint TryGetBreakpoint(in ModuleId module, uint token, uint offset) {
+		public override DbgCodeBreakpoint TryGetBreakpoint(ModuleId module, uint token, uint offset) {
 			var loc = dbgDotNetCodeLocationFactory.Create(module, token, offset);
 			try {
 				return dbgCodeBreakpointsService.Value.TryGetBreakpoint(loc);

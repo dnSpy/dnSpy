@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Diagnostics;
+using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
@@ -35,7 +37,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public string Title => attachableProcessInfo.Title;
 		public string Filename => attachableProcessInfo.Filename;
 		public string CommandLine => attachableProcessInfo.CommandLine;
-		public string Architecture => attachableProcessInfo.Architecture;
+		public string Architecture => GetArchitectureString(attachableProcessInfo.Architecture);
 
 		public IAttachToProcessContext Context { get; }
 		public object ProcessObject => new FormatterObject<ProgramVM>(this, PredefinedTextClassifierTags.AttachToProcessWindowProcess);
@@ -54,6 +56,18 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			AttachProgramOptions = attachProgramOptions ?? throw new ArgumentNullException(nameof(attachProgramOptions));
 			attachableProcessInfo = AttachableProcessInfo.Create(processProvider, attachProgramOptions);
 			Context = context ?? throw new ArgumentNullException(nameof(context));
+		}
+
+		static string GetArchitectureString(DbgArchitecture architecture) {
+			switch (architecture) {
+			case DbgArchitecture.X86:	return "x86";
+			case DbgArchitecture.X64:	return "x64";
+			case DbgArchitecture.Arm:	return "ARM";
+			case DbgArchitecture.Arm64:	return "ARM64";
+			default:
+				Debug.Fail($"Unknown architecture: {architecture}");
+				return "???";
+			}
 		}
 	}
 }

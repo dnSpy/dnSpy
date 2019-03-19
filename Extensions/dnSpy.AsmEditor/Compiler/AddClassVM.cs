@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		sealed class AddClassDecompileCodeState : DecompileCodeState {
 		}
 
-		public AddClassVM(in EditCodeVMOptions options) : base(options, null) => StartDecompile();
+		public AddClassVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
 			new AddClassDecompileCodeState();
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return Task.FromResult(result);
 		}
 
-		protected override void Import(ModuleImporter importer, in CompilationResult result) =>
+		protected override void Import(ModuleImporter importer, CompilationResult result) =>
 			importer.Import(result.RawFile, result.DebugFile, ModuleImporterOptions.None);
 	}
 }

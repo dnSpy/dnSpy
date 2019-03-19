@@ -937,6 +937,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code Style.
+        /// </summary>
+        public static string CodeStyleDlgTabTitle {
+            get {
+                return ResourceManager.GetString("CodeStyleDlgTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collapse Tree_View Nodes.
         /// </summary>
         public static string CollapseTreeViewNodesCommand {
@@ -1144,6 +1153,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timestamp:.
+        /// </summary>
+        public static string Decompile_Timestamp {
+            get {
+                return ResourceManager.GetString("Decompile_Timestamp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string DecompileCancelButton {
@@ -1194,6 +1212,402 @@ namespace dnSpy.Properties {
         public static string DisableBookmarkCommand3 {
             get {
                 return ResourceManager.GetString("DisableBookmarkCommand3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disassembler.
+        /// </summary>
+        public static string DisassemblerDlgTabTitle {
+            get {
+                return ResourceManager.GetString("DisassemblerDlgTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The method is not optimized.
+        /// </summary>
+        public static string Disassembly_MethodIsNotOptimized {
+            get {
+                return ResourceManager.GetString("Disassembly_MethodIsNotOptimized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disassembly.
+        /// </summary>
+        public static string Disassembly_TabTitle {
+            get {
+                return ResourceManager.GetString("Disassembly_TabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add labels.
+        /// </summary>
+        public static string DisassemblySettings_AddLabels {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_AddLabels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add leading &apos;0&apos; to hex numbers if needed.
+        /// </summary>
+        public static string DisassemblySettings_AddLeadingZeroToHexNumbers {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_AddLeadingZeroToHexNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always show size of memory operands.
+        /// </summary>
+        public static string DisassemblySettings_AlwaysShowMemorySize {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_AlwaysShowMemorySize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always show the scale value.
+        /// </summary>
+        public static string DisassemblySettings_AlwaysShowScale {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_AlwaysShowScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always show segment registers.
+        /// </summary>
+        public static string DisassemblySettings_AlwaysShowSegmentRegister {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_AlwaysShowSegmentRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add leading zeroes (branches).
+        /// </summary>
+        public static string DisassemblySettings_BranchLeadingZeroes {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_BranchLeadingZeroes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digit separator.
+        /// </summary>
+        public static string DisassemblySettings_DigitSeparator {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_DigitSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add an empty line between blocks.
+        /// </summary>
+        public static string DisassemblySettings_EmptyLineBetweenBasicBlocks {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_EmptyLineBetweenBasicBlocks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hex prefix.
+        /// </summary>
+        public static string DisassemblySettings_HexPrefix {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_HexPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hex suffix.
+        /// </summary>
+        public static string DisassemblySettings_HexSuffix {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_HexSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add leading zeroes.
+        /// </summary>
+        public static string DisassemblySettings_LeadingZeroes {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_LeadingZeroes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Naked registers.
+        /// </summary>
+        public static string DisassemblySettings_NakedRegisters {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_NakedRegisters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show disassembly in a new tab.
+        /// </summary>
+        public static string DisassemblySettings_NewTab {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_NewTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operand column.
+        /// </summary>
+        public static string DisassemblySettings_OperandColumn {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_OperandColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIP-relative addresses.
+        /// </summary>
+        public static string DisassemblySettings_RipRelativeAddresses {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_RipRelativeAddresses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show scale before index register.
+        /// </summary>
+        public static string DisassemblySettings_ScaleBeforeIndex {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ScaleBeforeIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show branch size.
+        /// </summary>
+        public static string DisassemblySettings_ShowBranchSize {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowBranchSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show decompiled code.
+        /// </summary>
+        public static string DisassemblySettings_ShowCode {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show IL code.
+        /// </summary>
+        public static string DisassemblySettings_ShowILCode {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowILCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show instruction address.
+        /// </summary>
+        public static string DisassemblySettings_ShowInstructionAddress {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowInstructionAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show instruction bytes.
+        /// </summary>
+        public static string DisassemblySettings_ShowInstructionBytes {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowInstructionBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always show mnemonic size suffix.
+        /// </summary>
+        public static string DisassemblySettings_ShowMnemonicSizeSuffix {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowMnemonicSizeSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show symbol address.
+        /// </summary>
+        public static string DisassemblySettings_ShowSymbolAddress {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowSymbolAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show zero displacements.
+        /// </summary>
+        public static string DisassemblySettings_ShowZeroDisplacements {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_ShowZeroDisplacements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signed numbers.
+        /// </summary>
+        public static string DisassemblySettings_SignedImmediateOperands {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SignedImmediateOperands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signed displacements.
+        /// </summary>
+        public static string DisassemblySettings_SignedMemoryDisplacements {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SignedMemoryDisplacements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show small numbers in decimal.
+        /// </summary>
+        public static string DisassemblySettings_SmallHexNumbersInDecimal {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SmallHexNumbersInDecimal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space after memory operand brackets.
+        /// </summary>
+        public static string DisassemblySettings_SpaceAfterMemoryBracket {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SpaceAfterMemoryBracket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space after memory operand comma.
+        /// </summary>
+        public static string DisassemblySettings_SpaceAfterMemoryOperandComma {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SpaceAfterMemoryOperandComma", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space after operand separator.
+        /// </summary>
+        public static string DisassemblySettings_SpaceAfterOperandSeparator {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SpaceAfterOperandSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space between &apos;+&apos;.
+        /// </summary>
+        public static string DisassemblySettings_SpacesBetweenMemoryAddOperators {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SpacesBetweenMemoryAddOperators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space between &apos;*&apos;.
+        /// </summary>
+        public static string DisassemblySettings_SpacesBetweenMemoryMulOperators {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_SpacesBetweenMemoryMulOperators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper case everything.
+        /// </summary>
+        public static string DisassemblySettings_UpperCaseAll {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UpperCaseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper case hex numbers.
+        /// </summary>
+        public static string DisassemblySettings_UpperCaseHex {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UpperCaseHex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper case keywords.
+        /// </summary>
+        public static string DisassemblySettings_UpperCaseKeywords {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UpperCaseKeywords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper case mnemonics.
+        /// </summary>
+        public static string DisassemblySettings_UpperCaseMnemonics {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UpperCaseMnemonics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper case prefixes.
+        /// </summary>
+        public static string DisassemblySettings_UpperCasePrefixes {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UpperCasePrefixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper case registers.
+        /// </summary>
+        public static string DisassemblySettings_UpperCaseRegisters {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UpperCaseRegisters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hex numbers.
+        /// </summary>
+        public static string DisassemblySettings_UseHexNumbers {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UseHexNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pseudo instructions.
+        /// </summary>
+        public static string DisassemblySettings_UsePseudoOps {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_UsePseudoOps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntax.
+        /// </summary>
+        public static string DisassemblySettings_X86AssemblerSyntax {
+            get {
+                return ResourceManager.GetString("DisassemblySettings_X86AssemblerSyntax", resourceCulture);
             }
         }
         
@@ -3194,24 +3608,6 @@ namespace dnSpy.Properties {
         public static string Options_Misc_Button_EnableAllWarnings {
             get {
                 return ResourceManager.GetString("Options_Misc_Button_EnableAllWarnings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deserialize types in resources (unsafe).
-        /// </summary>
-        public static string Options_Misc_Deserialize {
-            get {
-                return ResourceManager.GetString("Options_Misc_Deserialize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Any assembly could get loaded and executed with data from the resources..
-        /// </summary>
-        public static string Options_Misc_Deserialize_ToolTip {
-            get {
-                return ResourceManager.GetString("Options_Misc_Deserialize_ToolTip", resourceCulture);
             }
         }
         
@@ -5291,42 +5687,6 @@ namespace dnSpy.Properties {
         public static string UseHorizontalTabGroupsCommand {
             get {
                 return ResourceManager.GetString("UseHorizontalTabGroupsCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hex Editor.
-        /// </summary>
-        public static string UseNewRenderer_HexEditor {
-            get {
-                return ResourceManager.GetString("UseNewRenderer_HexEditor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Text Editor.
-        /// </summary>
-        public static string UseNewRenderer_TextEditor {
-            get {
-                return ResourceManager.GetString("UseNewRenderer_TextEditor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use the new text formatter.
-        /// </summary>
-        public static string UseNewRendererHeader {
-            get {
-                return ResourceManager.GetString("UseNewRendererHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The new text formatter is faster but doesn&apos;t support word wrap or all unicode characters..
-        /// </summary>
-        public static string UseNewRendererInfo {
-            get {
-                return ResourceManager.GetString("UseNewRendererInfo", resourceCulture);
             }
         }
         

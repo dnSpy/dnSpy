@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,12 +23,13 @@ using System.Globalization;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Roslyn.Properties;
 
 namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 	struct CSharpValueFormatter {
-		readonly ITextColorWriter output;
+		readonly IDbgTextWriter output;
 		readonly DbgEvaluationInfo evalInfo;
 		readonly LanguageFormatter languageFormatter;
 		readonly ValueFormatterOptions options;
@@ -47,7 +48,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool NoDebuggerDisplay => (options & ValueFormatterOptions.NoDebuggerDisplay) != 0;
 
-		public CSharpValueFormatter(ITextColorWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo) {
+		public CSharpValueFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
@@ -56,9 +57,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			recursionCounter = 0;
 		}
 
-		void OutputWrite(string s, object color) => output.Write(color, s);
+		void OutputWrite(string s, DbgTextColor color) => output.Write(color, s);
 
-		void WriteSpace() => OutputWrite(" ", BoxedTextColor.Text);
+		void WriteSpace() => OutputWrite(" ", DbgTextColor.Text);
 
 		public void Format(DbgDotNetValue value) {
 			if (value == null)
@@ -66,7 +67,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			try {
 				if (recursionCounter++ >= MAX_RECURSION) {
-					OutputWrite("???", BoxedTextColor.Error);
+					OutputWrite("???", DbgTextColor.Error);
 					return;
 				}
 
@@ -76,7 +77,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				int tupleArity = TypeFormatterUtils.GetTupleArity(type);
 				if (tupleArity > 0 && TryFormatTuple(value, tupleArity))
 					return;
-				if (KeyValuePairTypeUtils.IsKeyValuePair(type) && TryFormatKeyValuePair(value))
+				if (KeyValuePairTypeUtils.IsKeyValuePair(type) && TryFormatKeyValuePair(value, KeyValuePairTypeUtils.TryGetFields(value.Type)))
+					return;
+				if (DictionaryEntryTypeUtils.IsDictionaryEntry(type) && TryFormatKeyValuePair(value, DictionaryEntryTypeUtils.TryGetFields(value.Type)))
 					return;
 				if (TryFormatWithDebuggerAttributes(value))
 					return;
@@ -90,25 +93,25 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		}
 
 		void FormatTypeName(DbgDotNetValue value) {
-			OutputWrite(TypeNameOpenParen, BoxedTextColor.Error);
+			OutputWrite(TypeNameOpenParen, DbgTextColor.Error);
 			new CSharpTypeFormatter(output, options.ToTypeFormatterOptions(showArrayValueSizes: true), cultureInfo).Format(value.Type, value);
-			OutputWrite(TypeNameCloseParen, BoxedTextColor.Error);
+			OutputWrite(TypeNameCloseParen, DbgTextColor.Error);
 		}
 
 		bool TryFormatTuple(DbgDotNetValue value, int tupleArity) {
 			Debug.Assert(TypeFormatterUtils.GetTupleArity(value.Type) == tupleArity && tupleArity > 0);
-			OutputWrite(TupleTypeOpenParen, BoxedTextColor.Punctuation);
+			OutputWrite(TupleTypeOpenParen, DbgTextColor.Punctuation);
 
 			var values = ObjectCache.AllocDotNetValueList();
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			int index = 0;
 			foreach (var info in TupleTypeUtils.GetTupleFields(value.Type, tupleArity)) {
 				if (index++ > 0) {
-					OutputWrite(",", BoxedTextColor.Punctuation);
+					OutputWrite(",", DbgTextColor.Punctuation);
 					WriteSpace();
 				}
 				if (info.tupleIndex < 0) {
-					OutputWrite("???", BoxedTextColor.Error);
+					OutputWrite("???", DbgTextColor.Error);
 					break;
 				}
 				else {
@@ -127,7 +130,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 						}
 						valueResult = default;
 						if (objValue == null) {
-							OutputWrite("???", BoxedTextColor.Error);
+							OutputWrite("???", DbgTextColor.Error);
 							break;
 						}
 						Format(objValue);
@@ -142,12 +145,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			}
 			ObjectCache.Free(ref values);
 
-			OutputWrite(TupleTypeCloseParen, BoxedTextColor.Punctuation);
+			OutputWrite(TupleTypeCloseParen, DbgTextColor.Punctuation);
 			return true;
 		}
 
-		bool TryFormatKeyValuePair(DbgDotNetValue value) {
-			var info = KeyValuePairTypeUtils.TryGetFields(value.Type);
+		bool TryFormatKeyValuePair(DbgDotNetValue value, (DmdFieldInfo keyField, DmdFieldInfo valueField) info) {
 			if ((object)info.keyField == null)
 				return false;
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
@@ -160,12 +162,12 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				if (valueResult.ErrorMessage != null || valueResult.ValueIsException)
 					return false;
 
-				OutputWrite(KeyValuePairTypeOpenParen, BoxedTextColor.Punctuation);
+				OutputWrite(KeyValuePairTypeOpenParen, DbgTextColor.Punctuation);
 				Format(keyResult.Value);
-				OutputWrite(",", BoxedTextColor.Punctuation);
+				OutputWrite(",", DbgTextColor.Punctuation);
 				WriteSpace();
 				Format(valueResult.Value);
-				OutputWrite(KeyValuePairTypeCloseParen, BoxedTextColor.Punctuation);
+				OutputWrite(KeyValuePairTypeCloseParen, DbgTextColor.Punctuation);
 				return true;
 			}
 			finally {
@@ -186,7 +188,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			var s = new ToStringFormatter(evalInfo).GetToStringValue(value);
 			if (s == null)
 				return false;
-			OutputWrite(TypeNameOpenParen + s + TypeNameCloseParen, BoxedTextColor.ToStringEval);
+			OutputWrite(TypeNameOpenParen + s + TypeNameCloseParen, DbgTextColor.ToStringEval);
 			return true;
 		}
 
@@ -194,7 +196,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			var rawValue = value.GetRawValue();
 			if (rawValue.ValueType == DbgSimpleValueType.Void) {
 				Debug.Assert(value.Type == value.Type.AppDomain.System_Void);
-				OutputWrite(dnSpy_Roslyn_Resources.DebuggerExpressionHasNoValue, BoxedTextColor.Text);
+				OutputWrite(dnSpy_Roslyn_Resources.DebuggerExpressionHasNoValue, DbgTextColor.Text);
 				return true;
 			}
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,14 +51,14 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class BlockStructureService : IBlockStructureService {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.BlockStructure)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Text)]
 		[Order(After = PredefinedAdornmentLayers.TextMarker)]
 		static AdornmentLayerDefinition adornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
 		readonly IEditorFormatMapService editorFormatMapService;
@@ -342,7 +342,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		LineElement FindLineElement(in BlockStructureData info) {
+		LineElement FindLineElement(BlockStructureData info) {
 			foreach (var lineElement in lineElements) {
 				if (BlockStructureDataComparer.Instance.Equals(lineElement.BlockStructureData, info))
 					return lineElement;
@@ -422,7 +422,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		double GetLineXPosition(in BlockStructureData data) => xPosCache.GetXPosition(data);
+		double GetLineXPosition(BlockStructureData data) => xPosCache.GetXPosition(data);
 		void ClearXPosCache() => xPosCache.Clear();
 		readonly XPosCache xPosCache;
 
@@ -437,7 +437,7 @@ namespace dnSpy.Text.Editor {
 				toXPosDict = new Dictionary<int, double>();
 			}
 
-			public double GetXPosition(in BlockStructureData data) {
+			public double GetXPosition(BlockStructureData data) {
 				TryUpdateState();
 				var topPoint = data.Top.Start.TranslateTo(toXPosDictSnapshot, PointTrackingMode.Negative);
 				if (toXPosDict.TryGetValue(topPoint.Position, out double x))
@@ -524,7 +524,7 @@ done:
 			double bottom;
 			Pen pen;
 
-			public LineElement(in BlockStructureData info) => BlockStructureData = info;
+			public LineElement(BlockStructureData info) => BlockStructureData = info;
 
 			protected override void OnRender(DrawingContext drawingContext) {
 				base.OnRender(drawingContext);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,12 +21,12 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Output {
 	static class DefaultOutputOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string ShowTimestampsName = "Output/ShowTimestamps";
 		public static readonly EditorOptionKey<bool> ShowTimestampsId = new EditorOptionKey<bool>(ShowTimestampsName);
 		public const string TimestampDateTimeFormatName = "Output/TimestampDateTimeFormat";
 		public const string DefaultTimestampDateTimeFormat = "HH:mm:ss.fff";
 		public static readonly EditorOptionKey<string> TimestampDateTimeFormatId = new EditorOptionKey<string>(TimestampDateTimeFormatName);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

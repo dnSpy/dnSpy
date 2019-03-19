@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2018 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -95,6 +95,7 @@
             mvvm:InitDataTemplateAP.Initialize="True"
             mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -105,7 +106,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_BreakWhenThrown}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ExceptionsWindowColumnIds.BreakWhenThrown}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_BreakWhenThrown}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -119,14 +120,14 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Category}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ExceptionsWindowColumnIds.Category}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Category}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding CategoryObject, Mode=OneWay, Converter={StaticResource exceptionColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Conditions}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ExceptionsWindowColumnIds.Conditions}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Conditions}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ConditionsObject, Mode=OneWay, Converter={StaticResource exceptionColumnConverter}}" />

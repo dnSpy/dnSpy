@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,16 +18,16 @@
 */
 
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.Text;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class DbgValueNodeFormatParameters : IDbgValueNodeFormatParameters {
-		ITextColorWriter IDbgValueNodeFormatParameters.NameOutput => nameOutput;
-		ITextColorWriter IDbgValueNodeFormatParameters.ValueOutput => valueOutput;
-		ITextColorWriter IDbgValueNodeFormatParameters.ExpectedTypeOutput => expectedTypeOutput;
-		ITextColorWriter IDbgValueNodeFormatParameters.ActualTypeOutput => actualTypeOutput;
-		ITextColorWriter nameOutput, valueOutput, expectedTypeOutput, actualTypeOutput;
+		IDbgTextWriter IDbgValueNodeFormatParameters.NameOutput => nameOutput;
+		IDbgTextWriter IDbgValueNodeFormatParameters.ValueOutput => valueOutput;
+		IDbgTextWriter IDbgValueNodeFormatParameters.ExpectedTypeOutput => expectedTypeOutput;
+		IDbgTextWriter IDbgValueNodeFormatParameters.ActualTypeOutput => actualTypeOutput;
+		IDbgTextWriter nameOutput, valueOutput, expectedTypeOutput, actualTypeOutput;
 
 		DbgValueFormatterTypeOptions IDbgValueNodeFormatParameters.ExpectedTypeFormatterOptions => ValueFormatterTypeOptions;
 		DbgValueFormatterTypeOptions IDbgValueNodeFormatParameters.ActualTypeFormatterOptions => ValueFormatterTypeOptions;

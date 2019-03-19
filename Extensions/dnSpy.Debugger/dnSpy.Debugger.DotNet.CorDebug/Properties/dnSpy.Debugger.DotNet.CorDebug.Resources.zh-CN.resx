@@ -195,10 +195,10 @@
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>请改用 dnSpy-x86.exe 调试 32 位应用程序。</value>
+    <value>请改用32位dnspy 来调试32位应用程序。</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>请改用 dnSpy.exe 调试 64 位应用程序。</value>
+    <value>请改用64位dnspy 来调试64位应用程序。</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt; 没有异常消息 &gt;"</value>
@@ -273,5 +273,8 @@
 
 HR: 0x{0:X8}
 错误：0x{1:X8}</value>
+  </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>使用host可执行文件</value>
   </data>
 </root>

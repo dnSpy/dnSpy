@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Text {
 	readonly struct ClassifiedTextCollection : IEquatable<ClassifiedTextCollection> {
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Text {
 
 		public ClassifiedTextCollection(ClassifiedText[] result) => Result = result ?? throw new ArgumentNullException(nameof(result));
 
-		public void WriteTo(ITextColorWriter output) {
+		public void WriteTo(IDbgTextWriter output) {
 			foreach (var info in Result)
 				output.Write(info.Color, info.Text);
 		}
@@ -51,10 +51,10 @@ namespace dnSpy.Debugger.Text {
 	}
 
 	readonly struct ClassifiedText : IEquatable<ClassifiedText> {
-		public object Color { get; }
+		public DbgTextColor Color { get; }
 		public string Text { get; }
 
-		public ClassifiedText(object color, string text) {
+		public ClassifiedText(DbgTextColor color, string text) {
 			Color = color;
 			Text = text;
 		}

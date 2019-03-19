@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -62,9 +62,14 @@ namespace dnSpy.Contracts.Debugger {
 		public int PointerSize => Bitness / 8;
 
 		/// <summary>
-		/// Machine
+		/// Gets the architecture
 		/// </summary>
-		public abstract DbgMachine Machine { get; }
+		public abstract DbgArchitecture Architecture { get; }
+
+		/// <summary>
+		/// Gets the operating system
+		/// </summary>
+		public abstract DbgOperatingSystem OperatingSystem { get; }
 
 		/// <summary>
 		/// Gets the process state
@@ -117,7 +122,6 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="destination">Destination address</param>
 		/// <param name="size">Number of bytes to read</param>
-		/// <returns></returns>
 		public unsafe abstract void ReadMemory(ulong address, void* destination, int size);
 
 		/// <summary>
@@ -127,8 +131,18 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="destination">Destination buffer</param>
 		/// <param name="destinationIndex">Destination index</param>
 		/// <param name="size">Number of bytes to read</param>
-		/// <returns></returns>
 		public abstract void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size);
+
+		/// <summary>
+		/// Reads memory. Unreadable memory is returned as 0s.
+		/// </summary>
+		/// <param name="address">Address in the debugged process</param>
+		/// <param name="destination">Destination buffer</param>
+		public void ReadMemory(ulong address, byte[] destination) {
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+			ReadMemory(address, destination, 0, destination.Length);
+		}
 
 		/// <summary>
 		/// Reads memory. Unreadable memory is returned as 0s.
@@ -152,7 +166,6 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="source">Source address</param>
 		/// <param name="size">Number of bytes to write</param>
-		/// <returns></returns>
 		public unsafe abstract void WriteMemory(ulong address, void* source, int size);
 
 		/// <summary>
@@ -162,8 +175,18 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="source">Source buffer</param>
 		/// <param name="sourceIndex">Source index</param>
 		/// <param name="size">Number of bytes to write</param>
-		/// <returns></returns>
 		public abstract void WriteMemory(ulong address, byte[] source, int sourceIndex, int size);
+
+		/// <summary>
+		/// Writes memory.
+		/// </summary>
+		/// <param name="address">Address in the debugged process</param>
+		/// <param name="source">Source buffer</param>
+		public void WriteMemory(ulong address, byte[] source) {
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			WriteMemory(address, source, 0, source.Length);
+		}
 
 		/// <summary>
 		/// true if the process gets detached when debugging stops (<see cref="StopDebugging"/>),
@@ -203,9 +226,9 @@ namespace dnSpy.Contracts.Debugger {
 	}
 
 	/// <summary>
-	/// Machine
+	/// Architecture
 	/// </summary>
-	public enum DbgMachine {
+	public enum DbgArchitecture {
 		/// <summary>
 		/// x86, 32-bit
 		/// </summary>
@@ -215,6 +238,41 @@ namespace dnSpy.Contracts.Debugger {
 		/// x64, 64-bit
 		/// </summary>
 		X64,
+
+		/// <summary>
+		/// 32-bit ARM
+		/// </summary>
+		Arm,
+
+		/// <summary>
+		/// 64-bit ARM
+		/// </summary>
+		Arm64,
+	}
+
+	/// <summary>
+	/// Operating system
+	/// </summary>
+	public enum DbgOperatingSystem {
+		/// <summary>
+		/// Windows OS
+		/// </summary>
+		Windows,
+
+		/// <summary>
+		/// OSX/MacOS OS
+		/// </summary>
+		MacOS,
+
+		/// <summary>
+		/// Linux OS
+		/// </summary>
+		Linux,
+
+		/// <summary>
+		/// FreeBSD OS
+		/// </summary>
+		FreeBSD,
 	}
 
 	/// <summary>

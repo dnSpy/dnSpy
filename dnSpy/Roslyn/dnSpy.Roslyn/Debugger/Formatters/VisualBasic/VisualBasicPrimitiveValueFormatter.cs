@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,12 +22,12 @@ using System.Diagnostics;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 	readonly struct VisualBasicPrimitiveValueFormatter {
-		readonly ITextColorWriter output;
+		readonly IDbgTextWriter output;
 		readonly ValueFormatterOptions options;
 		readonly CultureInfo cultureInfo;
 
@@ -48,15 +48,15 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
 		bool ShowTokens => (options & ValueFormatterOptions.Tokens) != 0;
 
-		public VisualBasicPrimitiveValueFormatter(ITextColorWriter output, ValueFormatterOptions options, CultureInfo cultureInfo) {
+		public VisualBasicPrimitiveValueFormatter(IDbgTextWriter output, ValueFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output;
 			this.options = options;
 			this.cultureInfo = cultureInfo;
 		}
 
-		void OutputWrite(string s, object color) => output.Write(color, s);
+		void OutputWrite(string s, DbgTextColor color) => output.Write(color, s);
 
-		void WriteSpace() => OutputWrite(" ", BoxedTextColor.Text);
+		void WriteSpace() => OutputWrite(" ", DbgTextColor.Text);
 
 		void FormatType(DmdType type) {
 			var typeOptions = options.ToTypeFormatterOptions(showArrayValueSizes: false);
@@ -71,15 +71,15 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		public void WriteTokenComment(int metadataToken) {
 			if (!ShowTokens)
 				return;
-			OutputWrite(CommentBegin + FormatHexInt32(metadataToken) + CommentEnd, BoxedTextColor.Comment);
+			OutputWrite(CommentBegin + FormatHexInt32(metadataToken) + CommentEnd, DbgTextColor.Comment);
 		}
 
-		public bool TryFormat(DmdType type, in DbgDotNetRawValue rawValue) {
+		public bool TryFormat(DmdType type, DbgDotNetRawValue rawValue) {
 			if (!rawValue.HasRawValue)
 				return false;
 
 			if (rawValue.RawValue == null) {
-				OutputWrite(Keyword_null, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_null, DbgTextColor.Keyword);
 				return true;
 			}
 
@@ -220,28 +220,28 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			if (Edit)
 				return;
 			WriteSpace();
-			OutputWrite(TypeNameOpenParen, BoxedTextColor.Error);
+			OutputWrite(TypeNameOpenParen, DbgTextColor.Error);
 			WriteNumber(ToFormattedInteger(type.GetEnumUnderlyingType(), enumValue));
-			OutputWrite(TypeNameCloseParen, BoxedTextColor.Error);
+			OutputWrite(TypeNameCloseParen, DbgTextColor.Error);
 		}
 
 		void WriteEnumField(DmdFieldInfo field) {
 			if (Edit) {
 				FormatType(field.ReflectedType);
-				OutputWrite(".", BoxedTextColor.Operator);
+				OutputWrite(".", DbgTextColor.Operator);
 			}
-			OutputWrite(VisualBasicTypeFormatter.GetFormattedIdentifier(field.Name), BoxedTextColor.EnumField);
+			OutputWrite(VisualBasicTypeFormatter.GetFormattedIdentifier(field.Name), DbgTextColor.EnumField);
 		}
 
 		void WriteEnumInteger(DmdType type, ulong value) {
 			if (Edit) {
-				OutputWrite("CType", BoxedTextColor.Keyword);
-				OutputWrite("(", BoxedTextColor.Punctuation);
+				OutputWrite("CType", DbgTextColor.Keyword);
+				OutputWrite("(", DbgTextColor.Punctuation);
 				WriteNumber(ToFormattedInteger(type, value));
-				OutputWrite(",", BoxedTextColor.Punctuation);
+				OutputWrite(",", DbgTextColor.Punctuation);
 				WriteSpace();
 				FormatType(type);
-				OutputWrite(")", BoxedTextColor.Punctuation);
+				OutputWrite(")", DbgTextColor.Punctuation);
 			}
 			else
 				WriteNumber(ToFormattedInteger(type, value));
@@ -249,7 +249,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 
 		void WriteEnumSeperator() {
 			WriteSpace();
-			OutputWrite(EnumFlagsOrSeparatorKeyword, BoxedTextColor.Keyword);
+			OutputWrite(EnumFlagsOrSeparatorKeyword, DbgTextColor.Keyword);
 			WriteSpace();
 		}
 
@@ -279,9 +279,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 
 		public void FormatBoolean(bool value) {
 			if (value)
-				OutputWrite(Keyword_true, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_true, DbgTextColor.Keyword);
 			else
-				OutputWrite(Keyword_false, BoxedTextColor.Keyword);
+				OutputWrite(Keyword_false, DbgTextColor.Keyword);
 		}
 
 		public void FormatChar(char value) {
@@ -291,38 +291,38 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			}
 
 			switch (value) {
-			case '\r':	OutputWrite("vbCr", BoxedTextColor.LiteralField); break;
-			case '\n':	OutputWrite("vbLf", BoxedTextColor.LiteralField); break;
-			case '\b':	OutputWrite("vbBack", BoxedTextColor.LiteralField); break;
-			case '\f':	OutputWrite("vbFormFeed", BoxedTextColor.LiteralField); break;
-			case '\t':	OutputWrite("vbTab", BoxedTextColor.LiteralField); break;
-			case '\v':	OutputWrite("vbVerticalTab", BoxedTextColor.LiteralField); break;
-			case '\0':	OutputWrite("vbNullChar", BoxedTextColor.LiteralField); break;
-			case '"':	OutputWrite("\"\"\"\"c", BoxedTextColor.Char); break;
+			case '\r':	OutputWrite("vbCr", DbgTextColor.LiteralField); break;
+			case '\n':	OutputWrite("vbLf", DbgTextColor.LiteralField); break;
+			case '\b':	OutputWrite("vbBack", DbgTextColor.LiteralField); break;
+			case '\f':	OutputWrite("vbFormFeed", DbgTextColor.LiteralField); break;
+			case '\t':	OutputWrite("vbTab", DbgTextColor.LiteralField); break;
+			case '\v':	OutputWrite("vbVerticalTab", DbgTextColor.LiteralField); break;
+			case '\0':	OutputWrite("vbNullChar", DbgTextColor.LiteralField); break;
+			case '"':	OutputWrite("\"\"\"\"c", DbgTextColor.Char); break;
 			default:
 				if (char.IsControl(value))
 					WriteCharW(value);
 				else
-					OutputWrite("\"" + value.ToString(cultureInfo) + "\"c", BoxedTextColor.Char);
+					OutputWrite("\"" + value.ToString(cultureInfo) + "\"c", DbgTextColor.Char);
 				break;
 			}
 		}
 
 		void WriteCharW(char value) {
-			OutputWrite("ChrW", BoxedTextColor.StaticMethod);
-			OutputWrite("(", BoxedTextColor.Punctuation);
+			OutputWrite("ChrW", DbgTextColor.StaticMethod);
+			OutputWrite("(", DbgTextColor.Punctuation);
 			FormatUInt16(value);
-			OutputWrite(")", BoxedTextColor.Punctuation);
+			OutputWrite(")", DbgTextColor.Punctuation);
 		}
 
 		public void FormatString(string value) {
 			if (NoStringQuotes) {
-				OutputWrite(value, BoxedTextColor.DebuggerNoStringQuotesEval);
+				OutputWrite(value, DbgTextColor.DebuggerNoStringQuotesEval);
 				return;
 			}
 
 			if (value == string.Empty) {
-				OutputWrite("\"\"", BoxedTextColor.String);
+				OutputWrite("\"\"", DbgTextColor.String);
 				return;
 			}
 
@@ -333,7 +333,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				if (s.Length != 0) {
 					if (needSep)
 						WriteStringConcatOperator();
-					OutputWrite("\"" + s + "\"", BoxedTextColor.String);
+					OutputWrite("\"" + s + "\"", DbgTextColor.String);
 					needSep = true;
 				}
 				if (index < value.Length) {
@@ -386,14 +386,14 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 
 		void WriteStringConcatOperator() {
 			WriteSpace();
-			OutputWrite("&", BoxedTextColor.Operator);
+			OutputWrite("&", DbgTextColor.Operator);
 			WriteSpace();
 		}
 
 		void WriteSpecialConstantString(string s, ref bool needSep) {
 			if (needSep)
 				WriteStringConcatOperator();
-			OutputWrite(s, BoxedTextColor.LiteralField);
+			OutputWrite(s, DbgTextColor.LiteralField);
 			needSep = true;
 		}
 
@@ -437,7 +437,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		string ToFormattedDecimalNumber(string number) => ToFormattedNumber(string.Empty, number, ValueFormatterUtils.DigitGroupSizeDecimal);
 		string ToFormattedHexNumber(string number) => ToFormattedNumber(HexPrefix, number, ValueFormatterUtils.DigitGroupSizeHex);
 		string ToFormattedNumber(string prefix, string number, int digitGroupSize) => ValueFormatterUtils.ToFormattedNumber(DigitSeparators, prefix, number, digitGroupSize);
-		void WriteNumber(string number) => OutputWrite(number, BoxedTextColor.Number);
+		void WriteNumber(string number) => OutputWrite(number, DbgTextColor.Number);
 
 		public string ToFormattedSByte(sbyte value) {
 			if (Decimal)
@@ -505,65 +505,65 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		public void FormatSingle(float value, DmdAppDomain appDomain) {
 			if (float.IsNaN(value)) {
 				if (!Edit)
-					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NaN, DbgTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
-					OutputWrite(".", BoxedTextColor.Operator);
-					OutputWrite("NaN", BoxedTextColor.LiteralField);
+					OutputWrite(".", DbgTextColor.Operator);
+					OutputWrite("NaN", DbgTextColor.LiteralField);
 				}
 			}
 			else if (float.IsNegativeInfinity(value)) {
 				if (!Edit)
-					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NegativeInfinity, DbgTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
-					OutputWrite(".", BoxedTextColor.Operator);
-					OutputWrite("NegativeInfinity", BoxedTextColor.LiteralField);
+					OutputWrite(".", DbgTextColor.Operator);
+					OutputWrite("NegativeInfinity", DbgTextColor.LiteralField);
 				}
 			}
 			else if (float.IsPositiveInfinity(value)) {
 				if (!Edit)
-					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.PositiveInfinity, DbgTextColor.Number);
 				else {
 					FormatType(appDomain.System_Single);
-					OutputWrite(".", BoxedTextColor.Operator);
-					OutputWrite("PositiveInfinity", BoxedTextColor.LiteralField);
+					OutputWrite(".", DbgTextColor.Operator);
+					OutputWrite("PositiveInfinity", DbgTextColor.LiteralField);
 				}
 			}
 			else
-				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
+				OutputWrite(value.ToString(cultureInfo), DbgTextColor.Number);
 		}
 
 		public void FormatDouble(double value, DmdAppDomain appDomain) {
 			if (double.IsNaN(value)) {
 				if (!Edit)
-					OutputWrite(ValueFormatterUtils.NaN, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NaN, DbgTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
-					OutputWrite(".", BoxedTextColor.Operator);
-					OutputWrite("NaN", BoxedTextColor.LiteralField);
+					OutputWrite(".", DbgTextColor.Operator);
+					OutputWrite("NaN", DbgTextColor.LiteralField);
 				}
 			}
 			else if (double.IsNegativeInfinity(value)) {
 				if (!Edit)
-					OutputWrite(ValueFormatterUtils.NegativeInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.NegativeInfinity, DbgTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
-					OutputWrite(".", BoxedTextColor.Operator);
-					OutputWrite("NegativeInfinity", BoxedTextColor.LiteralField);
+					OutputWrite(".", DbgTextColor.Operator);
+					OutputWrite("NegativeInfinity", DbgTextColor.LiteralField);
 				}
 			}
 			else if (double.IsPositiveInfinity(value)) {
 				if (!Edit)
-					OutputWrite(ValueFormatterUtils.PositiveInfinity, BoxedTextColor.Number);
+					OutputWrite(ValueFormatterUtils.PositiveInfinity, DbgTextColor.Number);
 				else {
 					FormatType(appDomain.System_Double);
-					OutputWrite(".", BoxedTextColor.Operator);
-					OutputWrite("PositiveInfinity", BoxedTextColor.LiteralField);
+					OutputWrite(".", DbgTextColor.Operator);
+					OutputWrite("PositiveInfinity", DbgTextColor.LiteralField);
 				}
 			}
 			else
-				OutputWrite(value.ToString(cultureInfo), BoxedTextColor.Number);
+				OutputWrite(value.ToString(cultureInfo), DbgTextColor.Number);
 		}
 
 		string ToFormattedDecimal(decimal value) {
@@ -599,7 +599,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		public void FormatDateTime(DateTime value) {
 			// Roslyn EE always uses invariant culture
 			var s = value.ToString("#M/d/yyyy hh:mm:ss tt#", CultureInfo.InvariantCulture);
-			OutputWrite(s, BoxedTextColor.Number);
+			OutputWrite(s, DbgTextColor.Number);
 		}
 	}
 }

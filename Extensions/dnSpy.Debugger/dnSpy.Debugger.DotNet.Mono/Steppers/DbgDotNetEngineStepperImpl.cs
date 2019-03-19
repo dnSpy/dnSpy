@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -147,7 +147,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				return true;
 			});
 			session.MonoStepper = stepReq;
-			//TODO: StepOver fails on mono unless there's a portable PDB file available
 			stepReq.Depth = isStepInto ? StepDepth.Into : StepDepth.Over;
 			stepReq.Size = StepSize.Min;
 			stepReq.Filter = GetStepFilterFlags();

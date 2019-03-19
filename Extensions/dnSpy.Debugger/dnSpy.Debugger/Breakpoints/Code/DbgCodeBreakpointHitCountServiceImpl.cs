@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -115,15 +115,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			int hitCount;
+			bool start;
 			lock (lockObj) {
 				if (!bpToHitCount.TryGetValue(breakpoint, out hitCount))
 					hitCount = 0;
 				hitCount++;
 				bpToHitCount[breakpoint] = hitCount;
-			}
 
-			bool start;
-			lock (lockObj) {
 				start = dbgManager.IsRunning == false || pendingHitCountChanged.Count == 0;
 				pendingHitCountChanged.Add(breakpoint);
 				if (start) {

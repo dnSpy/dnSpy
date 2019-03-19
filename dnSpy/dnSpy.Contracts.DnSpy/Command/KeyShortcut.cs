@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public readonly struct KeyShortcut : IEquatable<KeyShortcut> {
 		public KeyInput KeyInput1 { get; }
 		public KeyInput KeyInput2 { get; }
@@ -54,5 +54,5 @@ namespace dnSpy.Contracts.Command {
 		public override int GetHashCode() => KeyInput1.GetHashCode() ^ KeyInput2.GetHashCode();
 		public override string ToString() => HasTwoKeyInputs ? $"{KeyInput1}, {KeyInput2}" : KeyInput1.ToString();
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

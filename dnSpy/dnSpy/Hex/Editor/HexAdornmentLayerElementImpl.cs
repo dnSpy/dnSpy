@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using dnSpy.Contracts.Hex.Editor;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Hex.Editor {
-	public sealed class HexAdornmentLayerElementImpl : HexAdornmentLayerElement {
+	sealed class HexAdornmentLayerElementImpl : HexAdornmentLayerElement {
 		public override UIElement Adornment { get; }
 		public override VSTE.AdornmentPositioningBehavior Behavior { get; }
 		public override VSTE.AdornmentRemovedCallback RemovedCallback { get; }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="imageReference">Image reference</param>
 		/// <param name="zIndex">Z-index, eg. <see cref="HexMarkerServiceZIndexes.CurrentValue"/></param>
-		public HexImageReferenceTag(in ImageReference imageReference, int zIndex) {
+		public HexImageReferenceTag(ImageReference imageReference, int zIndex) {
 			ImageReference = imageReference;
 			ZIndex = zIndex;
 		}

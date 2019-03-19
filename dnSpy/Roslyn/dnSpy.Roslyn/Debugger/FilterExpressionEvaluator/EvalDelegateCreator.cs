@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -71,7 +71,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			this.evalMethodName = evalMethodName;
 		}
 
-		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(ulong), typeof(string), typeof(ulong), typeof(string) };
+		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(int), typeof(string), typeof(ulong), typeof(string) };
 		public EvalDelegate CreateDelegate() {
 			var type = module.Find(evalClassName, isReflectionName: true);
 			Debug.Assert(type != null);
@@ -116,8 +116,6 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 					var lb = ilg.DeclareLocal(Import(local.Type), local.Type.IsPinned);
 					if (local.Index != lb.LocalIndex)
 						return null;
-					if (local.Name != null)
-						lb.SetLocalSymInfo(local.Name);
 					localsDict.Add(local, lb);
 				}
 			}

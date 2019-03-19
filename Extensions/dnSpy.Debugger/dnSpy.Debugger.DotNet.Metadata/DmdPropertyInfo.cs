@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,11 +45,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract DmdPropertyAttributes Attributes { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsSpecialName => (Attributes & DmdPropertyAttributes.SpecialName) != 0;
 		public bool IsRTSpecialName => (Attributes & DmdPropertyAttributes.RTSpecialName) != 0;
 		public bool HasDefault => (Attributes & DmdPropertyAttributes.HasDefault) != 0;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// true if the property can be read
@@ -253,10 +253,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			method.Invoke(context, obj, invokeAttr, parameters);
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdPropertyInfo left, DmdPropertyInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 		public static bool operator !=(DmdPropertyInfo left, DmdPropertyInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()

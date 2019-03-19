@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,8 +33,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 			var processes = Process.GetProcessesByName("Unity");
 			try {
 				foreach (var p in processes) {
+					if (!ProcessUtils.IsValidProcess(context, p.Id, p))
+						continue;
 					context.CancellationToken.ThrowIfCancellationRequested();
-					// Don't shoot the messenger
 					ushort port = (ushort)(56000 + p.Id % 1000);
 					const string ipAddress = "127.0.0.1";
 					yield return new UnityAttachProgramOptionsImpl(p.Id, ipAddress, port, $"Unity ({dnSpy_Debugger_DotNet_Mono_Resources.UnityEditor})");

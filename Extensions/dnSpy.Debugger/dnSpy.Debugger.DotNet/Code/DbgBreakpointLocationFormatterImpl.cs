@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,6 +22,8 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 
@@ -46,46 +48,46 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return "0x";
 		}
 
-		void WriteILOffset(ITextColorWriter output, uint offset) {
+		void WriteILOffset(IDbgTextWriter output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X4"));
+				output.Write(DbgTextColor.Number, GetHexPrefix() + offset.ToString("X4"));
 			else
-				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X8"));
+				output.Write(DbgTextColor.Number, GetHexPrefix() + offset.ToString("X8"));
 		}
 
-		void WriteToken(ITextColorWriter output, uint token) =>
-			output.Write(BoxedTextColor.Number, GetHexPrefix() + token.ToString("X8"));
+		void WriteToken(IDbgTextWriter output, uint token) =>
+			output.Write(DbgTextColor.Number, GetHexPrefix() + token.ToString("X8"));
 
-		public override void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options) {
+		public override void WriteName(IDbgTextWriter output, DbgBreakpointLocationFormatterOptions options) {
 			bool printedToken = false;
 			if ((options & DbgBreakpointLocationFormatterOptions.Tokens) != 0) {
 				WriteToken(output, location.Token);
-				output.WriteSpace();
+				output.Write(DbgTextColor.Text, " ");
 				printedToken = true;
 			}
 
 			var method = weakMethod?.Target as MethodDef ?? owner.GetDefinition<MethodDef>(location.Module, location.Token);
 			if (method == null) {
 				if (printedToken)
-					output.Write(BoxedTextColor.Error, "???");
+					output.Write(DbgTextColor.Error, "???");
 				else
 					WriteToken(output, location.Token);
 			}
 			else {
 				if (weakMethod?.Target != method)
 					weakMethod = new WeakReference(method);
-				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
+				owner.MethodDecompiler.Write(new DbgTextColorWriter(output), method, GetFormatterOptions(options));
 			}
 
 			switch (location.ILOffsetMapping) {
 			case DbgILOffsetMapping.Exact:
 			case DbgILOffsetMapping.Approximate:
-				output.WriteSpace();
-				output.Write(BoxedTextColor.Operator, "+");
-				output.WriteSpace();
+				output.Write(DbgTextColor.Text, " ");
+				output.Write(DbgTextColor.Operator, "+");
+				output.Write(DbgTextColor.Text, " ");
 				if (location.ILOffsetMapping == DbgILOffsetMapping.Approximate)
-					output.Write(BoxedTextColor.Operator, "~");
+					output.Write(DbgTextColor.Operator, "~");
 				WriteILOffset(output, location.Offset);
 				break;
 
@@ -109,11 +111,11 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		static void WriteText(ITextColorWriter output, string text) {
-			output.WriteSpace();
-			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Text, text);
-			output.Write(BoxedTextColor.Punctuation, ")");
+		static void WriteText(IDbgTextWriter output, string text) {
+			output.Write(DbgTextColor.Text, " ");
+			output.Write(DbgTextColor.Punctuation, "(");
+			output.Write(DbgTextColor.Text, text);
+			output.Write(DbgTextColor.Punctuation, ")");
 		}
 
 		FormatterOptions GetFormatterOptions(DbgBreakpointLocationFormatterOptions options) {
@@ -139,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return flags;
 		}
 
-		public override void WriteModule(ITextColorWriter output) =>
-			output.WriteFilename(location.Module.ModuleName);
+		public override void WriteModule(IDbgTextWriter output) =>
+			new DbgTextColorWriter(output).WriteFilename(location.Module.ModuleName);
 	}
 }

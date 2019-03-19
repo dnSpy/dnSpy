@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,10 +37,10 @@ namespace dnSpy.MainApp {
 			// Use multicore JIT.
 			// Simple test: x86: ~18% faster startup, x64: ~12% faster startup.
 			try {
-				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
+				var profileDir = BGJitUtils.GetFolder();
 				Directory.CreateDirectory(profileDir);
 				ProfileOptimization.SetProfileRoot(profileDir);
-				ProfileOptimization.StartProfile($"startup-{IntPtr.Size * 8}.profile");
+				ProfileOptimization.StartProfile("startup.profile");
 			}
 			catch {
 			}
@@ -65,7 +65,7 @@ namespace dnSpy.MainApp {
 		static bool AskReadSettings() {
 			bool readSettings;
 			// Need to use DefaultDesktopOnly or the dlg box is shown in the background...
-			var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
+			var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, Constants.DnSpy, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
 			readSettings = res != MessageBoxResult.No;
 			return readSettings;
 		}

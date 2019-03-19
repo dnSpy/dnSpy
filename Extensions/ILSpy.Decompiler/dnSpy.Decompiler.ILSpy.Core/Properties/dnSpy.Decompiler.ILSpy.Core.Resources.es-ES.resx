@@ -124,7 +124,7 @@
     <value>Permiten a inicializadores de campo</value>
   </data>
   <data name="DecompilerSettings_AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject" xml:space="preserve">
-    <value>Siempre generar variables de excepción en bloques catch a menos que sea de tipo objeto</value>
+    <value>Genere siempre variables de excepción en bloques catch a menos que el tipo sea Object</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
     <value>Orden de descompilación</value>
@@ -142,7 +142,7 @@
     <value>Descompilar propiedades automáticamente</value>
   </data>
   <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
-    <value>Descompilar enumeradores (retornos yield)</value>
+    <value>Descompilar enumeradores (retorno yield)</value>
   </data>
   <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
     <value>Descompilar árboles de expresión</value>
@@ -163,25 +163,28 @@
     <value>Descompilar sentencias using</value>
   </data>
   <data name="DecompilerSettings_FullyQualifyAllTypes" xml:space="preserve">
-    <value>Agregar espacios de nombres a todos los tipos</value>
+    <value>Agregar espacios de nombre a todos los tipos</value>
   </data>
   <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
-    <value>Añadir un espacio de nombres a los tipos con el mismo nombre</value>
+    <value>Añadir un espacio de nombre a los tipos con el mismo nombre</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Uso de incremento y decremento de operadores</value>
   </data>
   <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
-    <value>Asignación de expresiones tales como while ((cuenta = Do())! = 0);</value>
+    <value>Asignación de expresiones tales como while ((Count = Do())! = 0);</value>
   </data>
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Número máximo de elementos de matriz para mostrar</value>
+  </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Longitud máxima de cadena</value>
   </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Añadir el modificador 'private' para miembros type</value>
   </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
-    <value>Descompilar a los inicializadores de objeto o colección</value>
+    <value>Descompilar los inicializadores de objeto o colección</value>
   </data>
   <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
     <value>Mostrar un atributo personalizado por línea</value>
@@ -199,7 +202,7 @@
     <value>Mostrar los comentarios de opcode IL</value>
   </data>
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Mostrar instrucciones bytes IL</value>
+    <value>Mostrar las instrucciones bytes IL</value>
   </data>
   <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
     <value>Mostrar números de línea y nombres de archivos si están disponibles</value>
@@ -211,13 +214,13 @@
     <value>Mostrar la documentación XML en código descompilado</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>Atributos personalizados tipo</value>
+    <value>Ordenar atributos personalizados</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>Ordenar los métodos, campos, propiedades, eventos y tipos</value>
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Coloque la directiva 'System' primero al ordenar los using</value>
+    <value>Colocar la directiva 'using System' en primer al ordenar los using´s</value>
   </data>
   <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
     <value>Agregue el modificador 'internal' a tipos</value>
@@ -226,6 +229,6 @@
     <value>Utilice nombres de variables de símbolos de depuración, si está disponible</value>
   </data>
   <data name="DecompilerSettings_UseSourceCodeOrder" xml:space="preserve">
-    <value>Miembros de la orden en el código fuente</value>
+    <value>Ordene miembros en orden de código fuente</value>
   </data>
 </root>

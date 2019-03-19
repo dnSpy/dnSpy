@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void StartBrowser(string url) {
 			try {
-				Process.Start(url);
+				Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 			}
 			catch {
 				messageBoxService.Show(dnSpy_Resources.CouldNotStartBrowser);

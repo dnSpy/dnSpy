@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,7 +65,12 @@ namespace dnSpy.Decompiler.MSBuild {
 		/// true to generate .resx files from resources. Only used if <see cref="UnpackResources"/>
 		/// is true. Default value is true.
 		/// </summary>
-		public bool CreateResX { get; set; }
+		public bool CreateResX {
+			// Option is already disabled by default, but we should use a custom ResourceReader class in ResXProjectFile,
+			// so always ignore it for now.
+			get => false;
+			set { }
+		}
 
 		/// <summary>
 		/// true to decompile baml files to xaml files. Only used if <see cref="UnpackResources"/>

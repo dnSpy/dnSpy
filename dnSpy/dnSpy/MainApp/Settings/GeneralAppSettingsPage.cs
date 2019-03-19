@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -156,8 +156,6 @@ namespace dnSpy.MainApp.Settings {
 		}
 		bool useMemoryMappedIO;
 
-		public UseNewRendererVM UseNewRendererVM { get; }
-
 		public GeneralAppSettingsPage(IThemeServiceImpl themeService, IWindowsExplorerIntegrationService windowsExplorerIntegrationService, IDocumentTabServiceSettings documentTabServiceSettings, DocumentTreeViewSettingsImpl documentTreeViewSettings, IDsDocumentServiceSettings documentServiceSettings, AppSettingsImpl appSettings, MessageBoxService messageBoxService) {
 			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
 			this.windowsExplorerIntegrationService = windowsExplorerIntegrationService ?? throw new ArgumentNullException(nameof(windowsExplorerIntegrationService));
@@ -179,7 +177,6 @@ namespace dnSpy.MainApp.Settings {
 			RestoreTabs = documentTabServiceSettings.RestoreTabs;
 			DeserializeResources = documentTreeViewSettings.DeserializeResources;
 			UseMemoryMappedIO = documentServiceSettings.UseMemoryMappedIO;
-			UseNewRendererVM = new UseNewRendererVM(appSettings);
 		}
 
 		public override string[] GetSearchStrings() => ThemesVM.Select(a => a.Name).ToArray();
@@ -200,7 +197,6 @@ namespace dnSpy.MainApp.Settings {
 					appRefreshSettings.Add(AppSettingsConstants.DISABLE_MEMORY_MAPPED_IO);
 			}
 
-			UseNewRendererVM.Save();
 		}
 	}
 
@@ -209,77 +205,5 @@ namespace dnSpy.MainApp.Settings {
 		public string Name => Theme.GetName();
 
 		public ThemeVM(ITheme theme) => Theme = theme ?? throw new ArgumentNullException(nameof(theme));
-	}
-
-	sealed class UseNewRendererVM : ViewModelBase {
-		public bool? UseNewRenderer {
-			get {
-				const int MAX = 1;
-				int count = /*(UseNewRenderer_TextEditor ? 1 : 0) +
-							(UseNewRenderer_HexEditor ? 1 : 0) +*/
-							(UseNewRenderer_DocumentTreeView ? 1 : 0);
-				return count == 0 ? false : count == MAX ? (bool?)true : null;
-			}
-			set {
-				if (value == null)
-					return;
-				/*TODO: The text formatter doesn't support the hex view and text view
-				UseNewRenderer_TextEditor = value.Value;
-				UseNewRenderer_HexEditor = value.Value;
-				*/
-				UseNewRenderer_DocumentTreeView = value.Value;
-			}
-		}
-
-		public bool UseNewRenderer_TextEditor {
-			get => useNewRenderer_TextEditor;
-			set {
-				if (useNewRenderer_TextEditor != value) {
-					useNewRenderer_TextEditor = value;
-					OnPropertyChanged(nameof(UseNewRenderer_TextEditor));
-					OnPropertyChanged(nameof(UseNewRenderer));
-				}
-			}
-		}
-		bool useNewRenderer_TextEditor = false;
-
-		public bool UseNewRenderer_HexEditor {
-			get => useNewRenderer_HexEditor;
-			set {
-				if (useNewRenderer_HexEditor != value) {
-					useNewRenderer_HexEditor = value;
-					OnPropertyChanged(nameof(UseNewRenderer_HexEditor));
-					OnPropertyChanged(nameof(UseNewRenderer));
-				}
-			}
-		}
-		bool useNewRenderer_HexEditor = false;
-
-		public bool UseNewRenderer_DocumentTreeView {
-			get => useNewRenderer_DocumentTreeView;
-			set {
-				if (useNewRenderer_DocumentTreeView != value) {
-					useNewRenderer_DocumentTreeView = value;
-					OnPropertyChanged(nameof(UseNewRenderer_DocumentTreeView));
-					OnPropertyChanged(nameof(UseNewRenderer));
-				}
-			}
-		}
-		bool useNewRenderer_DocumentTreeView = false;
-
-		readonly AppSettingsImpl appSettings;
-
-		public UseNewRendererVM(AppSettingsImpl appSettings) {
-			this.appSettings = appSettings;
-			UseNewRenderer_TextEditor = appSettings.UseNewRenderer_TextEditor;
-			UseNewRenderer_HexEditor = appSettings.UseNewRenderer_HexEditor;
-			UseNewRenderer_DocumentTreeView = appSettings.UseNewRenderer_DocumentTreeView;
-		}
-
-		public void Save() {
-			appSettings.UseNewRenderer_TextEditor = UseNewRenderer_TextEditor;
-			appSettings.UseNewRenderer_HexEditor = UseNewRenderer_HexEditor;
-			appSettings.UseNewRenderer_DocumentTreeView = UseNewRenderer_DocumentTreeView;
-		}
 	}
 }

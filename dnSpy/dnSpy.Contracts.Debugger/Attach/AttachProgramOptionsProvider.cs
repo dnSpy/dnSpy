@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace dnSpy.Contracts.Debugger.Attach {
@@ -43,9 +45,31 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		public CancellationToken CancellationToken { get; }
 
 		/// <summary>
+		/// All valid process ids or empty if any process id is valid
+		/// </summary>
+		public int[] ProcessIds { get; }
+
+		/// <summary>
+		/// Checks if it's a valid process. May be null.
+		/// </summary>
+		public Func<Process, bool> IsValidProcess { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public AttachProgramOptionsProviderContext(CancellationToken cancellationToken) => CancellationToken = cancellationToken;
+		public AttachProgramOptionsProviderContext(CancellationToken cancellationToken) : this(null, null, cancellationToken) { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="processIds">All valid process ids or null/empty if any process id is valid</param>
+		/// <param name="isValidProcess">Checks if it's a valid process. May be null.</param>
+		/// <param name="cancellationToken">Cancellation token</param>
+		public AttachProgramOptionsProviderContext(int[] processIds, Func<Process, bool> isValidProcess, CancellationToken cancellationToken) {
+			ProcessIds = processIds ?? Array.Empty<int>();
+			IsValidProcess = isValidProcess;
+			CancellationToken = cancellationToken;
+		}
 	}
 }

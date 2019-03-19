@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -41,8 +42,8 @@ namespace dnSpy.Debugger.Attach {
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories.ToArray();
 		}
 
-		public override Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, string[] providerNames, CancellationToken cancellationToken) {
-			var helper = new Helper(dbgManager, attachProgramOptionsProviderFactories, processNames, providerNames, cancellationToken);
+		public override Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, int[] processIds, string[] providerNames, CancellationToken cancellationToken) {
+			var helper = new Helper(dbgManager, attachProgramOptionsProviderFactories, processNames, processIds, providerNames, cancellationToken);
 			return helper.Task;
 		}
 
@@ -91,8 +92,9 @@ namespace dnSpy.Debugger.Attach {
 			readonly Lazy<DbgManager> dbgManager;
 			ProcessProvider processProvider;
 			Regex[] processNameRegexes;
+			int[] processIds;
 
-			public Helper(Lazy<DbgManager> dbgManager, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories, string[] processNames, string[] providerNames, CancellationToken cancellationToken) {
+			public Helper(Lazy<DbgManager> dbgManager, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories, string[] processNames, int[] processIds, string[] providerNames, CancellationToken cancellationToken) {
 				if (attachProgramOptionsProviderFactories == null)
 					throw new ArgumentNullException(nameof(attachProgramOptionsProviderFactories));
 				lockObj = new object();
@@ -101,9 +103,10 @@ namespace dnSpy.Debugger.Attach {
 				processProvider = new ProcessProvider();
 				this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 				processNameRegexes = (processNames ?? Array.Empty<string>()).Select(a => WildcardsUtils.CreateRegex(a)).ToArray();
+				this.processIds = processIds ?? Array.Empty<int>();
 				if (providerNames == null)
 					providerNames = Array.Empty<string>();
-				var providerContext = new AttachProgramOptionsProviderContext(cancellationToken);
+				var providerContext = new AttachProgramOptionsProviderContext(processIds, IsValidProcess, cancellationToken);
 				bool allFactories = providerNames.Length == 0;
 				foreach (var lz in attachProgramOptionsProviderFactories) {
 					if (providerNames.Length != 0 && Array.IndexOf(providerNames, lz.Metadata.Name) < 0)
@@ -135,13 +138,27 @@ namespace dnSpy.Debugger.Attach {
 				}
 			}
 
-			bool IsMatch(AttachableProcessInfo info) {
+			bool IsValidProcess(Process process) {
+				if (!IsValidProcessId(process.Id))
+					return false;
 				if (processNameRegexes.Length != 0) {
-					if (!processNameRegexes.Any(a => a.IsMatch(info.Name)))
+					try {
+						if (!IsValidProcessName(Path.GetFileName(process.MainModule.FileName)))
+							return false;
+					}
+					catch (InvalidOperationException) {
 						return false;
+					}
+					catch (ArgumentException) {
+						return false;
+					}
 				}
 				return true;
 			}
+
+			bool IsMatch(AttachableProcessInfo info) => IsValidProcessName(info.Name) && IsValidProcessId(info.ProcessId);
+			bool IsValidProcessName(string name) => processNameRegexes.Length == 0 || processNameRegexes.Any(a => a.IsMatch(name));
+			bool IsValidProcessId(int pid) => processIds.Length == 0 || Array.IndexOf(processIds, pid) >= 0;
 
 			void EnumeratorCompleted(ProviderInfo info, bool canceled, Exception ex) {
 				AttachableProcess[] attachableProcesses;
@@ -173,6 +190,7 @@ namespace dnSpy.Debugger.Attach {
 					processProvider.Dispose();
 					processProvider = null;
 					processNameRegexes = null;
+					processIds = null;
 				}
 			}
 			bool wasCanceled;

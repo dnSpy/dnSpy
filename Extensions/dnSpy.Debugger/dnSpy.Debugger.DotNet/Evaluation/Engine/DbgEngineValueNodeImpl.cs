@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
@@ -57,8 +57,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return GetChildCountCore(evalInfo);
 			return GetChildCount(dispatcher, evalInfo);
 
-			ulong GetChildCount(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2) =>
-				dispatcher2.InvokeRethrow(() => GetChildCountCore(evalInfo2));
+			ulong GetChildCount(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetChildCountCore(evalInfo2), out var result))
+					result = 0;
+				return result;
+			}
 		}
 
 		ulong GetChildCountCore(DbgEvaluationInfo evalInfo) =>
@@ -70,8 +73,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return GetChildrenCore(evalInfo, index, count, options);
 			return GetChildren(dispatcher, evalInfo, index, count, options);
 
-			DbgEngineValueNode[] GetChildren(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, ulong index2, int count2, DbgValueNodeEvaluationOptions options2) =>
-				dispatcher2.InvokeRethrow(() => GetChildrenCore(evalInfo2, index2, count2, options2));
+			DbgEngineValueNode[] GetChildren(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, ulong index2, int count2, DbgValueNodeEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetChildrenCore(evalInfo2, index2, count2, options2), out var result))
+					result = Array.Empty<DbgEngineValueNode>();
+				return result;
+			}
 		}
 
 		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
@@ -108,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				Format2(dispatcher, evalInfo, options, cultureInfo);
 
 			void Format2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, IDbgValueNodeFormatParameters options2, CultureInfo cultureInfo2) =>
-				dispatcher2.InvokeRethrow(() => FormatCore(evalInfo2, options2, cultureInfo2));
+				dispatcher2.TryInvokeRethrow(() => FormatCore(evalInfo2, options2, cultureInfo2));
 		}
 
 		void FormatCore(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
@@ -154,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				else if (dnValue != null)
 					formatter.FormatValue(evalInfo, options.ValueOutput, dnValue, formatterOptions, cultureInfo);
 				else if (ErrorMessage is string errorMessage)
-					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
+					options.ValueOutput.Write(DbgTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
 		}
@@ -165,8 +171,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return AssignCore(evalInfo, expression, options);
 			return Assign(dispatcher, evalInfo, expression, options);
 
-			DbgEngineValueNodeAssignmentResult Assign(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, DbgEvaluationOptions options2) =>
-				dispatcher2.InvokeRethrow(() => AssignCore(evalInfo2, expression2, options2));
+			DbgEngineValueNodeAssignmentResult Assign(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, DbgEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => AssignCore(evalInfo2, expression2, options2), out var result))
+					result = new DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags.None, DispatcherConstants.ProcessExitedError);
+				return result;
+			}
 		}
 
 		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) {

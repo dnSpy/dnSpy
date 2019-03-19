@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -120,10 +120,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool RawSignatureCompare => (options & SigComparerOptions.RawSignatureCompare) != 0;
 		bool IgnoreModifiers => (options & SigComparerOptions.IgnoreModifiers) != 0;
 		bool MscorlibIsNotSpecial => (options & SigComparerOptions.MscorlibIsNotSpecial) != 0;
-
-		public ImportSigComparer(ImportSigComparerOptions importOptions, SigComparerOptions options)
-			: this(importOptions, options, null) {
-		}
 
 		public ImportSigComparer(ImportSigComparerOptions importOptions, SigComparerOptions options, ModuleDef sourceModule) {
 			recursionCounter = new RecursionCounter();

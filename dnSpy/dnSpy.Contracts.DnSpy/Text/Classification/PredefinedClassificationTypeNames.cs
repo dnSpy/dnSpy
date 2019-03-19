@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// Predefined classification type names
 	/// </summary>
 	public static class PredefinedClassificationTypeNames {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string Character = "character";
 		public const string Comment = "comment";
 		public const string ExcludedCode = "excluded code";
@@ -37,6 +37,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string PreprocessorKeyword = "preprocessor keyword";
 		public const string String = "string";
 		public const string WhiteSpace = "whitespace";
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

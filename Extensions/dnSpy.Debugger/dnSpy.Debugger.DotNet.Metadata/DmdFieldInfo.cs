@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2018 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public abstract DmdFieldAttributes Attributes { get; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public bool IsPublic => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.Public;
 		public bool IsPrivate => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.Private;
 		public bool IsFamily => (Attributes & DmdFieldAttributes.FieldAccessMask) == DmdFieldAttributes.Family;
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool HasFieldMarshal => (Attributes & DmdFieldAttributes.HasFieldMarshal) != 0;
 		public bool HasDefault => (Attributes & DmdFieldAttributes.HasDefault) != 0;
 		public bool HasFieldRVA => (Attributes & DmdFieldAttributes.HasFieldRVA) != 0;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Gets the RVA of the data if <see cref="HasFieldRVA"/> is true
@@ -145,10 +145,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="value">New value</param>
 		public void SetValue(object context, object obj, object value) => SetValue(context, obj, value, DmdBindingFlags.Default);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdFieldInfo left, DmdFieldInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 		public static bool operator !=(DmdFieldInfo left, DmdFieldInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
