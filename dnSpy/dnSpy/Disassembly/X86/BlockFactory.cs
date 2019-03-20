@@ -23,12 +23,12 @@ using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
+namespace dnSpy.Disassembly.X86 {
 	static class FormatterOutputTextKindExtensions {
 		public const FormatterOutputTextKind UnknownSymbol = (FormatterOutputTextKind)(-1);
 	}
 
-	static class X86BlockFactory {
+	static class BlockFactory {
 		const string LABEL_PREFIX = "LBL_";
 		const string FUNC_PREFIX = "FNC_";
 
@@ -74,7 +74,7 @@ namespace dnSpy.Disassembly {
 		static string GetLabel(int index) => LABEL_PREFIX + index.ToString();
 		static string GetFunc(int index) => FUNC_PREFIX + index.ToString();
 
-		public static X86Block[] Create(int bitness, NativeCodeBlock[] blocks) {
+		public static Block[] Create(int bitness, NativeCodeBlock[] blocks) {
 			var targets = new Dictionary<ulong, TargetKind>();
 			var instrInfo = new List<(Instruction instruction, int block, ArraySegment<byte> code)>();
 			for (int blockIndex = 0; blockIndex < blocks.Length; blockIndex++) {
@@ -179,7 +179,7 @@ namespace dnSpy.Disassembly {
 
 			newBlocks.Sort((a, b) => a.Address.CompareTo(b.Address));
 
-			var x86Blocks = new X86Block[newBlocks.Count];
+			var x86Blocks = new Block[newBlocks.Count];
 			for (int i = 0; i < newBlocks.Count; i++) {
 				var block = newBlocks[i];
 
@@ -217,7 +217,7 @@ namespace dnSpy.Disassembly {
 					goto case TargetKind.Unknown;
 				}
 
-				x86Blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, label, labelKind, x86Instructions);
+				x86Blocks[i] = new Block(block.Kind, block.Address, block.Comment, label, labelKind, x86Instructions);
 			}
 			return x86Blocks;
 		}

@@ -22,14 +22,15 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
+using dnSpy.Disassembly.Viewer.X86;
 
 namespace dnSpy.Disassembly.Viewer {
-	[Export(typeof(DisassemblyContentProviderFactory))]
-	sealed class DisassemblyContentProviderFactoryImpl : DisassemblyContentProviderFactory {
-		readonly X86DisassemblyContentProviderFactoryDependencies x86Deps;
+	[Export(typeof(Contracts.Disassembly.Viewer.DisassemblyContentProviderFactory))]
+	sealed class DisassemblyContentProviderFactoryImpl : Contracts.Disassembly.Viewer.DisassemblyContentProviderFactory {
+		readonly DisassemblyContentProviderFactoryDependencies x86Deps;
 
 		[ImportingConstructor]
-		DisassemblyContentProviderFactoryImpl(X86DisassemblyContentProviderFactoryDependencies x86Deps) => this.x86Deps = x86Deps;
+		DisassemblyContentProviderFactoryImpl(DisassemblyContentProviderFactoryDependencies x86Deps) => this.x86Deps = x86Deps;
 
 		public override DisassemblyContentProvider Create(NativeCode code, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver symbolResolver, string header) {
 			if (code.Blocks == null)
@@ -37,13 +38,13 @@ namespace dnSpy.Disassembly.Viewer {
 
 			switch (code.Kind) {
 			case NativeCodeKind.X86_16:
-				return new X86DisassemblyContentProviderFactory(x86Deps, 16, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
+				return new X86.DisassemblyContentProviderFactory(x86Deps, 16, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
 
 			case NativeCodeKind.X86_32:
-				return new X86DisassemblyContentProviderFactory(x86Deps, 32, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
+				return new X86.DisassemblyContentProviderFactory(x86Deps, 32, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
 
 			case NativeCodeKind.X86_64:
-				return new X86DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
+				return new X86.DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
 
 			case NativeCodeKind.ArmThumb:
 			case NativeCodeKind.Arm:

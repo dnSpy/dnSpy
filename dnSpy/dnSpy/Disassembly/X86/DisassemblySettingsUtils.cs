@@ -21,7 +21,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
+namespace dnSpy.Disassembly.X86 {
 	static class DisassemblySettingsUtils {
 		static Iced.Intel.NumberBase ToIcedNumberBase(Contracts.Disassembly.NumberBase numberBase) {
 			switch (numberBase) {

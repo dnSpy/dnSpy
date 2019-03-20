@@ -21,8 +21,8 @@ using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly.Viewer {
-	static class X86RegisterUtils {
+namespace dnSpy.Disassembly.Viewer.X86 {
+	static class RegisterUtils {
 		public static Register ToIcedRegister(this X86Register register) {
 			switch (register) {
 			case X86Register.None: return Register.None;

@@ -18,9 +18,10 @@
 */
 
 using dnSpy.Contracts.Disassembly;
+using dnSpy.Disassembly.X86;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly.Viewer {
+namespace dnSpy.Disassembly.Viewer.X86 {
 	static class SymbolKindUtils {
 		public static SymbolKind ToSymbolKind(FormatterOutputTextKind kind) {
 			switch (kind) {

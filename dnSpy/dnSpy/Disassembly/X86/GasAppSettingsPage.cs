@@ -20,15 +20,15 @@
 using System;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
-	sealed class GasAppSettingsPage : X86DisassemblyCodeStyleAppSettingsPage {
+namespace dnSpy.Disassembly.X86 {
+	sealed class GasAppSettingsPage : DisassemblyCodeStyleAppSettingsPage {
 		public override double Order => CodeStyleConstants.CODESTYLE_GAS_ORDER;
 		public override Guid Guid => new Guid("B2A9B538-925A-4029-9158-8C2FE632764D");
 		public override string Title => CodeStyleConstants.GAS_NAME;
 
-		public X86DisasmBooleanSetting NakedRegisters { get; }
-		public X86DisasmBooleanSetting ShowMnemonicSizeSuffix { get; }
-		public X86DisasmBooleanSetting SpaceAfterMemoryOperandComma { get; }
+		public DisasmBooleanSetting NakedRegisters { get; }
+		public DisasmBooleanSetting ShowMnemonicSizeSuffix { get; }
+		public DisasmBooleanSetting SpaceAfterMemoryOperandComma { get; }
 
 		GasDisassemblySettings GasSettings => (GasDisassemblySettings)Settings;
 

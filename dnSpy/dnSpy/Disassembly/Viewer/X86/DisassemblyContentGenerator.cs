@@ -23,11 +23,12 @@ using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Contracts.Text;
+using dnSpy.Disassembly.X86;
 using dnSpy.Properties;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly.Viewer {
-	static class X86DisassemblyContentGenerator {
+namespace dnSpy.Disassembly.Viewer.X86 {
+	static class DisassemblyContentGenerator {
 		const int HEXBYTES_COLUMN_BYTE_LENGTH = 10;
 
 		sealed class AsmReferenceFactory {
@@ -146,7 +147,7 @@ namespace dnSpy.Disassembly.Viewer {
 			return null;
 		}
 
-		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
 			if (variableInfo == null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {

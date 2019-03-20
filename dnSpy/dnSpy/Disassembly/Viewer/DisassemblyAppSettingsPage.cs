@@ -18,22 +18,22 @@
 */
 
 using System;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
-using System.Collections.ObjectModel;
 
 namespace dnSpy.Disassembly.Viewer {
 	sealed class DisassemblyAppSettingsPage : AppSettingsPage {
 		readonly DisassemblyViewerServiceSettings _global_viewerSettings;
-		readonly DisassemblyContentSettingsBase _global_x86DisassemblySettings;
-		readonly DisassemblyContentSettingsBase x86DisassemblySettings;
+		readonly DisassemblyContentSettingsBase _global_disassemblyContentSettings;
+		readonly DisassemblyContentSettingsBase disassemblyContentSettings;
 
 		public override double Order => AppSettingsConstants.ORDER_DISASSEMBLER;
-		public DisassemblyContentSettings Settings => x86DisassemblySettings;
+		public DisassemblyContentSettings Settings => disassemblyContentSettings;
 		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid(AppSettingsConstants.GUID_DISASSEMBLER);
 		public override string Title => dnSpy_Resources.DisassemblerDlgTabTitle;
@@ -69,16 +69,16 @@ namespace dnSpy.Disassembly.Viewer {
 			(X86Disassembler.Gas, CodeStyleConstants.GAS_NAME),
 		};
 
-		public DisassemblyAppSettingsPage(DisassemblyViewerServiceSettings viewerSettings, DisassemblyContentSettingsBase x86DisassemblySettings) {
+		public DisassemblyAppSettingsPage(DisassemblyViewerServiceSettings viewerSettings, DisassemblyContentSettingsBase disassemblyContentSettings) {
 			_global_viewerSettings = viewerSettings;
-			_global_x86DisassemblySettings = x86DisassemblySettings;
-			this.x86DisassemblySettings = x86DisassemblySettings.Clone();
+			_global_disassemblyContentSettings = disassemblyContentSettings;
+			this.disassemblyContentSettings = disassemblyContentSettings.Clone();
 
 			NewTab = viewerSettings.OpenNewTab;
 			X86DisassemblerVM = new ObservableCollection<X86DisassemblerVM>(x86DisasmInfos.Select(a => new X86DisassemblerVM(a.disasm, a.name)));
 
 			var tox86DisasmName = x86DisasmInfos.ToDictionary(k => k.disasm, v => v.name);
-			var x86Disassembler = x86DisassemblySettings.X86Disassembler;
+			var x86Disassembler = disassemblyContentSettings.X86Disassembler;
 			bool found = tox86DisasmName.TryGetValue(x86Disassembler, out var disasmName);
 			Debug.Assert(found);
 			if (!found) {
@@ -90,8 +90,8 @@ namespace dnSpy.Disassembly.Viewer {
 
 		public override void OnApply() {
 			_global_viewerSettings.OpenNewTab = NewTab;
-			x86DisassemblySettings.X86Disassembler = SelectedX86DisassemblerVM.Disassembler;
-			x86DisassemblySettings.CopyTo(_global_x86DisassemblySettings);
+			disassemblyContentSettings.X86Disassembler = SelectedX86DisassemblerVM.Disassembler;
+			disassemblyContentSettings.CopyTo(_global_disassemblyContentSettings);
 		}
 	}
 

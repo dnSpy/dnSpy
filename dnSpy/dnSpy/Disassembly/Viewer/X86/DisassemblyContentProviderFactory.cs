@@ -23,18 +23,19 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
+using dnSpy.Disassembly.X86;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly.Viewer {
-	[Export(typeof(X86DisassemblyContentProviderFactoryDependencies))]
-	sealed class X86DisassemblyContentProviderFactoryDependencies {
+namespace dnSpy.Disassembly.Viewer.X86 {
+	[Export(typeof(DisassemblyContentProviderFactoryDependencies))]
+	sealed class DisassemblyContentProviderFactoryDependencies {
 		public DisassemblyContentSettings DisasmSettings { get; }
 		public IMasmDisassemblySettings MasmSettings { get; }
 		public INasmDisassemblySettings NasmSettings { get; }
 		public IGasDisassemblySettings GasSettings { get; }
 
 		[ImportingConstructor]
-		X86DisassemblyContentProviderFactoryDependencies(DisassemblyContentSettingsImpl disasm, MasmDisassemblySettingsImpl masm, NasmDisassemblySettingsImpl nasm, GasDisassemblySettingsImpl gas) {
+		DisassemblyContentProviderFactoryDependencies(DisassemblyContentSettingsImpl disasm, MasmDisassemblySettingsImpl masm, NasmDisassemblySettingsImpl nasm, GasDisassemblySettingsImpl gas) {
 			DisasmSettings = disasm;
 			MasmSettings = masm;
 			NasmSettings = nasm;
@@ -42,8 +43,8 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 	}
 
-	readonly struct X86DisassemblyContentProviderFactory {
-		readonly X86DisassemblyContentProviderFactoryDependencies deps;
+	readonly struct DisassemblyContentProviderFactory {
+		readonly DisassemblyContentProviderFactoryDependencies deps;
 		readonly int bitness;
 		readonly DisassemblyContentFormatterOptions formatterOptions;
 		readonly Contracts.Disassembly.ISymbolResolver symbolResolver;
@@ -55,7 +56,7 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly string methodName;
 		readonly string moduleName;
 
-		public X86DisassemblyContentProviderFactory(X86DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public DisassemblyContentProviderFactory(DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
 			if (blocks == null)
 				throw new ArgumentNullException(nameof(blocks));
 			this.deps = deps ?? throw new ArgumentNullException(nameof(deps));
@@ -72,7 +73,7 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 
 		public DisassemblyContentProvider Create() {
-			var blocks = X86BlockFactory.Create(bitness, this.blocks);
+			var blocks = BlockFactory.Create(bitness, this.blocks);
 			var cachedSymResolver = new CachedSymbolResolver();
 			if (symbolResolver != null) {
 				var addresses = GetPossibleSymbolAddresses(blocks);
@@ -86,10 +87,10 @@ namespace dnSpy.Disassembly.Viewer {
 				if (!string.IsNullOrEmpty(block.Label))
 					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(SymbolKindUtils.ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
 			}
-			return new X86DisassemblyContentProvider(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, moduleName);
+			return new DisassemblyContentProviderImpl(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, moduleName);
 		}
 
-		static ulong[] GetPossibleSymbolAddresses(X86Block[] blocks) {
+		static ulong[] GetPossibleSymbolAddresses(Block[] blocks) {
 			var addresses = new HashSet<ulong>();
 			foreach (var block in blocks) {
 				addresses.Add(block.Address);

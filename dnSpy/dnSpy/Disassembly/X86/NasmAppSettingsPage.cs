@@ -20,8 +20,8 @@
 using System;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
-	sealed class NasmAppSettingsPage : X86DisassemblyCodeStyleAppSettingsPage {
+namespace dnSpy.Disassembly.X86 {
+	sealed class NasmAppSettingsPage : DisassemblyCodeStyleAppSettingsPage {
 		public override double Order => CodeStyleConstants.CODESTYLE_NASM_ORDER;
 		public override Guid Guid => new Guid("929A1758-C8CC-450E-A214-90B390A846DF");
 		public override string Title => CodeStyleConstants.NASM_NAME;

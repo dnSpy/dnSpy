@@ -23,8 +23,8 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Disassembly {
-	class MasmDisassemblySettings : X86DisassemblySettings, IMasmDisassemblySettings {
+namespace dnSpy.Disassembly.X86 {
+	class MasmDisassemblySettings : DisassemblySettings, IMasmDisassemblySettings {
 		public MasmDisassemblySettings() {
 			HexSuffix = "h";
 			OctalSuffix = "o";
