@@ -457,7 +457,7 @@ namespace dnSpy.Disassembly.X86 {
 				}
 			}
 		}
-		MemorySizeOptions memorySizeOptions = MemorySizeOptions.Default;
+		MemorySizeOptions memorySizeOptions = MemorySizeOptions.Minimum;
 
 		public bool RipRelativeAddresses {
 			get => ripRelativeAddresses;
