@@ -45,6 +45,7 @@ namespace dnSpy.Disassembly.Viewer {
 			case NativeCodeKind.X86_64:
 				return new X86DisassemblyContentProviderFactory(x86Deps, 64, formatterOptions, symbolResolver, header, code.Optimization, code.Blocks, code.CodeInfo, code.VariableInfo, code.MethodName, code.ModuleName).Create();
 
+			case NativeCodeKind.ArmThumb:
 			case NativeCodeKind.Arm:
 			case NativeCodeKind.Arm64:
 			default:

@@ -38,6 +38,11 @@ namespace dnSpy.Contracts.Disassembly {
 		X86_64,
 
 		/// <summary>
+		/// 32-bit ARM (thumb)
+		/// </summary>
+		ArmThumb,
+
+		/// <summary>
 		/// 32-bit ARM
 		/// </summary>
 		Arm,
