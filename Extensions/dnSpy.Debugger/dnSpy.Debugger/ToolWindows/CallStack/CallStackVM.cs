@@ -254,6 +254,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (callStackDisplaySettings.ShowTokens)				options |= DbgStackFrameFormatterOptions.Tokens;
 			if (!debuggerSettings.UseHexadecimal)					options |= DbgStackFrameFormatterOptions.Decimal;
 			if (debuggerSettings.UseDigitSeparators)				options |= DbgStackFrameFormatterOptions.DigitSeparators;
+			if (debuggerSettings.FullString)						options |= DbgStackFrameFormatterOptions.FullString;
 
 			return options;
 		}
@@ -268,6 +269,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//if (debuggerSettings.PropertyEvalAndFunctionCalls)	options |= DbgValueFormatterOptions.FuncEval;
 			if (debuggerSettings.UseStringConversionFunction)		options |= DbgValueFormatterOptions.ToString;
 			if (debuggerSettings.UseDigitSeparators)				options |= DbgValueFormatterOptions.DigitSeparators;
+			if (debuggerSettings.FullString)						options |= DbgValueFormatterOptions.FullString;
 			if (callStackDisplaySettings.ShowNamespaces)			options |= DbgValueFormatterOptions.Namespaces;
 			if (callStackDisplaySettings.ShowIntrinsicTypeKeywords)	options |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
 			if (callStackDisplaySettings.ShowTokens)				options |= DbgValueFormatterOptions.Tokens;

@@ -153,6 +153,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				DigitSeparators = debuggerSettings.UseDigitSeparators,
+				FullString = debuggerSettings.FullString,
 				Formatter = threadFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
@@ -225,6 +226,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				threadContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
 				threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 				threadContext.DigitSeparators = debuggerSettings.UseDigitSeparators;
+				threadContext.FullString = debuggerSettings.FullString;
 			}
 			else {
 				processes.Clear();
@@ -358,6 +360,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
 			case nameof(DebuggerSettings.UseDigitSeparators):
+			case nameof(DebuggerSettings.FullString):
 				RefreshHexFields_UI();
 				break;
 
@@ -386,6 +389,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			threadContext.UIDispatcher.VerifyAccess();
 			threadContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 			threadContext.DigitSeparators = debuggerSettings.UseDigitSeparators;
+			threadContext.FullString = debuggerSettings.FullString;
 			RecreateFormatter_UI();
 			foreach (var vm in realAllItems)
 				vm.RefreshHexFields_UI();

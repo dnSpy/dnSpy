@@ -68,6 +68,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		NoDebuggerDisplay			= 0x00000040,
 
 		/// <summary>
+		/// Show the full string value even if it's a very long string
+		/// </summary>
+		FullString					= 0x00000080,
+
+		/// <summary>
 		/// Show namespaces. Only used if <see cref="Edit"/> is clear
 		/// </summary>
 		Namespaces					= 0x20000000,

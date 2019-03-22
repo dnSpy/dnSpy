@@ -116,6 +116,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string NoDebuggerDisplay = "ndda";
 
 		/// <summary>
+		/// Show the full string value even if it's a very long string
+		/// </summary>
+		public const string FullString = "fs";
+
+		/// <summary>
+		/// Don't show the full string value if it's a very long string
+		/// </summary>
+		public const string NoFullString = "nfs";
+
+		/// <summary>
 		/// Show namespaces
 		/// </summary>
 		public const string Namespaces = "ns";
@@ -204,6 +214,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 						break;
 					case NoDebuggerDisplay:
 						options |= DbgValueFormatterOptions.NoDebuggerDisplay;
+						break;
+					case FullString:
+						options |= DbgValueFormatterOptions.FullString;
+						break;
+					case NoFullString:
+						options &= ~DbgValueFormatterOptions.FullString;
 						break;
 					case Namespaces:
 						options |= DbgValueFormatterOptions.Namespaces;

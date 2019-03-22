@@ -315,6 +315,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					frameOptions |= DbgStackFrameFormatterOptions.Decimal;
 				if (debuggerSettings.UseDigitSeparators)
 					frameOptions |= DbgStackFrameFormatterOptions.DigitSeparators;
+				if (debuggerSettings.FullString)
+					frameOptions |= DbgStackFrameFormatterOptions.FullString;
 
 				var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
 				const DbgValueFormatterOptions valueOptions = DbgValueFormatterOptions.None;
@@ -444,6 +446,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.UseDigitSeparators)
 				options |= DbgValueFormatterOptions.DigitSeparators;
+			if (debuggerSettings.FullString)
+				options |= DbgValueFormatterOptions.FullString;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)

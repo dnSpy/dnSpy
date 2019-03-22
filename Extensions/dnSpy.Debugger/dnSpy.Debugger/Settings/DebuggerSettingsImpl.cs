@@ -657,6 +657,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool ignoreUnhandledExceptions;
 
+		public override bool FullString {
+			get {
+				lock (lockObj)
+					return fullString;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = fullString != value;
+					fullString = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(FullString));
+					OnModified();
+				}
+			}
+		}
+		bool fullString;
+
 		public DebuggerSettingsBase Clone() => CopyTo(new DebuggerSettingsBase());
 
 		public DebuggerSettingsBase CopyTo(DebuggerSettingsBase other) {
@@ -693,6 +712,7 @@ namespace dnSpy.Debugger.Settings {
 			other.AsyncDebugging = AsyncDebugging;
 			other.StepOverPropertiesAndOperators = StepOverPropertiesAndOperators;
 			other.IgnoreUnhandledExceptions = IgnoreUnhandledExceptions;
+			other.FullString = FullString;
 			return other;
 		}
 	}
@@ -743,6 +763,7 @@ namespace dnSpy.Debugger.Settings {
 			AsyncDebugging = sect.Attribute<bool?>(nameof(AsyncDebugging)) ?? AsyncDebugging;
 			StepOverPropertiesAndOperators = sect.Attribute<bool?>(nameof(StepOverPropertiesAndOperators)) ?? StepOverPropertiesAndOperators;
 			IgnoreUnhandledExceptions = sect.Attribute<bool?>(nameof(IgnoreUnhandledExceptions)) ?? IgnoreUnhandledExceptions;
+			FullString = sect.Attribute<bool?>(nameof(FullString)) ?? FullString;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -784,6 +805,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(AsyncDebugging), AsyncDebugging);
 			sect.Attribute(nameof(StepOverPropertiesAndOperators), StepOverPropertiesAndOperators);
 			sect.Attribute(nameof(IgnoreUnhandledExceptions), IgnoreUnhandledExceptions);
+			sect.Attribute(nameof(FullString), FullString);
 		}
 	}
 }
