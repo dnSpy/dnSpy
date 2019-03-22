@@ -142,7 +142,7 @@
     <value>Декомпілювати BAML</value>
   </data>
   <data name="MSBuild_FailedToCreateProjectFile" xml:space="preserve">
-    <value>Не вдалося створити файл проекту {0}, повідомлення про помилку: {1}</value>
+    <value>Не вдалося створити файл проекту {0}, помилка: {1}</value>
   </data>
   <data name="MSBuild_FailedToCreateSolutionFile" xml:space="preserve">
     <value>Не вдалося створити файл проекту {0}, повідомлення про помилку: {1}</value>
@@ -151,7 +151,7 @@
     <value>Помилка, опис = {0}, повідомлення про виключення: {1}</value>
   </data>
   <data name="MSBuild_FileCreationFailed3" xml:space="preserve">
-    <value>Створення файлу не вдалося ({0}), опис = {1}, повідомлення про виняток: {2}</value>
+    <value>Створення файлу не вдалося ({0}), опис = {1}, повідомлення про виключення: {2}</value>
   </data>
   <data name="ToolTip_Constant" xml:space="preserve">
     <value>константа</value>
@@ -223,7 +223,7 @@
     <value>Створити {0}</value>
   </data>
   <data name="MSBuild_CreateSettingsDesignerTypeFile" xml:space="preserve">
-    <value>Створити файл настройок дизайнера</value>
+    <value>Створити файл налаштувань дизайнера</value>
   </data>
   <data name="MSBuild_CreateSettingsTypeFile" xml:space="preserve">
     <value>Створити файл налаштувань</value>

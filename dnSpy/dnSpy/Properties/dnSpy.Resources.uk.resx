@@ -136,10 +136,10 @@
     <value>Про програму</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>Всі файли</value>
+    <value>Всі Файли</value>
   </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
-    <value>Оглядач Збірок</value>
+    <value>Оглядач З_бірок</value>
   </data>
   <data name="AssemblyExplorerKey" xml:space="preserve">
     <value>Ctrl+Alt+L</value>
@@ -148,16 +148,16 @@
     <value>Оглядач Збірок</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
-    <value>Базовий Тип та інтерфейси</value>
+    <value>Базовий Тип та Інтерфейси</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Відміна</value>
+    <value>_Відміна</value>
   </data>
   <data name="Button_No" xml:space="preserve">
     <value>Ні</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>Так</value>
+    <value>Т_ак</value>
   </data>
   <data name="Button_Save" xml:space="preserve">
     <value>Зберегти...</value>
@@ -178,7 +178,7 @@
     <value>Закрити усі закладки</value>
   </data>
   <data name="CloseTabCommand" xml:space="preserve">
-    <value>Закрити</value>
+    <value>З_акрити</value>
   </data>
   <data name="CloseTabGroupCommand" xml:space="preserve">
     <value>Закрити групу Табів</value>
@@ -220,7 +220,7 @@
     <value>Трапилось  виключення:</value>
   </data>
   <data name="ExitAppCommand" xml:space="preserve">
-    <value>Вихід</value>
+    <value>В_ихід</value>
   </data>
   <data name="ExitAppKey" xml:space="preserve">
     <value>Alt+F4</value>
@@ -229,7 +229,7 @@
     <value>Відкрити у dnSpy</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>Пошук</value>
+    <value>_Пошук</value>
   </data>
   <data name="FindCommand2" xml:space="preserve">
     <value>Пошук</value>
@@ -238,7 +238,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>Повноекранний режим</value>
+    <value>П_овноекранний режим</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
     <value>Shift+Alt+Enter</value>
@@ -835,7 +835,7 @@
     <value>Шукати в збірках GAC</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
-    <value>Всі файли</value>
+    <value>Всі Файли</value>
   </data>
   <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
     <value>Файли в тому ж каталозі</value>
