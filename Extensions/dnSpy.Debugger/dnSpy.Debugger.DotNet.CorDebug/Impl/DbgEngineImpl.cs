@@ -659,6 +659,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				// We can only debug processes with the same bitness, so check IntPtr.Size.
 				if (IntPtr.Size == 4 && debuggerSettings.AntiIsDebuggerPresent && options is DotNetFrameworkStartDebuggingOptions)
 					disableMDA = true;
+				// .NET Core doesn't support MDAs
+				if (options is DotNetCoreStartDebuggingOptions)
+					disableMDA = false;
 				if (disableMDA) {
 					// https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/diagnosing-errors-with-managed-debugging-assistants
 					env.Add("COMPLUS_MDA", "0");
