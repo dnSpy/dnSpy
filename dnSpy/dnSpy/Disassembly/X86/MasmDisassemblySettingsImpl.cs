@@ -42,6 +42,28 @@ namespace dnSpy.Disassembly.X86 {
 		}
 		bool addDsPrefix32 = true;
 
+		public bool SymbolDisplInBrackets {
+			get => symbolDisplInBrackets;
+			set {
+				if (value != symbolDisplInBrackets) {
+					symbolDisplInBrackets = value;
+					OnPropertyChanged(nameof(SymbolDisplInBrackets));
+				}
+			}
+		}
+		bool symbolDisplInBrackets = true;
+
+		public bool DisplInBrackets {
+			get => displInBrackets;
+			set {
+				if (value != displInBrackets) {
+					displInBrackets = value;
+					OnPropertyChanged(nameof(DisplInBrackets));
+				}
+			}
+		}
+		bool displInBrackets = true;
+
 		public MasmDisassemblySettings Clone() => CopyTo(new MasmDisassemblySettings());
 
 		public MasmDisassemblySettings CopyTo(MasmDisassemblySettings other) {
@@ -49,6 +71,8 @@ namespace dnSpy.Disassembly.X86 {
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.AddDsPrefix32 = AddDsPrefix32;
+			other.SymbolDisplInBrackets = SymbolDisplInBrackets;
+			other.DisplInBrackets = DisplInBrackets;
 			return other;
 		}
 	}
@@ -67,6 +91,8 @@ namespace dnSpy.Disassembly.X86 {
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ReadSettings(sect);
 			AddDsPrefix32 = sect.Attribute<bool?>(nameof(AddDsPrefix32)) ?? AddDsPrefix32;
+			SymbolDisplInBrackets = sect.Attribute<bool?>(nameof(SymbolDisplInBrackets)) ?? SymbolDisplInBrackets;
+			DisplInBrackets = sect.Attribute<bool?>(nameof(DisplInBrackets)) ?? DisplInBrackets;
 
 			PropertyChanged += OnPropertyChanged;
 		}
@@ -77,6 +103,8 @@ namespace dnSpy.Disassembly.X86 {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			WriteSettings(sect);
 			sect.Attribute(nameof(AddDsPrefix32), AddDsPrefix32);
+			sect.Attribute(nameof(SymbolDisplInBrackets), SymbolDisplInBrackets);
+			sect.Attribute(nameof(DisplInBrackets), DisplInBrackets);
 		}
 	}
 }

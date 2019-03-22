@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 
 		protected Instruction AddTargetId(Instruction instruction) {
 			if (process.Bitness == 64)
-				instruction.IP64 = nextBranchTargetId;
+				instruction.IP = nextBranchTargetId;
 			else
 				instruction.IP32 = (uint)nextBranchTargetId;
 			nextBranchTargetId--;

@@ -74,6 +74,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				case FormatterOutputTextKind.Data:
 				case FormatterOutputTextKind.Label:
 				case FormatterOutputTextKind.Function:
+				case FormatterOutputTextKind.Decorator:
 					output.Write(text, refFactory.Create(kind, text), DisassemblyReferenceFlags.Local, color);
 					break;
 
@@ -118,6 +119,8 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				return BoxedTextColor.AsmLabel;
 			case FormatterOutputTextKind.Function:
 				return BoxedTextColor.AsmFunction;
+			case FormatterOutputTextKind.Decorator:
+				return BoxedTextColor.Text;
 			default:
 				Debug.Fail($"Unknown output kind: {kind}");
 				return BoxedTextColor.Error;
@@ -170,7 +173,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			foreach (var block in blocks) {
 				var instrs = block.Instructions;
 				if (instrs.Length > 0)
-					codeSize += instrs[instrs.Length - 1].Instruction.NextIP64 - block.Address;
+					codeSize += instrs[instrs.Length - 1].Instruction.NextIP - block.Address;
 			}
 			WriteComment(output, commentPrefix, $"Size: {codeSize} (0x{codeSize:X})");
 			output.Write(Environment.NewLine, BoxedTextColor.Text);
@@ -261,7 +264,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				for (int j = 0; j < instrs.Length; j++) {
 					ref var instr = ref instrs[j].Instruction;
 					if ((formatterOptions & InternalFormatterOptions.InstructionAddresses) != 0) {
-						var address = FormatAddress(bitness, instr.IP64, upperCaseHex);
+						var address = FormatAddress(bitness, instr.IP, upperCaseHex);
 						output.Write(address, BoxedTextColor.AsmAddress);
 						output.Write(" ", BoxedTextColor.Text);
 					}

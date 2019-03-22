@@ -71,16 +71,16 @@ namespace dnSpy.Disassembly.X86 {
 		}
 		bool upperCaseKeywords;
 
-		public bool UpperCaseOther {
-			get => upperCaseOther;
+		public bool UpperCaseDecorators {
+			get => upperCaseDecorators;
 			set {
-				if (value != upperCaseOther) {
-					upperCaseOther = value;
-					OnPropertyChanged(nameof(UpperCaseOther));
+				if (value != upperCaseDecorators) {
+					upperCaseDecorators = value;
+					OnPropertyChanged(nameof(UpperCaseDecorators));
 				}
 			}
 		}
-		bool upperCaseOther;
+		bool upperCaseDecorators;
 
 		public bool UpperCaseAll {
 			get => upperCaseAll;
@@ -508,7 +508,7 @@ namespace dnSpy.Disassembly.X86 {
 			UpperCaseMnemonics = sect.Attribute<bool?>(nameof(UpperCaseMnemonics)) ?? UpperCaseMnemonics;
 			UpperCaseRegisters = sect.Attribute<bool?>(nameof(UpperCaseRegisters)) ?? UpperCaseRegisters;
 			UpperCaseKeywords = sect.Attribute<bool?>(nameof(UpperCaseKeywords)) ?? UpperCaseKeywords;
-			UpperCaseOther = sect.Attribute<bool?>(nameof(UpperCaseOther)) ?? UpperCaseOther;
+			UpperCaseDecorators = sect.Attribute<bool?>(nameof(UpperCaseDecorators)) ?? UpperCaseDecorators;
 			UpperCaseAll = sect.Attribute<bool?>(nameof(UpperCaseAll)) ?? UpperCaseAll;
 			FirstOperandCharIndex = sect.Attribute<int?>(nameof(FirstOperandCharIndex)) ?? FirstOperandCharIndex;
 			TabSize = sect.Attribute<int?>(nameof(TabSize)) ?? TabSize;
@@ -554,7 +554,7 @@ namespace dnSpy.Disassembly.X86 {
 			sect.Attribute(nameof(UpperCaseMnemonics), UpperCaseMnemonics);
 			sect.Attribute(nameof(UpperCaseRegisters), UpperCaseRegisters);
 			sect.Attribute(nameof(UpperCaseKeywords), UpperCaseKeywords);
-			sect.Attribute(nameof(UpperCaseOther), UpperCaseOther);
+			sect.Attribute(nameof(UpperCaseDecorators), UpperCaseDecorators);
 			sect.Attribute(nameof(UpperCaseAll), UpperCaseAll);
 			sect.Attribute(nameof(FirstOperandCharIndex), FirstOperandCharIndex);
 			sect.Attribute(nameof(TabSize), TabSize);
@@ -602,7 +602,7 @@ namespace dnSpy.Disassembly.X86 {
 			other.UpperCaseMnemonics = UpperCaseMnemonics;
 			other.UpperCaseRegisters = UpperCaseRegisters;
 			other.UpperCaseKeywords = UpperCaseKeywords;
-			other.UpperCaseOther = UpperCaseOther;
+			other.UpperCaseDecorators = UpperCaseDecorators;
 			other.UpperCaseAll = UpperCaseAll;
 			other.FirstOperandCharIndex = FirstOperandCharIndex;
 			other.TabSize = TabSize;

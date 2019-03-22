@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		void Initialize(Decoder decoder, ulong address) {
 			codeReader.Initialize(processMemoryBlockAllocator.Process, address);
-			decoder.InstructionPointer = address;
+			decoder.IP = address;
 		}
 
 		void GetJmpTarget(ref Instruction instr, out ulong jmpTarget, out bool jmpTargetIsIndirect) {
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 		}
 
 		static bool ModifiesRegistersOrMemory(in InstructionInfo info) {
-			if (info.StackInstruction)
+			if (info.IsStackInstruction)
 				return true;
 
 			foreach (var regInfo in info.GetUsedRegisters()) {
@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 						break;
 					}
 
-					uint currentSize = (uint)decoder.InstructionPointer - (uint)startAddress;
+					uint currentSize = (uint)decoder.IP - (uint)startAddress;
 					if (currentSize >= patchSize && instr.Code != II.Code.INVALID) {
 						blockAddress = startAddress;
 						return true;
@@ -306,7 +306,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		bool TryCopyOriginalBlock(ProcessMemoryBlock memBlock, InstructionList blockInstructions, out string errorMessage) {
 			Debug.Assert(blockInstructions.Count != 0);
-			var targetAddr = blockInstructions[blockInstructions.Count - 1].NextIP64;
+			var targetAddr = blockInstructions[blockInstructions.Count - 1].NextIP;
 			blockInstructions.Add(Instruction.CreateBranch(is64 ? II.Code.Jmp_rel32_64 : II.Code.Jmp_rel32_32, targetAddr));
 			var codeWriter = new ProcessMemoryBlockCodeWriter(memBlock);
 			var block = new InstructionBlock(codeWriter, blockInstructions, memBlock.CurrentAddress);

@@ -74,7 +74,7 @@ namespace dnSpy.Disassembly.X86 {
 			options.UpperCaseMnemonics = settings.UpperCaseMnemonics;
 			options.UpperCaseRegisters = settings.UpperCaseRegisters;
 			options.UpperCaseKeywords = settings.UpperCaseKeywords;
-			options.UpperCaseOther = settings.UpperCaseOther;
+			options.UpperCaseDecorators = settings.UpperCaseDecorators;
 			options.UpperCaseAll = settings.UpperCaseAll;
 			options.FirstOperandCharIndex = settings.FirstOperandCharIndex;
 			options.TabSize = settings.TabSize;

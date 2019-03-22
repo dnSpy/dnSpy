@@ -164,7 +164,7 @@ namespace dnSpy.Disassembly.X86 {
 
 		protected DisasmBooleanSetting AddDisasmBoolSetting(Func<bool> getValue, Action<bool> setValue, Instruction instruction, bool fixRip = true) {
 			if (fixRip)
-				instruction.IP64 = X86_RIP;
+				instruction.IP = X86_RIP;
 			var boolSetting = new DisasmBooleanSetting(x86Output, getValue, setValue, formatter, instruction);
 			boolSetting.PropertyChanged += DisasmBooleanSetting_PropertyChanged;
 			boolSettings.Add(boolSetting);
@@ -190,7 +190,7 @@ namespace dnSpy.Disassembly.X86 {
 			options.UpperCaseMnemonics = x86DisassemblySettings.UpperCaseMnemonics;
 			options.UpperCaseRegisters = x86DisassemblySettings.UpperCaseRegisters;
 			options.UpperCaseKeywords = x86DisassemblySettings.UpperCaseKeywords;
-			options.UpperCaseOther = x86DisassemblySettings.UpperCaseOther;
+			options.UpperCaseDecorators = x86DisassemblySettings.UpperCaseDecorators;
 			options.UpperCaseAll = x86DisassemblySettings.UpperCaseAll;
 			options.FirstOperandCharIndex = x86DisassemblySettings.FirstOperandCharIndex;
 			options.TabSize = x86DisassemblySettings.TabSize;

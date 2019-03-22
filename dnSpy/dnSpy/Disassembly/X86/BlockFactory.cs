@@ -67,7 +67,7 @@ namespace dnSpy.Disassembly.X86 {
 		}
 
 		static ArraySegment<byte> GetBytes(ArraySegment<byte> code, ulong address, ref Instruction instr) {
-			int index = (int)(instr.IP64 - address);
+			int index = (int)(instr.IP - address);
 			return new ArraySegment<byte>(code.Array, code.Offset + index, instr.ByteLength);
 		}
 
@@ -82,7 +82,7 @@ namespace dnSpy.Disassembly.X86 {
 
 				var reader = new ByteArrayCodeReader(block.Code);
 				var decoder = Decoder.Create(bitness, reader);
-				decoder.InstructionPointer = block.Address;
+				decoder.IP = block.Address;
 				while (reader.CanReadByte) {
 					decoder.Decode(out var instr);
 					instrInfo.Add((instr, blockIndex, GetBytes(block.Code, block.Address, ref instr)));
@@ -93,7 +93,7 @@ namespace dnSpy.Disassembly.X86 {
 						break;
 
 					case FlowControl.UnconditionalBranch:
-						Add(targets, instr.NextIP64, TargetKind.Unknown);
+						Add(targets, instr.NextIP, TargetKind.Unknown);
 						if (instr.Op0Kind == OpKind.NearBranch16 || instr.Op0Kind == OpKind.NearBranch32 || instr.Op0Kind == OpKind.NearBranch64)
 							Add(targets, instr.NearBranchTarget, TargetKind.Branch);
 						break;
@@ -110,7 +110,7 @@ namespace dnSpy.Disassembly.X86 {
 						break;
 
 					case FlowControl.IndirectBranch:
-						Add(targets, instr.NextIP64, TargetKind.Unknown);
+						Add(targets, instr.NextIP, TargetKind.Unknown);
 						// Unknown target
 						break;
 
@@ -120,7 +120,7 @@ namespace dnSpy.Disassembly.X86 {
 
 					case FlowControl.Return:
 					case FlowControl.Exception:
-						Add(targets, instr.NextIP64, TargetKind.Unknown);
+						Add(targets, instr.NextIP, TargetKind.Unknown);
 						break;
 
 					default:
@@ -169,9 +169,9 @@ namespace dnSpy.Disassembly.X86 {
 			for (int i = 0; i < instrInfo.Count; i++) {
 				var info = instrInfo[i];
 				ref var instr = ref info.instruction;
-				if (targets.TryGetValue(instr.IP64, out var targetKind)) {
+				if (targets.TryGetValue(instr.IP, out var targetKind)) {
 					var origBlock = blocks[info.block];
-					currentBlock = new BlockInfo(targetKind, origBlock.Kind, instr.IP64, origBlock.Address == instr.IP64 ? origBlock.Comment : null);
+					currentBlock = new BlockInfo(targetKind, origBlock.Kind, instr.IP, origBlock.Address == instr.IP ? origBlock.Comment : null);
 					newBlocks.Add(currentBlock);
 				}
 				currentBlock.Instructions.Add(new X86InstructionInfo(info.code, instr));
