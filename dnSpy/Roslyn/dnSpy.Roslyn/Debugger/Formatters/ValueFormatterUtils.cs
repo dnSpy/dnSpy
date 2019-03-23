@@ -19,6 +19,7 @@
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class ValueFormatterUtils {
+		public const int MaxStringLength = 256 * 1024;
 		public const int DigitGroupSizeHex = 4;
 		public const int DigitGroupSizeDecimal = 3;
 		public const string DigitSeparator = "_";

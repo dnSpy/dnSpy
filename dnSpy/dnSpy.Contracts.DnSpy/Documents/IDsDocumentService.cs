@@ -96,6 +96,14 @@ namespace dnSpy.Contracts.Documents {
 		IDsDocument FindAssembly(IAssembly assembly);
 
 		/// <summary>
+		/// Returns an assembly or null if it's not in the list
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		IDsDocument FindAssembly(IAssembly assembly, FindAssemblyOptions options);
+
+		/// <summary>
 		/// Returns an inserted <see cref="IDsDocument"/> instance or null
 		/// </summary>
 		/// <param name="key">Key</param>
@@ -140,5 +148,45 @@ namespace dnSpy.Contracts.Documents {
 		/// The assembly resolver it uses
 		/// </summary>
 		IAssemblyResolver AssemblyResolver { get; }
+	}
+
+	/// <summary>
+	/// Find assembly options
+	/// </summary>
+	public enum FindAssemblyOptions {
+		/// <summary>
+		/// No option is enabled
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Compare assembly simple name
+		/// </summary>
+		Name				= 0x00000001,
+
+		/// <summary>
+		/// Compare assembly version
+		/// </summary>
+		Version				= 0x00000002,
+
+		/// <summary>
+		/// Compare assembly public key token
+		/// </summary>
+		PublicKeyToken		= 0x00000004,
+
+		/// <summary>
+		/// Compare assembly culture
+		/// </summary>
+		Culture				= 0x00000008,
+
+		/// <summary>
+		/// Compare content type
+		/// </summary>
+		ContentType			= 0x00000010,
+
+		/// <summary>
+		/// Compare assembly simple name, version, public key token, locale and content type
+		/// </summary>
+		All					= Name | Version | PublicKeyToken | Culture | ContentType,
 	}
 }

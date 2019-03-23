@@ -22,10 +22,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
+using dnSpy.Disassembly.X86;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly.Viewer {
-	sealed class X86DisassemblyContentProvider : DisassemblyContentProvider {
+namespace dnSpy.Disassembly.Viewer.X86 {
+	sealed class DisassemblyContentProviderImpl : DisassemblyContentProvider {
 		readonly int bitness;
 		readonly CachedSymbolResolver cachedSymbolResolver;
 		readonly DisassemblyContentSettings disasmSettings;
@@ -35,7 +36,7 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly DisassemblyContentFormatterOptions formatterOptions;
 		readonly string header;
 		readonly NativeCodeOptimization optimization;
-		readonly X86Block[] blocks;
+		readonly Block[] blocks;
 		readonly X86NativeCodeInfo codeInfo;
 		readonly NativeVariableInfo[] variableInfo;
 		readonly string methodName;
@@ -64,13 +65,20 @@ namespace dnSpy.Disassembly.Viewer {
 		public override event EventHandler OnContentChanged;
 
 		sealed class SymbolResolverImpl : Iced.Intel.ISymbolResolver {
-			readonly X86DisassemblyContentProvider owner;
-			public SymbolResolverImpl(X86DisassemblyContentProvider owner) => this.owner = owner;
+			readonly DisassemblyContentProviderImpl owner;
+			public SymbolResolverImpl(DisassemblyContentProviderImpl owner) => this.owner = owner;
 
 			public bool TryGetSymbol(int operand, int instructionOperand, ref Instruction instruction, ulong address, int addressSize, out SymbolResult symbol) {
 				if (owner.cachedSymbolResolver.TryResolve(address, out var symResult, out bool fakeSymbol)) {
 					if (!fakeSymbol || owner.AddLabels) {
 						symbol = new SymbolResult(symResult.Address, symResult.Symbol, SymbolKindUtils.ToFormatterOutputTextKind(symResult.Kind), SymbolFlags.None);
+						if (instruction.OpCount == 1 && (instruction.Op0Kind == OpKind.Memory || instruction.Op0Kind == OpKind.Memory64)) {
+							var code = instruction.Code;
+							if (code == Code.Call_rm32 || code == Code.Jmp_rm32)
+								symbol = new SymbolResult(symbol.Address, symbol.Text, symbol.Flags, MemorySize.DwordOffset);
+							else if (code == Code.Call_rm64 || code == Code.Jmp_rm64)
+								symbol = new SymbolResult(symbol.Address, symbol.Text, symbol.Flags, MemorySize.QwordOffset);
+						}
 						return true;
 					}
 				}
@@ -79,7 +87,7 @@ namespace dnSpy.Disassembly.Viewer {
 			}
 		}
 
-		public X86DisassemblyContentProvider(int bitness, CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, NativeCodeOptimization optimization, X86Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public DisassemblyContentProviderImpl(int bitness, CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, NativeCodeOptimization optimization, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
 			this.bitness = bitness;
 			this.cachedSymbolResolver = cachedSymbolResolver ?? throw new ArgumentNullException(nameof(cachedSymbolResolver));
 			this.disasmSettings = disasmSettings ?? throw new ArgumentNullException(nameof(disasmSettings));
@@ -98,7 +106,7 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 
 		public override DisassemblyContentProvider Clone() =>
-			new X86DisassemblyContentProvider(bitness, cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, moduleName);
+			new DisassemblyContentProviderImpl(bitness, cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, moduleName);
 
 		(Formatter formatter, string commentPrefix, DisassemblyContentKind contentKind) GetDisassemblerInfo(X86Disassembler disasm) {
 			switch (disasm) {
@@ -143,7 +151,7 @@ namespace dnSpy.Disassembly.Viewer {
 
 			var output = new DisassemblyContentOutput();
 			var disasmInfo = GetDisassemblerInfo(disasmSettings.X86Disassembler);
-			X86DisassemblyContentGenerator.Write(bitness, output, header, optimization, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.formatter.Options.UpperCaseHex), blocks, codeInfo, variableInfo, methodName, moduleName);
+			DisassemblyContentGenerator.Write(bitness, output, header, optimization, disasmInfo.formatter, disasmInfo.commentPrefix, GetInternalFormatterOptions(disasmInfo.formatter.Options.UpperCaseHex), blocks, codeInfo, variableInfo, methodName, moduleName);
 			return output.Create(disasmInfo.contentKind);
 		}
 

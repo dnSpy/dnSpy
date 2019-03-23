@@ -139,7 +139,7 @@
     <value>Клас "{0}" має IComponentConnector.Connect метод, який не вдалось проаналізувати.</value>
   </data>
   <data name="Error_UnknownConnectionId" xml:space="preserve">
-    <value>Невідомий ID з'єднання: {0}</value>
+    <value>Невідоме ID з'єднання: {0}</value>
   </data>
   <data name="Msg_GlobalNamespace" xml:space="preserve">
     <value>"{0}" є префіксом для глобального простору імен.</value>

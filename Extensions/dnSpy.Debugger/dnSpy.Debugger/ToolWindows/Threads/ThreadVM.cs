@@ -383,6 +383,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				options |= DbgStackFrameFormatterOptions.Decimal;
 			if (Context.DigitSeparators)
 				options |= DbgStackFrameFormatterOptions.DigitSeparators;
+			if (Context.FullString)
+				options |= DbgStackFrameFormatterOptions.FullString;
 			return options;
 		}
 

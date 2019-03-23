@@ -21,7 +21,7 @@ using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
+namespace dnSpy.Disassembly.X86 {
 	static class DisassemblySettingsUtils {
 		static Iced.Intel.NumberBase ToIcedNumberBase(Contracts.Disassembly.NumberBase numberBase) {
 			switch (numberBase) {
@@ -74,7 +74,7 @@ namespace dnSpy.Disassembly {
 			options.UpperCaseMnemonics = settings.UpperCaseMnemonics;
 			options.UpperCaseRegisters = settings.UpperCaseRegisters;
 			options.UpperCaseKeywords = settings.UpperCaseKeywords;
-			options.UpperCaseOther = settings.UpperCaseOther;
+			options.UpperCaseDecorators = settings.UpperCaseDecorators;
 			options.UpperCaseAll = settings.UpperCaseAll;
 			options.FirstOperandCharIndex = settings.FirstOperandCharIndex;
 			options.TabSize = settings.TabSize;

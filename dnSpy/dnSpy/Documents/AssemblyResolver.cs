@@ -464,6 +464,7 @@ namespace dnSpy.Documents {
 				fwkKind = FrameworkKind.DotNetFramework4;
 			IDsDocument document;
 			IDsDocument existingDocument;
+			FindAssemblyOptions options;
 			switch (fwkKind) {
 			case FrameworkKind.Unknown:
 			case FrameworkKind.DotNetFramework2:
@@ -471,26 +472,38 @@ namespace dnSpy.Documents {
 				int gacVersion;
 				if (!GacInfo.HasGAC2)
 					fwkKind = FrameworkKind.DotNetFramework4;
+				bool redirected;
+				IAssembly tempAsm;
 				if (fwkKind == FrameworkKind.DotNetFramework4) {
-					FrameworkRedirect.ApplyFrameworkRedirectV4(ref assembly);
+					redirected = FrameworkRedirect.TryApplyFrameworkRedirectV4(assembly, out tempAsm);
+					if (redirected)
+						assembly = tempAsm;
 					gacVersion = 4;
 				}
 				else if (fwkKind == FrameworkKind.DotNetFramework2) {
-					FrameworkRedirect.ApplyFrameworkRedirectV2(ref assembly);
+					redirected = FrameworkRedirect.TryApplyFrameworkRedirectV2(assembly, out tempAsm);
+					if (redirected)
+						assembly = tempAsm;
 					gacVersion = 2;
 				}
 				else {
 					Debug.Assert(fwkKind == FrameworkKind.Unknown);
-					var tempAsm = assembly;
-					FrameworkRedirect.ApplyFrameworkRedirect(ref tempAsm, sourceModule);
+					redirected = FrameworkRedirect.TryApplyFrameworkRedirect(assembly, sourceModule, out tempAsm);
 					// OK : System.Runtime 4.0.20.0 => 4.0.0.0
 					// KO : System 4.0.0.0 => 2.0.0.0
-					if (tempAsm.Version.Major >= assembly.Version.Major)
+					if (redirected && tempAsm.Version.Major >= assembly.Version.Major)
 						assembly = tempAsm;
+					else
+						redirected = false;
 					gacVersion = -1;
 				}
 
-				existingDocument = documentService.FindAssembly(assembly);
+				options = DsDocumentService.DefaultOptions;
+				// If the assembly was redirected, always compare the version number. This prevents resolving
+				// mscorlib 2.0 when a .NET 4 app references a .NET 2.0-3.5 dll. We should get mscorlib 4.0.
+				if (redirected)
+					options |= FindAssemblyOptions.Version;
+				existingDocument = documentService.FindAssembly(assembly, options);
 				if (existingDocument != null)
 					return existingDocument;
 
@@ -530,7 +543,10 @@ namespace dnSpy.Documents {
 					return documentService.GetOrAddCanDispose(document, assembly);
 
 				// If it already exists in assembly explorer, use it
-				existingDocument = documentService.FindAssembly(assembly);
+				options = DsDocumentService.DefaultOptions;
+				if (IgnorePublicKey(fwkKind))
+					options &= ~FindAssemblyOptions.PublicKeyToken;
+				existingDocument = documentService.FindAssembly(assembly, options);
 				if (existingDocument != null)
 					return existingDocument;
 
@@ -541,6 +557,24 @@ namespace dnSpy.Documents {
 			}
 
 			return null;
+		}
+
+		static bool IgnorePublicKey(FrameworkKind fwkKind) {
+			switch (fwkKind) {
+			case FrameworkKind.Unknown:
+			case FrameworkKind.DotNetFramework2:
+			case FrameworkKind.DotNetFramework4:
+				return false;
+
+			case FrameworkKind.DotNetCore:
+			case FrameworkKind.SelfContainedDotNetCore:
+			case FrameworkKind.Unity:
+			case FrameworkKind.WindowsUniversal:
+				return true;
+
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		IDsDocument LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, string sourceModuleDir, Version dotNetCoreAppVersion) {
@@ -656,7 +690,7 @@ namespace dnSpy.Documents {
 		}
 
 		IDsDocument ResolveWinMD(IAssembly assembly, ModuleDef sourceModule) {
-			var existingDocument = documentService.FindAssembly(assembly);
+			var existingDocument = documentService.FindAssembly(assembly, DsDocumentService.DefaultOptions);
 			if (existingDocument != null)
 				return existingDocument;
 

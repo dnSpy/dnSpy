@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 
-namespace dnSpy.Disassembly {
+namespace dnSpy.Disassembly.X86 {
 	[Export(typeof(IAppSettingsPageProvider))]
 	sealed class CodeStyleSettingsPageProvider : IAppSettingsPageProvider {
 		readonly MasmDisassemblySettingsImpl masmSettings;

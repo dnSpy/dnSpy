@@ -47,6 +47,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		bool DigitSeparators => (options & ValueFormatterOptions.DigitSeparators) != 0;
 		bool NoStringQuotes => (options & ValueFormatterOptions.NoStringQuotes) != 0;
 		bool ShowTokens => (options & ValueFormatterOptions.Tokens) != 0;
+		bool FullString => (options & ValueFormatterOptions.FullString) != 0;
 
 		public VisualBasicPrimitiveValueFormatter(IDbgTextWriter output, ValueFormatterOptions options, CultureInfo cultureInfo) {
 			this.output = output;
@@ -316,8 +317,14 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		}
 
 		public void FormatString(string value) {
+			bool stringTooLong = !FullString && value.Length > ValueFormatterUtils.MaxStringLength;
+			if (stringTooLong)
+				value = value.Substring(0, ValueFormatterUtils.MaxStringLength);
+
 			if (NoStringQuotes) {
 				OutputWrite(value, DbgTextColor.DebuggerNoStringQuotesEval);
+				if (stringTooLong)
+					OutputWrite("[...]", DbgTextColor.DebuggerNoStringQuotesEval);
 				return;
 			}
 
@@ -381,6 +388,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					index++;
 					needSep = true;
 				}
+			}
+			if (stringTooLong) {
+				if (needSep)
+					WriteStringConcatOperator();
+				OutputWrite("\"" + "[...]" + "\"", DbgTextColor.String);
 			}
 		}
 

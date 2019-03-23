@@ -23,12 +23,12 @@ using System.Diagnostics;
 using dnSpy.Contracts.Disassembly;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
+namespace dnSpy.Disassembly.X86 {
 	static class FormatterOutputTextKindExtensions {
 		public const FormatterOutputTextKind UnknownSymbol = (FormatterOutputTextKind)(-1);
 	}
 
-	static class X86BlockFactory {
+	static class BlockFactory {
 		const string LABEL_PREFIX = "LBL_";
 		const string FUNC_PREFIX = "FNC_";
 
@@ -67,14 +67,14 @@ namespace dnSpy.Disassembly {
 		}
 
 		static ArraySegment<byte> GetBytes(ArraySegment<byte> code, ulong address, ref Instruction instr) {
-			int index = (int)(instr.IP64 - address);
+			int index = (int)(instr.IP - address);
 			return new ArraySegment<byte>(code.Array, code.Offset + index, instr.ByteLength);
 		}
 
 		static string GetLabel(int index) => LABEL_PREFIX + index.ToString();
 		static string GetFunc(int index) => FUNC_PREFIX + index.ToString();
 
-		public static X86Block[] Create(int bitness, NativeCodeBlock[] blocks) {
+		public static Block[] Create(int bitness, NativeCodeBlock[] blocks) {
 			var targets = new Dictionary<ulong, TargetKind>();
 			var instrInfo = new List<(Instruction instruction, int block, ArraySegment<byte> code)>();
 			for (int blockIndex = 0; blockIndex < blocks.Length; blockIndex++) {
@@ -82,7 +82,7 @@ namespace dnSpy.Disassembly {
 
 				var reader = new ByteArrayCodeReader(block.Code);
 				var decoder = Decoder.Create(bitness, reader);
-				decoder.InstructionPointer = block.Address;
+				decoder.IP = block.Address;
 				while (reader.CanReadByte) {
 					decoder.Decode(out var instr);
 					instrInfo.Add((instr, blockIndex, GetBytes(block.Code, block.Address, ref instr)));
@@ -93,7 +93,7 @@ namespace dnSpy.Disassembly {
 						break;
 
 					case FlowControl.UnconditionalBranch:
-						Add(targets, instr.NextIP64, TargetKind.Unknown);
+						Add(targets, instr.NextIP, TargetKind.Unknown);
 						if (instr.Op0Kind == OpKind.NearBranch16 || instr.Op0Kind == OpKind.NearBranch32 || instr.Op0Kind == OpKind.NearBranch64)
 							Add(targets, instr.NearBranchTarget, TargetKind.Branch);
 						break;
@@ -110,7 +110,7 @@ namespace dnSpy.Disassembly {
 						break;
 
 					case FlowControl.IndirectBranch:
-						Add(targets, instr.NextIP64, TargetKind.Unknown);
+						Add(targets, instr.NextIP, TargetKind.Unknown);
 						// Unknown target
 						break;
 
@@ -120,7 +120,7 @@ namespace dnSpy.Disassembly {
 
 					case FlowControl.Return:
 					case FlowControl.Exception:
-						Add(targets, instr.NextIP64, TargetKind.Unknown);
+						Add(targets, instr.NextIP, TargetKind.Unknown);
 						break;
 
 					default:
@@ -169,9 +169,9 @@ namespace dnSpy.Disassembly {
 			for (int i = 0; i < instrInfo.Count; i++) {
 				var info = instrInfo[i];
 				ref var instr = ref info.instruction;
-				if (targets.TryGetValue(instr.IP64, out var targetKind)) {
+				if (targets.TryGetValue(instr.IP, out var targetKind)) {
 					var origBlock = blocks[info.block];
-					currentBlock = new BlockInfo(targetKind, origBlock.Kind, instr.IP64, origBlock.Address == instr.IP64 ? origBlock.Comment : null);
+					currentBlock = new BlockInfo(targetKind, origBlock.Kind, instr.IP, origBlock.Address == instr.IP ? origBlock.Comment : null);
 					newBlocks.Add(currentBlock);
 				}
 				currentBlock.Instructions.Add(new X86InstructionInfo(info.code, instr));
@@ -179,7 +179,7 @@ namespace dnSpy.Disassembly {
 
 			newBlocks.Sort((a, b) => a.Address.CompareTo(b.Address));
 
-			var x86Blocks = new X86Block[newBlocks.Count];
+			var x86Blocks = new Block[newBlocks.Count];
 			for (int i = 0; i < newBlocks.Count; i++) {
 				var block = newBlocks[i];
 
@@ -217,7 +217,7 @@ namespace dnSpy.Disassembly {
 					goto case TargetKind.Unknown;
 				}
 
-				x86Blocks[i] = new X86Block(block.Kind, block.Address, block.Comment, label, labelKind, x86Instructions);
+				x86Blocks[i] = new Block(block.Kind, block.Address, block.Comment, label, labelKind, x86Instructions);
 			}
 			return x86Blocks;
 		}

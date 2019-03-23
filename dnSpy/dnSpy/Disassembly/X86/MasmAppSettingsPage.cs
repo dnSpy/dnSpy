@@ -20,8 +20,8 @@
 using System;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
-	sealed class MasmAppSettingsPage : X86DisassemblyCodeStyleAppSettingsPage {
+namespace dnSpy.Disassembly.X86 {
+	sealed class MasmAppSettingsPage : DisassemblyCodeStyleAppSettingsPage {
 		public override double Order => CodeStyleConstants.CODESTYLE_MASM_ORDER;
 		public override Guid Guid => new Guid("B92522C8-3B79-4CC0-8E15-47F62F271269");
 		public override string Title => CodeStyleConstants.MASM_NAME;

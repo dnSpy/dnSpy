@@ -22,8 +22,8 @@ using System.ComponentModel;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Disassembly {
-	abstract class X86DisassemblySettings : IX86DisassemblySettings {
+namespace dnSpy.Disassembly.X86 {
+	abstract class DisassemblySettings : IX86DisassemblySettings {
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
@@ -71,16 +71,16 @@ namespace dnSpy.Disassembly {
 		}
 		bool upperCaseKeywords;
 
-		public bool UpperCaseOther {
-			get => upperCaseOther;
+		public bool UpperCaseDecorators {
+			get => upperCaseDecorators;
 			set {
-				if (value != upperCaseOther) {
-					upperCaseOther = value;
-					OnPropertyChanged(nameof(UpperCaseOther));
+				if (value != upperCaseDecorators) {
+					upperCaseDecorators = value;
+					OnPropertyChanged(nameof(UpperCaseDecorators));
 				}
 			}
 		}
-		bool upperCaseOther;
+		bool upperCaseDecorators;
 
 		public bool UpperCaseAll {
 			get => upperCaseAll;
@@ -457,7 +457,7 @@ namespace dnSpy.Disassembly {
 				}
 			}
 		}
-		MemorySizeOptions memorySizeOptions = MemorySizeOptions.Default;
+		MemorySizeOptions memorySizeOptions = MemorySizeOptions.Minimum;
 
 		public bool RipRelativeAddresses {
 			get => ripRelativeAddresses;
@@ -508,7 +508,7 @@ namespace dnSpy.Disassembly {
 			UpperCaseMnemonics = sect.Attribute<bool?>(nameof(UpperCaseMnemonics)) ?? UpperCaseMnemonics;
 			UpperCaseRegisters = sect.Attribute<bool?>(nameof(UpperCaseRegisters)) ?? UpperCaseRegisters;
 			UpperCaseKeywords = sect.Attribute<bool?>(nameof(UpperCaseKeywords)) ?? UpperCaseKeywords;
-			UpperCaseOther = sect.Attribute<bool?>(nameof(UpperCaseOther)) ?? UpperCaseOther;
+			UpperCaseDecorators = sect.Attribute<bool?>(nameof(UpperCaseDecorators)) ?? UpperCaseDecorators;
 			UpperCaseAll = sect.Attribute<bool?>(nameof(UpperCaseAll)) ?? UpperCaseAll;
 			FirstOperandCharIndex = sect.Attribute<int?>(nameof(FirstOperandCharIndex)) ?? FirstOperandCharIndex;
 			TabSize = sect.Attribute<int?>(nameof(TabSize)) ?? TabSize;
@@ -554,7 +554,7 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(UpperCaseMnemonics), UpperCaseMnemonics);
 			sect.Attribute(nameof(UpperCaseRegisters), UpperCaseRegisters);
 			sect.Attribute(nameof(UpperCaseKeywords), UpperCaseKeywords);
-			sect.Attribute(nameof(UpperCaseOther), UpperCaseOther);
+			sect.Attribute(nameof(UpperCaseDecorators), UpperCaseDecorators);
 			sect.Attribute(nameof(UpperCaseAll), UpperCaseAll);
 			sect.Attribute(nameof(FirstOperandCharIndex), FirstOperandCharIndex);
 			sect.Attribute(nameof(TabSize), TabSize);
@@ -595,14 +595,14 @@ namespace dnSpy.Disassembly {
 			sect.Attribute(nameof(ShowSymbolAddress), ShowSymbolAddress);
 		}
 
-		protected X86DisassemblySettings CopyTo(X86DisassemblySettings other) {
+		protected DisassemblySettings CopyTo(DisassemblySettings other) {
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 			other.UpperCasePrefixes = UpperCasePrefixes;
 			other.UpperCaseMnemonics = UpperCaseMnemonics;
 			other.UpperCaseRegisters = UpperCaseRegisters;
 			other.UpperCaseKeywords = UpperCaseKeywords;
-			other.UpperCaseOther = UpperCaseOther;
+			other.UpperCaseDecorators = UpperCaseDecorators;
 			other.UpperCaseAll = UpperCaseAll;
 			other.FirstOperandCharIndex = FirstOperandCharIndex;
 			other.TabSize = TabSize;

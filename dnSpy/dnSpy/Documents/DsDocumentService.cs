@@ -137,8 +137,25 @@ namespace dnSpy.Documents {
 				CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateClear(oldDocuments, null));
 		}
 
-		public IDsDocument FindAssembly(IAssembly assembly) {
-			const AssemblyNameComparerFlags flags = AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version;
+		static AssemblyNameComparerFlags ToAssemblyNameComparerFlags(FindAssemblyOptions options) {
+			AssemblyNameComparerFlags flags = 0;
+			if ((options & FindAssemblyOptions.Name) != 0)
+				flags |= AssemblyNameComparerFlags.Name;
+			if ((options & FindAssemblyOptions.Version) != 0)
+				flags |= AssemblyNameComparerFlags.Version;
+			if ((options & FindAssemblyOptions.PublicKeyToken) != 0)
+				flags |= AssemblyNameComparerFlags.PublicKeyToken;
+			if ((options & FindAssemblyOptions.Culture) != 0)
+				flags |= AssemblyNameComparerFlags.Culture;
+			if ((options & FindAssemblyOptions.ContentType) != 0)
+				flags |= AssemblyNameComparerFlags.ContentType;
+			return flags;
+		}
+
+		internal const FindAssemblyOptions DefaultOptions = FindAssemblyOptions.All & ~FindAssemblyOptions.Version;
+		public IDsDocument FindAssembly(IAssembly assembly) => FindAssembly(assembly, DefaultOptions);
+		public IDsDocument FindAssembly(IAssembly assembly, FindAssemblyOptions options) {
+			var flags = ToAssemblyNameComparerFlags(options);
 			var comparer = new AssemblyNameComparer(flags);
 			rwLock.EnterReadLock();
 			try {

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>Додати точку зупинки класу</value>
+    <value>Додати точку зупинки Класу</value>
   </data>
   <data name="AddClassTracepointCommand" xml:space="preserve">
     <value>Додати точку трасування класу</value>
@@ -154,7 +154,7 @@
     <value>Завантаження модуля. Це направду може зайняти деякий час.</value>
   </data>
   <data name="LoadModule_Title" xml:space="preserve">
-    <value>Завантаження динамічних модулів</value>
+    <value>Завантаження Динамічних Модулів</value>
   </data>
   <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
     <value>'{0}' кинув виключення типу '{1}'</value>

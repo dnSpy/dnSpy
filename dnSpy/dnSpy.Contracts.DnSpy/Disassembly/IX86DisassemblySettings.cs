@@ -45,9 +45,9 @@ namespace dnSpy.Contracts.Disassembly {
 		bool UpperCaseKeywords { get; set; }
 
 		/// <summary>
-		/// Upper case other stuff, eg. {z}, {sae}, {rd-sae}
+		/// Upper case decorators, eg. {z}, {sae}, {rd-sae}
 		/// </summary>
-		bool UpperCaseOther { get; set; }
+		bool UpperCaseDecorators { get; set; }
 
 		/// <summary>
 		/// Everything is upper cased, except numbers and their prefixes/suffixes

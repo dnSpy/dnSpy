@@ -40,6 +40,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly Lazy<DebuggerSettings> debuggerSettings;
 		readonly Lazy<ProgramFormatterProvider> programFormatterProvider;
 		readonly IMessageBoxService messageBoxService;
+		string lastFilterText;
 
 		[ImportingConstructor]
 		ShowAttachToProcessDialogImpl(IAppWindow appWindow, Lazy<UIDispatcher> uiDispatcher, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<AttachProgramOptionsAggregatorFactory> attachProgramOptionsAggregatorFactory, Lazy<DbgManager> dbgManager, Lazy<DebuggerSettings> debuggerSettings, Lazy<ProgramFormatterProvider> programFormatterProvider, IMessageBoxService messageBoxService) {
@@ -59,11 +60,13 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			try {
 				var dlg = new AttachToProcessDlg();
 				vm = new AttachToProcessVM(options, uiDispatcher.Value, dbgManager.Value, debuggerSettings.Value, programFormatterProvider.Value, classificationFormatMapService, textElementProvider, attachProgramOptionsAggregatorFactory.Value, () => SearchHelp(vm, dlg));
+				vm.FilterText = lastFilterText;
 				dlg.DataContext = vm;
 				dlg.Owner = appWindow.MainWindow;
 				var res = dlg.ShowDialog();
 				if (res != true)
 					return Array.Empty<AttachToProgramOptions>();
+				lastFilterText = vm.FilterText;
 				return vm.SelectedItems.Select(a => a.AttachProgramOptions.GetOptions()).ToArray();
 			}
 			finally {

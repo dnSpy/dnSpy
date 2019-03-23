@@ -25,48 +25,48 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using Iced.Intel;
 
-namespace dnSpy.Disassembly {
-	abstract class X86DisassemblyCodeStyleAppSettingsPage : AppSettingsPage {
+namespace dnSpy.Disassembly.X86 {
+	abstract class DisassemblyCodeStyleAppSettingsPage : AppSettingsPage {
 		const ulong X86_RIP = 0x7FFF_FFFF_FFFF_FFF0;
 		const ulong SYMBOLADDR = 0x5AA556789ABCDEF0UL;
 		const string SYMBOLNAME = "secret_data";
 
-		protected readonly X86DisassemblySettings _global_x86DisassemblySettings;
-		protected readonly X86DisassemblySettings x86DisassemblySettings;
+		protected readonly DisassemblySettings _global_x86DisassemblySettings;
+		protected readonly DisassemblySettings x86DisassemblySettings;
 		readonly StringBuilderFormatterOutput x86Output;
 		readonly Formatter formatter;
-		readonly List<X86DisasmBooleanSetting> boolSettings;
+		readonly List<DisasmBooleanSetting> boolSettings;
 
 		public IX86DisassemblySettings Settings => x86DisassemblySettings;
 		public sealed override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DISASSEMBLER_CODESTYLE);
 		public sealed override object UIObject => this;
 
-		public X86DisasmBooleanSetting UseHexNumbers { get; }
-		public X86DisasmBooleanSetting UpperCasePrefixes { get; }
-		public X86DisasmBooleanSetting UpperCaseMnemonics { get; }
-		public X86DisasmBooleanSetting UpperCaseRegisters { get; }
-		public X86DisasmBooleanSetting UpperCaseKeywords { get; }
-		public X86DisasmBooleanSetting UpperCaseHex { get; }
-		public X86DisasmBooleanSetting UpperCaseAll { get; }
-		public X86DisasmBooleanSetting SpaceAfterOperandSeparator { get; }
-		public X86DisasmBooleanSetting SpaceAfterMemoryBracket { get; }
-		public X86DisasmBooleanSetting SpaceBetweenMemoryAddOperators { get; }
-		public X86DisasmBooleanSetting SpaceBetweenMemoryMulOperators { get; }
-		public X86DisasmBooleanSetting ScaleBeforeIndex { get; }
-		public X86DisasmBooleanSetting AlwaysShowScale { get; }
-		public X86DisasmBooleanSetting AlwaysShowSegmentRegister { get; }
-		public X86DisasmBooleanSetting ShowZeroDisplacements { get; }
-		public X86DisasmBooleanSetting LeadingZeroes { get; }
-		public X86DisasmBooleanSetting BranchLeadingZeroes { get; }
-		public X86DisasmBooleanSetting SmallHexNumbersInDecimal { get; }
-		public X86DisasmBooleanSetting AddLeadingZeroToHexNumbers { get; }
-		public X86DisasmBooleanSetting SignedImmediateOperands { get; }
-		public X86DisasmBooleanSetting SignedMemoryDisplacements { get; }
-		public X86DisasmBooleanSetting AlwaysShowMemorySize { get; }
-		public X86DisasmBooleanSetting RipRelativeAddresses { get; }
-		public X86DisasmBooleanSetting ShowBranchSize { get; }
-		public X86DisasmBooleanSetting UsePseudoOps { get; }
-		public X86DisasmBooleanSetting ShowSymbolAddress { get; }
+		public DisasmBooleanSetting UseHexNumbers { get; }
+		public DisasmBooleanSetting UpperCasePrefixes { get; }
+		public DisasmBooleanSetting UpperCaseMnemonics { get; }
+		public DisasmBooleanSetting UpperCaseRegisters { get; }
+		public DisasmBooleanSetting UpperCaseKeywords { get; }
+		public DisasmBooleanSetting UpperCaseHex { get; }
+		public DisasmBooleanSetting UpperCaseAll { get; }
+		public DisasmBooleanSetting SpaceAfterOperandSeparator { get; }
+		public DisasmBooleanSetting SpaceAfterMemoryBracket { get; }
+		public DisasmBooleanSetting SpaceBetweenMemoryAddOperators { get; }
+		public DisasmBooleanSetting SpaceBetweenMemoryMulOperators { get; }
+		public DisasmBooleanSetting ScaleBeforeIndex { get; }
+		public DisasmBooleanSetting AlwaysShowScale { get; }
+		public DisasmBooleanSetting AlwaysShowSegmentRegister { get; }
+		public DisasmBooleanSetting ShowZeroDisplacements { get; }
+		public DisasmBooleanSetting LeadingZeroes { get; }
+		public DisasmBooleanSetting BranchLeadingZeroes { get; }
+		public DisasmBooleanSetting SmallHexNumbersInDecimal { get; }
+		public DisasmBooleanSetting AddLeadingZeroToHexNumbers { get; }
+		public DisasmBooleanSetting SignedImmediateOperands { get; }
+		public DisasmBooleanSetting SignedMemoryDisplacements { get; }
+		public DisasmBooleanSetting AlwaysShowMemorySize { get; }
+		public DisasmBooleanSetting RipRelativeAddresses { get; }
+		public DisasmBooleanSetting ShowBranchSize { get; }
+		public DisasmBooleanSetting UsePseudoOps { get; }
+		public DisasmBooleanSetting ShowSymbolAddress { get; }
 
 		public Int32VM OperandColumnVM { get; }
 
@@ -117,12 +117,12 @@ namespace dnSpy.Disassembly {
 			}
 		}
 
-		protected X86DisassemblyCodeStyleAppSettingsPage(X86DisassemblySettings global_x86DisassemblySettings, X86DisassemblySettings x86DisassemblySettings, Formatter formatter) {
+		protected DisassemblyCodeStyleAppSettingsPage(DisassemblySettings global_x86DisassemblySettings, DisassemblySettings x86DisassemblySettings, Formatter formatter) {
 			_global_x86DisassemblySettings = global_x86DisassemblySettings ?? throw new ArgumentNullException(nameof(global_x86DisassemblySettings));
 			this.x86DisassemblySettings = x86DisassemblySettings ?? throw new ArgumentNullException(nameof(x86DisassemblySettings));
 			x86Output = new StringBuilderFormatterOutput();
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
-			boolSettings = new List<X86DisasmBooleanSetting>();
+			boolSettings = new List<DisasmBooleanSetting>();
 
 			UseHexNumbers = AddDisasmBoolSetting(
 				() => Settings.NumberBase == Contracts.Disassembly.NumberBase.Hexadecimal,
@@ -162,17 +162,17 @@ namespace dnSpy.Disassembly {
 			RefreshDisassembly();
 		}
 
-		protected X86DisasmBooleanSetting AddDisasmBoolSetting(Func<bool> getValue, Action<bool> setValue, Instruction instruction, bool fixRip = true) {
+		protected DisasmBooleanSetting AddDisasmBoolSetting(Func<bool> getValue, Action<bool> setValue, Instruction instruction, bool fixRip = true) {
 			if (fixRip)
-				instruction.IP64 = X86_RIP;
-			var boolSetting = new X86DisasmBooleanSetting(x86Output, getValue, setValue, formatter, instruction);
+				instruction.IP = X86_RIP;
+			var boolSetting = new DisasmBooleanSetting(x86Output, getValue, setValue, formatter, instruction);
 			boolSetting.PropertyChanged += DisasmBooleanSetting_PropertyChanged;
 			boolSettings.Add(boolSetting);
 			return boolSetting;
 		}
 
 		void DisasmBooleanSetting_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(X86DisasmBooleanSetting.Disassembly))
+			if (e.PropertyName == nameof(DisasmBooleanSetting.Disassembly))
 				return;
 			RefreshDisassembly();
 		}
@@ -190,7 +190,7 @@ namespace dnSpy.Disassembly {
 			options.UpperCaseMnemonics = x86DisassemblySettings.UpperCaseMnemonics;
 			options.UpperCaseRegisters = x86DisassemblySettings.UpperCaseRegisters;
 			options.UpperCaseKeywords = x86DisassemblySettings.UpperCaseKeywords;
-			options.UpperCaseOther = x86DisassemblySettings.UpperCaseOther;
+			options.UpperCaseDecorators = x86DisassemblySettings.UpperCaseDecorators;
 			options.UpperCaseAll = x86DisassemblySettings.UpperCaseAll;
 			options.FirstOperandCharIndex = x86DisassemblySettings.FirstOperandCharIndex;
 			options.TabSize = x86DisassemblySettings.TabSize;

@@ -67,6 +67,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		bool Tokens => (options & DbgStackFrameFormatterOptions.Tokens) != 0;
 		bool ShowIP => (options & DbgStackFrameFormatterOptions.IP) != 0;
 		bool DigitSeparators => (options & DbgStackFrameFormatterOptions.DigitSeparators) != 0;
+		bool FullString => (options & DbgStackFrameFormatterOptions.FullString) != 0;
 
 		public CSharpStackFrameFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
@@ -105,6 +106,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				res |= ValueFormatterOptions.Tokens;
 			if (DigitSeparators)
 				res |= ValueFormatterOptions.DigitSeparators;
+			if (FullString)
+				res |= ValueFormatterOptions.FullString;
 			return res;
 		}
 

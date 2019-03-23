@@ -933,7 +933,7 @@
     <value>Виключення</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>Пошук</value>
+    <value>_Пошук</value>
   </data>
   <data name="Exceptions_NoMatch" xml:space="preserve">
     <value>Немає типів виключень, що відповідають умові пошуку.</value>

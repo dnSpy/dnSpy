@@ -206,5 +206,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// Ignore unhandled exceptions
 		/// </summary>
 		public abstract bool IgnoreUnhandledExceptions { get; set; }
+
+		/// <summary>
+		/// Show the full string value even if it's a very long string
+		/// </summary>
+		public abstract bool FullString { get; set; }
 	}
 }

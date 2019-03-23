@@ -18,21 +18,11 @@
 */
 
 using System;
+using System.Threading;
 
-namespace dnSpy.Roslyn.Debugger.Formatters {
-	[Flags]
-	enum ValueFormatterOptions {
-		None						= 0,
-		Edit						= 0x00000001,
-		Decimal						= 0x00000002,
-		FuncEval					= 0x00000004,
-		ToString					= 0x00000008,
-		Namespaces					= 0x00000010,
-		IntrinsicTypeKeywords		= 0x00000020,
-		Tokens						= 0x00000040,
-		DigitSeparators				= 0x00000080,
-		NoStringQuotes				= 0x00000100,
-		NoDebuggerDisplay			= 0x00000200,
-		FullString					= 0x00000400,
+namespace dnSpy.Debugger.Evaluation {
+	static class ExceptionUtils {
+		public static bool IsInternalDebuggerError(Exception ex) =>
+			!(ex is OutOfMemoryException || ex is OperationCanceledException || ex is ThreadAbortException);
 	}
 }

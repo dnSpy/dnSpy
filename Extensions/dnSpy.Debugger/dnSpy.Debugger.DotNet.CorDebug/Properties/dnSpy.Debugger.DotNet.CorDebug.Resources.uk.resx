@@ -130,7 +130,7 @@
     <value>_Host</value>
   </data>
   <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Аргументи Хоста</value>
+    <value>Ар_гументи Хоста</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
     <value>_Робоча Директорія</value>
@@ -139,7 +139,7 @@
     <value>Створити процес</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Не зупиняти</value>
+    <value>Не Зупиняти</value>
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
     <value>Точка Входу</value>

@@ -23,8 +23,8 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Disassembly {
-	class GasDisassemblySettings : X86DisassemblySettings, IGasDisassemblySettings {
+namespace dnSpy.Disassembly.X86 {
+	class GasDisassemblySettings : DisassemblySettings, IGasDisassemblySettings {
 		public GasDisassemblySettings() {
 			HexPrefix = "0x";
 			OctalPrefix = "0";

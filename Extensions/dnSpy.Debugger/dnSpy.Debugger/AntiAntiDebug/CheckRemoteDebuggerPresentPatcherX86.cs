@@ -63,15 +63,15 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 			instructions.Add(Instruction.Create(II.Code.Mov_r32_rm32, Register.EAX, new MemoryOperand(Register.ESP, 4)));
 			instructions.Add(Instruction.Create(II.Code.Test_rm32_r32, Register.EAX, Register.EAX));
-			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_32, jmp_orig_func_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_32, jmp_orig_func_instr.IP));
 			instructions.Add(Instruction.Create(II.Code.Cmp_rm32_imm8, new MemoryOperand(Register.ESP, 8), 0));
-			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_32, jmp_orig_func_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_32, jmp_orig_func_instr.IP));
 			instructions.Add(Instruction.Create(II.Code.Cmp_rm32_imm8, Register.EAX, -1));
-			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_32, fix_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_32, fix_instr.IP));
 			instructions.Add(Instruction.Create(II.Code.Push_r32, Register.EAX));
 			instructions.Add(Instruction.CreateBranch(II.Code.Call_rel32_32, addrGetProcessId));
 			instructions.Add(Instruction.Create(II.Code.Cmp_rm32_imm32, Register.EAX, pid));
-			instructions.Add(Instruction.CreateBranch(II.Code.Jne_rel8_32, jmp_orig_func_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Jne_rel8_32, jmp_orig_func_instr.IP));
 			instructions.Add(fix_instr);
 			instructions.Add(Instruction.Create(II.Code.And_rm32_imm8, new MemoryOperand(Register.EAX), 0));
 			instructions.Add(Instruction.Create(II.Code.Mov_r32_imm32, Register.EAX, 1));
@@ -126,11 +126,11 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			var jmp_orig_func_instr = AddTargetId(Instruction.CreateBranch(II.Code.Jmp_rel32_64, function.NewFunctionAddress));
 
 			instructions.Add(Instruction.Create(II.Code.Test_rm64_r64, Register.RCX, Register.RCX));
-			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_64, jmp_orig_func_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_64, jmp_orig_func_instr.IP));
 			instructions.Add(Instruction.Create(II.Code.Test_rm64_r64, Register.RDX, Register.RDX));
-			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_64, jmp_orig_func_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_64, jmp_orig_func_instr.IP));
 			instructions.Add(Instruction.Create(II.Code.Cmp_rm64_imm8, Register.RCX, -1));
-			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_64, fix_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Je_rel8_64, fix_instr.IP));
 			instructions.Add(Instruction.Create(II.Code.Mov_rm64_r64, new MemoryOperand(Register.RSP, 8), Register.RCX));
 			instructions.Add(Instruction.Create(II.Code.Push_r64, Register.RDX));
 			instructions.Add(Instruction.Create(II.Code.Sub_rm64_imm8, Register.RSP, 0x20));
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			instructions.Add(Instruction.Create(II.Code.Pop_r64, Register.RDX));
 			instructions.Add(Instruction.Create(II.Code.Mov_r64_rm64, Register.RCX, new MemoryOperand(Register.RSP, 8)));
 			instructions.Add(Instruction.Create(II.Code.Cmp_rm32_imm32, Register.EAX, pid));
-			instructions.Add(Instruction.CreateBranch(II.Code.Jne_rel8_64, jmp_orig_func_instr.IP64));
+			instructions.Add(Instruction.CreateBranch(II.Code.Jne_rel8_64, jmp_orig_func_instr.IP));
 			instructions.Add(fix_instr);
 			instructions.Add(Instruction.Create(II.Code.Mov_r32_imm32, Register.EAX, 1));
 			instructions.Add(Instruction.Create(II.Code.Retnq));

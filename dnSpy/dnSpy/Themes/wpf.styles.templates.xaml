@@ -19,7 +19,7 @@
                     xmlns:docvwrsettings="clr-namespace:dnSpy.Documents.Tabs.DocViewer.Settings"
                     xmlns:outputsettings="clr-namespace:dnSpy.Output.Settings"
                     xmlns:hexedsettings="clr-namespace:dnSpy.Hex.HexEditor"
-                    xmlns:disasmsettings="clr-namespace:dnSpy.Disassembly"
+                    xmlns:disasmsettingsx86="clr-namespace:dnSpy.Disassembly.X86"
                     xmlns:disasmviewersettings="clr-namespace:dnSpy.Disassembly.Viewer"
                     xmlns:bm="clr-namespace:dnSpy.Bookmarks.Settings"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -6740,7 +6740,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type disasmsettings:MasmAppSettingsPage}">
+    <DataTemplate DataType="{x:Type disasmsettingsx86:MasmAppSettingsPage}">
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -6867,7 +6867,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type disasmsettings:NasmAppSettingsPage}">
+    <DataTemplate DataType="{x:Type disasmsettingsx86:NasmAppSettingsPage}">
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -6994,7 +6994,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type disasmsettings:GasAppSettingsPage}">
+    <DataTemplate DataType="{x:Type disasmsettingsx86:GasAppSettingsPage}">
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
