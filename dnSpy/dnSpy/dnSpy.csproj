@@ -85,8 +85,8 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' AND '$(MSBuildRuntimeType)' != 'Core' ">
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationFramework.Aero" />
   </ItemGroup>
 
   <ItemGroup>
