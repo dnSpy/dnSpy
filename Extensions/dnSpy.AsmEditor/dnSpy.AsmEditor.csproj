@@ -37,6 +37,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' AND '$(MSBuildRuntimeType)' != 'Core' ">
+    <Reference Include="PresentationFramework.Aero" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>

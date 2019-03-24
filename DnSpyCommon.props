@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!--
         - appveyor.yml (artifacts)
-        - build.ps1
+        - build.cmd
         - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
     <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
@@ -19,7 +19,7 @@
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
     <!-- Make sure we don't have to publish each extension to get all their refs -->
     <CopyLocalLockFileAssemblies Condition=" '$(IsDotNetCore)' == 'true' ">true</CopyLocalLockFileAssemblies>
-    <!-- If this gets updated, also update appveyor.yml and build.ps1 -->
+    <!-- If this gets updated, also update appveyor.yml and build.cmd -->
     <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
 
     <!-- Update app.config whenever this value changes -->
@@ -36,12 +36,12 @@
     <IcedVersion>1.2.0</IcedVersion>
     <MSBuildNuGetVersion>15.9.20</MSBuildNuGetVersion>
     <MSDiagRuntimeVersion>1.0.5</MSDiagRuntimeVersion>
-    <MSVSCompositionNetFxAttributesVersion>15.8.117</MSVSCompositionNetFxAttributesVersion>
     <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
     <RoslynVersion>2.10.0</RoslynVersion>
+    <SCCompositionVersion>4.6.0-preview3.19128.7</SCCompositionVersion>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />

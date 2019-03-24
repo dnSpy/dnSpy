@@ -1,5 +1,5 @@
 version: x.x.{build}
-image: Visual Studio 2017
+image: Visual Studio 2019 Preview
 configuration: Release
 install:
 - cmd: git submodule update --init --recursive
