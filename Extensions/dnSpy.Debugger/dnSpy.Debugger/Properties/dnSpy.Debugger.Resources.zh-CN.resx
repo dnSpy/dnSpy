@@ -340,7 +340,7 @@
     <value>异常设置(_X)</value>
   </data>
   <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
-    <value>从列表中删除异常</value>
+    <value>从列表中去除异常</value>
   </data>
   <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
     <value>恢复列表到默认设置</value>
@@ -430,13 +430,13 @@
     <value>&lt;无地址&gt;</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>打开所在文件夹</value>
+    <value>打开所在文件夹(_O)</value>
   </data>
   <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
     <value>从内存打开模块</value>
   </data>
   <data name="RemoveExceptionCommand" xml:space="preserve">
-    <value>删除(_R)</value>
+    <value>去除(_R)</value>
   </data>
   <data name="RenameThreadCommand" xml:space="preserve">
     <value>重命名</value>
@@ -586,13 +586,13 @@
     <value>显示返回类型</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>显示Tokens</value>
+    <value>显示标记</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>显示内部类型关键字</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
-    <value>启动但不调试</value>
+    <value>启动但不调试(_H)</value>
   </data>
   <data name="StatusBar_Ready" xml:space="preserve">
     <value>就绪</value>
@@ -964,7 +964,7 @@
     <value>添加断点</value>
   </data>
   <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
-    <value>删除断点</value>
+    <value>去除断点</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
     <value>编辑 AppDomain 名称</value>
@@ -979,10 +979,10 @@
     <value>编辑过程名称</value>
   </data>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
-    <value>删除所有断点</value>
+    <value>去除所有断点</value>
   </data>
   <data name="RemoveBreakpointCommand" xml:space="preserve">
-    <value>删除断点</value>
+    <value>去除断点</value>
   </data>
   <data name="DisableBreakpointCommand3" xml:space="preserve">
     <value>禁用断点</value>
@@ -1063,7 +1063,7 @@
     <value>搜索断点</value>
   </data>
   <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
-    <value>删除与当前的搜索条件匹配的所有断点</value>
+    <value>去除与当前的搜索条件匹配的所有断点</value>
   </data>
   <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
     <value>重置所有搜索条件，以便显示所有断点</value>
@@ -1111,7 +1111,7 @@
     <value>转到源代码</value>
   </data>
   <data name="GoToSourceCodeCommand" xml:space="preserve">
-    <value>转到源代码</value>
+    <value>转到源代码(_G)</value>
   </data>
   <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
     <value>(没有条件)</value>
@@ -1342,13 +1342,13 @@
     <value>设置对象ID</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>语言</value>
+    <value>语言(_L)</value>
   </data>
   <data name="DbgSettings_DebugEngine" xml:space="preserve">
     <value>调试引擎</value>
   </data>
   <data name="DbgSettings_Language" xml:space="preserve">
-    <value>语言</value>
+    <value>语言(_L)</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
     <value>Ctrl+V</value>

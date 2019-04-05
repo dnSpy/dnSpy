@@ -2032,4 +2032,7 @@
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Timestamp:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Sconosciuto&gt;</value>
+  </data>
 </root>

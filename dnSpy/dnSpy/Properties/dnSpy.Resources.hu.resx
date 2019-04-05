@@ -2037,4 +2037,7 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Időbélyeg:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Ismeretlen&gt;</value>
+  </data>
 </root>

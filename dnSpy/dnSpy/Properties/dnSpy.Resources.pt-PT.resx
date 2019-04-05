@@ -2033,4 +2033,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Data/Hora:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Desconhecido&gt;</value>
+  </data>
 </root>

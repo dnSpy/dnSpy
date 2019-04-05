@@ -154,16 +154,16 @@
     <value>_Відміна</value>
   </data>
   <data name="Button_No" xml:space="preserve">
-    <value>Ні</value>
+    <value>_Ні</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>Т_ак</value>
+    <value>_OK</value>
   </data>
   <data name="Button_Save" xml:space="preserve">
-    <value>Зберегти...</value>
+    <value>_Зберегти...</value>
   </data>
   <data name="Button_Yes" xml:space="preserve">
-    <value>Так</value>
+    <value>_Так</value>
   </data>
   <data name="CantConvertInputToType" xml:space="preserve">
     <value>Не вдається перетворити вхідні дані в потрібний тип: {0}</value>
@@ -172,16 +172,16 @@
     <value>Закрити всі вкладки групи, крім цьої</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>Закрити усі окрім цієї</value>
+    <value>Закрити _усі окрім цієї</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
-    <value>Закрити усі закладки</value>
+    <value>За_крити усі закладки</value>
   </data>
   <data name="CloseTabCommand" xml:space="preserve">
     <value>З_акрити</value>
   </data>
   <data name="CloseTabGroupCommand" xml:space="preserve">
-    <value>Закрити групу Табів</value>
+    <value>Закрити Групу Табів</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Копіюв_ати</value>
@@ -2033,5 +2033,8 @@
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Часові відмітка:</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Невідомо&gt;</value>
   </data>
 </root>

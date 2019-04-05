@@ -2037,4 +2037,7 @@
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>برچسب زمان:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;نامشخص&gt;</value>
+  </data>
 </root>

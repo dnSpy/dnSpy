@@ -124,7 +124,7 @@
     <value>Додати тип</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>_Вимкнути оптимізатор JIT-компіляції</value>
+    <value>_Вимкнути Оптимізатор JIT-компіляції</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
     <value>Ввімкнути відслідковування _JIT-компіляції</value>
