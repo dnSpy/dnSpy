@@ -220,13 +220,13 @@ namespace dnSpy.Documents.Tabs {
 			if (peImage != null) {
 				var timestampLine = dnSpy_Resources.Decompile_Timestamp + " ";
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
-				if (ts < 0x80000000 && ts != 0) {
-					var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
+				if ((int)ts > 0) {
+					var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts).ToLocalTime();
 					var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 					timestampLine += $"{ts:X8} ({dateString})";
 				}
 				else
-					timestampLine += $"??? ({ts:X8})";
+					timestampLine += $"{dnSpy_Resources.UnknownValue} ({ts:X8})";
 				decompiler.WriteCommentLine(output, timestampLine);
 			}
 		}
