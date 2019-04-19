@@ -548,6 +548,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				field.Add(new BooleanHexBitField("PreserveSig", 7));
 				field.Add(new BooleanHexBitField("AggressiveInlining", 8));
 				field.Add(new BooleanHexBitField("AggressiveOptimization", 9));
+				field.Add(new BooleanHexBitField("SecurityMitigations", 10));
 				field.Add(new BooleanHexBitField("InternalCall", 12));
 				return field;
 			}

@@ -98,6 +98,8 @@ namespace dnSpy.AsmEditor.Method {
 					OnPropertyChanged(nameof(NoInlining));
 					OnPropertyChanged(nameof(AggressiveInlining));
 					OnPropertyChanged(nameof(NoOptimization));
+					OnPropertyChanged(nameof(AggressiveOptimization));
+					OnPropertyChanged(nameof(SecurityMitigations));
 					HasErrorUpdated();
 				}
 			}
@@ -142,6 +144,11 @@ namespace dnSpy.AsmEditor.Method {
 		public bool AggressiveOptimization {
 			get => GetFlagValue(MethodImplAttributes.AggressiveOptimization);
 			set => SetFlagValue(MethodImplAttributes.AggressiveOptimization, value);
+		}
+
+		public bool SecurityMitigations {
+			get => GetFlagValue((MethodImplAttributes)0x0400);
+			set => SetFlagValue((MethodImplAttributes)0x0400, value);
 		}
 
 		bool GetFlagValue(MethodImplAttributes flag) => (ImplAttributes & flag) != 0;
