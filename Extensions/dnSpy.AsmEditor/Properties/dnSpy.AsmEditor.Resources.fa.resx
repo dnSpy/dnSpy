@@ -409,33 +409,6 @@
   <data name="Event_RemoveMethod" xml:space="preserve">
     <value>_حذف...</value>
   </data>
-  <data name="Event_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
-  </data>
-  <data name="Event_SpecialName" xml:space="preserve">
-    <value>_SpecialName</value>
-  </data>
-  <data name="FieldAccess_Assembly" xml:space="preserve">
-    <value>Assembly</value>
-  </data>
-  <data name="FieldAccess_Family" xml:space="preserve">
-    <value>Family</value>
-  </data>
-  <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>Family and Assembly</value>
-  </data>
-  <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>Family or Assembly</value>
-  </data>
-  <data name="FieldAccess_Private" xml:space="preserve">
-    <value>Private</value>
-  </data>
-  <data name="FieldAccess_PrivateScope" xml:space="preserve">
-    <value>PrivateScope</value>
-  </data>
-  <data name="FieldAccess_Public" xml:space="preserve">
-    <value>Public</value>
-  </data>
   <data name="FieldType" xml:space="preserve">
     <value>Field Type: {0}</value>
   </data>
@@ -447,24 +420,6 @@
   </data>
   <data name="Field_Flags" xml:space="preserve">
     <value>Flags</value>
-  </data>
-  <data name="Field_Flags_InitOnly" xml:space="preserve">
-    <value>_InitOnly</value>
-  </data>
-  <data name="Field_Flags_Literal" xml:space="preserve">
-    <value>_Literal</value>
-  </data>
-  <data name="Field_Flags_NotSerialized" xml:space="preserve">
-    <value>NotSeriali_zed</value>
-  </data>
-  <data name="Field_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_TSpecialName</value>
-  </data>
-  <data name="Field_Flags_SpecialName" xml:space="preserve">
-    <value>S_pecialName</value>
-  </data>
-  <data name="Field_Flags_Static" xml:space="preserve">
-    <value>_Static</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
     <value>Initial_Value</value>
@@ -547,15 +502,6 @@
   <data name="ImplMapTab" xml:space="preserve">
     <value>ImplMap</value>
   </data>
-  <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>_BestFit</value>
-  </data>
-  <data name="ImplMap_CallingConvention" xml:space="preserve">
-    <value>CallCon_v</value>
-  </data>
-  <data name="ImplMap_CharacterSet" xml:space="preserve">
-    <value>C_harSet</value>
-  </data>
   <data name="ImplMap_Enable" xml:space="preserve">
     <value>فعال کردن(_E)</value>
   </data>
@@ -564,18 +510,6 @@
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
     <value>_نام</value>
-  </data>
-  <data name="ImplMap_NoMangle" xml:space="preserve">
-    <value>No_Mangle</value>
-  </data>
-  <data name="ImplMap_SupportsLastError" xml:space="preserve">
-    <value>Supports_LastError</value>
-  </data>
-  <data name="ImplMap_ThrowOn_SHORT" xml:space="preserve">
-    <value>_ThrowOn...</value>
-  </data>
-  <data name="ImplMap_ThrowOn_ToolTip" xml:space="preserve">
-    <value>ThrowOnUnmappableChar</value>
   </data>
   <data name="MainTab" xml:space="preserve">
     <value>اصلی</value>
@@ -696,12 +630,6 @@
   </data>
   <data name="MethodSig_CallingConv" xml:space="preserve">
     <value>Ca_lling Conv</value>
-  </data>
-  <data name="MethodSig_ExplicitThis" xml:space="preserve">
-    <value>E_xplicitThis</value>
-  </data>
-  <data name="MethodSig_HasThis" xml:space="preserve">
-    <value>_HasThis</value>
   </data>
   <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
     <value>تایپ های پارامتر متود</value>
@@ -1616,9 +1544,6 @@
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
     <value>مقدار MaxStack را در هنگام ذخیره فایل مجددا محاسبه نکن</value>
   </data>
-  <data name="MethodBody_LocalVariableSignatureToken" xml:space="preserve">
-    <value>_LocalVarSigTok</value>
-  </data>
   <data name="MethodBody_MaxStack" xml:space="preserve">
     <value>_MaxStack</value>
   </data>
@@ -2117,98 +2042,8 @@
   <data name="Method_Access" xml:space="preserve">
     <value>دسترسی</value>
   </data>
-  <data name="Method_CodeType" xml:space="preserve">
-    <value>Cod_eType</value>
-  </data>
-  <data name="Method_Flags_Abstract" xml:space="preserve">
-    <value>_Abstract</value>
-  </data>
-  <data name="Method_Flags_CheckAccessOnOverride" xml:space="preserve">
-    <value>Chec_kAccessOnOverride</value>
-  </data>
-  <data name="Method_Flags_Final" xml:space="preserve">
-    <value>_نهایی</value>
-  </data>
-  <data name="Method_Flags_HideBySig" xml:space="preserve">
-    <value>Hi_deBySig</value>
-  </data>
-  <data name="Method_Flags_RequireSecObject" xml:space="preserve">
-    <value>Re_quireSecObject</value>
-  </data>
-  <data name="Method_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_TSpecialName</value>
-  </data>
-  <data name="Method_Flags_SpecialName" xml:space="preserve">
-    <value>S_pecialName</value>
-  </data>
-  <data name="Method_Flags_Static" xml:space="preserve">
-    <value>_Static</value>
-  </data>
-  <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
-    <value>UnmanagedE_xport</value>
-  </data>
-  <data name="Method_Flags_Virtual" xml:space="preserve">
-    <value>_مجازی</value>
-  </data>
-  <data name="Method_ImplFlags" xml:space="preserve">
-    <value>ImplFlags</value>
-  </data>
-  <data name="Method_ImplFlags_AggressiveInlining" xml:space="preserve">
-    <value>A_ggressiveInlining</value>
-  </data>
-  <data name="Method_ImplFlags_ForwardRef" xml:space="preserve">
-    <value>For_wardRef</value>
-  </data>
-  <data name="Method_ImplFlags_InternalCall" xml:space="preserve">
-    <value>Interna_lCall</value>
-  </data>
-  <data name="Method_ImplFlags_NoInlining" xml:space="preserve">
-    <value>No_Inlining</value>
-  </data>
-  <data name="Method_ImplFlags_NoOptimization" xml:space="preserve">
-    <value>NoOptimi_zation</value>
-  </data>
-  <data name="Method_ImplFlags_PreserveSig" xml:space="preserve">
-    <value>Prese_rveSig</value>
-  </data>
-  <data name="Method_ImplFlags_Synchronized" xml:space="preserve">
-    <value>هماهنگ شده</value>
-  </data>
-  <data name="Method_ManagedType" xml:space="preserve">
-    <value>_ManagedType</value>
-  </data>
-  <data name="Method_VtableLayout" xml:space="preserve">
-    <value>Vta_bleLayout</value>
-  </data>
-  <data name="Module_Cor20" xml:space="preserve">
-    <value>Cor20</value>
-  </data>
   <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
     <value>_ورژن رانتایم</value>
-  </data>
-  <data name="Module_EncBaseId" xml:space="preserve">
-    <value>Enc_BaseId</value>
-  </data>
-  <data name="Module_EncId" xml:space="preserve">
-    <value>EncI_d</value>
-  </data>
-  <data name="Module_Flags_Bit32Preferred" xml:space="preserve">
-    <value>_ترجیح به 32 بیت بودن</value>
-  </data>
-  <data name="Module_Flags_Bit32Required" xml:space="preserve">
-    <value>اجبار به 32 بیت بودن</value>
-  </data>
-  <data name="Module_Flags_ILLibrary" xml:space="preserve">
-    <value>_کتابخانه IL</value>
-  </data>
-  <data name="Module_Flags_ILOnly" xml:space="preserve">
-    <value>فقط _IL</value>
-  </data>
-  <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_امضا شده با Strong Name</value>
-  </data>
-  <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>اطلاعات _مسیر دیباگ</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
     <value>ورژن _Header</value>
@@ -2216,23 +2051,8 @@
   <data name="Module_Metadata_VersionString" xml:space="preserve">
     <value>_VersionString</value>
   </data>
-  <data name="Module_Mvid" xml:space="preserve">
-    <value>_Mvid</value>
-  </data>
-  <data name="Module_PE" xml:space="preserve">
-    <value>PE</value>
-  </data>
   <data name="Module_PE_Machine" xml:space="preserve">
     <value>_ماشین</value>
-  </data>
-  <data name="NetModule_Mvid" xml:space="preserve">
-    <value>_Mvid</value>
-  </data>
-  <data name="PE_Header_Characteristics" xml:space="preserve">
-    <value>Characteristics</value>
-  </data>
-  <data name="PE_Header_DllCharacteristics" xml:space="preserve">
-    <value>DllCharacteristics</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
@@ -2242,24 +2062,6 @@
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
     <value>_نقطه ورود</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
-    <value>_ترجیح به 32 بیت بودن</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_Bit32Required" xml:space="preserve">
-    <value>اجبار به 32 بیت بودن</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_ILLibrary" xml:space="preserve">
-    <value>_کتابخانه IL</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_ILOnly" xml:space="preserve">
-    <value>فقط _IL</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_امضا شده با Strong Name</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>اطلاعات _مسیر دیباگ</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
     <value>_Major RT Ver</value>
@@ -2311,54 +2113,6 @@
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
     <value>_Use #- Table</value>
-  </data>
-  <data name="Type_Flags_Abstract" xml:space="preserve">
-    <value>A_bstract</value>
-  </data>
-  <data name="Type_Flags_Accessibility" xml:space="preserve">
-    <value>دسترسی</value>
-  </data>
-  <data name="Type_Flags_BeforeFieldInit" xml:space="preserve">
-    <value>BeforeFieldIni_t</value>
-  </data>
-  <data name="Type_Flags_Custom" xml:space="preserve">
-    <value>سفارشی</value>
-  </data>
-  <data name="Type_Flags_Forwarder" xml:space="preserve">
-    <value>_Forwarder</value>
-  </data>
-  <data name="Type_Flags_Import" xml:space="preserve">
-    <value>_Import</value>
-  </data>
-  <data name="Type_Flags_Kind" xml:space="preserve">
-    <value>_نوع</value>
-  </data>
-  <data name="Type_Flags_Layout" xml:space="preserve">
-    <value>_طرح</value>
-  </data>
-  <data name="Type_Flags_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
-  </data>
-  <data name="Type_Flags_Sealed" xml:space="preserve">
-    <value>Seale_d</value>
-  </data>
-  <data name="Type_Flags_Semantics" xml:space="preserve">
-    <value>_Semantics</value>
-  </data>
-  <data name="Type_Flags_Serializable" xml:space="preserve">
-    <value>S_erializable</value>
-  </data>
-  <data name="Type_Flags_SpecialName" xml:space="preserve">
-    <value>S_pecialName</value>
-  </data>
-  <data name="Type_Flags_String" xml:space="preserve">
-    <value>Strin_g</value>
-  </data>
-  <data name="Type_Flags_Visibility" xml:space="preserve">
-    <value>Visibilit_y</value>
-  </data>
-  <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
-    <value>_WindowsRuntime</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
     <value>فیلد</value>
@@ -2542,5 +2296,20 @@
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
     <value>_Replace with NOPs</value>
+  </data>
+  <data name="Type_Flags_Accessibility" xml:space="preserve">
+    <value>دسترسی</value>
+  </data>
+  <data name="Type_Flags_Kind" xml:space="preserve">
+    <value>_نوع</value>
+  </data>
+  <data name="Type_Flags_Layout" xml:space="preserve">
+    <value>_طرح</value>
+  </data>
+  <data name="Type_Flags_String" xml:space="preserve">
+    <value>Strin_g</value>
+  </data>
+  <data name="Type_Flags_Visibility" xml:space="preserve">
+    <value>Visibilit_y</value>
   </data>
 </root>

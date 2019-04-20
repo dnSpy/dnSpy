@@ -133,13 +133,13 @@
     <value>Коп_ировать</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
-    <value>Dbl Click</value>
+    <value>Двойнок клик</value>
   </data>
   <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>add</value>
+    <value>добавить</value>
   </data>
   <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>remove</value>
+    <value>удалить</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
     <value>Представлено в</value>

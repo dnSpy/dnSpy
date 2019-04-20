@@ -190,7 +190,7 @@
     <value>Ctrl+C</value>
   </data>
   <data name="CopyMDTokenCommand" xml:space="preserve">
-    <value>_Копіювати токен метаданних</value>
+    <value>_Копіювати Токен Метаданних</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
     <value>Не вдалося запустити браузер</value>
@@ -289,13 +289,13 @@
     <value>Перейти до токену метаданих</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>Заховати усі вкладки</value>
+    <value>З_аховати усі вкладки</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
-    <value>Сховати</value>
+    <value>_Сховати</value>
   </data>
   <data name="HighlightLine" xml:space="preserve">
-    <value>Підсвітити поточний рядок</value>
+    <value>_Підсвітити поточний рядок</value>
   </data>
   <data name="InvalidInputTextMessageBox" xml:space="preserve">
     <value>Невірний текст</value>
@@ -304,13 +304,13 @@
     <value>Завантажую dnSpy! Прохання зачекати...</value>
   </data>
   <data name="Menu_Edit" xml:space="preserve">
-    <value>Редагувати</value>
+    <value>Р_едагувати</value>
   </data>
   <data name="Menu_File" xml:space="preserve">
-    <value>Файл</value>
+    <value>_Файл</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
-    <value>Допомога</value>
+    <value>_Допомога</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
     <value>Тема</value>
@@ -334,13 +334,13 @@
     <value>Перенести усе в попередню групу вкладок</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
-    <value>Вниз</value>
+    <value>_Вниз</value>
   </data>
   <data name="MoveLeftCommand" xml:space="preserve">
     <value>Вліво</value>
   </data>
   <data name="MoveRightCommand" xml:space="preserve">
-    <value>Вправо</value>
+    <value>_Вправо</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
     <value>Перемістити групу вкладок після наступної групи вкладок</value>
@@ -352,13 +352,13 @@
     <value>Перенести усе в наступну групу вкладок</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
-    <value>Перемістити</value>
+    <value>_Перемістити</value>
   </data>
   <data name="MoveToolWindowGroupCommand" xml:space="preserve">
     <value>Перемістити Групу</value>
   </data>
   <data name="MoveTopCommand" xml:space="preserve">
-    <value>Вверх</value>
+    <value>_Вверх</value>
   </data>
   <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
     <value>Перенести усе в попередню групу вкладок</value>
@@ -382,10 +382,10 @@
     <value>Новая _вертикальна група вкладок</value>
   </data>
   <data name="NewWindowCommand" xml:space="preserve">
-    <value>Нова Вікно</value>
+    <value>_Нове Вікно</value>
   </data>
   <data name="OpenCommand" xml:space="preserve">
-    <value>Відкрити...</value>
+    <value>_Відкрити...</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
     <value>_Відкрити каталог</value>

@@ -409,33 +409,6 @@
   <data name="Event_RemoveMethod" xml:space="preserve">
     <value>_Eliminar...</value>
   </data>
-  <data name="Event_RTSpecialName" xml:space="preserve">
-    <value>Nombre espacial _RTS</value>
-  </data>
-  <data name="Event_SpecialName" xml:space="preserve">
-    <value>Nombre _Especial</value>
-  </data>
-  <data name="FieldAccess_Assembly" xml:space="preserve">
-    <value>Ensamblado</value>
-  </data>
-  <data name="FieldAccess_Family" xml:space="preserve">
-    <value>Familia</value>
-  </data>
-  <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>Familia y Ensamblado</value>
-  </data>
-  <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>Familia o Ensamblado</value>
-  </data>
-  <data name="FieldAccess_Private" xml:space="preserve">
-    <value>Privado</value>
-  </data>
-  <data name="FieldAccess_PrivateScope" xml:space="preserve">
-    <value>Ámbito privado</value>
-  </data>
-  <data name="FieldAccess_Public" xml:space="preserve">
-    <value>Público</value>
-  </data>
   <data name="FieldType" xml:space="preserve">
     <value>Tipo campo: {0}</value>
   </data>
@@ -447,24 +420,6 @@
   </data>
   <data name="Field_Flags" xml:space="preserve">
     <value>Banderas</value>
-  </data>
-  <data name="Field_Flags_InitOnly" xml:space="preserve">
-    <value>Solo iniciar</value>
-  </data>
-  <data name="Field_Flags_Literal" xml:space="preserve">
-    <value>Literal</value>
-  </data>
-  <data name="Field_Flags_NotSerialized" xml:space="preserve">
-    <value>No serializado</value>
-  </data>
-  <data name="Field_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_T Nombre especial</value>
-  </data>
-  <data name="Field_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre especial</value>
-  </data>
-  <data name="Field_Flags_Static" xml:space="preserve">
-    <value>Estático</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
     <value>Valor inicial</value>
@@ -547,15 +502,6 @@
   <data name="ImplMapTab" xml:space="preserve">
     <value>Implementación de Mapa</value>
   </data>
-  <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>El _Mejor ajustet</value>
-  </data>
-  <data name="ImplMap_CallingConvention" xml:space="preserve">
-    <value>Llamada con_vencional</value>
-  </data>
-  <data name="ImplMap_CharacterSet" xml:space="preserve">
-    <value>Juego de C_arácteres</value>
-  </data>
   <data name="ImplMap_Enable" xml:space="preserve">
     <value>_Habilitado</value>
   </data>
@@ -564,18 +510,6 @@
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
     <value>Nombre</value>
-  </data>
-  <data name="ImplMap_NoMangle" xml:space="preserve">
-    <value>Sin _Mutilación</value>
-  </data>
-  <data name="ImplMap_SupportsLastError" xml:space="preserve">
-    <value>Soporta el _ultimo error</value>
-  </data>
-  <data name="ImplMap_ThrowOn_SHORT" xml:space="preserve">
-    <value>_Lanzar...</value>
-  </data>
-  <data name="ImplMap_ThrowOn_ToolTip" xml:space="preserve">
-    <value>Lanzar un carácter inmaterial</value>
   </data>
   <data name="MainTab" xml:space="preserve">
     <value>Principal</value>
@@ -696,12 +630,6 @@
   </data>
   <data name="MethodSig_CallingConv" xml:space="preserve">
     <value>Ll_amada convencional</value>
-  </data>
-  <data name="MethodSig_ExplicitThis" xml:space="preserve">
-    <value>E_xplicitar esto</value>
-  </data>
-  <data name="MethodSig_HasThis" xml:space="preserve">
-    <value>_Tiene esto</value>
   </data>
   <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
     <value>Tipos de parámetro de método</value>
@@ -1615,9 +1543,6 @@
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
     <value>No calcular el valor de MaxStack al guardar el archivo</value>
   </data>
-  <data name="MethodBody_LocalVariableSignatureToken" xml:space="preserve">
-    <value>_LocalVarSigTok</value>
-  </data>
   <data name="MethodBody_MaxStack" xml:space="preserve">
     <value>_Máxima Pila</value>
   </data>
@@ -2110,98 +2035,8 @@
   <data name="Method_Access" xml:space="preserve">
     <value>Acceso</value>
   </data>
-  <data name="Method_CodeType" xml:space="preserve">
-    <value>Tipo de Cód_igo</value>
-  </data>
-  <data name="Method_Flags_Abstract" xml:space="preserve">
-    <value>_Abstracto</value>
-  </data>
-  <data name="Method_Flags_CheckAccessOnOverride" xml:space="preserve">
-    <value>Chec_kAccessOnOverride</value>
-  </data>
-  <data name="Method_Flags_Final" xml:space="preserve">
-    <value>_Final</value>
-  </data>
-  <data name="Method_Flags_HideBySig" xml:space="preserve">
-    <value>Hi_deBySig</value>
-  </data>
-  <data name="Method_Flags_RequireSecObject" xml:space="preserve">
-    <value>Re_quireSecObject</value>
-  </data>
-  <data name="Method_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_T Nombre especial</value>
-  </data>
-  <data name="Method_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre especial</value>
-  </data>
-  <data name="Method_Flags_Static" xml:space="preserve">
-    <value>Estático</value>
-  </data>
-  <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
-    <value>E_xportación no administrada</value>
-  </data>
-  <data name="Method_Flags_Virtual" xml:space="preserve">
-    <value>_Virtual</value>
-  </data>
-  <data name="Method_ImplFlags" xml:space="preserve">
-    <value>ImplFlags</value>
-  </data>
-  <data name="Method_ImplFlags_AggressiveInlining" xml:space="preserve">
-    <value>A_ggressiveInlining</value>
-  </data>
-  <data name="Method_ImplFlags_ForwardRef" xml:space="preserve">
-    <value>For_wardRef</value>
-  </data>
-  <data name="Method_ImplFlags_InternalCall" xml:space="preserve">
-    <value>Interna_lCall</value>
-  </data>
-  <data name="Method_ImplFlags_NoInlining" xml:space="preserve">
-    <value>No_Inlining</value>
-  </data>
-  <data name="Method_ImplFlags_NoOptimization" xml:space="preserve">
-    <value>NoOptimi_zation</value>
-  </data>
-  <data name="Method_ImplFlags_PreserveSig" xml:space="preserve">
-    <value>Prese_rveSig</value>
-  </data>
-  <data name="Method_ImplFlags_Synchronized" xml:space="preserve">
-    <value>Sync_hronized</value>
-  </data>
-  <data name="Method_ManagedType" xml:space="preserve">
-    <value>_ManagedType</value>
-  </data>
-  <data name="Method_VtableLayout" xml:space="preserve">
-    <value>Vta_bleLayout</value>
-  </data>
-  <data name="Module_Cor20" xml:space="preserve">
-    <value>Cor20</value>
-  </data>
   <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
     <value>Versión _Runtime</value>
-  </data>
-  <data name="Module_EncBaseId" xml:space="preserve">
-    <value>Enc_BaseId</value>
-  </data>
-  <data name="Module_EncId" xml:space="preserve">
-    <value>EncI_d</value>
-  </data>
-  <data name="Module_Flags_Bit32Preferred" xml:space="preserve">
-    <value>_Preferidos 32 bits</value>
-  </data>
-  <data name="Module_Flags_Bit32Required" xml:space="preserve">
-    <value>Requeridos _32 bits</value>
-  </data>
-  <data name="Module_Flags_ILLibrary" xml:space="preserve">
-    <value>_Libreria IL</value>
-  </data>
-  <data name="Module_Flags_ILOnly" xml:space="preserve">
-    <value>_IL sólo</value>
-  </data>
-  <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_Una firma nombre fuerte</value>
-  </data>
-  <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>Datos de depuración de la pista</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
     <value>_Encabezamiento de las versión</value>
@@ -2209,23 +2044,8 @@
   <data name="Module_Metadata_VersionString" xml:space="preserve">
     <value>Cadena de la _Versión</value>
   </data>
-  <data name="Module_Mvid" xml:space="preserve">
-    <value>_Mvid</value>
-  </data>
-  <data name="Module_PE" xml:space="preserve">
-    <value>PE</value>
-  </data>
   <data name="Module_PE_Machine" xml:space="preserve">
     <value>_Máquina</value>
-  </data>
-  <data name="NetModule_Mvid" xml:space="preserve">
-    <value>_Mvid</value>
-  </data>
-  <data name="PE_Header_Characteristics" xml:space="preserve">
-    <value>Características</value>
-  </data>
-  <data name="PE_Header_DllCharacteristics" xml:space="preserve">
-    <value>Carasterísticas de la Dll</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
     <value>Nombre espacial _RTS</value>
@@ -2235,24 +2055,6 @@
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
     <value>Punto de _Entry</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
-    <value>_Preferidos 32 bits</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_Bit32Required" xml:space="preserve">
-    <value>Requeridos _32 bits</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_ILLibrary" xml:space="preserve">
-    <value>_Libreria IL</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_ILOnly" xml:space="preserve">
-    <value>_IL sólo</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
-    <value>_Una firma nombre fuerte</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>Datos de depuración de la pista</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
     <value>_Mayor Versión RT</value>
@@ -2304,54 +2106,6 @@
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
     <value>_Use #-mesa</value>
-  </data>
-  <data name="Type_Flags_Abstract" xml:space="preserve">
-    <value>A_bstracto</value>
-  </data>
-  <data name="Type_Flags_Accessibility" xml:space="preserve">
-    <value>Accessibilida_d</value>
-  </data>
-  <data name="Type_Flags_BeforeFieldInit" xml:space="preserve">
-    <value>Antes de inicia_r campo</value>
-  </data>
-  <data name="Type_Flags_Custom" xml:space="preserve">
-    <value>Perso_nalizado</value>
-  </data>
-  <data name="Type_Flags_Forwarder" xml:space="preserve">
-    <value>_Promotor</value>
-  </data>
-  <data name="Type_Flags_Import" xml:space="preserve">
-    <value>_Importar</value>
-  </data>
-  <data name="Type_Flags_Kind" xml:space="preserve">
-    <value>_Tipo</value>
-  </data>
-  <data name="Type_Flags_Layout" xml:space="preserve">
-    <value>Dise_ño</value>
-  </data>
-  <data name="Type_Flags_RTSpecialName" xml:space="preserve">
-    <value>Nombre espacial _RTS</value>
-  </data>
-  <data name="Type_Flags_Sealed" xml:space="preserve">
-    <value>Sellad_o</value>
-  </data>
-  <data name="Type_Flags_Semantics" xml:space="preserve">
-    <value>_Semánticas</value>
-  </data>
-  <data name="Type_Flags_Serializable" xml:space="preserve">
-    <value>S_erializable</value>
-  </data>
-  <data name="Type_Flags_SpecialName" xml:space="preserve">
-    <value>Nombre especial</value>
-  </data>
-  <data name="Type_Flags_String" xml:space="preserve">
-    <value>Caden_a</value>
-  </data>
-  <data name="Type_Flags_Visibility" xml:space="preserve">
-    <value>Visibilida_d</value>
-  </data>
-  <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
-    <value>Tiempo de ejecución de _Windows</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
     <value>Campo</value>
@@ -2531,9 +2285,24 @@
     <value>Compilador</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>Reemolazo con NOPs</value>
+    <value>_Reemplazar con NOPs</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace con NOPs</value>
+    <value>_Reemplazar con NOPs</value>
+  </data>
+  <data name="Type_Flags_Accessibility" xml:space="preserve">
+    <value>Accessibilida_d</value>
+  </data>
+  <data name="Type_Flags_Kind" xml:space="preserve">
+    <value>_Tipo</value>
+  </data>
+  <data name="Type_Flags_Layout" xml:space="preserve">
+    <value>Dise_ño</value>
+  </data>
+  <data name="Type_Flags_String" xml:space="preserve">
+    <value>Caden_a</value>
+  </data>
+  <data name="Type_Flags_Visibility" xml:space="preserve">
+    <value>Visibilida_d</value>
   </data>
 </root>

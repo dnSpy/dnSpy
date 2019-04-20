@@ -385,7 +385,7 @@
     <value>编辑值(_E)</value>
   </data>
   <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
-    <value>展开子节点</value>
+    <value>展开子节点(_X)</value>
   </data>
   <data name="LocalsSaveCommand" xml:space="preserve">
     <value>保存(_S)...</value>
@@ -556,7 +556,7 @@
     <value>Shift+F5</value>
   </data>
   <data name="ShowInMemoryWindowCommand" xml:space="preserve">
-    <value>在内存窗口中显示</value>
+    <value>在内存窗口中显示(_S)</value>
   </data>
   <data name="ShowInstructionPointerCommand" xml:space="preserve">
     <value>显示IP</value>
@@ -766,13 +766,13 @@
     <value>程序输出(_O)</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>分步过滤信息</value>
+    <value>分步过滤信息(_S)</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
     <value>线程退出消息(_T)</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
-    <value>MDA消息</value>
+    <value>MDA消息(_M)</value>
   </data>
   <data name="DebugLogAdditionalInformation" xml:space="preserve">
     <value>其他信息: {0}</value>
@@ -1339,7 +1339,7 @@
     <value>在变量窗口中高亮显示更改过的变量</value>
   </data>
   <data name="MakeObjectIdCommand" xml:space="preserve">
-    <value>设置对象ID</value>
+    <value>设置对象ID(_M)</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>语言(_L)</value>
@@ -1381,7 +1381,7 @@
     <value>&lt;未知&gt;</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>刷新</value>
+    <value>刷新(_R)</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
     <value>组合参数和局部变量</value>
@@ -1414,7 +1414,7 @@
     <value>函数求值需要所有线程都在运行。</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>数字分隔符</value>
+    <value>数字分隔符(_D)</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
     <value>命令行</value>
@@ -1480,7 +1480,7 @@
     <value>使映像更易于调试</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>公共成员</value>
+    <value>公共成员(_P)</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
     <value>显示原始区域变量</value>
