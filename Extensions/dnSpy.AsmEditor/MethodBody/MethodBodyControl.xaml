@@ -98,7 +98,7 @@
                         <TextBox Grid.Column="5" Margin="5 0 0 0" Name="fileOffsetTextBox" IsReadOnly="True" Background="Transparent" Text="{Binding CilBodyVM.HeaderFileOffset.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                         <Label Grid.Column="6" Margin="5 0 0 0" Target="{Binding ElementName=maxStackTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_MaxStack}" />
                         <TextBox Grid.Column="7" Margin="5 0 0 0" Name="maxStackTextBox" Text="{Binding CilBodyVM.MaxStack.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-                        <Label Grid.Column="8" Margin="5 0 0 0" Target="{Binding ElementName=localVarSigTokTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_LocalVariableSignatureToken}" />
+                        <Label Grid.Column="8" Margin="5 0 0 0" Target="{Binding ElementName=localVarSigTokTextBox}" Content="_LocalVarSigTok" />
                         <TextBox Grid.Column="9" Margin="5 0 0 0" Name="localVarSigTokTextBox" Text="{Binding CilBodyVM.LocalVarSigTok.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                     <!-- Use recycling mode or the virtualizer will free the ListViewItems only a
