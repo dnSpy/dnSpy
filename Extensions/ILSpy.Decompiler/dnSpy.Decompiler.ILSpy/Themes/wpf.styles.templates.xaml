@@ -11,6 +11,8 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.QueryExpressions}" IsEnabled="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompileQueryExpr}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ExpressionTrees}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompileExprTrees}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseDebugSymbols}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_UseLocalNameFromSyms}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.FullyQualifyAllTypes}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_FullyQualifyAllTypes}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.FullyQualifyAmbiguousTypeNames}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_FullyQualifyAmbiguousTypeNames}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowXMLDocComments}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.RemoveEmptyDefaultConstructors}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_RemoveEmptyDefaultCtors}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowTokensRvasOffsets}"/>
