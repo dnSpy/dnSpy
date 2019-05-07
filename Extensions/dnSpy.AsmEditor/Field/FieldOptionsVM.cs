@@ -28,13 +28,13 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Field {
 	enum FieldAccess {
-		PrivateScope	= (int)FieldAttributes.PrivateScope >> 0,
-		Private			= (int)FieldAttributes.Private >> 0,
-		FamANDAssem		= (int)FieldAttributes.FamANDAssem >> 0,
-		Assembly		= (int)FieldAttributes.Assembly >> 0,
-		Family			= (int)FieldAttributes.Family >> 0,
-		FamORAssem		= (int)FieldAttributes.FamORAssem >> 0,
-		Public			= (int)FieldAttributes.Public >> 0,
+		PrivateScope	= (int)FieldAttributes.PrivateScope,
+		Private			= (int)FieldAttributes.Private,
+		FamANDAssem		= (int)FieldAttributes.FamANDAssem,
+		Assembly		= (int)FieldAttributes.Assembly,
+		Family			= (int)FieldAttributes.Family,
+		FamORAssem		= (int)FieldAttributes.FamORAssem,
+		Public			= (int)FieldAttributes.Public,
 	}
 
 	sealed class FieldOptionsVM : ViewModelBase {
@@ -42,22 +42,11 @@ namespace dnSpy.AsmEditor.Field {
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
-		static readonly EnumVM[] fieldAccessList = new EnumVM[] {
-			new EnumVM(Field.FieldAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
-			new EnumVM(Field.FieldAccess.Private, dnSpy_AsmEditor_Resources.FieldAccess_Private),
-			new EnumVM(Field.FieldAccess.FamANDAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyAndAssembly),
-			new EnumVM(Field.FieldAccess.Assembly, dnSpy_AsmEditor_Resources.FieldAccess_Assembly),
-			new EnumVM(Field.FieldAccess.Family, dnSpy_AsmEditor_Resources.FieldAccess_Family),
-			new EnumVM(Field.FieldAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
-			new EnumVM(Field.FieldAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
-		};
+		static readonly EnumVM[] fieldAccessList = EnumVM.Create(typeof(FieldAccess));
 		public EnumListVM FieldAccess { get; } = new EnumListVM(fieldAccessList);
 
 		public FieldAttributes Attributes {
-			get {
-				return (attributes & ~FieldAttributes.FieldAccessMask) |
-					(FieldAttributes)((int)(Field.FieldAccess)FieldAccess.SelectedItem << 0);
-			}
+			get => (attributes & ~FieldAttributes.FieldAccessMask) | (FieldAttributes)(FieldAccess)FieldAccess.SelectedItem;
 			set {
 				if (attributes != value) {
 					attributes = value;

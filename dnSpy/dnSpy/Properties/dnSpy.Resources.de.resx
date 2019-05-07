@@ -2037,4 +2037,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Zeitstempel:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unbekannt&gt;</value>
+  </data>
 </root>

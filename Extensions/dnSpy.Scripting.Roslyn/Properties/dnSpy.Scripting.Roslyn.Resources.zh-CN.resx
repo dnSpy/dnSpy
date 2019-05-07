@@ -196,7 +196,7 @@
     <value>前一条历史记录</value>
   </data>
   <data name="Script_ToolTip_Reset" xml:space="preserve">
-    <value>重置</value>
+    <value>重置(_R)</value>
   </data>
   <data name="ShortCutKeyAltDown" xml:space="preserve">
     <value>Alt + ↓</value>

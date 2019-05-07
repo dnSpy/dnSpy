@@ -53,8 +53,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding HasThis}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodSig_HasThis}" VerticalAlignment="Center" />
-                <CheckBox Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ExplicitThis}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodSig_ExplicitThis}" VerticalAlignment="Center" />
+                <CheckBox Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding HasThis}" Content="HasThis" VerticalAlignment="Center" />
+                <CheckBox Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ExplicitThis}" Content="ExplicitThis" VerticalAlignment="Center" />
                 <Label Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodSig_CallingConv}" Target="{Binding ElementName=methodCallingConvComboBox}" Visibility="{Binding IsMethodSig, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <ComboBox Grid.Column="3" Margin="5 0 0 0" Name="methodCallingConvComboBox" DisplayMemberPath="Name" ItemsSource="{Binding MethodCallingConv.Items}" SelectedIndex="{Binding MethodCallingConv.SelectedIndex}" Width="70" VerticalContentAlignment="Center" Visibility="{Binding IsMethodSig, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Button Grid.Column="4" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodSig_ReturnType}" Command="{Binding AddReturnTypeCommand}" />

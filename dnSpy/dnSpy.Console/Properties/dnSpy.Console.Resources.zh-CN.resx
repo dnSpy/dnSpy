@@ -127,10 +127,10 @@
     <value>选项无效：{0}</value>
   </data>
   <data name="InvalidSolutionName" xml:space="preserve">
-    <value>.sln 名称 ({0}) 必须是相对于工程目录</value>
+    <value>.sln 名称 ({0}) 必须相对于工程目录</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
-    <value>元数据令牌无效</value>
+    <value>元数据标记无效</value>
   </data>
   <data name="InvalidVSVersion" xml:space="preserve">
     <value>无效的 Visual Studio 版本：{0}</value>
@@ -295,7 +295,7 @@
     <value>反编译目录中所有.NET的dll文件并保存到C:\out\path</value>
   </data>
   <data name="ExampleDescription4" xml:space="preserve">
-    <value>反编译标识为0x06000123的成员</value>
+    <value>反编译标记为0x06000123的成员</value>
   </data>
   <data name="ExampleDescription5" xml:space="preserve">
     <value>从 mscorlib 反编译 System.Int32</value>

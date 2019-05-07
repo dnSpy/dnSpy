@@ -267,12 +267,12 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILOnly}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Cor20_Flags_ILOnly}" />
-                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILLibrary}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Cor20_Flags_ILLibrary}" />
-                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Required}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Cor20_Flags_Bit32Required}" />
-                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Preferred}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Cor20_Flags_Bit32Preferred}" />
-                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.TrackDebugData}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Cor20_Flags_TrackDebugData}" />
-                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.StrongNameSigned}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Cor20_Flags_StrongNameSigned}" />
+                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILOnly}" Content="ILOnly" />
+                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILLibrary}" Content="ILLibrary" />
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Required}" Content="32BitRequired" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Preferred}" Content="32BitPreferred" />
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.TrackDebugData}" Content="TrackDebugData" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.StrongNameSigned}" Content="StrongNameSigned" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
@@ -328,7 +328,7 @@
                                 <ComboBox Grid.Column="3" Margin="5 5 0 0" Name="subsystemComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Subsystem.Items}" SelectedIndex="{Binding PEHeadersOptions.Subsystem.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
                             </Grid>
 
-                            <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="{x:Static p:dnSpy_AsmEditor_Resources.PE_Header_Characteristics}" Margin="0 5 0 0">
+                            <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Characteristics" Margin="0 5 0 0">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
@@ -363,7 +363,7 @@
                                 </Grid>
                             </GroupBox>
 
-                            <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="{x:Static p:dnSpy_AsmEditor_Resources.PE_Header_DllCharacteristics}" Margin="0 5 0 0">
+                            <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="DllCharacteristics" Margin="0 5 0 0">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition />

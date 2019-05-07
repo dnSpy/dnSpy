@@ -175,10 +175,10 @@
     <value>Члени екземпляру</value>
   </data>
   <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
-    <value>Сирий вигляд</value>
+    <value>Сирий Вигляд</value>
   </data>
   <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
-    <value>Представлення результатів</value>
+    <value>Представлення Результатів</value>
   </data>
   <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
     <value>Shared члени</value>

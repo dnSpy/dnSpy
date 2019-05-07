@@ -121,7 +121,7 @@
     <value>BAML反编译器</value>
   </data>
   <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
-    <value>反汇编 BAML</value>
+    <value>反汇编BAML</value>
   </data>
   <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
     <value>每行一个标签</value>
@@ -130,7 +130,7 @@
     <value>使用Tab缩进</value>
   </data>
   <data name="DisassembleBAMLCommand" xml:space="preserve">
-    <value>反汇编 BAML</value>
+    <value>反汇编BAML</value>
   </data>
   <data name="Error_AttachedEvent" xml:space="preserve">
     <value>附加事件 '{0}'。</value>

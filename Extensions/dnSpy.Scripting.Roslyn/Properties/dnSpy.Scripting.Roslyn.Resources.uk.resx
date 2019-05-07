@@ -127,7 +127,7 @@
     <value>Копіювати</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
-    <value>Вирізати</value>
+    <value>В_ирізати</value>
   </data>
   <data name="HelpAltDown" xml:space="preserve">
     <value>Показати наступну команду</value>
@@ -262,7 +262,7 @@
     <value>Ctrl+Alt+I</value>
   </data>
   <data name="CopyCodeCommand" xml:space="preserve">
-    <value>Скопіювати код</value>
+    <value>Скопіювати Код</value>
   </data>
   <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
     <value>Ctrl + Shift + C</value>
@@ -286,7 +286,7 @@
     <value>Зберегти</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Текстові файли</value>
+    <value>Текстові Файли</value>
   </data>
   <data name="SaveCodeCommand" xml:space="preserve">
     <value>Збереження коду...</value>

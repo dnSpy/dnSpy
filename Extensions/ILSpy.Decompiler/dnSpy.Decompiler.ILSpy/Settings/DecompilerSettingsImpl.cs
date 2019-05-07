@@ -53,8 +53,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			//SwitchStatementOnString = sect.Attribute<bool?>(nameof(SwitchStatementOnString)) ?? SwitchStatementOnString;
 			//UsingDeclarations = sect.Attribute<bool?>(nameof(UsingDeclarations)) ?? UsingDeclarations;
 			QueryExpressions = sect.Attribute<bool?>(nameof(QueryExpressions)) ?? QueryExpressions;
-			//FullyQualifyAmbiguousTypeNames = sect.Attribute<bool?>(nameof(FullyQualifyAmbiguousTypeNames)) ?? FullyQualifyAmbiguousTypeNames;
-			//FullyQualifyAllTypes = sect.Attribute<bool?>(nameof(FullyQualifyAllTypes)) ?? FullyQualifyAllTypes;
+			FullyQualifyAmbiguousTypeNames = sect.Attribute<bool?>(nameof(FullyQualifyAmbiguousTypeNames)) ?? FullyQualifyAmbiguousTypeNames;
+			FullyQualifyAllTypes = sect.Attribute<bool?>(nameof(FullyQualifyAllTypes)) ?? FullyQualifyAllTypes;
 			UseDebugSymbols = sect.Attribute<bool?>(nameof(UseDebugSymbols)) ?? UseDebugSymbols;
 			//ObjectOrCollectionInitializers = sect.Attribute<bool?>(nameof(ObjectOrCollectionInitializers)) ?? ObjectOrCollectionInitializers;
 			ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? ShowXmlDocumentation;
@@ -102,8 +102,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			//sect.Attribute(nameof(SwitchStatementOnString), SwitchStatementOnString);
 			//sect.Attribute(nameof(UsingDeclarations), UsingDeclarations);
 			sect.Attribute(nameof(QueryExpressions), QueryExpressions);
-			//sect.Attribute(nameof(FullyQualifyAmbiguousTypeNames), FullyQualifyAmbiguousTypeNames);
-			//sect.Attribute(nameof(FullyQualifyAllTypes), FullyQualifyAllTypes);
+			sect.Attribute(nameof(FullyQualifyAmbiguousTypeNames), FullyQualifyAmbiguousTypeNames);
+			sect.Attribute(nameof(FullyQualifyAllTypes), FullyQualifyAllTypes);
 			sect.Attribute(nameof(UseDebugSymbols), UseDebugSymbols);
 			//sect.Attribute(nameof(ObjectOrCollectionInitializers), ObjectOrCollectionInitializers);
 			sect.Attribute(nameof(ShowXmlDocumentation), ShowXmlDocumentation);

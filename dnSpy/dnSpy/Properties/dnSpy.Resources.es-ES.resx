@@ -2036,4 +2036,7 @@
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Fecha/Hora:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt; desconocido &gt;</value>
+  </data>
 </root>

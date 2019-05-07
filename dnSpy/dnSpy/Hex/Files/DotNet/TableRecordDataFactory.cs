@@ -242,6 +242,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			new FlagInfo(0x0040, "NoOptimization"),
 			new FlagInfo(0x0080, "PreserveSig"),
 			new FlagInfo(0x0100, "AggressiveInlining"),
+			new FlagInfo(0x0200, "AggressiveOptimization"),
+			new FlagInfo(0x0400, "SecurityMitigations"),
 			new FlagInfo(0x1000, "InternalCall"),
 		});
 

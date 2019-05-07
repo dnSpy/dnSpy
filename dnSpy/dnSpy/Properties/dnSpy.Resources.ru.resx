@@ -2036,4 +2036,7 @@
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Время:</value>
   </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Неизвестно&gt;</value>
+  </data>
 </root>
