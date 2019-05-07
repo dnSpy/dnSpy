@@ -37,7 +37,7 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' AND '$(MSBuildRuntimeType)' != 'Core' ">
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
     <Reference Include="PresentationFramework.Aero" />
   </ItemGroup>
 
