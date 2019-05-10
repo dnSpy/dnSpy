@@ -881,7 +881,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 					type = type.Next;
 				}
 				if (list != null) {
-					Write(list[list.Count - 1].Next, typeGenArgs, methGenArgs);
+					Write(list[list.Count - 1].Next, typeGenArgs, Array.Empty<TypeSig>());
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
 							OutputWrite(ArrayParenOpen, BoxedTextColor.Punctuation);
