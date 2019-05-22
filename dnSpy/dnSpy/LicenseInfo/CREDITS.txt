@@ -78,3 +78,16 @@ Persian:
 
 	RezaHNA
 	Rex Prog
+
+Turkish:
+
+	Erol Yağız AYDIN
+	smngn
+	comanchero
+	Yüksel Güzel
+	URKMVC TMGD
+	Bilgehan Zeki ÖZAYTAÇ
+	Enes Taha SELEK
+	rifatx
+	python dede
+	meertcevik

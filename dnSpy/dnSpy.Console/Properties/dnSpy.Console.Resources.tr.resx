@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error1" xml:space="preserve">
+    <value>HATA: {0}</value>
+  </data>
+  <data name="FileOrDirDoesNotExist" xml:space="preserve">
+    <value>Dosya/dizin '{0}' yok</value>
+  </data>
+  <data name="InvalidOption" xml:space="preserve">
+    <value>Geçersiz seçenek: {0}</value>
+  </data>
+  <data name="InvalidSolutionName" xml:space="preserve">
+    <value>.sln adı ({0}) proje dizini ile ilişkili olmalıdır</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Geçersiz 'metadata' işareti</value>
+  </data>
+  <data name="InvalidVSVersion" xml:space="preserve">
+    <value>Geçersiz Visual Studio sürümü: {0}</value>
+  </data>
+  <data name="LanguageDoesNotExist" xml:space="preserve">
+    <value>Dil '{0}' yok</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Diller:</value>
+  </data>
+  <data name="LanguageXDoesNotExist" xml:space="preserve">
+    <value>{0} dili bulunmuyor</value>
+  </data>
+  <data name="MissingAsmSearchPath" xml:space="preserve">
+    <value>Eksik 'assembly' arama yolu</value>
+  </data>
+  <data name="MissingDotNetFilename" xml:space="preserve">
+    <value>Eksik .NET dosya adı</value>
+  </data>
+  <data name="MissingLanguageName" xml:space="preserve">
+    <value>Eksik dil adı</value>
+  </data>
+  <data name="MissingMDToken" xml:space="preserve">
+    <value>Eksik 'metadata' işareti</value>
+  </data>
+  <data name="MissingNumberOfThreads" xml:space="preserve">
+    <value>Eksik konu sayısı</value>
+  </data>
+  <data name="MissingOptions" xml:space="preserve">
+    <value>Hiçbir seçenek belirtilmedi</value>
+  </data>
+  <data name="MissingOutputDir" xml:space="preserve">
+    <value>Eksik çıkış dizini</value>
+  </data>
+  <data name="MissingSolutionName" xml:space="preserve">
+    <value>Eksik .sln adı</value>
+  </data>
+  <data name="MissingVSVersion" xml:space="preserve">
+    <value>Eksik Visual Studio sürümü</value>
+  </data>
+  <data name="NoLanguagesFound" xml:space="preserve">
+    <value>Dil bulunamadı. Dilin dll dosyaları ile programın aynı klasörde bulunduğundan emin olun.</value>
+  </data>
+  <data name="NotDotNetFile" xml:space="preserve">
+    <value>{0} bir .NET dosyası değil</value>
+  </data>
+  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
+    <value>--md kullanılarak sadece bir dosya kaynak koda dönüştürülebilir</value>
+  </data>
+  <data name="MissingUserGacPath" xml:space="preserve">
+    <value>Eksik kullanıcı GAC yolu</value>
+  </data>
+  <data name="InvalidMemberToDecompile" xml:space="preserve">
+    <value>Sadece türler, yöntemler, alanlar ve özellikler kaynak koda geri dönüştürülebilir</value>
+  </data>
+  <data name="CouldNotFindTypeX" xml:space="preserve">
+    <value>{0} türü bulunamadı</value>
+  </data>
+  <data name="CouldNotResolveGacFileX" xml:space="preserve">
+    <value>GAC assembly {0} çözümlenemedi</value>
+  </data>
+  <data name="MissingGacFile" xml:space="preserve">
+    <value>Eksik GAC assembly ismi</value>
+  </data>
+  <data name="MissingTypeName" xml:space="preserve">
+    <value>Türün tam adı eksik</value>
+  </data>
+  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
+    <value>{0} dili proje dosyası yaratmayı desteklemez</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>Dil seçenekleri:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>Tüm boolean seçenekleri 'no-' ve 'dont-' komuları kullanılarak devre dışı bırakılabilir. Örn: --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>Eksik seçenek argümanı</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>Geçersiz GUID</value>
+  </data>
+  <data name="CmdLineAssembly" xml:space="preserve">
+    <value>'assembly' dili</value>
+  </data>
+  <data name="CmdLineDescription_AsmPath" xml:space="preserve">
+    <value>'assembly' arama yolu. Bu yollar {0} kullanılarak veya birden çok --asm- yolu kullanılarak ayrılabilir</value>
+  </data>
+  <data name="CmdLineDescription_GACFile" xml:space="preserve">
+    <value>bir 'assembly'i GAC'dan kaynak koda dönüştürmek. Kesin versiyonu kullanmak için 'assembly' isminin tamamını kullan.</value>
+  </data>
+  <data name="CmdLineDescription_Language" xml:space="preserve">
+    <value>dili ayarla, varsayılan dil C#. Guid'ler kullanılabilir.</value>
+  </data>
+  <data name="CmdLineDescription_MDToken" xml:space="preserve">
+    <value>'metadata' işaretli bir üyeyi N den stdout'a geri derle</value>
+  </data>
+  <data name="CmdLineDescription_NoBAML" xml:space="preserve">
+    <value>baml'ı xaml'e geri derleme</value>
+  </data>
+  <data name="CmdLineDescription_NoGAC" xml:space="preserve">
+    <value>'assembly' lere bakmak için GAC'ı kullanma. --no-stdlib ile kullanışlı</value>
+  </data>
+  <data name="CmdLineDescription_NoResources" xml:space="preserve">
+    <value>kaynakları açma</value>
+  </data>
+  <data name="CmdLineDescription_NoResX" xml:space="preserve">
+    <value>.resx dosyaları oluşturma</value>
+  </data>
+  <data name="CmdLineDescription_NoSLN" xml:space="preserve">
+    <value>.sln dosyaları oluşturma</value>
+  </data>
+  <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
+    <value>projeler mscorlib'e referans vermiyor</value>
+  </data>
+  <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
+    <value>çalışan konu sayısı. Varsayılan her bir CPU çekirdeği için bir tane kullanmaktır</value>
+  </data>
+  <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
+    <value>çıktı dizini</value>
+  </data>
+  <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
+    <value>guid projesi</value>
+  </data>
+  <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
+    <value>.NET dosyaları geri çözümlenmesi için tekrarlanan arama</value>
+  </data>
+  <data name="CmdLineDescription_SlnName" xml:space="preserve">
+    <value>.sln dosyasının adı</value>
+  </data>
+  <data name="CmdLineDescription_Type1" xml:space="preserve">
+    <value>stdout ismi ile belirtilen tipi geri çözümle. İsimboşluk.İsim veya İsim, büyük küçük harfe duyarsız</value>
+  </data>
+  <data name="CmdLineDescription_Type2" xml:space="preserve">
+    <value>-t ile aynı</value>
+  </data>
+  <data name="CmdLineDescription_UserGAC" xml:space="preserve">
+    <value>kullanıcı GAC yolu, Yollar {0} veya birden çok --user-gac'leri kullanarak ayrılabilir</value>
+  </data>
+  <data name="CmdLineDescription_VSVersion" xml:space="preserve">
+    <value>{0} Visual Studio sürümü, 2005,2008</value>
+  </data>
+  <data name="CmdLineLanguage" xml:space="preserve">
+    <value>dil</value>
+  </data>
+  <data name="CmdLineName" xml:space="preserve">
+    <value>isim</value>
+  </data>
+  <data name="CmdLineOutputDir" xml:space="preserve">
+    <value>'outdir'</value>
+  </data>
+  <data name="CmdLinePath" xml:space="preserve">
+    <value>yol</value>
+  </data>
+  <data name="ExampleDescription1" xml:space="preserve">
+    <value>Üst dizindeki tüm .NET dosyalarını geri çözümler ve dosyaları C:\out\path'e kaydeder</value>
+  </data>
+  <data name="ExampleDescription2" xml:space="preserve">
+    <value>Üst dizindeki ve alt dizinlerdeki tüm .NET dosyalarını geri çözümler</value>
+  </data>
+  <data name="ExampleDescription3" xml:space="preserve">
+    <value>Üst dizindeki tüm *.dll .NET dosyalarını geri çözümler ve dosyaları C:\out\path'e kaydeder</value>
+  </data>
+  <data name="ExampleDescription4" xml:space="preserve">
+    <value>0x0600123 işaretine sahip üyeyi geri çözümler</value>
+  </data>
+  <data name="ExampleDescription5" xml:space="preserve">
+    <value>mscorlib'den System.Int32 yi geri çözümler</value>
+  </data>
+  <data name="ExamplesHeader" xml:space="preserve">
+    <value>Örnekler:</value>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>[options][fileOrDir1][fileOrDir2][...]</value>
+  </data>
+  <data name="CmdLineDescription_NoColor" xml:space="preserve">
+    <value>metni renklendirme</value>
+  </data>
+  <data name="CmdLineDescription_Spaces" xml:space="preserve">
+    <value>Boşluklardaki bir sekme boyutu veya bir sekmeyi kullanmak için 0</value>
+  </data>
+  <data name="InvalidSpacesArgument" xml:space="preserve">
+    <value>Boşluk sayısı {0} ile {1} arasında olmalıdır</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Eksik argüman</value>
+  </data>
+</root>

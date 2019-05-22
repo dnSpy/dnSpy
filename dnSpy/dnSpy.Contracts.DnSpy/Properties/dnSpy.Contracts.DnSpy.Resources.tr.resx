@@ -118,73 +118,74 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
+    <value>Tüm dosyalar</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro:{0}</value>
+    <value>Bir hata oluştu:
+
+{0}</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>İ_ptal</value>
   </data>
   <data name="CouldNotConvert" xml:space="preserve">
-    <value>Não foi possível converter '{0}'</value>
+    <value>'{0}' dönüştürülemiyor</value>
   </data>
   <data name="CouldNotConvertFromString" xml:space="preserve">
-    <value>Não foi possível convertê-lo de uma string '{0}'</value>
+    <value>{0} bir dizeden dönüştürülemiyor</value>
   </data>
   <data name="CouldNotDeserializeData" xml:space="preserve">
-    <value>Não foi possível desserializar dados: {0}</value>
+    <value>Verisi serisi {0} kaldırılamadı</value>
   </data>
   <data name="Files_DotNetExecutables" xml:space="preserve">
-    <value>Executáveis .NET</value>
+    <value>.NET yürütülebilir dosyaları</value>
   </data>
   <data name="Files_DotNetNetModules" xml:space="preserve">
-    <value>NetModules .NET</value>
+    <value>.NET NetModules</value>
   </data>
   <data name="Files_Executables" xml:space="preserve">
-    <value>Executáveis</value>
+    <value>Yürütülebilir dosyalar</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Imagens</value>
+    <value>Resimler</value>
   </data>
   <data name="Files_StrongNameKeyFiles" xml:space="preserve">
-    <value>Ficheiros de Chave de Nome Forte</value>
+    <value>Strong Name Key Files</value>
   </data>
   <data name="Files_XmlFiles" xml:space="preserve">
-    <value>Ficheiros XML</value>
+    <value>XML dosyaları</value>
   </data>
   <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID Inválido</value>
+    <value>Geçersiz GUID</value>
   </data>
   <data name="NewDataNotImageList" xml:space="preserve">
-    <value>Os novos dados não são uma lista de imagem.</value>
+    <value>Yeni veri bir resim listesi değil.</value>
   </data>
   <data name="NoTypeConverter" xml:space="preserve">
-    <value>{0} não tem um TypeConverter e não pode ser convertido de uma string.</value>
+    <value>{0} bir TypeConverter a sahip değil ve bir dizeden dönüştürülemez.</value>
   </data>
   <data name="NumberOfBytes" xml:space="preserve">
-    <value>{0} bytes</value>
+    <value>{0} bayt</value>
   </data>
   <data name="NumberOfBytesAndType" xml:space="preserve">
-    <value>{0} bytes, Tipo = {1}</value>
+    <value>{0} bayt, Tür = {1}</value>
   </data>
   <data name="ResourceTypeCantBeChanged" xml:space="preserve">
-    <value>Tipo de recurso não pode ser alterado</value>
+    <value>Kaynak türü değiştirilemez</value>
   </data>
   <data name="SaveResource" xml:space="preserve">
-    <value>Guardar Recurso</value>
+    <value>Kaynağı Kaydet</value>
   </data>
   <data name="SaveResources" xml:space="preserve">
-    <value>Guardar Recursos</value>
+    <value>Kaynakları Kaydet</value>
   </data>
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Coluna de pesquisa: {0}</value>
+    <value>Sütünü ara {0}</value>
   </data>
   <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
-    <value>Use '{0}' para inverter a partida, por exemplo. {1}</value>
+    <value>Eşleşmeyi ters çevirmek için '{0}' kullanın, örneğin. {1}</value>
   </data>
   <data name="ValueMustBeType" xml:space="preserve">
-    <value>Valor deve ser de tipo {0}.
-Erro: {1}</value>
+    <value>Değer türü {0} olmalıdır. Hata: {1}</value>
   </data>
 </root>

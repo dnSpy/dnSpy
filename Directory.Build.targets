@@ -30,7 +30,6 @@
     <GarbageDir Include="ko" />
     <GarbageDir Include="pl" />
     <GarbageDir Include="pt-BR" />
-    <GarbageDir Include="tr" />
     <GarbageDir Include="zh-Hans" />
     <GarbageDir Include="zh-Hant" />
     <GarbageDir Include="runtimes" Condition=" '$(IsDotNetFramework)' == 'true' " />

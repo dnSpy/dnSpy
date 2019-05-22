@@ -117,164 +117,193 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Argumentos</value>
+  <data name="CompilationAdditionalError" xml:space="preserve">
+    <value>+ek {0} hata</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+  <data name="CompilationAdditionalErrors" xml:space="preserve">
+    <value>+ ek {0} hata</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Parar em</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Kop_yala</value>
   </data>
-  <data name="DbgAsm_Host" xml:space="preserve">
-    <value>Host</value>
+  <data name="CutCommand" xml:space="preserve">
+    <value>Ke_s</value>
   </data>
-  <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Argumentos anfitrião</value>
+  <data name="HelpAltDown" xml:space="preserve">
+    <value>Sonraki komutu göster</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Diretório de Trabalho</value>
+  <data name="HelpAltUp" xml:space="preserve">
+    <value>Önceki komutu göster</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+  <data name="HelpCtrlA" xml:space="preserve">
+    <value>Giriş metni seçin. Tüm metni seçmek için düğmesine tekrar basın</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Não quebre</value>
+  <data name="HelpCtrlAltDown" xml:space="preserve">
+    <value>Girilen kelime ile eşleşen sıradaki komutu göster</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Ponto de Entrada</value>
+  <data name="HelpCtrlAltUp" xml:space="preserve">
+    <value>Girilen kelime ile eşleşen önceki komutu göster</value>
   </data>
-  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Não foi possível encontrar o .NET Core host '{0}'</value>
+  <data name="HelpCtrlEnter" xml:space="preserve">
+    <value>Komutu çalıştır</value>
   </data>
-  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. {0}</value>
+  <data name="HelpEnter" xml:space="preserve">
+    <value>Komutu çalıştır</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. Verifique se você tem acesso ao ficheiro '{0}'
-
-Erro: {1}</value>
+  <data name="HelpEscape" xml:space="preserve">
+    <value>Mevcut girişi temizle</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. O programa depurado requer privilégios de administrador. Reinicie dnSpy com direitos de administrador e tente novamente.</value>
+  <data name="HelpKeyboardShortcuts" xml:space="preserve">
+    <value>Klavye kısayolları:</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>O ficheiro não existe</value>
+  <data name="HelpReplCommands" xml:space="preserve">
+    <value>REPL komutları:</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nome do ficheiro em falta</value>
+  <data name="HelpScriptDirectives" xml:space="preserve">
+    <value>Komut dizisi talimatları:</value>
+  </data>
+  <data name="HelpScriptDirective_load" xml:space="preserve">
+    <value>Betiği yükle ve çalıştır, #load "betikadı.csx"</value>
+  </data>
+  <data name="HelpScriptDirective_r" xml:space="preserve">
+    <value>Bir başvuru, bir derleme, diskteki bir dosya yolu, dnSpy'ın yolu veya bir klasör ekleyin, #r "myfile.dll"</value>
+  </data>
+  <data name="HelpShiftEnter" xml:space="preserve">
+    <value>Yeni bir satır ekle</value>
+  </data>
+  <data name="HelpString" xml:space="preserve">
+    <value>Daha fazla bilgi için "#yardım" yazınız.</value>
+  </data>
+  <data name="LoadingContextFromFile" xml:space="preserve">
+    <value>Kaynak {0} dan yükleniyor.</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Yapıştır</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+    <value>Komut dizisi oluşturma</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Segundo plano</value>
+  <data name="ResettingExecutionEngine" xml:space="preserve">
+    <value>Uygulama motorunu sıfırlama.</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Parado</value>
+  <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
+    <value>Ekranı Temizle</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
+    <value>Sonraki geçmiş</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspenso</value>
+  <data name="Script_ToolTip_HistoryPrevious" xml:space="preserve">
+    <value>Önceki geçmiş</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="Script_ToolTip_Reset" xml:space="preserve">
+    <value>Sıfırla</value>
   </data>
-  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>ThreadPool</value>
+  <data name="ShortCutKeyAltDown" xml:space="preserve">
+    <value>Alt+Aşağı ok</value>
   </data>
-  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>UnsafePoint</value>
+  <data name="ShortCutKeyAltUp" xml:space="preserve">
+    <value>Alt+Yukarı ok</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
+    <value>Ctrl+Alt+Aşağı ok</value>
   </data>
-  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use a versão 32 bits do dnSpy para fazer debug de aplicações de 32 bits.</value>
+  <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
+    <value>Ctrl+Alt+N</value>
   </data>
-  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use a versão 64 bits do dnSpy para fazer debug de aplicações de 64 bits.</value>
+  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
+    <value>Ctrl+Alt+Yukarı Ok</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
   </data>
-  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador.
-
-Erro: {0}</value>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl+Enter</value>
   </data>
-  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Não foi possível anexar ao processo {0}</value>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
   </data>
-  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Algum outro processo já estiver depurando o processo {0}</value>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>Ctrl+X</value>
   </data>
-  <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Estrutura Nativa {0}</value>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter(Giriş)</value>
   </data>
-  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Transição de AppDomain</value>
+  <data name="ShortCutKeyEscape" xml:space="preserve">
+    <value>Esc</value>
   </data>
-  <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Inicialização de Classe</value>
+  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
+    <value>Shift+Enter</value>
   </data>
-  <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Exceção</value>
+  <data name="Window_CSharp" xml:space="preserve">
+    <value>İnteraktif C#</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Avaliação de Função</value>
+  <data name="HelpClearDescription" xml:space="preserve">
+    <value>Kod düzenleyicisini temizleyin</value>
   </data>
-  <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Chamada Interna</value>
+  <data name="HelpHelpDescription" xml:space="preserve">
+    <value>Yardımı göster</value>
   </data>
-  <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Estrutura Interna ({0})</value>
+  <data name="HelpResetDescription" xml:space="preserve">
+    <value>Uygulama ortamını ayarla</value>
   </data>
-  <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>Compilação JIT</value>
+  <data name="ClearScreenCommand" xml:space="preserve">
+    <value>Ekranı Temizle</value>
   </data>
-  <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Função Leve</value>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>Ctrl+L</value>
   </data>
-  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Transição de Managed para Native</value>
+  <data name="Window_VisualBasic" xml:space="preserve">
+    <value>İnteraktif Visual Basic</value>
   </data>
-  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Transição de Native para Managed</value>
+  <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
+    <value>Ctrl+Alt+I</value>
   </data>
-  <data name="StackFrame_Security" xml:space="preserve">
-    <value>Segurança</value>
+  <data name="CopyCodeCommand" xml:space="preserve">
+    <value>Kodu Kopyala</value>
   </data>
-  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Desvio de IL {0}</value>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
   </data>
-  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>linha {0} caráter {1}</value>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
   </data>
-  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>endereço {0}</value>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Satır numaralarını göster</value>
   </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>Não foi possível definir a próxima instrução.</value>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>_Sözcük Kaydır</value>
   </data>
-  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Could not break process. Error: 0x{0:X8}</value>
+  <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
+    <value>Sözcük kaydırmayı bağla</value>
   </data>
-  <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Erro interno do depurador</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Tüm Dosyalar</value>
   </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 
-
-HR: 0x{0:X8}
-Erro: 0x{1:X8}</value>
+  <data name="Repl_Save_ToolTip" xml:space="preserve">
+    <value>Kaydet</value>
   </data>
-  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Usar executável do host</value>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Metin Dosyaları</value>
+  </data>
+  <data name="SaveCodeCommand" xml:space="preserve">
+    <value>Kodu Kaydet...</value>
+  </data>
+  <data name="SaveCommand" xml:space="preserve">
+    <value>Kaydet...</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
+    <value>Ctrl+Shift+S</value>
+  </data>
+  <data name="CSharpScriptFiles" xml:space="preserve">
+    <value>C# Komut Dosyaları</value>
+  </data>
+  <data name="VisualBasicScriptFiles" xml:space="preserve">
+    <value>Visual Basic Komut Dosyaları</value>
   </data>
 </root>

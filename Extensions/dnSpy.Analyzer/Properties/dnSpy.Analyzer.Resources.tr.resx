@@ -117,164 +117,106 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Argumentos</value>
+  <data name="AnalyzeCommand" xml:space="preserve">
+    <value>Anali_z</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+  <data name="AnalyzerWindowTitle" xml:space="preserve">
+    <value>Çözümleyici</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Parar em</value>
+  <data name="AppliedToTreeNode" xml:space="preserve">
+    <value>Uygulanan</value>
   </data>
-  <data name="DbgAsm_Host" xml:space="preserve">
-    <value>Host</value>
+  <data name="AssignedByTreeNode" xml:space="preserve">
+    <value>Atayan</value>
   </data>
-  <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Argumentos anfitrião</value>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Kop_yala</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Diretório de Trabalho</value>
+  <data name="DoubleClick" xml:space="preserve">
+    <value>Çift tıklayın</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+  <data name="EventAdderTreeNodeName" xml:space="preserve">
+    <value>Ekle</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Não quebre</value>
+  <data name="EventRemoverTreeNodeName" xml:space="preserve">
+    <value>kaldır</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Ponto de Entrada</value>
+  <data name="ExposedByTreeNode" xml:space="preserve">
+    <value>Tarafından gösterilen</value>
   </data>
-  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Não foi possível encontrar o .NET Core host '{0}'</value>
+  <data name="ExtensionMethodsTreeNode" xml:space="preserve">
+    <value>Genişletme yöntemleri</value>
   </data>
-  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. {0}</value>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Refesansa Git</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. Verifique se você tem acesso ao ficheiro '{0}'
-
-Erro: {1}</value>
+  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
+    <value>Metodda Referans Göster</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. O programa depurado requer privilégios de administrador. Reinicie dnSpy com direitos de administrador e tente novamente.</value>
+  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
+    <value>Methodda Referansı Göster(Yeni Sekme)</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>O ficheiro não existe</value>
+  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
+    <value>Referansa Git(Yeni Sekme)</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nome do ficheiro em falta</value>
+  <data name="HidesParent" xml:space="preserve">
+    <value>gizle</value>
+  </data>
+  <data name="ImplementedByTreeNode" xml:space="preserve">
+    <value>Tarafından uygulanan</value>
+  </data>
+  <data name="InstantiatedByTreeNode" xml:space="preserve">
+    <value>Tarafından örneği</value>
+  </data>
+  <data name="OverriddenByTreeNode" xml:space="preserve">
+    <value>Geçersiz kılınmış</value>
+  </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Geçersiz Kıl</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+    <value>Derlemeleri analiz et</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Segundo plano</value>
+  <data name="PropertyGetterTreeNode" xml:space="preserve">
+    <value>get</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Parado</value>
+  <data name="PropertySetterTreeNode" xml:space="preserve">
+    <value>set</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="RaisedByTreeNode" xml:space="preserve">
+    <value>Tarafından yetiştirildi</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspenso</value>
+  <data name="ReadByTreeNode" xml:space="preserve">
+    <value>Tarafından okundu</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>_Kaldır</value>
   </data>
-  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>ThreadPool</value>
+  <data name="Searching" xml:space="preserve">
+    <value>Aranıyor...</value>
   </data>
-  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>UnsafePoint</value>
+  <data name="ShiftDoubleClick" xml:space="preserve">
+    <value>Shift+Çift Tıklama</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl + C</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Ctrl+Shift+R</value>
   </data>
-  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use a versão 32 bits do dnSpy para fazer debug de aplicações de 32 bits.</value>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
   </data>
-  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use a versão 64 bits do dnSpy para fazer debug de aplicações de 64 bits.</value>
+  <data name="ShowMetadataTokensCommand" xml:space="preserve">
+    <value>Token'ları Göster</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Sözdizimi Renklendirme</value>
   </data>
-  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador.
-
-Erro: {0}</value>
+  <data name="UsedByTreeNode" xml:space="preserve">
+    <value>Tarafından kullanılan</value>
   </data>
-  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Não foi possível anexar ao processo {0}</value>
-  </data>
-  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Algum outro processo já estiver depurando o processo {0}</value>
-  </data>
-  <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Estrutura Nativa {0}</value>
-  </data>
-  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Transição de AppDomain</value>
-  </data>
-  <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Inicialização de Classe</value>
-  </data>
-  <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Exceção</value>
-  </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Avaliação de Função</value>
-  </data>
-  <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Chamada Interna</value>
-  </data>
-  <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Estrutura Interna ({0})</value>
-  </data>
-  <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>Compilação JIT</value>
-  </data>
-  <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Função Leve</value>
-  </data>
-  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Transição de Managed para Native</value>
-  </data>
-  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Transição de Native para Managed</value>
-  </data>
-  <data name="StackFrame_Security" xml:space="preserve">
-    <value>Segurança</value>
-  </data>
-  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Desvio de IL {0}</value>
-  </data>
-  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>linha {0} caráter {1}</value>
-  </data>
-  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>endereço {0}</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>Não foi possível definir a próxima instrução.</value>
-  </data>
-  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Could not break process. Error: 0x{0:X8}</value>
-  </data>
-  <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Erro interno do depurador</value>
-  </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 
-
-HR: 0x{0:X8}
-Erro: 0x{1:X8}</value>
-  </data>
-  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Usar executável do host</value>
+  <data name="UsesTreeNode" xml:space="preserve">
+    <value>Kullanma</value>
   </data>
 </root>

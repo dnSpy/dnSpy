@@ -118,571 +118,571 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About_Issues" xml:space="preserve">
-    <value>_Проблеми</value>
+    <value>_Sorunlar</value>
   </data>
   <data name="About_LatestBuild" xml:space="preserve">
-    <value>Остання _Збірка</value>
+    <value>En Son _Derleme</value>
   </data>
   <data name="About_LatestRelease" xml:space="preserve">
-    <value>_Останній Реліз</value>
+    <value>_Son Sürüm</value>
   </data>
   <data name="About_Menu" xml:space="preserve">
-    <value>_Про</value>
+    <value>_Hakkında</value>
   </data>
   <data name="About_SourceCode" xml:space="preserve">
-    <value>_Джерельний Код</value>
+    <value>_Kaynak kodu</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
-    <value>Про програму</value>
+    <value>Hakkında</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>Всі Файли</value>
+    <value>Tüm Dosyalar</value>
   </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
-    <value>Оглядач З_бірок</value>
+    <value>Derleme G_ezgini</value>
   </data>
   <data name="AssemblyExplorerKey" xml:space="preserve">
     <value>Ctrl+Alt+L</value>
   </data>
   <data name="AssemblyExplorerTitle" xml:space="preserve">
-    <value>Оглядач Збірок</value>
+    <value>Derleme Gezgini</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
-    <value>Базовий Тип та Інтерфейси</value>
+    <value>Temel Tür ve Arabirimler</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>_Відміна</value>
+    <value>İptal</value>
   </data>
   <data name="Button_No" xml:space="preserve">
-    <value>_Ні</value>
+    <value>_Hayır</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>_OK</value>
+    <value>_TAMAM</value>
   </data>
   <data name="Button_Save" xml:space="preserve">
-    <value>_Зберегти...</value>
+    <value>_Kaydet...</value>
   </data>
   <data name="Button_Yes" xml:space="preserve">
-    <value>_Так</value>
+    <value>_Evet</value>
   </data>
   <data name="CantConvertInputToType" xml:space="preserve">
-    <value>Не вдається перетворити вхідні дані в потрібний тип: {0}</value>
+    <value>Girilen veri istenen türe dönüştürülemiyor: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Закрити всі вкладки групи, крім цьої</value>
+    <value>Bu Hariç Tüm Sekme Gruplarını Kapat</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>Закрити _усі окрім цієї</value>
+    <value>Bu H_ariç Tümünü Kapat</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
-    <value>За_крити усі закладки</value>
+    <value>Tüm Sekmeleri _Kapat</value>
   </data>
   <data name="CloseTabCommand" xml:space="preserve">
-    <value>З_акрити</value>
+    <value>_Kapat</value>
   </data>
   <data name="CloseTabGroupCommand" xml:space="preserve">
-    <value>Закрити Групу Табів</value>
+    <value>Sekme Grubunu Kapat</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Копіюв_ати</value>
+    <value>Kop_yala</value>
   </data>
   <data name="CopyKey" xml:space="preserve">
     <value>Ctrl+C</value>
   </data>
   <data name="CopyMDTokenCommand" xml:space="preserve">
-    <value>_Копіювати Токен Метаданних</value>
+    <value>_MD Token Kopyala</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
-    <value>Не вдалося запустити браузер</value>
+    <value>Tarayıcı başlatılamadı</value>
   </data>
   <data name="DecompilationCanceled" xml:space="preserve">
-    <value>Операцію було скасовано</value>
+    <value>İşlem iptal edildi</value>
   </data>
   <data name="DecompilationException" xml:space="preserve">
-    <value>Сталася помилка</value>
+    <value>Bir hata oluştu</value>
   </data>
   <data name="DecompileCancelButton" xml:space="preserve">
-    <value>Скасувати</value>
+    <value>İptal</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Декомпіляція...</value>
+    <value>Dekompilasyon...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
-    <value>Дочірні типи</value>
+    <value>Türemiş Türler</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
-    <value>Виконавчі файли .NET</value>
+    <value>.NET yürütülebilir dosyaları</value>
   </data>
   <data name="EmptyTabTitle" xml:space="preserve">
-    <value>&lt;пусто&gt;</value>
+    <value>&lt;boş&gt;</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Трапилось  виключення:</value>
+    <value>Özel bir durum oluştu:</value>
   </data>
   <data name="ExitAppCommand" xml:space="preserve">
-    <value>В_ихід</value>
+    <value>Çıkış</value>
   </data>
   <data name="ExitAppKey" xml:space="preserve">
     <value>Alt+F4</value>
   </data>
   <data name="ExplorerOpenWithDnSpy" xml:space="preserve">
-    <value>Відкрити у dnSpy</value>
+    <value>dnSpy ile birlikte aç</value>
   </data>
   <data name="FindCommand" xml:space="preserve">
-    <value>_Пошук</value>
+    <value>_Bul</value>
   </data>
   <data name="FindCommand2" xml:space="preserve">
-    <value>Пошук</value>
+    <value>Bul</value>
   </data>
   <data name="FindKey" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>П_овноекранний режим</value>
+    <value>Tam Ekran</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
     <value>Shift+Alt+Enter</value>
   </data>
   <data name="FullScreenToolBarCommand" xml:space="preserve">
-    <value>Повноекранний режим</value>
+    <value>Tam Ekran</value>
   </data>
   <data name="GoToEntryPointCommand" xml:space="preserve">
-    <value>Іти в _Точку Входу</value>
+    <value>Gitme Noktasına git</value>
   </data>
   <data name="GoToGlobalCctorCommand" xml:space="preserve">
-    <value>Перейти до &lt;Module&gt; .ccto_r</value>
+    <value>Git &amp; lt; Modül &amp; gt; .ccto_r</value>
   </data>
   <data name="GoToLine_EnterLineNum" xml:space="preserve">
-    <value>Введіть номер рядка</value>
+    <value>Satır numarası giriniz</value>
   </data>
   <data name="GoToLine_InvalidLine" xml:space="preserve">
-    <value>Невірний рядок: {0}</value>
+    <value>Geçersiz satır: {0}</value>
   </data>
   <data name="GoToLine_Label" xml:space="preserve">
-    <value>_Стрічка [, стовпчик]</value>
+    <value>_Satır [, sütun]</value>
   </data>
   <data name="GoToLine_Title" xml:space="preserve">
-    <value>Перейти до рядка</value>
+    <value>Satıra git</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Перейти до посилання</value>
+    <value>Refesansa Git</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
-    <value>Подвійний клік</value>
+    <value>Çift tıklayın</value>
   </data>
   <data name="GoToTokenCommand" xml:space="preserve">
-    <value>Перейти до MD токена...</value>
+    <value>MD Token'a Git...</value>
   </data>
   <data name="GoToTokenKey" xml:space="preserve">
     <value>Ctrl+D</value>
   </data>
   <data name="GoToToken_CouldNotResolve" xml:space="preserve">
-    <value>Не можу визначити токен посилання: 0x{0:X8}</value>
+    <value>Üye referans belirteci çözümlenemedi: 0x {0: X8}</value>
   </data>
   <data name="GoToToken_InvalidToken" xml:space="preserve">
-    <value>Невірний токен метаданих: 0x{0:X8}</value>
+    <value>Geçersiz metadata simgesi: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_Label" xml:space="preserve">
-    <value>Токен _метаданих</value>
+    <value>_Metaveri token</value>
   </data>
   <data name="GoToToken_Title" xml:space="preserve">
-    <value>Перейти до токену метаданих</value>
+    <value>MD Token'a Git...</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>З_аховати усі вкладки</value>
+    <value>Tüm Sekmeleri Gizle</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
-    <value>_Сховати</value>
+    <value>Gizle</value>
   </data>
   <data name="HighlightLine" xml:space="preserve">
-    <value>_Підсвітити поточний рядок</value>
+    <value>_Mevcut Satırı vurgula</value>
   </data>
   <data name="InvalidInputTextMessageBox" xml:space="preserve">
-    <value>Невірний текст</value>
+    <value>Metin geçersiz</value>
   </data>
   <data name="LoadingDnSpyPleaseWait" xml:space="preserve">
-    <value>Завантажую dnSpy! Прохання зачекати...</value>
+    <value>dnSpy yükleniyor. Lütfen bekleyiniz...</value>
   </data>
   <data name="Menu_Edit" xml:space="preserve">
-    <value>Р_едагувати</value>
+    <value>Düzenle</value>
   </data>
   <data name="Menu_File" xml:space="preserve">
-    <value>_Файл</value>
+    <value>Dosya</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
-    <value>_Допомога</value>
+    <value>_Yardım</value>
   </data>
   <data name="Menu_Themes" xml:space="preserve">
-    <value>_Тема</value>
+    <value>_Tema</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
-    <value>Вигляд</value>
+    <value>_Görünüm</value>
   </data>
   <data name="Menu_Windows" xml:space="preserve">
-    <value>_Вікно</value>
+    <value>_Pencere</value>
   </data>
   <data name="MergeAllTabGroupsCommand" xml:space="preserve">
-    <value>Об'єднати усі груи вкладок</value>
+    <value>Sekme Gruplarını Birleştir</value>
   </data>
   <data name="MessageBoxDontShowAgain" xml:space="preserve">
-    <value>Більше не показувати</value>
+    <value>_Tekrar gösterme</value>
   </data>
   <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
-    <value>Перенести усе в наступну групу вкладок</value>
+    <value>Hepsini Sonraki Sekme Grubuna Taşı</value>
   </data>
   <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Перенести усе в попередню групу вкладок</value>
+    <value>Hepsini Önceki Sekme Grubuna Taşı</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
-    <value>_Вниз</value>
+    <value>_Alt</value>
   </data>
   <data name="MoveLeftCommand" xml:space="preserve">
-    <value>Вліво</value>
+    <value>_Sol</value>
   </data>
   <data name="MoveRightCommand" xml:space="preserve">
-    <value>_Вправо</value>
+    <value>_Sag</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
-    <value>Перемістити групу вкладок після наступної групи вкладок</value>
+    <value>Sonraki Sekme Grubundan Sonra Sekme Grubunu Taşı</value>
   </data>
   <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
-    <value>Перемістити групу вкладок перед попередньою групою вкладок</value>
+    <value>Sekme Grubunu Önceki Sekme Grubundan Önce Taşı</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
-    <value>Перенести усе в наступну групу вкладок</value>
+    <value>İleri Sekme Grubuna Taşı</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
-    <value>_Перемістити</value>
+    <value>_Hareket</value>
   </data>
   <data name="MoveToolWindowGroupCommand" xml:space="preserve">
-    <value>Перемістити _Групу</value>
+    <value>_Grubu Taşı</value>
   </data>
   <data name="MoveTopCommand" xml:space="preserve">
-    <value>_Вверх</value>
+    <value>_Üst</value>
   </data>
   <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Перенести усе в попередню групу вкладок</value>
+    <value>Geri Tab Grup'a Git</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Перехід назад</value>
+    <value>Geri Git</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Перехід вперед</value>
+    <value>İleri git</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
-    <value>Нові дані не є зображенням.</value>
+    <value>Yeni veri bir görüntü değil.</value>
   </data>
   <data name="NewHorizontalTabGroupCommand" xml:space="preserve">
-    <value>Нова _горизонтальна група вкладок</value>
+    <value>Yeni Yatay Tab Grubu</value>
   </data>
   <data name="NewTabCommand" xml:space="preserve">
-    <value>Нова _Вкладка</value>
+    <value>Yeni Sekme</value>
   </data>
   <data name="NewVerticalTabGroupCommand" xml:space="preserve">
-    <value>Новая _вертикальна група вкладок</value>
+    <value>Yeni Dikey Tab Grubu</value>
   </data>
   <data name="NewWindowCommand" xml:space="preserve">
-    <value>_Нове Вікно</value>
+    <value>Yeni Pencere</value>
   </data>
   <data name="OpenCommand" xml:space="preserve">
-    <value>_Відкрити...</value>
+    <value>_Aç...</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>_Відкрити каталог</value>
+    <value>_Dosyayı içeren klasörü aç</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
-    <value>Відкрити із _GAC...</value>
+    <value>_GAC'den aç...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
-    <value>Автор:</value>
+    <value>Tarafından yaratıldı:</value>
   </data>
   <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
-    <value>Версія файлу: </value>
+    <value>Dosya Sürümü:</value>
   </data>
   <data name="OpenGAC_Name_Column" xml:space="preserve">
-    <value>Назва</value>
+    <value>Isim</value>
   </data>
   <data name="OpenGAC_Name_Label" xml:space="preserve">
-    <value>Назва:</value>
+    <value>Adı:</value>
   </data>
   <data name="OpenGAC_Path_Label" xml:space="preserve">
-    <value>Шлях:</value>
+    <value>Yol:</value>
   </data>
   <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
-    <value>_Показати дублікати</value>
+    <value>_Yinelenenleri göster</value>
   </data>
   <data name="OpenGAC_ShowFiles" xml:space="preserve">
-    <value>Показати {0:n0} із {1:n0} файлів</value>
+    <value>Gösterilen: {0 n0} arasında: {n0 1} dosyalar</value>
   </data>
   <data name="OpenGAC_Title" xml:space="preserve">
-    <value>Відкрити із GAC</value>
+    <value>GAC'den aç</value>
   </data>
   <data name="OpenGAC_Version_Column" xml:space="preserve">
-    <value>Версія</value>
+    <value>Versiyon</value>
   </data>
   <data name="OpenGAC_Version_Label" xml:space="preserve">
-    <value>Версія:</value>
+    <value>Sürüm:</value>
   </data>
   <data name="OpenInNewTabCommand" xml:space="preserve">
-    <value>Відкрити у новій вкладці</value>
+    <value>Yeni sekmede aç</value>
   </data>
   <data name="OpenInNewTabKey" xml:space="preserve">
-    <value>Ctrl+T</value>
+    <value>Ctrl + T</value>
   </data>
   <data name="OpenInNewTabKey2" xml:space="preserve">
-    <value>Ctrl+F12</value>
+    <value>Ctrl + F12</value>
   </data>
   <data name="OpenInNewTabKey3" xml:space="preserve">
-    <value>Ctrl+Click</value>
+    <value>Ctrl + Tıkla</value>
   </data>
   <data name="OpenKey" xml:space="preserve">
-    <value>Ctrl+O</value>
+    <value>Ctrl + O</value>
   </data>
   <data name="OpenListCommand" xml:space="preserve">
-    <value>Відкрити сп_исок...</value>
+    <value>List'i aç...</value>
   </data>
   <data name="OpenList_AskForName" xml:space="preserve">
-    <value>_Назва</value>
+    <value>Ad</value>
   </data>
   <data name="OpenList_Files_Column" xml:space="preserve">
-    <value>Файли</value>
+    <value>Dosyalar</value>
   </data>
   <data name="OpenList_MissingName" xml:space="preserve">
-    <value>Ім'я пропущене</value>
+    <value>Eksik adı</value>
   </data>
   <data name="OpenList_Name_Column" xml:space="preserve">
-    <value>Ім'я</value>
+    <value>Isim</value>
   </data>
   <data name="OpenList_New_Button" xml:space="preserve">
-    <value>_Новий...</value>
+    <value>_Yeni...</value>
   </data>
   <data name="OpenList_Open_Button" xml:space="preserve">
-    <value>_Відкрити</value>
+    <value>_Aç</value>
   </data>
   <data name="OpenList_Remove_Button" xml:space="preserve">
-    <value>_Видалити</value>
+    <value>_Kaldır</value>
   </data>
   <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
-    <value>Зб_ережені списки</value>
+    <value>Kayıtlı listeler</value>
   </data>
   <data name="OpenList_Search_Label" xml:space="preserve">
-    <value>_Пошук</value>
+    <value>_Ara</value>
   </data>
   <data name="OpenList_Title" xml:space="preserve">
-    <value>Відкрити список</value>
+    <value>Listeyi Aç</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Відкрити</value>
+    <value>Aç</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
-    <value>Налаштування</value>
+    <value>Ayarlar</value>
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
-    <value>Ввімкнути усі попередження</value>
+    <value>Tüm uyarı mesajlarını göster</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
-    <value>Використовувати відображений в пам'ять ввід/вивід</value>
+    <value>Bellek eşlemeli g/Ç kullan</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
-    <value>Посилання</value>
+    <value>Referanslar</value>
   </data>
   <data name="ReloadAsmsCommand" xml:space="preserve">
-    <value>_Перевантажити Усі Збірки</value>
+    <value>_Bütün Meclisleri Yeniden Yükle</value>
   </data>
   <data name="ResourcesFolder" xml:space="preserve">
-    <value>Ресурси</value>
+    <value>Kaynaklar</value>
   </data>
   <data name="SaveKey" xml:space="preserve">
     <value>Ctrl+S</value>
   </data>
   <data name="SaveResourceButton" xml:space="preserve">
-    <value>Зберегти</value>
+    <value>Kaydet</value>
   </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
-    <value>Пошук зупинений, знайдено більше {0:n0} результатів.</value>
+    <value>Arama iptal edildi, daha fazla {0:n0} sonuç bulundu.</value>
   </data>
   <data name="SearchAssembliesCommand" xml:space="preserve">
-    <value>_Шукати в збірках</value>
+    <value>Araştırma Grupları</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Шукати в збірках</value>
+    <value>Meclisleri Arama</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Пошук...</value>
+    <value>Aranıyor...</value>
   </data>
   <data name="SearchMsdnCommand" xml:space="preserve">
-    <value>Знайти в MSDN</value>
+    <value>Arama _MSDN</value>
   </data>
   <data name="SearchWindow_Options" xml:space="preserve">
-    <value>Налаштування</value>
+    <value>Ayarlar</value>
   </data>
   <data name="SearchWindow_SearchFor" xml:space="preserve">
-    <value>Шукати:</value>
+    <value>Arama sonuçları:</value>
   </data>
   <data name="ShowCodeCommand" xml:space="preserve">
-    <value>_Код</value>
+    <value>_Kod</value>
   </data>
   <data name="ShowCodeKey" xml:space="preserve">
     <value>Ctrl+Alt+0</value>
   </data>
   <data name="OpenInNewTabKey4" xml:space="preserve">
-    <value>Shift+подвійний клік</value>
+    <value>Shift+Çift Tıklama</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
-    <value>Підсвітка синтаксису</value>
+    <value>Sözdizimi Renklendirme</value>
   </data>
   <data name="TabsDlg_Activate_Button" xml:space="preserve">
-    <value>_Активувати</value>
+    <value>_Aktif et</value>
   </data>
   <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
-    <value>_Закрити вікно</value>
+    <value>_Pencereyi kapat</value>
   </data>
   <data name="TabsDlg_Module_Column" xml:space="preserve">
-    <value>Модуль</value>
+    <value>Modül</value>
   </data>
   <data name="TabsDlg_Name_Column" xml:space="preserve">
-    <value>Назва</value>
+    <value>İsim</value>
   </data>
   <data name="TabsDlg_Path_Column" xml:space="preserve">
-    <value>Шлях</value>
+    <value>Yol</value>
   </data>
   <data name="TabsDlg_Title" xml:space="preserve">
-    <value>Вікна</value>
+    <value>Pencereler</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Виникла невідома помилка</value>
+    <value>Bilinmeyen bir hata oluştu</value>
   </data>
   <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
-    <value>Використовувати горизонтальні групи вкладок</value>
+    <value>Yatay sekme grupları kullan</value>
   </data>
   <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
-    <value>Використовувати вертикальні групи вкладок</value>
+    <value>Dikey sekme grupları kullan</value>
   </data>
   <data name="WindowsCommand" xml:space="preserve">
-    <value>Вікна...</value>
+    <value>_Windows...</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
-    <value>_Перенесення Слів</value>
+    <value>_Sözcükleri kaydır</value>
   </data>
   <data name="CloseTabButtonToolTip" xml:space="preserve">
-    <value>Закрити</value>
+    <value>Kapat</value>
   </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
-    <value>Декомпілювати увесь клас замість члена класу</value>
+    <value>Sınıf üyesi yerine üyenin kapanan sınıfını geri derle</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
-    <value>Виділяти посилання</value>
+    <value>Referansları vurgula</value>
   </data>
   <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
-    <value>Відновити вкладки на запуску</value>
+    <value>Başlangıçta sekmeleri geri yükle</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Показати публічний ключ збірки</value>
+    <value>Assembly genel anahtar işaretini göster</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
-    <value>Показати інформацію про збірку</value>
+    <value>Derleme sürümünü göster</value>
   </data>
   <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
-    <value>Показати номера рядків</value>
+    <value>Satır numaralarını göster</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
-    <value>Показати токени метаданих</value>
+    <value>Metadata tokenları göster</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
-    <value>_Налаштування...</value>
+    <value>_Ayarlar...</value>
   </data>
   <data name="SearchWindow_AllAbove" xml:space="preserve">
-    <value>Все можливе</value>
+    <value>Yukarıdakilerin tümü</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
     <value>Ctrl+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
-    <value>Збірка</value>
+    <value>montaj</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
     <value>AssemblyRef</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
-    <value>Регістрозалежний пошук</value>
+    <value>Büyük küçük harf duyarlı arama</value>
   </data>
   <data name="SearchWindow_Class" xml:space="preserve">
-    <value>Клас</value>
+    <value>Sınıf</value>
   </data>
   <data name="SearchWindow_DecompileResources" xml:space="preserve">
-    <value>Декомпілювати ресурси (напр. XAML)</value>
+    <value>Geri derleme kaynakları (örn. XAML)</value>
   </data>
   <data name="SearchWindow_Delegate" xml:space="preserve">
-    <value>Делегат</value>
+    <value>Delegate</value>
   </data>
   <data name="SearchWindow_Enum" xml:space="preserve">
-    <value>Перечислення</value>
+    <value>Enum</value>
   </data>
   <data name="SearchWindow_Event" xml:space="preserve">
-    <value>Подія</value>
+    <value>Event</value>
   </data>
   <data name="SearchWindow_Event_Key" xml:space="preserve">
-    <value>Ctrl+E</value>
+    <value>Ctrl + E</value>
   </data>
   <data name="SearchWindow_Field" xml:space="preserve">
-    <value>Поле</value>
+    <value>Field</value>
   </data>
   <data name="SearchWindow_Field_Key" xml:space="preserve">
     <value>Ctrl+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>Загальний тип</value>
+    <value>Genel Tür</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
-    <value>Інтерфейс</value>
+    <value>Arayüz</value>
   </data>
   <data name="SearchWindow_Literal" xml:space="preserve">
-    <value>Число/Стрічка</value>
+    <value>Sayı/Dizi</value>
   </data>
   <data name="SearchWindow_Literal_Key" xml:space="preserve">
     <value>Ctrl+L</value>
   </data>
   <data name="SearchWindow_Local" xml:space="preserve">
-    <value>Локальний</value>
+    <value>Yerel</value>
   </data>
   <data name="SearchWindow_Local_Key" xml:space="preserve">
     <value>Ctrl+I</value>
   </data>
   <data name="SearchWindow_MatchAny" xml:space="preserve">
-    <value>Співпадіння із любим термом</value>
+    <value>Herhangi bir arama terimiyle eşleştir</value>
   </data>
   <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
-    <value>Лишень повне співпадіння слів</value>
+    <value>Tüm kelimeleri eşleştir</value>
   </data>
   <data name="SearchWindow_Member" xml:space="preserve">
-    <value>Член</value>
+    <value>Üye</value>
   </data>
   <data name="SearchWindow_Member_Key" xml:space="preserve">
     <value>Ctrl+U</value>
   </data>
   <data name="SearchWindow_Method" xml:space="preserve">
-    <value>Метод</value>
+    <value>Yöntem</value>
   </data>
   <data name="SearchWindow_Method_Key" xml:space="preserve">
     <value>Ctrl+M</value>
   </data>
   <data name="SearchWindow_Module" xml:space="preserve">
-    <value>Модуль</value>
+    <value>Modül</value>
   </data>
   <data name="SearchWindow_ModuleRef" xml:space="preserve">
-    <value>Посилання на модуль</value>
+    <value>ModuleRef</value>
   </data>
   <data name="SearchWindow_Namespace" xml:space="preserve">
-    <value>Простір імен</value>
+    <value>İsim alanı</value>
   </data>
   <data name="SearchWindow_NonGeneric" xml:space="preserve">
-    <value>Незагальний тип</value>
+    <value>Genel-Olmayan Tür</value>
   </data>
   <data name="SearchWindow_Parameter" xml:space="preserve">
-    <value>Параметр</value>
+    <value>Parametre</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Параметр/Локальна змінна</value>
+    <value>Parametre/Yerel</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
     <value>Ctrl+N</value>
@@ -691,175 +691,175 @@
     <value>Ctrl+J</value>
   </data>
   <data name="SearchWindow_Property" xml:space="preserve">
-    <value>Властивість</value>
+    <value>Özellik</value>
   </data>
   <data name="SearchWindow_Property_Key" xml:space="preserve">
     <value>Ctrl+P</value>
   </data>
   <data name="SearchWindow_Resource" xml:space="preserve">
-    <value>Ресурс</value>
+    <value>Kaynak</value>
   </data>
   <data name="SearchWindow_Resource_Key" xml:space="preserve">
-    <value>Ctrl+R</value>
+    <value>Ctrl + R</value>
   </data>
   <data name="SearchWindow_Struct" xml:space="preserve">
-    <value>Структура</value>
+    <value>Yapı</value>
   </data>
   <data name="SearchWindow_Title" xml:space="preserve">
-    <value>Пошук</value>
+    <value>Arama</value>
   </data>
   <data name="SearchWindow_Type" xml:space="preserve">
-    <value>Тип</value>
+    <value>Tip</value>
   </data>
   <data name="SearchWindow_Type_Key" xml:space="preserve">
     <value>Ctrl+T</value>
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
-    <value>Позиція вікна</value>
+    <value>Pencere pozisyonu</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
-    <value>_Голубий</value>
+    <value>_Mavi</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>_Темний</value>
+    <value>_Karanlık</value>
   </data>
   <data name="Theme_HighContrast" xml:space="preserve">
-    <value>_Висока контрастність</value>
+    <value>_Yüksek kontrast</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>_Світла</value>
+    <value>_Açık</value>
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
-    <value>Пошук</value>
+    <value>Arama</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>Мова</value>
+    <value>Dil</value>
   </data>
   <data name="Language_OperatingSystemLanguage" xml:space="preserve">
-    <value>Система</value>
+    <value>Sistem</value>
   </data>
   <data name="LanguageSwitchMessage" xml:space="preserve">
-    <value>Зміни набудуть чинності після перезапуску dnSpy.</value>
+    <value>Dil tercihinin geçerli olması için uygulamayı yeniden başlatmanız gerekir.</value>
   </data>
   <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
     <value>Ctrl+Shift+O</value>
   </data>
   <data name="SortAsmsCommand" xml:space="preserve">
-    <value>С_ортувати Збірки</value>
+    <value>Meclisleri Sırala</value>
   </data>
   <data name="AskReadSettings" xml:space="preserve">
-    <value>Чи ви хочете завантажити збережені налаштування?</value>
+    <value>Önceden kaydedilmiş ayarları yüklemek istiyor musunuz?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>Експорт в Проект...</value>
+    <value>Projeyi Çıkart...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
-    <value>Експорт в проект</value>
+    <value>Projeyi Çıkart</value>
   </data>
   <data name="Error_FileAlreadyExists" xml:space="preserve">
-    <value>Файл із таким же ж іменем як і каталог вже існує.</value>
+    <value>Hedef klasör olarak aynı ada sahip bir dosya zaten var.</value>
   </data>
   <data name="Error_MissingDestinationFolder" xml:space="preserve">
-    <value>Не вказаний вихідний каталог.</value>
+    <value>Eksik hedef klasörü.</value>
   </data>
   <data name="ExportToProject_Button_Export" xml:space="preserve">
-    <value>_Експорт</value>
+    <value>_Dışa Aktar</value>
   </data>
   <data name="ExportToProject_CreateResX" xml:space="preserve">
-    <value>Створити файли .res_x</value>
+    <value>.resx Dosyaları Oluştur</value>
   </data>
   <data name="ExportToProject_DecompileXaml" xml:space="preserve">
-    <value>Декомпілювати _baml в xaml</value>
+    <value>_baml'ı xaml'a derleme</value>
   </data>
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
-    <value>_Каталог</value>
+    <value>_Klasör</value>
   </data>
   <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
-    <value>Буде декомпільований один файл. Для того, щоб декомпілювати більше файлів, виберіть більше збірок.</value>
+    <value>Bir dosya ayrıştırılacak. Birden fazla dosyanın derlemesini çözmek için birden fazla derleme seçin.</value>
   </data>
   <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
-    <value>Буде декомпільовано {0:n0} файлів.</value>
+    <value>{0:n0} dosyaları yeniden ayrıştırılacak.</value>
   </data>
   <data name="ExportToProject_Language" xml:space="preserve">
-    <value>_Мова</value>
+    <value>_Dil</value>
   </data>
   <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
-    <value>_Відкрити проект в Visual Studio</value>
+    <value>_Visual Studio'da açık proje</value>
   </data>
   <data name="ExportToProject_ProjectVersion" xml:space="preserve">
-    <value>_Версія</value>
+    <value>_Versiyon</value>
   </data>
   <data name="ExportToProject_SolutionFilename" xml:space="preserve">
-    <value>_Solution</value>
+    <value>_Proje</value>
   </data>
   <data name="ExportToProject_UnpackResources" xml:space="preserve">
-    <value>_Розпакувати ресурси</value>
+    <value>_Açılmamış kaynaklar</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Відсутнє ім'я файлу</value>
+    <value>Eksik dosya adı</value>
   </data>
   <data name="Button_Close" xml:space="preserve">
-    <value>_Закрити</value>
+    <value>_Kapat</value>
   </data>
   <data name="ErrorExceptionOccurred" xml:space="preserve">
-    <value>Трапилось  виключення {0}</value>
+    <value>Özel bir durum oluştu: {0}</value>
   </data>
   <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
-    <value>Журнал помилок</value>
+    <value>Hata günlüğü</value>
   </data>
   <data name="DecompilerDlgTabTitle" xml:space="preserve">
-    <value>Декомпілятор</value>
+    <value>Geri derleyici</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
-    <value>Події</value>
+    <value>Olaylar</value>
   </data>
   <data name="MemberKind_Fields" xml:space="preserve">
-    <value>Поля</value>
+    <value>Alanlar</value>
   </data>
   <data name="MemberKind_Methods" xml:space="preserve">
-    <value>Методи</value>
+    <value>Yöntemler</value>
   </data>
   <data name="MemberKind_NestedTypes" xml:space="preserve">
-    <value>Вкладені Типи</value>
+    <value>İçiçe Türler</value>
   </data>
   <data name="MemberKind_Properties" xml:space="preserve">
-    <value>Властивості</value>
+    <value>Özellikler</value>
   </data>
   <data name="AboutScreen_LicenseInfo" xml:space="preserve">
-    <value>dnSpy заліцензовний під GPLv3.</value>
+    <value>dnSpy GPLv3 altında lisanslıdır.</value>
   </data>
   <data name="AboutScreen_LoadedFiles" xml:space="preserve">
-    <value>Завантажені файли:</value>
+    <value>Yüklenen dosyalar:</value>
   </data>
   <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
-    <value>Шукати в збірках GAC</value>
+    <value>GAC Assembly'lerinde ara</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
-    <value>Всі Файли</value>
+    <value>Tüm Dosyalar</value>
   </data>
   <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
-    <value>Файли в тому ж каталозі</value>
+    <value>Aynı klasördeki dosyaları</value>
   </data>
   <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
-    <value>Вибрані файли</value>
+    <value>Seçili dosyalar</value>
   </data>
   <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
-    <value>Вибраний тип</value>
+    <value>Seçilü türler</value>
   </data>
   <data name="GoToResourceCommand" xml:space="preserve">
-    <value>Перейти до ре_сурсу</value>
+    <value>_Kaynağa git</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
-    <value>Згорнути вузли _дерева</value>
+    <value>Ağaç_Görünüm düğümlerini daralt</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
-    <value>Закрити всі</value>
+    <value>Tümünü Kapat</value>
   </data>
   <data name="ExportToProject_NewGuid" xml:space="preserve">
-    <value>_Новий</value>
+    <value>_Yeni</value>
   </data>
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
-    <value>_GUID проекту</value>
+    <value>_Proje GUID</value>
   </data>
   <data name="ShortCutKeyCtrlShiftP" xml:space="preserve">
     <value>Ctrl+Shift+P</value>
@@ -868,43 +868,43 @@
     <value>_Wiki</value>
   </data>
   <data name="Window_Output" xml:space="preserve">
-    <value>Вивід</value>
+    <value>Çıktı</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Очистити все</value>
+    <value>Hepsini Temizle</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
-    <value>_Показати вивід із:</value>
+    <value>_Çıktıyı buradan göster:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Увімкнути або вимкнути перенос слів</value>
+    <value>Sözcük kaydırmayı bağla</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
-    <value>Alt+2</value>
+    <value>Alt + 2</value>
   </data>
   <data name="Window_Output2" xml:space="preserve">
-    <value>_Вивід</value>
+    <value>_Çıktı</value>
   </data>
   <data name="Output_Save_ToolTip" xml:space="preserve">
-    <value>Зберегти</value>
+    <value>Kaydet</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Очистити все</value>
+    <value>Hepsini temizle_</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Ctrl+L</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
-    <value>Текстові файли</value>
+    <value>Metin dosyaları</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Показати номери стрічок</value>
+    <value>Satır numaralarını göster</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Показати часові мітки</value>
+    <value>Zaman bilgisini göster</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Ctrl+E, Ctrl+W</value>
@@ -916,157 +916,157 @@
     <value>Shift+Esc</value>
   </data>
   <data name="Window_Close" xml:space="preserve">
-    <value>Закрити</value>
+    <value>Kapat</value>
   </data>
   <data name="Window_Maximize" xml:space="preserve">
-    <value>Розгорнути</value>
+    <value>Maksimuma çıkar</value>
   </data>
   <data name="Window_Minimize" xml:space="preserve">
-    <value>Згорнути</value>
+    <value>Minimize Et</value>
   </data>
   <data name="Window_Restore" xml:space="preserve">
-    <value>Відновити</value>
+    <value>Önceki boyuta küçült</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Фоновий малюнок</value>
+    <value>Arkaplan görüntüsü</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
-    <value>Редактор коду</value>
+    <value>Kod düzenleyici</value>
   </data>
   <data name="BgImgDisplayName_Default" xml:space="preserve">
-    <value>Інші текстові вікна</value>
+    <value>Diğer metin pencereleri</value>
   </data>
   <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
-    <value>Головне текстове вікно</value>
+    <value>Ana metin görüntüleyici</value>
   </data>
   <data name="BgImgDisplayName_Logger" xml:space="preserve">
-    <value>Вікно логів</value>
+    <value>Günlük penceresi</value>
   </data>
   <data name="BgImgDisplayName_REPL" xml:space="preserve">
-    <value>вікно REPL</value>
+    <value>REPL penceresi</value>
   </data>
   <data name="BgImgSettings_Direction" xml:space="preserve">
-    <value>Напрямок</value>
+    <value>Yön</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Горизонтальне зміщення</value>
+    <value>Yatay Dengeleyici</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
-    <value>Додати шляхи до малюнків і каталогів, один шлях в рядку:</value>
+    <value>Görüntülere ve görüntü dosyalarına yol ekle, her satıra bir yol:</value>
   </data>
   <data name="BgImgSettings_Interval" xml:space="preserve">
-    <value>Інтервал</value>
+    <value>Aralık</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Максимальна висота</value>
+    <value>Maksimum yükseklik</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Максимальна ширина</value>
+    <value>Max Genişlik</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
-    <value>Прозорість</value>
+    <value>Saydamlık</value>
   </data>
   <data name="BgImgSettings_Placement" xml:space="preserve">
-    <value>Розміщення</value>
+    <value>Yerleştirme</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Випадкове зображення</value>
+    <value>Rasgele resim</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
-    <value>Очистити</value>
+    <value>Sıfırla</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
-    <value>Зум %</value>
+    <value>Yakınlaştırma %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Показати зображення</value>
+    <value>Resimleri göster</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
-    <value>Розтягнути</value>
+    <value>Genişlet</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Вертикальний зсув</value>
+    <value>Diket ofset</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
-    <value>Низ</value>
+    <value>Alt</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Внизу зліва</value>
+    <value>Sol alt</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Знизу справа</value>
+    <value>Sağ alt</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
-    <value>Центр</value>
+    <value>Orta</value>
   </data>
   <data name="ImagePlacement_Left" xml:space="preserve">
-    <value>Ліворуч</value>
+    <value>Sol</value>
   </data>
   <data name="ImagePlacement_Right" xml:space="preserve">
-    <value>Праворуч</value>
+    <value>Sağ</value>
   </data>
   <data name="ImagePlacement_Top" xml:space="preserve">
-    <value>Зверху</value>
+    <value>Üst</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Зверху ліворуч</value>
+    <value>Sol üst</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
-    <value>Зверху праворуч</value>
+    <value>Sağ Üst</value>
   </data>
   <data name="StretchDirection_Both" xml:space="preserve">
-    <value>Обидва</value>
+    <value>İkisi</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Тільки вниз</value>
+    <value>Sadece aşağı</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Тільки вгору</value>
+    <value>Sadece yukarı</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
-    <value>Зображення</value>
+    <value>Resimler</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Нижній відступ, %</value>
+    <value>Alt kenar boşluğu %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Лівий відступ, %</value>
+    <value>Sol kenar boşluğu %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Правий відступ, %</value>
+    <value>Sağ kenar boşluğu %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Верхній відступ, %</value>
+    <value>Üst kenar boşluğu %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Знайти наступне</value>
+    <value>Sonrakini bul</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Знайти попереднє</value>
+    <value>Öncekini bul</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Враховувати регістр</value>
+    <value>Büyük-küçük harfe duyarlı</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Слово повністю</value>
+    <value>Bütün kelimeyi eşle</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Замінити все</value>
+    <value>Tümünü değiştir</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Замінити далі</value>
+    <value>Sonrakini değiştir</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Використовувати регулярні вирази</value>
+    <value>Düzenli İfade Kullan</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
-    <value>Переключіть для переключення між режимами пошуку та заміни</value>
+    <value>Modları değiştirmek ve bulmak arasında geçiş yapmak için değiştir</value>
   </data>
   <data name="Search_CloseToolTip" xml:space="preserve">
-    <value>Закрити</value>
+    <value>Kapat</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Послідовний пошук</value>
+    <value>Artan arama</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
@@ -1075,345 +1075,344 @@
     <value>Alt+{0}</value>
   </data>
   <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
-    <value>{0} / {1}</value>
+    <value>{1} in {0} ı</value>
   </data>
   <data name="UriFollowLinkMessage" xml:space="preserve">
-    <value>CTRL + клац для переходу</value>
+    <value>Bağlantıyı izlemek için Ctrl + tıklayın</value>
   </data>
   <data name="EnvironmentSettings" xml:space="preserve">
-    <value>Середовище</value>
+    <value>Çevre</value>
   </data>
   <data name="GeneralSettings" xml:space="preserve">
-    <value>Загальний</value>
+    <value>Genel</value>
   </data>
   <data name="GeneralSettings_Theme" xml:space="preserve">
-    <value>Тема</value>
+    <value>Tema</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Інтегрувати в провідник Windows</value>
+    <value>Windows Explorer ile birleştir</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
-    <value>Сортування (потрібне перевантаження)</value>
+    <value>Sıra (yeniden başlatma gerekli)</value>
   </data>
   <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
-    <value>Розгортати вузли одним клациком</value>
+    <value>Tek tıklama düğümleri genişletir</value>
   </data>
   <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Підсвітка синтаксису</value>
+    <value>Sözdizimi vurgulama</value>
   </data>
   <data name="FontSettings" xml:space="preserve">
-    <value>Шрифт</value>
+    <value>Yazı tipi</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Редактор коду</value>
+    <value>Kod düzenleyici</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
-    <value>Вкладки</value>
+    <value>Sekmeler</value>
   </data>
   <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
-    <value>Перетворити табулятори в _прогалини</value>
+    <value>Sekmeleri _boşluklara çevir</value>
   </data>
   <data name="TextEditorLineNumbers" xml:space="preserve">
-    <value>_Номери стрічок</value>
+    <value>_Satır numaraları</value>
   </data>
   <data name="TextEditorVirtualSpace" xml:space="preserve">
-    <value>_Віртуальна прогалина</value>
+    <value>_Sanal boşluk</value>
   </data>
   <data name="TextEditorWordWrap" xml:space="preserve">
-    <value>_Переніс слів</value>
+    <value>_Sözcükleri kaydır</value>
   </data>
   <data name="TextEditorIndentSize" xml:space="preserve">
-    <value>Розмір _відступу</value>
+    <value>_Satırbaşı uzunluğu</value>
   </data>
   <data name="TextEditorTabSize" xml:space="preserve">
-    <value>Розмір _табулятора</value>
+    <value>_Çıkıntı uzunluğu</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Перегляд тексту</value>
+    <value>Metin görüntüleyici</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
-    <value>Додаткові налаштування</value>
+    <value>Gelişmiş</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Смуги прокрутки</value>
+    <value>Kaydırma çubukları</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
-    <value>Стискати пусті стрічки</value>
+    <value>Boş satırları sıkıştır</value>
   </data>
   <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
-    <value>Стискати стрічки, які не мають яких-небудь буквенно-цифрових символів</value>
+    <value>Herhangi bir alfabetik karakter içermeyen satırları sıkıştırır</value>
   </data>
   <data name="TextEditorGlyphMargin" xml:space="preserve">
-    <value>Індикатор полів</value>
+    <value>Kenar göstergesi</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Виділяти поточну стрічку</value>
+    <value>Mevcut satırı vurgula</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Виділяти дужки</value>
+    <value>Bağı vurgula</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
-    <value>Підсвічувати зв'язані ключові слова</value>
+    <value>Bağlantılı kelimeleri vurgula</value>
   </data>
   <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
-    <value>Показувати _горизонтальну  прокрутку</value>
+    <value>_Yatay kaydırma çubuğunu göster</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Висота стрічки</value>
+    <value>Satır yüksekliği</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
-    <value>Показувати розділюючі лінії процедур</value>
+    <value>İşlem hattı ayırıcılarını göster</value>
   </data>
   <data name="TextEditorMargins" xml:space="preserve">
-    <value>Відступи</value>
+    <value>Kenar boşlukları</value>
   </data>
   <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
-    <value>Не додавати додатковий міжстрічковий інтервал</value>
+    <value>Ekstra satır boşluğu ekleme</value>
   </data>
   <data name="TextEditorMouseWheelZoom" xml:space="preserve">
-    <value>Масштабувати за допомогою коліщатка миші</value>
+    <value>Fare tekeriyle yaklaştır</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
-    <value>Виділяти посилання</value>
+    <value>Referansları vurgula</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
-    <value>Поле виділення</value>
+    <value>Boşluk seçimi</value>
   </data>
   <data name="TextEditorShowStructureLines" xml:space="preserve">
-    <value>Показувати границі відступу</value>
+    <value>Çentik kılavuzunu göster</value>
   </data>
   <data name="TextEditorVerticalScrollBar" xml:space="preserve">
-    <value>Показувати _вертикальну прокрутку</value>
+    <value>_Dikey kaydırma barını göster</value>
   </data>
   <data name="TextEditorZoom" xml:space="preserve">
-    <value>Масштаб</value>
+    <value>Yakınlaştır</value>
   </data>
   <data name="TextEditorZoomControl" xml:space="preserve">
-    <value>Управління масштабуванням</value>
+    <value>Yakınlaştıma kontrolü</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Вікно виводу</value>
+    <value>Çıkış penceresi</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>Показувати час</value>
+    <value>Damgaları göster</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
   </data>
   <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
-    <value>Фільтр перетягуваних елементів</value>
+    <value>Sürüklenen parça filtresi</value>
   </data>
   <data name="DocumentFilterType_All" xml:space="preserve">
-    <value>Всі</value>
+    <value>Tümü</value>
   </data>
   <data name="DocumentFilterType_AllSupported" xml:space="preserve">
-    <value>Все, що підтримуються</value>
+    <value>Hepsi destekleniyor</value>
   </data>
   <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
-    <value>Тільки .NET</value>
+    <value>Yalnızca .NET</value>
   </data>
   <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
-    <value>Усі файли були відфільтровані. Фільтр можна змінити в опціях Assembly Explorer.</value>
+    <value>Tüm dosyalar filtrelendi.
+Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
   </data>
   <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
-    <value>Пунктирні лінії</value>
+    <value>Kesik çizgiler</value>
   </data>
   <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
-    <value>Суцільні лінії</value>
+    <value>Düz çizgiler</value>
   </data>
   <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
     <value>Ctrl+Shift+K</value>
   </data>
   <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
-    <value>Hex-редактор</value>
+    <value>Hex Düzenleyicisi</value>
   </data>
   <data name="HexEditorGroup_Default" xml:space="preserve">
-    <value>За замовчанням</value>
+    <value>Varsayılan</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
-    <value>Hex-редактор</value>
+    <value>Hex Düzenleyicisi</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
-    <value>Кодування</value>
+    <value>Karakter kodlaması</value>
   </data>
   <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
-    <value>Розмір групи</value>
+    <value>Grup boyutu</value>
   </data>
   <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
-    <value>Виділити поточне значення</value>
+    <value>Geçerli değeri vurgula</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
-    <value>Зміщення</value>
+    <value>Denkleştirme</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>Hex в нижньому регістрі (зміщення)</value>
+    <value>Küçük harf hex (denkleştirme)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>Hex в нижньому регістрі (значення)</value>
+    <value>Küçük harf hex (değerler)</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
-    <value>Жоден</value>
+    <value>Hiçbiri</value>
   </data>
   <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
-    <value>Показати разділювачі стовпців</value>
+    <value>Sütun satır ayırıcıları göster</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
-    <value>О_фсет</value>
+    <value>dengele</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Перехід по зміщенню</value>
+    <value>Denkleştirmeye git</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
-    <value>Кін_ец</value>
+    <value>_Son</value>
   </data>
   <data name="HexEditorSelect_Start" xml:space="preserve">
-    <value>_Початок</value>
+    <value>_Başlangıç</value>
   </data>
   <data name="HexEditorSelect_Title" xml:space="preserve">
-    <value>Вибір</value>
+    <value>Seç</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>Невірне значення</value>
+    <value>Geçersiz değer</value>
   </data>
   <data name="ValueMustBeWithinRange" xml:space="preserve">
-    <value>Значення має бути між {0} та {1}</value>
+    <value>Değeri {0} ile {1} arasında olmalıdır</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Трапилась помилка:
-
-{0}</value>
+    <value>Bir hata oluştu:{0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Зберегти вибране 0x{0:X}-0x{1:X}</value>
+    <value>Seçim 0x{0:X}-0x{1:X} Kaydet</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>Налаштування _за замовчуванням</value>
+    <value>_Varsayılan Ayarlar</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Очистити</value>
+    <value>Sıfırla</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Байтів у стрічці</value>
+    <value>Satır başına bayt</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Очистити байт</value>
+    <value>Bayt temizle</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Очистити вибрані байти</value>
+    <value>Seçilen bayt temizle</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Копіювати масив C#</value>
+    <value>C# dizisini kopyala</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Копіювати зміщення</value>
+    <value>Denkleştiriciyi kopyala</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Спеціальне копіювання</value>
+    <value>Özel kopyala</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Копіювати текст</value>
+    <value>Metin Kopyala</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Копіювати стрічку Unicode</value>
+    <value>Unicode dizesini kopyala</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Копіювати стрічку UTF-8</value>
+    <value>UTF-8 dizisini kopyala</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Копіювати масив VB</value>
+    <value>Visual Basic dizisini kopyala</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Заповнити виділене байтом...</value>
+    <value>Bit ile seçimi doldur...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
-    <value>_Байт</value>
+    <value>_Bit</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Введіть значення</value>
+    <value>Değer gir</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Перейти по зміщенню...</value>
+    <value>Denkleştiriciye git...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Зберегти об_ране...</value>
+    <value>_Seçimi kaydet...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>Обрати...</value>
+    <value>Seç...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>Налаштування...</value>
+    <value>Ayarlar...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 байт</value>
+    <value>_16 bit</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 байт</value>
+    <value>_32 bit</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 байт</value>
+    <value>_48 bit</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 байти</value>
+    <value>_64 bit</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 байтів</value>
+    <value>_8 bit</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Розтягнути по ширині</value>
+    <value>_Genişliğe sığdır</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>_Базове Зміщення</value>
+    <value>_Temel dengeleyici</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>Це значення додається до початкового зміщення, перед показом на екрані</value>
+    <value>Bu değer ekranda gösterilmeden önce dengeleyiciyi başlatmak için eklendi</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
-    <value>Б_айтів в стрічці</value>
+    <value>Satır başına _bit</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>Зміщення _кінця</value>
+    <value>Dengeleyiciyi _bitir</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>Кількість бі_тів зміщення</value>
+    <value>Dengeleyici _bit boyutu</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
-    <value>Пока_зати ASCII</value>
+    <value>ASCII'i _göster</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>Пок_азати зміщення</value>
+    <value>Dengeleyiciyi _göster</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Показати з_начення</value>
+    <value>_Değerleri göster</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Зміщення початку</value>
+    <value>Dengeleyici _başlat</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
-    <value>Налаштування локального Hex-редактора</value>
+    <value>Yerel Hex Editör Ayarları</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>Використовувати  _відносне зміщення</value>
+    <value>_İlgili dengeleyicileri kullan</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>Усі зміщення вказані відносно стартового зміщення</value>
+    <value>Tüm dengeleyiciler başlangıç dengeleyicisi ile alakalıdır</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
-    <value>_Формат значення</value>
+    <value>Değer _Formatı</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Вставити</value>
+    <value>_Yapıştır</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>_Вставити (#Blob Data)</value>
+    <value>Yapıştır (#Blob Veri)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>Спеціяльна вставка</value>
+    <value>Özel Yapıştır</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>Вставити (Unicode)</value>
+    <value>Yapıştır (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>Вставити (UTF-8)</value>
+    <value>Yapıştır (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
     <value>Ctrl+8</value>
@@ -1458,29 +1457,29 @@
     <value>Ctrl+V</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Видалити</value>
+    <value>Del</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Показати всі байти</value>
+    <value>Tüm bitleri göster</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Показать лише вибрані байти</value>
+    <value>Sadece seçilmiş bitleri göster</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>Формат значення</value>
+    <value>Değer formatı</value>
   </data>
   <data name="ShortCutKeyF5" xml:space="preserve">
     <value>F5</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Оновити</value>
+    <value>Yenile</value>
   </data>
   <data name="TextEditor" xml:space="preserve">
-    <value>Текстовbй редактор</value>
+    <value>Metin Editörü</value>
   </data>
   <data name="Search_BigEndianToolTip" xml:space="preserve">
-    <value>Big endian</value>
+    <value>Düşük son haneli</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
@@ -1495,10 +1494,10 @@
     <value>Ctrl+F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>Вставити (Unicode та довжину)</value>
+    <value>Yapıştır (Unicode ve uzunluk)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>Вставити (UTF-8 та довжину)</value>
+    <value>Yapıştır (UTF-8 ve uzunluk)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
     <value>Ctrl+K, Ctrl+8</value>
@@ -1507,37 +1506,37 @@
     <value>Ctrl+K, Ctrl+U</value>
   </data>
   <data name="HexGoToCodeOrStructure" xml:space="preserve">
-    <value>Перейти до коду чи структури</value>
+    <value>Koda veya yapıya git</value>
   </data>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
   </data>
   <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
-    <value>Виділяти структуру під курсором мишки</value>
+    <value>Fare imlecinin altındaki yapıyı vurgula</value>
   </data>
   <data name="HexToolTipIndex" xml:space="preserve">
-    <value>індекс</value>
+    <value>indeks</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
-    <value>зміщення</value>
+    <value>dengeleyici</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
-    <value>Big Endian</value>
+    <value>Düşük son haneli</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>Копіювати {0}</value>
+    <value>{0} 'ı kopyala</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>Копіювати абсолютне зміщення</value>
+    <value>Mutlak değerlendiriciyi kopyala</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Копіювати зміщення в файлі</value>
+    <value>Dosya Uzaklığını Kopyala</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>Копіювати RVA</value>
+    <value>RVA kopyala</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>Копіювати значення</value>
+    <value>Değeri kopyala</value>
   </data>
   <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
     <value>Ctrl+Shift+Q</value>
@@ -1552,13 +1551,13 @@
     <value>Ctrl+Shift+V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
-    <value>Позиція</value>
+    <value>Konum</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
-    <value>Поточна позиція</value>
+    <value>Mevcut Konum</value>
   </data>
   <data name="GoToFilePosition" xml:space="preserve">
-    <value>Файл</value>
+    <value>Doysa</value>
   </data>
   <data name="ShortCutKeyCtrl1" xml:space="preserve">
     <value>Ctrl+1</value>
@@ -1573,19 +1572,19 @@
     <value>Ctrl+4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>_Вибрати в нову позицію</value>
+    <value>_Yeni konum seçin</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
-    <value>Ctrl+O</value>
+    <value>Ctrl + O</value>
   </data>
   <data name="SelectLength" xml:space="preserve">
-    <value>Довжина</value>
+    <value>Uzunluk</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
-    <value>Перейти до метаданих</value>
+    <value>Megadata'ya git</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
-    <value>_Токен</value>
+    <value>_İşaret</value>
   </data>
   <data name="ShortCutKeyCtrl5" xml:space="preserve">
     <value>Ctrl+5</value>
@@ -1594,37 +1593,37 @@
     <value>Ctrl+6</value>
   </data>
   <data name="GoToMetadataCommand" xml:space="preserve">
-    <value>Перейти до Метаданих...</value>
+    <value>Megadata'ya git...</value>
   </data>
   <data name="ShortCutKeyCtrlM" xml:space="preserve">
     <value>Ctrl+M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>Невірне зміщення чи токен метаданих</value>
+    <value>Geçersiz dengeleyici veya megadata işareti</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>Тіло методу</value>
+    <value>Yönem gövdesi</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Токен метаданих</value>
+    <value>Megadata işareti</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
-    <value>_Індекс</value>
+    <value>_Indeks</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
-    <value>Перейти по посиланню</value>
+    <value>Referansı izle</value>
   </data>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
-    <value>Ctrl+F12</value>
+    <value>Ctrl + F12</value>
   </data>
   <data name="HexEditorSelectFileCommand" xml:space="preserve">
-    <value>Вибрати файл</value>
+    <value>Dosya seç</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>Вибрати вкладений файл</value>
+    <value>İç içe geçmiş dosyayı seç</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
-    <value>Вибрати спеціальне</value>
+    <value>Özel seç</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
     <value>Ctrl+E, Ctrl+F</value>
@@ -1633,22 +1632,22 @@
     <value>Ctrl+E, Ctrl+N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Обрати структуру</value>
+    <value>Yapı seç</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl+E, Ctrl+S</value>
   </data>
   <data name="HexEditFieldCommand" xml:space="preserve">
-    <value>Редагувати поле</value>
+    <value>Alanı Düzenle</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
-    <value>Розфарбувати текст</value>
+    <value>Metni renklendir</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt + стрілка вправо</value>
+    <value>Alt+sağ ok</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
-    <value>Backspace</value>
+    <value>Geri tuşu(backspace)</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
     <value>Ctrl+S</value>
@@ -1681,121 +1680,121 @@
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Формат позначки часу</value>
+    <value>Zaman bilgisi formatı</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
-    <value>Закладки</value>
+    <value>Yer imleri</value>
   </data>
   <data name="BookmarksOptDlgTab" xml:space="preserve">
-    <value>Закладки</value>
+    <value>Yer imleri</value>
   </data>
   <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
-    <value>Підсвітка синтаксису</value>
+    <value>Sözdizimi vurgulama</value>
   </data>
   <data name="SearchHelp_ToolTip" xml:space="preserve">
-    <value>Допомога</value>
+    <value>Yardım</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Мітки</value>
+    <value>Etiketler</value>
   </data>
   <data name="Column_Location" xml:space="preserve">
-    <value>Розташування</value>
+    <value>Konum</value>
   </data>
   <data name="Column_Module" xml:space="preserve">
-    <value>Модуль</value>
+    <value>Modül</value>
   </data>
   <data name="Column_Name" xml:space="preserve">
-    <value>Назва</value>
+    <value>Ad</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>Ні одна закладка не співпадає із фільтром.</value>
+    <value>Arama kriterlerinizle eşleşen yer imi yok.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
-    <value>Пошук</value>
+    <value>Arama</value>
   </data>
   <data name="BookmarksCommand" xml:space="preserve">
-    <value>За_кладки</value>
+    <value>_Yer imleri</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>Вікно _закладок</value>
+    <value>_Yer imleri penceresi</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Експортувати всі закладки, що відповідають поточним умовам пошуку</value>
+    <value>Mevcut arama kriteriyle eşleşen tüm yer imlerini dışarı aktar</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор на обрану закладку.</value>
+    <value>Düzeltme imini seçilen yer imine götür.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор до наступної закладки в поточному файлі.</value>
+    <value>Düzeltme imini mevcut dosyada bir sonraki yer imine götür.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор до наступної закладки із тою ж міткою.</value>
+    <value>Düzeltme imini aynı etiketi taşıyan sonraki yer imine götür.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор до наступної закладки.</value>
+    <value>Düzeltme işaretini bir sonraki yer imine götür.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор до попередньої закладки в поточному файлі.</value>
+    <value>Düzeltme işaretini aynı dosyadaki bir önceki yer imine götür.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор до попередньої закладки із тою ж міткою.</value>
+    <value>Düzeltme işaretini aynı etiketi taşıyan önceki yer imine götür.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Перемістити курсор до попередньої закладки.</value>
+    <value>Düzeltme işaretini bir önceki yer imine götür.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Імпортувати закладки із файла</value>
+    <value>Bir dosyadan yer imlerini içe aktar</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>Видалити закладку</value>
+    <value>Yer imlerini kaldır</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Видалити усі закладки, що відповідають поточному фільтру</value>
+    <value>Mevcut arama kriteriyle eşleşen tüm yer imlerini kaldır</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Скинути усі фільтри, щоб показати усі закладки</value>
+    <value>Tüm yer imleri görülecek şekilde tüm arama kriterlerini sıfırla</value>
   </data>
   <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
-    <value>Шукати закладку</value>
+    <value>Bir yer imi için ara</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Перемкнути закладку на поточному рядку.</value>
+    <value>Mevcut sayıta bir yer imi aç.</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Ввімкнути чи вимкнути усі закладки, що відповідають поточному фільтру</value>
+    <value>Mevcut arama kriterleriyle eşleşen tüm yer imlerini aktifleştir veya devre dışı bırak</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
-    <value>Закладка{0}</value>
+    <value>Yer imi{0}</value>
   </data>
   <data name="RenameCommand" xml:space="preserve">
-    <value>Перейменувати</value>
+    <value>Yeniden adlandır</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Перейти на закладку</value>
+    <value>Yer imine git</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Вимкнути закладку</value>
+    <value>Yer imlerini devre dışı bırak</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Редагувати Мітки</value>
+    <value>Etketleri düzenle</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Увімкнути закладку</value>
+    <value>Yer imlerini aktifleştir</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>_Експортувати обране...</value>
+    <value>_Dış aktarım seçildi...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Видалити всі закладки</value>
+    <value>Tüm yer imlerini kaldır</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Видалити закладку</value>
+    <value>Yer imini kaldır</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
-    <value>Вибр_ати усе</value>
+    <value>Hepsini _seç</value>
   </data>
   <data name="ShortCutKeyCtrlA" xml:space="preserve">
     <value>Ctrl+A</value>
@@ -1804,70 +1803,70 @@
     <value>Ctrl+C</value>
   </data>
   <data name="ShortCutKeyEnter" xml:space="preserve">
-    <value>Enter</value>
+    <value>Enter(Giriş)</value>
   </data>
   <data name="ShortCutKeyF2" xml:space="preserve">
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Показати оголошення типів</value>
+    <value>Bildiren Türleri Göster</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Показати ключові слова вбудованих типів</value>
+    <value>Gerçek tip anahtar kelimeleri göster</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
-    <value>Показати імена _модулів</value>
+    <value>_Modül İsimlerini göster</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
-    <value>Показати простори імен</value>
+    <value>İsim alanlarını Göster</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
-    <value>Показати імена _параметрів</value>
+    <value>_Parametre İsimlerini göster</value>
   </data>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
-    <value>Показати типи параметрів</value>
+    <value>Parametre tiplerini göster</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>Показати типи, що повертаються</value>
+    <value>Dönüş Türlerini Göster</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Показувати токени</value>
+    <value>Token'ları Göster</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
     <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Очистити усі закладки в документі</value>
+    <value>Dokümandaki tüm yer imlerini temizle</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Очистити закладки</value>
+    <value>Yer imlerini _temizle</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Вимкнути _Усі закладки</value>
+    <value>_Tüm yer imlerini devre dışı bırak</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Увімкнути _Усі закладки</value>
+    <value>_Tüm yer imlerini aktifleştir</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Увімкнути закладку</value>
+    <value>Yer imlerini aktifleştir</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Наступна _Закладка</value>
+    <value>Sonraki _Yer imi</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>Наступна закладка в документі</value>
+    <value>Dökümandaki _sonraki yer imi</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Наступна закладка із тою ж міткою</value>
+    <value>Aynı etiketteki sonraki yer imi</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Попередня закладка</value>
+    <value>_Önceki yer imi</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>П_опередня закладка в документі</value>
+    <value>Dökümandaki _önceki yer imi</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Попередня закладка із тою ж міткою</value>
+    <value>Aynı etiketteki önceki yer imi</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
@@ -1882,159 +1881,159 @@
     <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>Перемикати закладку</value>
+    <value>Yer imlerini _değiştir</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>Позначки</value>
+    <value>Etiketler</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
-    <value>Редагувати Мітки</value>
+    <value>Etiketleri düzenle</value>
   </data>
   <data name="User_Administrator" xml:space="preserve">
-    <value>Адміністратор</value>
+    <value>Yönetici</value>
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
-    <value>Дозволити більше одного екземпляра (потрібне перезавантаження)</value>
+    <value>Birden fazla örneğe izin ver (yeniden başlatma gerekiyor)</value>
   </data>
   <data name="DisassemblerDlgTabTitle" xml:space="preserve">
-    <value>Дизассемблер</value>
+    <value>Parçala</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Стиль Коду</value>
+    <value>Kod Stili</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Додати мітки</value>
+    <value>Etiket ekle</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Додавати ведучий '0' для hex-чисел</value>
+    <value>Gerekirse "0" satırına hex sayıları ekleyin</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
-    <value>Завжди показувати розмір операндів пам'яті</value>
+    <value>Her zaman bellek işlenen boyutunu göster</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Завжди відображати значення масштабу</value>
+    <value>Her zaman ölçek değerini göster</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
-    <value>Завжди показувати сегменті регістри</value>
+    <value>Her zaman segment kayıtlarını göster</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
-    <value>Розділювач цифр</value>
+    <value>Basamak ayırıcı</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Додати порожній рядок між блоками</value>
+    <value>Blokların arasına boş bir satır ekleyin</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>Hex префікс</value>
+    <value>Hex önüne ek</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>Hex суфікс</value>
+    <value>Hex sonuna ek</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
-    <value>Показати дизассемблер в новій вкладці</value>
+    <value>Sökme işlemini yeni bir sekmede göster</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Колонка операнду</value>
+    <value>İşlenen sütun</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
-    <value>RIP-відносна адресація</value>
+    <value>RIP'ye bağlı adresler</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Показати масштаб перед індексним регістром</value>
+    <value>Dizin kaydı öncesi ölçeği göster</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Додати нулі попереду (переходи)</value>
+    <value>Baştaki sıfırları ekle (dallar)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Додати нулі попереду</value>
+    <value>Başına sıfır ekle</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Показати розмір бренча</value>
+    <value>Şube boyutunu göster</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
-    <value>Показати адресу інструкцій</value>
+    <value>Hedef Adresi Göster</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
-    <value>Показати байти інструкцій</value>
+    <value>Komut baytlarını göster</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
-    <value>Показувати нульові зміщення</value>
+    <value>Sıfır yer değiştirmeleri göster</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Числа зі знаком</value>
+    <value>İmzalı numaralar</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Переміщення зі знаком</value>
+    <value>İmzalı yer değiştirme</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Показувати малі числа десятковими</value>
+    <value>Küçük sayıları ondalık basamakta göster</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Пробіл після дужок операнду пам'яті</value>
+    <value>Bellek işlenen parantez den sonra boşluk</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
-    <value>Пробіл після розділювача операнду</value>
+    <value>İşlenen ayırıcıdan sonra boşluk</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Пробіл між '+'</value>
+    <value>'+' Arasındaki boşluk</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Пробіл між '*'</value>
+    <value>Arasındaki boşluk '*'</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
-    <value>Все у верхньому регістрі</value>
+    <value>Her şey büyük harf</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Hex-числа в верхньому регістрі</value>
+    <value>Büyük harf hex sayılar</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
-    <value>Верхній регістр ключових слів</value>
+    <value>Büyük harf anahtar kelimeler</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
-    <value>Верхній регістр мнемонік</value>
+    <value>Büyük harf anımsatıcıları</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
-    <value>Префікси у верхньому регістрі</value>
+    <value>Büyük harf ön ekleri</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
-    <value>Регістри у верхньому регістрі</value>
+    <value>Büyük harf kayıtları</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
-    <value>Псевдо інструкції</value>
+    <value>Sözde talimatları</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
-    <value>Синтаксис</value>
+    <value>Sözdizimi</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
-    <value>Голі регістри</value>
+    <value>Çıplak kayıtlar</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Завжди показувати суфікс розміру мнемонік</value>
+    <value>Her zaman anımsatıcı boyut son ekini göster</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Пробіл після коми операнду пам'яті</value>
+    <value>Bellek işlenen virgülden sonra boşluk</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
-    <value>Hex-числа</value>
+    <value>Hex numaraları</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
-    <value>Дизассембльований код</value>
+    <value>Parçala</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
-    <value>Показати декомпільований код</value>
+    <value>Ayrıştırılmış kodu göster</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Показувати IL код</value>
+    <value>IL kodunu göster</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
-    <value>Метод не оптимізований</value>
+    <value>Yöntem optimize edilmedi</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Показувати адресу символу</value>
+    <value>Sembol adresini göster</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Часові відмітка:</value>
+    <value>Zaman Bilgisi:</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
-    <value>&lt;Невідомо&gt;</value>
+    <value>&lt;Bilinmiyor&gt;</value>
   </data>
 </root>

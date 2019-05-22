@@ -117,164 +117,139 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Argumentos</value>
+  <data name="MSBuild_CopyAppConfig" xml:space="preserve">
+    <value>Kopyala app.config ({0})</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+  <data name="MSBuild_CouldNotCreateDirectory2" xml:space="preserve">
+    <value>Dizin oluşturulamadı {0}, Hata: {1}</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Parar em</value>
+  <data name="MSBuild_CreateApplicationIcon" xml:space="preserve">
+    <value>Uygulama simgesi oluştur</value>
   </data>
-  <data name="DbgAsm_Host" xml:space="preserve">
-    <value>Host</value>
+  <data name="MSBuild_CreateAppManifest" xml:space="preserve">
+    <value>App.manifest oluştur</value>
   </data>
-  <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Argumentos anfitrião</value>
+  <data name="MSBuild_CreateAppXaml" xml:space="preserve">
+    <value>App.xaml Oluştur</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Diretório de Trabalho</value>
+  <data name="MSBuild_CreateEmbeddedResource" xml:space="preserve">
+    <value>Gömülü kaynak oluştur {0}</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+  <data name="MSBuild_DecompileAssemblyInfoAndFileExtension" xml:space="preserve">
+    <value>Decompile AssemblyInfo{0}</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Não quebre</value>
+  <data name="MSBuild_DecompileBaml" xml:space="preserve">
+    <value>Decompile BAML</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Ponto de Entrada</value>
+  <data name="MSBuild_FailedToCreateProjectFile" xml:space="preserve">
+    <value>Proje dosyası {0} oluşturulurken başarısız oldu, Özel durum iletisi: {1}</value>
   </data>
-  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Não foi possível encontrar o .NET Core host '{0}'</value>
+  <data name="MSBuild_FailedToCreateSolutionFile" xml:space="preserve">
+    <value>Çözüm dosyası {0} oluşturulurken başarısız oldu, Özel durum iletisi: {1}</value>
   </data>
-  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. {0}</value>
+  <data name="MSBuild_FileCreationFailed2" xml:space="preserve">
+    <value>Başarısız oldu, açıklama = {0}, Özel durum iletisi: {1}</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. Verifique se você tem acesso ao ficheiro '{0}'
-
-Erro: {1}</value>
+  <data name="MSBuild_FileCreationFailed3" xml:space="preserve">
+    <value>Dosya oluşturma başarısız oldu ({0}), açıklama = {1}, Özel durum iletisi: {2}</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. O programa depurado requer privilégios de administrador. Reinicie dnSpy com direitos de administrador e tente novamente.</value>
+  <data name="ToolTip_Constant" xml:space="preserve">
+    <value>sabit</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>O ficheiro não existe</value>
+  <data name="ToolTip_Field" xml:space="preserve">
+    <value>alan</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nome do ficheiro em falta</value>
+  <data name="ToolTip_GenericParameterInTypeOrMethod" xml:space="preserve">
+    <value>içinde</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+  <data name="ToolTip_Local" xml:space="preserve">
+    <value>yerel değişken</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Segundo plano</value>
+  <data name="ToolTip_NMethodOverloads" xml:space="preserve">
+    <value>{0} aşırı yükleme</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Parado</value>
+  <data name="ToolTip_OneMethodOverload" xml:space="preserve">
+    <value>1 aşırı yükleme</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="ToolTip_Parameter" xml:space="preserve">
+    <value>parametre</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspenso</value>
+  <data name="Decompile_Namespace_Types" xml:space="preserve">
+    <value>Türler:</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="Decompile_AnyCPU32BitPreferred" xml:space="preserve">
+    <value>AnyCPU (32-bit tercihen)</value>
   </data>
-  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>ThreadPool</value>
+  <data name="Decompile_AnyCPU64BitPreferred" xml:space="preserve">
+    <value>AnyCPU (64-bit tercihen)</value>
   </data>
-  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>UnsafePoint</value>
+  <data name="Decompile_Architecture" xml:space="preserve">
+    <value>Mimari:</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="Decompile_EntryPoint" xml:space="preserve">
+    <value>Başlangıç noktası:</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="Decompile_GlobalType" xml:space="preserve">
+    <value>Global tür:</value>
   </data>
-  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use a versão 32 bits do dnSpy para fazer debug de aplicações de 32 bits.</value>
+  <data name="Decompile_NativeEntryPoint" xml:space="preserve">
+    <value>Yerel giriş noktası: 0x{0:X8}</value>
   </data>
-  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use a versão 64 bits do dnSpy para fazer debug de aplicações de 64 bits.</value>
+  <data name="Decompile_Runtime" xml:space="preserve">
+    <value>Çalışma Ortamı:</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
+  <data name="Decompile_ThisAssemblyContainsUnmanagedCode" xml:space="preserve">
+    <value>Bu derleme yönetilmeyen (unmanaged) kod içerir.</value>
   </data>
-  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador.
-
-Erro: {0}</value>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Zaman Bilgisi:</value>
   </data>
-  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Não foi possível anexar ao processo {0}</value>
+  <data name="MSBuild_CreateResource" xml:space="preserve">
+    <value>Kaynak oluştur {0}</value>
   </data>
-  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Algum outro processo já estiver depurando o processo {0}</value>
+  <data name="MSBuild_CreateSplashScreenResource" xml:space="preserve">
+    <value>Giriş ekranı kaynağı oluştur {0}</value>
   </data>
-  <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Estrutura Nativa {0}</value>
+  <data name="MSBuild_CreateWinFormsDesignerFile" xml:space="preserve">
+    <value>WinForms Tasarım dosyası oluştur</value>
   </data>
-  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Transição de AppDomain</value>
+  <data name="MSBuild_CreateWinFormsFile" xml:space="preserve">
+    <value>WinForms dosyası oluştur</value>
   </data>
-  <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Inicialização de Classe</value>
+  <data name="MSBuild_DecompileType" xml:space="preserve">
+    <value>Decompile türü {0}</value>
   </data>
-  <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Exceção</value>
+  <data name="MSBuild_CreateSettingsFile" xml:space="preserve">
+    <value>Oluştur {0}</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Avaliação de Função</value>
+  <data name="MSBuild_CreateSettingsDesignerTypeFile" xml:space="preserve">
+    <value>Ayar dizayn dosyası oluştur</value>
   </data>
-  <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Chamada Interna</value>
+  <data name="MSBuild_CreateSettingsTypeFile" xml:space="preserve">
+    <value>Ayar dosyası oluştur</value>
   </data>
-  <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Estrutura Interna ({0})</value>
+  <data name="MSBuild_CreateResXFile" xml:space="preserve">
+    <value>ResX dosyası oluştur</value>
   </data>
-  <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>Compilação JIT</value>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Bilinmiyor&gt;</value>
   </data>
-  <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Função Leve</value>
+  <data name="CSharp_Awaitable_Method" xml:space="preserve">
+    <value>awaitable</value>
   </data>
-  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Transição de Managed para Native</value>
+  <data name="CSharp_Deprecated_Member" xml:space="preserve">
+    <value>kullanımdışı</value>
   </data>
-  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Transição de Native para Managed</value>
+  <data name="CSharp_Extension_Method" xml:space="preserve">
+    <value>uzantı</value>
   </data>
-  <data name="StackFrame_Security" xml:space="preserve">
-    <value>Segurança</value>
+  <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
+    <value>Awaitable</value>
   </data>
-  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Desvio de IL {0}</value>
+  <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
+    <value>Kullanımdışı</value>
   </data>
-  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>linha {0} caráter {1}</value>
-  </data>
-  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>endereço {0}</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>Não foi possível definir a próxima instrução.</value>
-  </data>
-  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Could not break process. Error: 0x{0:X8}</value>
-  </data>
-  <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Erro interno do depurador</value>
-  </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 
-
-HR: 0x{0:X8}
-Erro: 0x{1:X8}</value>
-  </data>
-  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Usar executável do host</value>
+  <data name="VisualBasic_Extension_Method" xml:space="preserve">
+    <value>Eklenti</value>
   </data>
 </root>
