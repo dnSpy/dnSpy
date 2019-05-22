@@ -117,74 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
+  <data name="BamlOptionDlgTab" xml:space="preserve">
+    <value>BAML geri çözümleyicisi</value>
   </data>
-  <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro:{0}</value>
+  <data name="BamlSettings_DisassembleBAML" xml:space="preserve">
+    <value>Disassemble BAML</value>
   </data>
-  <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+  <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
+    <value>Her satırda bir nitelik</value>
   </data>
-  <data name="CouldNotConvert" xml:space="preserve">
-    <value>Não foi possível converter '{0}'</value>
+  <data name="BamlSettings_UseTabs" xml:space="preserve">
+    <value>Sekmeleri kullan</value>
   </data>
-  <data name="CouldNotConvertFromString" xml:space="preserve">
-    <value>Não foi possível convertê-lo de uma string '{0}'</value>
+  <data name="DisassembleBAMLCommand" xml:space="preserve">
+    <value>Disassemble BAML</value>
   </data>
-  <data name="CouldNotDeserializeData" xml:space="preserve">
-    <value>Não foi possível desserializar dados: {0}</value>
+  <data name="Error_AttachedEvent" xml:space="preserve">
+    <value>Ekli olay '{0}'.</value>
   </data>
-  <data name="Files_DotNetExecutables" xml:space="preserve">
-    <value>Executáveis .NET</value>
+  <data name="Error_IComponentConnectorConnetCannotBeParsed" xml:space="preserve">
+    <value>'{0}' sınıfı IComponentConnector.Connect yöntemine sahip, fakat çözümlenemez.</value>
   </data>
-  <data name="Files_DotNetNetModules" xml:space="preserve">
-    <value>NetModules .NET</value>
+  <data name="Error_UnknownConnectionId" xml:space="preserve">
+    <value>Bilinmeyen bağlantı kimliği: {0}</value>
   </data>
-  <data name="Files_Executables" xml:space="preserve">
-    <value>Executáveis</value>
+  <data name="Msg_GlobalNamespace" xml:space="preserve">
+    <value>'{0}' küresel alan adı için önektir.</value>
   </data>
-  <data name="Files_Images" xml:space="preserve">
-    <value>Imagens</value>
-  </data>
-  <data name="Files_StrongNameKeyFiles" xml:space="preserve">
-    <value>Ficheiros de Chave de Nome Forte</value>
-  </data>
-  <data name="Files_XmlFiles" xml:space="preserve">
-    <value>Ficheiros XML</value>
-  </data>
-  <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID Inválido</value>
-  </data>
-  <data name="NewDataNotImageList" xml:space="preserve">
-    <value>Os novos dados não são uma lista de imagem.</value>
-  </data>
-  <data name="NoTypeConverter" xml:space="preserve">
-    <value>{0} não tem um TypeConverter e não pode ser convertido de uma string.</value>
-  </data>
-  <data name="NumberOfBytes" xml:space="preserve">
-    <value>{0} bytes</value>
-  </data>
-  <data name="NumberOfBytesAndType" xml:space="preserve">
-    <value>{0} bytes, Tipo = {1}</value>
-  </data>
-  <data name="ResourceTypeCantBeChanged" xml:space="preserve">
-    <value>Tipo de recurso não pode ser alterado</value>
-  </data>
-  <data name="SaveResource" xml:space="preserve">
-    <value>Guardar Recurso</value>
-  </data>
-  <data name="SaveResources" xml:space="preserve">
-    <value>Guardar Recursos</value>
-  </data>
-  <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Coluna de pesquisa: {0}</value>
-  </data>
-  <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
-    <value>Use '{0}' para inverter a partida, por exemplo. {1}</value>
-  </data>
-  <data name="ValueMustBeType" xml:space="preserve">
-    <value>Valor deve ser de tipo {0}.
-Erro: {1}</value>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>BAML geri çözümleyicisi</value>
   </data>
 </root>

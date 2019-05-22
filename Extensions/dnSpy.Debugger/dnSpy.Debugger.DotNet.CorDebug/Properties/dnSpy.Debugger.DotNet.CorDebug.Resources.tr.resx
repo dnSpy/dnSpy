@@ -118,163 +118,163 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Argumentos</value>
+    <value>Argümanlar</value>
   </data>
   <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+    <value>_Assembly</value>
   </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Parar em</value>
+    <value>_Atla</value>
   </data>
   <data name="DbgAsm_Host" xml:space="preserve">
-    <value>Host</value>
+    <value>_Ana bilgisayar</value>
   </data>
   <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Argumentos anfitrião</value>
+    <value>Ana bilgisayar argümanları</value>
   </data>
   <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Diretório de Trabalho</value>
+    <value>_Çalışma dizini</value>
   </data>
   <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+    <value>SüreçYarat</value>
   </data>
   <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Não quebre</value>
+    <value>Bozma</value>
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Ponto de Entrada</value>
+    <value>Giriş Noktası</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Não foi possível encontrar o .NET Core host '{0}'</value>
+    <value>.Net Core host '{0}' bulunamadı</value>
   </data>
   <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. {0}</value>
+    <value>Hata ayıklayıcı {0} çalıştırılamadı</value>
   </data>
   <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. Verifique se você tem acesso ao ficheiro '{0}'
+    <value>Hata ayıklayıcı başlatılamadı. '{0}' dosyasına erişiminiz olduğundan emin olun
 
-Erro: {1}</value>
+Hata:{1}</value>
   </data>
   <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. O programa depurado requer privilégios de administrador. Reinicie dnSpy com direitos de administrador e tente novamente.</value>
+    <value>Hata ayıklayıcı başlatılamadı. Hata ayıklayıcı programı yönetici izinleri gerektirir. Yönetici izniyle beraber dnSpy'ı tekrar başlatın ve işlemi tekrar deneyin.</value>
   </data>
   <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>O ficheiro não existe</value>
+    <value>Dosya mevcut değil</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nome do ficheiro em falta</value>
+    <value>Eksik dosya adı</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+    <value>Hata Ayıklayıcı ({0})</value>
   </data>
   <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Segundo plano</value>
+    <value>Arka plan</value>
   </data>
   <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Parado</value>
+    <value>Durdu</value>
   </data>
   <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+    <value>DurmaTalepedildi</value>
   </data>
   <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspenso</value>
+    <value>Askıya alındı</value>
   </data>
   <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+    <value>AskıyaalınmaTalepedildi</value>
   </data>
   <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>ThreadPool</value>
+    <value>KonuHavuzu</value>
   </data>
   <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>UnsafePoint</value>
+    <value>TehlikeliNokta</value>
   </data>
   <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+    <value>Başlamamış</value>
   </data>
   <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+    <value>BekleUyuKatıl</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use a versão 32 bits do dnSpy para fazer debug de aplicações de 32 bits.</value>
+    <value>32-bit uygulamalardaki hataları ayıklamak için dnSpy 32-bit kullanın.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use a versão 64 bits do dnSpy para fazer debug de aplicações de 64 bits.</value>
+    <value>64 bit uygulamalarda hata ayıklamak için 64 bit dnSpy kullanın.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
+    <value>"&lt; istisna mesajı yok &gt;"</value>
   </data>
   <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador.
+    <value>Hata ayıklayıcı başlatılamadı.
 
-Erro: {0}</value>
+Hata:{0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Não foi possível anexar ao processo {0}</value>
+    <value>{0} ı işlemek için eklenemedi</value>
   </data>
   <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Algum outro processo já estiver depurando o processo {0}</value>
+    <value>Başka işlemler zaten işlem {0} 'ın hatalarını ayıklıyor</value>
   </data>
   <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Estrutura Nativa {0}</value>
+    <value>Yerli Çerçeve {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Transição de AppDomain</value>
+    <value>Uygulama alanı geçişi</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Inicialização de Classe</value>
+    <value>Class Init</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Exceção</value>
+    <value>İstisna</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Avaliação de Função</value>
+    <value>Fonksiyon değerlendirmesi</value>
   </data>
   <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Chamada Interna</value>
+    <value>Dahili Çağrı</value>
   </data>
   <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Estrutura Interna ({0})</value>
+    <value>İç çerçeve ({0})</value>
   </data>
   <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>Compilação JIT</value>
+    <value>JIT Derlemesi</value>
   </data>
   <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Função Leve</value>
+    <value>Lightweight fonksiyonu</value>
   </data>
   <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Transição de Managed para Native</value>
+    <value>Yerel geçiş başarılı</value>
   </data>
   <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Transição de Native para Managed</value>
+    <value>Başarılan geçişe yerli</value>
   </data>
   <data name="StackFrame_Security" xml:space="preserve">
-    <value>Segurança</value>
+    <value>Güvenlik</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Desvio de IL {0}</value>
+    <value>IL dengesi {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>linha {0} caráter {1}</value>
+    <value>hat {0} karakter {1}</value>
   </data>
   <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>endereço {0}</value>
+    <value>adres {0}</value>
   </data>
   <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>Não foi possível definir a próxima instrução.</value>
+    <value>Bir sonraki ifade ayarlanamadı.</value>
   </data>
   <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Could not break process. Error: 0x{0:X8}</value>
+    <value>İşlem durdurulamadı. Hata: 0x{0:X8}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Erro interno do depurador</value>
+    <value>İç hata ayıklayıcı hatası</value>
   </data>
   <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 
+    <value>Bir CLR hata ayıklayıcı hatası meydana geldi. Hata ayıklanan süreci sonlandırıp tekrar deneyin.
 
 HR: 0x{0:X8}
-Erro: 0x{1:X8}</value>
+Hata: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Usar executável do host</value>
+    <value>Ana bilgisayar da yürütülebilir</value>
   </data>
 </root>

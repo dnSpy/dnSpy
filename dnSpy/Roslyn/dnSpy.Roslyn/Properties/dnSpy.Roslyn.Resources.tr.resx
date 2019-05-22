@@ -117,164 +117,139 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DbgAsm_Args" xml:space="preserve">
-    <value>Argumentos</value>
+  <data name="ClassesToolTip" xml:space="preserve">
+    <value>Sınıflar</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>Güvenli olmayan kod çalıştırılmasına izin</value>
   </data>
-  <data name="DbgAsm_BreakAt" xml:space="preserve">
-    <value>Parar em</value>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>Aritmetik taşma/yetersizlik durumu denetle</value>
   </data>
-  <data name="DbgAsm_Host" xml:space="preserve">
-    <value>Host</value>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>Visual Basic çalışma zamanını göm</value>
   </data>
-  <data name="DbgAsm_HostArgs" xml:space="preserve">
-    <value>Argumentos anfitrião</value>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>Kodu iyileştir</value>
   </data>
-  <data name="DbgAsm_WorkingDir" xml:space="preserve">
-    <value>Diretório de Trabalho</value>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>Seçenek karşılaştırması: ikili</value>
   </data>
-  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
-    <value>CreateProcess</value>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>Seçenek açık</value>
   </data>
-  <data name="DbgBreak_Dont" xml:space="preserve">
-    <value>Não quebre</value>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>Seçenek çıkarımı</value>
   </data>
-  <data name="DbgBreak_EntryPoint" xml:space="preserve">
-    <value>Ponto de Entrada</value>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>Seçenek katı</value>
   </data>
-  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
-    <value>Não foi possível encontrar o .NET Core host '{0}'</value>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>Koşullu derleme sembolleri</value>
   </data>
-  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. {0}</value>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>Tümü</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. Verifique se você tem acesso ao ficheiro '{0}'
-
-Erro: {1}</value>
+  <data name="ConstantsToolTip" xml:space="preserve">
+    <value>Sabitler</value>
   </data>
-  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador. O programa depurado requer privilégios de administrador. Reinicie dnSpy com direitos de administrador e tente novamente.</value>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>İfade değerlendirildi ve hiçbir değeri yok</value>
   </data>
-  <data name="Error_FileDoesNotExist" xml:space="preserve">
-    <value>O ficheiro não existe</value>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>Sabit üyeler</value>
   </data>
-  <data name="Error_MissingFilename" xml:space="preserve">
-    <value>Nome do ficheiro em falta</value>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>Dinamik görünüm</value>
   </data>
-  <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Depurador ({0})</value>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>Hata</value>
   </data>
-  <data name="Thread_UserState_Background" xml:space="preserve">
-    <value>Segundo plano</value>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>Dinamik Görünümü genişletmek nesne için dinamik üyeleri alır</value>
   </data>
-  <data name="Thread_UserState_Stopped" xml:space="preserve">
-    <value>Parado</value>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>Sonuç görünümünü genişletmek IEnumerable'ı sıralayacaktır</value>
   </data>
-  <data name="Thread_UserState_StopRequested" xml:space="preserve">
-    <value>StopRequested</value>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>Örnek üyeleri</value>
   </data>
-  <data name="Thread_UserState_Suspended" xml:space="preserve">
-    <value>Suspenso</value>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>İşlem görmemiş görünüm</value>
   </data>
-  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
-    <value>SuspendRequested</value>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>Sonuçların Görünümü</value>
   </data>
-  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
-    <value>ThreadPool</value>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>Paylaşılan Üyeler</value>
   </data>
-  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
-    <value>UnsafePoint</value>
+  <data name="DelegatesToolTip" xml:space="preserve">
+    <value>Görevlendirmeler</value>
   </data>
-  <data name="Thread_UserState_Unstarted" xml:space="preserve">
-    <value>Unstarted</value>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>Dinamik görünümü {0}'ın/un referanslanmasına ihtiyaç duyar</value>
   </data>
-  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
-    <value>WaitSleepJoin</value>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>Sadece COM veya Dinamik nesneler Dinamik Görünüme sahip olabilir</value>
   </data>
-  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use a versão 32 bits do dnSpy para fazer debug de aplicações de 32 bits.</value>
+  <data name="EnumsToolTip" xml:space="preserve">
+    <value>Enumlar</value>
   </data>
-  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use a versão 64 bits do dnSpy para fazer debug de aplicações de 64 bits.</value>
+  <data name="EventsToolTip" xml:space="preserve">
+    <value>Olaylar</value>
   </data>
-  <data name="ExceptionMessageIsNull" xml:space="preserve">
-    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
+  <data name="ExtensionMethodsToolTip" xml:space="preserve">
+    <value>Genişletme yöntemleri</value>
   </data>
-  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Não foi possível iniciar o depurador.
-
-Erro: {0}</value>
+  <data name="FieldsToolTip" xml:space="preserve">
+    <value>Alanlar</value>
   </data>
-  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
-    <value>Não foi possível anexar ao processo {0}</value>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>Derlenmiş ifade özel bir durum oluşturdu: {0}</value>
   </data>
-  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
-    <value>Algum outro processo já estiver depurando o processo {0}</value>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>İfade geçersiz</value>
   </data>
-  <data name="StackFrame_NativeFrame" xml:space="preserve">
-    <value>Estrutura Nativa {0}</value>
+  <data name="InterfacesToolTip" xml:space="preserve">
+    <value>Arayüzler</value>
   </data>
-  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Transição de AppDomain</value>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>Anahtar Kelimeler</value>
   </data>
-  <data name="StackFrame_ClassInit" xml:space="preserve">
-    <value>Inicialização de Classe</value>
+  <data name="LocalsAndParametersToolTip" xml:space="preserve">
+    <value>Lokal ve parametreler</value>
   </data>
-  <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Exceção</value>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>{0} döndü</value>
   </data>
-  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
-    <value>Avaliação de Função</value>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>Değişken türleri</value>
   </data>
-  <data name="StackFrame_InternalCall" xml:space="preserve">
-    <value>Chamada Interna</value>
+  <data name="MethodsToolTip" xml:space="preserve">
+    <value>Yöntemler</value>
   </data>
-  <data name="StackFrame_InternalFrame" xml:space="preserve">
-    <value>Estrutura Interna ({0})</value>
+  <data name="ModulesToolTip" xml:space="preserve">
+    <value>Modüller</value>
   </data>
-  <data name="StackFrame_JITCompilation" xml:space="preserve">
-    <value>Compilação JIT</value>
+  <data name="NamespacesToolTip" xml:space="preserve">
+    <value>İsim Alanları</value>
   </data>
-  <data name="StackFrame_LightweightFunction" xml:space="preserve">
-    <value>Função Leve</value>
+  <data name="PropertiesToolTip" xml:space="preserve">
+    <value>Özellikler</value>
   </data>
-  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
-    <value>Transição de Managed para Native</value>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>Yalnızca Enumerable türleri sonuç görünümü alabilir</value>
   </data>
-  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
-    <value>Transição de Native para Managed</value>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>Parçacıklar</value>
   </data>
-  <data name="StackFrame_Security" xml:space="preserve">
-    <value>Segurança</value>
+  <data name="StructuresToolTip" xml:space="preserve">
+    <value>Yapılar</value>
   </data>
-  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>Desvio de IL {0}</value>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>Sonuç görünümü {0}'ın/un referanslanmasına ihtiyaç duyar</value>
   </data>
-  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
-    <value>linha {0} caráter {1}</value>
-  </data>
-  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
-    <value>endereço {0}</value>
-  </data>
-  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
-    <value>Não foi possível definir a próxima instrução.</value>
-  </data>
-  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
-    <value>Could not break process. Error: 0x{0:X8}</value>
-  </data>
-  <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Erro interno do depurador</value>
-  </data>
-  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro de depurador CLR. Finalize o processo depurado e tente novamente. 
-
-HR: 0x{0:X8}
-Erro: 0x{1:X8}</value>
-  </data>
-  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Usar executável do host</value>
+  <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
+    <value>{0} tipi {1} assembly'sinde yok</value>
   </data>
 </root>

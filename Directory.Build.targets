@@ -38,7 +38,6 @@
     <GarbageDir>$(GarbageDir);$(OutputPath)\ko</GarbageDir>
     <GarbageDir>$(GarbageDir);$(OutputPath)\pl</GarbageDir>
     <GarbageDir>$(GarbageDir);$(OutputPath)\pt-BR</GarbageDir>
-    <GarbageDir>$(GarbageDir);$(OutputPath)\tr</GarbageDir>
     <GarbageDir>$(GarbageDir);$(OutputPath)\zh-Hans</GarbageDir>
     <GarbageDir>$(GarbageDir);$(OutputPath)\zh-Hant</GarbageDir>
   </PropertyGroup>

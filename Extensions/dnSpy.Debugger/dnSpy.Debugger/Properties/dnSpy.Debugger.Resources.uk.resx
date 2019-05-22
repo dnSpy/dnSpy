@@ -816,7 +816,7 @@
     <value>_Вікна</value>
   </data>
   <data name="OutputCommand" xml:space="preserve">
-    <value>Вив_ід</value>
+    <value>_Вивід</value>
   </data>
   <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
     <value>Ctrl+Alt+W, {0}</value>

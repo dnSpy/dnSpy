@@ -117,74 +117,73 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AllFiles" xml:space="preserve">
-    <value>Todos os Ficheiros</value>
+  <data name="AddClassBreakpointCommand" xml:space="preserve">
+    <value>Sınıf kesme noktası ekle</value>
   </data>
-  <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Ocorreu um erro:{0}</value>
+  <data name="AddClassTracepointCommand" xml:space="preserve">
+    <value>Sınıf izleme noktası ekle</value>
+  </data>
+  <data name="AddMethodBreakpointCommand" xml:space="preserve">
+    <value>Metod kesme noktası ekle</value>
+  </data>
+  <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
+    <value>Fırlatıldığında Durdur</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>İptal</value>
   </data>
-  <data name="CouldNotConvert" xml:space="preserve">
-    <value>Não foi possível converter '{0}'</value>
+  <data name="CancelLoadingModulesMessage" xml:space="preserve">
+    <value>Modül yükleme durdurulsun mu?</value>
   </data>
-  <data name="CouldNotConvertFromString" xml:space="preserve">
-    <value>Não foi possível convertê-lo de uma string '{0}'</value>
+  <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
+    <value>Geçerli yığın çerçevesi bir yerel yığın çerçevesiyken ifade değerlendirilemiyor</value>
   </data>
-  <data name="CouldNotDeserializeData" xml:space="preserve">
-    <value>Não foi possível desserializar dados: {0}</value>
+  <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
+    <value>Geri derlenmiş değişkenler hesaplanamaz</value>
   </data>
-  <data name="Files_DotNetExecutables" xml:space="preserve">
-    <value>Executáveis .NET</value>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL dengesi {0}</value>
   </data>
-  <data name="Files_DotNetNetModules" xml:space="preserve">
-    <value>NetModules .NET</value>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>hat {0} karakter {1}</value>
   </data>
-  <data name="Files_Executables" xml:space="preserve">
-    <value>Executáveis</value>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>İç hata ayıklayıcı hatası</value>
   </data>
-  <data name="Files_Images" xml:space="preserve">
-    <value>Imagens</value>
+  <data name="LoadModule_InfoText" xml:space="preserve">
+    <value>Modül yükleniyor. Büyük bir modül ise biraz zaman alabilir.</value>
   </data>
-  <data name="Files_StrongNameKeyFiles" xml:space="preserve">
-    <value>Ficheiros de Chave de Nome Forte</value>
+  <data name="LoadModule_Title" xml:space="preserve">
+    <value>Dinamik Modülleri Yükleme</value>
   </data>
-  <data name="Files_XmlFiles" xml:space="preserve">
-    <value>Ficheiros XML</value>
+  <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
+    <value>'{0}' bir tip '{1}' istisnası oluşturdu</value>
   </data>
-  <data name="InvalidGuid" xml:space="preserve">
-    <value>GUID Inválido</value>
+  <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
+    <value>Modülün 'megadata' sı bulunamadı veya geçersiz</value>
   </data>
-  <data name="NewDataNotImageList" xml:space="preserve">
-    <value>Os novos dados não são uma lista de imagem.</value>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>Dinamik modüller yüklenmeden önce işlemi durdurmak zorundasınız.</value>
   </data>
-  <data name="NoTypeConverter" xml:space="preserve">
-    <value>{0} não tem um TypeConverter e não pode ser convertido de uma string.</value>
+  <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
+    <value>Verilen adreste bir obje bulunamadı</value>
   </data>
-  <data name="NumberOfBytes" xml:space="preserve">
-    <value>{0} bytes</value>
+  <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
+    <value>Geçerli konuda hiçbir istisna yok</value>
   </data>
-  <data name="NumberOfBytesAndType" xml:space="preserve">
-    <value>{0} bytes, Tipo = {1}</value>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>Tüm method gövdeleri yeniden yükle</value>
   </data>
-  <data name="ResourceTypeCantBeChanged" xml:space="preserve">
-    <value>Tipo de recurso não pode ser alterado</value>
+  <data name="ReturnValueNotAvailable" xml:space="preserve">
+    <value>Geri dönüş değeri şuanda kullanılabilir değil</value>
   </data>
-  <data name="SaveResource" xml:space="preserve">
-    <value>Guardar Recurso</value>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>İçine adım: '{0}' operatörü üzerine atım at.</value>
   </data>
-  <data name="SaveResources" xml:space="preserve">
-    <value>Guardar Recursos</value>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>İçine adım: '{0}' özelliği üzerine atım at.</value>
   </data>
-  <data name="Search_SearchColumnHelpText" xml:space="preserve">
-    <value>Coluna de pesquisa: {0}</value>
-  </data>
-  <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
-    <value>Use '{0}' para inverter a partida, por exemplo. {1}</value>
-  </data>
-  <data name="ValueMustBeType" xml:space="preserve">
-    <value>Valor deve ser de tipo {0}.
-Erro: {1}</value>
+  <data name="UnknownVariableOrObjectId" xml:space="preserve">
+    <value>Bilinmeyen değişken veya obje kimliği</value>
   </data>
 </root>
