@@ -167,7 +167,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				goto case DnCodeBreakpointError.OtherError;
 			}
 
-			string GetFunctionName(DnCodeBreakpoint cbp) => $"0x{cbp.Token:X8} ({cbp.Module.ModuleName})";
+			static string GetFunctionName(DnCodeBreakpoint cbp) => $"0x{cbp.Token:X8} ({cbp.Module.ModuleName})";
 		}
 
 		Dictionary<ModuleId, List<BoundBreakpointData>> CreateBoundBreakpointsDictionary(DbgBoundCodeBreakpoint[] boundBreakpoints) {

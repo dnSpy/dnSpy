@@ -243,7 +243,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 			return false;
 
-			bool FollowsCloseParen(string expr2, int index2) => (index2 > 0) && (expr2[index2 - 1] == ')');
+			static bool FollowsCloseParen(string expr2, int index2) => (index2 > 0) && (expr2[index2 - 1] == ')');
 		}
 
 		protected abstract bool IsIdentifierPartCharacter(char c);

@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return typeCache;
 			return GetOrCreateTypeCacheCore(reflectionAppDomain);
 
-			TypeCache GetOrCreateTypeCacheCore(DmdAppDomain reflectionAppDomain2) =>
+			static TypeCache GetOrCreateTypeCacheCore(DmdAppDomain reflectionAppDomain2) =>
 				reflectionAppDomain2.GetOrCreateData(() => new TypeCache());
 		}
 	}

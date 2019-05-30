@@ -193,7 +193,7 @@ namespace dnSpy.MainApp {
 				cachedStream?.Dispose();
 			}
 
-			bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
+			static bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
 		}
 
 		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver) {
