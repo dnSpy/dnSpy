@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -41,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
 		sealed class DbgThreadData {
 			public DnThread DnThread { get; }
-			public ThreadProperties Last { get; set; }
+			public ThreadProperties? Last { get; set; }
 			public bool HasNewName { get; set; }
 			public bool IsMainThread { get; set; }
 			public DbgThreadData(DnThread dnThread, bool isMainThread) {
@@ -50,8 +51,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		DbgThreadData TryGetThreadData(DbgThread thread) {
-			if (thread != null && thread.TryGetData(out DbgThreadData data))
+		DbgThreadData? TryGetThreadData(DbgThread thread) {
+			if (thread != null && thread.TryGetData(out DbgThreadData? data))
 				return data;
 			return null;
 		}
@@ -59,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal DnThread GetThread(DbgThread thread) =>
 			TryGetThreadData(thread)?.DnThread ?? throw new InvalidOperationException();
 
-		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties oldProperties, bool isCreateThread, bool forceReadName, bool isMainThread) {
+		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties? oldProperties, bool isCreateThread, bool forceReadName, bool isMainThread) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
 			ulong id = (uint)thread.VolatileThreadId;
@@ -86,24 +87,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return new ThreadProperties(appDomain, kind, id, managedId, name, suspendedCount, userState);
 		}
 
-		static CorValue TryGetThreadObject(DnThread thread) {
+		static CorValue? TryGetThreadObject(DnThread thread) {
 			var threadObj = thread.CorThread.Object;
-			if (threadObj == null || threadObj.IsNull)
+			if (threadObj is null || threadObj.IsNull)
 				return null;
 			threadObj = threadObj.GetDereferencedValue(out int hr);
-			if (threadObj == null || threadObj.IsNull)
+			if (threadObj is null || threadObj.IsNull)
 				return null;
 			return threadObj;
 		}
 
-		ulong? GetManagedId(DnThread thread, DbgAppDomain appDomain) {
+		ulong? GetManagedId(DnThread thread, DbgAppDomain? appDomain) {
 			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, "m_ManagedThreadId");
 			if (res == null || !res.HasValue)
 				return null;
 			if (res.Value.ValueType == DbgSimpleValueType.Int32)
-				return (uint)(int)res.Value.RawValue;
+				return (uint)(int?)res.Value.RawValue!;
 			if (res.Value.ValueType == DbgSimpleValueType.UInt32)
-				return (uint)res.Value.RawValue;
+				return (uint?)res.Value.RawValue;
 			return null;
 		}
 
@@ -115,12 +116,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return (uint)info.Value.ManagedThreadId;
 		}
 
-		string GetThreadName(DnThread thread, DbgAppDomain appDomain) {
+		string? GetThreadName(DnThread thread, DbgAppDomain? appDomain) {
 			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, "m_Name");
 			if (res == null || !res.HasValue)
 				return null;
 			if (res.Value.ValueType == DbgSimpleValueType.StringUtf16)
-				return (string)res.Value.RawValue;
+				return (string?)res.Value.RawValue;
 			return null;
 		}
 
@@ -139,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return PredefinedThreadKinds.Unknown;
 		}
 
-		string GetThreadKind_ClrDac(DnThread thread) {
+		string? GetThreadKind_ClrDac(DnThread thread) {
 			Debug.Assert(clrDacInitd);
 			var tmp = clrDac.GetThreadInfo(thread.VolatileThreadId);
 			if (tmp == null)
@@ -173,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
 			var newProps = GetThreadProperties_CorDebug(threadData.DnThread, threadData.Last, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread);
 			threadData.HasNewName = false;
-			var updateOptions = threadData.Last.Compare(newProps);
+			var updateOptions = newProps.Compare(threadData.Last);
 			if (updateOptions == DbgEngineThread.UpdateOptions.None)
 				return null;
 			threadData.Last = newProps;
@@ -182,7 +183,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void NotifyThreadPropertiesChanged_CorDebug(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props) {
 			debuggerThread.VerifyAccess();
-			ReadOnlyCollection<DbgStateInfo> state = null;
+			ReadOnlyCollection<DbgStateInfo>? state = null;
 			if ((updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
 				state = DnThreadUtils.GetState(props.UserState);
 			engineThread.Update(updateOptions, appDomain: props.AppDomain, kind: props.Kind, id: props.Id, managedId: props.ManagedId, name: props.Name, suspendedCount: props.SuspendedCount, state: state);
@@ -190,7 +191,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void UpdateThreadProperties_CorDebug() {
 			debuggerThread.VerifyAccess();
-			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
+			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)>? threadsToUpdate = null;
 			KeyValuePair<DnThread, DbgEngineThread>[] infos;
 			lock (lockObj)
 				infos = toEngineThread.ToArray();
@@ -221,7 +222,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					toEngineThread.Add(e.Thread, engineThread);
 			}
 			else {
-				DbgEngineThread engineThread;
+				DbgEngineThread? engineThread;
 				lock (lockObj) {
 					if (toEngineThread.TryGetValue(e.Thread, out engineThread))
 						toEngineThread.Remove(e.Thread);
@@ -288,7 +289,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (list.Count > 0) {
 					const ulong defaultManagedId = ulong.MaxValue;
 					// The main thread should have a low managed ID, very often MID=1
-					list.Sort((a, b) => (a.data.Last.ManagedId ?? defaultManagedId).CompareTo(b.data.Last.ManagedId ?? defaultManagedId));
+					list.Sort((a, b) => (a.data.Last?.ManagedId ?? defaultManagedId).CompareTo(b.data.Last?.ManagedId ?? defaultManagedId));
 					alreadyKnowsMainThread = true;
 					foreach (var threadInfo in list) {
 						if (IsMainThreadCheckCallStack(threadInfo.thread)) {
@@ -299,7 +300,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 			}
 			if (mainThreadInfo.thread != null) {
-				mainThreadInfo.data.IsMainThread = true;
+				mainThreadInfo.data!.IsMainThread = true;
 				var info = UpdateThreadProperties_CorDebug(mainThreadInfo.thread);
 				if (info != null)
 					NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
@@ -310,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var lastFrame = dnThread.AllFrames.LastOrDefault();
 			var func = lastFrame?.Function;
 			var corModule = func?.Module;
-			if (corModule == null)
+			if (corModule is null)
 				return false;
 			var module = TryGetModule(corModule);
 			if (module == null)
@@ -321,17 +322,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (reflectionModule == null)
 				return false;
 			var ep = reflectionModule.Assembly.EntryPoint;
-			if (ep?.Module != reflectionModule || ep.MetadataToken != func.Token)
+			if (ep?.Module != reflectionModule || ep?.MetadataToken != func?.Token)
 				return false;
 
 			// Seems to be the main assembly
 			return true;
 		}
 
-		DbgEngineThread TryGetEngineThread(DnThread thread) {
-			if (thread == null)
+		DbgEngineThread? TryGetEngineThread(DnThread? thread) {
+			if (thread is null)
 				return null;
-			DbgEngineThread engineThread;
+			DbgEngineThread? engineThread;
 			bool b;
 			lock (lockObj)
 				b = toEngineThread.TryGetValue(thread, out engineThread);
@@ -339,10 +340,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return engineThread;
 		}
 
-		void OnNewThreadName_CorDebug(DnThread thread) {
+		void OnNewThreadName_CorDebug(DnThread? thread) {
 			debuggerThread.VerifyAccess();
 			var engineThread = TryGetEngineThread(thread);
-			if (engineThread == null)
+			if (engineThread is null)
 				return;
 			engineThread.Thread.GetData<DbgThreadData>().HasNewName = true;
 		}
@@ -377,14 +378,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
 			var threadData = TryGetThreadData(thread);
 			var engineThread = TryGetEngineThread(threadData?.DnThread);
-			if (engineThread == null || threadData.DnThread.HasExited)
+			if (engineThread == null || threadData!.DnThread.HasExited)
 				return new NullDbgEngineStackWalker();
 			return new DbgEngineStackWalkerImpl(dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory, this, threadData.DnThread, thread, GetFramesBuffer());
 		}
 		const int framesBufferSize = 0x100;
-		ICorDebugFrame[] framesBuffer = new ICorDebugFrame[framesBufferSize];
+		ICorDebugFrame[]? framesBuffer = new ICorDebugFrame[framesBufferSize];
 		ICorDebugFrame[] GetFramesBuffer() => Interlocked.Exchange(ref framesBuffer, null) ?? new ICorDebugFrame[framesBufferSize];
-		internal void ReturnFramesBuffer(ref ICorDebugFrame[] framesBuffer) {
+		internal void ReturnFramesBuffer(ref ICorDebugFrame[]? framesBuffer) {
 			Debug.Assert(framesBuffer != null);
 			Interlocked.Exchange(ref this.framesBuffer, framesBuffer);
 			framesBuffer = null;
@@ -401,6 +402,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, messageFlags: GetMessageFlags(), error: error));
 				return;
 			}
+			Debug.Assert(!(corFrame is null));
 
 			framesInvalidated = true;
 			bool failed = !corFrame.SetILFrameIP(offset);
@@ -417,7 +419,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		bool CanSetIP_CorDebug(DbgThread thread, DbgCodeLocation location) => TryGetFrameForSetIP_CorDebug(thread, location, out var corFrame, out uint offset) == null;
 
-		string TryGetFrameForSetIP_CorDebug(DbgThread thread, DbgCodeLocation location, out CorFrame corFrame, out uint offset) {
+		string? TryGetFrameForSetIP_CorDebug(DbgThread thread, DbgCodeLocation location, out CorFrame? corFrame, out uint offset) {
 			debuggerThread.VerifyAccess();
 			corFrame = null;
 			offset = 0;
@@ -440,7 +442,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		internal DnModuleId? TryGetModuleId(CorFrame frame) => dnDebugger.TryGetModuleId(frame.Function?.Module);
 
-		bool TryGetFrame(DbgThread thread, out CorFrame frame) {
+		bool TryGetFrame(DbgThread thread, [NotNullWhenTrue] out CorFrame? frame) {
 			debuggerThread.VerifyAccess();
 			frame = null;
 			var data = TryGetThreadData(thread);
@@ -449,7 +451,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (data.DnThread.HasExited)
 				return false;
 			frame = data.DnThread.AllFrames.FirstOrDefault();
-			if (frame == null || !frame.IsILFrame)
+			if (frame is null || !frame.IsILFrame)
 				return false;
 			return true;
 		}

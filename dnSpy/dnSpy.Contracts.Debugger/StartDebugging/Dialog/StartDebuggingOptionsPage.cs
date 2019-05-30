@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		public abstract object UIObject { get; }
+		public abstract object? UIObject { get; }
 
 		/// <summary>
 		/// true if all options are valid and <see cref="GetOptions"/> can be called.
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <param name="filename">Filename</param>
 		/// <param name="breakKind">Default break kind, see <see cref="PredefinedBreakKinds"/></param>
 		/// <param name="options">Options or null</param>
-		public abstract void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options);
+		public abstract void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options);
 
 		/// <summary>
 		/// Gets all options. This method is only called if <see cref="IsValid"/> returns true
@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <summary>
 		/// Filename or null
 		/// </summary>
-		public string Filename { get; }
+		public string? Filename { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <param name="options">Options</param>
 		/// <param name="filename">Filename or null</param>
 		/// <param name="flags">Flags</param>
-		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string filename, StartDebuggingOptionsInfoFlags flags) {
+		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string? filename, StartDebuggingOptionsInfoFlags flags) {
 			Options = options ?? throw new ArgumentNullException(nameof(options));
 			Filename = filename;
 			Flags = flags;

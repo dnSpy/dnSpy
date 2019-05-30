@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		const long cachedArrayLength_error = -2;
 
 		uint elementCount;
-		DbgDotNetArrayDimensionInfo[] dimensionInfos;
+		DbgDotNetArrayDimensionInfo[]? dimensionInfos;
 
 		public ArrayILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue arrayValue)
 			: base(runtime, arrayValue) {
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				throw new InvalidOperationException();
 		}
 
-		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) {
 			switch (method.SpecialMethodKind) {
 			case DmdSpecialMethodKind.Array_Get:
 				returnValue = LoadArrayElement(GetZeroBasedIndex(arguments, arguments.Length));
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				var addrValue = ObjValue.GetArrayElementAddressAt(index);
 				if (addrValue != null) {
 					runtime.RecordValue(addrValue.Value);
-					Debug.Assert(addrValue.Value.Value.Type.IsByRef);
+					Debug.Assert(addrValue.Value.Value!.Type.IsByRef);
 					returnValue = new ByRefILValueImpl(runtime, addrValue.Value.Value);
 				}
 				else
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		uint GetZeroBasedIndex(ILValue[] indexes, int count) {
 			if (dimensionInfos == null)
 				InitializeArrayInfo();
-			if (dimensionInfos.Length != count)
+			if (dimensionInfos!.Length != count)
 				throw new InvalidOperationException();
 
 			uint result = 0;
@@ -90,17 +90,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return result;
 		}
 
-		internal DbgDotNetValue ReadArrayElement(long index) {
+		internal DbgDotNetValue? ReadArrayElement(long index) {
 			if ((ulong)index > uint.MaxValue)
 				return null;
 			return runtime.RecordValue(ObjValue.GetArrayElementAt((uint)index));
 		}
 
 		void StoreArrayElement(uint index, ILValue value) => runtime.SetArrayElementAt(ObjValue, index, value);
-		internal void StoreArrayElement(uint index, object value) => runtime.SetArrayElementAt(ObjValue, index, value);
+		internal void StoreArrayElement(uint index, object? value) => runtime.SetArrayElementAt(ObjValue, index, value);
 		ILValue LoadArrayElement(uint index) => runtime.CreateILValue(ObjValue.GetArrayElementAt(index));
 
-		public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
+		public override ILValue? LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) {
 			if (!ObjValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return true;
 		}
 
-		public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) {
+		public override ILValue? LoadSZArrayElementAddress(long index, DmdType elementType) {
 			if (!ObjValue.Type.IsSZArray)
 				return null;
 			if ((ulong)index > uint.MaxValue)
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			var addrValue = ObjValue.GetArrayElementAddressAt((uint)index);
 			if (addrValue != null) {
 				runtime.RecordValue(addrValue.Value);
-				Debug.Assert(addrValue.Value.Value.Type.IsByRef);
+				Debug.Assert(addrValue.Value.Value!.Type.IsByRef);
 				return new ByRefILValueImpl(runtime, addrValue.Value.Value);
 			}
 			return new ArrayElementAddress(runtime, this, (uint)index);

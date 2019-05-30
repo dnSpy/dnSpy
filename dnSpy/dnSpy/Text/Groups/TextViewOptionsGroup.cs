@@ -68,7 +68,7 @@ namespace dnSpy.Text.Groups {
 		}
 
 		TextViewGroupOptionCollection GetCollection(string contentType) => GetCollection(contentTypeRegistryService.GetContentType(contentType));
-		TextViewGroupOptionCollection GetCollection(IContentType contentType) {
+		TextViewGroupOptionCollection GetCollection(IContentType? contentType) {
 			if (contentType == null)
 				contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
 			Debug.Assert(contentType != null);
@@ -100,7 +100,7 @@ namespace dnSpy.Text.Groups {
 		}
 
 		TextViewGroupOptionCollection ErrorCollection => errorCollection ?? (errorCollection = new TextViewGroupOptionCollection(contentTypeRegistryService.UnknownContentType));
-		TextViewGroupOptionCollection errorCollection;
+		TextViewGroupOptionCollection? errorCollection;
 
 		public bool HasOption<T>(string contentType, EditorOptionKey<T> option) => HasOption(contentType, option.Name);
 		public bool HasOption(string contentType, string optionId) {
@@ -111,8 +111,8 @@ namespace dnSpy.Text.Groups {
 			return GetCollection(contentType).HasOption(optionId);
 		}
 
-		public T GetOptionValue<T>(string contentType, EditorOptionKey<T> option) => (T)GetOptionValue(contentType, option.Name);
-		public object GetOptionValue(string contentType, string optionId) {
+		public T GetOptionValue<T>(string contentType, EditorOptionKey<T> option) => (T)GetOptionValue(contentType, option.Name)!;
+		public object? GetOptionValue(string contentType, string optionId) {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 			if (optionId == null)
@@ -121,7 +121,7 @@ namespace dnSpy.Text.Groups {
 		}
 
 		public void SetOptionValue<T>(string contentType, EditorOptionKey<T> option, T value) => SetOptionValue(contentType, option.Name, value);
-		public void SetOptionValue(string contentType, string optionId, object value) {
+		public void SetOptionValue(string contentType, string optionId, object? value) {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 			if (optionId == null)
@@ -206,7 +206,7 @@ namespace dnSpy.Text.Groups {
 			coll.SetOptionValue(e.OptionId, textView.Options.GetOptionValue(e.OptionId));
 		}
 
-		void InitializeOptions(IWpfTextView textView, IContentType beforeContentType, IContentType afterContentType, bool force) {
+		void InitializeOptions(IWpfTextView textView, IContentType? beforeContentType, IContentType afterContentType, bool force) {
 			var oldColl = GetCollection(beforeContentType);
 			var newColl = GetCollection(afterContentType);
 			if (!force && oldColl == newColl)

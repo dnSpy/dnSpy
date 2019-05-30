@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgCodeLocationSerializerService {
 		public abstract bool CanSerialize(DbgCodeLocation location);
 		public abstract void Serialize(ISettingsSection section, DbgCodeLocation location);
-		public abstract DbgCodeLocation Deserialize(ISettingsSection section);
+		public abstract DbgCodeLocation? Deserialize(ISettingsSection? section);
 	}
 
 	[Export(typeof(DbgCodeLocationSerializerService))]
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgCodeLocationSerializerServiceImpl([ImportMany] IEnumerable<Lazy<DbgCodeLocationSerializer, IDbgCodeLocationSerializerMetadata>> dbgCodeLocationSerializers) =>
 			this.dbgCodeLocationSerializers = dbgCodeLocationSerializers.ToArray();
 
-		Lazy<DbgCodeLocationSerializer, IDbgCodeLocationSerializerMetadata> TryGetSerializer(string type) {
+		Lazy<DbgCodeLocationSerializer, IDbgCodeLocationSerializerMetadata>? TryGetSerializer(string type) {
 			foreach (var lz in dbgCodeLocationSerializers) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0)
 					return lz;
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			serializer.Value.Serialize(section, location);
 		}
 
-		public override DbgCodeLocation Deserialize(ISettingsSection section) {
+		public override DbgCodeLocation? Deserialize(ISettingsSection? section) {
 			if (section == null)
 				return null;
 

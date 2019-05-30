@@ -23,7 +23,7 @@ using dnSpy.Contracts.Settings.HexGroups;
 namespace dnSpy.Hex.HexEditor {
 	[ExportHexViewOptionsGroupNameProvider]
 	sealed class HexViewOptionsGroupNameProviderImpl : HexViewOptionsGroupNameProvider {
-		public override string TryGetGroupName(WpfHexView hexView) {
+		public override string? TryGetGroupName(WpfHexView hexView) {
 			if (hexView.Roles.Contains(PredefinedHexViewRoles.HexEditorGroup))
 				return PredefinedHexViewGroupNames.HexEditor;
 			return null;

@@ -91,12 +91,12 @@ namespace dnSpy.Contracts.Debugger.Disassembly {
 		/// <summary>
 		/// Symbol resolver or null
 		/// </summary>
-		public ISymbolResolver SymbolResolver { get; }
+		public ISymbolResolver? SymbolResolver { get; }
 
 		/// <summary>
 		/// Header or null
 		/// </summary>
-		public string Header { get; }
+		public string? Header { get; }
 
 		/// <summary>
 		/// Constructor
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Debugger.Disassembly {
 		/// <param name="code">Native code</param>
 		/// <param name="symbolResolver">Symbol resolver or null</param>
 		/// <param name="header">Header or null</param>
-		public GetNativeCodeResult(NativeCode code, ISymbolResolver symbolResolver, string header) {
+		public GetNativeCodeResult(NativeCode code, ISymbolResolver? symbolResolver, string? header) {
 			Code = code;
 			SymbolResolver = symbolResolver;
 			Header = header;

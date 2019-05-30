@@ -79,14 +79,14 @@ namespace Example1.Extension {
 			}
 		}
 
-		public override string GetHeader(IMenuItemContext context) {
+		public override string? GetHeader(IMenuItemContext context) {
 			var md = GetTokenObj(context);
 			if (md == null)
 				return "Copy token";
 			return $"Copy token {md.MDToken.Raw:X8}";
 		}
 
-		IMDTokenProvider GetTokenObj(IMenuItemContext context) {
+		IMDTokenProvider? GetTokenObj(IMenuItemContext context) {
 			// Only show this in the document viewer
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
@@ -117,7 +117,7 @@ namespace Example1.Extension {
 			}
 		}
 
-		public override string GetHeader(IMenuItemContext context) {
+		public override string? GetHeader(IMenuItemContext context) {
 			var documentViewer = GetDocumentViewer(context);
 			if (documentViewer == null)
 				return "Copy line and column";
@@ -140,7 +140,7 @@ namespace Example1.Extension {
 			}
 		}
 
-		IDocumentViewer GetDocumentViewer(IMenuItemContext context) {
+		IDocumentViewer? GetDocumentViewer(IMenuItemContext context) {
 			// Only show this in the document viewer
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;

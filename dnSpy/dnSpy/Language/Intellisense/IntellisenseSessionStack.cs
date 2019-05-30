@@ -31,7 +31,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Language.Intellisense {
 	sealed partial class IntellisenseSessionStack : IIntellisenseSessionStack {
 		public ReadOnlyObservableCollection<IIntellisenseSession> Sessions { get; }
-		public IIntellisenseSession TopSession => sessions.Count == 0 ? null : sessions[0];
+		public IIntellisenseSession? TopSession => sessions.Count == 0 ? null : sessions[0];
 
 		readonly IWpfTextView wpfTextView;
 		readonly ObservableCollection<IIntellisenseSession> sessions;
@@ -43,9 +43,9 @@ namespace dnSpy.Language.Intellisense {
 
 		sealed class SessionState {
 			public IIntellisenseSession Session { get; }
-			public ISpaceReservationManager SpaceReservationManager { get; private set; }
-			public ISpaceReservationAgent SpaceReservationAgent;
-			public IPopupIntellisensePresenter PopupIntellisensePresenter { get; set; }
+			public ISpaceReservationManager? SpaceReservationManager { get; private set; }
+			public ISpaceReservationAgent? SpaceReservationAgent;
+			public IPopupIntellisensePresenter? PopupIntellisensePresenter { get; set; }
 			public SessionState(IIntellisenseSession session) => Session = session;
 			public void SetSpaceReservationManager(ISpaceReservationManager manager) {
 				if (SpaceReservationManager != null)
@@ -139,7 +139,7 @@ namespace dnSpy.Language.Intellisense {
 			PresenterUpdated(session);
 		}
 
-		public IIntellisenseSession PopSession() {
+		public IIntellisenseSession? PopSession() {
 			if (wpfTextView.IsClosed)
 				throw new InvalidOperationException();
 			if (sessions.Count == 0)
@@ -198,7 +198,7 @@ namespace dnSpy.Language.Intellisense {
 			return sessionState;
 		}
 
-		SessionState TryGetSessionState(ISpaceReservationAgent agent) {
+		SessionState? TryGetSessionState(ISpaceReservationAgent agent) {
 			foreach (var sessionState in sessionStates) {
 				if (sessionState.SpaceReservationAgent == agent)
 					return sessionState;
@@ -206,7 +206,7 @@ namespace dnSpy.Language.Intellisense {
 			return null;
 		}
 
-		SessionState TryGetSessionState(IPopupIntellisensePresenter popupPresenter) {
+		SessionState? TryGetSessionState(IPopupIntellisensePresenter popupPresenter) {
 			foreach (var sessionState in sessionStates) {
 				if (sessionState.PopupIntellisensePresenter == popupPresenter)
 					return sessionState;
@@ -217,13 +217,14 @@ namespace dnSpy.Language.Intellisense {
 		void PresenterUpdated(IIntellisenseSession session) {
 			var sessionState = GetSessionState(session);
 			if (sessionState.SpaceReservationAgent != null)
-				sessionState.SpaceReservationManager.RemoveAgent(sessionState.SpaceReservationAgent);
+				sessionState.SpaceReservationManager!.RemoveAgent(sessionState.SpaceReservationAgent);
 			Debug.Assert(sessionState.SpaceReservationAgent == null);
 
 			var presenter = session.Presenter;
 			if (presenter is IPopupIntellisensePresenter popupPresenter) {
 				if (sessionState.SpaceReservationManager == null) {
 					sessionState.SetSpaceReservationManager(wpfTextView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
+					Debug.Assert(sessionState.SpaceReservationManager != null);
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
 				}
 				UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
@@ -245,7 +246,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void RegisterPopupIntellisensePresenterEvents(IPopupIntellisensePresenter popupPresenter) {
+		void RegisterPopupIntellisensePresenterEvents(IPopupIntellisensePresenter? popupPresenter) {
 			if (popupPresenter != null) {
 				popupPresenter.PopupStylesChanged += PopupIntellisensePresenter_PopupStylesChanged;
 				popupPresenter.PresentationSpanChanged += PopupIntellisensePresenter_PresentationSpanChanged;
@@ -253,7 +254,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void UnregisterPopupIntellisensePresenterEvents(IPopupIntellisensePresenter popupPresenter) {
+		void UnregisterPopupIntellisensePresenterEvents(IPopupIntellisensePresenter? popupPresenter) {
 			if (popupPresenter != null) {
 				popupPresenter.PopupStylesChanged -= PopupIntellisensePresenter_PopupStylesChanged;
 				popupPresenter.PresentationSpanChanged -= PopupIntellisensePresenter_PresentationSpanChanged;
@@ -284,7 +285,7 @@ namespace dnSpy.Language.Intellisense {
 				if (presentationSpan == null || sessionState.SpaceReservationAgent == null)
 					PresenterUpdated(popupPresenter.Session);
 				else
-					sessionState.SpaceReservationManager.UpdatePopupAgent(sessionState.SpaceReservationAgent, presentationSpan, popupPresenter.PopupStyles);
+					sessionState.SpaceReservationManager!.UpdatePopupAgent(sessionState.SpaceReservationAgent, presentationSpan, popupPresenter.PopupStyles);
 			}
 			else if (propertyName == nameof(popupPresenter.SurfaceElement))
 				PresenterUpdated(popupPresenter.Session);
@@ -321,7 +322,7 @@ namespace dnSpy.Language.Intellisense {
 			session.PresenterChanged -= Session_PresenterChanged;
 			var sessionState = GetSessionState(session);
 			if (sessionState.SpaceReservationAgent != null)
-				sessionState.SpaceReservationManager.RemoveAgent(sessionState.SpaceReservationAgent);
+				sessionState.SpaceReservationManager!.RemoveAgent(sessionState.SpaceReservationAgent);
 			if (sessionState.SpaceReservationManager != null)
 				sessionState.SpaceReservationManager.AgentChanged -= SpaceReservationManager_AgentChanged;
 			UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);

@@ -40,7 +40,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTabServiceSettings = documentTabServiceSettings;
 		}
 
-		static object ResolveMemberDef(object @ref) {
+		static object? ResolveMemberDef(object? @ref) {
 			if (@ref is MethodStatementReference stmtRef)
 				return stmtRef.Method;
 
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		object GetReference(object @ref) {
+		object? GetReference(object? @ref) {
 			var @ref2 = ResolveMemberDef(@ref);
 			var def = @ref2 as IMemberDef ?? (@ref2 as ParamDef)?.DeclaringMethod;
 
@@ -87,7 +87,7 @@ namespace dnSpy.Documents.Tabs {
 			return def;
 		}
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult? Create(IDocumentTabService documentTabService, DocumentTabContent? sourceContent, object? @ref) {
 			if (@ref is TextReference textRef) {
 				if (textRef.Reference is IAssembly || textRef.Reference is ModuleDef || textRef.Reference is ModuleRef || textRef.Reference is NamespaceReference)
 					return null;
@@ -101,7 +101,7 @@ namespace dnSpy.Documents.Tabs {
 			return CreateMemberRefResult(documentTabService, @ref);
 		}
 
-		DocumentTabReferenceResult CreateLocalRefResult(DocumentTabContent sourceContent, TextReference textRef) {
+		DocumentTabReferenceResult? CreateLocalRefResult(DocumentTabContent? sourceContent, TextReference textRef) {
 			Debug.Assert(IsSupportedReference(textRef));
 			if (sourceContent == null)
 				return null;
@@ -116,7 +116,7 @@ namespace dnSpy.Documents.Tabs {
 			});
 		}
 
-		DocumentTabReferenceResult CreateMemberRefResult(IDocumentTabService documentTabService, object @ref) {
+		DocumentTabReferenceResult? CreateMemberRefResult(IDocumentTabService documentTabService, object? @ref) {
 			var resolvedRef = ResolveMemberDef(@ref);
 			if (!IsSupportedReference(resolvedRef))
 				return null;
@@ -133,7 +133,7 @@ namespace dnSpy.Documents.Tabs {
 				// FindNode() above will succeed.
 				var def = @ref as IMemberDef ?? (@ref as ParamDef)?.DeclaringMethod;
 				if (def != null) {
-					DsDocument document = null;
+					DsDocument? document = null;
 					var mod = def.Module;
 					if (mod != null && mod.Assembly != null)
 						document = DsDotNetDocument.CreateAssembly(DsDocumentInfo.CreateDocument(mod.Location), mod, false);
@@ -166,11 +166,11 @@ namespace dnSpy.Documents.Tabs {
 			});
 		}
 
-		static bool IsSupportedReference(object @ref) => @ref is TextReference || @ref is IMemberDef || @ref is ParamDef;
+		static bool IsSupportedReference(object? @ref) => @ref is TextReference || @ref is IMemberDef || @ref is ParamDef;
 
-		void GoToReference(DocumentTabContent content, object @ref, bool center) {
+		void GoToReference(DocumentTabContent content, object? @ref, bool center) {
 			Debug.Assert(IsSupportedReference(@ref));
-			var uiCtx = content.DocumentTab.UIContext as IDocumentViewer;
+			var uiCtx = content.DocumentTab?.UIContext as IDocumentViewer;
 			if (uiCtx == null)
 				return;
 
@@ -180,13 +180,13 @@ namespace dnSpy.Documents.Tabs {
 			uiCtx.MoveCaretToReference(@ref, options);
 		}
 
-		void GoToReference(DocumentTabContent content, object @ref, MethodDef method, uint ilOffset, bool center) {
+		void GoToReference(DocumentTabContent content, object? @ref, MethodDef method, uint ilOffset, bool center) {
 			if (!GoToReferenceCore(content, method, ilOffset, center))
 				GoToReference(content, @ref, center);
 		}
 
 		bool GoToReferenceCore(DocumentTabContent content, MethodDef method, uint ilOffset, bool center) {
-			var uiCtx = content.DocumentTab.UIContext as IDocumentViewer;
+			var uiCtx = content.DocumentTab?.UIContext as IDocumentViewer;
 			if (uiCtx == null)
 				return false;
 

@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return settings.ToArray();
 		}
 
-		DbgCodeBreakpointCondition? LoadCondition(ISettingsSection section) {
+		DbgCodeBreakpointCondition? LoadCondition(ISettingsSection? section) {
 			if (section == null)
 				return null;
 			var kind = section.Attribute<DbgCodeBreakpointConditionKind?>("Kind");
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return new DbgCodeBreakpointCondition(kind.Value, condition);
 		}
 
-		DbgCodeBreakpointHitCount? LoadHitCount(ISettingsSection section) {
+		DbgCodeBreakpointHitCount? LoadHitCount(ISettingsSection? section) {
 			if (section == null)
 				return null;
 			var kind = section.Attribute<DbgCodeBreakpointHitCountKind?>("Kind");
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return new DbgCodeBreakpointHitCount(kind.Value, count.Value);
 		}
 
-		DbgCodeBreakpointFilter? LoadFilter(ISettingsSection section) {
+		DbgCodeBreakpointFilter? LoadFilter(ISettingsSection? section) {
 			if (section == null)
 				return null;
 			var filter = section.Attribute<string>("Filter");
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return new DbgCodeBreakpointFilter(filter);
 		}
 
-		DbgCodeBreakpointTrace? LoadTrace(ISettingsSection section) {
+		DbgCodeBreakpointTrace? LoadTrace(ISettingsSection? section) {
 			if (section == null)
 				return null;
 			var message = section.Attribute<string>("Message");

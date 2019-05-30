@@ -32,6 +32,6 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="file">File</param>
 		/// <returns></returns>
-		public abstract BufferFileHeadersProvider Create(HexBufferFile file);
+		public abstract BufferFileHeadersProvider? Create(HexBufferFile file);
 	}
 }

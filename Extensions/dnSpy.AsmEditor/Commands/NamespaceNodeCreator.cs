@@ -42,11 +42,13 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public NamespaceNodeCreator(string ns, ModuleDocumentNode modNode) {
 			this.modNode = modNode;
-			nsNode = modNode.FindNode(ns);
-			if (nsNode == null) {
-				nsNode = modNode.Create(ns);
+
+			var newNsNode = modNode.FindNode(ns);
+			if (newNsNode is null) {
+				newNsNode = modNode.Create(ns);
 				nsNodeCreated = true;
 			}
+			nsNode = newNsNode;
 		}
 
 		/// <summary>

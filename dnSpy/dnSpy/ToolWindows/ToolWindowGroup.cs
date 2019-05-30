@@ -31,8 +31,8 @@ namespace dnSpy.ToolWindows {
 		IEnumerable<TabContentImpl> TabContentImpls => TabGroup.TabContents.Cast<TabContentImpl>();
 		public IEnumerable<ToolWindowContent> TabContents => TabContentImpls.Select(a => a.Content);
 
-		public ToolWindowContent ActiveTabContent {
-			get => ((TabContentImpl)TabGroup.ActiveTabContent)?.Content;
+		public ToolWindowContent? ActiveTabContent {
+			get => ((TabContentImpl?)TabGroup.ActiveTabContent)?.Content;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -59,7 +59,7 @@ namespace dnSpy.ToolWindows {
 				impl.Owner = null;
 		}
 
-		public static ToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) => (ToolWindowGroup)tabGroup?.Tag;
+		public static ToolWindowGroup? GetToolWindowGroup(ITabGroup? tabGroup) => (ToolWindowGroup?)tabGroup?.Tag;
 		TabContentImpl GetTabContentImpl(ToolWindowContent content) => TabContentImpls.FirstOrDefault(a => a.Content == content);
 		public void Add(ToolWindowContent content) => TabGroup.Add(new TabContentImpl(this, content));
 

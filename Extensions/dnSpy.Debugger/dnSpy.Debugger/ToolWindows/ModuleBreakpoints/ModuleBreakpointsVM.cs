@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				return moduleNameEditValueProvider;
 			}
 		}
-		IEditValueProvider moduleNameEditValueProvider;
+		IEditValueProvider? moduleNameEditValueProvider;
 
 		IEditValueProvider OrderEditValueProvider {
 			get {
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				return orderEditValueProvider;
 			}
 		}
-		IEditValueProvider orderEditValueProvider;
+		IEditValueProvider? orderEditValueProvider;
 
 		IEditValueProvider ProcessNameEditValueProvider {
 			get {
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				return processNameEditValueProvider;
 			}
 		}
-		IEditValueProvider processNameEditValueProvider;
+		IEditValueProvider? processNameEditValueProvider;
 
 		IEditValueProvider AppDomainNameEditValueProvider {
 			get {
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				return appDomainNameEditValueProvider;
 			}
 		}
-		IEditValueProvider appDomainNameEditValueProvider;
+		IEditValueProvider? appDomainNameEditValueProvider;
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly ModuleBreakpointContext moduleBreakpointContext;
@@ -153,9 +153,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			this.editValueProviderService = editValueProviderService;
 			this.dbgModuleBreakpointsService = dbgModuleBreakpointsService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleBreakpointContext = new ModuleBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
+			moduleBreakpointContext = new ModuleBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions), moduleBreakpointFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = moduleBreakpointFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {

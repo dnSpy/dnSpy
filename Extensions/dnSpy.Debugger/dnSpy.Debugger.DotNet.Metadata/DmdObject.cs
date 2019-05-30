@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -27,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	public abstract class DmdObject {
 		readonly object lockObj;
-		List<(RuntimeTypeHandle key, object data)> dataList;
+		List<(RuntimeTypeHandle key, object data)>? dataList;
 
 		/// <summary>
 		/// Gets the lock object used by this instance
@@ -59,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="value">Result</param>
 		/// <returns></returns>
-		public bool TryGetData<T>(out T value) where T : class {
+		public bool TryGetData<T>([NotNullWhenTrue] out T? value) where T : class {
 			lock (lockObj) {
 				if (dataList != null) {
 					var type = typeof(T).TypeHandle;

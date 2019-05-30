@@ -65,6 +65,6 @@ namespace dnSpy.Contracts.Settings {
 		/// </summary>
 		/// <param name="name">Name of section</param>
 		/// <returns></returns>
-		ISettingsSection TryGetSection(string name);
+		ISettingsSection? TryGetSection(string name);
 	}
 }

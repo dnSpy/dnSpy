@@ -26,6 +26,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// if the user didn't open a public key file.
 		/// </summary>
 		/// <returns></returns>
-		PublicKey Open();
+		PublicKey? Open();
 	}
 }

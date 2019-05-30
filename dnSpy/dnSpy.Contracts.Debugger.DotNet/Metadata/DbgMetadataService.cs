@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// <param name="module">Module</param>
 		/// <param name="options">Load options</param>
 		/// <returns></returns>
-		public abstract ModuleDef TryGetMetadata(DbgModule module, DbgLoadModuleOptions options = DbgLoadModuleOptions.None);
+		public abstract ModuleDef? TryGetMetadata(DbgModule module, DbgLoadModuleOptions options = DbgLoadModuleOptions.None);
 
 		/// <summary>
 		/// Returns a <see cref="ModuleDef"/> or null if none could be loaded
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// <param name="moduleId">Module id</param>
 		/// <param name="options">Load options</param>
 		/// <returns></returns>
-		public abstract ModuleDef TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options = DbgLoadModuleOptions.None);
+		public abstract ModuleDef? TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options = DbgLoadModuleOptions.None);
 	}
 
 	/// <summary>

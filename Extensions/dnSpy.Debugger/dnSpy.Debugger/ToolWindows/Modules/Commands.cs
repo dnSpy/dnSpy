@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		protected ModulesCtxMenuCommand(Lazy<IModulesContent> modulesContent) => this.modulesContent = modulesContent;
 
-		protected sealed override ModulesCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override ModulesCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != modulesContent.Value.ListView)
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public override void Execute(ModulesCtxMenuContext context) => context.Operations.LoadModules();
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.Operations.CanLoadModules;
-		public override string GetHeader(ModulesCtxMenuContext context) {
+		public override string? GetHeader(ModulesCtxMenuContext context) {
 			if (context.Operations.LoadModulesCount <= 1)
 				return dnSpy_Debugger_Resources.LoadModulesCommand;
 			return string.Format(dnSpy_Debugger_Resources.LoadXModulesCommand, context.Operations.LoadModulesCount);
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override void Execute(ModulesCtxMenuContext context) => context.Operations.Save();
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.Operations.CanSave;
 
-		public override string GetHeader(ModulesCtxMenuContext context) {
+		public override string? GetHeader(ModulesCtxMenuContext context) {
 			var count = context.Operations.GetSaveModuleCount();
 			return count > 1 ?
 				string.Format(dnSpy_Debugger_Resources.SaveModulesCommand, count) :

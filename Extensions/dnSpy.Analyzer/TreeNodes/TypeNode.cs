@@ -53,7 +53,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new TypeExtensionMethodsNode(analyzedType);
 		}
 
-		public override IMemberRef Member => analyzedType;
-		public override IMDTokenProvider Reference => analyzedType;
+		public override IMemberRef? Member => analyzedType;
+		public override IMDTokenProvider? Reference => analyzedType;
 	}
 }

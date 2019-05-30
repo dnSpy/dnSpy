@@ -33,7 +33,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler ApplicableToSpanChanged;
 		public bool TrackMouse { get; }
 		public ITextView TextView { get; }
-		public IIntellisensePresenter Presenter => quickInfoPresenter;
+		public IIntellisensePresenter? Presenter => quickInfoPresenter;
 		public event EventHandler PresenterChanged;
 		public event EventHandler Recalculated;
 		public event EventHandler Dismissed;
@@ -41,7 +41,7 @@ namespace dnSpy.Language.Intellisense {
 		public bool HasInteractiveContent { get; private set; }
 		bool IsStarted { get; set; }
 
-		public ITrackingSpan ApplicableToSpan {
+		public ITrackingSpan? ApplicableToSpan {
 			get => applicableToSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(applicableToSpan, value)) {
@@ -50,13 +50,13 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 		}
-		ITrackingSpan applicableToSpan;
+		ITrackingSpan? applicableToSpan;
 
 		readonly Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders;
 		readonly ITrackingPoint triggerPoint;
 		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
-		IQuickInfoSource[] quickInfoSources;
-		IIntellisensePresenter quickInfoPresenter;
+		IQuickInfoSource[]? quickInfoSources;
+		IIntellisensePresenter? quickInfoPresenter;
 
 		public QuickInfoSession(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders) {
 			Properties = new PropertyCollection();
@@ -75,7 +75,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		IQuickInfoSource[] CreateQuickInfoSources() {
-			List<IQuickInfoSource> list = null;
+			List<IQuickInfoSource>? list = null;
 			var textBuffer = TextView.TextBuffer;
 			foreach (var provider in quickInfoSourceProviders) {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
@@ -115,7 +115,7 @@ namespace dnSpy.Language.Intellisense {
 			quickInfoSources = CreateQuickInfoSources();
 
 			var newContent = new List<object>();
-			ITrackingSpan applicableToSpan = null;
+			ITrackingSpan? applicableToSpan = null;
 			foreach (var source in quickInfoSources) {
 				source.AugmentQuickInfoSession(this, newContent, out var applicableToSpanTmp);
 				if (IsDismissed)
@@ -169,7 +169,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public void Collapse() => Dismiss();
 
-		public ITrackingPoint GetTriggerPoint(ITextBuffer textBuffer) {
+		public ITrackingPoint? GetTriggerPoint(ITextBuffer textBuffer) {
 			if (!IsStarted)
 				throw new InvalidOperationException();
 			if (IsDismissed)

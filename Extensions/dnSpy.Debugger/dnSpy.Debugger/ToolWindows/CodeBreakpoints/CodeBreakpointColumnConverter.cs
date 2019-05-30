@@ -27,7 +27,7 @@ using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	sealed class CodeBreakpointColumnConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var obj = value as FormatterObject<CodeBreakpointVM>;
 			if (obj == null)
 				return null;

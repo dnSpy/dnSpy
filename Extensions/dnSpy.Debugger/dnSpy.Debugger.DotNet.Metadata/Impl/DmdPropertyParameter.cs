@@ -23,9 +23,9 @@ using System.Collections.ObjectModel;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdPropertyParameter : DmdParameterInfoBase {
 		public override DmdType ParameterType => parameter.ParameterType;
-		public override string Name => parameter.Name;
+		public override string? Name => parameter.Name;
 		public override bool HasDefaultValue => parameter.HasDefaultValue;
-		public override object RawDefaultValue => parameter.RawDefaultValue;
+		public override object? RawDefaultValue => parameter.RawDefaultValue;
 		public override int Position => parameter.Position;
 		public override DmdParameterAttributes Attributes => parameter.Attributes;
 		public override DmdMemberInfo Member { get; }

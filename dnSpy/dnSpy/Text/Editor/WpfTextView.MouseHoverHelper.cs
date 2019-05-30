@@ -127,7 +127,7 @@ namespace dnSpy.Text.Editor {
 				timer.Stop();
 				timerStart = null;
 			}
-			Stopwatch timerStart;
+			Stopwatch? timerStart;
 
 			void Timer_Tick(object sender, EventArgs e) {
 				if (owner.IsClosed || !owner.IsVisible || position == null || position.Value > owner.TextSnapshot.Length) {
@@ -152,8 +152,8 @@ namespace dnSpy.Text.Editor {
 				return timerStart.ElapsedMilliseconds * 10000;
 			}
 
-			List<MouseHoverHandler> GetHandlersToNotify() {
-				List<MouseHoverHandler> list = null;
+			List<MouseHoverHandler>? GetHandlersToNotify() {
+				List<MouseHoverHandler>? list = null;
 				long elapsedTicks = GetElapsedTimerStartTicks();
 				foreach (var h in handlers) {
 					if (h.Raised)

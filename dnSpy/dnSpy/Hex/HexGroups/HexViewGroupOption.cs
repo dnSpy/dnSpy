@@ -22,10 +22,10 @@ using dnSpy.Contracts.Settings.HexGroups;
 
 namespace dnSpy.Hex.HexGroups {
 	sealed class HexViewGroupOption {
-		public string OptionId => Definition.Name;
-		public object DefaultValue => Definition.DefaultValue;
+		public string OptionId { get; }
+		public object? DefaultValue => Definition.DefaultValue;
 
-		public object Value {
+		public object? Value {
 			get => theValue;
 			set {
 				if (!Equals(theValue, value)) {
@@ -34,7 +34,7 @@ namespace dnSpy.Hex.HexGroups {
 				}
 			}
 		}
-		object theValue;
+		object? theValue;
 
 		public TagOptionDefinition Definition { get; }
 
@@ -44,6 +44,7 @@ namespace dnSpy.Hex.HexGroups {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Definition = definition ?? throw new ArgumentNullException(nameof(definition));
 			theValue = Definition.DefaultValue;
+			OptionId = Definition.Name ?? throw new ArgumentException();
 		}
 	}
 }

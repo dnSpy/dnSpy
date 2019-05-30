@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ArgumentException();
 			var lineSpan = line.TextSpan;
 
-			List<AdornmentElementAndSpan> adornmentList = null;
+			List<AdornmentElementAndSpan>? adornmentList = null;
 			foreach (var tagSpan in hexTagAggregator.GetAllTags(new HexTaggerContext(line, lineSpan))) {
 				if (adornmentList == null)
 					adornmentList = new List<AdornmentElementAndSpan>();

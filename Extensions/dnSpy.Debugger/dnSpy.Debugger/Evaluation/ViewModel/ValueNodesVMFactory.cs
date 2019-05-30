@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 	}
 
 	sealed class ValueNodesVMOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public ValueNodesProvider NodesProvider { get; set; }
 
 		/// <summary>
@@ -66,5 +67,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public ShowMessageBox ShowMessageBox { get; set; }
 
 		public Guid TreeViewGuid { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

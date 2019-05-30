@@ -67,10 +67,10 @@ namespace dnSpy.Text.Editor {
 			if (markerElement != null)
 				markerElement.BackgroundBrush = backgroundBrush;
 		}
-		Brush backgroundBrush;
-		MarkerElement markerElement;
+		Brush? backgroundBrush;
+		MarkerElement? markerElement;
 
-		Brush GetBackgroundBrush() {
+		Brush? GetBackgroundBrush() {
 			var props = editorFormatMap.GetProperties(IsActive ? ThemeClassificationTypeNameKeys.SelectedText : ThemeClassificationTypeNameKeys.InactiveSelectedText);
 			return ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
@@ -190,7 +190,7 @@ namespace dnSpy.Text.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
+			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
 					if (value == null)
@@ -201,9 +201,9 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
+			public Pen? Pen {
 				get => pen;
 				set {
 					if (pen != value) {
@@ -212,7 +212,7 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public MarkerElement(Geometry geometry) => this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 

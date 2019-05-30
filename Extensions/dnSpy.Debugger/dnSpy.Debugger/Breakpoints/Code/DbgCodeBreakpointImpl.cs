@@ -275,10 +275,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
 			Location.Close(dispatcher);
-			HitCheck = null;
-			Hit = null;
-			BoundBreakpointsChanged = null;
-			BoundBreakpointsMessageChanged = null;
+			HitCheck = null!;
+			Hit = null!;
+			BoundBreakpointsChanged = null!;
+			BoundBreakpointsMessageChanged = null!;
 		}
 	}
 }

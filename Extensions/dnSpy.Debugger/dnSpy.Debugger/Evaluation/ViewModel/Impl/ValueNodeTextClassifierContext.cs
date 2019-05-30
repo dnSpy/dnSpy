@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		/// </summary>
 		public Span TextChangedSpan { get; }
 
-		public ValueNodeTextClassifierContext(bool textChanged, Span textChangedSpan, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public ValueNodeTextClassifierContext(bool textChanged, Span textChangedSpan, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null)
 			: base(text, tag, colorize, colors) {
 			TextChanged = textChanged;
 			TextChangedSpan = textChangedSpan;

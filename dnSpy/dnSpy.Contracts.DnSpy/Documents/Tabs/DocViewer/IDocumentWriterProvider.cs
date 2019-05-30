@@ -31,6 +31,6 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		IDocumentWriter Create(IContentType contentType);
+		IDocumentWriter? Create(IContentType contentType);
 	}
 }

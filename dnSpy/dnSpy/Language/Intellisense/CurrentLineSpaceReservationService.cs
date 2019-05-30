@@ -56,7 +56,7 @@ namespace dnSpy.Language.Intellisense {
 		event EventHandler ISpaceReservationAgent.GotFocus { add { } remove { } }
 		event EventHandler ISpaceReservationAgent.LostFocus { add { } remove { } }
 		readonly IWpfTextView wpfTextView;
-		ISpaceReservationManager spaceReservationManager;
+		ISpaceReservationManager? spaceReservationManager;
 
 		int ActiveSessions {
 			get => activeSessions;
@@ -103,7 +103,7 @@ namespace dnSpy.Language.Intellisense {
 		Rect ToScreenRect(Rect wpfRect) => new Rect(ToScreenPoint(wpfRect.TopLeft), ToScreenPoint(wpfRect.BottomRight));
 		Point ToScreenPoint(Point point) => wpfTextView.VisualElement.PointToScreen(point);
 
-		Geometry ISpaceReservationAgent.PositionAndDisplay(Geometry reservedSpace) {
+		Geometry? ISpaceReservationAgent.PositionAndDisplay(Geometry reservedSpace) {
 			if (wpfTextView.IsClosed)
 				return null;
 

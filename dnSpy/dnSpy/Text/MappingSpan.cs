@@ -25,7 +25,7 @@ namespace dnSpy.Text {
 	sealed class MappingSpan : IMappingSpan {
 		/*readonly*/ SnapshotSpan snapshotSpan;
 		readonly SpanTrackingMode spanTrackingMode;
-		IMappingPoint start, end;
+		IMappingPoint? start, end;
 
 		public ITextBuffer AnchorBuffer => snapshotSpan.Snapshot.TextBuffer;
 		public IBufferGraph BufferGraph { get; }

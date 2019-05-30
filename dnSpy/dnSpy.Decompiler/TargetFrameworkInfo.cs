@@ -45,14 +45,14 @@ namespace dnSpy.Decompiler {
 		/// Profile eg. "Client" or null. This is stored in a <c>TargetFrameworkProfile</c> tag
 		/// in the project file.
 		/// </summary>
-		public string Profile { get; }
+		public string? Profile { get; }
 
 		/// <summary>
 		/// true if the info is from <see cref="T:System.Runtime.Versioning.TargetFrameworkAttribute"/>
 		/// </summary>
 		public bool FromAttribute { get; }
 
-		TargetFrameworkInfo(string framework, string version, string profile, bool fromAttribute) {
+		TargetFrameworkInfo(string framework, string version, string? profile, bool fromAttribute) {
 			Framework = framework ?? throw new ArgumentNullException(nameof(framework));
 			Version = version ?? throw new ArgumentNullException(nameof(version));
 			Profile = profile;
@@ -107,8 +107,8 @@ namespace dnSpy.Decompiler {
 			if (framework.Length == 0)
 				return null;
 
-			string versionStr = null;
-			string profile = null;
+			string? versionStr = null;
+			string? profile = null;
 			for (int i = 1; i < values.Length; i++) {
 				var kvp = values[i].Split('=');
 				if (kvp.Length != 2)
@@ -275,7 +275,7 @@ namespace dnSpy.Decompiler {
 			return ver;
 		}
 
-		string GetDisplayName() {
+		string? GetDisplayName() {
 			if (Framework == null)
 				return null;
 			var name = GetFrameworkDisplayName();
@@ -287,7 +287,7 @@ namespace dnSpy.Decompiler {
 			return name;
 		}
 
-		string GetFrameworkDisplayName() {
+		string? GetFrameworkDisplayName() {
 			switch (Framework) {
 			case ".NETFramework":
 				string v = Version;
@@ -398,6 +398,6 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		public override string ToString() => GetDisplayName();
+		public override string? ToString() => GetDisplayName();
 	}
 }

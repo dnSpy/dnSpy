@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		readonly ListView listView;
 		readonly Dictionary<GridViewColumn, GridViewColumnDesc> toDesc;
-		IGridViewColumnDescsProvider descsProvider;
+		IGridViewColumnDescsProvider? descsProvider;
 
 		GridViewColumnSorter(ListView listView) {
 			this.listView = listView;
@@ -102,6 +102,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		void GridView_Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+			Debug.Assert(descsProvider != null);
 			var gridView = (GridView)listView.View;
 			var columns = gridView.Columns;
 			Debug.Assert(columns.Count == descsProvider.Descs.Columns.Length);
@@ -122,6 +123,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		void UpdateSortedColumn(GridViewColumnDesc desc) {
+			Debug.Assert(descsProvider != null);
 			if (!desc.CanBeSorted)
 				return;
 			var sortedColumn = descsProvider.Descs.SortedColumn;

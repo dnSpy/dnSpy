@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 		readonly int metadataSize;
 		readonly object lockObj;
 		GCHandle moduleBytesHandle;
-		readonly DbgProcess process;
+		readonly DbgProcess? process;
 		readonly ulong moduleAddress;
 		volatile int referenceCounter;
 		volatile bool disposed;
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 			process?.ReadMemory(moduleAddress, address.ToPointer(), size);
 		}
 
-		internal DbgRawMetadata TryAddRef() {
+		internal DbgRawMetadata? TryAddRef() {
 			lock (lockObj) {
 				if (disposed)
 					return null;

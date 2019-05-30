@@ -125,14 +125,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 		void DecrementRecursionCounter() => recursionCounter--;
 
-		bool MemberNameEquals(string a, string b) {
+		bool MemberNameEquals(string? a, string? b) {
 			if (CaseInsensitiveMemberNames)
 				return StringComparer.OrdinalIgnoreCase.Equals(a, b);
 			return StringComparer.Ordinal.Equals(a, b);
 		}
 
-		int MemberNameGetHashCode(string a) {
-			if ((object)a == null)
+		int MemberNameGetHashCode(string? a) {
+			if (a is null)
 				return 0;
 			if (CaseInsensitiveMemberNames)
 				return StringComparer.OrdinalIgnoreCase.GetHashCode(a);
@@ -145,10 +145,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First member</param>
 		/// <param name="b">Second member</param>
 		/// <returns></returns>
-		public bool Equals(DmdMemberInfo a, DmdMemberInfo b) {
-			if ((object)a == b)
+		public bool Equals(DmdMemberInfo? a, DmdMemberInfo? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			switch (a.MemberType) {
@@ -179,10 +179,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First type</param>
 		/// <param name="b">Second type</param>
 		/// <returns></returns>
-		public bool Equals(DmdType a, DmdType b) {
-			if ((object)a == b)
+		public bool Equals(DmdType? a, DmdType? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			if (!IncrementRecursionCounter())
@@ -201,14 +201,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						MemberNameEquals(a.MetadataNamespace, b.MetadataNamespace) &&
 						Equals(a.DeclaringType, b.DeclaringType);
 					// Type scope only needs to be checked if it's a non-nested type
-					if (result && !DontCompareTypeScope && (object)a.DeclaringType == null) {
+					if (result && !DontCompareTypeScope && a.DeclaringType is null) {
 						result = TypeScopeEquals(a, b);
 						if (!result) {
 							// One or both of the types could be exported types. We need to
 							// resolve them and then compare again.
 							var ra = a.ResolveNoThrow();
-							var rb = (object)ra == null ? null : b.ResolveNoThrow();
-							result = (object)ra != null && (object)rb != null && TypeScopeEquals(ra, rb);
+							var rb = ra is null ? null : b.ResolveNoThrow();
+							result = !(ra is null) && !(rb is null) && TypeScopeEquals(ra, rb);
 							if (!result && CheckTypeEquivalence)
 								result = TIAHelper.Equivalent(ra, rb);
 						}
@@ -267,10 +267,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First field</param>
 		/// <param name="b">Second field</param>
 		/// <returns></returns>
-		public bool Equals(DmdFieldInfo a, DmdFieldInfo b) {
-			if ((object)a == b)
+		public bool Equals(DmdFieldInfo? a, DmdFieldInfo? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			return MemberNameEquals(a.Name, b.Name) &&
@@ -284,10 +284,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First method or constructor</param>
 		/// <param name="b">Second method or constructor</param>
 		/// <returns></returns>
-		public bool Equals(DmdMethodBase a, DmdMethodBase b) {
-			if ((object)a == b)
+		public bool Equals(DmdMethodBase? a, DmdMethodBase? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			return MemberNameEquals(a.Name, b.Name) &&
@@ -301,10 +301,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First property</param>
 		/// <param name="b">Second property</param>
 		/// <returns></returns>
-		public bool Equals(DmdPropertyInfo a, DmdPropertyInfo b) {
-			if ((object)a == b)
+		public bool Equals(DmdPropertyInfo? a, DmdPropertyInfo? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			return MemberNameEquals(a.Name, b.Name) &&
@@ -318,10 +318,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First event</param>
 		/// <param name="b">Second event</param>
 		/// <returns></returns>
-		public bool Equals(DmdEventInfo a, DmdEventInfo b) {
-			if ((object)a == b)
+		public bool Equals(DmdEventInfo? a, DmdEventInfo? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			return MemberNameEquals(a.Name, b.Name) &&
@@ -335,10 +335,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First method parameter</param>
 		/// <param name="b">Second method parameter</param>
 		/// <returns></returns>
-		public bool Equals(DmdParameterInfo a, DmdParameterInfo b) {
-			if ((object)a == b)
+		public bool Equals(DmdParameterInfo? a, DmdParameterInfo? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			return a.Position == b.Position &&
@@ -352,10 +352,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First assembly name</param>
 		/// <param name="b">Second assembly name</param>
 		/// <returns></returns>
-		public bool Equals(IDmdAssemblyName a, IDmdAssemblyName b) {
-			if ((object)a == b)
+		public bool Equals(IDmdAssemblyName? a, IDmdAssemblyName? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			// We do not compare the version number. The runtime can redirect an assembly
@@ -378,10 +378,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="a">First method signature</param>
 		/// <param name="b">Second method signature</param>
 		/// <returns></returns>
-		public bool Equals(DmdMethodSignature a, DmdMethodSignature b) {
-			if ((object)a == b)
+		public bool Equals(DmdMethodSignature? a, DmdMethodSignature? b) {
+			if ((object?)a == b)
 				return true;
-			if ((object)a == null || (object)b == null)
+			if (a is null || b is null)
 				return false;
 
 			return a.Flags == b.Flags &&
@@ -399,7 +399,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public bool Equals(DmdCustomModifier a, DmdCustomModifier b) => a.IsRequired == b.IsRequired && Equals(a.Type, b.Type);
 
-		bool Equals(ReadOnlyCollection<DmdCustomModifier> a, ReadOnlyCollection<DmdCustomModifier> b) {
+		bool Equals(ReadOnlyCollection<DmdCustomModifier>? a, ReadOnlyCollection<DmdCustomModifier>? b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -413,7 +413,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return true;
 		}
 
-		bool Equals(ReadOnlyCollection<DmdType> a, ReadOnlyCollection<DmdType> b) {
+		bool Equals(ReadOnlyCollection<DmdType>? a, ReadOnlyCollection<DmdType>? b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -427,7 +427,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return true;
 		}
 
-		bool Equals(ReadOnlyCollection<int> a, ReadOnlyCollection<int> b) {
+		bool Equals(ReadOnlyCollection<int>? a, ReadOnlyCollection<int>? b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -442,10 +442,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		bool TypeScopeEquals(DmdType a, DmdType b) {
-			Debug.Assert((object)a != null && (object)b != null && !a.HasElementType && !b.HasElementType);
+			Debug.Assert(!(a is null) && !(b is null) && !a.HasElementType && !b.HasElementType);
 			if (DontCompareTypeScope)
 				return true;
-			if ((object)a == b)
+			if ((object?)a == b)
 				return true;
 
 			var at = a.TypeScope;
@@ -509,8 +509,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Member</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdMemberInfo a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdMemberInfo? a) {
+			if (a is null)
 				return 0;
 
 			switch (a.MemberType) {
@@ -541,8 +541,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Type</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdType a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdType? a) {
+			if (a is null)
 				return 0;
 
 			if (!IncrementRecursionCounter())
@@ -551,7 +551,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			int hc = CompareCustomModifiers ? GetHashCode(a.GetCustomModifiers()) : 0;
 			switch (a.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
-				hc ^= (object)a.DeclaringType == null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
+				hc ^= a.DeclaringType is null ? HASHCODE_MAGIC_TYPE : HASHCODE_MAGIC_NESTED_TYPE;
 				hc ^= MemberNameGetHashCode(a.MetadataName);
 				hc ^= MemberNameGetHashCode(a.MetadataNamespace);
 				hc ^= GetHashCode(a.DeclaringType);
@@ -619,8 +619,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Field</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdFieldInfo a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdFieldInfo? a) {
+			if (a is null)
 				return 0;
 
 			int hc = MemberNameGetHashCode(a.Name);
@@ -635,8 +635,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Method or constructor</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdMethodBase a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdMethodBase? a) {
+			if (a is null)
 				return 0;
 
 			int hc = MemberNameGetHashCode(a.Name);
@@ -651,8 +651,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Property</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdPropertyInfo a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdPropertyInfo? a) {
+			if (a is null)
 				return 0;
 
 			int hc = MemberNameGetHashCode(a.Name);
@@ -667,8 +667,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Event</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdEventInfo a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdEventInfo? a) {
+			if (a is null)
 				return 0;
 
 			int hc = MemberNameGetHashCode(a.Name);
@@ -683,8 +683,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Method parameter</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdParameterInfo a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdParameterInfo? a) {
+			if (a is null)
 				return 0;
 
 			int hc = a.Position;
@@ -699,8 +699,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Assembly name</param>
 		/// <returns></returns>
-		public int GetHashCode(IDmdAssemblyName a) {
-			if ((object)a == null)
+		public int GetHashCode(IDmdAssemblyName? a) {
+			if (a is null)
 				return 0;
 			return StringComparer.OrdinalIgnoreCase.GetHashCode(a.Name ?? string.Empty);
 		}
@@ -710,8 +710,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="a">Method signature</param>
 		/// <returns></returns>
-		public int GetHashCode(DmdMethodSignature a) {
-			if ((object)a == null)
+		public int GetHashCode(DmdMethodSignature? a) {
+			if (a is null)
 				return 0;
 			int hc = (int)a.Flags;
 			hc ^= a.GenericParameterCount;
@@ -729,7 +729,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public int GetHashCode(DmdCustomModifier a) => (a.IsRequired ? -1 : 0) ^ GetHashCode(a.Type);
 
-		int GetHashCode(ReadOnlyCollection<DmdCustomModifier> a) {
+		int GetHashCode(ReadOnlyCollection<DmdCustomModifier>? a) {
 			if (a == null)
 				return 0;
 			int hc = a.Count;
@@ -738,7 +738,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return hc;
 		}
 
-		int GetHashCode(ReadOnlyCollection<DmdType> a) {
+		int GetHashCode(ReadOnlyCollection<DmdType>? a) {
 			if (a == null)
 				return 0;
 			int hc = a.Count;
@@ -747,7 +747,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return hc;
 		}
 
-		int GetHashCode(ReadOnlyCollection<int> a) {
+		int GetHashCode(ReadOnlyCollection<int>? a) {
 			if (a == null)
 				return 0;
 			int hc = a.Count;

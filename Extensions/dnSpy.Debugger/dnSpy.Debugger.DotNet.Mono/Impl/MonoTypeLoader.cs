@@ -29,7 +29,7 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	abstract class MonoTypeLoader {
-		public abstract TypeMirror Load(AssemblyMirror assembly, string typeFullName);
+		public abstract TypeMirror? Load(AssemblyMirror assembly, string typeFullName);
 	}
 
 	sealed class MonoTypeLoaderImpl : MonoTypeLoader {
@@ -43,11 +43,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		sealed class LoaderState {
 			public readonly HashSet<string> LoadedTypes = new HashSet<string>(StringComparer.Ordinal);
-			public DmdMethodBase Method_System_Reflection_Assembly_GetType_String;
-			public DmdMethodBase Method_System_Array_CreateInstance_Type_Int32;
+			public DmdMethodBase? Method_System_Reflection_Assembly_GetType_String;
+			public DmdMethodBase? Method_System_Array_CreateInstance_Type_Int32;
 		}
 
-		public override TypeMirror Load(AssemblyMirror assembly, string typeFullName) {
+		public override TypeMirror? Load(AssemblyMirror assembly, string typeFullName) {
 			var res = engine.CheckFuncEval(evalInfo.Context);
 			if (res != null)
 				return null;
@@ -61,28 +61,28 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var reflectionAppDomain = appDomain.GetReflectionAppDomain() ?? throw new InvalidOperationException();
 			var runtime = engine.DotNetRuntime;
 
-			DbgDotNetValue asmTypeValue = null;
+			DbgDotNetValue? asmTypeValue = null;
 			DbgDotNetValueResult result1 = default;
 			DbgDotNetValueResult result2 = default;
 			try {
-				if ((object)state.Method_System_Reflection_Assembly_GetType_String == null) {
+				if (state.Method_System_Reflection_Assembly_GetType_String is null) {
 					var assemblyType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
 					state.Method_System_Reflection_Assembly_GetType_String =
 						assemblyType.GetMethod(nameof(System.Reflection.Assembly.GetType), DmdSignatureCallingConvention.HasThis,
 						0, reflectionAppDomain.System_Type, new[] { reflectionAppDomain.System_String }, throwOnError: false);
-					Debug.Assert((object)state.Method_System_Reflection_Assembly_GetType_String != null);
-					if ((object)state.Method_System_Reflection_Assembly_GetType_String == null)
+					Debug.Assert(!(state.Method_System_Reflection_Assembly_GetType_String is null));
+					if (state.Method_System_Reflection_Assembly_GetType_String is null)
 						return null;
 
 					state.Method_System_Array_CreateInstance_Type_Int32 =
 						reflectionAppDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default,
 						0, reflectionAppDomain.System_Array, new[] { reflectionAppDomain.System_Type, reflectionAppDomain.System_Int32 }, throwOnError: false);
-					Debug.Assert((object)state.Method_System_Array_CreateInstance_Type_Int32 != null);
-					if ((object)state.Method_System_Array_CreateInstance_Type_Int32 == null)
+					Debug.Assert(!(state.Method_System_Array_CreateInstance_Type_Int32 is null));
+					if (state.Method_System_Array_CreateInstance_Type_Int32 is null)
 						return null;
 				}
 
-				if ((object)state.Method_System_Reflection_Assembly_GetType_String == null || (object)state.Method_System_Array_CreateInstance_Type_Int32 == null)
+				if (state.Method_System_Reflection_Assembly_GetType_String is null || state.Method_System_Array_CreateInstance_Type_Int32 is null)
 					return null;
 
 				asmTypeValue = engine.CreateDotNetValue_MonoDebug(reflectionAppDomain, assembly.GetAssemblyObject(), null);
@@ -90,12 +90,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					new[] { typeFullName }, DbgDotNetInvokeOptions.None);
 				if (result1.IsNormalResult) {
 					result2 = runtime.Call(evalInfo, null, state.Method_System_Array_CreateInstance_Type_Int32,
-						new object[2] { result1.Value, 0 }, DbgDotNetInvokeOptions.None);
+						new object[2] { result1.Value!, 0 }, DbgDotNetInvokeOptions.None);
 					if (result2.IsNormalResult) {
-						var arrayType = result2.Value.Type;
+						var arrayType = result2.Value!.Type;
 						Debug.Assert(arrayType.IsSZArray);
 						if (arrayType.IsSZArray)
-							return MonoDebugTypeCreator.TryGetType(arrayType.GetElementType());
+							return MonoDebugTypeCreator.TryGetType(arrayType.GetElementType()!);
 					}
 				}
 

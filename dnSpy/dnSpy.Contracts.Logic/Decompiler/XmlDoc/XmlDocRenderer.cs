@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="output">Output</param>
 		/// <param name="xmlDocumentation">XML documentation</param>
 		/// <returns></returns>
-		public static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation) {
+		public static bool WriteXmlDoc(IXmlDocOutput output, string? xmlDocumentation) {
 			if (xmlDocumentation == null)
 				return false;
 			try {

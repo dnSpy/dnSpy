@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	sealed class EditorOptions : IEditorOptions {
 		public IEditorOptions GlobalOptions => service.GlobalOptions;
 
-		public IEditorOptions Parent {
+		public IEditorOptions? Parent {
 			get => parent;
 			set {
 				// Check if we're the global options
@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor {
 				UpdateOptions(oldParent);
 			}
 		}
-		EditorOptions parent;
+		EditorOptions? parent;
 
 		public IEnumerable<EditorOptionDefinition> SupportedOptions {
 			get {
@@ -55,9 +55,9 @@ namespace dnSpy.Text.Editor {
 		readonly Dictionary<string, object> dict;
 		readonly EditorOptionsFactoryService service;
 		readonly List<WeakReference> weakChildren;
-		readonly IPropertyOwner scope;
+		readonly IPropertyOwner? scope;
 
-		public EditorOptions(EditorOptionsFactoryService service, EditorOptions parent, IPropertyOwner scope) {
+		public EditorOptions(EditorOptionsFactoryService service, EditorOptions? parent, IPropertyOwner? scope) {
 			this.service = service;
 			this.parent = parent;
 			dict = new Dictionary<string, object>(StringComparer.Ordinal);
@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 			UpdateOptions(null);
 		}
 
-		void UpdateOptions(EditorOptions oldParent) {
+		void UpdateOptions(EditorOptions? oldParent) {
 			if (oldParent != null) {
 				for (int i = 0; i < oldParent.weakChildren.Count; i++) {
 					if (oldParent.weakChildren[i].Target == this) {
@@ -90,10 +90,10 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		bool TryGetValue(string optionId, out object value) {
+		bool TryGetValue(string optionId, out object? value) {
 			if (scope != null && !service.GetOption(optionId).IsApplicableToScope(scope))
 				throw new InvalidOperationException();
-			var p = this;
+			EditorOptions? p = this;
 			while (p != null) {
 				if (p.dict.TryGetValue(optionId, out value))
 					return true;
@@ -103,8 +103,8 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		object GetValueOrDefault(string optionId) {
-			if (!TryGetValue(optionId, out object value))
+		object? GetValueOrDefault(string optionId) {
+			if (!TryGetValue(optionId, out var value))
 				value = service.GetOption(optionId).DefaultValue;
 			return value;
 		}
@@ -147,16 +147,16 @@ namespace dnSpy.Text.Editor {
 			return true;
 		}
 
-		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId);
-		public T GetOptionValue<T>(EditorOptionKey<T> key) => (T)GetOptionValue(key.Name);
-		public object GetOptionValue(string optionId) {
+		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId)!;
+		public T GetOptionValue<T>(EditorOptionKey<T> key) => (T)GetOptionValue(key.Name)!;
+		public object? GetOptionValue(string optionId) {
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
 			return GetValueOrDefault(optionId);
 		}
 
 		public void SetOptionValue<T>(EditorOptionKey<T> key, T value) => SetOptionValue(key.Name, value);
-		public void SetOptionValue(string optionId, object value) {
+		public void SetOptionValue(string optionId, object? value) {
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
 			var def = service.GetOption(optionId);

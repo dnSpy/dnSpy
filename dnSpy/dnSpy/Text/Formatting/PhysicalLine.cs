@@ -59,7 +59,7 @@ namespace dnSpy.Text.Formatting {
 			return point < BufferSpan.End;
 		}
 
-		public IFormattedLine FindFormattedLineByBufferPosition(SnapshotPoint point) {
+		public IFormattedLine? FindFormattedLineByBufferPosition(SnapshotPoint point) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(PhysicalLine));
 			if (point.Snapshot == null)

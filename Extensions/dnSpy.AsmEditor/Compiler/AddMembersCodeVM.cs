@@ -78,6 +78,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override void Import(ModuleImporter importer, CompilationResult result) =>
-			importer.ImportNewMembers(result.RawFile, result.DebugFile, nonNestedType);
+			importer.ImportNewMembers(result.RawFile!, result.DebugFile, nonNestedType);
 	}
 }

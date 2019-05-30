@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -91,7 +92,7 @@ namespace dnSpy.Debugger.Shared {
 			}
 			else {
 				using (var ev = new ManualResetEvent(false)) {
-					TResult result = default;
+					TResult result = default!;
 					BeginInvoke(() => {
 						result = callback();
 						ev.Set();
@@ -105,10 +106,10 @@ namespace dnSpy.Debugger.Shared {
 		public void Invoke(Action callback) {
 			if (callback == null)
 				throw new ArgumentNullException(nameof(callback));
-			Invoke<object>(() => { callback(); return null; });
+			Invoke<object?>(() => { callback(); return null; });
 		}
 
-		bool TryDequeue(out Action callback) {
+		bool TryDequeue([NotNullWhenTrue] out Action? callback) {
 			lock (lockObj) {
 				if (queue.Count == 0) {
 					callback = null;
@@ -132,10 +133,10 @@ namespace dnSpy.Debugger.Shared {
 			}
 			RunCallbacks();
 			hasShutdownFinished = true;
-			thread = null;
-			queue = null;
+			thread = null!;
+			queue = null!;
 			queueEvent.Dispose();
-			queueEvent = null;
+			queueEvent = null!;
 		}
 
 		void RunCallbacks() {

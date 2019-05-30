@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips {
 		/// <param name="context">Context</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		object Create(IDocumentViewerToolTipProviderContext context, object @ref);
+		object? Create(IDocumentViewerToolTipProviderContext context, object? @ref);
 	}
 
 	/// <summary>Metadata</summary>

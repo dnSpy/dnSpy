@@ -65,7 +65,7 @@ namespace dnSpy.Bookmarks.DotNet {
 		}
 
 		protected abstract bool WriteLocationCore(ITextColorWriter output, BookmarkLocationFormatterOptions options);
-		protected TDef GetDefinition<TDef>() where TDef : class => owner.GetDefinition<TDef>(location.Module, location.Token);
+		protected TDef? GetDefinition<TDef>() where TDef : class => owner.GetDefinition<TDef>(location.Module, location.Token);
 		protected IDecompiler MethodDecompiler => owner.MethodDecompiler;
 
 		protected FormatterOptions GetFormatterOptions(BookmarkLocationFormatterOptions options) {
@@ -97,7 +97,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 	sealed class DotNetMethodBodyBookmarkLocationFormatterImpl : DotNetBookmarkLocationFormatter {
 		readonly DotNetMethodBodyBookmarkLocation location;
-		WeakReference weakMethod;
+		WeakReference? weakMethod;
 
 		public DotNetMethodBodyBookmarkLocationFormatterImpl(BookmarkFormatterServiceImpl owner, DotNetMethodBodyBookmarkLocationImpl location)
 			: base(owner, location) => this.location = location ?? throw new ArgumentNullException(nameof(location));
@@ -129,7 +129,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 	sealed class DotNetTokenBookmarkLocationFormatterImpl : DotNetBookmarkLocationFormatter {
 		readonly DotNetTokenBookmarkLocation location;
-		WeakReference weakMember;
+		WeakReference? weakMember;
 
 		public DotNetTokenBookmarkLocationFormatterImpl(BookmarkFormatterServiceImpl owner, DotNetTokenBookmarkLocationImpl location)
 			: base(owner, location) => this.location = location ?? throw new ArgumentNullException(nameof(location));

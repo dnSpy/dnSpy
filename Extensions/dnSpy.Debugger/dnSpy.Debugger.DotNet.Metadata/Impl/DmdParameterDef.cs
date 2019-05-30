@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public sealed override object RawDefaultValue {
+		public sealed override object? RawDefaultValue {
 			get {
 				if (!hasInitializedDefaultValue)
 					InitializeDefaultValue();
@@ -66,10 +66,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 		}
-		volatile object __rawDefaultValue_DONT_USE;
+		volatile object? __rawDefaultValue_DONT_USE;
 		volatile bool __hasDefaultValue_DONT_USE;
 		volatile bool hasInitializedDefaultValue;
-		protected abstract (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue();
+		protected abstract (object? rawDefaultValue, bool hasDefaultValue) CreateDefaultValue();
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (__customAttributes_DONT_USE != null)
@@ -77,10 +77,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var info = CreateCustomAttributes();
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.marshalType);
 			Interlocked.CompareExchange(ref __customAttributes_DONT_USE, newCAs, null);
-			return __customAttributes_DONT_USE;
+			return __customAttributes_DONT_USE!;
 		}
-		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData>? __customAttributes_DONT_USE;
 
-		protected abstract (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes();
+		protected abstract (DmdCustomAttributeData[]? cas, DmdMarshalType? marshalType) CreateCustomAttributes();
 	}
 }

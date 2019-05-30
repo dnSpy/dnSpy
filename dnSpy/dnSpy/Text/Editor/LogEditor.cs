@@ -34,10 +34,10 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
-		public object UIObject => wpfTextViewHost.HostControl;
-		public IInputElement FocusedElement => wpfTextView.VisualElement;
-		public FrameworkElement ZoomElement => wpfTextView.VisualElement;
-		public object Tag { get; set; }
+		public object? UIObject => wpfTextViewHost.HostControl;
+		public IInputElement? FocusedElement => wpfTextView.VisualElement;
+		public FrameworkElement? ZoomElement => wpfTextView.VisualElement;
+		public object? Tag { get; set; }
 		public IDsWpfTextView TextView => wpfTextViewHost.TextView;
 		public IDsWpfTextViewHost TextViewHost => wpfTextViewHost;
 
@@ -55,7 +55,7 @@ namespace dnSpy.Text.Editor {
 		readonly IDsWpfTextView wpfTextView;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
-		CachedTextColorsCollection cachedTextColorsCollection;
+		CachedTextColorsCollection? cachedTextColorsCollection;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly LogEditor logEditorUI;
@@ -76,7 +76,7 @@ namespace dnSpy.Text.Editor {
 			PredefinedDsTextViewRoles.LogEditor,
 		};
 
-		public LogEditor(LogEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public LogEditor(LogEditorOptions? options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			dispatcher = Dispatcher.CurrentDispatcher;
 			cachedColorsList = new CachedColorsList();
 			options = options?.Clone() ?? new LogEditorOptions();
@@ -185,7 +185,7 @@ namespace dnSpy.Text.Editor {
 
 			foreach (var info in newPendingOutput) {
 				sb.Append(info.Text);
-				cachedTextColorsCollection.Append(info.Color, info.Text);
+				cachedTextColorsCollection!.Append(info.Color, info.Text);
 			}
 			if (sb.Length == 0)
 				return;

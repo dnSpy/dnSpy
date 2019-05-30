@@ -28,12 +28,12 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Gets the error message or null
 		/// </summary>
-		public abstract string ErrorMessage { get; }
+		public abstract string? ErrorMessage { get; }
 
 		/// <summary>
 		/// Gets the value or null if none
 		/// </summary>
-		public abstract DbgEngineValue Value { get; }
+		public abstract DbgEngineValue? Value { get; }
 
 		/// <summary>
 		/// Gets the expression that is used when adding an expression to the watch window or
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		public abstract bool? HasChildren { get; }
 
 		/// <summary>
-		/// Number of children. This property is called as late as possible and can be lazily initialized.
+		/// Number of children. This method is called as late as possible and can be lazily initialized.
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo);
+		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo);
 
 		/// <summary>
 		/// Writes a new value
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <summary>
 		/// Gets the error message (also see <see cref="PredefinedEvaluationErrorMessages"/>) or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// </summary>
 		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or one of the errors in <see cref="PredefinedEvaluationErrorMessages"/></param>
-		public DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+		public DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string? error) {
 			Flags = flags;
 			Error = error;
 		}

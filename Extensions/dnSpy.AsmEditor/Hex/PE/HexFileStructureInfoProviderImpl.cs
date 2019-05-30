@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		[ImportingConstructor]
 		HexFileStructureInfoProviderFactoryImpl(PEStructureProviderFactory peStructureProviderFactory) => this.peStructureProviderFactory = peStructureProviderFactory;
 
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new HexFileStructureInfoProviderImpl(peStructureProviderFactory);
 	}
 
@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 				}
 				if (metadataTablesSpan.Contains(position)) {
-					foreach (var mdTbl in peStructureProvider.TablesStream.MetadataTables) {
+					foreach (var mdTbl in peStructureProvider.TablesStream!.MetadataTables) {
 						if (mdTbl == null || !mdTbl.Span.Contains(position))
 							continue;
 						var offset = position - mdTbl.Span.Start;
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override object? GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
 			var peStructure = PEStructure.TryCreate(peStructureProviderFactory, file);
 			if (peStructure == null)
 				return null;
@@ -147,7 +147,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return null;
 		}
 
-		public override HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override HexIndexes[]? GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			if (structure is PeSectionsData sections)
 				return Array.Empty<HexIndexes>();
 

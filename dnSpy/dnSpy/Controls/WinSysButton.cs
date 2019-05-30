@@ -54,7 +54,7 @@ namespace dnSpy.Controls {
 			set => SetValue(CurrentWinSysTypeProperty, value);
 		}
 
-		Window window;
+		Window? window;
 
 		static WinSysButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(WinSysButton), new FrameworkPropertyMetadata(typeof(WinSysButton)));
 
@@ -74,7 +74,7 @@ namespace dnSpy.Controls {
 		void OnWinSysTypeChanged(WinSysType newValue) {
 			if (window == null)
 				window = Window.GetWindow(this);
-			if (window == null && DesignerProperties.GetIsInDesignMode(this))
+			if (window == null || DesignerProperties.GetIsInDesignMode(this))
 				return;
 
 			switch (newValue) {
@@ -99,6 +99,9 @@ namespace dnSpy.Controls {
 		}
 
 		protected override void OnClick() {
+			if (window == null)
+				return;
+
 			switch (CurrentWinSysType) {
 			case CurrentWinSysType.Minimize:
 				WindowUtils.Minimize(window);

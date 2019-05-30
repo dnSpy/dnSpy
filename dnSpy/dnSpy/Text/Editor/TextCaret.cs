@@ -42,7 +42,7 @@ namespace dnSpy.Text.Editor {
 		public double Height => textCaretLayer.Height;
 		public bool InVirtualSpace => currentPosition.VirtualSpaces > 0;
 		public bool OverwriteMode => textCaretLayer.OverwriteMode;
-		public ITextViewLine ContainingTextViewLine => GetLine(currentPosition.Position, Affinity);
+		public ITextViewLine ContainingTextViewLine => GetLine(currentPosition.Position, Affinity)!;
 		internal VirtualSnapshotPoint CurrentPosition => currentPosition;
 		PositionAffinity Affinity { get; set; }
 
@@ -206,7 +206,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			public HwndSource HwndSource;
+			public HwndSource? HwndSource;
 			public IntPtr Context;
 			public IntPtr HWND;
 			public IntPtr OldContext;
@@ -262,8 +262,8 @@ namespace dnSpy.Text.Editor {
 			var compForm = new ImeState.COMPOSITIONFORM();
 			compForm.dwStyle = CFS_DEFAULT;
 
-			var rootVisual = imeState.HwndSource.RootVisual;
-			GeneralTransform generalTransform = null;
+			var rootVisual = imeState.HwndSource!.RootVisual;
+			GeneralTransform? generalTransform = null;
 			if (rootVisual != null && rootVisual.IsAncestorOf(textView.VisualElement))
 				generalTransform = textView.VisualElement.TransformToAncestor(rootVisual);
 
@@ -505,7 +505,7 @@ namespace dnSpy.Text.Editor {
 		double PreferredYCoordinate => Math.Min(__preferredYCoordinate, textView.ViewportHeight) + textView.ViewportTop;
 		double __preferredYCoordinate;
 
-		ITextViewLine GetVisibleCaretLine() {
+		ITextViewLine? GetVisibleCaretLine() {
 			if (textView.TextViewLines == null)
 				return null;
 			var line = ContainingTextViewLine;
@@ -533,7 +533,7 @@ namespace dnSpy.Text.Editor {
 			return MoveTo(textLine, preferredXCoordinate, false, false, true);
 		}
 
-		ITextViewLine GetLine(SnapshotPoint bufferPosition, PositionAffinity affinity) {
+		ITextViewLine? GetLine(SnapshotPoint bufferPosition, PositionAffinity affinity) {
 			bufferPosition = bufferPosition.TranslateTo(textView.TextSnapshot, GetPointTrackingMode(affinity));
 			var line = textView.GetTextViewLineContainingBufferPosition(bufferPosition);
 			if (line == null)

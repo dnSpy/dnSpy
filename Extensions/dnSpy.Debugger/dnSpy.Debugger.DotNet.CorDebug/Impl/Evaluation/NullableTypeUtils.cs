@@ -25,11 +25,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		const string HasValueFieldName = "hasValue";
 		const string ValueFieldName = "value";
 
-		public static (DmdFieldInfo hasValueField, DmdFieldInfo valueField) TryGetNullableFields(DmdType type) {
+		public static (DmdFieldInfo? hasValueField, DmdFieldInfo? valueField) TryGetNullableFields(DmdType type) {
 			Debug.Assert(type.IsNullable);
 
-			DmdFieldInfo hasValueField = null;
-			DmdFieldInfo valueField = null;
+			DmdFieldInfo? hasValueField = null;
+			DmdFieldInfo? valueField = null;
 			var fields = type.DeclaredFields;
 			for (int i = 0; i < fields.Count; i++) {
 				var field = fields[i];
@@ -37,12 +37,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					continue;
 				switch (field.Name) {
 				case HasValueFieldName:
-					if ((object)hasValueField != null)
+					if (!(hasValueField is null))
 						return (null, null);
 					hasValueField = field;
 					break;
 				case ValueFieldName:
-					if ((object)valueField != null)
+					if (!(valueField is null))
 						return (null, null);
 					valueField = field;
 					break;
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				}
 			}
 
-			if ((object)hasValueField == null || (object)valueField == null)
+			if (hasValueField is null || valueField is null)
 				return (null, null);
 			return (hasValueField, valueField);
 		}

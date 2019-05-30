@@ -33,14 +33,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MemberRefOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand InitializeFromFieldCommand => new RelayCommand(a => InitializeFromField());
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ICommand PickMethodDefCommand => new RelayCommand(a => PickMethodDef());
 		public ICommand PickModuleRefCommand => new RelayCommand(a => PickModuleRef());
 
-		public IMemberRefParent Class {
+		public IMemberRefParent? Class {
 			get => @class;
 			set {
 				if (@class != value) {
@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		IMemberRefParent @class;
+		IMemberRefParent? @class;
 
 		public string ClassFullName {
 			get {
@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string name;
+		string? name;
 
 		public TypeSigCreatorVM TypeSigCreatorVM { get; }
 		public MethodSigCreatorVM MethodSigCreatorVM { get; }

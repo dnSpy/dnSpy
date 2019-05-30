@@ -31,7 +31,7 @@ namespace dnSpy.Text.Editor {
 	sealed class SmartIndentationService : ISmartIndentationService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ISmartIndentProvider, IContentTypeMetadata>[] smartIndentProviders;
-		ProviderSelector<ISmartIndentProvider, IContentTypeMetadata> providerSelector;
+		ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		SmartIndentationService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ISmartIndentProvider, IContentTypeMetadata>> smartIndentProviders) {

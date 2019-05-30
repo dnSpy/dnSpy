@@ -74,9 +74,9 @@ namespace dnSpy.Hex.Operations {
 
 			static class Cache {
 				const int BUFFER_LENGTH = 0x1000;
-				static WeakReference weakBuffer;
+				static WeakReference? weakBuffer;
 				public static byte[] GetBuffer() => Interlocked.Exchange(ref weakBuffer, null)?.Target as byte[] ?? new byte[BUFFER_LENGTH];
-				public static void ReturnBuffer(ref byte[] buffer) {
+				public static void ReturnBuffer(ref byte[]? buffer) {
 					var tmp = buffer;
 					if (tmp != null) {
 						buffer = null;
@@ -144,7 +144,7 @@ namespace dnSpy.Hex.Operations {
 				Buffer.ReadBytes(dataPosition, Data, 0, dataLength);
 			}
 
-			public void Dispose() => Cache.ReturnBuffer(ref Data);
+			public void Dispose() => Cache.ReturnBuffer(ref Data!);
 		}
 	}
 }

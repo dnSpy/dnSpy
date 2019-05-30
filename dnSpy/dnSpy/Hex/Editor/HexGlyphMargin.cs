@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Editor {
 			this.marginContextMenuHandlerProviderService = marginContextMenuHandlerProviderService;
 		}
 
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new HexGlyphMargin(menuService, wpfHexViewHost, viewTagAggregatorFactoryService, editorFormatMapService, glyphMouseProcessorProviders, glyphFactoryProviders, marginContextMenuHandlerProviderService);
 	}
 
@@ -84,12 +84,12 @@ namespace dnSpy.Hex.Editor {
 		readonly HexEditorFormatMapService editorFormatMapService;
 		readonly Lazy<HexGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] lazyGlyphMouseProcessorProviders;
 		readonly Lazy<HexGlyphFactoryProvider, IGlyphMetadata>[] lazyGlyphFactoryProviders;
-		HexMouseProcessorCollection mouseProcessorCollection;
+		HexMouseProcessorCollection? mouseProcessorCollection;
 		readonly Dictionary<Type, GlyphFactoryInfo> glyphFactories;
-		HexTagAggregator<HexGlyphTag> tagAggregator;
-		VSTC.IEditorFormatMap editorFormatMap;
-		Dictionary<object, LineInfo> lineInfos;
-		Canvas iconCanvas;
+		HexTagAggregator<HexGlyphTag>? tagAggregator;
+		VSTC.IEditorFormatMap? editorFormatMap;
+		Dictionary<object, LineInfo>? lineInfos;
+		Canvas? iconCanvas;
 		Canvas[] childCanvases;
 
 		readonly struct GlyphFactoryInfo {
@@ -167,7 +167,7 @@ namespace dnSpy.Hex.Editor {
 			DsImage.SetZoom(canvas, e.NewZoomLevel / 100);
 		}
 
-		public override HexViewMargin GetHexViewMargin(string marginName) =>
+		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedHexMarginNames.Glyph) ? this : null;
 
 		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
@@ -192,6 +192,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void InitializeGlyphFactories() {
+			Debug.Assert(iconCanvas != null);
 			var oldFactories = new Dictionary<HexGlyphFactoryProvider, HexGlyphFactory>();
 			foreach (var info in glyphFactories.Values)
 				oldFactories[info.FactoryProvider] = info.Factory;
@@ -200,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 			bool newFactory = false;
 			int order = 0;
 			foreach (var lazy in lazyGlyphFactoryProviders) {
-				HexGlyphFactory glyphFactory = null;
+				HexGlyphFactory? glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
 					Debug.Assert(type != null);
 					if (type == null)
@@ -268,6 +269,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void RefreshEverything() {
+			Debug.Assert(lineInfos != null);
 			lineInfos.Clear();
 			foreach (var c in childCanvases)
 				c.Children.Clear();
@@ -281,6 +283,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void OnNewLayout(IReadOnlyList<HexViewLine> newOrReformattedLines, IReadOnlyList<HexViewLine> translatedLines) {
+			Debug.Assert(lineInfos != null);
 			var newInfos = new Dictionary<object, LineInfo>();
 
 			foreach (var line in newOrReformattedLines)
@@ -349,6 +352,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		IEnumerable<HexGlyphTag> GetGlyphTags(WpfHexViewLine line) {
+			Debug.Assert(tagAggregator != null);
 			foreach (var tagSpan in tagAggregator.GetTags(line.BufferSpan)) {
 				if (line.IntersectsBufferSpan(tagSpan.Span))
 					yield return tagSpan.Tag;
@@ -360,12 +364,12 @@ namespace dnSpy.Hex.Editor {
 
 		void TagAggregator_BatchedTagsChanged(object sender, HexBatchedTagsChangedEventArgs e) {
 			canvas.Dispatcher.VerifyAccess();
-			HashSet<HexViewLine> checkedLines = null;
+			HashSet<HexViewLine>? checkedLines = null;
 			foreach (var span in e.Spans)
 				Update(span, ref checkedLines);
 		}
 
-		void Update(HexBufferSpan span, ref HashSet<HexViewLine> checkedLines) {
+		void Update(HexBufferSpan span, ref HashSet<HexViewLine>? checkedLines) {
 			Debug.Assert(span.Buffer == wpfHexViewHost.HexView.Buffer);
 			var intersection = span.Intersection(wpfHexViewHost.HexView.HexViewLines.FormattedSpan);
 			if (intersection == null)
@@ -388,6 +392,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void Update(WpfHexViewLine line) {
+			Debug.Assert(lineInfos != null);
 			Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
 			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
@@ -421,6 +426,8 @@ namespace dnSpy.Hex.Editor {
 				return;
 			if (wpfHexViewHost.IsClosed)
 				return;
+			Debug.Assert(editorFormatMap != null);
+			Debug.Assert(tagAggregator != null);
 			hasRegisteredEvents = true;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 			tagAggregator.BatchedTagsChanged += TagAggregator_BatchedTagsChanged;

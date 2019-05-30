@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 	// interface by using the extension method below.
 
 	public interface IDebuggerDisplayAttributeEvaluator {
-		DbgDotNetEvalResult Evaluate(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object state);
+		DbgDotNetEvalResult Evaluate(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object? state);
 	}
 
 	public static class IDebuggerDisplayAttributeEvaluatorUtils {
@@ -43,19 +43,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 	}
 
 	public readonly struct DbgDotNetEvalResult {
-		public DbgDotNetValue Value { get; }
+		public DbgDotNetValue? Value { get; }
 		public ReadOnlyCollection<string> FormatSpecifiers { get; }
 		public DbgEvaluationResultFlags Flags { get; }
 		public bool IsThrownException => (Flags & DbgEvaluationResultFlags.ThrownException) != 0;
-		public string Error { get; }
+		public string? Error { get; }
 		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
-		public DbgDotNetEvalResult(string error, ReadOnlyCollection<string> formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
+		public DbgDotNetEvalResult(string error, ReadOnlyCollection<string>? formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
 			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
 			Error = error ?? throw new ArgumentNullException(nameof(error));
 		}
-		public DbgDotNetEvalResult(DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
+		public DbgDotNetEvalResult(DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
 			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;

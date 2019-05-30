@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		[ImportingConstructor]
 		CompletionToolTipTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) =>
+		public ITextClassifier? Create(IContentType contentType) =>
 			new CompletionToolTipTextClassifier(themeClassificationTypeService);
 	}
 

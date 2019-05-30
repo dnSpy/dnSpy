@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -29,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public DmdEvaluatorImpl(DbgEngineImpl engine) =>
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-		DbgEvaluationInfo GetEvaluationInfo(object context) {
+		DbgEvaluationInfo GetEvaluationInfo(object? context) {
 			const string errorMessage = nameof(context) + " must not be null and must be a " + nameof(DbgEvaluationInfo);
 			if (context == null)
 				throw new ArgumentNullException(nameof(context), errorMessage);
@@ -39,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return evalInfo;
 		}
 
-		DbgDotNetValue GetDotNetValue(object obj) {
+		DbgDotNetValue? GetDotNetValue(object? obj) {
 			if (obj == null)
 				return null;
 			var dnValue = obj as DbgDotNetValue;
@@ -51,6 +52,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		object GetValueThrow(DbgDotNetValueResult result) {
 			if (result.ErrorMessage != null)
 				throw new DmdEvaluatorException(result.ErrorMessage);
+			Debug.Assert(result.Value != null);
 			if (result.ValueIsException) {
 				var msg = "An exception was thrown: " + result.Value.Type.FullName;
 				result.Value.Dispose();
@@ -59,25 +61,25 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return result.Value;
 		}
 
-		public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) {
+		public override object? CreateInstance(object? context, DmdConstructorInfo ctor, object?[] arguments) {
 			var evalInfo = GetEvaluationInfo(context);
 			var res = engine.DotNetRuntime.CreateInstance(evalInfo, ctor, arguments, DbgDotNetInvokeOptions.None);
 			return GetValueThrow(res);
 		}
 
-		public override object Invoke(object context, DmdMethodBase method, object obj, object[] arguments) {
+		public override object? Invoke(object? context, DmdMethodBase method, object? obj, object?[] arguments) {
 			var evalInfo = GetEvaluationInfo(context);
 			var res = engine.DotNetRuntime.Call(evalInfo, GetDotNetValue(obj), method, arguments, DbgDotNetInvokeOptions.None);
 			return GetValueThrow(res);
 		}
 
-		public override object LoadField(object context, DmdFieldInfo field, object obj) {
+		public override object? LoadField(object? context, DmdFieldInfo field, object? obj) {
 			var evalInfo = GetEvaluationInfo(context);
 			var res = engine.DotNetRuntime.LoadField(evalInfo, GetDotNetValue(obj), field);
 			return GetValueThrow(res);
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value) {
+		public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) {
 			var evalInfo = GetEvaluationInfo(context);
 			var errorMessage = engine.DotNetRuntime.StoreField(evalInfo, GetDotNetValue(obj), field, value);
 			if (errorMessage != null)

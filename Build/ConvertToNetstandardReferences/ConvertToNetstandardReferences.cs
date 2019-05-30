@@ -31,6 +31,7 @@ namespace ConvertToNetstandardReferences {
 		// Increment it if something changes so the files are re-created
 		const string VERSION = "cnsrefs_v1";
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		[Required]
 		public string DestinationDirectory { get; set; }
 
@@ -39,6 +40,7 @@ namespace ConvertToNetstandardReferences {
 
 		[Output]
 		public ITaskItem[] OutputReferencePath { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 		bool ShouldPatchAssembly(string simpleName) {
 			if (simpleName.StartsWith("Microsoft.VisualStudio."))
@@ -72,8 +74,8 @@ namespace ConvertToNetstandardReferences {
 			}
 
 			using (var assemblyFactory = new AssemblyFactory(ReferencePath.Select(a => a.ItemSpec))) {
-				AssemblyRef netstandardAsmRef = null;
-				AssemblyDef netstandardAsm = null;
+				AssemblyRef? netstandardAsmRef = null;
+				AssemblyDef? netstandardAsm = null;
 				var typeComparer = new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope);
 				var netstandardTypes = new HashSet<IType>(typeComparer);
 				OutputReferencePath = new ITaskItem[ReferencePath.Length];
@@ -177,10 +179,10 @@ namespace ConvertToNetstandardReferences {
 			context = new ModuleContext(this, new Resolver(this));
 		}
 
-		AssemblyDef IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
+		AssemblyDef? IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
 			Resolve(assembly.Name);
 
-		public AssemblyDef Resolve(string name) {
+		public AssemblyDef? Resolve(string name) {
 			if (modules.TryGetValue(name, out var module))
 				return module.Assembly;
 			if (!nameToPath.TryGetValue(name, out var path))

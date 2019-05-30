@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="value">Value to format</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo);
+		public abstract void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo);
 
 		/// <summary>
 		/// Formats a type
@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="value">Value or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo);
+		public abstract void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DmdType type, DbgDotNetValue? value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo);
 
 		/// <summary>
 		/// Formats a stack frame
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters {
 		/// <param name="options">Stack frame options</param>
 		/// <param name="valueOptions">Value option</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo);
+		public abstract void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo);
 	}
 
 	/// <summary>Metadata</summary>

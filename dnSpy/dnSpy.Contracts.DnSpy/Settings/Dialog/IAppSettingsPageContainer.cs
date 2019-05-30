@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>Metadata</summary>
 	public interface IAppSettingsPageContainerMetadata {
 		/// <summary>See <see cref="ExportAppSettingsPageContainerAttribute.ParentGuid"/></summary>
-		string ParentGuid { get; }
+		string? ParentGuid { get; }
 		/// <summary>See <see cref="ExportAppSettingsPageContainerAttribute.Guid"/></summary>
 		string Guid { get; }
 		/// <summary>See <see cref="ExportAppSettingsPageContainerAttribute.Order"/></summary>
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>See <see cref="ExportAppSettingsPageContainerAttribute.Title"/></summary>
 		string Title { get; }
 		/// <summary>See <see cref="ExportAppSettingsPageContainerAttribute.Icon"/></summary>
-		string Icon { get; }
+		string? Icon { get; }
 	}
 
 	/// <summary>
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <param name="order">Order of this instance relative to other instances with the same parent, eg. <see cref="AppSettingsConstants.ORDER_DECOMPILER"/></param>
 		/// <param name="parentGuid"><see cref="System.Guid"/> of the parent or null if the root element is the parent, eg. <see cref="AppSettingsConstants.GUID_DECOMPILER"/></param>
 		/// <param name="icon">Icon shown in the UI or null</param>
-		public ExportAppSettingsPageContainerAttribute(string title, string guid, double order = double.MaxValue, string parentGuid = null, string icon = null)
+		public ExportAppSettingsPageContainerAttribute(string title, string guid, double order = double.MaxValue, string? parentGuid = null, string? icon = null)
 			: base(typeof(IAppSettingsPageContainer)) {
 			ParentGuid = parentGuid;
 			Guid = guid ?? throw new ArgumentNullException(nameof(guid));
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Parent <see cref="System.Guid"/> or <see cref="System.Guid.Empty"/> if the root element is the parent
 		/// </summary>
-		public string ParentGuid { get; }
+		public string? ParentGuid { get; }
 
 		/// <summary>
 		/// Gets the <see cref="System.Guid"/>
@@ -88,6 +88,6 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Gets the icon shown in the UI or null
 		/// </summary>
-		public string Icon { get; }
+		public string? Icon { get; }
 	}
 }

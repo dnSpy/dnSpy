@@ -29,16 +29,16 @@ namespace dnSpy.Text.Operations {
 		public IPropertyOwner PropertyOwner { get; }
 		public PropertyCollection Properties { get; }
 		public TextUndoHistoryState State { get; private set; }
-		public ITextUndoTransaction CurrentTransaction => currentTransaction;
+		public ITextUndoTransaction? CurrentTransaction => currentTransaction;
 		public event EventHandler<TextUndoRedoEventArgs> UndoRedoHappened;
 		public event EventHandler<TextUndoTransactionCompletedEventArgs> UndoTransactionCompleted;
 
 		public bool CanRedo => redoList.Count > 0;
 		public bool CanUndo => undoList.Count > 0;
-		public ITextUndoTransaction LastRedoTransaction => redoList.FirstOrDefault();
-		public ITextUndoTransaction LastUndoTransaction => undoList.FirstOrDefault();
-		public string RedoDescription => LastRedoTransaction?.Description;
-		public string UndoDescription => LastUndoTransaction?.Description;
+		public ITextUndoTransaction? LastRedoTransaction => redoList.FirstOrDefault();
+		public ITextUndoTransaction? LastUndoTransaction => undoList.FirstOrDefault();
+		public string? RedoDescription => LastRedoTransaction?.Description;
+		public string? UndoDescription => LastUndoTransaction?.Description;
 		public IEnumerable<ITextUndoTransaction> RedoStack => readOnlyRedoList;
 		public IEnumerable<ITextUndoTransaction> UndoStack => readOnlyUndoList;
 
@@ -46,7 +46,7 @@ namespace dnSpy.Text.Operations {
 		readonly List<TextUndoTransaction> undoList;
 		readonly ReadOnlyCollection<TextUndoTransaction> readOnlyRedoList;
 		readonly ReadOnlyCollection<TextUndoTransaction> readOnlyUndoList;
-		TextUndoTransaction currentTransaction;
+		TextUndoTransaction? currentTransaction;
 
 		public TextUndoHistory(IPropertyOwner propertyOwner) {
 			State = TextUndoHistoryState.Idle;

@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Adornments {
 	sealed class HexToolTipProviderImpl : HexToolTipProvider {
 		readonly WpfHexView wpfHexView;
 		readonly HexSpaceReservationManager spaceReservationManager;
-		HexSpaceReservationAgent toolTipAgent;
+		HexSpaceReservationAgent? toolTipAgent;
 
 #pragma warning disable CS0169
 		[Export(typeof(HexSpaceReservationManagerDefinition))]
@@ -75,7 +75,7 @@ namespace dnSpy.Hex.Adornments {
 			}
 		}
 
-		UIElement GetUIElement(object toolTipContent) {
+		UIElement? GetUIElement(object toolTipContent) {
 			if (toolTipContent is UIElement elem)
 				return elem;
 			if (toolTipContent is string s)

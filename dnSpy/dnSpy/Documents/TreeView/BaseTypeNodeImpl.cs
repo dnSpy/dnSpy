@@ -30,7 +30,7 @@ namespace dnSpy.Documents.TreeView {
 	sealed class BaseTypeNodeImpl : BaseTypeNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.BASETYPE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, TypeDefOrRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			var td = TryGetTypeDef();
@@ -42,7 +42,7 @@ namespace dnSpy.Documents.TreeView {
 		ITypeDefOrRef TryGetTypeDefOrRef() => (ITypeDefOrRef)weakRefTypeDefOrRef.Target;
 		public override ITypeDefOrRef TypeDefOrRef => TryGetTypeDefOrRef() ?? new TypeRefUser(new ModuleDefUser("???"), "???");
 
-		TypeDef TryGetTypeDef() {
+		TypeDef? TryGetTypeDef() {
 			var td = (TypeDef)weakRefResolvedTypeDef.Target;
 			if (td != null)
 				return td;

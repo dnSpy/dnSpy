@@ -28,9 +28,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly bool isFileLayout;
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef editedModule;
-		readonly TypeDef nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedTypeOrNull;
 
-		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
+		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedTypeOrNull) {
 			this.moduleData = moduleData;
 			this.isFileLayout = isFileLayout;
 			this.tempAssembly = tempAssembly;
@@ -52,6 +52,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (fixTypeDefRefs || addIVT) {
 				DnSpyEventSource.Log.EditCodePatchModuleStart(module.Location);
 				using (var md = MDPatcherUtils.TryCreateMetadata(moduleData, isFileLayout)) {
+					if (md == null)
+						throw new InvalidOperationException("Couldn't create metadata");
 					var mdEditor = new MetadataEditor(moduleData, md);
 					var options = MDEditorPatcherOptions.None;
 					if (fixTypeDefRefs)
@@ -63,7 +65,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					if (mdEditor.MustRewriteMetadata()) {
 						var stream = new MDWriterMemoryStream();
 						new MDWriter(moduleData, mdEditor, stream).Write();
-						NativeMemoryRawModuleBytes newRawData = null;
+						NativeMemoryRawModuleBytes? newRawData = null;
 						try {
 							newRawData = new NativeMemoryRawModuleBytes((int)stream.Length, isFileLayout: true);
 							stream.CopyTo((IntPtr)newRawData.Pointer, newRawData.Size);

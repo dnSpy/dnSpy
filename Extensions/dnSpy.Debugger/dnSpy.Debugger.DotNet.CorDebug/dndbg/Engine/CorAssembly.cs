@@ -27,7 +27,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	sealed class CorAssembly : COMObject<ICorDebugAssembly>, IEquatable<CorAssembly> {
+	sealed class CorAssembly : COMObject<ICorDebugAssembly>, IEquatable<CorAssembly?> {
 		public IEnumerable<CorModule> Modules {
 			get {
 				int hr = obj.EnumerateModules(out var moduleEnum);
@@ -54,8 +54,8 @@ namespace dndbg.Engine {
 		public string FullName {
 			get {
 				var module = ManifestModule;
-				Debug.Assert(module != null);
-				if (module == null)
+				Debug.Assert(!(module is null));
+				if (module is null)
 					return Name;
 				return CalculateFullName(module);
 			}
@@ -67,20 +67,20 @@ namespace dndbg.Engine {
 
 			var asm = new AssemblyNameInfo();
 			asm.Name = MDAPI.GetAssemblySimpleName(mdai, token) ?? string.Empty;
-			asm.Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out string locale) ?? new Version(0, 0, 0, 0);
+			asm.Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out var locale) ?? new Version(0, 0, 0, 0);
 			asm.Culture = locale ?? string.Empty;
 			asm.HashAlgId = MDAPI.GetAssemblyHashAlgorithm(mdai, token) ?? AssemblyHashAlgorithm.SHA1;
 			asm.Attributes = MDAPI.GetAssemblyAttributes(mdai, token) ?? AssemblyAttributes.None;
-			asm.PublicKeyOrToken = MDAPI.GetAssemblyPublicKey(mdai, token) ?? new PublicKey((byte[])null);
+			asm.PublicKeyOrToken = MDAPI.GetAssemblyPublicKey(mdai, token) ?? new PublicKey((byte[]?)null);
 			return asm.FullName;
 		}
 
-		public CorModule ManifestModule {
+		public CorModule? ManifestModule {
 			get {
-				CorModule moduleWithAssemblyRow = null;
+				CorModule? moduleWithAssemblyRow = null;
 				foreach (var module in Modules) {
 					if (module.HasAssemblyRow) {
-						if (moduleWithAssemblyRow == null || (!IsFile(moduleWithAssemblyRow) && IsFile(module)))
+						if (moduleWithAssemblyRow is null || (!IsFile(moduleWithAssemblyRow) && IsFile(module)))
 							moduleWithAssemblyRow = module;
 					}
 				}
@@ -93,7 +93,7 @@ namespace dndbg.Engine {
 		public CorAssembly(ICorDebugAssembly assembly)
 			: base(assembly) => Name = GetName(assembly) ?? string.Empty;
 
-		static string GetName(ICorDebugAssembly assembly) {
+		static string? GetName(ICorDebugAssembly assembly) {
 			int hr = assembly.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
@@ -104,17 +104,8 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		public static bool operator ==(CorAssembly a, CorAssembly b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorAssembly a, CorAssembly b) => !(a == b);
-		public bool Equals(CorAssembly other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorAssembly);
+		public bool Equals(CorAssembly? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorAssembly);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Assembly] {Name}";
 	}

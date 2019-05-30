@@ -29,7 +29,7 @@ using dnSpy.Debugger.DotNet.CorDebug.Properties;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 	abstract class DotNetStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public string Filename {
 			get => filename;
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
 
 		public string BreakKind {
-			get => (string)BreakProcessKindVM.SelectedItem;
+			get => (string)BreakProcessKindVM.SelectedItem!;
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 		}
 
-		static string GetPath(string file) {
+		static string? GetPath(string file) {
 			try {
 				return Path.GetDirectoryName(file);
 			}
@@ -126,19 +126,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 			WorkingDirectory = newDir;
 		}
 
-		static string FilterBreakKind(string breakKind) {
+		static string FilterBreakKind(string? breakKind) {
 			foreach (var info in BreakProcessKindsUtils.BreakProcessKindList) {
 				if (StringComparer.Ordinal.Equals(breakKind, (string)info.Value))
-					return breakKind;
+					return breakKind!;
 			}
 			return PredefinedBreakKinds.DontBreak;
 		}
 
 		protected void Initialize(CorDebugStartDebuggingOptions options) {
-			Filename = options.Filename;
-			CommandLine = options.CommandLine;
+			Filename = options.Filename ?? string.Empty;
+			CommandLine = options.CommandLine ?? string.Empty;
 			// Must be init'd after Filename since it also overwrites this property
-			WorkingDirectory = options.WorkingDirectory;
+			WorkingDirectory = options.WorkingDirectory ?? string.Empty;
 			BreakKind = FilterBreakKind(options.BreakKind);
 		}
 

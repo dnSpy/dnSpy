@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract bool IsDebugging { get; }
 		public abstract bool CanStartWithoutDebugging { get; }
 		public abstract void StartWithoutDebugging();
-		public abstract string GetCurrentExecutableFilename();
+		public abstract string? GetCurrentExecutableFilename();
 		public abstract bool CanDebugProgram { get; }
 		public abstract void DebugProgram(bool pauseAtEntryPoint);
 		public abstract bool CanAttachProgram { get; }

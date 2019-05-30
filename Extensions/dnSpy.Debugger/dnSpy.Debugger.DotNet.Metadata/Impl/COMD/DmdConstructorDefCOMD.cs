@@ -35,19 +35,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			MethodImplementationFlags = implementationFlags;
 			Attributes = attributes;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
-			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + rid), DeclaringType.GetGenericArguments(), GetGenericArguments(), isProperty: false);
+			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + rid), DeclaringType!.GetGenericArguments(), GetGenericArguments(), isProperty: false);
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		protected override DmdType[] CreateGenericParameters() => COMThread(() => reader.CreateGenericParameters_COMThread(this));
+		protected override DmdType[]? CreateGenericParameters() => COMThread(() => reader.CreateGenericParameters_COMThread(this));
 
-		public override DmdMethodBody GetMethodBody() => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType.GetGenericArguments(), GetGenericArguments()));
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType.GetGenericArguments(), genericMethodArguments));
+		public override DmdMethodBody? GetMethodBody() => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType!.GetGenericArguments(), GetGenericArguments()));
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType!.GetGenericArguments(), genericMethodArguments));
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override DmdParameterInfo[] CreateParameters() => COMThread(() => reader.CreateParameters_COMThread(this, createReturnParameter: false).parameters);
 
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
 		(DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes_COMThread() {
 			reader.Dispatcher.VerifyAccess();
 			var cas = reader.ReadCustomAttributesCore_COMThread((uint)MetadataToken);

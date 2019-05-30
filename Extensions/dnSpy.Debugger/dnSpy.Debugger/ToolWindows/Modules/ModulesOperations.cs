@@ -209,7 +209,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				throw new ArgumentOutOfRangeException(nameof(windowIndex));
 			ShowInMemoryWindowCore(windowIndex);
 		}
-		ModuleVM GetShowInMemoryWindowModule() {
+		ModuleVM? GetShowInMemoryWindowModule() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var vm = SelectedItems[0];
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			catch {
 			}
 		}
-		string GetFilename() {
+		string? GetFilename() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var path = SelectedItems[0].Module.Filename;

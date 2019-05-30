@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler {
 			if (langs.Count == 0)
 				langs.Add(new DummyDecompiler());
 			decompilers = langs.OrderBy(a => a.OrderUI).ToArray();
-			decompiler = FindOrDefault(decompilerServiceSettings.LanguageGuid);
+			decompiler = FindOrDefault(decompilerServiceSettings.LanguageGuid) ?? throw new InvalidOperationException();
 			decompilerChanged = new WeakEventList<EventArgs>();
 		}
 
@@ -66,9 +66,9 @@ namespace dnSpy.Decompiler {
 		readonly WeakEventList<EventArgs> decompilerChanged;
 
 		public IEnumerable<IDecompiler> AllDecompilers => decompilers;
-		public IDecompiler Find(Guid guid) =>
+		public IDecompiler? Find(Guid guid) =>
 			AllDecompilers.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
 		public IDecompiler FindOrDefault(Guid guid) =>
-			Find(guid) ?? AllDecompilers.FirstOrDefault();
+			Find(guid) ?? AllDecompilers.FirstOrDefault()!;
 	}
 }

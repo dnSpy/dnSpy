@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			return ptr >= endRva ? (uint?)null : (uint)ptr;
 		}
 
-		ImageSectionHeader FindSection(string name) {
+		ImageSectionHeader? FindSection(string name) {
 			foreach (var sect in peImage.ImageSectionHeaders) {
 				if (sect.DisplayName == name)
 					return sect;
@@ -245,7 +245,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			return new ECClass(ns, name, funcs);
 		}
 
-		ECFunc[] ReadECFuncs(uint? rva, bool first) {
+		ECFunc[]? ReadECFuncs(uint? rva, bool first) {
 			if (rva == null || rva.Value == 0)
 				return null;
 			var funcs = new List<ECFunc>();
@@ -268,7 +268,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 					return null;
 
 				uint? methRva;
-				string name;
+				string? name;
 				if (tableFormat == TableFormat.V1) {
 					methRva = ReadRva(pos + ptrSize * 1);
 					ulong nullPtr1 = ReadPtr(pos + ptrSize * 2);
@@ -342,9 +342,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			return (uint)textSect.VirtualAddress <= rva && rva < (uint)textSect.VirtualAddress + Math.Max(textSect.VirtualSize, textSect.SizeOfRawData);
 		}
 
-		string ReadAsciizIdPtr(long pos) => ReadAsciizId(ReadRva(pos));
+		string? ReadAsciizIdPtr(long pos) => ReadAsciizId(ReadRva(pos));
 
-		string ReadAsciizId(uint? rva) {
+		string? ReadAsciizId(uint? rva) {
 			if (rva == null || rva.Value == 0)
 				return null;
 			reader.Position = (uint)peImage.ToFileOffset((RVA)rva.Value);

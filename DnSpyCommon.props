@@ -14,7 +14,8 @@
     <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
     <IsSelfContainedDotNetCore Condition=" '$(IsDotNetCore)' == 'true' ">true</IsSelfContainedDotNetCore>
     <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
+    <LangVersion Condition=" $(MSBuildProjectFile.EndsWith('.vbproj')) " >latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
     <!-- Make sure we don't have to publish each extension to get all their refs -->

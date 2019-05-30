@@ -28,17 +28,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the simple name
 		/// </summary>
-		public string Name { get; }
+		public string? Name { get; }
 
 		/// <summary>
 		/// Gets the version
 		/// </summary>
-		public Version Version { get; }
+		public Version? Version { get; }
 
 		/// <summary>
 		/// Gets the culture name
 		/// </summary>
-		public string CultureName { get; }
+		public string? CultureName { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -64,14 +64,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the public key
 		/// </summary>
 		/// <returns></returns>
-		public byte[] GetPublicKey() => publicKey;
-		readonly byte[] publicKey;
+		public byte[]? GetPublicKey() => publicKey;
+		readonly byte[]? publicKey;
 
 		/// <summary>
 		/// Gets the public key token
 		/// </summary>
 		/// <returns></returns>
-		public byte[] GetPublicKeyToken() {
+		public byte[]? GetPublicKeyToken() {
 			if (publicKeyToken == null && publicKey != null) {
 				try {
 					publicKeyToken = AssemblyHasher.CreatePublicKeyToken(publicKey);
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 			return publicKeyToken;
 		}
-		byte[] publicKeyToken;
+		byte[]? publicKeyToken;
 
 		/// <summary>
 		/// Gets the hash algorithm
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdReadOnlyAssemblyName(string assemblyName) {
 			if (assemblyName == null)
 				throw new ArgumentNullException(nameof(assemblyName));
-			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out this.publicKey, out this.publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm);
+			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out var name, out var version, out var cultureName, out var flags, out publicKey, out publicKeyToken, out var hashAlgorithm);
 			Name = name;
 			Version = version;
 			CultureName = cultureName;
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="publicKey">Public key or null</param>
 		/// <param name="publicKeyToken">Public key token or null</param>
 		/// <param name="hashAlgorithm">Hash algorithm</param>
-		public DmdReadOnlyAssemblyName(string name, Version version, string cultureName, DmdAssemblyNameFlags flags, byte[] publicKey, byte[] publicKeyToken, DmdAssemblyHashAlgorithm hashAlgorithm) {
+		public DmdReadOnlyAssemblyName(string? name, Version? version, string? cultureName, DmdAssemblyNameFlags flags, byte[]? publicKey, byte[]? publicKeyToken, DmdAssemblyHashAlgorithm hashAlgorithm) {
 			Name = name;
 			Version = version;
 			CultureName = cultureName;
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="flags">Flags</param>
 		/// <param name="publicKeyOrToken">Public key or public key token or null</param>
 		/// <param name="hashAlgorithm">Hash algorithm</param>
-		public DmdReadOnlyAssemblyName(string name, Version version, string cultureName, DmdAssemblyNameFlags flags, byte[] publicKeyOrToken, DmdAssemblyHashAlgorithm hashAlgorithm) {
+		public DmdReadOnlyAssemblyName(string? name, Version? version, string? cultureName, DmdAssemblyNameFlags flags, byte[]? publicKeyOrToken, DmdAssemblyHashAlgorithm hashAlgorithm) {
 			Name = name;
 			Version = version;
 			CultureName = cultureName;

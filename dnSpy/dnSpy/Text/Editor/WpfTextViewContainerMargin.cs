@@ -80,7 +80,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ITextViewMargin GetTextViewMargin(string marginName) {
+		public ITextViewMargin? GetTextViewMargin(string marginName) {
 			if (StringComparer.OrdinalIgnoreCase.Equals(marginName, name))
 				return this;
 

@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		[ImportingConstructor]
 		DocumentViewerToolTipServiceCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) => this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) != true)
 				return null;
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 		}
 
-		DocumentViewerToolTipService TryGetInstance() {
+		DocumentViewerToolTipService? TryGetInstance() {
 			if (__documentViewerToolTipService == null) {
 				var docViewer = textView.TextBuffer.TryGetDocumentViewer();
 				if (docViewer != null)
@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			}
 			return __documentViewerToolTipService;
 		}
-		DocumentViewerToolTipService __documentViewerToolTipService;
+		DocumentViewerToolTipService? __documentViewerToolTipService;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var service = TryGetInstance();
@@ -89,12 +89,12 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var service = TryGetInstance();
 			if (service == null)
 				return CommandTargetStatus.NotHandled;
@@ -150,7 +150,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		[ImportingConstructor]
 		DocumentViewerToolTipServiceQuickInfoSourceProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) => this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 
-		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
+		public IQuickInfoSource? TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var docViewer = textBuffer.TryGetDocumentViewer();
 			if (docViewer == null)
 				return null;
@@ -163,7 +163,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) => this.documentViewerToolTipService = documentViewerToolTipService ?? throw new ArgumentNullException(nameof(documentViewerToolTipService));
 
-		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) =>
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan? applicableToSpan) =>
 			documentViewerToolTipService.AugmentQuickInfoSession(session, quickInfoContent, out applicableToSpan);
 
 		public void Dispose() { }
@@ -192,7 +192,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			this.decompilerService = decompilerService ?? throw new ArgumentNullException(nameof(decompilerService));
 		}
 
-		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan? applicableToSpan) {
 			applicableToSpan = null;
 			Debug.Assert(session.TextView == documentViewer.TextView);
 			if (session.TextView != documentViewer.TextView)
@@ -240,7 +240,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		IDecompiler GetDecompiler() => (documentViewer.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
 
-		object CreateToolTipContent(IDecompiler decompiler, object @ref) {
+		object? CreateToolTipContent(IDecompiler decompiler, object @ref) {
 			if (decompiler == null)
 				return null;
 			if (@ref == null)

@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		protected HexField() {
 			IsVisible = false;
 			Name = string.Empty;
+			buffer = null!;// Never accessed since the field is not visible
 		}
 
 		protected HexField(BufferField field)
@@ -199,13 +200,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		public override string FormattedValue => $"{ReadData():X8}";
 
-		public static UInt32HexField TryCreate(StructField<UInt32Data> field, bool useDecimal = false) {
+		public static UInt32HexField TryCreate(StructField<UInt32Data>? field, bool useDecimal = false) {
 			if (field != null)
 				return new UInt32HexField(field, useDecimal);
 			return new UInt32HexField();
 		}
 
-		UInt32HexField() { }
+		UInt32HexField() => data = null!;// Never accessed since the field is not visible
 
 		public UInt32HexField(UInt32Data data, string fieldName, bool useDecimal = false)
 			: base(data, fieldName) => this.data = new UInt32VM(buffer.ReadUInt32(Span.Start), a => UpdateValue(), useDecimal);
@@ -305,74 +306,74 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	}
 
 	abstract class FlagsHexField : HexField {
-		Dictionary<int, HexBitField> bitFields;
+		readonly Dictionary<int, HexBitField> bitFields;
 
-		public HexBitField Bit0 => GetBitField(0);
-		public HexBitField Bit1 => GetBitField(1);
-		public HexBitField Bit2 => GetBitField(2);
-		public HexBitField Bit3 => GetBitField(3);
-		public HexBitField Bit4 => GetBitField(4);
-		public HexBitField Bit5 => GetBitField(5);
-		public HexBitField Bit6 => GetBitField(6);
-		public HexBitField Bit7 => GetBitField(7);
-		public HexBitField Bit8 => GetBitField(8);
-		public HexBitField Bit9 => GetBitField(9);
-		public HexBitField Bit10 => GetBitField(10);
-		public HexBitField Bit11 => GetBitField(11);
-		public HexBitField Bit12 => GetBitField(12);
-		public HexBitField Bit13 => GetBitField(13);
-		public HexBitField Bit14 => GetBitField(14);
-		public HexBitField Bit15 => GetBitField(15);
-		public HexBitField Bit16 => GetBitField(16);
-		public HexBitField Bit17 => GetBitField(17);
-		public HexBitField Bit18 => GetBitField(18);
-		public HexBitField Bit19 => GetBitField(19);
-		public HexBitField Bit20 => GetBitField(20);
-		public HexBitField Bit21 => GetBitField(21);
-		public HexBitField Bit22 => GetBitField(22);
-		public HexBitField Bit23 => GetBitField(23);
-		public HexBitField Bit24 => GetBitField(24);
-		public HexBitField Bit25 => GetBitField(25);
-		public HexBitField Bit26 => GetBitField(26);
-		public HexBitField Bit27 => GetBitField(27);
-		public HexBitField Bit28 => GetBitField(28);
-		public HexBitField Bit29 => GetBitField(29);
-		public HexBitField Bit30 => GetBitField(30);
-		public HexBitField Bit31 => GetBitField(31);
-		public HexBitField Bit32 => GetBitField(32);
-		public HexBitField Bit33 => GetBitField(33);
-		public HexBitField Bit34 => GetBitField(34);
-		public HexBitField Bit35 => GetBitField(35);
-		public HexBitField Bit36 => GetBitField(36);
-		public HexBitField Bit37 => GetBitField(37);
-		public HexBitField Bit38 => GetBitField(38);
-		public HexBitField Bit39 => GetBitField(39);
-		public HexBitField Bit40 => GetBitField(40);
-		public HexBitField Bit41 => GetBitField(41);
-		public HexBitField Bit42 => GetBitField(42);
-		public HexBitField Bit43 => GetBitField(43);
-		public HexBitField Bit44 => GetBitField(44);
-		public HexBitField Bit45 => GetBitField(45);
-		public HexBitField Bit46 => GetBitField(46);
-		public HexBitField Bit47 => GetBitField(47);
-		public HexBitField Bit48 => GetBitField(48);
-		public HexBitField Bit49 => GetBitField(49);
-		public HexBitField Bit50 => GetBitField(50);
-		public HexBitField Bit51 => GetBitField(51);
-		public HexBitField Bit52 => GetBitField(52);
-		public HexBitField Bit53 => GetBitField(53);
-		public HexBitField Bit54 => GetBitField(54);
-		public HexBitField Bit55 => GetBitField(55);
-		public HexBitField Bit56 => GetBitField(56);
-		public HexBitField Bit57 => GetBitField(57);
-		public HexBitField Bit58 => GetBitField(58);
-		public HexBitField Bit59 => GetBitField(59);
-		public HexBitField Bit60 => GetBitField(60);
-		public HexBitField Bit61 => GetBitField(61);
-		public HexBitField Bit62 => GetBitField(62);
-		public HexBitField Bit63 => GetBitField(63);
+		public HexBitField? Bit0 => GetBitField(0);
+		public HexBitField? Bit1 => GetBitField(1);
+		public HexBitField? Bit2 => GetBitField(2);
+		public HexBitField? Bit3 => GetBitField(3);
+		public HexBitField? Bit4 => GetBitField(4);
+		public HexBitField? Bit5 => GetBitField(5);
+		public HexBitField? Bit6 => GetBitField(6);
+		public HexBitField? Bit7 => GetBitField(7);
+		public HexBitField? Bit8 => GetBitField(8);
+		public HexBitField? Bit9 => GetBitField(9);
+		public HexBitField? Bit10 => GetBitField(10);
+		public HexBitField? Bit11 => GetBitField(11);
+		public HexBitField? Bit12 => GetBitField(12);
+		public HexBitField? Bit13 => GetBitField(13);
+		public HexBitField? Bit14 => GetBitField(14);
+		public HexBitField? Bit15 => GetBitField(15);
+		public HexBitField? Bit16 => GetBitField(16);
+		public HexBitField? Bit17 => GetBitField(17);
+		public HexBitField? Bit18 => GetBitField(18);
+		public HexBitField? Bit19 => GetBitField(19);
+		public HexBitField? Bit20 => GetBitField(20);
+		public HexBitField? Bit21 => GetBitField(21);
+		public HexBitField? Bit22 => GetBitField(22);
+		public HexBitField? Bit23 => GetBitField(23);
+		public HexBitField? Bit24 => GetBitField(24);
+		public HexBitField? Bit25 => GetBitField(25);
+		public HexBitField? Bit26 => GetBitField(26);
+		public HexBitField? Bit27 => GetBitField(27);
+		public HexBitField? Bit28 => GetBitField(28);
+		public HexBitField? Bit29 => GetBitField(29);
+		public HexBitField? Bit30 => GetBitField(30);
+		public HexBitField? Bit31 => GetBitField(31);
+		public HexBitField? Bit32 => GetBitField(32);
+		public HexBitField? Bit33 => GetBitField(33);
+		public HexBitField? Bit34 => GetBitField(34);
+		public HexBitField? Bit35 => GetBitField(35);
+		public HexBitField? Bit36 => GetBitField(36);
+		public HexBitField? Bit37 => GetBitField(37);
+		public HexBitField? Bit38 => GetBitField(38);
+		public HexBitField? Bit39 => GetBitField(39);
+		public HexBitField? Bit40 => GetBitField(40);
+		public HexBitField? Bit41 => GetBitField(41);
+		public HexBitField? Bit42 => GetBitField(42);
+		public HexBitField? Bit43 => GetBitField(43);
+		public HexBitField? Bit44 => GetBitField(44);
+		public HexBitField? Bit45 => GetBitField(45);
+		public HexBitField? Bit46 => GetBitField(46);
+		public HexBitField? Bit47 => GetBitField(47);
+		public HexBitField? Bit48 => GetBitField(48);
+		public HexBitField? Bit49 => GetBitField(49);
+		public HexBitField? Bit50 => GetBitField(50);
+		public HexBitField? Bit51 => GetBitField(51);
+		public HexBitField? Bit52 => GetBitField(52);
+		public HexBitField? Bit53 => GetBitField(53);
+		public HexBitField? Bit54 => GetBitField(54);
+		public HexBitField? Bit55 => GetBitField(55);
+		public HexBitField? Bit56 => GetBitField(56);
+		public HexBitField? Bit57 => GetBitField(57);
+		public HexBitField? Bit58 => GetBitField(58);
+		public HexBitField? Bit59 => GetBitField(59);
+		public HexBitField? Bit60 => GetBitField(60);
+		public HexBitField? Bit61 => GetBitField(61);
+		public HexBitField? Bit62 => GetBitField(62);
+		public HexBitField? Bit63 => GetBitField(63);
 
-		HexBitField GetBitField(int bit) {
+		HexBitField? GetBitField(int bit) {
 			bool b = bitFields.TryGetValue(bit, out var bitField);
 			Debug.Assert(b);
 			return bitField;
@@ -405,12 +406,12 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			bitField.Owner = this;
 			bitFields.Add(bitField.Bit, bitField);
 			Debug.Assert(!DataFieldVM.HasError);	// Should only be called at init and it's then always valid
-			ulong val = ToUInt64(DataFieldVM.ObjectValue);
+			ulong val = ToUInt64(DataFieldVM.ObjectValue!);
 			SetValue(bitField, val);
 		}
 
 		protected override void OnBufferChanged(object newValue) => UpdateFields(newValue);
-		protected override void OnUpdateValue() => UpdateFields(DataFieldVM.ObjectValue);
+		protected override void OnUpdateValue() => UpdateFields(DataFieldVM.ObjectValue!);
 
 		void UpdateFields(object newValue) {
 			ulong val = ToUInt64(newValue);
@@ -507,7 +508,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public int Bit { get; }
 		public ulong Mask => Count == 64 ? ulong.MaxValue : (1UL << Count) - 1;
 		public int Count { get; }
-		internal FlagsHexField Owner { get; set; }
+		internal FlagsHexField? Owner { get; set; }
 
 		public HexBitField(string name, int bit, int count) {
 			Debug.Assert(0 <= bit && bit <= 63 && 1 <= count && count <= 64 && bit + count <= 64);
@@ -525,7 +526,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			get => boolean;
 			set {
 				if (SetBitValue(value))
-					Owner.Updated(this);
+					Owner!.Updated(this);
 			}
 		}
 		bool SetBitValue(bool value) {
@@ -582,7 +583,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (ListUpdated_ignore)
 				return;
 
-			Owner.Updated(this);
+			Owner!.Updated(this);
 		}
 		bool ListUpdated_ignore = false;
 
@@ -597,7 +598,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		public override ulong GetValue() => (ulong)(IntegerHexBitFieldEnum)ListVM.SelectedItem;
+		public override ulong GetValue() => (ulong)(IntegerHexBitFieldEnum)ListVM.SelectedItem!;
 	}
 
 	sealed class DataDirectoryVM : ViewModelBase {
@@ -618,7 +619,12 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		public static DataDirectoryVM CreateEmpty() => new DataDirectoryVM();
 
-		DataDirectoryVM() => Name = string.Empty;
+		DataDirectoryVM() {
+			Name = string.Empty;
+			// It's hidden
+			RVAVM = null!;
+			SizeVM = null!;
+		}
 
 		public DataDirectoryVM(DataDirectoryData data, string name) {
 			Name = name;

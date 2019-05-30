@@ -32,6 +32,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			: base(options) {
 		}
 
-		public override string[] GetSearchStrings() => BlockStructureLineKindVM.Items.Select(a => a.Name).ToArray();
+		public override string[]? GetSearchStrings() => BlockStructureLineKindVM.Items.Select(a => a.Name).ToArray();
 	}
 }

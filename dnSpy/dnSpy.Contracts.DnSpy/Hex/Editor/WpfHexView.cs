@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets/sets the background brush
 		/// </summary>
-		public abstract Brush Background { get; set; }
+		public abstract Brush? Background { get; set; }
 
 		/// <summary>
 		/// Raised when the background property has changed

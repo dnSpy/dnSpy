@@ -34,7 +34,7 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_RSRCELEMSET)]
 	sealed class ResourceElementSetNodeProvider : IResourceNodeProvider {
-		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
 			if (er == null)
 				return null;
@@ -43,7 +43,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			return new ResourceElementSetNodeImpl(treeNodeGroup, module, er);
 		}
 
-		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) => null;
+		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) => null;
 	}
 
 	sealed class ResourceElementSetNodeImpl : ResourceElementSetNode {

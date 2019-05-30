@@ -79,7 +79,7 @@ namespace dnSpy.Hex.Formatting {
 			var linePartsCollection = CreateLinePartsCollection(seqColl, line);
 			var textSource = new HexLinePartsTextSource(linePartsCollection);
 
-			TextLineBreak previousLineBreak = null;
+			TextLineBreak? previousLineBreak = null;
 			double autoIndent = BaseIndentation;
 			int column = 0;
 			int linePartsIndex = 0;
@@ -171,6 +171,7 @@ namespace dnSpy.Hex.Formatting {
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
 				if (last.AdornmentElement == null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
+					Debug.Assert(last.TextRunProperties != null);
 					list[list.Count - 1] = new HexLinePart(list.Count - 1, last.Column, VST.Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
 					return;
 				}

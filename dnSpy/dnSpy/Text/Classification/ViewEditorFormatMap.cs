@@ -37,6 +37,7 @@ namespace dnSpy.Text.Classification {
 		readonly HashSet<string> viewProps;
 
 		protected ViewEditorFormatMap(EditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
+			categoryMap = null!;
 			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
 			this.appearanceCategoryName = appearanceCategoryName ?? throw new ArgumentNullException(nameof(appearanceCategoryName));
 			viewProps = new HashSet<string>(StringComparer.Ordinal);

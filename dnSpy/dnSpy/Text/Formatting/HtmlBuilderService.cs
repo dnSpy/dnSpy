@@ -71,8 +71,8 @@ namespace dnSpy.Text.Formatting {
 			return GenerateHtmlFragmentCore(spans, textView, delimiter, cancellationToken);
 		}
 
-		string GenerateHtmlFragmentCore(NormalizedSnapshotSpanCollection spans, ITextView textView, string delimiter, CancellationToken cancellationToken) {
-			ISynchronousClassifier classifier = null;
+		string GenerateHtmlFragmentCore(NormalizedSnapshotSpanCollection spans, ITextView? textView, string delimiter, CancellationToken cancellationToken) {
+			ISynchronousClassifier? classifier = null;
 			try {
 				int tabSize;
 				IClassificationFormatMap classificationFormatMap;
@@ -90,7 +90,7 @@ namespace dnSpy.Text.Formatting {
 
 				var builder = new HtmlBuilder(classificationFormatMap, delimiter, tabSize);
 				if (spans.Count != 0)
-					builder.Add(classifier, spans, cancellationToken);
+					builder.Add(classifier!, spans, cancellationToken);
 				return builder.Create();
 			}
 			finally {

@@ -36,7 +36,7 @@ namespace dnSpy.Hex.HexEditor {
 		[ImportingConstructor]
 		HexEditorOptionsServiceImpl(HexViewOptionsGroupService hexViewOptionsGroupService, [ImportMany] IEnumerable<Lazy<HexEditorOptionsDefinition, IHexEditorOptionsDefinitionMetadata>> hexEditorOptionsDefinitions) {
 			var group = hexViewOptionsGroupService.GetGroup(PredefinedHexViewGroupNames.HexEditor);
-			Options = hexEditorOptionsDefinitions.Select(a => HexEditorOptions.TryCreate(group, a.Metadata)).Where(a => a != null).ToArray();
+			Options = hexEditorOptionsDefinitions.Select(a => HexEditorOptions.TryCreate(group, a.Metadata)).OfType< HexEditorOptions>().ToArray();
 		}
 	}
 }

@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public DbgCodeBreakpointHitCountService2 DbgCodeBreakpointHitCountService { get; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public CodeBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, SearchMatcher searchMatcher) {
+		public CodeBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, SearchMatcher searchMatcher, CodeBreakpointFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
@@ -59,6 +59,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			BreakpointConditionsFormatter = breakpointConditionsFormatter;
 			DbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 		bool hasCompleted;
 
-		public string CurrentItemName {
+		public string? CurrentItemName {
 			get => currentItemName;
 			set {
 				uiDispatcher.VerifyAccess();
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				}
 			}
 		}
-		string currentItemName;
+		string? currentItemName;
 
 		void LoadFiles_EngineThread() {
 			bool wasCanceled;
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 							continue;
 
 						UI(() => CurrentItemName = CalculateCurrentItemName(document));
-						document.ModuleDef.LoadEverything(new CancellationTokenImpl(cancellationToken));
+						document.ModuleDef!.LoadEverything(new CancellationTokenImpl(cancellationToken));
 
 						// Make sure the cache is cleared since there could be new types
 						if (document.ModuleDef.EnableTypeDefFindCache) {
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public event EventHandler OnCompleted;
 
 		string CalculateCurrentItemName(DynamicModuleDefDocument document) {
-			var module = document.ModuleDef;
+			var module = document.ModuleDef!;
 			var sb = new StringBuilder();
 			sb.Append($"({Array.IndexOf(documents, document) + 1}/{documents.Length}): ");
 

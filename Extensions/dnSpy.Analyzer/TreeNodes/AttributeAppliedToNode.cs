@@ -34,7 +34,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		AttributeTargets usage = AttributeTargets.All;
 		bool allowMutiple;
 		bool inherited = true;
-		ConcurrentDictionary<MethodDef, int> foundMethods;
+		ConcurrentDictionary<MethodDef, int>? foundMethods;
 
 		public static bool CanShow(TypeDef type) => type.IsClass && IsCustomAttribute(type);
 
@@ -263,7 +263,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods!.TryAdd(method, 0);
 
 		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
@@ -280,7 +280,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef!.Modules.SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.NameOnly.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
@@ -325,7 +325,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDef.Name)) {
+						if (friendAssemblies.Contains(assembly.AssemblyDef!.Name)) {
 							var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
 							if (typeref != null) {
 								foreach (var m in assembly.AssemblyDef.Modules)
@@ -337,7 +337,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		ITypeDefOrRef GetScopeTypeRefInAssembly(AssemblyDef asm) {
+		ITypeDefOrRef? GetScopeTypeRefInAssembly(AssemblyDef asm) {
 			foreach (var mod in asm.Modules) {
 				foreach (var typeref in mod.GetTypeRefs()) {
 					if (new SigComparer().Equals(analyzedType, typeref))

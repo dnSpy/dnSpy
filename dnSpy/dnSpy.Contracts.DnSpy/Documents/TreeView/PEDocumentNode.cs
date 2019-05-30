@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// true if it's an .exe file, false if it's a .dll file
 		/// </summary>
-		public bool IsExe => (Document.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		public bool IsExe => (Document.PEImage!.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		/// <summary>
 		/// Constructor

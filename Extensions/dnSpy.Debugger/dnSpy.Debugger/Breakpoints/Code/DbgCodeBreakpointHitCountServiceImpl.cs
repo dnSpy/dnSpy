@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using dnSpy.Contracts.Debugger;
@@ -42,7 +43,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		readonly DbgDispatcherProvider dbgDispatcherProvider;
 		readonly Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService;
 		Dictionary<DbgCodeBreakpoint, int> bpToHitCount;
-		DbgManager dbgManager;
+		DbgManager? dbgManager;
 
 		[ImportingConstructor]
 		DbgCodeBreakpointHitCountServiceImpl(DbgDispatcherProvider dbgDispatcherProvider, Lazy<DbgCodeBreakpointsService> dbgCodeBreakpointsService) {
@@ -112,6 +113,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		public override int Hit_DbgThread(DbgCodeBreakpoint breakpoint) {
 			dbgDispatcherProvider.VerifyAccess();
+			Debug.Assert(dbgManager != null);
 			if (breakpoint == null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			int hitCount;
@@ -140,7 +142,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 		const double HITCOUNT_CHANGED_DELAY_MS = 250;
 		readonly HashSet<DbgCodeBreakpoint> pendingHitCountChanged = new HashSet<DbgCodeBreakpoint>();
-		Timer pendingHitCountChangedTimer;
+		Timer? pendingHitCountChangedTimer;
 
 		void StopPendingHitCountChangedTimer_NoLock() {
 			pendingHitCountChangedTimer?.Stop();
@@ -181,7 +183,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		void Reset_DbgThread(DbgCodeBreakpoint[] breakpoints) {
 			dbgDispatcherProvider.VerifyAccess();
-			List<DbgCodeBreakpointAndHitCount> updated = null;
+			List<DbgCodeBreakpointAndHitCount>? updated = null;
 			bool raisePendingEvent;
 			lock (lockObj) {
 				raisePendingEvent = pendingHitCountChanged.Count != 0;

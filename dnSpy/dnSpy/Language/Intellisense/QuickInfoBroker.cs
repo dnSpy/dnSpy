@@ -42,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 			this.quickInfoSourceProviders = Orderer.Order(quickInfoSourceProviders).ToArray();
 		}
 
-		public IQuickInfoSession TriggerQuickInfo(ITextView textView) {
+		public IQuickInfoSession? TriggerQuickInfo(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			var pos = textView.Caret.Position.BufferPosition;
@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 			return TriggerQuickInfo(textView, triggerPoint, trackMouse: false);
 		}
 
-		public IQuickInfoSession TriggerQuickInfo(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse) {
+		public IQuickInfoSession? TriggerQuickInfo(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)

@@ -22,9 +22,9 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
 	sealed class TextImageVersion : ITextImageVersion {
-		public ITextImageVersion Next { get; private set; }
+		public ITextImageVersion? Next { get; private set; }
 		public int Length { get; }
-		public INormalizedTextChangeCollection Changes { get; private set; }
+		public INormalizedTextChangeCollection? Changes { get; private set; }
 		public int VersionNumber { get; }
 		public int ReiteratedVersionNumber { get; }
 		public object Identifier { get; }

@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IReplEditor Create(ReplEditorOptions options = null);
+		IReplEditor Create(ReplEditorOptions? options = null);
 	}
 }

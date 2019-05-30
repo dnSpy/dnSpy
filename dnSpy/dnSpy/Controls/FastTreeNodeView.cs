@@ -34,9 +34,11 @@ namespace dnSpy.Controls {
 		static FastTreeNodeView() => DefaultStyleKeyProperty.OverrideMetadata(typeof(FastTreeNodeView),
 				new FrameworkPropertyMetadata(typeof(FastTreeNodeView)));
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		ToggleButton expander;
 		DsImage icon;
 		ContentPresenter content;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 		static readonly object toolTipDummy = new object();
 
@@ -83,7 +85,7 @@ namespace dnSpy.Controls {
 
 		protected override int VisualChildrenCount => 3;
 
-		protected override Visual GetVisualChild(int index) {
+		protected override Visual? GetVisualChild(int index) {
 			switch (index) {
 				case 0:
 					return expander;
@@ -160,7 +162,7 @@ namespace dnSpy.Controls {
 
 		protected override void UpdateTemplate() => UpdateChildren(Node);
 
-		void UpdateChildren(SharpTreeNode node) {
+		void UpdateChildren(SharpTreeNode? node) {
 			InitializeChildrens();
 
 			if (node == null || ParentItem == null)

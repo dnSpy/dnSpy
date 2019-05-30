@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		readonly Lazy<DebuggerSettings> debuggerSettings;
 		readonly Lazy<ProgramFormatterProvider> programFormatterProvider;
 		readonly IMessageBoxService messageBoxService;
-		string lastFilterText;
+		string? lastFilterText;
 
 		[ImportingConstructor]
 		ShowAttachToProcessDialogImpl(IAppWindow appWindow, Lazy<UIDispatcher> uiDispatcher, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, Lazy<AttachProgramOptionsAggregatorFactory> attachProgramOptionsAggregatorFactory, Lazy<DbgManager> dbgManager, Lazy<DebuggerSettings> debuggerSettings, Lazy<ProgramFormatterProvider> programFormatterProvider, IMessageBoxService messageBoxService) {
@@ -55,12 +55,12 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			this.messageBoxService = messageBoxService;
 		}
 
-		public override AttachToProgramOptions[] Show(ShowAttachToProcessDialogOptions options) {
-			AttachToProcessVM vm = null;
+		public override AttachToProgramOptions[] Show(ShowAttachToProcessDialogOptions? options) {
+			AttachToProcessVM? vm = null;
 			try {
 				var dlg = new AttachToProcessDlg();
-				vm = new AttachToProcessVM(options, uiDispatcher.Value, dbgManager.Value, debuggerSettings.Value, programFormatterProvider.Value, classificationFormatMapService, textElementProvider, attachProgramOptionsAggregatorFactory.Value, () => SearchHelp(vm, dlg));
-				vm.FilterText = lastFilterText;
+				vm = new AttachToProcessVM(options, uiDispatcher.Value, dbgManager.Value, debuggerSettings.Value, programFormatterProvider.Value, classificationFormatMapService, textElementProvider, attachProgramOptionsAggregatorFactory.Value, () => SearchHelp(vm!, dlg));
+				vm.FilterText = lastFilterText ?? string.Empty;
 				dlg.DataContext = vm;
 				dlg.Owner = appWindow.MainWindow;
 				var res = dlg.ShowDialog();
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 
 		void SearchHelp(AttachToProcessVM vm, DependencyObject control) => messageBoxService.Show(vm.GetSearchHelpText(), ownerWindow: Window.GetWindow(control));
 
-		public override void Attach(ShowAttachToProcessDialogOptions options) {
+		public override void Attach(ShowAttachToProcessDialogOptions? options) {
 			var attachOptions = Show(options);
 			foreach (var o in attachOptions)
 				dbgManager.Value.Start(o);

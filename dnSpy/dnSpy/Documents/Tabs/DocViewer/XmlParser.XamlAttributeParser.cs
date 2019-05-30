@@ -26,7 +26,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		sealed class XamlAttributeParser {
 			readonly XmlParser owner;
-			string text;
+			string? text;
 			int textPosition;
 			int textEnd;
 			const int MAX_RECURSION = 50;
@@ -165,7 +165,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 						case TokenKind.Name:
 							Undo(token);
-							var name = ReadNameToken().Value;
+							var name = ReadNameToken()!.Value;// Undo() was called so force '!'
 
 							SkipNamesAndPeriods();
 							if (PeekToken().Kind == TokenKind.Equals) {
@@ -275,6 +275,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Token? cachedToken;
 
 			Token ReadTokenCore() {
+				Debug.Assert(text != null);
 				Debug.Assert(cachedToken == null);
 
 				SkipWhitespace();
@@ -324,12 +325,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			int NextChar() {
+				Debug.Assert(text != null);
 				if (textPosition >= textEnd)
 					return -1;
 				return text[textPosition++];
 			}
 
 			int PeekChar() {
+				Debug.Assert(text != null);
 				if (textPosition >= textEnd)
 					return -1;
 				return text[textPosition];

@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return false;
 		}
 
-		static IMemberRef Resolve(IMemberRef memberRef) {
+		static IMemberRef? Resolve(IMemberRef memberRef) {
 			if (memberRef is ITypeDefOrRef)
 				return ((ITypeDefOrRef)memberRef).ResolveTypeDef();
 			if (memberRef is IMethod && ((IMethod)memberRef).IsMethod)

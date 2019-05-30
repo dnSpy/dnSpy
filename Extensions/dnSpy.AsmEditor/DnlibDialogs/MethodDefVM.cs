@@ -23,9 +23,9 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefVM : ViewModelBase {
-		readonly MethodDef origMethod;
+		readonly MethodDef? origMethod;
 
-		public MethodDef Method {
+		public MethodDef? Method {
 			get => method;
 			set {
 				if (method != value) {
@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		MethodDef method;
+		MethodDef? method;
 
 		public string FullName {
 			get {
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public MethodDefVM(MethodDef method) {
+		public MethodDefVM(MethodDef? method) {
 			origMethod = method;
 
 			Reinitialize();
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void Reinitialize() => Method = origMethod;
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Method)) {
 				if (Method == null)
 					return dnSpy_AsmEditor_Resources.MethodCantBeNull;

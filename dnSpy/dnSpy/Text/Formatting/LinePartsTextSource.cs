@@ -94,10 +94,11 @@ namespace dnSpy.Text.Formatting {
 			public override LineBreakCondition BreakAfter { get; }
 			public override bool HasFixedSize { get; }
 			public override int Length { get; }
-			public override TextRunProperties Properties { get; }
+			public override TextRunProperties? Properties { get; }
 			readonly IAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(in LinePart linePart) {
+				Debug.Assert(linePart.AdornmentElement != null);
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;

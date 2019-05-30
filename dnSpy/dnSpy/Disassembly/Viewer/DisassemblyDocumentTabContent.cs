@@ -35,12 +35,12 @@ namespace dnSpy.Disassembly.Viewer {
 		readonly IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider;
 		readonly DisassemblyContentProvider contentProvider;
 		readonly IContentType asmContentType;
-		DocumentViewerContent cachedDocumentViewerContent;
-		IContentType cachedContentType;
+		DocumentViewerContent? cachedDocumentViewerContent;
+		IContentType? cachedContentType;
 		bool isVisible;
 		bool disposed;
 
-		public DisassemblyDocumentTabContent(IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IContentType contentType, DisassemblyContentProvider contentProvider, string title) {
+		public DisassemblyDocumentTabContent(IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IContentType contentType, DisassemblyContentProvider contentProvider, string? title) {
 			this.documentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			this.contentProvider = contentProvider;
 			asmContentType = contentType;

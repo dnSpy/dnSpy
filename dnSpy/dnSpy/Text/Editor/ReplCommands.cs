@@ -28,7 +28,7 @@ namespace dnSpy.Text.Editor {
 
 		public bool HasCommands => commands.Count > 0;
 
-		public string SelectedCommand {
+		public string? SelectedCommand {
 			get {
 				if (!HasCommands)
 					return null;
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public bool SelectPrevious(string text = null) {
+		public bool SelectPrevious(string? text = null) {
 			foreach (var t in PreviousCommands) {
 				if (string.IsNullOrEmpty(text) || t.command.Contains(text)) {
 					selectedIndex = t.index;
@@ -91,7 +91,7 @@ namespace dnSpy.Text.Editor {
 
 		public bool CanSelectNext => HasCommands && selectedIndex != null;
 
-		public bool SelectNext(string text = null) {
+		public bool SelectNext(string? text = null) {
 			foreach (var t in NextCommands) {
 				if (string.IsNullOrEmpty(text) || t.command.Contains(text)) {
 					selectedIndex = t.index;

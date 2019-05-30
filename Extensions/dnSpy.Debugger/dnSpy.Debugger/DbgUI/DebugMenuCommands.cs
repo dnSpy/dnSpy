@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IMenuItemContext context) => debugger.Value.DebugProgram(pauseAtEntryPoint: false);
 			public override bool IsVisible(IMenuItemContext context) => debugger.Value.CanDebugProgram;
-			public override string GetInputGestureText(IMenuItemContext context) =>
+			public override string? GetInputGestureText(IMenuItemContext context) =>
 				debugger.Value.IsDebugging ? null : dnSpy_Debugger_Resources.ShortCutKeyF5;
 		}
 

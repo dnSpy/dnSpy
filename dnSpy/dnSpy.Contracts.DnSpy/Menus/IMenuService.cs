@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="initCtxMenu">A <see cref="IContextMenuInitializer"/> instance or null</param>
 		/// <param name="ctxMenuGuid">Guid of context menu, default is <see cref="MenuConstants.CTX_MENU_GUID"/></param>
 		/// <returns></returns>
-		IContextMenuProvider InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsProvider provider = null, IContextMenuInitializer initCtxMenu = null, Guid? ctxMenuGuid = null);
+		IContextMenuProvider InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsProvider? provider = null, IContextMenuInitializer? initCtxMenu = null, Guid? ctxMenuGuid = null);
 
 		/// <summary>
 		/// Initializes a context menu. Should be called when <paramref name="elem"/> has been created.
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="initCtxMenu">A <see cref="IContextMenuInitializer"/> instance or null</param>
 		/// <param name="ctxMenuGuid">Guid of context menu, default is <see cref="MenuConstants.CTX_MENU_GUID"/></param>
 		/// <returns></returns>
-		IContextMenuProvider InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsProvider provider = null, IContextMenuInitializer initCtxMenu = null, string ctxMenuGuid = null);
+		IContextMenuProvider InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsProvider? provider = null, IContextMenuInitializer? initCtxMenu = null, string? ctxMenuGuid = null);
 
 		/// <summary>
 		/// Creates a <see cref="Menu"/>
@@ -54,6 +54,6 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="menuGuid">Guid of menu, eg. <see cref="MenuConstants.APP_MENU_GUID"/></param>
 		/// <param name="commandTarget">Command target for menu items, eg. the owner window, or null</param>
 		/// <returns></returns>
-		Menu CreateMenu(Guid menuGuid, IInputElement commandTarget);
+		Menu CreateMenu(Guid menuGuid, IInputElement? commandTarget);
 	}
 }

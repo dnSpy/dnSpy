@@ -41,12 +41,12 @@ namespace dnSpy.Decompiler {
 		public abstract Guid UniqueGuid { get; }
 		public abstract DecompilerSettingsBase Settings { get; }
 		public abstract string FileExtension { get; }
-		public virtual string ProjectFileExtension => null;
+		public virtual string? ProjectFileExtension => null;
 		public virtual MetadataTextColorProvider MetadataTextColorProvider => CSharpMetadataTextColorProvider.Instance;
 
 		public void WriteName(ITextColorWriter output, TypeDef type) =>
 			FormatTypeName(TextColorWriterToDecompilerOutput.Create(output), type);
-		public void WriteType(ITextColorWriter output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) =>
+		public void WriteType(ITextColorWriter output, ITypeDefOrRef type, bool includeNamespace, ParamDef? pd = null) =>
 			TypeToString(TextColorWriterToDecompilerOutput.Create(output), type, includeNamespace, pd);
 		public void WriteName(ITextColorWriter output, PropertyDef property, bool? isIndexer) =>
 			FormatPropertyName(TextColorWriterToDecompilerOutput.Create(output), property, isIndexer);
@@ -74,10 +74,7 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		static IPEImage TryGetPEImage(ModuleDef mod) {
-			var m = mod as ModuleDefMD;
-			return m == null ? null : m.Metadata.PEImage;
-		}
+		static IPEImage? TryGetPEImage(ModuleDef mod) => (mod as ModuleDefMD)?.Metadata.PEImage;
 
 		protected void WriteAssembly(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			DecompileInternal(asm, output, ctx);
@@ -121,7 +118,7 @@ namespace dnSpy.Decompiler {
 			if (!mod.IsILOnly) {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
 			}
-			string runtimeName = GetRuntimeDisplayName(mod);
+			string? runtimeName = GetRuntimeDisplayName(mod);
 			if (runtimeName != null) {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Runtime + " " + runtimeName);
 			}
@@ -164,7 +161,7 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		object GetEntryPoint(ModuleDef module) {
+		object? GetEntryPoint(ModuleDef module) {
 			int maxIters = 1;
 			for (int i = 0; module != null && i < maxIters; i++) {
 				var rva = module.NativeEntryPoint;
@@ -206,13 +203,13 @@ namespace dnSpy.Decompiler {
 
 		public virtual void WriteCommentEnd(IDecompilerOutput output, bool addSpace) { }
 
-		string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
+		string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute? typeAttributes = null) {
 			var output = new StringBuilderDecompilerOutput();
 			TypeToString(output, type, includeNamespace, typeAttributes);
 			return output.ToString();
 		}
 
-		protected virtual void TypeToString(IDecompilerOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
+		protected virtual void TypeToString(IDecompilerOutput output, ITypeDefOrRef? type, bool includeNamespace, IHasCustomAttribute? typeAttributes = null) {
 			if (type == null)
 				return;
 			if (includeNamespace)
@@ -222,11 +219,11 @@ namespace dnSpy.Decompiler {
 		}
 
 		protected const FormatterOptions DefaultFormatterOptions = FormatterOptions.Default | FormatterOptions.ShowParameterLiteralValues;
-		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
+		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute? typeAttributes) =>
 			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteToolTip(member);
 		public virtual void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
 			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteToolTip(variable);
-		public virtual void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
+		public virtual void WriteNamespaceToolTip(ITextColorWriter output, string? @namespace) =>
 			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
 		public virtual void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
 			new CSharpFormatter(output, flags, null).Write(member);
@@ -245,7 +242,7 @@ namespace dnSpy.Decompiler {
 
 		public virtual bool ShowMember(IMemberRef member) => true;
 		protected static string GetPlatformDisplayName(ModuleDef module) => TargetFrameworkUtils.GetArchString(module);
-		protected static string GetRuntimeDisplayName(ModuleDef module) => TargetFrameworkInfo.Create(module).ToString();
+		protected static string? GetRuntimeDisplayName(ModuleDef module) => TargetFrameworkInfo.Create(module).ToString();
 		public virtual bool CanDecompile(DecompilationType decompilationType) => false;
 
 		public virtual void Decompile(DecompilationType decompilationType, object data) => throw new NotImplementedException();

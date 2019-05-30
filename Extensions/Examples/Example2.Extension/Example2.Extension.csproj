@@ -1,9 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\..\DnSpyCommon.props" />
 
   <PropertyGroup>
     <AssemblyName>Example2.Extension.x</AssemblyName>
+    <NullableContextOptions>enable</NullableContextOptions>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 

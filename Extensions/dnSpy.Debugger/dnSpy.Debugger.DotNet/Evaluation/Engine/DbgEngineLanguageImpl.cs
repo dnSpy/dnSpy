@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		readonly struct DbgLanguageDebugInfoKey {
 			readonly uint token;
-			readonly DbgModule module;
+			readonly DbgModule? module;
 			readonly ModuleId moduleId;
 			readonly int refreshedVersion;
 
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public readonly List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)> DebugInfos = new List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)>(MAX_CACHED_DEBUG_INFOS);
 		}
 
-		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) {
+		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation? location, CancellationToken cancellationToken) {
 			Debug.Assert(context.Runtime.GetDotNetRuntime() != null);
 
 			IDebuggerDisplayAttributeEvaluatorUtils.Initialize(context, debuggerDisplayAttributeEvaluator);
@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		//TODO: If decompiler settings change, we need to invalidate the cached data in DbgEvaluationContext, see decompiler.Settings.VersionChanged
-		DbgLanguageDebugInfo GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo? GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			DbgLanguageDebugInfoKey key;
 			if (location.DbgModule is DbgModule dbgModule)
 				key = new DbgLanguageDebugInfoKey(dbgModule, location.Token);
@@ -167,7 +167,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return debugInfo;
 		}
 
-		DbgLanguageDebugInfo CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo? CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			var result = dbgMethodDebugInfoProvider.GetMethodDebugInfo(context.Runtime, decompiler, location, cancellationToken);
 			if (result.DebugInfoOrNull == null)
 				return null;

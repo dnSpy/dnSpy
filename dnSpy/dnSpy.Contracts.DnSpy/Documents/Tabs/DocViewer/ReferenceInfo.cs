@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the reference or null
 		/// </summary>
-		public object Reference { get; }
+		public object? Reference { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="reference">Reference or null</param>
 		/// <param name="flags">Flags</param>
-		public ReferenceInfo(object reference, DecompilerReferenceFlags flags) {
+		public ReferenceInfo(object? reference, DecompilerReferenceFlags flags) {
 			Reference = reference;
 			Flags = flags;
 		}
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ReferenceInfo && Equals((ReferenceInfo)obj);
+		public override bool Equals(object? obj) => obj is ReferenceInfo && Equals((ReferenceInfo)obj);
 
 		/// <summary>
 		/// GetHashCode()

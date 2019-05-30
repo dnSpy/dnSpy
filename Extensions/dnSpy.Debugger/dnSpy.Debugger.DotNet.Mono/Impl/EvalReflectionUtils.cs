@@ -22,7 +22,7 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	static class EvalReflectionUtils {
-		public static string TryGetExceptionMessage(ObjectMirror exObj) {
+		public static string? TryGetExceptionMessage(ObjectMirror exObj) {
 			var field = GetField(exObj.Type, "_message", "message");
 			if (field == null)
 				return null;
@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
-		static FieldInfoMirror GetField(TypeMirror type, string name1, string name2) {
+		static FieldInfoMirror? GetField(TypeMirror type, string name1, string name2) {
 			while (type != null) {
 				foreach (var field in type.GetFields()) {
 					if (field.Name == name1 || field.Name == name2)

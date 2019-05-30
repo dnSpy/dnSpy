@@ -62,6 +62,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			Initialize(asyncState, snapshot, cancellationToken).Wait(cancellationToken);
 			if (!asyncState.IsValid)
 				yield break;
+			Debug.Assert(asyncState.SyntaxRoot != null && asyncState.SemanticModel != null && asyncState.Workspace != null);
 
 			var classifier = new RoslynClassifier(asyncState.SyntaxRoot, asyncState.SemanticModel, asyncState.Workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
 			foreach (var span in spans) {
@@ -79,6 +80,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 				await Initialize(state.UserAsyncState, snapshot, state.CancellationToken).ConfigureAwait(false);
 			if (!state.UserAsyncState.IsValid)
 				return;
+			Debug.Assert(state.UserAsyncState.SyntaxRoot != null && state.UserAsyncState.SemanticModel != null && state.UserAsyncState.Workspace != null);
 
 			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, roslynClassificationTypes, defaultClassificationType, state.CancellationToken);
 			state.UserAsyncState.TagsList.Clear();

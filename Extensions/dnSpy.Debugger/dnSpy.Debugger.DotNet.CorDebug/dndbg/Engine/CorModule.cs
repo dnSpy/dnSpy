@@ -27,22 +27,22 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {
-		public CorProcess Process {
+	sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule?> {
+		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
 				return hr < 0 || process == null ? null : new CorProcess(process);
 			}
 		}
 
-		public CorAssembly Assembly {
+		public CorAssembly? Assembly {
 			get {
 				int hr = obj.GetAssembly(out var assembly);
 				return hr < 0 || assembly == null ? null : new CorAssembly(assembly);
 			}
 		}
 
-		public bool IsManifestModule => Assembly?.ManifestModule == this;
+		public bool IsManifestModule => (object?)Assembly?.ManifestModule == this;
 
 		public bool HasAssemblyRow {
 			get {
@@ -62,10 +62,10 @@ namespace dndbg.Engine {
 			get {
 				if (dnlibName == null)
 					Interlocked.CompareExchange(ref dnlibName, CalculateDnlibName(this), null);
-				return dnlibName;
+				return dnlibName!;
 			}
 		}
-		string dnlibName;
+		string? dnlibName;
 
 		internal void ClearCachedDnlibName() => dnlibName = null;
 
@@ -150,7 +150,7 @@ namespace dndbg.Engine {
 			return filename;
 		}
 
-		static string GetName(ICorDebugModule module) {
+		static string? GetName(ICorDebugModule module) {
 			int hr = module.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
@@ -161,7 +161,7 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		public CorFunction GetFunctionFromToken(uint token) {
+		public CorFunction? GetFunctionFromToken(uint token) {
 			int hr = obj.GetFunctionFromToken(token, out var func);
 			return hr < 0 || func == null ? null : new CorFunction(func, this);
 		}
@@ -181,28 +181,19 @@ namespace dndbg.Engine {
 			int hr = m2.SetJMCStatus(isJustMyCode ? 1 : 0, 0, IntPtr.Zero);
 		}
 
-		public CorClass GetClassFromToken(uint token) {
+		public CorClass? GetClassFromToken(uint token) {
 			int hr = obj.GetClassFromToken(token, out var cls);
 			return hr < 0 || cls == null ? null : new CorClass(cls);
 		}
 
-		public T GetMetaDataInterface<T>() where T : class {
+		public T? GetMetaDataInterface<T>() where T : class {
 			var riid = typeof(T).GUID;
 			int hr = obj.GetMetaDataInterface(ref riid, out object o);
 			return o as T;
 		}
 
-		public static bool operator ==(CorModule a, CorModule b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorModule a, CorModule b) => !(a == b);
-		public bool Equals(CorModule other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorModule);
+		public bool Equals(CorModule? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorModule);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Module] DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";
 	}

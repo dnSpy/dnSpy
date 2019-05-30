@@ -11,7 +11,7 @@ namespace dnSpy.Contracts.Decompiler {
 		IList<TypeSig> methodGenArgs;
 		RecursionCounter recursionCounter;
 
-		GenericArgumentResolver(IList<TypeSig> typeGenArgs, IList<TypeSig> methodGenArgs) {
+		GenericArgumentResolver(IList<TypeSig>? typeGenArgs, IList<TypeSig>? methodGenArgs) {
 			this.typeGenArgs = typeGenArgs ?? Array.Empty<TypeSig>();
 			this.methodGenArgs = methodGenArgs ?? Array.Empty<TypeSig>();
 			recursionCounter = new RecursionCounter();
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="methodGenArgs">The method generic arguments.</param>
 		/// <returns>Resolved type signature.</returns>
 		/// <exception cref="System.ArgumentException">No generic arguments to resolve.</exception>
-		public static TypeSig Resolve(TypeSig typeSig, IList<TypeSig> typeGenArgs, IList<TypeSig> methodGenArgs) {
+		public static TypeSig? Resolve(TypeSig? typeSig, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methodGenArgs) {
 			if (typeSig == null)
 				return typeSig;
 			if ((typeGenArgs == null || typeGenArgs.Count == 0) && (methodGenArgs == null || methodGenArgs.Count == 0))
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="methodGenArgs">The method generic arguments.</param>
 		/// <returns>Resolved method signature.</returns>
 		/// <exception cref="System.ArgumentException">No generic arguments to resolve.</exception>
-		public static MethodBaseSig Resolve(MethodBaseSig methodSig, IList<TypeSig> typeGenArgs, IList<TypeSig> methodGenArgs) {
+		public static MethodBaseSig? Resolve(MethodBaseSig? methodSig, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methodGenArgs) {
 			if (methodSig == null)
 				return null;
 			if ((typeGenArgs == null || typeGenArgs.Count == 0) && (methodGenArgs == null || methodGenArgs.Count == 0))
@@ -75,13 +75,13 @@ namespace dnSpy.Contracts.Decompiler {
 			return false;
 		}
 
-		static TypeSig Read(IList<TypeSig> sigs, uint index) {
+		static TypeSig? Read(IList<TypeSig> sigs, uint index) {
 			if (index < (uint)sigs.Count)
 				return sigs[(int)index];
 			return null;
 		}
 
-		MethodSig ResolveGenericArgs(MethodBaseSig sig) {
+		MethodSig? ResolveGenericArgs(MethodBaseSig sig) {
 			if (sig == null)
 				return null;
 			if (!recursionCounter.Increment())
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Decompiler {
 			return sig;
 		}
 
-		TypeSig ResolveGenericArgs(TypeSig typeSig) {
+		TypeSig? ResolveGenericArgs(TypeSig typeSig) {
 			if (typeSig == null)
 				return null;
 			if (!recursionCounter.Increment())
@@ -125,25 +125,25 @@ namespace dnSpy.Contracts.Decompiler {
 				result = new ByRefSig(ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.Var:
-				result = new GenericVar((typeSig as GenericVar).Number, (typeSig as GenericVar).OwnerType);
+				result = new GenericVar(((GenericVar)typeSig).Number, ((GenericVar)typeSig).OwnerType);
 				break;
 			case ElementType.ValueArray:
-				result = new ValueArraySig(ResolveGenericArgs(typeSig.Next), (typeSig as ValueArraySig).Size);
+				result = new ValueArraySig(ResolveGenericArgs(typeSig.Next), ((ValueArraySig)typeSig).Size);
 				break;
 			case ElementType.SZArray:
 				result = new SZArraySig(ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.MVar:
-				result = new GenericMVar((typeSig as GenericMVar).Number, (typeSig as GenericMVar).OwnerMethod);
+				result = new GenericMVar(((GenericMVar)typeSig).Number, ((GenericMVar)typeSig).OwnerMethod);
 				break;
 			case ElementType.CModReqd:
-				result = new CModReqdSig((typeSig as ModifierSig).Modifier, ResolveGenericArgs(typeSig.Next));
+				result = new CModReqdSig(((ModifierSig)typeSig).Modifier, ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.CModOpt:
-				result = new CModOptSig((typeSig as ModifierSig).Modifier, ResolveGenericArgs(typeSig.Next));
+				result = new CModOptSig(((ModifierSig)typeSig).Modifier, ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.Module:
-				result = new ModuleSig((typeSig as ModuleSig).Index, ResolveGenericArgs(typeSig.Next));
+				result = new ModuleSig(((ModuleSig)typeSig).Index, ResolveGenericArgs(typeSig.Next));
 				break;
 			case ElementType.Pinned:
 				result = new PinnedSig(ResolveGenericArgs(typeSig.Next));
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.Decompiler {
 				break;
 			case ElementType.GenericInst:
 				GenericInstSig gis = (GenericInstSig)typeSig;
-				List<TypeSig> genArgs = new List<TypeSig>(gis.GenericArguments.Count);
+				List<TypeSig?> genArgs = new List<TypeSig?>(gis.GenericArguments.Count);
 				foreach (TypeSig ga in gis.GenericArguments) {
 					genArgs.Add(ResolveGenericArgs(ga));
 				}
@@ -177,16 +177,16 @@ namespace dnSpy.Contracts.Decompiler {
 			return result;
 		}
 
-		CallingConventionSig ResolveGenericArgs(CallingConventionSig sig) {
+		CallingConventionSig? ResolveGenericArgs(CallingConventionSig sig) {
 			if (!recursionCounter.Increment())
 				return null;
 
-			CallingConventionSig result;
-			MethodSig msig;
-			FieldSig fsig;
-			LocalSig lsig;
-			PropertySig psig;
-			GenericInstMethodSig gsig;
+			CallingConventionSig? result;
+			MethodSig? msig;
+			FieldSig? fsig;
+			LocalSig? lsig;
+			PropertySig? psig;
+			GenericInstMethodSig? gsig;
 			if ((msig = sig as MethodSig) != null)
 				result = ResolveGenericArgs(msig);
 			else if ((fsig = sig as FieldSig) != null)
@@ -224,7 +224,7 @@ namespace dnSpy.Contracts.Decompiler {
 			return outSig;
 		}
 
-		void UpdateSigList(IList<TypeSig> inList, IList<TypeSig> outList) {
+		void UpdateSigList(IList<TypeSig?> inList, IList<TypeSig> outList) {
 			foreach (var arg in outList)
 				inList.Add(ResolveGenericArgs(arg));
 		}

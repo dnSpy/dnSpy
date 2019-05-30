@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		bool CachedHasModifiedDocuments { get; }
 		IEnumerable<object> GetModifiedDocuments();
 		IEnumerable<IUndoObject> GetAllObjects();
-		IUndoObject GetUndoObject(object obj);
+		IUndoObject? GetUndoObject(object obj);
 		IEnumerable<object> GetUniqueDocuments(IEnumerable<object> docs);
 		void ClearRedo();
 	}
@@ -81,13 +81,13 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		readonly List<UndoState> undoCommands = new List<UndoState>();
 		readonly List<UndoState> redoCommands = new List<UndoState>();
 		readonly Lazy<IUndoableDocumentsProvider>[] undoableDocumentsProviders;
-		UndoState currentCommands;
+		UndoState? currentCommands;
 		int commandCounter;
 		int currentCommandCounter;
 
 		public event EventHandler<UndoCommandServiceEventArgs> OnEvent;
 
-		void NotifyEvent(UndoCommandServiceEventType type, IUndoObject obj = null) {
+		void NotifyEvent(UndoCommandServiceEventType type, IUndoObject? obj = null) {
 			UndoRedoChanged();
 			OnEvent?.Invoke(this, new UndoCommandServiceEventArgs(type, obj));
 		}
@@ -329,7 +329,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return hash;
 		}
 
-		object GetDocument(IUndoObject uo) {
+		object? GetDocument(IUndoObject uo) {
 			foreach (var p in undoableDocumentsProviders) {
 				var doc = p.Value.GetDocument(uo);
 				if (doc != null)
@@ -411,7 +411,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			}
 		}
 
-		public IUndoObject GetUndoObject(object obj) {
+		public IUndoObject? GetUndoObject(object obj) {
 			foreach (var up in undoableDocumentsProviders) {
 				var uo = up.Value.GetUndoObject(obj);
 				if (uo != null)

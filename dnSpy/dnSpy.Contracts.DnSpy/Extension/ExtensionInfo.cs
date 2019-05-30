@@ -27,11 +27,11 @@ namespace dnSpy.Contracts.Extension {
 		/// <summary>
 		/// Short description or null
 		/// </summary>
-		public string ShortDescription { get; set; }
+		public string? ShortDescription { get; set; }
 
 		/// <summary>
 		/// Copyright message or null to get it from the assembly's <see cref="AssemblyCopyrightAttribute"/>
 		/// </summary>
-		public string Copyright { get; set; }
+		public string? Copyright { get; set; }
 	}
 }

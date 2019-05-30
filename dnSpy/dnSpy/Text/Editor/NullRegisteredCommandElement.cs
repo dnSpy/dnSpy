@@ -31,8 +31,8 @@ namespace dnSpy.Text.Editor {
 		public static readonly NullCommandTargetCollection Instance = new NullCommandTargetCollection();
 		public void AddFilter(ICommandTargetFilter filter, double order) { }
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) => CommandTargetStatus.NotHandled;
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) => CommandTargetStatus.NotHandled;
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) => CommandTargetStatus.NotHandled;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) => CommandTargetStatus.NotHandled;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) => CommandTargetStatus.NotHandled;
 		public void RemoveFilter(ICommandTargetFilter filter) { }
 	}
 }

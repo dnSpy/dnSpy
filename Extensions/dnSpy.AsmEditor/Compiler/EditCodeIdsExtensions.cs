@@ -37,6 +37,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <param name="id">ID</param>
 		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this EditCodeIds id, object arguments) => new CommandInfo(EditCodeCommandConstants.EditCodeGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this EditCodeIds id, object? arguments) => new CommandInfo(EditCodeCommandConstants.EditCodeGroup, (int)id, arguments);
 	}
 }

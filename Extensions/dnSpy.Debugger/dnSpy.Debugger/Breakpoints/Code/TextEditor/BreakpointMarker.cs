@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService;
 		readonly DbgBreakpointGlyphTextMarkerLocationProviderService dbgBreakpointGlyphTextMarkerLocationProviderService;
 		readonly BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler;
-		BreakpointInfo[] breakpointInfos;
+		BreakpointInfo[]? breakpointInfos;
 
 		[ImportingConstructor]
 		BreakpointMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, DbgBreakpointGlyphTextMarkerLocationProviderService dbgBreakpointGlyphTextMarkerLocationProviderService, BreakpointGlyphTextMarkerHandler breakpointGlyphTextMarkerHandler) {
@@ -105,8 +105,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		sealed class BreakpointData {
 			public GlyphTextMarkerLocationInfo Location { get; }
-			public IGlyphTextMarker Marker { get; set; }
-			public BreakpointInfo Info { get; set; }
+			public IGlyphTextMarker? Marker { get; set; }
+			public BreakpointInfo? Info { get; set; }
 			public BreakpointData(GlyphTextMarkerLocationInfo location) => Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			else {
 				var list = new List<(DbgCodeBreakpoint breakpoint, BreakpointData data)>(e.Objects.Count);
 				foreach (var bp in e.Objects) {
-					if (!bp.TryGetData(out BreakpointData data))
+					if (!bp.TryGetData(out BreakpointData? data))
 						continue;
 					list.Add((bp, data));
 				}
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		void OnBreakpointsRemoved_UI(List<(DbgCodeBreakpoint breakpoint, BreakpointData data)> list) {
 			uiDispatcher.VerifyAccess();
-			glyphTextMarkerService.Value.Remove(list.Select(a => a.data.Marker).Where(a => a != null));
+			glyphTextMarkerService.Value.Remove(list.Select(a => a.data.Marker).OfType<IGlyphTextMarker>());
 		}
 
 		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) =>
@@ -157,12 +157,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				var bp = breakpoints[i];
 				if (bp.IsHidden)
 					continue;
-				if (!bp.TryGetData(out BreakpointData data))
+				if (!bp.TryGetData(out BreakpointData? data))
 					continue;
 				bps.Add(bp);
 				if (data.Marker == null)
 					continue;
-				if (data.Info == breakpointInfos[(int)BreakpointImageUtilities.GetBreakpointKind(bp)])
+				if (data.Info == breakpointInfos![(int)BreakpointImageUtilities.GetBreakpointKind(bp)])
 					continue;
 				removedMarkers.Add(data.Marker);
 				data.Marker = null;
@@ -173,10 +173,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		void UpdateMarker(DbgCodeBreakpoint bp) {
-			if (!bp.TryGetData(out BreakpointData data))
+			if (!bp.TryGetData(out BreakpointData? data))
 				return;
 
-			var info = breakpointInfos[(int)BreakpointImageUtilities.GetBreakpointKind(bp)];
+			var info = breakpointInfos![(int)BreakpointImageUtilities.GetBreakpointKind(bp)];
 			if (data.Info == info && data.Marker != null)
 				return;
 			data.Info = info;
@@ -188,7 +188,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		static readonly Func<ITextView, bool> textViewFilter = textView => textView.Roles.Contains(PredefinedTextViewRoles.Debuggable);
 
 		DbgTextViewBreakpointLocationResult? IBreakpointMarker.GetLocations(ITextView textView, SnapshotSpan span) {
-			List<DbgCodeLocation> locations = null;
+			List<DbgCodeLocation>? locations = null;
 			var locationSpan = default(SnapshotSpan);
 			foreach (var info in glyphTextMarkerService.Value.GetMarkers(textView, span)) {
 				if (info.Marker.Tag is DbgCodeBreakpoint bp) {

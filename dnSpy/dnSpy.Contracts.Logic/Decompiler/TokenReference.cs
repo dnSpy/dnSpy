@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Token reference
 	/// </summary>
-	public class TokenReference : IEquatable<TokenReference> {
+	public class TokenReference : IEquatable<TokenReference?> {
 		/// <summary>
 		/// Owner module
 		/// </summary>
@@ -58,14 +58,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(TokenReference other) => other != null && Token == other.Token && ModuleDef == other.ModuleDef;
+		public bool Equals(TokenReference? other) => other != null && Token == other.Token && ModuleDef == other.ModuleDef;
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as TokenReference);
+		public override bool Equals(object? obj) => Equals(obj as TokenReference);
 
 		/// <summary>
 		/// Equals()

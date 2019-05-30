@@ -60,7 +60,7 @@ namespace dnSpy.Hex.Editor {
 			return new HexMouseLocation(hexViewLine, position, point);
 		}
 
-		public static HexMouseLocation TryCreateTextOnly(WpfHexView wpfHexView, MouseEventArgs e, bool fullLineHeight) {
+		public static HexMouseLocation? TryCreateTextOnly(WpfHexView wpfHexView, MouseEventArgs e, bool fullLineHeight) {
 			var point = GetTextPoint(wpfHexView, e);
 			var line = wpfHexView.HexViewLines.GetHexViewLineContainingYCoordinate(point.Y);
 			if (line == null)

@@ -56,9 +56,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			clrDacDebugger.ClrDacTerminated -= ClrDacDebugger_ClrDacTerminated;
 			Flush();
 			dataTarget.Dispose();
-			dataTarget = null;
-			clrRuntime = null;
-			clrDacDebugger = null;
+			dataTarget = null!;
+			clrRuntime = null!;
+			clrDacDebugger = null!;
 		}
 
 		public override ClrDacThreadInfo? GetThreadInfo(int tid) {

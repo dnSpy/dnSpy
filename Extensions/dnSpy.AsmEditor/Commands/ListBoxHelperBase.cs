@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.Commands {
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
 		protected readonly ListBox listBox;
 		protected IndexObservableCollection<T> coll;
-		List<ContextMenuHandler> contextMenuHandlers = new List<ContextMenuHandler>();
+		List<ContextMenuHandler?> contextMenuHandlers = new List<ContextMenuHandler?>();
 
 		static int classCopiedDataId;
 		readonly int copiedDataId;
@@ -70,6 +70,7 @@ namespace dnSpy.AsmEditor.Commands {
 		protected virtual bool CopyItemsAsTextCanExecute(T[] items) => items.Length > 0;
 
 		protected ListBoxHelperBase(ListBox listBox) {
+			coll = null!;
 			this.listBox = listBox;
 			this.listBox.ContextMenu = new ContextMenu();
 			this.listBox.ContextMenuOpening += (s, e) => ShowContextMenu(e, listBox, contextMenuHandlers, GetSelectedItems());
@@ -264,7 +265,7 @@ namespace dnSpy.AsmEditor.Commands {
 				image.Opacity = 0.3;
 		}
 
-		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
+		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler?> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
 			ctxMenu.SetResourceReference(DsImage.BackgroundBrushProperty, "ContextMenuRectangleFill");
 
@@ -333,7 +334,7 @@ namespace dnSpy.AsmEditor.Commands {
 			return index;
 		}
 
-		ClipboardData GetClipboardData() {
+		ClipboardData? GetClipboardData() {
 			var cpData = ClipboardDataHolder.TryGet<ClipboardData>();
 			if (cpData == null)
 				return null;

@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.ToolWindows {
 
 		readonly ILazyToolWindowVM vm;
 		readonly UIDispatcher uiDispatcher;
-		DispatcherTimer timer;
+		DispatcherTimer? timer;
 
 		public LazyToolWindowVMHelper(ILazyToolWindowVM vm, UIDispatcher uiDispatcher) {
 			this.vm = vm ?? throw new ArgumentNullException(nameof(vm));

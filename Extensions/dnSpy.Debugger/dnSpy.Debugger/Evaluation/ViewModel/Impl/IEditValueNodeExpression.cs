@@ -20,7 +20,7 @@
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	interface IEditValueNodeExpression {
 		bool SupportsEditExpression { get; }
-		void EditExpression(string id, string expression);
+		void EditExpression(string? id, string expression);
 		void AddExpressions(string[] expressions);
 	}
 }

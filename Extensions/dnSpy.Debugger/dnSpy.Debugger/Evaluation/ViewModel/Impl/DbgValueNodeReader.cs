@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	abstract class DbgValueNodeReader {
-		public abstract void SetEvaluationInfo(DbgEvaluationInfo evalInfo);
+		public abstract void SetEvaluationInfo(DbgEvaluationInfo? evalInfo);
 		public abstract void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options);
 		public abstract DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode);
 		public abstract DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex);
@@ -32,13 +32,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 	sealed class DbgValueNodeReaderImpl : DbgValueNodeReader {
 		readonly Func<DbgEvaluationInfo, string, DbgValueNodeInfo> evaluate;
-		DbgEvaluationInfo evalInfo;
+		DbgEvaluationInfo? evalInfo;
 		DbgValueNodeEvaluationOptions dbgValueNodeEvaluationOptions;
 
 		public DbgValueNodeReaderImpl(Func<DbgEvaluationInfo, string, DbgValueNodeInfo> evaluate) =>
 			this.evaluate = evaluate ?? throw new ArgumentNullException(nameof(evaluate));
 
-		public override void SetEvaluationInfo(DbgEvaluationInfo evalInfo) => this.evalInfo = evalInfo;
+		public override void SetEvaluationInfo(DbgEvaluationInfo? evalInfo) => this.evalInfo = evalInfo;
 		public override void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options) => dbgValueNodeEvaluationOptions = options;
 
 		public override DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode) {

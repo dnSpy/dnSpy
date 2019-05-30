@@ -27,10 +27,10 @@ namespace dnSpy.Culture {
 		CultureInfo,
 	}
 
-	sealed class LanguageInfo : IEquatable<LanguageInfo> {
+	sealed class LanguageInfo : IEquatable<LanguageInfo?> {
 		public LanguageType Type { get; }
 
-		public CultureInfo CultureInfo { get; }
+		public CultureInfo? CultureInfo { get; }
 
 		public string UIName => ToString();
 
@@ -52,18 +52,20 @@ namespace dnSpy.Culture {
 			CultureInfo = cultureInfo;
 		}
 
-		public bool Equals(LanguageInfo other) {
+		public bool Equals(LanguageInfo? other) {
+			if (other == null)
+				return false;
 			if (Type != other.Type)
 				return false;
-			return Type != LanguageType.CultureInfo || CultureInfo.Equals(other.CultureInfo);
+			return Type != LanguageType.CultureInfo || object.Equals(CultureInfo, other.CultureInfo);
 		}
 
-		public override bool Equals(object obj) => Equals(obj as LanguageInfo);
+		public override bool Equals(object? obj) => Equals(obj as LanguageInfo);
 
 		public override int GetHashCode() {
 			switch (Type) {
 			case LanguageType.SystemLanguage: return 0x69DCD8A8;
-			case LanguageType.CultureInfo: return CultureInfo.GetHashCode();
+			case LanguageType.CultureInfo: return CultureInfo?.GetHashCode() ?? 0;
 			default: throw new InvalidOperationException();
 			}
 		}
@@ -71,7 +73,7 @@ namespace dnSpy.Culture {
 		public override string ToString() {
 			switch (Type) {
 			case LanguageType.SystemLanguage: return dnSpy_Resources.Language_OperatingSystemLanguage;
-			case LanguageType.CultureInfo: return CultureInfo.NativeName;
+			case LanguageType.CultureInfo: return CultureInfo?.NativeName ?? "???";
 			default: throw new InvalidOperationException();
 			}
 		}

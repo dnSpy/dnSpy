@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteMethodDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteMethodCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 30)]
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteMethodDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteMethodCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 30)]
@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteMethodDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteMethodDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(CodeContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(CodeContext context) => DeleteMethodDefCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(DocumentTreeNodeData[] nodes) {
@@ -111,7 +111,7 @@ namespace dnSpy.AsmEditor.Method {
 		}
 
 		struct DeleteModelNodes {
-			ModelInfo[] infos;
+			ModelInfo[]? infos;
 
 			readonly struct ModelInfo {
 				public readonly TypeDef OwnerType;
@@ -341,7 +341,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -349,7 +349,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			var ownerNode = nodes[0];
 			if (!(ownerNode is TypeNode))
-				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
@@ -486,14 +486,14 @@ namespace dnSpy.AsmEditor.Method {
 		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
-		readonly Field.MemberRefInfo[] memberRefInfos;
+		readonly Field.MemberRefInfo[]? memberRefInfos;
 
 		MethodDefSettingsCommand(MethodNode methodNode, MethodDefOptions options) {
 			this.methodNode = methodNode;
 			newOptions = options;
 			origOptions = new MethodDefOptions(methodNode.MethodDef);
 
-			origParentNode = (DocumentTreeNodeData)methodNode.TreeNode.Parent.Data;
+			origParentNode = (DocumentTreeNodeData)methodNode.TreeNode.Parent!.Data;
 			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(methodNode.TreeNode);
 			Debug.Assert(origParentChildIndex >= 0);
 			if (origParentChildIndex < 0)
@@ -501,7 +501,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			nameChanged = origOptions.Name != newOptions.Name;
 			if (nameChanged)
-				memberRefInfos = RefFinder.FindMemberRefsToThisModule(methodNode.GetModule()).Where(a => RefFinder.Equals(a, methodNode.MethodDef)).Select(a => new Field.MemberRefInfo(a)).ToArray();
+				memberRefInfos = RefFinder.FindMemberRefsToThisModule(methodNode.GetModule()!).Where(a => RefFinder.Equals(a, methodNode.MethodDef)).Select(a => new Field.MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditMethodCommand2;

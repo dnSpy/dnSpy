@@ -30,10 +30,10 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventFiredByNode : SearchNode {
 		readonly EventDef analyzedEvent;
-		readonly FieldDef eventBackingField;
-		readonly MethodDef eventFiringMethod;
+		readonly FieldDef? eventBackingField;
+		readonly MethodDef? eventFiringMethod;
 
-		ConcurrentDictionary<MethodDef, int> foundMethods;
+		ConcurrentDictionary<MethodDef, int>? foundMethods;
 
 		public EventFiredByNode(EventDef analyzedEvent) {
 			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
@@ -66,11 +66,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 				bool readBackingField = false;
 				if (!method.HasBody)
 					continue;
-				Instruction foundInstr = null;
+				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					Code code = instr.OpCode.Code;
 					if (code == Code.Ldfld || code == Code.Ldflda) {
-						IField fr = instr.Operand as IField;
+						IField? fr = instr.Operand as IField;
 						if (fr.ResolveFieldDef() == eventBackingField) {
 							readBackingField = true;
 						}
@@ -94,10 +94,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods!.TryAdd(method, 0);
 
 		// HACK: we should probably examine add/remove methods to determine this
-		static FieldDef GetBackingField(EventDef ev) {
+		static FieldDef? GetBackingField(EventDef ev) {
 			var fieldName = ev.Name;
 			var vbStyleFieldName = fieldName + "Event";
 			var fieldType = ev.EventType;

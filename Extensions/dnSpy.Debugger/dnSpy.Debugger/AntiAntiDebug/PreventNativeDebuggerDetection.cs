@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			}
 
 			public bool Equals(Key other) => architecture == other.architecture && operatingSystem == other.operatingSystem;
-			public override bool Equals(object obj) => obj is Key other && Equals(other);
+			public override bool Equals(object? obj) => obj is Key other && Equals(other);
 			public override int GetHashCode() => ((int)architecture << 16) ^ (int)operatingSystem;
 		}
 
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 					if (!lz.Value.IsEnabled(context))
 						continue;
 					hookedFuncs.Add(id);
-					string errorMessage = null;
+					string? errorMessage = null;
 					try {
 						lz.Value.Hook(context, out errorMessage);
 					}

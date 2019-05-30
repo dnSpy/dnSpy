@@ -26,7 +26,7 @@ namespace dndbg.Engine {
 	}
 
 	abstract class DnBreakpoint {
-		public object Tag { get; set; }
+		public object? Tag { get; set; }
 
 		public bool IsEnabled {
 			get => isEnabled;

@@ -23,9 +23,9 @@ using dnlib.DotNet;
 namespace dnSpy.AsmEditor.Property {
 	sealed class PropertyDefOptions {
 		public PropertyAttributes Attributes;
-		public UTF8String Name;
-		public PropertySig PropertySig;
-		public Constant Constant;
+		public UTF8String? Name;
+		public PropertySig? PropertySig;
+		public Constant? Constant;
 		public List<MethodDef> GetMethods = new List<MethodDef>();
 		public List<MethodDef> SetMethods = new List<MethodDef>();
 		public List<MethodDef> OtherMethods = new List<MethodDef>();

@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints {
 		DbgBreakpointLocationFormatterProviderImpl(Lazy<BreakpointFormatterService> breakpointFormatterService) =>
 			this.breakpointFormatterService = breakpointFormatterService;
 
-		public override DbgBreakpointLocationFormatter Create(DbgCodeLocation location) {
+		public override DbgBreakpointLocationFormatter? Create(DbgCodeLocation location) {
 			switch (location) {
 			case DbgDotNetNativeCodeLocationImpl nativeLoc:
 				var formatter = nativeLoc.Formatter;

@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
-		DbgCodeBreakpointsService dbgCodeBreakpointsService;
+		DbgCodeBreakpointsService? dbgCodeBreakpointsService;
 
 		[ImportingConstructor]
 		DeleteBreakpointsInRemovedModules(UIDispatcher uiDispatcher, Lazy<IDocumentTabService> documentTabService, Lazy<IModuleIdProvider> moduleIdProvider) {
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				var removed = new HashSet<ModuleId>(e.Documents.Select(a => moduleIdProvider.Value.Create(a.ModuleDef)));
 				existing.Remove(new ModuleId());
 				removed.Remove(new ModuleId());
-				List<DbgCodeBreakpoint> breakpointsToRemove = null;
+				List<DbgCodeBreakpoint>? breakpointsToRemove = null;
 				foreach (var bp in dbgCodeBreakpointsService.Breakpoints) {
 					if (bp.IsHidden)
 						continue;

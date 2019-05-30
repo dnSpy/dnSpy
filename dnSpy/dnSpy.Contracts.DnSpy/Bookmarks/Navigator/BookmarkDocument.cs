@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Bookmarks.Navigator {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// Gets the hash code

@@ -35,13 +35,13 @@ namespace dnSpy.Hex.Files.PE {
 		[ImportingConstructor]
 		PeStructureProviderFactory([ImportMany] IEnumerable<Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>> peFileLayoutProviders) => this.peFileLayoutProviders = VSUTIL.Orderer.Order(peFileLayoutProviders).ToArray();
 
-		public override StructureProvider Create(HexBufferFile file) => new PeStructureProvider(file, peFileLayoutProviders);
+		public override StructureProvider? Create(HexBufferFile file) => new PeStructureProvider(file, peFileLayoutProviders);
 	}
 
 	sealed class PeStructureProvider : StructureProvider {
 		readonly HexBufferFile file;
 		readonly Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders;
-		PeHeadersImpl peHeadersImpl;
+		PeHeadersImpl? peHeadersImpl;
 		HexSpan peHeadersSpan;
 
 		public PeStructureProvider(HexBufferFile file, Lazy<PeFileLayoutProvider, VSUTIL.IOrderable>[] peFileLayoutProviders) {
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Files.PE {
 			return default;
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			if (!peHeadersSpan.Contains(position))
 				return null;
 
@@ -92,7 +92,7 @@ namespace dnSpy.Hex.Files.PE {
 			return null;
 		}
 
-		public override ComplexData GetStructure(string id) {
+		public override ComplexData? GetStructure(string id) {
 			var peHeaders = peHeadersImpl;
 			if (peHeaders == null)
 				return null;
@@ -114,7 +114,7 @@ namespace dnSpy.Hex.Files.PE {
 			return null;
 		}
 
-		public override THeader GetHeaders<THeader>() =>
+		public override THeader? GetHeaders<THeader>() where THeader : class =>
 			peHeadersImpl as THeader;
 	}
 }

@@ -83,7 +83,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override HexViewMargin GetHexViewMargin(string marginName) {
+		public override HexViewMargin? GetHexViewMargin(string marginName) {
 			if (StringComparer.OrdinalIgnoreCase.Equals(marginName, name))
 				return this;
 

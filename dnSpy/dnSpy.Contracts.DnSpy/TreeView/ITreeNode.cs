@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// Gets the parent or null if it is the root node or if it hasn't been inserted into the
 		/// treeview yet.
 		/// </summary>
-		ITreeNode Parent { get; }
+		ITreeNode? Parent { get; }
 
 		/// <summary>
 		/// Gets all children or an empty list if <see cref="LazyLoading"/> is true. See also

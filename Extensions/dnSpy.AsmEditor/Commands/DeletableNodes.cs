@@ -26,11 +26,11 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Commands {
 	struct DeletableNodes<T> where T : DocumentTreeNodeData {
 		readonly T[] nodes;
-		DocumentTreeNodeData[] parents;
+		DocumentTreeNodeData[]? parents;
 
 		public int Count => nodes.Length;
 		public T[] Nodes => nodes;
-		public DocumentTreeNodeData[] Parents => parents;
+		public DocumentTreeNodeData[]? Parents => parents;
 
 		public DeletableNodes(T node)
 			: this(new[] { node }) {
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Commands {
 			parents = new DocumentTreeNodeData[nodes.Length];
 			for (int i = 0; i < nodes.Length; i++) {
 				var node = nodes[i];
-				var parent = (DocumentTreeNodeData)node.TreeNode.Parent.Data;
+				var parent = (DocumentTreeNodeData)node.TreeNode.Parent!.Data;
 				parents[i] = parent;
 
 				parent.TreeNode.Children.Remove(node.TreeNode);

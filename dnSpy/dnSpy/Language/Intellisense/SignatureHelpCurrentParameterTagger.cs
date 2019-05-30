@@ -48,7 +48,7 @@ namespace dnSpy.Language.Intellisense {
 			signatureHelpParameterDocumentationClassificationTag = new ClassificationTag(classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation));
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			var session = buffer.TryGetSignatureHelpSession();
 			if (session == null)
 				return null;

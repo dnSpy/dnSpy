@@ -60,7 +60,7 @@ namespace Example2.Extension {
 		[ImportingConstructor]
 		TreeViewNodeColorizerProvider(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
-		public ITextClassifier Create(IContentType contentType) => new TreeViewNodeColorizer(classificationTypeRegistryService);
+		public ITextClassifier? Create(IContentType contentType) => new TreeViewNodeColorizer(classificationTypeRegistryService);
 	}
 
 	sealed class TreeViewNodeColorizer : ITextClassifier {

@@ -34,22 +34,22 @@ using dnSpy.Contracts.TreeView.Text;
 namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsPageVM : TreeNodeData, INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
-		public AppSettingsPageVM Parent { get; set; }
+		public AppSettingsPageVM? Parent { get; set; }
 		public override Guid Guid => Guid.Empty;
-		public override object ToolTip => null;
+		public override object? ToolTip => null;
 		public override ImageReference Icon => Page.Icon;
 
 		public double Order => Page.Order;
 		public List<AppSettingsPageVM> Children { get; }
 		internal AppSettingsPage Page { get; }
-		public object UIObject => VisiblePageAndUIObject.UIObject;
-		internal AppSettingsPageVM VisiblePage => VisiblePageAndUIObject.Page;
-		PageAndUIObject VisiblePageAndUIObject => pageAndUIObject ?? (pageAndUIObject = GetOrCreatePageAndUIObject());
-		PageAndUIObject pageAndUIObject;
+		public object? UIObject => VisiblePageAndUIObject?.UIObject;
+		internal AppSettingsPageVM? VisiblePage => VisiblePageAndUIObject?.Page;
+		PageAndUIObject? VisiblePageAndUIObject => pageAndUIObject ?? (pageAndUIObject = GetOrCreatePageAndUIObject());
+		PageAndUIObject? pageAndUIObject;
 
 		sealed class PageAndUIObject {
 			public AppSettingsPageVM Page { get; }
-			public object UIObject { get; }
+			public object? UIObject { get; }
 			public PageAndUIObject(AppSettingsPageVM page, object uiObject) {
 				Page = page;
 				UIObject = uiObject;
@@ -58,7 +58,7 @@ namespace dnSpy.Settings.Dialog {
 
 		public bool SavedIsExpanded { get; set; }
 
-		public override object Text {
+		public override object? Text {
 			get {
 				var writer = new TextClassifierTextColorWriter();
 				writer.Write(BoxedTextColor.Text, Page.Title);
@@ -75,7 +75,7 @@ namespace dnSpy.Settings.Dialog {
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		PageAndUIObject GetOrCreatePageAndUIObject() {
+		PageAndUIObject? GetOrCreatePageAndUIObject() {
 			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
 			if (uiObj != null)
 				return createdPageAndUIObject ?? (createdPageAndUIObject = new PageAndUIObject(this, CreateUIObject(uiObj)));
@@ -90,7 +90,7 @@ namespace dnSpy.Settings.Dialog {
 				return null;
 			return Children[0].VisiblePageAndUIObject;
 		}
-		PageAndUIObject createdPageAndUIObject;
+		PageAndUIObject? createdPageAndUIObject;
 
 		static object CreateUIObject(object uiObj) {
 			if (uiObj is ScrollViewer)
@@ -122,7 +122,7 @@ namespace dnSpy.Settings.Dialog {
 			}
 			return searchableStrings;
 		}
-		string[] searchableStrings;
+		string[]? searchableStrings;
 
 		IEnumerable<string> GetDataTemplateStrings(FrameworkElement fwElem) {
 			var obj = Page.GetStringsObject();
@@ -155,8 +155,8 @@ namespace dnSpy.Settings.Dialog {
 			}
 		}
 
-		static string TryGetString(DependencyObject obj) {
-			string s;
+		static string? TryGetString(DependencyObject obj) {
+			string? s;
 
 			s = (obj as GroupBox)?.Header as string;
 			if (s != null)

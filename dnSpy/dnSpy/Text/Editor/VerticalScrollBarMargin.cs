@@ -39,7 +39,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		VerticalScrollBarMarginProvider(IScrollMapFactoryService scrollMapFactoryService) => this.scrollMapFactoryService = scrollMapFactoryService;
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new VerticalScrollBarMargin(scrollMapFactoryService, wpfTextViewHost);
 	}
 
@@ -70,7 +70,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.VerticalScrollBar, marginName) ? this : null;
 
 		void ScrollMap_MappingChanged(object sender, EventArgs e) => UpdateMinMax();

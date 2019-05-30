@@ -37,6 +37,6 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexFileStructureInfoProvider Create(HexView hexView);
+		public abstract HexFileStructureInfoProvider? Create(HexView hexView);
 	}
 }

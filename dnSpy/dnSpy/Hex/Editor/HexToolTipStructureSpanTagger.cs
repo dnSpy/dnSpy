@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		HexToolTipStructureSpanTaggerProvider(HexStructureInfoAggregatorFactory hexStructureInfoAggregatorFactory) => this.hexStructureInfoAggregatorFactory = hexStructureInfoAggregatorFactory;
 
-		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) =>
+		public override IHexTagger<T>? CreateTagger<T>(HexView hexView, HexBuffer buffer) =>
 			new HexToolTipStructureSpanTagger(hexStructureInfoAggregatorFactory.Create(hexView)) as IHexTagger<T>;
 	}
 
@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Editor {
 			foreach (var span in spans) {
 				var position = span.Start;
 				foreach (var info in hexStructureInfoAggregator.GetFields(position)) {
-					object toolTip = null, reference = null;
+					object? toolTip = null, reference = null;
 					if (info.Value.IsCurrentField) {
 						toolTip = info.Provider.GetToolTip(position);
 						reference = info.Provider.GetReference(position);

@@ -72,7 +72,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new InvalidOperationException();
 			return cachedText;
 		}
-		string cachedText;
+		string? cachedText;
 
 		internal static DocumentViewerOutput Create() => new DocumentViewerOutput();
 
@@ -120,6 +120,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal DocumentViewerContent CreateContent(Dictionary<string, object> dataDict) {
 			VerifyState(State.CustomDataProviders);
 			state = State.ContentCreated;
+			Debug.Assert(cachedText != null);
 			Debug.Assert(cachedText == stringBuilder.ToString());
 			return new DocumentViewerContent(cachedText, cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
 		}
@@ -190,10 +191,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void Write(string text, object color) => AddText(text, color);
 		public void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
 
-		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+		public void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) =>
 			Write(text, 0, text.Length, reference, flags, color);
 
-		public void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
+		public void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) {
 			VerifyState(State.GeneratingContent);
 			if (addIndent)
 				AddIndent();

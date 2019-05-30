@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// Result of compilation or null if compilation failed
 		/// </summary>
-		public byte[] RawFile { get; }
+		public byte[]? RawFile { get; }
 
 		/// <summary>
 		/// Debug file data (eg. PDB data)
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="rawFile">Raw file data</param>
 		/// <param name="debugFile">Debug file result or null</param>
 		/// <param name="diagnostics">Diagnostics or null</param>
-		public CompilationResult(byte[] rawFile, DebugFileResult? debugFile = null, CompilerDiagnostic[] diagnostics = null) {
+		public CompilationResult(byte[] rawFile, DebugFileResult? debugFile = null, CompilerDiagnostic[]? diagnostics = null) {
 			RawFile = rawFile ?? throw new ArgumentNullException(nameof(rawFile));
 			DebugFile = debugFile ?? new DebugFileResult();
 			Diagnostics = diagnostics ?? Array.Empty<CompilerDiagnostic>();

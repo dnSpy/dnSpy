@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		readonly SemanticModel semanticModel;
 		readonly Workspace workspace;
 		readonly RoslynClassificationTypes roslynClassificationTypes;
-		readonly object defaultColor;
+		readonly object? defaultColor;
 		readonly CancellationToken cancellationToken;
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		/// <param name="roslynClassificationTypes">Colors</param>
 		/// <param name="defaultColor">Default color if a token can't be classified or null to not use anything</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes roslynClassificationTypes, object defaultColor, CancellationToken cancellationToken) {
+		public RoslynClassifier(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace, RoslynClassificationTypes roslynClassificationTypes, object? defaultColor, CancellationToken cancellationToken) {
 			this.syntaxRoot = syntaxRoot;
 			this.semanticModel = semanticModel;
 			this.workspace = workspace;
@@ -95,8 +95,8 @@ namespace dnSpy.Roslyn.Text.Classification {
 		}
 
 		readonly struct SymbolResult {
-			public readonly ISymbol Symbol;
-			public readonly object Color;
+			public readonly ISymbol? Symbol;
+			public readonly object? Color;
 
 			public SymbolResult(ISymbol symbol) {
 				Symbol = symbol;
@@ -123,7 +123,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 			return new SymbolResult(symbol);
 		}
 
-		object GetClassificationType2(ClassifiedSpan cspan) {
+		object? GetClassificationType2(ClassifiedSpan cspan) {
 			var symRes = GetSymbolResult(cspan.TextSpan);
 			if (symRes.Color != null)
 				return symRes.Color;
@@ -273,8 +273,8 @@ the_switch:
 			return null;
 		}
 
-		object GetClassificationType(ClassifiedSpan cspan) {
-			object classificationType;
+		object? GetClassificationType(ClassifiedSpan cspan) {
+			object? classificationType;
 			SymbolResult symRes;
 			switch (cspan.ClassificationType) {
 			case ClassificationTypeNames.FieldName:

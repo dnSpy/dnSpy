@@ -49,7 +49,7 @@ namespace dnSpy.Hex.Editor {
 			adornmentLayerElements = new List<HexAdornmentLayerElementImpl>();
 		}
 
-		public override bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, VSTE.AdornmentRemovedCallback removedCallback) {
+		public override bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object? tag, UIElement adornment, VSTE.AdornmentRemovedCallback? removedCallback) {
 			if (adornment == null)
 				throw new ArgumentNullException(nameof(adornment));
 			if (visualSpan != null && visualSpan.Value.IsDefault)
@@ -95,7 +95,7 @@ namespace dnSpy.Hex.Editor {
 			return false;
 		}
 
-		public override void RemoveAdornmentsByTag(object tag) {
+		public override void RemoveAdornmentsByTag(object? tag) {
 			if (tag == null)
 				throw new ArgumentNullException(nameof(tag));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
@@ -193,7 +193,7 @@ namespace dnSpy.Hex.Editor {
 		// Canvas.Top/Left default to NaN, not 0
 		static double ToDefault(double value, double defaultValue) => double.IsNaN(value) ? defaultValue : value;
 
-		static HexViewLine GetLine(IList<HexViewLine> lines, HexBufferSpan span) {
+		static HexViewLine? GetLine(IList<HexViewLine> lines, HexBufferSpan span) {
 			foreach (var line in lines) {
 				if (line.BufferSpan.OverlapsWith(span))
 					return line;

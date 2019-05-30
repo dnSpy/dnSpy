@@ -92,9 +92,9 @@ namespace dnSpy.Hex.Editor {
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly WpfHexView wpfHexView;
-			readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects;
+			readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects;
 
-			public GuidObjectsProvider(WpfHexView wpfHexView, Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects) {
+			public GuidObjectsProvider(WpfHexView wpfHexView, Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects) {
 				this.wpfHexView = wpfHexView;
 				this.createGuidObjects = createGuidObjects;
 			}
@@ -134,13 +134,13 @@ namespace dnSpy.Hex.Editor {
 			this.hexCursorProviderFactories = hexCursorProviderFactories.ToArray();
 		}
 
-		public override WpfHexView Create(HexBuffer buffer, HexViewCreatorOptions options) =>
+		public override WpfHexView Create(HexBuffer buffer, HexViewCreatorOptions? options) =>
 			Create(buffer, DefaultRoles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
-		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, HexViewCreatorOptions options) =>
+		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, HexViewCreatorOptions? options) =>
 			Create(buffer, roles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
-		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexViewCreatorOptions options) {
+		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexViewCreatorOptions? options) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (roles == null)
@@ -151,7 +151,7 @@ namespace dnSpy.Hex.Editor {
 			var wpfHexView = new WpfHexViewImpl(buffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService, hexAndAdornmentSequencerFactoryService, hexBufferLineFormatterFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfHexViewCreationListeners, hexViewCreationListeners, classificationTypeRegistryService, hexCursorProviderFactories);
 
 			if (options?.MenuGuid != null) {
-				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options?.CreateGuidObjects);
+				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options.CreateGuidObjects);
 				menuService.InitializeContextMenu(wpfHexView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new HexContextMenuInitializer(wpfHexView));
 			}
 

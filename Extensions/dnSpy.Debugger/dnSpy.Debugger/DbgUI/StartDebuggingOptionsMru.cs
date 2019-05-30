@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public StartDebuggingOptionsMru() => list = new List<Info>(MRU_SIZE);
 
-		Info Find(string filename) {
+		Info? Find(string filename) {
 			foreach (var info in list) {
 				if (StringComparer.Ordinal.Equals(info.Filename, filename))
 					return info;

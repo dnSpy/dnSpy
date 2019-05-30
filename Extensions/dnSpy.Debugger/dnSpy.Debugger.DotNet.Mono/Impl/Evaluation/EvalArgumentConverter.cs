@@ -27,8 +27,8 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	readonly struct EvalArgumentResult {
-		public string ErrorMessage { get; }
-		public Value Value { get; }
+		public string? ErrorMessage { get; }
+		public Value? Value { get; }
 		public EvalArgumentResult(string errorMessage) {
 			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 			Value = null;
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		TypeMirror GetType(DmdType type) => MonoDebugTypeCreator.GetType(engine, type, null);
 
-		public EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
+		public EvalArgumentResult Convert(object? value, DmdType defaultType, out DmdType type) {
 			var vm = engine.MonoVirtualMachine;
 			if (value == null)
 				return new EvalArgumentResult(CreateNullValue(defaultType, out type));
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return res;
 			if (origType.IsEnum) {
 				type = origType;
-				return new EvalArgumentResult(vm.CreateEnumMirror(GetType(origType), (PrimitiveValue)res.Value));
+				return new EvalArgumentResult(vm.CreateEnumMirror(GetType(origType), (PrimitiveValue)res.Value!));
 			}
 			return res;
 		}
@@ -306,7 +306,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return new EvalArgumentResult(vm.CreateStructMirror(monoType, values));
 		}
 
-		static FieldInfoMirror[] GetFields(TypeMirror monoType, int length) {
+		static FieldInfoMirror[]? GetFields(TypeMirror monoType, int length) {
 			var fields = new FieldInfoMirror[length];
 			int w = 0;
 			foreach (var f in monoType.GetFields()) {
@@ -370,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var methodCreateInstance = reflectionAppDomain.System_Array.GetMethod(nameof(Array.CreateInstance),
 				DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Array,
 				new DmdType[2] { reflectionAppDomain.System_Type, reflectionAppDomain.System_Int32 },
-				throwOnError: true);
+				throwOnError: true)!;
 			var args = new Value[2] {
 				monoElementType.GetTypeObject(),
 				new PrimitiveValue(engine.MonoVirtualMachine, ElementType.I4, length),
@@ -389,7 +389,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return res;
 			Debug.Assert(array.Length > 0);
 
-			var arrayValue = (ArrayMirror)res.Value;
+			var arrayValue = (ArrayMirror)res.Value!;
 			for (int i = 0; i < array.Length; i++) {
 				var s = array[i];
 				if (s == null)
@@ -414,7 +414,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return res;
 
 			Debug.Assert(length > 0);
-			var arrayValue = (ArrayMirror)res.Value;
+			var arrayValue = (ArrayMirror)res.Value!;
 			var addr = DbgDotNetValueImpl.GetArrayAddress(arrayValue, elementType, engine);
 			if (addr == null)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);

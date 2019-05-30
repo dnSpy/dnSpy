@@ -43,7 +43,7 @@ namespace Example1.Extension {
 
 		// This is the content shown in the page. It should be a WPF object (eg. a UserControl) or a
 		// ViewModel with a DataTemplate defined in a resource dictionary.
-		public override object UIObject {
+		public override object? UIObject {
 			get {
 				if (uiObject == null) {
 					uiObject = new MySettingsControl();
@@ -52,7 +52,7 @@ namespace Example1.Extension {
 				return uiObject;
 			}
 		}
-		MySettingsControl uiObject;
+		MySettingsControl? uiObject;
 
 		readonly MySettings globalSettings;
 		readonly MySettings newSettings;

@@ -14,7 +14,7 @@ namespace Example2.Extension {
 	[ExportDocumentTabContentFactory]
 	sealed class AssemblyChildNodeTabContentFactory : IDocumentTabContentFactory {
 		// Called to create a new IFileTabContent. If it's our new tree node, create a new IFileTabContent for it
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1 && context.Nodes[0] is AssemblyChildNode)
 				return new AssemblyChildNodeTabContent((AssemblyChildNode)context.Nodes[0]);
 			return null;
@@ -23,7 +23,7 @@ namespace Example2.Extension {
 		//TODO: Use your own guid
 		static readonly Guid GUID_SerializedContent = new Guid("FC6D2EC8-6FF8-4071-928E-EB07735A6402");
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent) {
 				// Serialize() doesn't add anything extra to 'section', but if it did, you'd have to
 				// get that info here and return null if the serialized data wasn't found.
@@ -51,7 +51,7 @@ namespace Example2.Extension {
 		}
 
 		public override string Title => node.ToString();
-		public override object ToolTip => node.ToString();
+		public override object? ToolTip => node.ToString();
 
 		readonly AssemblyChildNode node;
 
@@ -88,14 +88,14 @@ namespace Example2.Extension {
 		// The element inside UIObject that gets the focus when the tool window should be focused.
 		// If it's not as easy as calling FocusedElement.Focus() to focus it, you must implement
 		// dnSpy.Contracts.Controls.IFocusable.
-		public override IInputElement FocusedElement => content;
+		public override IInputElement? FocusedElement => content;
 
 		// The element in UIObject that gets the scale transform. null can be returned to disable scaling.
-		public override FrameworkElement ZoomElement => content;
+		public override FrameworkElement? ZoomElement => content;
 
 		// The UI object shown in the tab. Should be a WPF control (eg. UserControl) or a .NET object
 		// with a DataTemplate.
-		public override object UIObject => content;
+		public override object? UIObject => content;
 
 		readonly ContentPresenter content;
 		readonly AssemblyChildNodeVM vm;
@@ -122,7 +122,7 @@ namespace Example2.Extension {
 
 		// Optional:
 		// Called to create an object that can be passed to RestoreUIState()
-		public override object DeserializeUIState(ISettingsSection section) {
+		public override object? DeserializeUIState(ISettingsSection section) {
 			var value1 = section.Attribute<string>(nameof(MyUIState.Value1));
 			var value2 = section.Attribute<bool?>(nameof(MyUIState.Value2));
 			if (value1 == null || value2 == null)
@@ -133,7 +133,7 @@ namespace Example2.Extension {
 
 		// Optional:
 		// Saves the object returned by CreateUIState()
-		public override void SerializeUIState(ISettingsSection section, object obj) {
+		public override void SerializeUIState(ISettingsSection section, object? obj) {
 			var d = obj as MyUIState;
 			if (d == null)
 				return;
@@ -144,11 +144,11 @@ namespace Example2.Extension {
 
 		// Optional:
 		// Creates the UI state or returns null. This is an example, so return some random data
-		public override object CreateUIState() => new MyUIState("Some string", true);
+		public override object? CreateUIState() => new MyUIState("Some string", true);
 
 		// Optional:
 		// Restores the UI state
-		public override void RestoreUIState(object obj) {
+		public override void RestoreUIState(object? obj) {
 			var d = obj as MyUIState;
 			if (d == null)
 				return;

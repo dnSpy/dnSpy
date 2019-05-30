@@ -74,7 +74,7 @@ namespace dnSpy.Text.Classification {
 				return classificationType;
 			}
 
-			IClassificationType TryCreate(string type, int recurse) {
+			IClassificationType? TryCreate(string type, int recurse) {
 				var ct = TryGet(type);
 				if (ct != null)
 					return ct;

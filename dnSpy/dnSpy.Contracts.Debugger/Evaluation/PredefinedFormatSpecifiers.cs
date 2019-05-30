@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Default options</param>
 		/// <returns></returns>
-		public static DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string> formatSpecifiers, DbgValueFormatterOptions options) {
+		public static DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string>? formatSpecifiers, DbgValueFormatterOptions options) {
 			if (formatSpecifiers != null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {
@@ -251,7 +251,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Default options</param>
 		/// <returns></returns>
-		public static DbgValueFormatterTypeOptions GetValueFormatterTypeOptions(ReadOnlyCollection<string> formatSpecifiers, DbgValueFormatterTypeOptions options) {
+		public static DbgValueFormatterTypeOptions GetValueFormatterTypeOptions(ReadOnlyCollection<string>? formatSpecifiers, DbgValueFormatterTypeOptions options) {
 			if (formatSpecifiers != null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {
@@ -297,7 +297,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Default options</param>
 		/// <returns></returns>
-		public static DbgValueNodeEvaluationOptions GetValueNodeEvaluationOptions(ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options) {
+		public static DbgValueNodeEvaluationOptions GetValueNodeEvaluationOptions(ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options) {
 			if (formatSpecifiers != null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {

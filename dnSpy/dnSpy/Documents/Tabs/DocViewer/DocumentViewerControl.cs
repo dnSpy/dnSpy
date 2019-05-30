@@ -85,7 +85,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Children.Add(wpfTextViewHost.HostControl);
 		}
 
-		WaitAdorner CurrentWaitAdorner {
+		WaitAdorner? CurrentWaitAdorner {
 			get => __currentWaitAdorner;
 			set {
 				if (__currentWaitAdorner != null) {
@@ -97,11 +97,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					Children.Add(__currentWaitAdorner);
 			}
 		}
-		WaitAdorner __currentWaitAdorner;
+		WaitAdorner? __currentWaitAdorner;
 
-		public Button CancelButton => CurrentWaitAdorner?.button;
+		public Button? CancelButton => CurrentWaitAdorner?.button;
 
-		public void ShowCancelButton(Action onCancel, string message) {
+		public void ShowCancelButton(Action onCancel, string? message) {
 			var newWaitAdorner = new WaitAdorner(onCancel, message);
 			CurrentWaitAdorner = newWaitAdorner;
 
@@ -142,7 +142,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		CurrentContent currentContent;
-		public bool SetContent(DocumentViewerContent content, IContentType contentType) {
+		public bool SetContent(DocumentViewerContent content, IContentType? contentType) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 			if (contentType == null)
@@ -197,7 +197,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return true;
 		}
 
-		public bool GoToLocation(object reference, MoveCaretOptions options) {
+		public bool GoToLocation(object? reference, MoveCaretOptions options) {
 			if (reference == null)
 				return false;
 
@@ -389,9 +389,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				textEditorHelper.SetFocus();
 		}
 
-		public object SaveReferencePosition(IMethodDebugService methodDebugService) => GetReferencePosition(methodDebugService);
+		public object? SaveReferencePosition(IMethodDebugService methodDebugService) => GetReferencePosition(methodDebugService);
 
-		public bool RestoreReferencePosition(IMethodDebugService methodDebugService, object obj) {
+		public bool RestoreReferencePosition(IMethodDebugService methodDebugService, object? obj) {
 			var referencePosition = obj as ReferencePosition;
 			if (referencePosition == null)
 				return false;
@@ -407,7 +407,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public ReferencePosition(IList<MethodSourceStatement> methodSourceStatements) => MethodSourceStatement = methodSourceStatements.Count > 0 ? methodSourceStatements[0] : (MethodSourceStatement?)null;
 		}
 
-		ReferencePosition GetReferencePosition(IMethodDebugService methodDebugService) {
+		ReferencePosition? GetReferencePosition(IMethodDebugService methodDebugService) {
 			int caretPos = wpfTextViewHost.TextView.Caret.Position.BufferPosition.Position;
 			var line = wpfTextViewHost.TextView.TextSnapshot.GetLineFromPosition(caretPos);
 			var statements = methodDebugService.FindByTextPosition(caretPos, FindByTextPositionOptions.None).ToList();

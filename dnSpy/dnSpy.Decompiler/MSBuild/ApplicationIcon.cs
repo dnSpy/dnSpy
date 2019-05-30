@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.data = data;
 		}
 
-		public static ApplicationIcon TryCreate(Win32Resources resources, string filenameNoExt, FilenameCreator filenameCreator) {
+		public static ApplicationIcon? TryCreate(Win32Resources resources, string filenameNoExt, FilenameCreator filenameCreator) {
 			if (resources == null)
 				return null;
 
@@ -63,7 +63,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return new ApplicationIcon(filenameCreator.CreateName(filenameNoExt + ".ico"), iconData);
 		}
 
-		static byte[] TryCreateIcon(ref DataReader reader, ResourceDirectory iconDir) {
+		static byte[]? TryCreateIcon(ref DataReader reader, ResourceDirectory iconDir) {
 			try {
 				reader.Position = 0;
 				var outStream = new MemoryStream();

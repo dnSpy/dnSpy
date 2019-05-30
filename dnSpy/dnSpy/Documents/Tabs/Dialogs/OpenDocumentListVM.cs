@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ObservableCollection<DocumentListVM> documentListColl;
 		readonly ListCollectionView collectionView;
 
-		public object SelectedItem {
+		public object? SelectedItem {
 			get => selectedItem;
 			set {
 				if (selectedItem != value) {
@@ -52,7 +52,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		public DocumentListVM[] SelectedItems {
 			get => selectedItems;
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NotSearchingForDefaultLists => !SearchingForDefaultLists;
 
-		public string SearchText {
+		public string? SearchText {
 			get => searchText;
 			set {
 				if (searchText != value) {
@@ -84,7 +84,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string searchText;
+		string? searchText;
 
 		public bool ShowSavedLists {
 			get => showSavedLists;

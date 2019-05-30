@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		void ModifyCore(DbgCodeBreakpointAndSettings[] settings) {
 			dbgDispatcherProvider.VerifyAccess();
-			List<DbgCodeBreakpointImpl> updatedBreakpoints = null;
+			List<DbgCodeBreakpointImpl>? updatedBreakpoints = null;
 			var bps = new List<DbgCodeBreakpointAndOldSettings>(settings.Length);
 			lock (lockObj) {
 				foreach (var info in settings) {
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			if (breakpoints == null)
 				throw new ArgumentNullException(nameof(breakpoints));
 			var bpImpls = new List<DbgCodeBreakpointImpl>(breakpoints.Length);
-			List<DbgObject> objsToClose = null;
+			List<DbgObject>? objsToClose = null;
 			lock (lockObj) {
 				for (int i = 0; i < breakpoints.Length; i++) {
 					var info = breakpoints[i];
@@ -138,10 +138,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return bpImpls.ToArray();
 		}
 
-		void AddCore(List<DbgCodeBreakpointImpl> breakpoints, List<DbgObject> objsToClose) {
+		void AddCore(List<DbgCodeBreakpointImpl> breakpoints, List<DbgObject>? objsToClose) {
 			dbgDispatcherProvider.VerifyAccess();
 			var added = new List<DbgCodeBreakpoint>(breakpoints.Count);
-			List<DbgCodeBreakpointImpl> updatedBreakpoints = null;
+			List<DbgCodeBreakpointImpl>? updatedBreakpoints = null;
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
 					Debug.Assert(!this.breakpoints.Contains(bp));
@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location) {
+		public override DbgCodeBreakpoint? TryGetBreakpoint(DbgCodeLocation location) {
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
 			lock (lockObj) {
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgDispatcherProvider.VerifyAccess();
 			var dict = CreateBreakpointDictionary(boundBreakpoints);
 			var updatedBreakpoints = new List<(bool raiseMessageChanged, DbgCodeBreakpointImpl breakpoint, List<DbgBoundCodeBreakpoint> boundBreakpoints)>(dict.Count);
-			List<DbgBoundCodeBreakpoint> unusedBoundBreakpoints = null;
+			List<DbgBoundCodeBreakpoint>? unusedBoundBreakpoints = null;
 			lock (lockObj) {
 				foreach (var kv in dict) {
 					var bp = kv.Key;

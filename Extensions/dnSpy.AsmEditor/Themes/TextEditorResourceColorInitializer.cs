@@ -66,7 +66,7 @@ namespace dnSpy.AsmEditor.Themes {
 			Application.Current.Resources[GetInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
 		}
 
-		static Brush GetBrush(Brush b) => b ?? Brushes.Transparent;
+		static Brush GetBrush(Brush? b) => b ?? Brushes.Transparent;
 		static string GetTextInheritedForegroundResourceKey(string name) => $"TETextInherited{name}Foreground";
 		static string GetTextInheritedBackgroundResourceKey(string name) => $"TETextInherited{name}Background";
 		static string GetTextInheritedFontStyleResourceKey(string name) => $"TETextInherited{name}FontStyle";

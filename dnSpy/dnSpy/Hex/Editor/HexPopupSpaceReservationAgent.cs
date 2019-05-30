@@ -110,7 +110,7 @@ namespace dnSpy.Hex.Editor {
 
 		IList<VSTF.TextBounds> GetTextBounds(HexViewLine line) {
 			if (lineSpan.IsTextSpan) {
-				if (lineSpan.TextSpan.Value.Length == 0) {
+				if (lineSpan.TextSpan!.Value.Length == 0) {
 					if (line.BufferSpan.Contains(lineSpan.BufferSpan)) {
 						var bounds = line.GetCharacterBounds(lineSpan.TextSpan.Value.Start);
 						// It's just a point, so use zero width
@@ -126,7 +126,7 @@ namespace dnSpy.Hex.Editor {
 				var fullSpan = lineSpan.BufferSpan;
 				if (fullSpan.Length == 0) {
 					if (line.BufferSpan.Contains(fullSpan))
-						return line.GetNormalizedTextBounds(fullSpan, lineSpan.SelectionFlags.Value);
+						return line.GetNormalizedTextBounds(fullSpan, lineSpan.SelectionFlags!.Value);
 					return Array.Empty<VSTF.TextBounds>();
 				}
 				else
@@ -153,7 +153,7 @@ namespace dnSpy.Hex.Editor {
 		Rect ToScreenRect(Rect wpfRect) => new Rect(ToScreenPoint(wpfRect.TopLeft), ToScreenPoint(wpfRect.BottomRight));
 		Point ToScreenPoint(Point point) => wpfHexView.VisualElement.PointToScreen(point);
 
-		public override Geometry PositionAndDisplay(Geometry reservedSpace) {
+		public override Geometry? PositionAndDisplay(Geometry reservedSpace) {
 			var spanBoundsTmp = GetVisualSpanBounds();
 			if (spanBoundsTmp == null || spanBoundsTmp.Value.IsEmpty)
 				return null;

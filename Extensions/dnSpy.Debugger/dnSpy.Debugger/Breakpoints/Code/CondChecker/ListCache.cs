@@ -22,7 +22,7 @@ using System.Threading;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	static class ListCache<T> {
-		static volatile List<T> cachedList;
+		static volatile List<T>? cachedList;
 		public static List<T> AllocList() => Interlocked.Exchange(ref cachedList, null) ?? new List<T>();
 		public static T[] FreeAndToArray(ref List<T> list) {
 			var res = list.ToArray();

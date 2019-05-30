@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) => this.textMarkerProviderFactory = textMarkerProviderFactory;
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			return textMarkerProviderFactory.GetTextMarkerTagger(buffer) as ITagger<T>;
@@ -143,7 +143,7 @@ namespace dnSpy.Text.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
+			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
 					if (value == null)
@@ -154,9 +154,9 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
+			public Pen? Pen {
 				get => pen;
 				set {
 					if (pen != value) {
@@ -165,7 +165,7 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public SnapshotSpan Span { get; private set; }
 			public string Type { get; }
@@ -230,7 +230,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextView.IsClosed)
 				return;
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
-			List<SnapshotSpan> intersectionSpans = null;
+			List<SnapshotSpan>? intersectionSpans = null;
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(wpfTextView.TextSnapshot)) {
 					var intersection = wpfTextView.TextViewLines.FormattedSpan.Intersection(span);
@@ -296,24 +296,20 @@ namespace dnSpy.Text.Editor {
 		bool ShouldUseHighContrastOpacity => useReducedOpacityForHighContrast && isInContrastMode;
 
 		Brush GetBackgroundBrush(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-			Brush fillBrush;
-
 			const double BG_BRUSH_OPACITY = 0.8;
 			const double BG_BRUSH_HIGHCONTRAST_OPACITY = 0.5;
 			Brush newBrush;
-			if ((color = props[EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
-				newBrush = new SolidColorBrush(color.Value);
+			if (props[EditorFormatDefinition.BackgroundColorId] is Color color) {
+				newBrush = new SolidColorBrush(color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.BackgroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.BackgroundBrushId] is SolidColorBrush scBrush) {
 				newBrush = new SolidColorBrush(scBrush.Color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((fillBrush = props[MarkerFormatDefinition.FillId] as Brush) != null) {
+			else if (props[MarkerFormatDefinition.FillId] is Brush fillBrush) {
 				newBrush = fillBrush;
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();
@@ -334,19 +330,16 @@ namespace dnSpy.Text.Editor {
 			return newBrush;
 		}
 
-		Pen GetPen(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-
+		Pen? GetPen(ResourceDictionary props) {
 			const double PEN_THICKNESS = 0.5;
-			Pen newPen;
-			if ((color = props[EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+			Pen? newPen;
+			if (props[EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = new Pen(brush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = new Pen(scBrush, PEN_THICKNESS);
@@ -360,7 +353,7 @@ namespace dnSpy.Text.Editor {
 			return newPen;
 		}
 
-		MarkerElement TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
+		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
 			Debug.Assert(tag.Type != null);
 			var geo = wpfTextView.TextViewLines.GetMarkerGeometry(span);
 			if (geo == null)

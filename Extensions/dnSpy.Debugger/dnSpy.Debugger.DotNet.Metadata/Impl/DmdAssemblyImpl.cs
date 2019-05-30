@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdAppDomain AppDomain => appDomain;
 		public override string Location { get; }
 		public override string ImageRuntimeVersion => metadataReader.ImageRuntimeVersion;
-		public override DmdMethodInfo EntryPoint => metadataReader.EntryPoint;
+		public override DmdMethodInfo? EntryPoint => metadataReader.EntryPoint;
 		public override bool IsLoaded => appDomain.GetIsLoaded(this);
 		internal bool IsLoadedInternal { get; set; }
 
@@ -41,12 +41,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return assemblySimpleName;
 			}
 		}
-		string assemblySimpleName;
+		string? assemblySimpleName;
 		string CalculateAssemblySimpleName() {
 			// GetName() will access the metadata but we have to do it in case this is a renamed exe file.
 			// Most files aren't EXEs so most of the files' metadata won't be accessed.
 			if (isExe)
-				return GetName().Name;
+				return GetName().Name ?? string.Empty;
 
 			if (IsInMemory || IsDynamic)
 				return string.Empty;
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdModule ManifestModule {
 			get {
 				lock (LockObject)
-					return modules.Count == 0 ? null : modules[0];
+					return modules.Count == 0 ? throw new InvalidOperationException() : modules[0];
 			}
 		}
 
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdMetadataReader metadataReader;
 		readonly bool isExe;
 
-		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location, string assemblySimpleNameOrNull, bool isExe) {
+		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location, string? assemblySimpleNameOrNull, bool isExe) {
 			modules = new List<DmdModuleImpl>();
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.metadataReader = metadataReader ?? throw new ArgumentNullException(nameof(metadataReader));
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return modules.ToArray();
 		}
 
-		public override DmdModule GetModule(string name) {
+		public override DmdModule? GetModule(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			// Make a copy of it so we don't hold a lock while calling module.ScopeName
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			return asmName;
 		}
-		DmdReadOnlyAssemblyName asmName;
+		DmdReadOnlyAssemblyName? asmName;
 
 		static DmdAssemblyNameFlags GetProcessorArchitecture(DmdPortableExecutableKinds peKind, DmdImageFileMachine machine) {
 			if ((peKind & DmdPortableExecutableKinds.PE32Plus) == 0) {
@@ -209,13 +209,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		static bool IsTypeForwarder(DmdType type) {
 			var nonNested = DmdTypeUtilities.GetNonNestedType(type);
-			if ((object)nonNested == null)
+			if (nonNested is null)
 				return false;
 			return nonNested.TypeScope.Kind == DmdTypeScopeKind.AssemblyRef;
 		}
 
 		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
-		internal DmdTypeDef GetType(DmdTypeRef typeRef, bool ignoreCase) => appDomain.TryLookup(this, typeRef, ignoreCase);
+		internal DmdTypeDef? GetType(DmdTypeRef typeRef, bool ignoreCase) => appDomain.TryLookup(this, typeRef, ignoreCase);
 
 		sealed class TypeDefResolver : ITypeDefResolver {
 			readonly DmdAssemblyImpl assembly;
@@ -226,19 +226,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				this.ignoreCase = ignoreCase;
 			}
 
-			public DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames) {
+			public DmdTypeDef? GetTypeDef(IDmdAssemblyName? assemblyName, List<string> typeNames) {
 				if (typeNames.Count == 0)
 					return null;
 
-				var targetAssembly = assembly;
+				DmdAssemblyImpl? targetAssembly = assembly;
 				if (assemblyName != null && !assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
-					targetAssembly = (DmdAssemblyImpl)targetAssembly.AppDomain.GetAssembly(assemblyName);
+					targetAssembly = (DmdAssemblyImpl?)targetAssembly.AppDomain.GetAssembly(assemblyName);
 					if (targetAssembly == null)
 						return null;
 				}
 
-				DmdTypeDef type;
-				DmdTypeUtilities.SplitFullName(typeNames[0], out string @namespace, out string name);
+				DmdTypeDef? type;
+				DmdTypeUtilities.SplitFullName(typeNames[0], out var @namespace, out string name);
 
 				var module = targetAssembly.ManifestModule;
 				if (module == null)
@@ -246,27 +246,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
 				type = targetAssembly.GetType(typeRef, ignoreCase);
 
-				if ((object)type == null)
+				if (type is null)
 					return null;
 				for (int i = 1; i < typeNames.Count; i++) {
 					var flags = DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
 					if (ignoreCase)
 						flags |= DmdBindingFlags.IgnoreCase;
-					type = (DmdTypeDef)type.GetNestedType(typeNames[i], flags);
-					if ((object)type == null)
+					type = (DmdTypeDef?)type.GetNestedType(typeNames[i], flags);
+					if (type is null)
 						return null;
 				}
 				return type;
 			}
 		}
 
-		public override DmdType GetType(string typeName, DmdGetTypeOptions options) {
+		public override DmdType? GetType(string typeName, DmdGetTypeOptions options) {
 			if (typeName == null)
 				throw new ArgumentNullException(nameof(typeName));
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
 			var type = DmdTypeNameParser.Parse(resolver, typeName);
-			if ((object)type != null)
+			if (!(type is null))
 				return appDomain.Intern(type, DmdMakeTypeOptions.NoResolve);
 
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
@@ -279,9 +279,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return securityAttributes;
 			var cas = metadataReader.ReadSecurityAttributes(0x20000001);
 			Interlocked.CompareExchange(ref securityAttributes, ReadOnlyCollectionHelpers.Create(cas), null);
-			return securityAttributes;
+			return securityAttributes!;
 		}
-		volatile ReadOnlyCollection<DmdCustomAttributeData> securityAttributes;
+		volatile ReadOnlyCollection<DmdCustomAttributeData>? securityAttributes;
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			if (customAttributes != null)
@@ -289,8 +289,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var cas = metadataReader.ReadCustomAttributes(0x20000001);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas, GetSecurityAttributesData());
 			Interlocked.CompareExchange(ref customAttributes, newCAs, null);
-			return customAttributes;
+			return customAttributes!;
 		}
-		volatile ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
+		volatile ReadOnlyCollection<DmdCustomAttributeData>? customAttributes;
 	}
 }

@@ -39,16 +39,16 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		public bool HasSymbolImageReference => !SymbolImageReference.IsDefault;
 		public ImageReference WarningImageReference { get; }
 		public bool HasWarningImageReference => !WarningImageReference.IsDefault;
-		public object MainDescriptionObject { get; }
-		public object DocumentationObject { get; }
+		public object? MainDescriptionObject { get; }
+		public object? DocumentationObject { get; }
 		public bool HasDocumentationObject => DocumentationObject != null;
-		public object UsageObject { get; }
+		public object? UsageObject { get; }
 		public bool HasUsageObject => UsageObject != null;
-		public object TypeParameterMapObject { get; }
+		public object? TypeParameterMapObject { get; }
 		public bool HasTypeParameterMapObject => TypeParameterMapObject != null;
-		public object AnonymousTypesObject { get; }
+		public object? AnonymousTypesObject { get; }
 		public bool HasAnonymousTypesObject => AnonymousTypesObject != null;
-		public object ExceptionObject { get; }
+		public object? ExceptionObject { get; }
 		public bool HasExceptionObject => ExceptionObject != null;
 
 		public InformationQuickInfoContentVM(ITextView textView, InformationQuickInfoContent content, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
@@ -73,7 +73,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			ExceptionObject = TryCreateObject(sb, content.ExceptionText, classificationFormatMap, themeClassificationTypeService);
 		}
 
-		TextBlock TryCreateObject(StringBuilder sb, ImmutableArray<TaggedText> taggedParts, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
+		TextBlock? TryCreateObject(StringBuilder sb, ImmutableArray<TaggedText> taggedParts, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
 			if (taggedParts.IsDefaultOrEmpty)
 				return null;
 			var text = ToString(sb, taggedParts);

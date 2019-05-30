@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// </summary>
 		/// <param name="allFactories">true if all factories are called, false if only some of them get called</param>
 		/// <returns></returns>
-		public abstract AttachProgramOptionsProvider Create(bool allFactories);
+		public abstract AttachProgramOptionsProvider? Create(bool allFactories);
 	}
 
 	/// <summary>Metadata</summary>

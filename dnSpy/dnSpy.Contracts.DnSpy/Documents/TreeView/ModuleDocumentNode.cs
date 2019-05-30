@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public new IDsDotNetDocument Document => (IDsDotNetDocument)base.Document;
 
-		IMDTokenProvider IMDTokenNode.Reference => Document.ModuleDef;
+		IMDTokenProvider? IMDTokenNode.Reference => Document.ModuleDef;
 
 		/// <summary>
 		/// Constructor
@@ -52,6 +52,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="ns">Namespace</param>
 		/// <returns></returns>
-		public abstract NamespaceNode FindNode(string ns);
+		public abstract NamespaceNode? FindNode(string? ns);
 	}
 }

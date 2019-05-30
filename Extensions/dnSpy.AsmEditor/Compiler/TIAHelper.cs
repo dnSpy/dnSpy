@@ -31,25 +31,22 @@ namespace dnSpy.AsmEditor.Compiler {
 	/// </summary>
 	static class TIAHelper {
 		struct Info : IEquatable<Info> {
-			public readonly UTF8String Scope;
-			public readonly UTF8String Identifier;
+			public readonly UTF8String? Scope;
+			public readonly UTF8String? Identifier;
 
-			public Info(UTF8String scope, UTF8String identifier) {
-				this.Scope = scope;
-				this.Identifier = identifier;
+			public Info(UTF8String? scope, UTF8String? identifier) {
+				Scope = scope;
+				Identifier = identifier;
 			}
 
-			public bool Equals(Info other) {
-				return stricmp(Scope, other.Scope) &&
-					UTF8String.Equals(Identifier, other.Identifier);
-			}
+			public bool Equals(Info other) => stricmp(Scope, other.Scope) && UTF8String.Equals(Identifier, other.Identifier);
 
-			static bool stricmp(UTF8String a, UTF8String b) {
-				var da = (object)a == null ? null : a.Data;
-				var db = (object)b == null ? null : b.Data;
+			static bool stricmp(UTF8String? a, UTF8String? b) {
+				var da = a is null ? null : a.Data;
+				var db = b is null ? null : b.Data;
 				if (da == db)
 					return true;
-				if (da == null || db == null)
+				if (da is null || db is null)
 					return false;
 				if (da.Length != db.Length)
 					return false;
@@ -72,7 +69,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (td.IsWindowsRuntime)
 				return null;
 
-			UTF8String scope = null, identifier = null;
+			UTF8String? scope = null, identifier = null;
 			var tia = td.CustomAttributes.Find("System.Runtime.InteropServices.TypeIdentifierAttribute");
 			if (tia != null) {
 				if (tia.ConstructorArguments.Count >= 2) {

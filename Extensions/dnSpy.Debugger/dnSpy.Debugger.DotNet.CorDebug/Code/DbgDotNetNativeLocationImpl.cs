@@ -34,10 +34,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		public override uint Offset { get; }
 		public override DbgILOffsetMapping ILOffsetMapping { get; }
 		public DnDebuggerObjectHolder<CorCode> CorCode { get; }
-		public override DbgModule DbgModule { get; }
+		public override DbgModule? DbgModule { get; }
 		public override DbgDotNetNativeFunctionAddress NativeAddress { get; }
 
-		internal DbgBreakpointLocationFormatterImpl Formatter { get; set; }
+		internal DbgBreakpointLocationFormatterImpl? Formatter { get; set; }
 
 		readonly DbgDotNetNativeCodeLocationFactoryImpl owner;
 
@@ -53,14 +53,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		}
 
 		public override DbgCodeLocation Clone() =>
-			owner.Create(DbgModule, Module, Token, Offset, ILOffsetMapping, NativeAddress.Address, NativeAddress.Offset, CorCode.AddRef());
+			owner.Create(DbgModule!, Module, Token, Offset, ILOffsetMapping, NativeAddress.Address, NativeAddress.Offset, CorCode.AddRef());
 
 		public override void Close() => owner.DbgManager.Value.Close(this);
 		protected override void CloseCore(DbgDispatcher dispatcher) => CorCode.Close();
 
-		public override bool Equals(object obj) =>
+		public override bool Equals(object? obj) =>
 			obj is DbgDotNetNativeCodeLocationImpl other &&
-			CorCode.Object == other.CorCode.Object &&
+			CorCode.Object.Equals(other.CorCode.Object) &&
 			Module == other.Module &&
 			Token == other.Token &&
 			Offset == other.Offset &&

@@ -79,7 +79,7 @@ namespace dndbg.DotNet {
 			Attributes = MDAPI.GetTypeDefAttributes(mdi, token) ?? 0;
 		}
 
-		void InitializeName(UTF8String utf8Name, string fullName) {
+		void InitializeName(UTF8String? utf8Name, string? fullName) {
 			Utils.SplitNameAndNamespace(utf8Name, fullName, out var ns, out var name);
 			Namespace = ns;
 			Name = name;
@@ -120,7 +120,7 @@ namespace dndbg.DotNet {
 				return fieldOffset;
 			return null;
 		}
-		Dictionary<uint, uint> fieldRidToFieldOffset;
+		Dictionary<uint, uint>? fieldRidToFieldOffset;
 
 		public void UpdateFields() {
 			lock (lockObj) {
@@ -246,7 +246,7 @@ namespace dndbg.DotNet {
 			interfaces?.Clear();
 
 			var itemTokens = MDAPI.GetInterfaceImplTokens(mdi, token);
-			interfaces = new LazyList<InterfaceImpl, uint[]>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens2[index], new GenericParamContext(this)));
+			interfaces = new LazyList<InterfaceImpl?, uint[]>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens2[index], new GenericParamContext(this)));
 		}
 
 		void InitCustomAttributes_NoLock() => customAttributes = null;
@@ -256,7 +256,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
 
-		unsafe protected override ITypeDefOrRef GetBaseType_NoLock() {
+		unsafe protected override ITypeDefOrRef? GetBaseType_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
@@ -264,9 +264,9 @@ namespace dndbg.DotNet {
 			return readerModule.ResolveTypeDefOrRefInternal(tkExtends, GenericParamContext.Create(this));
 		}
 
-		protected override TypeDef GetDeclaringType2_NoLock() => readerModule.GetEnclosingTypeDef(this);
+		protected override TypeDef? GetDeclaringType2_NoLock() => readerModule.GetEnclosingTypeDef(this);
 
-		TypeDef DeclaringType2_NoLock {
+		TypeDef? DeclaringType2_NoLock {
 			get {
 				if (!declaringType2_isInitialized) {
 					declaringType2 = GetDeclaringType2_NoLock();
@@ -276,7 +276,7 @@ namespace dndbg.DotNet {
 			}
 		}
 
-		protected override ModuleDef GetModule2_NoLock() => DeclaringType2_NoLock != null ? null : readerModule;
+		protected override ModuleDef? GetModule2_NoLock() => DeclaringType2_NoLock != null ? null : readerModule;
 
 		internal void PrepareAutoInsert() {
 			DeclaringType = null;
@@ -342,7 +342,7 @@ namespace dndbg.DotNet {
 			}
 			return methodRidToOverrides = newMethodRidToOverrides;
 		}
-		Dictionary<uint, IList<MethodOverrideTokens>> methodRidToOverrides;
+		Dictionary<uint, IList<MethodOverrideTokens>>? methodRidToOverrides;
 
 		internal void InitializeProperty(CorPropertyDef prop, out IList<MethodDef> getMethods, out IList<MethodDef> setMethods, out IList<MethodDef> otherMethods) {
 			getMethods = new List<MethodDef>();
@@ -372,7 +372,7 @@ namespace dndbg.DotNet {
 			return dict;
 		}
 
-		internal void InitializeEvent(CorEventDef evt, out MethodDef addMethod, out MethodDef invokeMethod, out MethodDef removeMethod, out IList<MethodDef> otherMethods) {
+		internal void InitializeEvent(CorEventDef evt, out MethodDef? addMethod, out MethodDef? invokeMethod, out MethodDef? removeMethod, out IList<MethodDef> otherMethods) {
 			addMethod = null;
 			invokeMethod = null;
 			removeMethod = null;
@@ -391,7 +391,7 @@ namespace dndbg.DotNet {
 				Add(dict, otherMethods, otherToken);
 		}
 
-		CorMethodDef Lookup(Dictionary<uint, CorMethodDef> dict, uint token) {
+		CorMethodDef? Lookup(Dictionary<uint, CorMethodDef> dict, uint token) {
 			var mdToken = new MDToken(token);
 			if (mdToken.Table != Table.Method)
 				return null;
@@ -408,7 +408,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeNestedTypes() {
 			var list = readerModule.GetTypeDefNestedClassRids(this);
-			var tmp = new LazyList<TypeDef, uint[]>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(list2[index]));
+			var tmp = new LazyList<TypeDef?, uint[]>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(list2[index]));
 			Interlocked.CompareExchange(ref nestedTypes, tmp, null);
 		}
 	}

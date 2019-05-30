@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="dbgManager">Debug manager</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgEngine Create(DbgManager dbgManager, DebugProgramOptions options);
+		public abstract DbgEngine? Create(DbgManager dbgManager, DebugProgramOptions options);
 	}
 
 	/// <summary>Metadata</summary>

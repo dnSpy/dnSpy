@@ -35,9 +35,9 @@ using Mono.Debugger.Soft;
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
 		sealed class BoundBreakpointData : IDisposable {
-			public BreakpointEventRequest Breakpoint { get; set; }
+			public BreakpointEventRequest? Breakpoint { get; set; }
 			public ModuleId Module { get; }
-			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
+			public DbgEngineBoundCodeBreakpoint? EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
 			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module) {
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -46,16 +46,16 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			public void Dispose() => Engine.RemoveBreakpoint(this);
 		}
 
-		bool SendCodeBreakpointHitMessage_MonoDebug(BreakpointEventRequest breakpoint, DbgThread thread) {
+		bool SendCodeBreakpointHitMessage_MonoDebug(BreakpointEventRequest breakpoint, DbgThread? thread) {
 			debuggerThread.VerifyAccess();
 			if (breakpoint.Tag is BoundBreakpointData bpData) {
 				if (bpData != null)
-					SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, thread, GetMessageFlags()));
+					SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint!.BoundCodeBreakpoint, thread, GetMessageFlags()));
 				else
 					SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
 				return true;
 			}
-			else if (breakpoint.Tag is Func<DbgThread, bool> callback)
+			else if (breakpoint.Tag is Func<DbgThread?, bool> callback)
 				return callback(thread);
 			else {
 				Debug.Fail("Breakpoint with invalid Tag data");
@@ -150,11 +150,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				const ulong address = DbgObjectFactory.BoundBreakpointNoAddress;
 
 				DbgEngineBoundCodeBreakpointMessage msg;
-				var method = reflectionModule.ResolveMethod((int)location.Token, DmdResolveOptions.None);
-				if ((object)method == null)
+				var method = reflectionModule?.ResolveMethod((int)location.Token, DmdResolveOptions.None);
+				if (method is null)
 					msg = DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(location.Module, location.Token));
 				else {
-					msg = state.IsTypeLoaded(method.DeclaringType.MetadataToken) ?
+					msg = state.IsTypeLoaded(method.DeclaringType!.MetadataToken) ?
 						DbgEngineBoundCodeBreakpointMessage.CreateCustomWarning(dnSpy_Debugger_DotNet_Mono_Resources.CanNotSetABreakpointWhenProcessIsPaused) :
 						DbgEngineBoundCodeBreakpointMessage.CreateNoError();
 				}
@@ -162,9 +162,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				createdBreakpoints[i] = new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData);
 			}
 
-			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
+			var boundBreakpoints = objectFactory!.Create(createdBreakpoints.ToArray());
 			foreach (var ebp in boundBreakpoints) {
-				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData bpData)) {
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData? bpData)) {
 					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
 					continue;
 				}
@@ -176,11 +176,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			for (int i = 0; i < boundBreakpoints.Length; i++) {
 				var boundBp = boundBreakpoints[i];
 				var location = (DbgDotNetCodeLocation)boundBp.BoundCodeBreakpoint.Breakpoint.Location;
-				var method = reflectionModule.ResolveMethod((int)location.Token, DmdResolveOptions.None);
-				if ((object)method == null)
+				var method = reflectionModule?.ResolveMethod((int)location.Token, DmdResolveOptions.None);
+				if (method is null)
 					continue;
 
-				state.AddBreakpoint(method.DeclaringType.MetadataToken, boundBp, () => EnableBreakpointCore(module, method, boundBp, location));
+				state.AddBreakpoint(method.DeclaringType!.MetadataToken, boundBp, () => EnableBreakpointCore(module, method, boundBp, location));
 			}
 		}
 
@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return;
 			using (TempBreak()) {
 				var info = CreateBreakpoint(method.Module, location.Module, location.Token, location.Offset);
-				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData bpData)) {
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData? bpData)) {
 					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
 					return;
 				}
@@ -264,12 +264,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			state.OnTypeLoaded(monoType);
 		}
 
-		(BreakpointEventRequest bp, DbgEngineBoundCodeBreakpointMessage error) CreateBreakpoint(DmdModule module, ModuleId moduleId, uint token, uint offset) {
-			DmdMethodBase method;
+		(BreakpointEventRequest? bp, DbgEngineBoundCodeBreakpointMessage error) CreateBreakpoint(DmdModule module, ModuleId moduleId, uint token, uint offset) {
+			DmdMethodBase? method;
 			MethodMirror monoMethod;
 			try {
 				method = module.ResolveMethod((int)token);
-				if ((object)method == null)
+				if (method is null)
 					return (null, DbgEngineBoundCodeBreakpointMessage.CreateFunctionNotFound(GetFunctionName(moduleId, token)));
 				monoMethod = MethodCache.GetMethod(method, null);
 			}
@@ -278,7 +278,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 
 			try {
-				var bp = vm.CreateBreakpointRequest(monoMethod, offset);
+				var bp = vm!.CreateBreakpointRequest(monoMethod, offset);
 				bp.Enable();
 				return (bp, DbgEngineBoundCodeBreakpointMessage.CreateNoError());
 			}
@@ -293,7 +293,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		Dictionary<ModuleId, List<BoundBreakpointData>> CreateBoundBreakpointsDictionary(DbgBoundCodeBreakpoint[] boundBreakpoints) {
 			var dict = new Dictionary<ModuleId, List<BoundBreakpointData>>();
 			foreach (var bound in boundBreakpoints) {
-				if (!bound.TryGetData(out BoundBreakpointData bpData) || bpData.Engine != this)
+				if (!bound.TryGetData(out BoundBreakpointData? bpData) || bpData.Engine != this)
 					continue;
 				if (!dict.TryGetValue(bpData.Module, out var list))
 					dict.Add(bpData.Module, list = new List<BoundBreakpointData>());
@@ -313,11 +313,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				bpsToRemove.AddRange(bpDataList);
 			}
 			if (bpsToRemove.Count > 0)
-				bpsToRemove[0].EngineBoundCodeBreakpoint.Remove(bpsToRemove.Select(a => a.EngineBoundCodeBreakpoint).ToArray());
+				bpsToRemove[0].EngineBoundCodeBreakpoint!.Remove(bpsToRemove.Select(a => a.EngineBoundCodeBreakpoint!).ToArray());
 		}
 
 		// Assumes the method's declaring type has already been loaded so we can set a BP
-		internal BreakpointEventRequest CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<DbgThread, bool> callback) {
+		internal BreakpointEventRequest CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<DbgThread?, bool> callback) {
 			debuggerThread.VerifyAccess();
 			var reflectionModule = module.GetReflectionModule() ?? throw new InvalidOperationException();
 			if (!TryGetModuleData(module, out var data))

@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly CAArgument originalArg;
 		readonly ModuleDef module;
 
-		public TypeSig StorageType {
+		public TypeSig? StorageType {
 			get => storageType;
 			set {
 				if (storageType != value) {
@@ -89,9 +89,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		TypeSig storageType;
+		TypeSig? storageType;
 
-		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType) {
+		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig? storageType) {
 			module = options.OwnerModule;
 			originalArg = arg.Clone();
 			ConstantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
@@ -108,12 +108,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		void InitializeFrom(CAArgument arg, TypeSig storageType) {
+		void InitializeFrom(CAArgument arg, TypeSig? storageType) {
 			StorageType = storageType;
 			ConstantTypeVM.Value = ConvertFromModel(arg.Type, arg.Value);
 		}
 
-		object ConvertFromModel(TypeSig valueType, object value) {
+		object? ConvertFromModel(TypeSig valueType, object? value) {
 			var type = valueType.RemovePinnedAndModifiers();
 			var et = type.GetElementType();
 			ITypeDefOrRef tdr;
@@ -262,7 +262,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			var sigComparer = new SigComparer(SigComparerOptions.CompareAssemblyPublicKeyToken);
 			for (int i = 0; i < list.Length; i++) {
 				if (ary[i].Value is T && sigComparer.Equals(elemType, ary[i].EnumType))
-					list[i] = (T)ary[i].Value;
+					list[i] = (T)ary[i].Value!;
 			}
 
 			return new EnumInfo {
@@ -287,8 +287,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (res is T)
 					list[i] = (T)res;
 				else if (!tIsValueType && (res == null || res == Null<T>.Instance)) {
-					object n = null;
-					list[i] = (T)n;
+					object? n = null;
+					list[i] = (T)n!;
 				}
 				else
 					return Array.Empty<T>();
@@ -303,7 +303,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return CreateCAArgument(ownerType, ConstantTypeVM.Value);
 		}
 
-		CAArgument CreateCAArgument(TypeSig ownerType, object value) {
+		CAArgument CreateCAArgument(TypeSig ownerType, object? value) {
 			if (value == null || value is Null) {
 				var t = ownerType.RemovePinnedAndModifiers();
 				t = t is SZArraySig ? t.Next : t;
@@ -335,7 +335,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (!enumInfo.IsArray)
 					return new CAArgument(enumSig, enumInfo.Value);
 				var res = CreateArray(enumSig, enumInfo.Value);
-				var list = (IList<CAArgument>)res.Value;
+				var list = (IList<CAArgument>?)res.Value;
 				if (list != null) {
 					for (int i = 0; i < list.Count; i++)
 						list[i] = new CAArgument(enumSig, list[i].Value);
@@ -379,7 +379,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return new CAArgument();
 		}
 
-		CAArgument CreateArray(TypeSig elemType, object value) {
+		CAArgument CreateArray(TypeSig elemType, object? value) {
 			var aryType = new SZArraySig(elemType);
 			var list = value as System.Collections.IList;
 			Debug.Assert(list != null || value == null);

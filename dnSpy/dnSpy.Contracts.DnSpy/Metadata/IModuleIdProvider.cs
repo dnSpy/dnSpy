@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module or null</param>
 		/// <returns></returns>
-		ModuleId Create(ModuleDef module);
+		ModuleId Create(ModuleDef? module);
 	}
 }

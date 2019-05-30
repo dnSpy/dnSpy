@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// Gets the active <see cref="IToolWindowGroup"/> or null if <see cref="TabGroups"/> is empty
 		/// </summary>
-		IToolWindowGroup ActiveTabGroup { get; set; }
+		IToolWindowGroup? ActiveTabGroup { get; set; }
 
 		/// <summary>
 		/// true if the <see cref="IToolWindowGroup"/>s are lined up horizontally, else vertically
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		object UIObject { get; }
+		object? UIObject { get; }
 
 		/// <summary>
 		/// Raised when a new tab has been selected

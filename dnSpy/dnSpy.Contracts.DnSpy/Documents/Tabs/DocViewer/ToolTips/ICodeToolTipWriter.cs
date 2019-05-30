@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips {
 		/// </summary>
 		/// <param name="xmlDoc">XML doc</param>
 		/// <returns></returns>
-		bool WriteXmlDoc(string xmlDoc);
+		bool WriteXmlDoc(string? xmlDoc);
 
 		/// <summary>
 		/// Writes an XML doc parameter. Returns true if it was written, false otherwise
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips {
 		/// <param name="xmlDoc">XML doc</param>
 		/// <param name="paramName">Name of parameter</param>
 		/// <returns></returns>
-		bool WriteXmlDocParameter(string xmlDoc, string paramName);
+		bool WriteXmlDocParameter(string? xmlDoc, string? paramName);
 
 		/// <summary>
 		/// Writes an XML doc generic. Returns true if it was written, false otherwise
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips {
 		/// <param name="xmlDoc">XML doc</param>
 		/// <param name="gpName">Name of generic parameter</param>
 		/// <returns></returns>
-		bool WriteXmlDocGeneric(string xmlDoc, string gpName);
+		bool WriteXmlDocGeneric(string? xmlDoc, string? gpName);
 
 		/// <summary>
 		/// Writes text

@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Bookmarks.DotNet;
@@ -39,7 +40,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
-		public override BookmarkDocument GetDocument(Bookmark bookmark) {
+		public override BookmarkDocument? GetDocument(Bookmark bookmark) {
 			switch (bookmark.Location) {
 			case DotNetMethodBodyBookmarkLocation bodyLoc:
 				return GetDocument(bodyLoc);
@@ -54,15 +55,16 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		sealed class BookmarkDocumentImpl : BookmarkDocument {
 			readonly IDocumentTab tab;
 			public BookmarkDocumentImpl(IDocumentTab tab) => this.tab = tab ?? throw new ArgumentNullException(nameof(tab));
-			public override bool Equals(object obj) => obj is BookmarkDocumentImpl other && tab == other.tab;
+			public override bool Equals(object? obj) => obj is BookmarkDocumentImpl other && tab == other.tab;
 			public override int GetHashCode() => tab.GetHashCode();
 		}
 
-		BookmarkDocument GetDocument(DotNetMethodBodyBookmarkLocation bodyLoc) {
+		BookmarkDocument? GetDocument(DotNetMethodBodyBookmarkLocation bodyLoc) {
 			var tab = documentTabService.Value.ActiveTab;
-			var documentViewer = tab.TryGetDocumentViewer();
+			var documentViewer = tab?.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
+			Debug.Assert(tab != null);
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var info = methodDebugService.TryGetMethodDebugInfo(new ModuleTokenId(bodyLoc.Module, bodyLoc.Token));
 			if (info == null)
@@ -72,11 +74,12 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			return new BookmarkDocumentImpl(tab);
 		}
 
-		BookmarkDocument GetDocument(DotNetTokenBookmarkLocation tokenLoc) {
+		BookmarkDocument? GetDocument(DotNetTokenBookmarkLocation tokenLoc) {
 			var tab = documentTabService.Value.ActiveTab;
-			var documentViewer = tab.TryGetDocumentViewer();
+			var documentViewer = tab?.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;
+			Debug.Assert(tab != null);
 
 			foreach (var info in documentViewer.ReferenceCollection) {
 				if (!info.Data.IsDefinition)

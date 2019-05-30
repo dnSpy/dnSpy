@@ -24,30 +24,30 @@ using dnSpy.Contracts.Debugger.DotNet.Text;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	static class ObjectCache {
 		const int MAX_STRINGBUILDER_CAPACITY = 1024;
-		static volatile StringBuilder stringBuilder;
+		static volatile StringBuilder? stringBuilder;
 		public static StringBuilder AllocStringBuilder() => Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
-		public static void Free(ref StringBuilder sb) {
-			if (sb.Capacity <= MAX_STRINGBUILDER_CAPACITY) {
+		public static void Free(ref StringBuilder? sb) {
+			if (sb!.Capacity <= MAX_STRINGBUILDER_CAPACITY) {
 				sb.Clear();
 				stringBuilder = sb;
 			}
 			sb = null;
 		}
-		public static string FreeAndToString(ref StringBuilder sb) {
-			var res = sb.ToString();
+		public static string FreeAndToString(ref StringBuilder? sb) {
+			var res = sb!.ToString();
 			Free(ref sb);
 			return res;
 		}
 
-		static DbgDotNetTextOutput dotNetTextOutput;
+		static DbgDotNetTextOutput? dotNetTextOutput;
 		public static DbgDotNetTextOutput AllocDotNetTextOutput() => Interlocked.Exchange(ref dotNetTextOutput, null) ?? new DbgDotNetTextOutput();
-		public static void Free(ref DbgDotNetTextOutput output) {
-			output.Clear();
+		public static void Free(ref DbgDotNetTextOutput? output) {
+			output!.Clear();
 			dotNetTextOutput = output;
 			output = null;
 		}
-		public static DbgDotNetText FreeAndToText(ref DbgDotNetTextOutput output) {
-			var res = output.CreateAndReset();
+		public static DbgDotNetText FreeAndToText(ref DbgDotNetTextOutput? output) {
+			var res = output!.CreateAndReset();
 			Free(ref output);
 			return res;
 		}

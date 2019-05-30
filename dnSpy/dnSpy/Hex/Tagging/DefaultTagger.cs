@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Tagging {
 		[ImportingConstructor]
 		DefaultTaggerProvider(HexClassificationTags hexClassificationTags) => this.hexClassificationTags = hexClassificationTags;
 
-		public override IHexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
+		public override IHexTagger<T>? CreateTagger<T>(HexBuffer buffer) =>
 			new DefaultTagger(hexClassificationTags) as IHexTagger<T>;
 	}
 

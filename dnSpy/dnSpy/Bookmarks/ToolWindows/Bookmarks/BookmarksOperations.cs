@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -271,6 +272,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			var filename = pickFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
 			if (!File.Exists(filename))
 				return;
+			Debug.Assert(filename != null);
 			var settingsService = settingsServiceFactory.Value.Create();
 			try {
 				settingsService.Open(filename);

@@ -31,11 +31,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		}
 
 		public static EnumInfo GetEnumInfo(DmdType type) {
-			if ((object)type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (!type.IsEnum)
 				throw new ArgumentException();
-			if (type.TryGetData(out EnumInfo info))
+			if (type.TryGetData(out EnumInfo? info))
 				return info;
 			return GetAndCreateEnumInfo(type);
 		}

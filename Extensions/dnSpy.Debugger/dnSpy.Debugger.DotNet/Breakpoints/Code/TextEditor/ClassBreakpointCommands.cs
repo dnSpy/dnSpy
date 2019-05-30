@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 
 			var list = new List<DbgCodeBreakpointInfo>(methods.Length);
 			var existing = new HashSet<DbgDotNetCodeLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetCodeLocation>());
-			List<DbgObject> objsToClose = null;
+			List<DbgObject>? objsToClose = null;
 			foreach (var method in methods) {
 				if (method.IsAbstract || method.Body == null)
 					continue;
@@ -85,10 +85,10 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	}
 
 	static class AddClassBreakpointCtxMenuCommands {
-		static IMDTokenProvider GetReference(IMenuItemContext context, Guid guid) =>
+		static IMDTokenProvider? GetReference(IMenuItemContext context, Guid guid) =>
 			AddMethodBreakpointCtxMenuCommands.GetReference(context, guid);
 
-		static ITypeDefOrRef GetTypeRef(IMenuItemContext context, Guid guid) =>
+		static ITypeDefOrRef? GetTypeRef(IMenuItemContext context, Guid guid) =>
 			GetReference(context, guid) as ITypeDefOrRef;
 
 		abstract class MenuItemCommon : MenuItemBase {
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	}
 
 	static class AddMethodBreakpointCtxMenuCommands {
-		internal static IMDTokenProvider GetReference(IMenuItemContext context, Guid guid) {
+		internal static IMDTokenProvider? GetReference(IMenuItemContext context, Guid guid) {
 			if (context.CreatorObject.Guid != guid)
 				return null;
 
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			return null;
 		}
 
-		static IMethod[] GetMethodReferences(IMenuItemContext context, Guid guid) {
+		static IMethod[]? GetMethodReferences(IMenuItemContext context, Guid guid) {
 			var @ref = GetReference(context, guid);
 
 			if (@ref is IMethod methodRef)

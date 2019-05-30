@@ -30,6 +30,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// </summary>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		ITextClassifier Create(IContentType contentType);
+		ITextClassifier? Create(IContentType contentType);
 	}
 }

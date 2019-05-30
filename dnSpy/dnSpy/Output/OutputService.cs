@@ -45,19 +45,19 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Output {
 	interface IOutputServiceInternal : IOutputService {
-		IInputElement FocusedElement { get; }
+		IInputElement? FocusedElement { get; }
 		bool CanCopy { get; }
 		void Copy();
 		bool CanClearAll { get; }
 		void ClearAll();
 		bool CanSaveText { get; }
 		void SaveText();
-		OutputBufferVM SelectLog(int index);
+		OutputBufferVM? SelectLog(int index);
 		bool CanSelectLog(int index);
 		bool WordWrap { get; set; }
 		bool ShowLineNumbers { get; set; }
 		bool ShowTimestamps { get; set; }
-		OutputBufferVM SelectedOutputBufferVM { get; }
+		OutputBufferVM? SelectedOutputBufferVM { get; }
 		double ZoomLevel { get; }
 	}
 
@@ -92,12 +92,12 @@ namespace dnSpy.Output {
 			set => outputWindowOptionsService.Default.ShowTimestamps = value;
 		}
 
-		public object TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
-		public IInputElement FocusedElement => SelectedOutputBufferVM?.FocusedElement;
+		public object? TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
+		public IInputElement? FocusedElement => SelectedOutputBufferVM?.FocusedElement;
 		public bool HasOutputWindows => SelectedOutputBufferVM != null;
 		public double ZoomLevel => SelectedOutputBufferVM?.ZoomLevel ?? 100;
 
-		public OutputBufferVM SelectedOutputBufferVM {
+		public OutputBufferVM? SelectedOutputBufferVM {
 			get => selectedOutputBufferVM;
 			set {
 				if (selectedOutputBufferVM != value) {
@@ -110,7 +110,7 @@ namespace dnSpy.Output {
 				}
 			}
 		}
-		OutputBufferVM selectedOutputBufferVM;
+		OutputBufferVM? selectedOutputBufferVM;
 
 		public ObservableCollection<OutputBufferVM> OutputBuffers => outputBuffers;
 		readonly ObservableCollection<OutputBufferVM> outputBuffers;
@@ -167,10 +167,10 @@ namespace dnSpy.Output {
 		public IOutputTextPane Create(Guid guid, string name, string contentType) =>
 			Create(guid, name, (object)contentType);
 
-		public IOutputTextPane Create(Guid guid, string name, IContentType contentType) =>
-			Create(guid, name, (object)contentType);
+		public IOutputTextPane Create(Guid guid, string name, IContentType? contentType) =>
+			Create(guid, name, (object?)contentType);
 
-		IOutputTextPane Create(Guid guid, string name, object contentTypeObj) {
+		IOutputTextPane Create(Guid guid, string name, object? contentTypeObj) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -242,6 +242,7 @@ namespace dnSpy.Output {
 		public void SaveText() {
 			if (!CanSaveText)
 				return;
+			Debug.Assert(SelectedOutputBufferVM != null);
 			var vm = SelectedOutputBufferVM;
 			var filename = pickSaveFilename.GetFilename(GetFilename(vm), "txt", TEXTFILES_FILTER);
 			if (filename == null)
@@ -263,7 +264,7 @@ namespace dnSpy.Output {
 
 		public bool CanSelectLog(int index) => (uint)index < (uint)OutputBuffers.Count;
 
-		public OutputBufferVM SelectLog(int index) {
+		public OutputBufferVM? SelectLog(int index) {
 			if (!CanSelectLog(index))
 				return null;
 			SelectedOutputBufferVM = OutputBuffers[index];

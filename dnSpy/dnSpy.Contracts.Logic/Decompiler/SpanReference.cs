@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Id or null (eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/>). This is used to enable
 		/// or disable the reference. If null, it's always enabled.
 		/// </summary>
-		public string Id { get; }
+		public string? Id { get; }
 
 		/// <summary>
 		/// Constructor
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="span">Span</param>
 		/// <param name="id">Reference id or null, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/></param>
-		public SpanReference(object reference, TextSpan span, string id) {
+		public SpanReference(object reference, TextSpan span, string? id) {
 			Reference = reference;
 			Span = span;
 			Id = id;

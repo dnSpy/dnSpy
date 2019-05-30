@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new LeftSelectionMargin(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, editorOperationsFactoryService.GetEditorOperations(wpfTextViewHost.TextView));
 	}
 

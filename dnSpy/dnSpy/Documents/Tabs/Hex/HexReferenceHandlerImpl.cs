@@ -32,8 +32,8 @@ namespace dnSpy.Documents.Tabs.Hex {
 		[ImportingConstructor]
 		HexReferenceHandlerImpl(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-		public override bool Handle(HexView hexView, object reference, IList<string> tags) {
-			bool newTab = tags.Contains(PredefinedHexReferenceHandlerTags.NewTab);
+		public override bool Handle(HexView hexView, object reference, IList<string>? tags) {
+			bool newTab = tags?.Contains(PredefinedHexReferenceHandlerTags.NewTab) == true;
 			documentTabService.FollowReference(reference, newTab: newTab);
 			return true;
 		}

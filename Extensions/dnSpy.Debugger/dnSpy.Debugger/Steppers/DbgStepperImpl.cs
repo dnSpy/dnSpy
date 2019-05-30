@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Steppers {
 		readonly DbgManagerImpl dbgManager;
 		DbgThreadImpl thread;
 		readonly DbgEngineStepper engineStepper;
-		object stepperTag;
+		object? stepperTag;
 		bool closeWhenStepComplete;
 
 		public DbgStepperImpl(DbgManagerImpl dbgManager, DbgThreadImpl thread, DbgEngineStepper engineStepper) {
@@ -64,11 +64,11 @@ namespace dnSpy.Debugger.Steppers {
 			lock (lockObj) {
 				wasStepping = stepperTag != null && stepperTag == e.Tag;
 				stepperTag = null;
-				thread = (DbgThreadImpl)e.Thread ?? thread;
+				thread = (DbgThreadImpl?)e.Thread ?? thread;
 			}
 			if (IsClosed)
 				return;
-			var stepThread = (DbgThreadImpl)e.Thread ?? thread;
+			var stepThread = (DbgThreadImpl?)e.Thread ?? thread;
 			dbgManager.StepComplete_DbgThread(stepThread, e.Error, e.ForciblyCanceled);
 			if (wasStepping)
 				RaiseStepComplete_DbgThread(stepThread, e.Error);
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Steppers {
 
 		void RaiseStepComplete(string error) => Dispatcher.BeginInvoke(() => RaiseStepComplete_DbgThread(thread, error));
 
-		void RaiseStepComplete_DbgThread(DbgThread thread, string error) {
+		void RaiseStepComplete_DbgThread(DbgThread thread, string? error) {
 			Dispatcher.VerifyAccess();
 			StepComplete?.Invoke(this, new DbgStepCompleteEventArgs(thread, error));
 			if (closeWhenStepComplete)
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Steppers {
 			}
 
 			bool canStep;
-			object stepperTagTmp;
+			object? stepperTagTmp;
 			lock (lockObj) {
 				canStep = stepperTag == null;
 				if (canStep)

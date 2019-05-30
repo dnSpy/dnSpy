@@ -43,7 +43,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (!type.HasInterfaces)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
-			ITypeDefOrRef implementedInterfaceRef = iff?.Interface;
+			var implementedInterfaceRef = iff?.Interface;
 			if (implementedInterfaceRef == null)
 				yield break;
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
@@ -27,14 +28,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public BlockStructureCollection Collection {
 			get {
 				if (coll == null) {
+					Debug.Assert(ranges != null);
 					coll = new BlockStructureCollection(ranges);
 					ranges = null;
 				}
 				return coll;
 			}
 		}
-		BlockStructureCollection coll;
-		CodeBracesRange[] ranges;
+		BlockStructureCollection? coll;
+		CodeBracesRange[]? ranges;
 
 		LazyBlockStructureCollection() => coll = BlockStructureCollection.Empty;
 

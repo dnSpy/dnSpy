@@ -54,7 +54,7 @@ namespace dnSpy.ToolWindows {
 		sealed class InitializeContextMenuHelper {
 			readonly Guid tabGroupGuid;
 
-			public ToolWindowGroupService ToolWindowGroupService { get; set; }
+			public ToolWindowGroupService? ToolWindowGroupService { get; set; }
 
 			public InitializeContextMenuHelper(Guid tabGroupGuid) => this.tabGroupGuid = tabGroupGuid;
 

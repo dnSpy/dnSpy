@@ -164,7 +164,7 @@ namespace dnSpy.Hex.Editor {
 			return new HexColumnPosition(activeColumn, newValuePosition, newAsciiPosition);
 		}
 
-		static bool CanReUse(HexCellPosition oldPos, HexCellPosition newPos, HexCell cell) {
+		static bool CanReUse(HexCellPosition oldPos, HexCellPosition newPos, HexCell? cell) {
 			if (oldPos.IsDefault)
 				return false;
 			if (oldPos.IsDefault != newPos.IsDefault)
@@ -305,7 +305,7 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 
-			public HwndSource HwndSource;
+			public HwndSource? HwndSource;
 			public IntPtr Context;
 			public IntPtr HWND;
 			public IntPtr OldContext;
@@ -348,7 +348,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		static int? GetLinePosition(HexBufferLine line, HexColumnPosition position) {
-			HexCell cell;
+			HexCell? cell;
 			switch (position.ActiveColumn) {
 			case HexColumnType.Values:
 				cell = line.ValueCells.GetCell(position.ActivePosition.BufferPosition);
@@ -365,6 +365,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void MoveImeCompositionWindow() {
+			Debug.Assert(imeState.HwndSource != null);
 			if (!IsValuesCaretPresent && !IsAsciiCaretPresent)
 				return;
 			if (imeState.Context == IntPtr.Zero)
@@ -384,7 +385,7 @@ namespace dnSpy.Hex.Editor {
 			compForm.dwStyle = CFS_DEFAULT;
 
 			var rootVisual = imeState.HwndSource.RootVisual;
-			GeneralTransform generalTransform = null;
+			GeneralTransform? generalTransform = null;
 			if (rootVisual != null && rootVisual.IsAncestorOf(hexView.VisualElement))
 				generalTransform = hexView.VisualElement.TransformToAncestor(rootVisual);
 
@@ -610,7 +611,7 @@ namespace dnSpy.Hex.Editor {
 			var bufferPosition = position.BufferPosition;
 			int cellPosition = position.CellPosition;
 			var line = hexView.BufferLines.GetLineFromPosition(bufferPosition);
-			HexCell cell;
+			HexCell? cell;
 			HexBufferPoint nextBufferPosition;
 			switch (currentPosition.ActiveColumn) {
 			case HexColumnType.Values:
@@ -659,7 +660,7 @@ namespace dnSpy.Hex.Editor {
 			var bufferPosition = position.BufferPosition;
 			int cellPosition = position.CellPosition;
 			var line = hexView.BufferLines.GetLineFromPosition(bufferPosition);
-			HexCell cell;
+			HexCell? cell;
 			HexBufferPoint previousBufferPosition;
 			switch (currentPosition.ActiveColumn) {
 			case HexColumnType.Values:
@@ -699,7 +700,7 @@ namespace dnSpy.Hex.Editor {
 		double PreferredYCoordinate => Math.Min(__preferredYCoordinate, hexView.ViewportHeight) + hexView.ViewportTop;
 		double __preferredYCoordinate;
 
-		HexViewLine GetVisibleCaretLine() {
+		HexViewLine? GetVisibleCaretLine() {
 			if (hexView.HexViewLines == null)
 				return null;
 			var line = ContainingHexViewLine;

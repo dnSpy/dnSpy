@@ -45,12 +45,13 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public BookmarkContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public BookmarkContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher, BookmarkFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

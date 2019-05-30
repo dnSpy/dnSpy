@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class NullObjectRefILValueImpl : NullObjectRefILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public NullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value;
-		public override DmdType Type => value.Type;
+		public override DmdType? Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 

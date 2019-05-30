@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 
 		sealed class WatchInfo {
 			public int WindowIndex { get; }
-			public ISettingsSection Section { get; set; }
+			public ISettingsSection? Section { get; set; }
 			public string[] Expressions { get; set; }
 			public WatchInfo(int windowIndex) {
 				WindowIndex = windowIndex;

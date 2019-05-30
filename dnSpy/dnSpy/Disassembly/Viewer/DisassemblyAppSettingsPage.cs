@@ -37,7 +37,7 @@ namespace dnSpy.Disassembly.Viewer {
 		public override Guid ParentGuid => Guid.Empty;
 		public override Guid Guid => new Guid(AppSettingsConstants.GUID_DISASSEMBLER);
 		public override string Title => dnSpy_Resources.DisassemblerDlgTabTitle;
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public bool NewTab {
 			get => newTab;
@@ -63,7 +63,7 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 		X86DisassemblerVM selectedX86DisassemblerVM;
 
-		static readonly (X86Disassembler disasm, string name)[] x86DisasmInfos = new (X86Disassembler disasm, string name)[] {
+		static readonly (X86Disassembler disasm, string name)[] x86DisasmInfos = new[] {
 			(X86Disassembler.Masm, CodeStyleConstants.MASM_NAME),
 			(X86Disassembler.Nasm, CodeStyleConstants.NASM_NAME),
 			(X86Disassembler.Gas, CodeStyleConstants.GAS_NAME),

@@ -45,13 +45,13 @@ namespace dnSpy.Contracts.Controls {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void okButton_Click(object sender, RoutedEventArgs e) => ClickOK();
+		protected void okButton_Click(object? sender, RoutedEventArgs? e) => ClickOK();
 
 		/// <summary>
 		/// Cancel button handler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void cancelButton_Click(object sender, RoutedEventArgs e) => ClickCancel();
+		protected void cancelButton_Click(object? sender, RoutedEventArgs? e) => ClickCancel();
 	}
 }

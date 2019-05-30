@@ -47,7 +47,7 @@ namespace dnSpy.Hex.Editor {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new SpacerMargin(wpfHexViewHost);
 	}
 
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateVisibility() => frameworkElement.Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public override HexViewMargin GetHexViewMargin(string marginName) =>
+		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedHexMarginNames.Spacer) ? this : null;
 
 		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {

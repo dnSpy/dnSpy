@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && nodes[0] is MethodNode;
 
-		internal static void Execute(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes, uint[] offsets = null) {
+		internal static void Execute(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes, uint[]? offsets = null) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -163,8 +163,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(context);
 
-		internal static bool IsVisibleInternal(IMenuItemContext context) => IsVisible(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
-		static bool IsVisible(IList<MethodSourceStatement> list) =>
+		internal static bool IsVisibleInternal(IMenuItemContext? context) => IsVisible(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
+		static bool IsVisible(IList<MethodSourceStatement>? list) =>
 			list != null &&
 			list.Count != 0 &&
 			list[0].Method.Body != null &&
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
 
-		void Execute(IList<MethodSourceStatement> list) {
+		void Execute(IList<MethodSourceStatement>? list) {
 			if (list == null)
 				return;
 
@@ -191,7 +191,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			remove => CommandManager.RequerySuggested -= value;
 		}
 
-		IList<MethodSourceStatement> GetStatements() {
+		IList<MethodSourceStatement>? GetStatements() {
 			var documentViewer = appService.DocumentTabService.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;

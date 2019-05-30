@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		protected GlyphMarginCommand(Lazy<GlyphMarginOperations> glyphMarginOperations) => this.glyphMarginOperations = glyphMarginOperations;
 
-		protected sealed override DbgCodeBreakpoint CreateContext(IMenuItemContext context) {
+		protected sealed override DbgCodeBreakpoint? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_GLYPHMARGIN_GUID))
 				return null;
 			return context.Find<DbgCodeBreakpoint>();
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		ToggleBreakpointGlyphMarginCommand(Lazy<GlyphMarginOperations> glyphMarginOperations) : base(glyphMarginOperations) { }
 
 		public override void Execute(DbgCodeBreakpoint breakpoint) => GlyphMarginOperations.Toggle(breakpoint);
-		public override string GetHeader(DbgCodeBreakpoint breakpoint) => breakpoint.IsEnabled ? dnSpy_Debugger_Resources.DisableBreakpointCommand2 : dnSpy_Debugger_Resources.EnableBreakpointCommand2;
+		public override string? GetHeader(DbgCodeBreakpoint breakpoint) => breakpoint.IsEnabled ? dnSpy_Debugger_Resources.DisableBreakpointCommand2 : dnSpy_Debugger_Resources.EnableBreakpointCommand2;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.GLYPHMARGIN_GUID, Header = "res:SettingsCommand2", Icon = DsImagesAttribute.Settings, Group = MenuConstants.GROUP_GLYPHMARGIN_DEBUG_CODEBPS_EDIT, Order = 0)]

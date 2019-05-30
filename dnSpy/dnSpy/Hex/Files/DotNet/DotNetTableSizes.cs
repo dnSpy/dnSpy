@@ -20,6 +20,7 @@
 // from dnlib
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
@@ -30,8 +31,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		bool bigStrings;
 		bool bigGuid;
 		bool bigBlob;
-		uint[] rowCounts;
-		TableInfo[] tableInfos;
+		uint[]? rowCounts;
+		TableInfo[]? tableInfos;
 
 		/// <summary>
 		/// Initializes the table sizes
@@ -41,6 +42,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		/// <param name="bigBlob"><c>true</c> if #Blob size >= 0x10000</param>
 		/// <param name="rowCounts">Count of rows in each table</param>
 		public void InitializeSizes(bool bigStrings, bool bigGuid, bool bigBlob, uint[] rowCounts) {
+			Debug.Assert(tableInfos != null);
 			this.bigStrings = bigStrings;
 			this.bigGuid = bigGuid;
 			this.bigBlob = bigBlob;
@@ -61,6 +63,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		int GetSize(ColumnSize columnSize) {
+			Debug.Assert(rowCounts != null);
 			if (ColumnSize.Module <= columnSize && columnSize <= ColumnSize.CustomDebugInformation) {
 				int table = (int)(columnSize - ColumnSize.Module);
 				uint count = table >= rowCounts.Length ? 0 : rowCounts[table];

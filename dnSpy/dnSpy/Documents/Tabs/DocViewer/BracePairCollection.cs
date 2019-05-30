@@ -102,7 +102,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public bool Equals(BracePairResultCollection other) => First.Equals(other.First) && Nullable.Equals(Second, other.Second);
-		public override bool Equals(object obj) => obj is BracePairResultCollection && Equals((BracePairResultCollection)obj);
+		public override bool Equals(object? obj) => obj is BracePairResultCollection && Equals((BracePairResultCollection)obj);
 		public override int GetHashCode() => First.GetHashCode() ^ (Second?.GetHashCode() ?? 0);
 		public override string ToString() => Second == null ? First.ToString() : "{" + First.ToString() + "," + Second.Value.ToString() + "}";
 	}
@@ -119,7 +119,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public static bool operator ==(BracePairResult left, BracePairResult right) => left.Equals(right);
 		public static bool operator !=(BracePairResult left, BracePairResult right) => !left.Equals(right);
 		public bool Equals(BracePairResult other) => Left == other.Left && Right == other.Right;
-		public override bool Equals(object obj) => obj is BracePairResult && Equals((BracePairResult)obj);
+		public override bool Equals(object? obj) => obj is BracePairResult && Equals((BracePairResult)obj);
 		public override int GetHashCode() => Left.GetHashCode() ^ Right.GetHashCode();
 		public override string ToString() => "[" + Left.ToString() + "," + Right.ToString() + "]";
 	}

@@ -661,7 +661,7 @@ namespace dnSpy.Contracts.Controls {
 			}
 		}
 
-		static void ShowSystemMenu(object o) {
+		static void ShowSystemMenu(object? o) {
 			var depo = o as DependencyObject;
 			if (depo == null)
 				return;
@@ -679,9 +679,9 @@ namespace dnSpy.Contracts.Controls {
 		/// </summary>
 		/// <param name="target">Target that gets the scale transform</param>
 		/// <param name="scale">Scale to use where 1.0 is 100%</param>
-		public void SetScaleTransform(DependencyObject target, double scale) => SetScaleTransform(target, target, scale);
+		public void SetScaleTransform(DependencyObject? target, double scale) => SetScaleTransform(target, target, scale);
 
-		void SetScaleTransform(DependencyObject textObj, DependencyObject vc, double scale) {
+		void SetScaleTransform(DependencyObject? textObj, DependencyObject? vc, double scale) {
 			Debug.Assert(textObj != this);
 			if (vc == null || textObj == null)
 				return;

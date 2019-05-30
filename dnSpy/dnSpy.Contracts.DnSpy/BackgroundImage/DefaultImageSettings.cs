@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.BackgroundImage {
 		/// <summary>
 		/// All images or null to use the default value. This can be filenames, folders, or pack:// URIs
 		/// </summary>
-		public string[] Images { get; set; }
+		public string[]? Images { get; set; }
 
 		/// <summary>
 		/// Stretch value or null to use the default value

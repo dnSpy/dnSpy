@@ -29,8 +29,8 @@ namespace dnSpy.Contracts.Text {
 		readonly int indentSize;
 		readonly int tabSize;
 		readonly bool useTabs;
-		readonly List<string> cachedStrings;
-		StringBuilder sb;
+		readonly List<string?> cachedStrings;
+		StringBuilder? sb;
 		int indentLevel;
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Text {
 			this.indentSize = indentSize;
 			this.tabSize = tabSize;
 			this.useTabs = useTabs;
-			cachedStrings = new List<string>();
+			cachedStrings = new List<string?>();
 		}
 
 		/// <summary>

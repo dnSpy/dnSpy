@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public TypeSigCreatorVM TypeSigCreator { get; }
 		public CustomAttributesVM CustomAttributesVM { get; }
 
-		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			origOptions = options;
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {

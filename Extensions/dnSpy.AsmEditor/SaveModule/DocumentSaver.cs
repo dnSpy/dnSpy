@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		IEnumerable<object> Distinct(IEnumerable<object> objs) => undoCommandService.Value.GetUniqueDocuments(objs);
 
 		public bool AskUserToSaveIfModified(IEnumerable<object> docs) {
-			var modifiedDocs = Distinct(docs).Where(a => undoCommandService.Value.IsModified(undoCommandService.Value.GetUndoObject(a))).ToArray();
+			var modifiedDocs = Distinct(docs).Where(a => undoCommandService.Value.IsModified(undoCommandService.Value.GetUndoObject(a)!)).ToArray();
 			if (modifiedDocs.Length == 0)
 				return true;
 
@@ -129,7 +129,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (!vm.WasSaved(doc))
 					allSaved = false;
 				else {
-					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc));
+					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc)!);
 					if (doc is IDsDocument document && string.IsNullOrEmpty(document.Filename)) {
 						var filename = vm.GetSavedFileName(doc);
 						if (!string.IsNullOrWhiteSpace(filename) && document.ModuleDef != null) {

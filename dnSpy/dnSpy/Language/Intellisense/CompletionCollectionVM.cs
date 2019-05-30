@@ -41,7 +41,7 @@ namespace dnSpy.Language.Intellisense {
 
 		readonly List<CompletionVM> list;
 		readonly IList<Completion> completionList;
-		readonly INotifyCollectionChanged completionListNotifyCollectionChanged;
+		readonly INotifyCollectionChanged? completionListNotifyCollectionChanged;
 
 		public CompletionCollectionVM(IList<Completion> completionList) {
 			this.completionList = completionList ?? throw new ArgumentNullException(nameof(completionList));
@@ -72,7 +72,8 @@ namespace dnSpy.Language.Intellisense {
 				var oldList = new List<CompletionVM>();
 				foreach (Completion c in e.OldItems) {
 					var vm = CompletionVM.TryGet(c);
-					oldList.Add(vm);
+					if (vm != null)
+						oldList.Add(vm);
 					Debug.Assert(list[e.OldStartingIndex].Completion == vm?.Completion);
 					list.RemoveAt(e.OldStartingIndex);
 				}
@@ -104,8 +105,8 @@ namespace dnSpy.Language.Intellisense {
 				list.Add(GetOrCreateVM(c));
 		}
 
-		public bool Contains(object value) => list.Contains(value as CompletionVM);
-		public int IndexOf(object value) => list.IndexOf(value as CompletionVM);
+		public bool Contains(object value) => list.Contains((value as CompletionVM)!);
+		public int IndexOf(object value) => list.IndexOf((value as CompletionVM)!);
 		public void CopyTo(Array array, int index) => Array.Copy(list.ToArray(), 0, array, index, list.Count);
 		public IEnumerator GetEnumerator() => list.GetEnumerator();
 

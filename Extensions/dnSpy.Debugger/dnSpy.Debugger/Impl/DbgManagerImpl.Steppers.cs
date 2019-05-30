@@ -27,14 +27,14 @@ using dnSpy.Debugger.Steppers;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
-		internal void Step(DbgStepperImpl stepper, object stepperTag, DbgEngineStepKind step, bool singleProcess) =>
+		internal void Step(DbgStepperImpl stepper, object? stepperTag, DbgEngineStepKind step, bool singleProcess) =>
 			DbgThread(() => Step_DbgThread(stepper, stepperTag, step, singleProcess));
 
-		void Step_DbgThread(DbgStepperImpl stepper, object stepperTag, DbgEngineStepKind step, bool singleProcess) {
+		void Step_DbgThread(DbgStepperImpl stepper, object? stepperTag, DbgEngineStepKind step, bool singleProcess) {
 			Dispatcher.VerifyAccess();
 
 			var infos = new List<EngineInfo>();
-			EngineInfo stepperEngineInfo = null;
+			EngineInfo? stepperEngineInfo = null;
 			lock (lockObj) {
 				var process = stepper.Process;
 				var runtime = stepper.Runtime;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Impl {
 			stepper.RaiseError_DbgThread(string.Format(dnSpy_Debugger_Resources.DebugStepProcessError, error));
 		}
 
-		internal void StepComplete_DbgThread(DbgThreadImpl thread, string error, bool forciblyCanceled) {
+		internal void StepComplete_DbgThread(DbgThreadImpl thread, string? error, bool forciblyCanceled) {
 			Dispatcher.VerifyAccess();
 			var engine = thread.RuntimeImpl.Engine;
 			if (engine.IsClosed)

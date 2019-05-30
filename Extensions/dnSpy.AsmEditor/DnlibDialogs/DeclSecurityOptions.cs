@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public SecurityAction Action;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<SecurityAttribute> SecurityAttributes = new List<SecurityAttribute>();
-		public string V1XMLString;
+		public string? V1XMLString;
 
 		public DeclSecurityOptions() {
 		}

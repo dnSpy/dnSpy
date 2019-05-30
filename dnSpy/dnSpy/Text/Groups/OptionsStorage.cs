@@ -40,7 +40,7 @@ namespace dnSpy.Text.Groups {
 				this.contentType = contentType;
 			}
 			public bool Equals(ContentTypeKey other) => StringComparer.Ordinal.Equals(groupName, other.groupName) && StringComparer.OrdinalIgnoreCase.Equals(contentType, other.contentType);
-			public override bool Equals(object obj) => obj is ContentTypeKey && Equals((ContentTypeKey)obj);
+			public override bool Equals(object? obj) => obj is ContentTypeKey && Equals((ContentTypeKey)obj);
 			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(groupName) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(contentType);
 			public override string ToString() => $"({groupName},{contentType})";
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Text.Groups {
 				this.name = name;
 			}
 			public bool Equals(OptionKey other) => contentTypeKey.Equals(other.contentTypeKey) && StringComparer.Ordinal.Equals(name, other.name);
-			public override bool Equals(object obj) => obj is OptionKey && Equals((OptionKey)obj);
+			public override bool Equals(object? obj) => obj is OptionKey && Equals((OptionKey)obj);
 			public override int GetHashCode() => contentTypeKey.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(name);
 			public override string ToString() => contentTypeKey.ToString() + ": " + name;
 		}
@@ -128,14 +128,14 @@ namespace dnSpy.Text.Groups {
 				if (!option.Definition.CanBeSaved)
 					continue;
 
-				if (!TryGetValue(option, textValue, out object value))
+				if (!TryGetValue(option, textValue, out var value))
 					continue;
 
 				option.Value = value;
 			}
 		}
 
-		bool TryGetValue(TextViewGroupOption option, string textValue, out object value) {
+		bool TryGetValue(TextViewGroupOption option, string textValue, out object? value) {
 			var type = option.Definition.Type;
 			var c = TypeDescriptor.GetConverter(type);
 			try {
@@ -154,7 +154,7 @@ namespace dnSpy.Text.Groups {
 			return false;
 		}
 
-		bool TryGetValueString(TextViewGroupOption option, out string valueString) {
+		bool TryGetValueString(TextViewGroupOption option, out string? valueString) {
 			if (!option.Definition.CanBeSaved) {
 				valueString = null;
 				return false;
@@ -212,7 +212,7 @@ namespace dnSpy.Text.Groups {
 			if (!option.Definition.CanBeSaved)
 				return;
 			var sect = GetOrCreateOptionSection(groupName, option);
-			if (!TryGetValueString(option, out string valueString))
+			if (!TryGetValueString(option, out var valueString))
 				return;
 			sect.Attribute(OptionValueAttr, valueString);
 		}

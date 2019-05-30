@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
@@ -26,7 +27,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class HexEditorOptions : VSTE.IEditorOptions {
 		public VSTE.IEditorOptions GlobalOptions => service.GlobalOptions;
 
-		public VSTE.IEditorOptions Parent {
+		public VSTE.IEditorOptions? Parent {
 			get => parent;
 			set {
 				// Check if we're the global options
@@ -41,7 +42,7 @@ namespace dnSpy.Hex.Editor {
 				UpdateOptions(oldParent);
 			}
 		}
-		HexEditorOptions parent;
+		HexEditorOptions? parent;
 
 		public IEnumerable<VSTE.EditorOptionDefinition> SupportedOptions {
 			get {
@@ -55,9 +56,9 @@ namespace dnSpy.Hex.Editor {
 		readonly Dictionary<string, object> dict;
 		readonly HexEditorOptionsFactoryServiceImpl service;
 		readonly List<WeakReference> weakChildren;
-		readonly VSUTIL.IPropertyOwner scope;
+		readonly VSUTIL.IPropertyOwner? scope;
 
-		public HexEditorOptions(HexEditorOptionsFactoryServiceImpl service, HexEditorOptions parent, VSUTIL.IPropertyOwner scope) {
+		public HexEditorOptions(HexEditorOptionsFactoryServiceImpl service, HexEditorOptions? parent, VSUTIL.IPropertyOwner? scope) {
 			this.service = service;
 			this.parent = parent;
 			dict = new Dictionary<string, object>(StringComparer.Ordinal);
@@ -66,7 +67,7 @@ namespace dnSpy.Hex.Editor {
 			UpdateOptions(null);
 		}
 
-		void UpdateOptions(HexEditorOptions oldParent) {
+		void UpdateOptions(HexEditorOptions? oldParent) {
 			if (oldParent != null) {
 				for (int i = 0; i < oldParent.weakChildren.Count; i++) {
 					if (oldParent.weakChildren[i].Target == this) {
@@ -90,10 +91,10 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		bool TryGetValue(string optionId, out object value) {
+		bool TryGetValue(string optionId, [NotNullWhenTrue] out object? value) {
 			if (scope != null && !service.GetOption(optionId).IsApplicableToScope(scope))
 				throw new InvalidOperationException();
-			var p = this;
+			HexEditorOptions? p = this;
 			while (p != null) {
 				if (p.dict.TryGetValue(optionId, out value))
 					return true;
@@ -104,7 +105,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		object GetValueOrDefault(string optionId) {
-			if (!TryGetValue(optionId, out object value))
+			if (!TryGetValue(optionId, out var value))
 				value = service.GetOption(optionId).DefaultValue;
 			return value;
 		}
@@ -147,16 +148,16 @@ namespace dnSpy.Hex.Editor {
 			return true;
 		}
 
-		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId);
-		public T GetOptionValue<T>(VSTE.EditorOptionKey<T> key) => (T)GetOptionValue(key.Name);
-		public object GetOptionValue(string optionId) {
+		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId)!;
+		public T GetOptionValue<T>(VSTE.EditorOptionKey<T> key) => (T)GetOptionValue(key.Name)!;
+		public object? GetOptionValue(string optionId) {
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
 			return GetValueOrDefault(optionId);
 		}
 
 		public void SetOptionValue<T>(VSTE.EditorOptionKey<T> key, T value) => SetOptionValue(key.Name, value);
-		public void SetOptionValue(string optionId, object value) {
+		public void SetOptionValue(string optionId, object? value) {
 			if (optionId == null)
 				throw new ArgumentNullException(nameof(optionId));
 			var def = service.GetOption(optionId);

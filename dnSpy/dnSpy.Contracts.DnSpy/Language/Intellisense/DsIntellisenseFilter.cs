@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="accessKey"></param>
 		/// <param name="isChecked"></param>
 		/// <param name="isEnabled"></param>
-		public DsIntellisenseFilter(ImageReference imageReference, string toolTip, string accessKey, bool isChecked, bool isEnabled) {
+		public DsIntellisenseFilter(ImageReference imageReference, string? toolTip, string? accessKey, bool isChecked, bool isEnabled) {
 			ImageReference = imageReference;
 			ToolTip = toolTip;
 			AccessKey = accessKey;
@@ -48,12 +48,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Tooltip or null
 		/// </summary>
-		public string ToolTip { get; }
+		public string? ToolTip { get; }
 
 		/// <summary>
 		/// Access key or null
 		/// </summary>
-		public string AccessKey { get; }
+		public string? AccessKey { get; }
 
 		/// <summary>
 		/// true if it's checked

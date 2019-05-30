@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
@@ -41,13 +42,13 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 		[ImportingConstructor]
 		CompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) => new CompletionClassifier(themeClassificationTypeService);
+		public ITextClassifier? Create(IContentType contentType) => new CompletionClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly IClassificationType punctuationClassificationType;
-		StringBuilder stringBuilder;
+		StringBuilder? stringBuilder;
 
 		public CompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
 			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
@@ -104,6 +105,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			var description = completionSet.GetDescriptionAsync(completion).GetAwaiter().GetResult();
 			var indexes = GetMatchIndexes(completion, description);
 			if (indexes != null) {
+				Debug.Assert(description != null);
 				int pos = 0;
 				var parts = description.TaggedParts;
 				int endIndex = indexes.Value.endIndex;
@@ -130,7 +132,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			'(', ')',
 		};
 
-		(int index, int endIndex)? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
+		(int index, int endIndex)? GetMatchIndexes(RoslynCompletion? completion, CompletionDescription? description) {
 			if (completion == null || description == null)
 				return null;
 			if (stringBuilder == null)

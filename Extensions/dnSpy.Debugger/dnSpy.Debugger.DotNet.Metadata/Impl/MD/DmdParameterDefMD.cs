@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdParameterDefMD : DmdParameterDef {
-		public sealed override string Name { get; }
+		public sealed override string? Name { get; }
 		public sealed override DmdParameterAttributes Attributes { get; }
 
 		readonly DmdEcma335MetadataReader reader;
@@ -32,12 +32,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = attributes;
 		}
 
-		protected override (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes() {
+		protected override (DmdCustomAttributeData[]? cas, DmdMarshalType? marshalType) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			var marshalType = reader.ReadMarshalType(MetadataToken, Member.Module, null);
 			return (cas, marshalType);
 		}
 
-		protected override (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => reader.ReadConstant(MetadataToken);
+		protected override (object? rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => reader.ReadConstant(MetadataToken);
 	}
 }

@@ -28,7 +28,7 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	static class BodyCommandUtils {
-		public static IList<MethodSourceStatement> GetStatements(IMenuItemContext context, FindByTextPositionOptions options) {
+		public static IList<MethodSourceStatement>? GetStatements(IMenuItemContext? context, FindByTextPositionOptions options) {
 			if (context == null)
 				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return GetStatements(documentViewer, pos.Position, options);
 		}
 
-		public static IList<MethodSourceStatement> GetStatements(IDocumentViewer documentViewer, int textPosition, FindByTextPositionOptions options) {
+		public static IList<MethodSourceStatement>? GetStatements(IDocumentViewer? documentViewer, int textPosition, FindByTextPositionOptions options) {
 			if (documentViewer == null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return methodStatements.Count == 0 ? null : methodStatements;
 		}
 
-		public static uint[] GetInstructionOffsets(MethodDef method, IList<MethodSourceStatement> list) {
+		public static uint[]? GetInstructionOffsets(MethodDef? method, IList<MethodSourceStatement> list) {
 			if (method == null)
 				return null;
 			var body = method.Body;

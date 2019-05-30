@@ -32,7 +32,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class ModuleCreator {
-		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain appDomain, DnModule dnModule, T data) where T : class {
+		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain? appDomain, DnModule dnModule, T data) where T : class {
 			ulong address = dnModule.Address;
 			uint size = dnModule.Size;
 			var imageLayout = CalculateImageLayout(dnModule);
@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			int order = dnModule.UniqueId + 1;// 0-based to 1-based
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
 
+			if (appDomain is null)
+				throw new InvalidOperationException("No appdomain");
 			var reflectionAppDomain = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;
 
 			var closedListenerCollection = new ClosedListenerCollection();
@@ -72,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var manifestModule = engine.TryGetModule(modules[0].CorModule);
 				if (manifestModule == null)
 					throw new InvalidOperationException();
-				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule.Assembly;
+				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule!.Assembly;
 				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
 			}
 
@@ -142,11 +144,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return s;
 		}
 
-		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string assemblySimpleName) {
+		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string? assemblySimpleName) {
 			isExe = false;
 			isDll = false;
 			timestamp = null;
-			version = null;
+			version = string.Empty;
 			assemblySimpleName = null;
 
 			if (dnModule.IsDynamic) {
@@ -176,12 +178,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				catch {
 				}
 			}
-
-			if (version == null)
-				version = string.Empty;
 		}
 
-		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string assemblySimpleName) {
+		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string? assemblySimpleName) {
 			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 			isDll = !isExe;
 
@@ -195,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (string.IsNullOrEmpty(version)) {
 					using (var mod = ModuleDefMD.Load(peImage)) {
 						if (string.IsNullOrEmpty(version))
-							version = mod.Assembly?.Version.ToString();
+							version = mod.Assembly?.Version.ToString() ?? string.Empty;
 						assemblySimpleName = UTF8String.ToSystemString(mod.Assembly?.Name);
 					}
 				}
@@ -228,7 +227,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		static string GetFileVersion(byte[] bytes) {
-			string tempFilename = null;
+			string? tempFilename = null;
 			try {
 				tempFilename = Path.GetTempFileName();
 				File.WriteAllBytes(tempFilename, bytes);

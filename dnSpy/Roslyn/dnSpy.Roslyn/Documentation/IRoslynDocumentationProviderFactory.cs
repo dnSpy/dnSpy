@@ -29,6 +29,6 @@ namespace dnSpy.Roslyn.Documentation {
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		DocumentationProvider TryCreate(string filename);
+		DocumentationProvider? TryCreate(string? filename);
 	}
 }

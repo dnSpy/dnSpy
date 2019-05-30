@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Formatting {
 			this.maxCacheSize = maxCacheSize;
 		}
 
-		public HexFormattedLine FindFormattedLineByBufferPosition(HexBufferPoint point) {
+		public HexFormattedLine? FindFormattedLineByBufferPosition(HexBufferPoint point) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(PhysicalLineCache));
 			for (int i = 0; i < cache.Count; i++) {

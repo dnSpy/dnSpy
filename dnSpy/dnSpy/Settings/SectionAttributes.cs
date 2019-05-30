@@ -48,7 +48,7 @@ namespace dnSpy.Settings {
 			string stringValue;
 			lock (lockObj) {
 				if (!attributes.TryGetValue(name, out stringValue))
-					return default;
+					return default!;
 			}
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
@@ -59,7 +59,7 @@ namespace dnSpy.Settings {
 			}
 			catch (NotSupportedException) {
 			}
-			return default;
+			return default!;
 		}
 
 		public void Attribute<T>(string name, T value) {

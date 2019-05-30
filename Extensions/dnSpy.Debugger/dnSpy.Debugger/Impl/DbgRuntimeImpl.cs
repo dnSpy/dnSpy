@@ -115,9 +115,9 @@ namespace dnSpy.Debugger.Impl {
 			currentThread = new CurrentObject<DbgThreadImpl>(thread, currentThread.Break);
 		}
 
-		internal DbgThread SetBreakThread(DbgThreadImpl thread, bool tryOldCurrentThread = false) {
+		internal DbgThread? SetBreakThread(DbgThreadImpl? thread, bool tryOldCurrentThread = false) {
 			Dispatcher.VerifyAccess();
-			DbgThreadImpl newCurrent, newBreak;
+			DbgThreadImpl? newCurrent, newBreak;
 			lock (lockObj) {
 				newBreak = GetThread_NoLock(thread);
 				if (tryOldCurrentThread && currentThread.Current?.IsClosed == false)
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.Impl {
 			return newCurrent;
 		}
 
-		DbgThreadImpl GetThread_NoLock(DbgThreadImpl thread) {
+		DbgThreadImpl? GetThread_NoLock(DbgThreadImpl? thread) {
 			if (thread?.IsClosed == false)
 				return thread;
 			return threads.FirstOrDefault(a => a.IsMain) ?? (threads.Count == 0 ? null : threads[0]);
@@ -150,8 +150,8 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Remove_DbgThread(DbgAppDomainImpl appDomain, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
-			List<DbgThread> threadsToRemove = null;
-			List<DbgModule> modulesToRemove = null;
+			List<DbgThread>? threadsToRemove = null;
+			List<DbgModule>? modulesToRemove = null;
 			lock (lockObj) {
 				bool b = appDomains.Remove(appDomain);
 				if (!b)

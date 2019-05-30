@@ -113,7 +113,7 @@ namespace MakeEverythingPublic {
 			return false;
 		}
 
-		static bool ParseIVTBlob(ref DataReader reader, uint end, out string publicKeyString) {
+		static bool ParseIVTBlob(ref DataReader reader, uint end, out string? publicKeyString) {
 			publicKeyString = null;
 			if ((ulong)reader.Position + 2 > end)
 				return false;

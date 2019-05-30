@@ -61,8 +61,8 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			set => SetValue(EditValueProviderProperty, value);
 		}
 
-		IEditValue editValue;
-		WeakReference oldKeyboardFocus;
+		IEditValue? editValue;
+		WeakReference? oldKeyboardFocus;
 
 		public EditValueControl() {
 			Loaded += EditValueControl_Loaded;
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			base.OnMouseLeftButtonUp(e);
 		}
 
-		void OnEditableValuePropertyChanged(IEditableValue oldValue, IEditableValue newValue, bool force) {
+		void OnEditableValuePropertyChanged(IEditableValue? oldValue, IEditableValue? newValue, bool force) {
 			if (!force && !isLoaded)
 				return;
 			CancelEdit(oldValue);
@@ -121,13 +121,13 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 		void OnEditValueProviderPropertyChanged() => CancelEdit(EditableValue);
 
-		void HookEvents(IEditableValue editableValue) {
+		void HookEvents(IEditableValue? editableValue) {
 			if (editableValue == null)
 				return;
 			editableValue.PropertyChanged += EditableValue_PropertyChanged;
 		}
 
-		void UnhookEvents(IEditableValue editableValue) {
+		void UnhookEvents(IEditableValue? editableValue) {
 			if (editableValue == null)
 				return;
 			editableValue.PropertyChanged -= EditableValue_PropertyChanged;
@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 				OnIsEditingValueChanged(editableValue);
 		}
 
-		void OnIsEditingValueChanged(IEditableValue editableValue) {
+		void OnIsEditingValueChanged(IEditableValue? editableValue) {
 			if (editableValue == null)
 				return;
 			if (!editableValue.CanEdit) {
@@ -174,9 +174,9 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			editValue.EditCompleted += EditValue_EditCompleted;
 		}
 
-		static UIElement GetUIElement(object obj) => obj as UIElement ?? new ContentPresenter { Content = obj };
+		static UIElement GetUIElement(object? obj) => obj as UIElement ?? new ContentPresenter { Content = obj };
 
-		void CancelEdit(IEditableValue editableValue) {
+		void CancelEdit(IEditableValue? editableValue) {
 			if (editableValue != null)
 				editableValue.IsEditingValue = false;
 			RemoveEditControl();

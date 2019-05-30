@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="id">AppDomain id</param>
 		/// <returns></returns>
-		public abstract DmdAppDomain GetAppDomain(int id);
+		public abstract DmdAppDomain? GetAppDomain(int id);
 
 		/// <summary>
 		/// Creates an AppDomain

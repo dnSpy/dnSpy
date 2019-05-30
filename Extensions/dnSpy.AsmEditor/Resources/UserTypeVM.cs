@@ -31,9 +31,9 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly bool canDeserialize;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand PickTypeCommand => new RelayCommand(a => PickType());
 
@@ -79,10 +79,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public void SetData(byte[] data) => StringValue = GetString(data);
 
-		public byte[] GetSerializedData() {
-			if (!string.IsNullOrEmpty(GetSerializedData(out object obj)))
+		public byte[]? GetSerializedData() {
+			if (!string.IsNullOrEmpty(GetSerializedData(out var obj)))
 				return null;
-			return SerializationUtilities.Serialize(obj);
+			return SerializationUtilities.Serialize(obj!);
 		}
 
 		string GetString(byte[] data) {
@@ -92,22 +92,22 @@ namespace dnSpy.AsmEditor.Resources {
 			if (data == null)
 				return string.Empty;
 
-			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out object obj)))
+			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out var obj)))
 				return string.Empty;
 
-			return SerializationUtilities.ConvertObjectToString(obj);
+			return SerializationUtilities.ConvertObjectToString(obj!);
 		}
 
-		string GetSerializedData(out object obj) {
+		string GetSerializedData(out object? obj) {
 			obj = null;
 			var error = LoadType(out var type);
 			if (!string.IsNullOrEmpty(error))
 				return error;
 
-			return SerializationUtilities.CreateObjectFromString(type, StringValue, out obj);
+			return SerializationUtilities.CreateObjectFromString(type!, StringValue, out obj);
 		}
 
-		string LoadType(out Type type) {
+		string LoadType(out Type? type) {
 			if (!canDeserialize) {
 				type = null;
 				return dnSpy_AsmEditor_Resources.Error_DeSerializationDisabledInSettings;
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		ITypeDefOrRef GetTypeRef() => TypeNameParser.ParseReflection(ownerModule, typeFullName, null);
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(TypeFullName)) {
 				var error = LoadType(out var type);
 				if (!string.IsNullOrEmpty(error))
@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 
 			if (columnName == nameof(StringValue)) {
-				return GetSerializedData(out object obj);
+				return GetSerializedData(out _);
 			}
 
 			return string.Empty;

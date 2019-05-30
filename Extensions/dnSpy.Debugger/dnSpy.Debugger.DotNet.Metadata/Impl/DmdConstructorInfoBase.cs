@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdConstructorInfoBase : DmdConstructorInfo {
 		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
-		public sealed override DmdModule Module => DeclaringType.Module;
+		public sealed override DmdModule Module => DeclaringType!.Module;
 
 		public sealed override DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments) {
 			if (genericMethodArguments == null)
@@ -34,9 +34,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return GetMethodSignature();
 		}
 
-		internal abstract DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments);
+		internal abstract DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments);
 
-		public sealed override object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.Invoke(context, this, obj, parameters);
-		public sealed override object Invoke(object context, DmdBindingFlags invokeAttr, object[] parameters) => AppDomain.CreateInstance(context, this, parameters);
+		public sealed override object? Invoke(object? context, object? obj, DmdBindingFlags invokeAttr, object?[]? parameters) => AppDomain.Invoke(context, this, obj, parameters);
+		public sealed override object? Invoke(object? context, DmdBindingFlags invokeAttr, object?[] parameters) => AppDomain.CreateInstance(context, this, parameters);
 	}
 }

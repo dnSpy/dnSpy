@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.Shared {
 		readonly object lockObj;
 		readonly Dispatcher dispatcher;
 		readonly TimeSpan interval;
-		Timer timer;
+		Timer? timer;
 
 		public event EventHandler Tick;
 
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Shared {
 		}
 
 		public void Stop() {
-			Timer oldTimer;
+			Timer? oldTimer;
 			lock (lockObj) {
 				oldTimer = timer;
 				timer = null;

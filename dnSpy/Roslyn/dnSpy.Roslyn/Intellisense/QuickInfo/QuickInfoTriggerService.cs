@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 	sealed class QuickInfoTriggerService : IQuickInfoTriggerService {
 		readonly IQuickInfoBroker quickInfoBroker;
 		readonly ITextView textView;
-		QuickInfoSession currentQuickInfoSession;
+		QuickInfoSession? currentQuickInfoSession;
 
 		public QuickInfoTriggerService(IQuickInfoBroker quickInfoBroker, ITextView textView) {
 			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));

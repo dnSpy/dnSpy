@@ -28,8 +28,8 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeImpl : DbgValueNode {
 		public override DbgLanguage Language { get; }
 		public override DbgRuntime Runtime { get; }
-		public override string ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(engineValueNode.ErrorMessage);
-		public override DbgValue Value => value;
+		public override string? ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessageOrNull(engineValueNode.ErrorMessage);
+		public override DbgValue? Value => value;
 		public override bool CanEvaluateExpression => true;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override bool? HasChildren => engineValueNode.HasChildren;
 
 		readonly DbgEngineValueNode engineValueNode;
-		readonly DbgValueImpl value;
+		readonly DbgValueImpl? value;
 
 		public DbgValueNodeImpl(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode engineValueNode) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Evaluation {
 			return DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes);
 		}
 
-		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))

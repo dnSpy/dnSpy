@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			public bool Equals(ProcessKey other) => pid == other.pid && rid.Equals(other.rid);
-			public override bool Equals(object obj) => obj is ProcessKey other && Equals(other);
+			public override bool Equals(object? obj) => obj is ProcessKey other && Equals(other);
 			public override int GetHashCode() => pid ^ rid.GetHashCode();
 		}
 	}

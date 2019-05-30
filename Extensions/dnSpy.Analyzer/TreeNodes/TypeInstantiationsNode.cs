@@ -54,7 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					(isSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
 					continue;
 
-				Instruction foundInstr = null;
+				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == ".ctor") {
 						if (Helpers.IsReferencedBy(analyzedType, mr.DeclaringType)) {

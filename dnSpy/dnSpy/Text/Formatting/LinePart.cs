@@ -45,12 +45,12 @@ namespace dnSpy.Text.Formatting {
 		/// <summary>
 		/// Adornment element or null
 		/// </summary>
-		public readonly IAdornmentElement AdornmentElement;
+		public readonly IAdornmentElement? AdornmentElement;
 
 		/// <summary>
 		/// Text run properties if it's normal text or null if an adornment element is used instead
 		/// </summary>
-		public readonly TextRunProperties TextRunProperties;
+		public readonly TextRunProperties? TextRunProperties;
 
 		/// <summary>
 		/// Index of this instance in the collection

@@ -73,7 +73,7 @@ namespace dnSpy.Hex.Commands {
 		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
 		HexBufferFileService HexBufferFileService => __hexBufferFileService ?? (__hexBufferFileService = hexBufferFileServiceFactory.Value.Create(HexView.Buffer));
-		HexBufferFileService __hexBufferFileService;
+		HexBufferFileService? __hexBufferFileService;
 
 		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, HexView hexView) {
 			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
@@ -159,9 +159,9 @@ namespace dnSpy.Hex.Commands {
 			}
 		}
 
-		HexBufferFile TryGetFile(HexPosition position) => HexBufferFileService.GetFile(position, checkNestedFiles: false);
-		PeHeaders TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
-		DotNetMetadataHeaders TryGetMetadataHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<DotNetMetadataHeaders>();
+		HexBufferFile? TryGetFile(HexPosition position) => HexBufferFileService.GetFile(position, checkNestedFiles: false);
+		PeHeaders? TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
+		DotNetMetadataHeaders? TryGetMetadataHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<DotNetMetadataHeaders>();
 
 		public override void GoToMetadata(GoToMetadataKind mdKind) {
 			var origPos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
@@ -187,8 +187,8 @@ namespace dnSpy.Hex.Commands {
 			MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret), select: false);
 		}
 
-		HexSpan? GetGoToMetadataSpan(DotNetMetadataHeaders mdHeaders, PeHeaders peHeaders, uint offsetTokenValue, GoToMetadataKind mdKind) {
-			MDTable mdTable;
+		HexSpan? GetGoToMetadataSpan(DotNetMetadataHeaders mdHeaders, PeHeaders? peHeaders, uint offsetTokenValue, GoToMetadataKind mdKind) {
+			MDTable? mdTable;
 			switch (mdKind) {
 			case GoToMetadataKind.Blob:
 				if (mdHeaders.BlobStream == null)
@@ -233,7 +233,7 @@ namespace dnSpy.Hex.Commands {
 			}
 		}
 
-		static MDTable GetMDTable(DotNetMetadataHeaders mdHeaders, uint token) {
+		static MDTable? GetMDTable(DotNetMetadataHeaders mdHeaders, uint token) {
 			var tablesStream = mdHeaders.TablesStream;
 			if (tablesStream == null)
 				return null;
@@ -369,10 +369,10 @@ namespace dnSpy.Hex.Commands {
 				return;
 
 			var res = messageBoxService.Ask<byte?>(dnSpy_Resources.FillSelection_Label, "0xFF", dnSpy_Resources.FillSelection_Title, s => {
-				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out string error);
+				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out var error);
 				return string.IsNullOrEmpty(error) ? b : (byte?)null;
 			}, s => {
-				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out string error);
+				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out var error);
 				return error;
 			});
 			if (res == null)
@@ -411,7 +411,7 @@ namespace dnSpy.Hex.Commands {
 			if (win.ShowDialog() != true)
 				return;
 
-			vm.TryGetLocalGroupOptions().WriteTo(HexView);
+			vm.TryGetLocalGroupOptions()!.WriteTo(HexView);
 		}
 
 		public override void ResetLocalSettings() =>

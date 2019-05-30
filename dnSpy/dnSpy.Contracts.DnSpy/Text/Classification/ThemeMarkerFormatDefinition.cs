@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Text.Classification {
 			return res;
 		}
 
-		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
-		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
+		Brush? GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
+		Brush? GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
 	}
 }

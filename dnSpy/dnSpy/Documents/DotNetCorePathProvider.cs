@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
@@ -56,7 +57,7 @@ namespace dnSpy.Documents {
 				version.Patch == other.version.Patch &&
 				(version.Extra.Length == 0) == (other.version.Extra.Length == 0);
 
-			public override bool Equals(object obj) => obj is FrameworkVersionIgnoreExtra other && Equals(other);
+			public override bool Equals(object? obj) => obj is FrameworkVersionIgnoreExtra other && Equals(other);
 			public override int GetHashCode() => version.Major ^ version.Minor ^ version.Patch ^ (version.Extra.Length == 0 ? 0 : -1);
 		}
 
@@ -73,10 +74,10 @@ namespace dnSpy.Documents {
 			netcorePaths = array;
 		}
 
-		public string[] TryGetDotNetCorePaths(Version version, int bitness) {
+		public string[]? TryGetDotNetCorePaths(Version version, int bitness) {
 			Debug.Assert(bitness == 32 || bitness == 64);
 			int bitness2 = bitness ^ 0x60;
-			FrameworkPaths info;
+			FrameworkPaths? info;
 
 			info = TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness) ??
 				TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness2);
@@ -96,9 +97,9 @@ namespace dnSpy.Documents {
 			return null;
 		}
 
-		FrameworkPaths TryGetDotNetCorePathsCore(int major, int minor, int bitness) {
-			FrameworkPaths fpMajor = null;
-			FrameworkPaths fpMajorMinor = null;
+		FrameworkPaths? TryGetDotNetCorePathsCore(int major, int minor, int bitness) {
+			FrameworkPaths? fpMajor = null;
+			FrameworkPaths? fpMajorMinor = null;
 			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
 				var info = netcorePaths[i];
 				if (info.Bitness == bitness && info.Version.Major == major) {
@@ -138,8 +139,8 @@ namespace dnSpy.Documents {
 			return 0x80000000 + (uint)minVer - (uint)ver - 1;
 		}
 
-		FrameworkPaths TryGetDotNetCorePathsCore(int major, int bitness) {
-			FrameworkPaths fpMajor = null;
+		FrameworkPaths? TryGetDotNetCorePathsCore(int major, int bitness) {
+			FrameworkPaths? fpMajor = null;
 			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
 				var info = netcorePaths[i];
 				if (info.Bitness == bitness && info.Version.Major == major) {
@@ -152,8 +153,8 @@ namespace dnSpy.Documents {
 			return fpMajor;
 		}
 
-		FrameworkPaths TryGetDotNetCorePathsCore(int bitness) {
-			FrameworkPaths best = null;
+		FrameworkPaths? TryGetDotNetCorePathsCore(int bitness) {
+			FrameworkPaths? best = null;
 			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
 				var info = netcorePaths[i];
 				if (info.Bitness == bitness) {
@@ -230,13 +231,6 @@ namespace dnSpy.Documents {
 					yield return installLocation;
 			}
 
-			bool TryGetInstallLocationFromRegistry(string regPath, out string installLocation) {
-				using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
-					installLocation = key?.GetValue("InstallLocation") as string;
-					return installLocation != null;
-				}
-			}
-
 			// Check default locations
 			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -247,6 +241,13 @@ namespace dnSpy.Documents {
 				yield return Path.Combine(progDir, dotnetDirName);
 			if (!string.IsNullOrEmpty(progDirX86))
 				yield return Path.Combine(progDirX86, dotnetDirName);
+		}
+
+		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
+			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
+				installLocation = key?.GetValue("InstallLocation") as string;
+				return installLocation != null;
+			}
 		}
 
 		static IEnumerable<FrameworkPath> GetDotNetCorePaths(string basePath, int bitness) {
@@ -307,7 +308,7 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		public Version TryGetDotNetCoreVersion(string filename) {
+		public Version? TryGetDotNetCoreVersion(string filename) {
 			foreach (var info in netcorePaths) {
 				foreach (var path in info.Paths) {
 					if (FileUtils.IsFileInDir(path, filename))

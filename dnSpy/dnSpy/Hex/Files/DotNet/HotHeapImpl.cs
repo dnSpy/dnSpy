@@ -22,8 +22,8 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class HotHeapImpl : HotHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
 
 		public HotHeapImpl(HexBufferSpan span)
 			: base(span) {

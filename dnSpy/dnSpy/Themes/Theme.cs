@@ -173,7 +173,7 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		Brush GetForeground(ColorInfo info, bool canIncludeDefault) {
+		Brush? GetForeground(ColorInfo? info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -186,7 +186,7 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		Brush GetBackground(ColorInfo info, bool canIncludeDefault) {
+		Brush? GetBackground(ColorInfo? info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -199,7 +199,7 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		Brush GetColor3(ColorInfo info, bool canIncludeDefault) {
+		Brush? GetColor3(ColorInfo? info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -212,7 +212,7 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		Brush GetColor4(ColorInfo info, bool canIncludeDefault) {
+		Brush? GetColor4(ColorInfo? info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -225,7 +225,7 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		FontStyle? GetFontStyle(ColorInfo info, bool canIncludeDefault) {
+		FontStyle? GetFontStyle(ColorInfo? info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -238,7 +238,7 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		FontWeight? GetFontWeight(ColorInfo info, bool canIncludeDefault) {
+		FontWeight? GetFontWeight(ColorInfo? info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -262,7 +262,7 @@ namespace dnSpy.Themes {
 			return hlColors[i];
 		}
 
-		ThemeColor ReadColor(XElement color, ref ColorType colorType) {
+		ThemeColor? ReadColor(XElement color, ref ColorType colorType) {
 			var name = color.Attribute("name");
 			if (name == null)
 				return null;
@@ -322,7 +322,7 @@ namespace dnSpy.Themes {
 			return hl;
 		}
 
-		static string GetAttribute(XElement xml, string attr, string defVal) {
+		static string? GetAttribute(XElement xml, string attr, string? defVal) {
 			var a = xml.Attribute(attr);
 			if (a != null)
 				return a.Value;
@@ -330,7 +330,7 @@ namespace dnSpy.Themes {
 		}
 
 		static readonly ColorConverter colorConverter = new ColorConverter();
-		static Brush CreateColor(string color) {
+		static Brush? CreateColor(string color) {
 			if (color.StartsWith("SystemColors.")) {
 				string shortName = color.Substring(13);
 				var property = typeof(SystemColors).GetProperty(shortName + "Brush");

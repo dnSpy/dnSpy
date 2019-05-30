@@ -67,7 +67,7 @@ namespace dndbg.Engine {
 			new DnThread(this, thread, Debugger.GetNextThreadId(), Interlocked.Increment(ref nextThreadId));
 		public bool Terminate(int exitCode) => CorProcess.Terminate(exitCode);
 
-		internal void Initialize(string filename, string cwd, string cmdLine) {
+		internal void Initialize(string? filename, string? cwd, string? cmdLine) {
 			this.filename = filename ?? string.Empty;
 			this.cwd = cwd ?? string.Empty;
 			this.cmdLine = cmdLine ?? string.Empty;
@@ -82,7 +82,7 @@ namespace dndbg.Engine {
 			return CorProcess.RawObject.IsRunning(out int running) >= 0;
 		}
 
-		internal DnAppDomain TryAdd(ICorDebugAppDomain comAppDomain) => appDomains.Add(comAppDomain);
+		internal DnAppDomain? TryAdd(ICorDebugAppDomain comAppDomain) => appDomains.Add(comAppDomain);
 
 		public DnAppDomain[] AppDomains {
 			get {
@@ -93,9 +93,9 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal DnAppDomain TryGetAppDomain(ICorDebugAppDomain comAppDomain) => appDomains.TryGet(comAppDomain);
+		internal DnAppDomain? TryGetAppDomain(ICorDebugAppDomain? comAppDomain) => appDomains.TryGet(comAppDomain);
 
-		public DnAppDomain TryGetValidAppDomain(ICorDebugAppDomain comAppDomain) {
+		public DnAppDomain? TryGetValidAppDomain(ICorDebugAppDomain comAppDomain) {
 			Debugger.DebugVerifyThread();
 			var appDomain = appDomains.TryGet(comAppDomain);
 			if (appDomain == null)
@@ -105,15 +105,15 @@ namespace dndbg.Engine {
 			return appDomain;
 		}
 
-		internal void AppDomainExited(ICorDebugAppDomain comAppDomain) {
+		internal void AppDomainExited(ICorDebugAppDomain? comAppDomain) {
 			var appDomain = appDomains.TryGet(comAppDomain);
-			if (appDomain == null)
+			if (appDomain is null)
 				return;
 			appDomain.SetHasExited();
 			appDomains.Remove(comAppDomain);
 		}
 
-		internal DnThread TryAdd(ICorDebugThread comThread) => threads.Add(comThread);
+		internal DnThread? TryAdd(ICorDebugThread? comThread) => threads.Add(comThread);
 
 		public DnThread[] Threads {
 			get {
@@ -124,19 +124,19 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal DnThread TryGetThread(ICorDebugThread comThread) => threads.TryGet(comThread);
+		internal DnThread? TryGetThread(ICorDebugThread? comThread) => threads.TryGet(comThread);
 
-		public DnThread TryGetValidThread(ICorDebugThread comThread) {
+		public DnThread? TryGetValidThread(ICorDebugThread? comThread) {
 			Debugger.DebugVerifyThread();
 			var thread = threads.TryGet(comThread);
-			if (thread == null)
+			if (thread is null)
 				return null;
 			if (!thread.CheckValid())
 				return null;
 			return thread;
 		}
 
-		internal DnThread ThreadExited(ICorDebugThread comThread) {
+		internal DnThread? ThreadExited(ICorDebugThread? comThread) {
 			var thread = threads.TryGet(comThread);
 			// Sometimes we don't get a CreateThread message
 			if (thread != null) {
@@ -146,7 +146,7 @@ namespace dndbg.Engine {
 			return thread;
 		}
 
-		public DnThread GetMainThread() {
+		public DnThread? GetMainThread() {
 			var threads = Threads;
 			var appDomain = GetMainAppDomain();
 			foreach (var thread in threads) {
@@ -156,7 +156,7 @@ namespace dndbg.Engine {
 			return threads.Length == 0 ? null : threads[0];
 		}
 
-		public DnAppDomain GetMainAppDomain() {
+		public DnAppDomain? GetMainAppDomain() {
 			var appDomains = AppDomains;
 			return appDomains.Length == 0 ? null : appDomains[0];
 		}

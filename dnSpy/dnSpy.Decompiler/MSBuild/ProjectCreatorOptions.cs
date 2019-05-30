@@ -28,12 +28,12 @@ namespace dnSpy.Decompiler.MSBuild {
 		/// <summary>
 		/// The logger or null
 		/// </summary>
-		public IMSBuildProjectWriterLogger Logger { get; set; }
+		public IMSBuildProjectWriterLogger? Logger { get; set; }
 
 		/// <summary>
 		/// Gets notified when the progress gets updated
 		/// </summary>
-		public IMSBuildProgressListener ProgressListener { get; set; }
+		public IMSBuildProgressListener? ProgressListener { get; set; }
 
 		/// <summary>
 		/// All modules that should be decompiled
@@ -60,7 +60,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		/// Filename relative to <see cref="Directory"/>. Use null if no solution file should be
 		/// written.
 		/// </summary>
-		public string SolutionFilename { get; set; }
+		public string? SolutionFilename { get; set; }
 
 		/// <summary>
 		/// User GAC paths. All files stored in any of these directories are considered GAC files.

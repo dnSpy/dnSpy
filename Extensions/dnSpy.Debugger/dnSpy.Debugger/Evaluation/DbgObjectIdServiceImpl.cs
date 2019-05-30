@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Evaluation {
 			return GetRuntimeObjectIdService(value.Runtime).CanCreateObjectId(value, options);
 		}
 
-		public override DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
+		public override DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
 			if (values.Length == 0)
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Evaluation {
 					dict.Add(value.Runtime, list = new List<(DbgValue, int)>());
 				list.Add((value, i));
 			}
-			var res = new DbgObjectId[values.Length];
+			var res = new DbgObjectId?[values.Length];
 			foreach (var kv in dict) {
 				var objectIds = GetRuntimeObjectIdService(kv.Key).CreateObjectIds(kv.Value.Select(a => a.value).ToArray(), options);
 				if (objectIds.Length != kv.Value.Count)
@@ -92,13 +92,13 @@ namespace dnSpy.Debugger.Evaluation {
 			return res;
 		}
 
-		public override DbgObjectId GetObjectId(DbgValue value) {
+		public override DbgObjectId? GetObjectId(DbgValue value) {
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
 			return GetRuntimeObjectIdService(value.Runtime).GetObjectId(value);
 		}
 
-		public override DbgObjectId GetObjectId(DbgRuntime runtime, uint id) {
+		public override DbgObjectId? GetObjectId(DbgRuntime runtime, uint id) {
 			if (runtime == null)
 				throw new ArgumentNullException(nameof(runtime));
 			return GetRuntimeObjectIdService(runtime).GetObjectId(id);

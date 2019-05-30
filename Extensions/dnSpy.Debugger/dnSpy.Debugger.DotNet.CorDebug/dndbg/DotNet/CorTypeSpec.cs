@@ -38,7 +38,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, gpContext);
 
-		protected override TypeSig GetTypeSigAndExtraData_NoLock(out byte[] extraData) {
+		protected override TypeSig? GetTypeSigAndExtraData_NoLock(out byte[]? extraData) {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 

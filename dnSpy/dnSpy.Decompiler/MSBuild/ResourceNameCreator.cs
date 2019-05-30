@@ -65,18 +65,18 @@ namespace dnSpy.Decompiler.MSBuild {
 			return name;
 		}
 
-		TypeDef GetResXType(TypeDef type, string name) {
+		TypeDef? GetResXType(TypeDef? type, string name) {
 			if (type != null && IsResXType(type, name))
 				return type;
 			return FindResXType(name);
 		}
 
-		TypeDef FindResXType(string name) {
+		TypeDef? FindResXType(string name) {
 			if (resXNameToType == null) {
 				var dict = new Dictionary<string, TypeDef>(StringComparer.Ordinal);
 
 				foreach (var t in module.Types) {
-					string s = GetResXString(t);
+					var s = GetResXString(t);
 					if (s != null)
 						dict[s] = t;
 				}
@@ -87,9 +87,9 @@ namespace dnSpy.Decompiler.MSBuild {
 			resXNameToType.TryGetValue(name, out var type);
 			return type;
 		}
-		Dictionary<string, TypeDef> resXNameToType;
+		Dictionary<string, TypeDef>? resXNameToType;
 
-		static string GetResXString(TypeDef type) {
+		static string? GetResXString(TypeDef type) {
 			if (!type.Fields.Any(a => a.IsStatic && a.FieldType != null && a.FieldType.ToString() == "System.Globalization.CultureInfo"))
 				return null;
 			if (!type.Fields.Any(a => a.IsStatic && a.FieldType != null && a.FieldType.ToString() == "System.Resources.ResourceManager"))
@@ -135,6 +135,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetBamlResourceName(string resourceName) {
 			if (namespaces == null)
 				Initialize();
+			Debug.Assert(partialNamespaceMap != null);
+			Debug.Assert(partialTypeToFullNameMap != null);
+			Debug.Assert(typeToFullNameMap != null);
+			Debug.Assert(lowerCaseNsToReal != null);
+			Debug.Assert(namespaces != null);
 
 			var ext = FileUtils.GetExtension(resourceName);
 			var nameNoExt = resourceName.Substring(0, resourceName.Length - ext.Length);
@@ -157,19 +162,26 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string GetBamlResourceName(string resourceName, out string typeFullName) {
 			if (namespaces == null)
 				Initialize();
+			Debug.Assert(partialNamespaceMap != null);
+			Debug.Assert(partialTypeToFullNameMap != null);
+			Debug.Assert(typeToFullNameMap != null);
+			Debug.Assert(lowerCaseNsToReal != null);
+			Debug.Assert(namespaces != null);
 
 			Debug.Assert(resourceName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase));
 			var name = resourceName.Substring(0, resourceName.Length - ".baml".Length);
 			var nameNoExt = name;
 			name = name.Replace('/', '.');
-			typeFullName = GetFullName(name);
+			typeFullName = GetFullName(name) ?? string.Empty;
 			if (!string.IsNullOrEmpty(typeFullName))
 				return filenameCreator.Create(".xaml", typeFullName);
 
 			return GetBamlResourceName(nameNoExt + ".xaml");
 		}
 
-		string GetFullName(string partialName) {
+		string? GetFullName(string partialName) {
+			Debug.Assert(partialTypeToFullNameMap != null);
+			Debug.Assert(typeToFullNameMap != null);
 			var name = partialName;
 			if (!string.IsNullOrEmpty(filenameCreator.DefaultNamespace))
 				name = filenameCreator.DefaultNamespace + "." + name;
@@ -182,6 +194,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string GetResourceFilename(string resourceName) {
 			if (namespaces == null)
 				Initialize();
+			Debug.Assert(partialNamespaceMap != null);
+			Debug.Assert(partialTypeToFullNameMap != null);
+			Debug.Assert(typeToFullNameMap != null);
+			Debug.Assert(lowerCaseNsToReal != null);
+			Debug.Assert(namespaces != null);
 
 			string[] parts = resourceName.Split(new char[] { '.' });
 			var possibleNamespaces = new List<string>(parts.Length);
@@ -239,7 +256,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				if (UTF8String.IsNullOrEmpty(nsu))
 					fullName = (t.Name ?? UTF8String.Empty).String;
 				else
-					fullName = nsu.String + "." + (t.Name ?? UTF8String.Empty).String;
+					fullName = nsu!.String + "." + (t.Name ?? UTF8String.Empty).String;
 				pmap3[fullName] = fullName;
 				var name = fullName;
 				while (name.Length > 0) {
@@ -270,10 +287,10 @@ namespace dnSpy.Decompiler.MSBuild {
 			lowerCaseNsToReal = dict;
 			namespaces = hash;
 		}
-		HashSet<string> namespaces;
-		Dictionary<string, string> lowerCaseNsToReal;
-		Dictionary<string, string> partialNamespaceMap;
-		Dictionary<string, string> partialTypeToFullNameMap;
-		Dictionary<string, string> typeToFullNameMap;
+		HashSet<string>? namespaces;
+		Dictionary<string, string>? lowerCaseNsToReal;
+		Dictionary<string, string>? partialNamespaceMap;
+		Dictionary<string, string>? partialTypeToFullNameMap;
+		Dictionary<string, string>? typeToFullNameMap;
 	}
 }

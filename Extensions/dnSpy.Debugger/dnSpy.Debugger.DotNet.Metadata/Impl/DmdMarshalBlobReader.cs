@@ -35,18 +35,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdDataStream reader;
 		readonly IList<DmdType> genericTypeArguments;
 
-		public static DmdMarshalType Read(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments) {
+		public static DmdMarshalType? Read(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments) {
 			using (var marshalReader = new DmdMarshalBlobReader(module, reader, genericTypeArguments))
 				return marshalReader.Read();
 		}
 
-		DmdMarshalBlobReader(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments) {
+		DmdMarshalBlobReader(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments) {
 			this.module = module;
 			this.reader = reader;
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();
 		}
 
-		DmdMarshalType Read() {
+		DmdMarshalType? Read() {
 			const int DEFAULT = 0;
 			try {
 				var nativeType = (UnmanagedType)reader.ReadByte();

@@ -24,8 +24,8 @@ using System.Collections.ObjectModel;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdMethodSpec : DmdMethodInfoBase {
 		public override string Name => genericMethodDefinition.Name;
-		public override DmdType DeclaringType => genericMethodDefinition.DeclaringType;
-		public override DmdType ReflectedType => genericMethodDefinition.ReflectedType;
+		public override DmdType? DeclaringType => genericMethodDefinition.DeclaringType;
+		public override DmdType? ReflectedType => genericMethodDefinition.ReflectedType;
 		public override int MetadataToken => genericMethodDefinition.MetadataToken;
 		public override DmdMethodImplAttributes MethodImplementationFlags => genericMethodDefinition.MethodImplementationFlags;
 		public override DmdMethodAttributes Attributes => genericMethodDefinition.Attributes;
@@ -44,19 +44,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.genericArguments = ReadOnlyCollectionHelpers.Create(genericArguments);
 		}
 
-		public override DmdMethodInfo Resolve(bool throwOnError) => this;
+		public override DmdMethodInfo? Resolve(bool throwOnError) => this;
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		internal override DmdMethodInfo GetParentDefinition() => genericMethodDefinition.GetParentDefinition();
+		internal override DmdMethodInfo? GetParentDefinition() => genericMethodDefinition.GetParentDefinition();
 		public override ReadOnlyCollection<DmdType> GetGenericArguments() => genericArguments;
 		public override DmdMethodInfo GetGenericMethodDefinition() {
 			var method = genericMethodDefinition;
-			if ((object)method.ReflectedType == method.DeclaringType)
+			if ((object?)method.ReflectedType == method.DeclaringType)
 				return method;
-			return method.DeclaringType.GetMethod(method.Module, method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+			return method.DeclaringType!.GetMethod(method.Module, method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
 		}
 		public override DmdMethodInfo MakeGenericMethod(IList<DmdType> typeArguments) => AppDomain.MakeGenericMethod(this, typeArguments);
-		public override DmdMethodBody GetMethodBody() => genericMethodDefinition.GetMethodBody(genericArguments);
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => genericMethodDefinition.GetMethodBody(genericMethodArguments);
+		public override DmdMethodBody? GetMethodBody() => genericMethodDefinition.GetMethodBody(genericArguments);
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => genericMethodDefinition.GetMethodBody(genericMethodArguments);
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() => genericMethodDefinition.GetCustomAttributesData();
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() => genericMethodDefinition.GetSecurityAttributesData();
 
@@ -64,14 +64,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			get {
 				if (__parameters_DONT_USE == null)
 					InitializeParameters();
-				return __returnParameter_DONT_USE;
+				return __returnParameter_DONT_USE!;
 			}
 		}
 
 		public override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
 			if (__parameters_DONT_USE == null)
 				InitializeParameters();
-			return __parameters_DONT_USE;
+			return __parameters_DONT_USE!;
 		}
 
 		void InitializeParameters() {
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 		}
-		volatile ReadOnlyCollection<DmdParameterInfo> __parameters_DONT_USE;
-		volatile DmdParameterInfo __returnParameter_DONT_USE;
+		volatile ReadOnlyCollection<DmdParameterInfo>? __parameters_DONT_USE;
+		volatile DmdParameterInfo? __returnParameter_DONT_USE;
 	}
 }

@@ -45,7 +45,7 @@ namespace dnSpy.Text {
 		}
 
 		Lazy<TProvider, TProviderMetadata>[] CreateProviderList(IContentType contentType) {
-			List<(Lazy<TProvider, TProviderMetadata> lz, int dist)> list = null;
+			List<(Lazy<TProvider, TProviderMetadata> lz, int dist)>? list = null;
 
 			// We only allow a provider to match if its supported content type equals the
 			// requested content type or if it's a child of the requested content type.

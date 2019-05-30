@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="view">Hex view</param>
 		/// <param name="margin">Margin</param>
 		/// <returns></returns>
-		public abstract HexGlyphFactory GetGlyphFactory(WpfHexView view, WpfHexViewMargin margin);
+		public abstract HexGlyphFactory? GetGlyphFactory(WpfHexView view, WpfHexViewMargin margin);
 	}
 }

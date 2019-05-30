@@ -30,7 +30,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly List<Project> projects;
 		readonly string filename;
 		readonly List<string> configs;
-		readonly List<string> platforms;
+		readonly List<string?> platforms;
 
 		public SolutionWriter(ProjectVersion projectVersion, IList<Project> projects, string filename) {
 			this.projectVersion = projectVersion;
@@ -51,8 +51,8 @@ namespace dnSpy.Decompiler.MSBuild {
 			configs.Add("Debug");
 			configs.Add("Release");
 
-			var hash = new HashSet<string>(projects.Select(a => a.Platform));
-			platforms = new List<string>(hash.Count);
+			var hash = new HashSet<string?>(projects.Select(a => a.Platform));
+			platforms = new List<string?>(hash.Count);
 			platforms.Add("Any CPU");
 			hash.Remove("AnyCPU");
 			if (hash.Count > 0)
@@ -164,7 +164,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.Write("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution" + crlf);
 				foreach (var p in projects) {
 					var prjGuid = p.Guid.ToString("B").ToUpperInvariant();
-					var pp = p.Platform.Equals("AnyCPU") ? "Any CPU" : p.Platform;
+					var pp = p.Platform == "AnyCPU" ? "Any CPU" : p.Platform;
 					foreach (var c in configs) {
 						foreach (var f in platforms) {
 							writer.Write("\t\t{0}.{1}|{2}.ActiveCfg = {1}|{3}" + crlf, prjGuid, c, f, pp);

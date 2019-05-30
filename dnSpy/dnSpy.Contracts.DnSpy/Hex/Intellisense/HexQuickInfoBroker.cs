@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexQuickInfoSession TriggerQuickInfo(HexView hexView);
+		public abstract HexQuickInfoSession? TriggerQuickInfo(HexView hexView);
 
 		/// <summary>
 		/// Triggers a quick info session
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <param name="triggerPoint">Trigger point</param>
 		/// <param name="trackMouse">true to track the mouse</param>
 		/// <returns></returns>
-		public abstract HexQuickInfoSession TriggerQuickInfo(HexView hexView, HexCellPosition triggerPoint, bool trackMouse);
+		public abstract HexQuickInfoSession? TriggerQuickInfo(HexView hexView, HexCellPosition triggerPoint, bool trackMouse);
 
 		/// <summary>
 		/// Creates a quick info session

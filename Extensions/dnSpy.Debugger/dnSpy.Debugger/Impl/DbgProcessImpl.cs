@@ -168,7 +168,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		void UpdateRuntime_DbgThread(DbgRuntimeImpl runtime) {
+		void UpdateRuntime_DbgThread(DbgRuntimeImpl? runtime) {
 			owner.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				var newCurrent = GetRuntime_NoLock(currentRuntime.Current, runtime);
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		DbgRuntimeImpl GetRuntime_NoLock(DbgRuntimeImpl runtime, DbgRuntimeImpl defaultRuntime) {
+		DbgRuntimeImpl? GetRuntime_NoLock(DbgRuntimeImpl? runtime, DbgRuntimeImpl? defaultRuntime) {
 			if (runtime != null) {
 				var info = engineInfos.First(a => a.Runtime == runtime);
 				if (info.IsPaused || owner.GetDelayedIsRunning_DbgThread(info.Engine) == false)
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		internal void SetPaused_DbgThread(DbgRuntimeImpl runtime) {
+		internal void SetPaused_DbgThread(DbgRuntimeImpl? runtime) {
 			owner.Dispatcher.VerifyAccess();
 			if (runtime == null)
 				return;
@@ -199,7 +199,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		internal void SetRunning_DbgThread(DbgRuntimeImpl runtime) {
+		internal void SetRunning_DbgThread(DbgRuntimeImpl? runtime) {
 			owner.Dispatcher.VerifyAccess();
 			if (runtime == null)
 				return;
@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal DbgEngine TryGetEngine(DbgRuntime runtime) {
+		internal DbgEngine? TryGetEngine(DbgRuntime? runtime) {
 			lock (lockObj) {
 				foreach (var info in engineInfos) {
 					if (info.Runtime == runtime)
@@ -241,9 +241,9 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		static (string filename, string name) GetProcessName(int pid) {
-			string name = null;
-			string filename = null;
+		static (string? filename, string? name) GetProcessName(int pid) {
+			string? name = null;
+			string? filename = null;
 			try {
 				using (var p = Process.GetProcessById(pid)) {
 					name = p.ProcessName;
@@ -458,8 +458,8 @@ namespace dnSpy.Debugger.Impl {
 				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		internal (DbgRuntimeImpl runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
-			DbgRuntimeImpl runtime = null;
+		internal (DbgRuntimeImpl? runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
+			DbgRuntimeImpl? runtime = null;
 			bool hasMoreRuntimes;
 			lock (lockObj) {
 				for (int i = 0; i < engineInfos.Count; i++) {

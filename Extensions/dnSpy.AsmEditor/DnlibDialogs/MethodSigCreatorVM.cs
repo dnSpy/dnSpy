@@ -38,24 +38,24 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class MethodSigCreatorVM : ViewModelBase {
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand AddReturnTypeCommand => new RelayCommand(a => AddReturnType());
 
-		public PropertySig PropertySig {
+		public PropertySig? PropertySig {
 			get => CreateSig(new PropertySig());
 			set => WriteSignature(value);
 		}
 
-		public MethodSig MethodSig {
+		public MethodSig? MethodSig {
 			get => CreateSig(new MethodSig());
 			set => WriteSignature(value);
 		}
 
-		public MethodBaseSig MethodBaseSig {
-			get => IsPropertySig ? (MethodBaseSig)PropertySig : MethodSig;
+		public MethodBaseSig? MethodBaseSig {
+			get => IsPropertySig ? (MethodBaseSig?)PropertySig : MethodSig;
 			set => WriteSignature(value);
 		}
 
@@ -66,7 +66,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string SignatureFullName {
 			get {
-				var sig = MethodBaseSig;
+				var sig = MethodBaseSig!;
 				if (sig.GenParamCount > 100)
 					sig.GenParamCount = 100;
 				return FullNameFactory.MethodBaseSigFullName(null, null, sig, options.TypeSigCreatorOptions.OwnerMethod, null);
@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM MethodCallingConv { get; }
 		internal static readonly EnumVM[] methodCallingConvList = EnumVM.Create(typeof(MethodCallingConv));
 
-		public TypeSig ReturnType {
+		public TypeSig? ReturnType {
 			get => retType;
 			set {
 				if (retType != value) {
@@ -127,18 +127,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		TypeSig retType;
+		TypeSig? retType;
 
 		public UInt32VM GenericParameterCount { get; }
 
-		public string Title {
+		public string? Title {
 			get {
 				if (!string.IsNullOrEmpty(title))
 					return title;
 				return IsPropertySig ? dnSpy_AsmEditor_Resources.CreatePropertySignature : dnSpy_AsmEditor_Resources.CreateMethodSignature;
 			}
 		}
-		string title;
+		string? title;
 
 		public CreateTypeSigArrayVM ParametersCreateTypeSigArray { get; }
 		public CreateTypeSigArrayVM SentinelCreateTypeSigArray { get; }
@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |
-					(dnlib.DotNet.CallingConvention)(MethodCallingConv)MethodCallingConv.SelectedItem;
+					(dnlib.DotNet.CallingConvention)(MethodCallingConv)MethodCallingConv.SelectedItem!;
 			});
 			if (!CanHaveSentinel) {
 				MethodCallingConv.Items.RemoveAt(MethodCallingConv.GetIndex(DnlibDialogs.MethodCallingConv.VarArg));
@@ -189,7 +189,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return sig;
 		}
 
-		void WriteSignature(MethodBaseSig sig) {
+		void WriteSignature(MethodBaseSig? sig) {
 			if (sig == null) {
 				CallingConvention = 0;
 				ReturnType = null;
@@ -218,7 +218,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ReturnType = newTypeSig;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(ReturnType))
 				return ReturnType != null ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
 			return string.Empty;
@@ -228,7 +228,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string ErrorText {
 			get {
-				string err;
+				string? err;
 				if (!string.IsNullOrEmpty(err = Verify(nameof(ReturnType))))
 					return err;
 

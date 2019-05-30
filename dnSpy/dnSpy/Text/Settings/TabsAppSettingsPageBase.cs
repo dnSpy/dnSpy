@@ -26,7 +26,7 @@ using dnSpy.Text.Editor;
 namespace dnSpy.Text.Settings {
 	abstract class TabsAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.TabsSettings;
-		public sealed override object UIObject => this;
+		public sealed override object? UIObject => this;
 
 		public Int32VM TabSizeVM { get; }
 		public Int32VM IndentSizeVM { get; }

@@ -37,10 +37,11 @@ namespace dnSpy.Roslyn.Text {
 			get {
 				if (defaultServices == null)
 					Interlocked.CompareExchange(ref defaultServices, CreateDefaultServices(), null);
+				Debug.Assert(defaultServices != null);
 				return defaultServices;
 			}
 		}
-		static MefHostServices defaultServices;
+		static MefHostServices? defaultServices;
 
 		static MefHostServices CreateDefaultServices() {
 			var asms = new HashSet<Assembly>(MefHostServices.DefaultAssemblies);

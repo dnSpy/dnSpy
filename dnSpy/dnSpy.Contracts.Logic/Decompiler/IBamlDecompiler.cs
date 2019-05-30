@@ -57,12 +57,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Indent characters
 		/// </summary>
-		public string IndentChars { get; set; }
+		public string? IndentChars { get; set; }
 
 		/// <summary>
 		/// Newline characters
 		/// </summary>
-		public string NewLineChars { get; set; }
+		public string? NewLineChars { get; set; }
 
 		/// <summary>
 		/// Add a newline after each attribute

@@ -21,7 +21,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	static class ContentTypeRegistryServiceExtensions {
-		public static IContentType GetContentType(this IContentTypeRegistryService contentTypeRegistryService, IContentType contentType, string contentTypeString) {
+		public static IContentType? GetContentType(this IContentTypeRegistryService contentTypeRegistryService, IContentType? contentType, string? contentTypeString) {
 			if (contentType != null)
 				return contentType;
 			if (contentTypeString != null)

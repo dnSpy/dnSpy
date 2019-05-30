@@ -50,7 +50,7 @@ namespace dnSpy.Hex.Editor {
 
 		readonly WpfHexView wpfHexView;
 		readonly string[] spaceReservationManagerNames;
-		readonly HexSpaceReservationManagerImpl[] spaceReservationManagers;
+		readonly HexSpaceReservationManagerImpl?[] spaceReservationManagers;
 
 		public HexSpaceReservationStackImpl(WpfHexView wpfHexView, string[] spaceReservationManagerNames) {
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
@@ -112,7 +112,7 @@ namespace dnSpy.Hex.Editor {
 		public override void Refresh() {
 			if (wpfHexView.IsClosed)
 				return;
-			GeometryGroup geometry = null;
+			GeometryGroup? geometry = null;
 			foreach (var mgr in SpaceReservationManagers) {
 				if (geometry == null)
 					geometry = new GeometryGroup();

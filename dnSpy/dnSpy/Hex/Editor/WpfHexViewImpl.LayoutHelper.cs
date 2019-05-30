@@ -39,10 +39,10 @@ namespace dnSpy.Hex.Editor {
 			readonly HashSet<HexViewLine> oldVisibleLines;
 
 			public double NewViewportTop { get; private set; }
-			public List<PhysicalLine> AllVisiblePhysicalLines { get; private set; }
-			public List<WpfHexViewLine> AllVisibleLines { get; private set; }
-			public List<WpfHexViewLine> NewOrReformattedLines { get; private set; }
-			public List<WpfHexViewLine> TranslatedLines { get; private set; }
+			public List<PhysicalLine>? AllVisiblePhysicalLines { get; private set; }
+			public List<WpfHexViewLine>? AllVisibleLines { get; private set; }
+			public List<WpfHexViewLine>? NewOrReformattedLines { get; private set; }
+			public List<WpfHexViewLine>? TranslatedLines { get; private set; }
 			readonly double requestedViewportTop;
 
 			public LayoutHelper(HexBufferLineFormatter bufferLines, HexLineTransformProvider lineTransformProvider, double newViewportTop, HashSet<HexViewLine> oldVisibleLines, List<PhysicalLine> oldLines, HexFormattedLineSource formattedLineSource) {
@@ -162,6 +162,7 @@ namespace dnSpy.Hex.Editor {
 			List<LineInfo> CreateLineInfos(HexBufferPoint bufferPosition, VSTE.ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
+				Debug.Assert(startLine != null);
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
@@ -176,7 +177,7 @@ namespace dnSpy.Hex.Editor {
 					lineStartY -= startLine.Height;
 				}
 
-				var currentLine = startLine;
+				HexFormattedLine? currentLine = startLine;
 				double y = lineStartY;
 				if (y + currentLine.Height > NewViewportTop) {
 					for (;;) {
@@ -216,7 +217,7 @@ namespace dnSpy.Hex.Editor {
 				return lineInfos;
 			}
 
-			HexFormattedLine AddLineTransform(HexFormattedLine line, double yPosition, VSTE.ViewRelativePosition placement) {
+			HexFormattedLine? AddLineTransform(HexFormattedLine? line, double yPosition, VSTE.ViewRelativePosition placement) {
 				if (line != null) {
 					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
@@ -227,9 +228,9 @@ namespace dnSpy.Hex.Editor {
 				return line;
 			}
 
-			HexFormattedLine GetLine(HexBufferPoint point) => GetPhysicalLine(point).FindFormattedLineByBufferPosition(point);
+			HexFormattedLine? GetLine(HexBufferPoint point) => GetPhysicalLine(point).FindFormattedLineByBufferPosition(point);
 
-			HexFormattedLine GetLineBefore(HexFormattedLine line) {
+			HexFormattedLine? GetLineBefore(HexFormattedLine line) {
 				var physLine = GetPhysicalLine(line);
 				int index = physLine.IndexOf(line);
 				if (index < 0)
@@ -242,7 +243,7 @@ namespace dnSpy.Hex.Editor {
 				return physLine.Lines[physLine.Lines.Length - 1];
 			}
 
-			HexFormattedLine GetLineAfter(HexFormattedLine line) {
+			HexFormattedLine? GetLineAfter(HexFormattedLine line) {
 				var physLine = GetPhysicalLine(line);
 				int index = physLine.IndexOf(line);
 				if (index < 0)

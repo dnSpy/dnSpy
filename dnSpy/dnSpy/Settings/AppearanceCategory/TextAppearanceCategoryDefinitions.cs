@@ -27,7 +27,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		[Export(typeof(TextAppearanceCategoryDefinition))]
 		sealed class TextEditorTextAppearanceCategoryDefinition : TextAppearanceCategoryDefinition {
 			public override bool IsUserVisible => true;
-			public override string DisplayName => dnSpy_Resources.TextEditor;
+			public override string? DisplayName => dnSpy_Resources.TextEditor;
 			public override string Category => AppearanceCategoryConstants.TextEditor;
 			public override ColorType ColorType => ColorType.Text;
 		}
@@ -35,7 +35,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		[Export(typeof(TextAppearanceCategoryDefinition))]
 		sealed class HexEditorTextAppearanceCategoryDefinition : TextAppearanceCategoryDefinition {
 			public override bool IsUserVisible => true;
-			public override string DisplayName => dnSpy_Resources.BgImgDisplayName_HexEditor;
+			public override string? DisplayName => dnSpy_Resources.BgImgDisplayName_HexEditor;
 			public override string Category => AppearanceCategoryConstants.HexEditor;
 			public override ColorType ColorType => ColorType.HexText;
 		}
@@ -43,7 +43,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		[Export(typeof(TextAppearanceCategoryDefinition))]
 		sealed class UITextAppearanceCategoryDefinition : TextAppearanceCategoryDefinition {
 			public override bool IsUserVisible => false;
-			public override string DisplayName => null;
+			public override string? DisplayName => null;
 			public override string Category => AppearanceCategoryConstants.UIMisc;
 			public override ColorType ColorType => ColorType.Text;
 		}

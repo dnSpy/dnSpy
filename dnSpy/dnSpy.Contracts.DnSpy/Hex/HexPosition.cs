@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexPosition && Equals((HexPosition)obj);
+		public override bool Equals(object? obj) => obj is HexPosition && Equals((HexPosition)obj);
 
 		/// <summary>
 		/// Gets the hash code of this instance

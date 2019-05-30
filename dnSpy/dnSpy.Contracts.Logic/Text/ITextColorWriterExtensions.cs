@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 
@@ -67,7 +68,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="version">Version</param>
 		/// <returns></returns>
-		public static T Write<T>(this T output, Version version) where T : ITextColorWriter {
+		public static T Write<T>(this T output, Version? version) where T : ITextColorWriter {
 			if (version == null)
 				output.Write(BoxedTextColor.Error, "?.?.?.?");
 			else {
@@ -89,7 +90,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		public static T Write<T>(this T output, IAssembly asm) where T : ITextColorWriter {
+		public static T Write<T>(this T output, IAssembly? asm) where T : ITextColorWriter {
 			if (asm == null)
 				return output;
 			var asmDef = asm as AssemblyDef;
@@ -117,8 +118,10 @@ namespace dnSpy.Contracts.Text {
 			output.Write(BoxedTextColor.Operator, "=");
 			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
 				output.Write(BoxedTextColor.Keyword, "null");
-			else
+			else {
+				Debug.Assert(publicKey != null);
 				output.Write(BoxedTextColor.Number, publicKey.ToString());
+			}
 
 			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
 				output.WriteCommaSpace();
@@ -144,7 +147,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="namespace">Namespace</param>
 		/// <returns></returns>
-		public static T WriteNamespace<T>(this T output, string @namespace) where T : ITextColorWriter {
+		public static T WriteNamespace<T>(this T output, string? @namespace) where T : ITextColorWriter {
 			if (@namespace == null)
 				return output;
 			if (@namespace.Length == 0)
@@ -179,10 +182,10 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static T WriteFilename<T>(this T output, string filename) where T : ITextColorWriter {
+		public static T WriteFilename<T>(this T output, string? filename) where T : ITextColorWriter {
 			if (filename == null)
 				return output;
-			filename = NameUtilities.CleanName(filename);
+			filename = NameUtilities.CleanName(filename)!;
 			var s = filename.Replace('\\', '/');
 			var parts = s.Split('/');
 			int slashIndex = 0;

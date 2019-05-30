@@ -88,9 +88,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.debuggerSettings = debuggerSettings;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			callStackContext = new CallStackContext(uiDispatcher, classificationFormatMap, textBlockContentInfoFactory) {
+			callStackContext = new CallStackContext(uiDispatcher, classificationFormatMap, textBlockContentInfoFactory, callStackFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = callStackFormatterProvider.Create(),
 				StackFrameFormatterOptions = GetStackFrameFormatterOptions(),
 				ValueFormatterOptions = GetValueFormatterOptions(),
 			};
@@ -374,7 +373,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// UI thread
-		void UpdateFrames_UI(DbgCallStackFramesInfo framesInfo, DbgThread thread) {
+		void UpdateFrames_UI(DbgCallStackFramesInfo framesInfo, DbgThread? thread) {
 			callStackContext.UIDispatcher.VerifyAccess();
 
 			ClearUsedBreakpoints_UI();
@@ -438,7 +437,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			else if (!oldFramesTruncated && framesInfo.FramesTruncated)
 				AllItems.Add(new MessageStackFrameVM(dnSpy_Debugger_Resources.CallStack_MaxFramesExceeded, callStackContext, newFrames.Count));
 		}
-		DbgThread framesThread;
+		DbgThread? framesThread;
 
 		// UI thread
 		BreakpointKind? GetBreakpointKind_UI(NormalStackFrameVM vm) {

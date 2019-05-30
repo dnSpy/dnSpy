@@ -42,7 +42,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			readonly MSBuildProjectCreator owner;
 			readonly IMSBuildProjectWriterLogger logger;
 
-			public MyLogger(MSBuildProjectCreator owner, IMSBuildProjectWriterLogger logger) {
+			public MyLogger(MSBuildProjectCreator owner, IMSBuildProjectWriterLogger? logger) {
 				this.owner = owner;
 				this.logger = logger ?? NoMSBuildProjectWriterLogger.Instance;
 			}
@@ -61,7 +61,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public void Create() {
-			SatelliteAssemblyFinder satelliteAssemblyFinder = null;
+			SatelliteAssemblyFinder? satelliteAssemblyFinder = null;
 			try {
 				var opts = new ParallelOptions {
 					CancellationToken = options.CancellationToken,

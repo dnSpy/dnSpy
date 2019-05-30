@@ -28,9 +28,9 @@ namespace dnSpy.AsmEditor.Method {
 		public MethodAttributes Attributes;
 		public MethodSemanticsAttributes SemanticsAttributes;
 		public RVA RVA;
-		public UTF8String Name;
-		public MethodSig MethodSig;
-		public ImplMap ImplMap;
+		public UTF8String? Name;
+		public MethodSig? MethodSig;
+		public ImplMap? ImplMap;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 		public List<ParamDef> ParamDefs = new List<ParamDef>();

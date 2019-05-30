@@ -151,7 +151,7 @@ namespace dnSpy.Text.Operations {
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, firstSpan.Start.Position + s.Length));
 			wpfTextView.Caret.EnsureVisible();
 			if (clearSearchText)
-				replEditor.SearchText = null;
+				replEditor.SearchText = string.Empty;
 		}
 
 		public void AddUserInput(Span span, string text, bool clearSearchText = true) {
@@ -172,7 +172,7 @@ namespace dnSpy.Text.Operations {
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, span.Start + s.Length));
 			wpfTextView.Caret.EnsureVisible();
 			if (clearSearchText)
-				replEditor.SearchText = null;
+				replEditor.SearchText = string.Empty;
 		}
 
 		public bool Backspace() {
@@ -181,7 +181,7 @@ namespace dnSpy.Text.Operations {
 			if (!wpfTextView.Selection.IsEmpty)
 				AddUserInput(string.Empty);
 			else {
-				int start = replEditor.FilterOffset(replEditor.OffsetOfPrompt.Value);
+				int start = replEditor.FilterOffset(replEditor.OffsetOfPrompt!.Value);
 				int offs = CaretOffset;
 				if (offs <= start)
 					return false;

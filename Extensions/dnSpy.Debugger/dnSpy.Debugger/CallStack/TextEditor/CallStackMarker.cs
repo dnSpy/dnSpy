@@ -42,11 +42,11 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		readonly Lazy<CallStackGlyphTextMarkerHandler> callStackGlyphTextMarkerHandler;
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly Lazy<DbgStackFrameGlyphTextMarkerLocationInfoProvider>[] dbgStackFrameGlyphTextMarkerLocationInfoProviders;
-		IClassificationType classificationTypeCurrentStatement;
-		IClassificationType classificationTypeCallReturn;
-		IGlyphTextMarker currentStatementMarker;
-		IGlyphTextMarker callReturnMarker;
-		DbgProcess currentProcess;
+		IClassificationType? classificationTypeCurrentStatement;
+		IClassificationType? classificationTypeCallReturn;
+		IGlyphTextMarker? currentStatementMarker;
+		IGlyphTextMarker? callReturnMarker;
+		DbgProcess? currentProcess;
 
 		[ImportingConstructor]
 		CallStackMarker(UIDispatcher uiDispatcher, DbgCallStackService dbgCallStackService, Lazy<ActiveStatementService> activeStatementService, Lazy<CallStackGlyphTextMarkerHandler> callStackGlyphTextMarkerHandler, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, Lazy<IClassificationTypeRegistryService> classificationTypeRegistryService, [ImportMany] IEnumerable<Lazy<DbgStackFrameGlyphTextMarkerLocationInfoProvider>> dbgStackFrameGlyphTextMarkerLocationInfoProviders) {
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 			AddMarkers(updateActiveStatements);
 		}
 
-		void SetCurrentProcess(DbgProcess process) {
+		void SetCurrentProcess(DbgProcess? process) {
 			if (currentProcess == process)
 				return;
 			if (currentProcess != null)
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
 			if (currentProcess != sender)
 				return;
-			if (currentProcess.IsRunning) {
+			if (currentProcess!.IsRunning) {
 				UI(() => {
 					ClearMarkers();
 					activeStatementService.Value.OnNewActiveStatements(emptyStackFrames);
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 			}
 		}
 
-		GlyphTextMarkerLocationInfo GetTextMarkerLocationInfo(DbgStackFrame frame) {
+		GlyphTextMarkerLocationInfo? GetTextMarkerLocationInfo(DbgStackFrame frame) {
 			foreach (var provider in dbgStackFrameGlyphTextMarkerLocationInfoProviders) {
 				var info = provider.Value.Create(frame);
 				if (info != null)

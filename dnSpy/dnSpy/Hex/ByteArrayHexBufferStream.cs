@@ -439,6 +439,6 @@ namespace dnSpy.Hex {
 			Array.Copy(source, sourceIndex, d, (long)pos, validBytes);
 		}
 
-		protected override void DisposeCore() => data = null;
+		protected override void DisposeCore() => data = null!;
 	}
 }

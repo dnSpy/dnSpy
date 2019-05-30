@@ -62,7 +62,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		bool MoveInVirtualSpace => Options.IsVirtualSpaceEnabled() || Selection.Mode == TextSelectionMode.Box;
-		public ITrackingSpan ProvisionalCompositionSpan => null;//TODO:
+		public ITrackingSpan? ProvisionalCompositionSpan => null;//TODO:
 		public IEditorOptions Options => TextView.Options;
 		public string SelectedText => TextView.Selection.GetText();
 		public ITextView TextView { get; }
@@ -84,7 +84,7 @@ namespace dnSpy.Text.Operations {
 				return textStructureNavigator;
 			}
 		}
-		ITextStructureNavigator textStructureNavigator;
+		ITextStructureNavigator? textStructureNavigator;
 
 		void OnContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
 			// The TextStructureNavigator prop checks it for null and re-initializes it. The reason that we
@@ -263,7 +263,7 @@ namespace dnSpy.Text.Operations {
 
 		const string VS_COPY_FULL_LINE_DATA_FORMAT = "VisualStudioEditorOperationsLineCutCopyClipboardTag";
 		const string VS_COPY_BOX_DATA_FORMAT = "MSDEVColumnSelect";
-		bool CopyToClipboard(string text, string htmlText, bool isFullLineData, bool isBoxData) {
+		bool CopyToClipboard(string text, string? htmlText, bool isFullLineData, bool isBoxData) {
 			try {
 				var dataObj = new DataObject();
 				dataObj.SetText(text);
@@ -281,8 +281,8 @@ namespace dnSpy.Text.Operations {
 			}
 		}
 
-		string TryCreateHtmlText(SnapshotSpan span) => TryCreateHtmlText(new NormalizedSnapshotSpanCollection(span));
-		string TryCreateHtmlText(NormalizedSnapshotSpanCollection spans) {
+		string? TryCreateHtmlText(SnapshotSpan span) => TryCreateHtmlText(new NormalizedSnapshotSpanCollection(span));
+		string? TryCreateHtmlText(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return null;
 
@@ -299,7 +299,7 @@ namespace dnSpy.Text.Operations {
 		public bool CopySelection() => CutOrCopySelection(false);
 		public bool CutSelection() => CutOrCopySelection(true);
 		bool CutOrCopySelection(bool cut) {
-			string htmlText;
+			string? htmlText;
 			if (Selection.IsEmpty) {
 				var line = Caret.ContainingTextViewLine;
 				bool cutEmptyLines = Options.GetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId);
@@ -358,7 +358,7 @@ namespace dnSpy.Text.Operations {
 			var endLine = span.End.Position.GetContainingLine();
 			var cutSpan = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak);
 			var text = Snapshot.GetText(cutSpan);
-			string htmlText = cut ? TryCreateHtmlText(cutSpan) : null;
+			string? htmlText = cut ? TryCreateHtmlText(cutSpan) : null;
 			Selection.Clear();
 			TextBuffer.Delete(cutSpan);
 			var newPos = caretPos.BufferPosition.TranslateTo(Snapshot, PointTrackingMode.Negative);
@@ -449,7 +449,7 @@ namespace dnSpy.Text.Operations {
 			if (spanEnd > snapshot.Length)
 				throw new ArgumentOutOfRangeException(nameof(span));
 			int pos = span.Start;
-			ITextSnapshotLine line = null;
+			ITextSnapshotLine? line = null;
 			while (pos < spanEnd) {
 				while (pos < spanEnd && !IsWhitespace(snapshot[pos]))
 					pos++;
@@ -1696,7 +1696,7 @@ namespace dnSpy.Text.Operations {
 
 		public bool Untabify() => true;//TODO:
 
-		IWpfTextView GetZoomableView() {
+		IWpfTextView? GetZoomableView() {
 			if (!Roles.Contains(PredefinedTextViewRoles.Zoomable))
 				return null;
 			var wpfTextView = TextView as IWpfTextView;

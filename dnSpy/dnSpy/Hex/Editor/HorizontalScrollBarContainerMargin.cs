@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		HorizontalScrollBarContainerMarginProvider(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider) => this.wpfHexViewMarginProviderCollectionProvider = wpfHexViewMarginProviderCollectionProvider;
 
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new HorizontalScrollBarContainerMargin(wpfHexViewMarginProviderCollectionProvider, wpfHexViewHost);
 	}
 

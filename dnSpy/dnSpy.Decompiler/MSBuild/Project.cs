@@ -40,17 +40,17 @@ namespace dnSpy.Decompiler.MSBuild {
 		public Guid LanguageGuid { get; }
 		public string Filename { get; }
 		public string Directory { get; }
-		public string Platform { get; set; }
+		public string? Platform { get; set; }
 		public HashSet<Guid> ProjectTypeGuids { get; }
 		public HashSet<string> ExtraAssemblyReferences { get; }
-		public string StartupObject { get; private set; }
+		public string? StartupObject { get; private set; }
 		public bool AllowUnsafeBlocks { get; private set; }
 		public string PropertiesFolder { get; }
-		public ApplicationIcon ApplicationIcon => applicationIcon;
-		public ApplicationManifest ApplicationManifest => applicationManifest;
+		public ApplicationIcon? ApplicationIcon => applicationIcon;
+		public ApplicationManifest? ApplicationManifest => applicationManifest;
 
-		ApplicationIcon applicationIcon;
-		ApplicationManifest applicationManifest;
+		ApplicationIcon? applicationIcon;
+		ApplicationManifest? applicationManifest;
 
 		readonly SatelliteAssemblyFinder satelliteAssemblyFinder;
 		readonly Func<TextWriter, IDecompilerOutput> createDecompilerOutput;
@@ -141,7 +141,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			applicationIcon = ApplicationIcon.TryCreate(Options.Module.Win32Resources, Path.GetFileName(Directory), filenameCreator);
 
-			var dirs = new HashSet<string>(Files.Select(a => GetDirectoryName(a.Filename)).Where(a => a != null), StringComparer.OrdinalIgnoreCase);
+			var dirs = new HashSet<string>(Files.Select(a => GetDirectoryName(a.Filename)).OfType<string>(), StringComparer.OrdinalIgnoreCase);
 			int errors = 0;
 			foreach (var dir in dirs) {
 				ctx.CancellationToken.ThrowIfCancellationRequested();
@@ -155,7 +155,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		static string GetDirectoryName(string s) {
+		static string? GetDirectoryName(string s) {
 			try {
 				return Path.GetDirectoryName(s);
 			}
@@ -188,7 +188,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				break;
 			}
 		}
-		string splashScreenImageName;
+		string? splashScreenImageName;
 
 		ProjectFile CreateTypeProjectFile(TypeDef type, FilenameCreator filenameCreator) {
 			var bamlFile = TryGetBamlFile(type);
@@ -289,7 +289,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			newFile.DependentUpon = bamlFile;
 			Files.Add(bamlFile);
 		}
-		TypeProjectFile appTypeProjFile;
+		TypeProjectFile? appTypeProjFile;
 
 		void InitializeXaml() {
 			typeFullNameToBamlFile = new Dictionary<string, BamlResourceProjectFile>(StringComparer.OrdinalIgnoreCase);
@@ -314,7 +314,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					ProjectTypeGuids.Add(new Guid("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"));
 			}
 		}
-		Dictionary<string, BamlResourceProjectFile> typeFullNameToBamlFile;
+		Dictionary<string, BamlResourceProjectFile>? typeFullNameToBamlFile;
 		bool hasXamlClasses;
 
 		bool ReferencesWPFClasses() {
@@ -329,7 +329,8 @@ namespace dnSpy.Decompiler.MSBuild {
 			return false;
 		}
 
-		BamlResourceProjectFile TryGetBamlFile(TypeDef type) {
+		BamlResourceProjectFile? TryGetBamlFile(TypeDef type) {
+			Debug.Assert(typeFullNameToBamlFile != null);
 			typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile);
 			return bamlFile;
 		}
@@ -341,14 +342,16 @@ namespace dnSpy.Decompiler.MSBuild {
 					typeFullNameToResXFile[resxFile.TypeFullName] = resxFile;
 			}
 		}
-		Dictionary<string, ResXProjectFile> typeFullNameToResXFile;
+		Dictionary<string, ResXProjectFile>? typeFullNameToResXFile;
 
-		ResXProjectFile TryGetResXFile(TypeDef type) {
+		ResXProjectFile? TryGetResXFile(TypeDef type) {
+			Debug.Assert(typeFullNameToResXFile != null);
 			typeFullNameToResXFile.TryGetValue(type.FullName, out var resxFile);
 			return resxFile;
 		}
 
 		string GetTypeExtension(TypeDef type) {
+			Debug.Assert(typeFullNameToBamlFile != null);
 			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile))
 				return ".xaml" + Options.Decompiler.FileExtension;
 			return Options.Decompiler.FileExtension;
@@ -372,7 +375,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			yield return CreateRawEmbeddedResourceProjectFile(module, resourceNameCreator, er);
 		}
 
-		List<ProjectFile> TryCreateResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) {
+		List<ProjectFile>? TryCreateResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, EmbeddedResource er) {
 			ResourceElementSet set;
 			try {
 				set = ResourceReader.Read(module, er.CreateReader());
@@ -417,7 +420,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				if (decompileBaml && e.Name.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 					var filename = resourceNameCreator.GetBamlResourceName(e.Name, out string typeFullName);
-					yield return new BamlResourceProjectFile(filename, data, typeFullName, (bamlData, stream) => Options.DecompileBaml(module, bamlData, Options.DecompilationContext.CancellationToken, stream));
+					yield return new BamlResourceProjectFile(filename, data, typeFullName, (bamlData, stream) => Options.DecompileBaml!(module, bamlData, Options.DecompilationContext.CancellationToken, stream));
 				}
 				else if (StringComparer.InvariantCultureIgnoreCase.Equals(splashScreenImageName, e.Name)) {
 					var filename = resourceNameCreator.GetXamlResourceFilename(e.Name);
@@ -465,7 +468,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		ProjectFile TryCreateSatelliteFile(ModuleDef module, string rsrcName, FilenameCreator filenameCreator, ProjectFile nonSatFile) {
+		ProjectFile? TryCreateSatelliteFile(ModuleDef module, string rsrcName, FilenameCreator filenameCreator, ProjectFile nonSatFile) {
 			if (!Options.CreateResX)
 				return null;
 			var asm = module.Assembly;
@@ -488,7 +491,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return CreateResXFile(module, er, set, filename, string.Empty, true);
 		}
 
-		static ResourceElementSet TryCreateResourceElementSet(ModuleDef module, EmbeddedResource er) {
+		static ResourceElementSet? TryCreateResourceElementSet(ModuleDef module, EmbeddedResource er) {
 			if (er == null)
 				return null;
 			if (!ResourceReader.CouldBeResourcesFile(er.CreateReader()))

@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ModuleTokenId && Equals((ModuleTokenId)obj);
+		public override bool Equals(object? obj) => obj is ModuleTokenId && Equals((ModuleTokenId)obj);
 
 		/// <summary>
 		/// GetHashCode()

@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Normalized <see cref="HexSpan"/> collection
 	/// </summary>
-	public sealed class NormalizedHexSpanCollection : ReadOnlyCollection<HexSpan>, IEquatable<NormalizedHexSpanCollection> {
+	public sealed class NormalizedHexSpanCollection : ReadOnlyCollection<HexSpan>, IEquatable<NormalizedHexSpanCollection?> {
 		/// <summary>
 		/// An empty collection
 		/// </summary>
@@ -118,10 +118,10 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(NormalizedHexSpanCollection left, NormalizedHexSpanCollection right) {
-			if ((object)left == right)
+		public static bool operator ==(NormalizedHexSpanCollection? left, NormalizedHexSpanCollection? right) {
+			if ((object?)left == right)
 				return true;
-			if ((object)left == null || (object)right == null)
+			if (left is null || right is null)
 				return false;
 			return left.Equals(right);
 		}
@@ -132,15 +132,15 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(NormalizedHexSpanCollection left, NormalizedHexSpanCollection right) => !(left == right);
+		public static bool operator !=(NormalizedHexSpanCollection? left, NormalizedHexSpanCollection? right) => !(left == right);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(NormalizedHexSpanCollection other) {
-			if ((object)other == null)
+		public bool Equals(NormalizedHexSpanCollection? other) {
+			if ((object?)other == null)
 				return false;
 			if (Count != other.Count)
 				return false;
@@ -156,7 +156,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as NormalizedHexSpanCollection);
+		public override bool Equals(object? obj) => Equals(obj as NormalizedHexSpanCollection);
 
 		/// <summary>
 		/// GetHashCode()

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
@@ -39,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 		}
 
-		public bool TryPatch(out string errorMessage) {
+		public bool TryPatch([NotNullWhenFalse] out string? errorMessage) {
 			var mgr = new ECallManager(process.Id, runtime.ClrFilename);
 			if (!mgr.FoundClrModule) {
 				errorMessage = $"Couldn't find the CLR dll file: {runtime.ClrFilename}";

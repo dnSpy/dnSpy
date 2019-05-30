@@ -42,7 +42,7 @@ namespace dnSpy.Text {
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out CachedColorsListTagger colorizer)) {
 				colorizer.ThemeClassificationTypeService = themeClassificationTypeService;
 				colorizer.ClassificationTypeRegistryService = classificationTypeRegistryService;
@@ -62,10 +62,10 @@ namespace dnSpy.Text {
 
 	sealed class CachedColorsListTagger : ITagger<IClassificationTag> {
 		readonly CachedColorsList cachedColorsList;
-		IClassificationType textClassificationType;
+		IClassificationType? textClassificationType;
 
-		public IThemeClassificationTypeService ThemeClassificationTypeService { get; internal set; }
-		public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; internal set; }
+		public IThemeClassificationTypeService? ThemeClassificationTypeService { get; internal set; }
+		public IClassificationTypeRegistryService? ClassificationTypeRegistryService { get; internal set; }
 
 		CachedColorsListTagger(CachedColorsList cachedColorsList) => this.cachedColorsList = cachedColorsList;
 

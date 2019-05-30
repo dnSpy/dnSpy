@@ -27,11 +27,11 @@ using dnlib.DotNet;
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class SatelliteAssemblyFinder : IDisposable {
 		readonly HashSet<string> cultures;
-		readonly Dictionary<string, ModuleDef> openedModules;
+		readonly Dictionary<string, ModuleDef?> openedModules;
 
 		public SatelliteAssemblyFinder() {
 			cultures = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(a => a.Name), StringComparer.OrdinalIgnoreCase);
-			openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
+			openedModules = new Dictionary<string, ModuleDef?>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		bool IsValidCulture(string name) => !string.IsNullOrEmpty(name) && cultures.Contains(name);
@@ -90,10 +90,10 @@ namespace dnSpy.Decompiler.MSBuild {
 			return Array.Empty<string>();
 		}
 
-		AssemblyDef TryOpenAssembly(string filename) {
+		AssemblyDef? TryOpenAssembly(string filename) {
 			lock (openedModules) {
 				if (openedModules.TryGetValue(filename, out var mod))
-					return mod.Assembly;
+					return mod?.Assembly;
 				openedModules[filename] = null;
 				if (!File.Exists(filename))
 					return null;
@@ -114,7 +114,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public void Dispose() {
 			foreach (var mod in openedModules.Values)
-				mod.Dispose();
+				mod?.Dispose();
 		}
 	}
 }

@@ -43,12 +43,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public ModuleContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public ModuleContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher, ModuleFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

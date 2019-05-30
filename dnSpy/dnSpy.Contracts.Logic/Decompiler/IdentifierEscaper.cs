@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="s">Identifier string</param>
 		/// <returns></returns>
-		public static string Truncate(string s) => Truncate(s, MAX_IDENTIFIER_LENGTH);
+		public static string? Truncate(string? s) => Truncate(s, MAX_IDENTIFIER_LENGTH);
 
 		/// <summary>
 		/// Truncates the length of <paramref name="s"/> if it's too long
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="s">Identifier string</param>
 		/// <param name="maxLength">Max length</param>
 		/// <returns></returns>
-		public static string Truncate(string s, int maxLength) {
+		public static string? Truncate(string? s, int maxLength) {
 			if (s == null || s.Length <= maxLength)
 				return s;
 
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="id">Identifier</param>
 		/// <returns></returns>
-		public static string Escape(string id) => Escape(id, MAX_IDENTIFIER_LENGTH, allowSpaces: false);
+		public static string Escape(string? id) => Escape(id, MAX_IDENTIFIER_LENGTH, allowSpaces: false);
 
 		/// <summary>
 		/// Escapes an identifier
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="maxLength">Max length</param>
 		/// <param name="allowSpaces">true to allow spaces</param>
 		/// <returns></returns>
-		public static string Escape(string id, int maxLength, bool allowSpaces) {
+		public static string Escape(string? id, int maxLength, bool allowSpaces) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;
 

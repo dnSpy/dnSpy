@@ -23,13 +23,13 @@ using dnSpy.Contracts.App;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class ShowWarningMessage : IShowWarningMessage {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public ShowWarningMessage()
 			: this(null) {
 		}
 
-		public ShowWarningMessage(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public ShowWarningMessage(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public void Show(Guid? guid, string msg) {
 			if (guid == null)

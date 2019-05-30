@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
+		public ITextBuffer? TextBuffer { get; set; }
 
 		/// <summary>
 		/// All <see cref="ITextView"/> roles

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Decompiler.XmlDoc;
 namespace dnSpy.Decompiler.IL {
 	public static class ILLanguageHelper {
 		static readonly string[] cachedOpCodeDocs = new string[0x200];
-		public static string GetOpCodeDocumentation(OpCode code) {
+		public static string? GetOpCodeDocumentation(OpCode code) {
 			int index = (int)code.Code;
 			int hi = index >> 8;
 			if (hi == 0xFE)
@@ -36,7 +36,7 @@ namespace dnSpy.Decompiler.IL {
 
 			var docProvider = XmlDocLoader.MscorlibDocumentation;
 			if (docProvider != null) {
-				string docXml = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.Code.ToString());
+				string? docXml = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.Code.ToString());
 				if (docXml != null) {
 					XmlDocRenderer renderer = new XmlDocRenderer();
 					renderer.AddXmlDocumentation(docXml);

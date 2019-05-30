@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 	abstract class AsyncTagger<TTagType, TUserAsyncState> : ITagger<TTagType>, IDisposable where TTagType : ITag where TUserAsyncState : new() {
 		readonly Dictionary<int, IEnumerable<ITagSpan<TTagType>>> cachedTags;
 		readonly object lockObj;
-		SnapshotState lastSnapshotState;
+		SnapshotState? lastSnapshotState;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
@@ -113,7 +113,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			readonly List<TagsResult> tagsResultList;
 			readonly List<NormalizedSnapshotSpanCollection> jobs;
 			readonly List<TagsResult> currentResult;
-			HashSet<SnapshotSpan> snapshotHash;
+			HashSet<SnapshotSpan>? snapshotHash;
 
 			public GetTagsStateImpl(CancellationToken cancellationToken)
 				: base(cancellationToken) {
@@ -170,7 +170,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 				return result;
 			}
 
-			public NormalizedSnapshotSpanCollection TryGetJob() {
+			public NormalizedSnapshotSpanCollection? TryGetJob() {
 				if (jobs.Count == 0)
 					return null;
 				int index = jobs.Count - 1;
@@ -208,10 +208,10 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			var snapshot = spans[0].Snapshot;
 
 			// The common case is spans.Count == 1, so try to prevent extra allocations
-			IEnumerable<ITagSpan<TTagType>> singleResult = null;
-			List<ITagSpan<TTagType>> multipleResults = null;
+			IEnumerable<ITagSpan<TTagType>>? singleResult = null;
+			List<ITagSpan<TTagType>>? multipleResults = null;
 			SnapshotSpan? singleMissingSpan = null;
-			List<SnapshotSpan> multipleMissingSpans = null;
+			List<SnapshotSpan>? multipleMissingSpans = null;
 			lock (lockObj) {
 				if (lastSnapshotState?.Snapshot != snapshot) {
 					lastSnapshotState?.Cancel();
@@ -221,6 +221,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 					lastSnapshotState = new SnapshotState(snapshot);
 					lastSnapshotState.AddRef();
 				}
+				Debug.Assert(lastSnapshotState != null);
 
 				foreach (var span in spans) {
 					if (cachedTags.TryGetValue(span.Start.Position, out var tags)) {
@@ -294,7 +295,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 
 		async Task<TagsResult[]> GetTagsAsync(SnapshotState snapshotState) {
 			try {
-				NormalizedSnapshotSpanCollection spans;
+				NormalizedSnapshotSpanCollection? spans;
 				for (;;) {
 					lock (lockObj) {
 						spans = snapshotState.GetTagsStateImpl.TryGetJob();

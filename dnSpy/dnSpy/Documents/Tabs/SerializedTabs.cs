@@ -44,9 +44,9 @@ namespace dnSpy.Documents.Tabs {
 		public int Index { get; }
 		public bool IsHorizontal { get; }
 		public List<SerializedTabGroup> TabGroups { get; }
-		public StackedContentState StackedContentState { get; }
+		public StackedContentState? StackedContentState { get; }
 
-		SerializedTabGroupWindow(string name, int index, bool isHorizontal, StackedContentState stackedContentState) {
+		SerializedTabGroupWindow(string name, int index, bool isHorizontal, StackedContentState? stackedContentState) {
 			Name = name;
 			Index = index;
 			IsHorizontal = isHorizontal;
@@ -80,7 +80,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public static SerializedTabGroupWindow Create(IDocumentTabContentFactoryService factory, ITabGroupService tabGroupService, string name) {
-			int index = tabGroupService.TabGroups.ToList().IndexOf(tabGroupService.ActiveTabGroup);
+			int index = tabGroupService.TabGroups.ToList().IndexOf(tabGroupService.ActiveTabGroup!);
 			var stackedContentState = ((TabGroupService)tabGroupService).StackedContentState;
 			var tgw = new SerializedTabGroupWindow(name, index, tabGroupService.IsHorizontal, stackedContentState);
 
@@ -90,7 +90,7 @@ namespace dnSpy.Documents.Tabs {
 			return tgw;
 		}
 
-		public IEnumerable<object> Restore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroupService mgr) {
+		public IEnumerable<object?> Restore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroupService mgr) {
 			mgr.IsHorizontal = IsHorizontal;
 			for (int i = 0; i < TabGroups.Count; i++) {
 				var stg = TabGroups[i];
@@ -143,7 +143,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public static SerializedTabGroup Create(IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroup g) {
-			int index = g.TabContents.ToList().IndexOf(g.ActiveTabContent);
+			int index = g.TabContents.ToList().IndexOf(g.ActiveTabContent!);
 			var tg = new SerializedTabGroup(index);
 
 			foreach (IDocumentTab tab in g.TabContents) {
@@ -155,7 +155,7 @@ namespace dnSpy.Documents.Tabs {
 			return tg;
 		}
 
-		public IEnumerable<object> Restore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroup g) {
+		public IEnumerable<object?> Restore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroup g) {
 			foreach (var st in Tabs) {
 				foreach (var o in st.TryRestore(documentTabService, documentTabContentFactoryService, g))
 					yield return o;
@@ -189,7 +189,7 @@ namespace dnSpy.Documents.Tabs {
 			AutoLoadedDocuments = autoLoadedDocuments;
 		}
 
-		public static SerializedTab TryLoad(ISettingsSection section) {
+		public static SerializedTab? TryLoad(ISettingsSection section) {
 			var contentSect = section.TryGetSection(CONTENT_SECTION);
 			if (contentSect == null || contentSect.Attribute<Guid?>(CONTENT_GUID_ATTR) == null)
 				return null;
@@ -225,7 +225,7 @@ namespace dnSpy.Documents.Tabs {
 				DsDocumentInfoSerializer.Save(section.CreateSection(AUTOLOADED_SECTION), f);
 		}
 
-		public static SerializedTab TryCreate(IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTab tab) {
+		public static SerializedTab? TryCreate(IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTab tab) {
 			var contentSect = new SettingsSection(CONTENT_SECTION);
 			var guid = documentTabContentFactoryService.Serialize(tab.Content, contentSect);
 			if (guid == null)
@@ -265,10 +265,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		sealed class GetNodesContext {
-			public DocumentTreeNodeData[] Nodes;
+			public DocumentTreeNodeData[]? Nodes;
 		}
 
-		public IEnumerable<object> TryRestore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroup g) {
+		public IEnumerable<object?> TryRestore(DocumentTabService documentTabService, IDocumentTabContentFactoryService documentTabContentFactoryService, ITabGroup g) {
 			var guid = Content.Attribute<Guid?>(CONTENT_GUID_ATTR);
 			if (guid == null)
 				yield break;
@@ -283,7 +283,7 @@ namespace dnSpy.Documents.Tabs {
 				yield break;
 			documentTabService.Add(g, tabContent, null, (Action<ShowTabContentEventArgs>)(a => {
 				if (a.Success) {
-					var uiContext = tabContent.DocumentTab.UIContext;
+					var uiContext = tabContent.DocumentTab!.UIContext;
 					tabContent.DocumentTab.DeserializeUI((ISettingsSection)TabUI);
 					var obj = uiContext.DeserializeUIState(UI);
 					uiContext.RestoreUIState(obj);
@@ -292,7 +292,7 @@ namespace dnSpy.Documents.Tabs {
 			yield return null;
 		}
 
-		IEnumerable<object> GetNodes(GetNodesContext ctx, IDocumentTreeView documentTreeView) {
+		IEnumerable<object?> GetNodes(GetNodesContext ctx, IDocumentTreeView documentTreeView) {
 			var list = new List<DocumentTreeNodeData>();
 			var root = documentTreeView.TreeView.Root;
 			var findCtx = new FindNodeContext();
@@ -308,7 +308,7 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	sealed class FindNodeContext {
-		public DocumentTreeNodeData Node;
+		public DocumentTreeNodeData? Node;
 	}
 
 	sealed class SerializedPath {
@@ -332,7 +332,7 @@ namespace dnSpy.Documents.Tabs {
 				NodePathNameSerializer.Save(section.CreateSection(NAME_SECTION), name);
 		}
 
-		public static SerializedPath Create(DocumentTreeNodeData node) {
+		public static SerializedPath Create(DocumentTreeNodeData? node) {
 			var path = new SerializedPath();
 
 			while (node != null && node.TreeNode.Parent != null) {
@@ -345,7 +345,7 @@ namespace dnSpy.Documents.Tabs {
 			return path;
 		}
 
-		public IEnumerable<object> FindNode(FindNodeContext ctx, ITreeNode root) {
+		public IEnumerable<object?> FindNode(FindNodeContext ctx, ITreeNode root) {
 			var node = root;
 			foreach (var name in Names) {
 				node.EnsureChildrenLoaded();

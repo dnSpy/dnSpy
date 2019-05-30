@@ -20,6 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
@@ -47,7 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 			protected override string OnNewValue(string value) => value;
 
-			protected override string ConvertToValue(out string value) {
+			protected override string? ConvertToValue(out string value) {
 				value = StringValue;
 
 				if (isCode) {
@@ -60,14 +61,14 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				}
 			}
 
-			public bool TryGetCode(out int code, out string error) {
+			public bool TryGetCode(out int code, [NotNullWhenFalse] out string? error) {
 				code = SimpleTypeConverter.ParseInt32(StringValue, int.MinValue, int.MaxValue, out error);
 				if (error != null)
 					code = (int)SimpleTypeConverter.ParseUInt32(StringValue, uint.MinValue, uint.MaxValue, out error);
 				return error == null;
 			}
 
-			public bool TryGetName(out string name, out string error) {
+			public bool TryGetName([NotNullWhenTrue] out string? name, [NotNullWhenFalse] out string? error) {
 				name = StringValue;
 				if (string.IsNullOrWhiteSpace(name)) {
 					error = dnSpy_Debugger_Resources.Exception_Error_NameCanNotBeEmpty;
@@ -95,18 +96,18 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 		bool isVisible;
 
-		public object SelectedCategory {
+		public object? SelectedCategory {
 			get => selectedCategory;
 			set {
 				if (selectedCategory == value)
 					return;
-				selectedCategory = (ExceptionCategoryVM)value;
+				selectedCategory = (ExceptionCategoryVM?)value;
 				OnPropertyChanged(nameof(SelectedCategory));
 				OnPropertyChanged(nameof(HasDescriptionText));
 				nameOrCodeVM.IsCode = IsExceptionCode;
 			}
 		}
-		ExceptionCategoryVM selectedCategory;
+		ExceptionCategoryVM? selectedCategory;
 
 		public object ExceptionCategoryCollection => exceptionCategories;
 		readonly ObservableCollection<ExceptionCategoryVM> exceptionCategories;
@@ -125,7 +126,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				OnPropertyChanged(nameof(DescriptionText));
 			}
 		}
-		string descriptionText;
+		string descriptionText = string.Empty;
 
 		bool IsExceptionCode => selectedCategory != null && (selectedCategory.Definition.Flags & DbgExceptionCategoryDefinitionFlags.Code) != 0;
 		public bool HasDescriptionText => IsExceptionCode;
@@ -165,7 +166,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			var id = CreateId();
 			if (id == null)
 				return;
-			var desc = descriptionText.Trim();
+			string? desc = descriptionText.Trim();
 			if (desc == string.Empty)
 				desc = null;
 			var flags = DbgExceptionDefinitionFlags.StopFirstChance | DbgExceptionDefinitionFlags.StopSecondChance;

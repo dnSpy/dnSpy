@@ -66,9 +66,9 @@ namespace dnSpy.AsmEditor.Compiler {
 					(*data++ << 8) | *data++);
 		}
 
-		public static bool ExistsInMetadata(TypeDef type) => type != null && !(type is TypeDefUser);
+		public static bool ExistsInMetadata(TypeDef? type) => type != null && !(type is TypeDefUser);
 
-		public static bool ReferencesModule(ModuleDef sourceModule, ModuleDef targetModule) {
+		public static bool ReferencesModule(ModuleDef sourceModule, ModuleDef? targetModule) {
 			if (targetModule == null)
 				return false;
 
@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return false;
 		}
 
-		public static Metadata TryCreateMetadata(RawModuleBytes moduleData, bool isFileLayout) {
+		public static Metadata? TryCreateMetadata(RawModuleBytes moduleData, bool isFileLayout) {
 			try {
 				return MetadataFactory.CreateMetadata(new PEImage((IntPtr)moduleData.Pointer, (uint)moduleData.Size, isFileLayout ? ImageLayout.File : ImageLayout.Memory, verify: true));
 			}
@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		public static bool CheckTypeDefOrTypeRefName(ITypeDefOrRef tdr, UTF8String @namespace, UTF8String name) {
+		public static bool CheckTypeDefOrTypeRefName(ITypeDefOrRef? tdr, UTF8String @namespace, UTF8String name) {
 			if (tdr is TypeDef td)
 				return td.Name == name && td.Namespace == @namespace;
 			if (tdr is TypeRef tr)

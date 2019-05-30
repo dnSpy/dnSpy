@@ -22,10 +22,10 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class ListCache<T> {
-		static volatile List<T> cachedList;
+		static volatile List<T>? cachedList;
 		public static List<T> AllocList() => Interlocked.Exchange(ref cachedList, null) ?? new List<T>();
-		public static void Free(ref List<T> list) {
-			list.Clear();
+		public static void Free(ref List<T>? list) {
+			list!.Clear();
 			cachedList = list;
 		}
 	}

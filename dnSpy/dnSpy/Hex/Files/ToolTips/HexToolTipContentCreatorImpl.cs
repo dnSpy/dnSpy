@@ -37,7 +37,7 @@ namespace dnSpy.Hex.Files.ToolTips {
 	}
 
 	sealed class HexToolTipContentCreatorImpl : HexToolTipContentCreator {
-		public override object Image { get; set; }
+		public override object? Image { get; set; }
 
 		readonly struct WriterState {
 			public HexTextWriterImpl Writer { get; }

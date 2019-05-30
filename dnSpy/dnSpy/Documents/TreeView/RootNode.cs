@@ -80,7 +80,7 @@ namespace dnSpy.Documents.TreeView {
 			Debug.Fail("Unknown drop data format");
 		}
 
-		public Action<int, int[]> DropNodes;
-		public Action<int, string[]> DropFiles;
+		public Action<int, int[]>? DropNodes;
+		public Action<int, string[]>? DropFiles;
 	}
 }

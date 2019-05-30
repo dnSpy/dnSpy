@@ -95,7 +95,7 @@ namespace dnSpy.Culture {
 			if (o != 0)
 				return o;
 			if (x.Type == LanguageType.CultureInfo) {
-				o = StringComparer.CurrentCultureIgnoreCase.Compare(x.CultureInfo.NativeName, y.CultureInfo.NativeName);
+				o = StringComparer.CurrentCultureIgnoreCase.Compare(x.CultureInfo?.NativeName, y.CultureInfo?.NativeName);
 				if (o != 0)
 					return o;
 			}

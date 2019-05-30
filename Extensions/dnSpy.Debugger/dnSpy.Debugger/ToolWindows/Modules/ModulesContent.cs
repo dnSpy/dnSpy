@@ -42,9 +42,9 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 	[Export(typeof(IModulesContent))]
 	sealed class ModulesContent : IModulesContent {
-		public object UIObject => modulesControl;
-		public IInputElement FocusedElement => modulesControl.ListView;
-		public FrameworkElement ZoomElement => modulesControl;
+		public object? UIObject => modulesControl;
+		public IInputElement? FocusedElement => modulesControl.ListView;
+		public FrameworkElement? ZoomElement => modulesControl;
 		public ListView ListView => modulesControl.ListView;
 		public ModulesOperations Operations { get; }
 

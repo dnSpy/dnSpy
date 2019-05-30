@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly FrameworkElement glyphMargin;
 		readonly IInputElement focusedElement;
 		bool loaded;
-		DispatcherTimer timer;
-		Storyboard fadeOutStoryboard;
+		DispatcherTimer? timer;
+		Storyboard? fadeOutStoryboard;
 
 		public BreakpointGlyphPopupControl(BreakpointGlyphPopupVM vm, FrameworkElement glyphMargin) {
 			InitializeComponent();

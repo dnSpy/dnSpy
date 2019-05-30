@@ -48,10 +48,10 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class ReplEditor : IReplEditor2 {
-		public object UIObject => wpfTextViewHost.HostControl;
-		public IInputElement FocusedElement => wpfTextView.VisualElement;
-		public FrameworkElement ZoomElement => wpfTextView.VisualElement;
-		public object Tag { get; set; }
+		public object? UIObject => wpfTextViewHost.HostControl;
+		public IInputElement? FocusedElement => wpfTextView.VisualElement;
+		public FrameworkElement? ZoomElement => wpfTextView.VisualElement;
+		public object? Tag { get; set; }
 		public IReplEditorOperations ReplEditorOperations { get; }
 		public ICommandTargetCollection CommandTarget => wpfTextView.CommandTarget;
 		public IDsWpfTextView TextView => wpfTextViewHost.TextView;
@@ -80,7 +80,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ReplEditor(ReplEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
+		public ReplEditor(ReplEditorOptions? options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOperationsFactoryService editorOperationsFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService, IClassificationTypeRegistryService classificationTypeRegistryService, IThemeClassificationTypeService themeClassificationTypeService, IPickSaveFilename pickSaveFilename, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			dispatcher = Dispatcher.CurrentDispatcher;
 			this.pickSaveFilename = pickSaveFilename;
 			options = options?.Clone() ?? new ReplEditorOptions();
@@ -174,7 +174,7 @@ namespace dnSpy.Text.Editor {
 			else
 				RefreshScreen();
 		}
-		DispatcherTimer screenRefreshTimer;
+		DispatcherTimer? screenRefreshTimer;
 
 		void RefreshScreen() {
 			if (OffsetOfPrompt == null)
@@ -208,7 +208,7 @@ namespace dnSpy.Text.Editor {
 			}
 			OffsetOfPrompt = newValue;
 		}
-		CachedTextColorsCollection scriptOutputCachedTextColorsCollection;
+		CachedTextColorsCollection? scriptOutputCachedTextColorsCollection;
 
 		public int? OffsetOfPrompt { get; private set; }
 
@@ -226,6 +226,7 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (!IsCommandMode)
 					return false;
+				Debug.Assert(OffsetOfPrompt != null);
 				return CaretOffset >= OffsetOfPrompt.Value;
 			}
 		}
@@ -248,6 +249,7 @@ namespace dnSpy.Text.Editor {
 		void ClearCurrentInput(bool removePrompt) {
 			if (!IsCommandMode)
 				return;
+			Debug.Assert(OffsetOfPrompt != null);
 			int offs = removePrompt ? OffsetOfPrompt.Value : FilterOffset(OffsetOfPrompt.Value);
 			MoveTo(offs);
 			var span = Span.FromBounds(offs, wpfTextView.TextSnapshot.Length);
@@ -258,7 +260,7 @@ namespace dnSpy.Text.Editor {
 
 				wpfTextView.TextBuffer.Delete(span);
 				wpfTextView.Caret.EnsureVisible();
-				SearchText = null;
+				SearchText = string.Empty;
 
 				OffsetOfPrompt = oldValue;
 				WriteOffsetOfPrompt(null);
@@ -266,7 +268,7 @@ namespace dnSpy.Text.Editor {
 			else {
 				wpfTextView.TextBuffer.Delete(span);
 				wpfTextView.Caret.EnsureVisible();
-				SearchText = null;
+				SearchText = string.Empty;
 			}
 			wpfTextView.Selection.Clear();
 		}
@@ -277,7 +279,7 @@ namespace dnSpy.Text.Editor {
 			if (!isCmd)
 				return false;
 
-			SearchText = null;
+			SearchText = string.Empty;
 			if (!string.IsNullOrEmpty(input))
 				replCommands.Add(input);
 			RawAppend(Environment.NewLine);
@@ -298,6 +300,7 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(IsCommandMode);
 				if (!IsCommandMode)
 					return string.Empty;
+				Debug.Assert(OffsetOfPrompt != null);
 
 				string s = wpfTextView.TextBuffer.CurrentSnapshot.GetText(OffsetOfPrompt.Value, wpfTextView.TextSnapshot.Length - OffsetOfPrompt.Value);
 				return ToInputString(s, PrimaryPrompt);
@@ -405,6 +408,7 @@ namespace dnSpy.Text.Editor {
 		async void TextBuffer_Changed(object sender, TextContentChangedEventArgs e) {
 			if (!IsCommandMode)
 				return;
+			Debug.Assert(OffsetOfPrompt != null);
 			var buf = CreateReplCommandInput(e);
 			if (buf == null)
 				return;
@@ -441,9 +445,9 @@ namespace dnSpy.Text.Editor {
 				changedState.Dispose();
 			}
 		}
-		CommandTextChangedState prevCommandTextChangedState;
+		CommandTextChangedState? prevCommandTextChangedState;
 
-		ReplCommandInput CreateReplCommandInput(TextContentChangedEventArgs e) {
+		ReplCommandInput? CreateReplCommandInput(TextContentChangedEventArgs e) {
 			Debug.Assert(IsCommandMode);
 			if (!IsCommandMode)
 				return null;
@@ -495,6 +499,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(IsCommandMode);
 			if (!IsCommandMode)
 				return;
+			Debug.Assert(OffsetOfPrompt != null);
 
 			var command = replCommands.SelectedCommand;
 			if (command == null)
@@ -520,7 +525,7 @@ namespace dnSpy.Text.Editor {
 			var caretPos = wpfTextView.Caret.Position;
 			bool caretIsInEditingArea = OffsetOfPrompt != null && CaretOffset >= OffsetOfPrompt.Value;
 
-			ColorAndText[] newPendingOutput = null;
+			ColorAndText[]? newPendingOutput = null;
 			var sb = new StringBuilder();
 			lock (pendingScriptOutputLock) {
 				pendingScriptOutput_dispatching = false;
@@ -528,7 +533,7 @@ namespace dnSpy.Text.Editor {
 				pendingScriptOutput.Clear();
 			}
 
-			string currentCommand = null;
+			string? currentCommand = null;
 			bool isCommandMode = IsCommandMode;
 			if (isCommandMode) {
 				currentCommand = CurrentInput;
@@ -545,6 +550,7 @@ namespace dnSpy.Text.Editor {
 			RawAppend(sb.ToString());
 			MoveToEnd();
 			if (isCommandMode) {
+				Debug.Assert(currentCommand != null);
 				int posBeforeNewLine = wpfTextView.TextSnapshot.Length;
 				CreateEmptyLastLineIfNeededAndMoveCaret();
 				int extraLen = wpfTextView.TextSnapshot.Length - posBeforeNewLine;
@@ -602,10 +608,10 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void IReplEditor.OutputPrint(string text, TextColor color, bool startOnNewLine) =>
+		void IReplEditor.OutputPrint(string? text, TextColor color, bool startOnNewLine) =>
 			((IReplEditor)this).OutputPrint(text, color.Box(), startOnNewLine);
 
-		void IReplEditor.OutputPrint(string text, object color, bool startOnNewLine) {
+		void IReplEditor.OutputPrint(string? text, object color, bool startOnNewLine) {
 			if (string.IsNullOrEmpty(text))
 				return;
 
@@ -625,10 +631,10 @@ namespace dnSpy.Text.Editor {
 			FlushScriptOutput();
 		}
 
-		void IReplEditor.OutputPrintLine(string text, TextColor color, bool startOnNewLine) =>
+		void IReplEditor.OutputPrintLine(string? text, TextColor color, bool startOnNewLine) =>
 			((IReplEditor)this).OutputPrint(text + Environment.NewLine, color.Box(), startOnNewLine);
 
-		void IReplEditor.OutputPrintLine(string text, object color, bool startOnNewLine) =>
+		void IReplEditor.OutputPrintLine(string? text, object color, bool startOnNewLine) =>
 			((IReplEditor)this).OutputPrint(text + Environment.NewLine, color, startOnNewLine);
 
 		void IReplEditor.OutputPrint(IEnumerable<ColorAndText> text) {
@@ -649,7 +655,7 @@ namespace dnSpy.Text.Editor {
 			get => replCommandHandler ?? ReplCommandHandler.Null;
 			set => replCommandHandler = value;
 		}
-		IReplCommandHandler replCommandHandler;
+		IReplCommandHandler? replCommandHandler;
 
 		void ClearUndoRedoHistory() => textViewUndoManager.ClearUndoHistory();
 
@@ -983,9 +989,9 @@ namespace dnSpy.Text.Editor {
 		readonly IClassificationType replLineNumberInput1ClassificationType;
 		readonly IClassificationType replLineNumberInput2ClassificationType;
 		readonly IClassificationType replLineNumberOutputClassificationType;
-		TextFormattingRunProperties replLineNumberInput1TextFormattingRunProperties;
-		TextFormattingRunProperties replLineNumberInput2TextFormattingRunProperties;
-		TextFormattingRunProperties replLineNumberOutputTextFormattingRunProperties;
+		TextFormattingRunProperties? replLineNumberInput1TextFormattingRunProperties;
+		TextFormattingRunProperties? replLineNumberInput2TextFormattingRunProperties;
+		TextFormattingRunProperties? replLineNumberOutputTextFormattingRunProperties;
 		readonly IReplEditor2 replEditor;
 
 		public ReplCustomLineNumberMarginOwner(IReplEditor2 replEditor, IThemeClassificationTypeService themeClassificationTypeService) {
@@ -999,12 +1005,12 @@ namespace dnSpy.Text.Editor {
 
 		sealed class ReplState {
 			public ReplSubBufferInfo BufferInfo;
-			public ITextSnapshotLine BufferStartLine;
+			public ITextSnapshotLine? BufferStartLine;
 		}
 
-		public TextFormattingRunProperties GetDefaultTextFormattingRunProperties() => replLineNumberOutputTextFormattingRunProperties;
+		public TextFormattingRunProperties? GetDefaultTextFormattingRunProperties() => replLineNumberOutputTextFormattingRunProperties;
 
-		public int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object state) {
+		public int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object? state) {
 			if (!viewLine.IsFirstTextViewLineForSnapshotLine)
 				return null;
 			ReplState replState;
@@ -1021,7 +1027,7 @@ namespace dnSpy.Text.Editor {
 				replState.BufferInfo = subBufferInfo;
 				replState.BufferStartLine = snapshot.GetLineFromPosition(subBufferInfo.Buffer.Span.Start);
 			}
-			int lineNumber = snapshotLine.LineNumber - replState.BufferStartLine.LineNumber;
+			int lineNumber = snapshotLine.LineNumber - replState.BufferStartLine!.LineNumber;
 			Debug.Assert(lineNumber >= 0);
 			if (lineNumber < 0)
 				return null;
@@ -1029,18 +1035,18 @@ namespace dnSpy.Text.Editor {
 			return lineNumber + 1;
 		}
 
-		public TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object state) {
-			var replState = (ReplState)state;
+		public TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object? state) {
+			var replState = (ReplState)state!;
 			switch (replState.BufferInfo.Buffer.Kind) {
 			case ReplBufferKind.Output:
-				return replLineNumberOutputTextFormattingRunProperties;
+				return replLineNumberOutputTextFormattingRunProperties!;
 
 			case ReplBufferKind.Code:
 				switch (replState.BufferInfo.CodeBufferIndex % 2) {
 				case 0:
-					return replLineNumberInput1TextFormattingRunProperties;
+					return replLineNumberInput1TextFormattingRunProperties!;
 				case 1:
-					return replLineNumberInput2TextFormattingRunProperties;
+					return replLineNumberInput2TextFormattingRunProperties!;
 				default:
 					throw new InvalidOperationException();
 				}

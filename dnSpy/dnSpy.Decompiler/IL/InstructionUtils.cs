@@ -99,8 +99,8 @@ namespace dnSpy.Decompiler.IL {
 		}
 
 		public static void AddOperand(IList<short> instrs, ITokenResolver resolver, uint offset, OpCode opCode, object operand) {
-			Instruction target;
-			IVariable variable;
+			Instruction? target;
+			IVariable? variable;
 			switch (opCode.OperandType) {
 			case OperandType.InlineBrTarget:
 				target = operand as Instruction;

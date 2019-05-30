@@ -27,10 +27,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ModuleLoaderVM;
-				if (data != null)
+				if (data != null) {
 					data.OnCompleted += ModuleLoaderVM_OnCompleted;
-				if (data.HasCompleted)
-					OnCompleted();
+					if (data.HasCompleted)
+						OnCompleted();
+				}
 			};
 		}
 

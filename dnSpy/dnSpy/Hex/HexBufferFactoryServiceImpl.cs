@@ -31,13 +31,13 @@ namespace dnSpy.Hex {
 		[ImportingConstructor]
 		HexBufferFactoryServiceImpl(HexBufferStreamFactoryService hexBufferStreamFactoryService) => this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;
 
-		public override HexBuffer Create(string filename, HexTags tags) {
+		public override HexBuffer Create(string filename, HexTags? tags) {
 			if (filename == null)
 				throw new ArgumentNullException(nameof(filename));
 			return Create(hexBufferStreamFactoryService.Create(filename), tags ?? DefaultFileTags, disposeStream: true);
 		}
 
-		public override HexBuffer Create(byte[] data, string name, HexTags tags) {
+		public override HexBuffer Create(byte[] data, string name, HexTags? tags) {
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
 			return Create(hexBufferStreamFactoryService.Create(data, name), tags ?? DefaultFileTags, disposeStream: true);

@@ -35,15 +35,15 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 	abstract class BreakpointGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
-		public abstract IGlyphTextMarkerHandlerMouseProcessor MouseProcessor { get; }
+		public abstract IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor { get; }
 		public abstract IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint);
-		public abstract GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
-		public abstract FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
 	}
 
 	[Export(typeof(BreakpointGlyphTextMarkerHandler))]
 	sealed class BreakpointGlyphTextMarkerHandlerImpl : BreakpointGlyphTextMarkerHandler {
-		public override IGlyphTextMarkerHandlerMouseProcessor MouseProcessor => null;
+		public override IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor => null;
 
 		readonly Lazy<ShowCodeBreakpointSettingsService> showCodeBreakpointSettingsService;
 		readonly BreakpointConditionsFormatter breakpointConditionsFormatter;
@@ -58,13 +58,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			this.dbgBreakpointGlyphFormatters = dbgBreakpointGlyphFormatters.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public override FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
-			var vm = new BreakpointGlyphPopupVM(showCodeBreakpointSettingsService.Value, (DbgCodeBreakpoint)marker.Tag);
+		public override FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
+			var vm = new BreakpointGlyphPopupVM(showCodeBreakpointSettingsService.Value, (DbgCodeBreakpoint)marker.Tag!);
 			return new BreakpointGlyphPopupControl(vm, context.Margin.VisualElement);
 		}
 
-		public override GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
-			var bp = (DbgCodeBreakpoint)marker.Tag;
+		public override GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) {
+			var bp = (DbgCodeBreakpoint)marker.Tag!;
 			return new GlyphTextMarkerToolTip(GetToolTipContent(bp, context.TextView, context.SpanProvider.GetSpan(marker)));
 		}
 
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		public override IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint) {
-			var bp = (DbgCodeBreakpoint)marker.Tag;
+			var bp = (DbgCodeBreakpoint)marker.Tag!;
 			yield return new GuidObject(MenuConstants.GUIDOBJ_BREAKPOINT_GUID, bp);
 		}
 	}

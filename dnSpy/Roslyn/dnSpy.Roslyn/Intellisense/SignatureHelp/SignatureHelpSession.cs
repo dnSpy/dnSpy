@@ -37,8 +37,8 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		readonly ITextView textView;
 		readonly SignatureHelpService signatureHelpService;
 		readonly List<Signature> signatures;
-		CancellationTokenSource cancellationTokenSource;
-		ISignatureHelpSession session;
+		CancellationTokenSource? cancellationTokenSource;
+		ISignatureHelpSession? session;
 		static readonly object sigHelpSessionKey = new object();
 
 
@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		/// </summary>
 		/// <param name="session">Intellisense sig help session</param>
 		/// <returns></returns>
-		public static SignatureHelpSession TryGetSession(ISignatureHelpSession session) {
+		public static SignatureHelpSession? TryGetSession(ISignatureHelpSession session) {
 			if (session == null)
 				return null;
 			if (session.Properties.TryGetProperty(sigHelpSessionKey, out SignatureHelpSession ourSession))
@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			return null;
 		}
 
-		public static SignatureHelpSession TryCreate(SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo, Lazy<ISignatureHelpBroker> signatureHelpBroker, ITextView textView) {
+		public static SignatureHelpSession? TryCreate(SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo, Lazy<ISignatureHelpBroker> signatureHelpBroker, ITextView textView) {
 			var info = SignatureHelpInfo.Create(triggerPosition.Snapshot);
 			if (info == null)
 				return null;
@@ -185,7 +185,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 				signatures.Add(sig);
 		}
 
-		public ISignature GetBestMatch() => session.SelectedSignature;
+		public ISignature? GetBestMatch() => session?.SelectedSignature;
 		public bool IsTriggerCharacter(char c) => signatureHelpService.IsTriggerCharacter(c);
 		public bool IsRetriggerCharacter(char c) => signatureHelpService.IsRetriggerCharacter(c);
 

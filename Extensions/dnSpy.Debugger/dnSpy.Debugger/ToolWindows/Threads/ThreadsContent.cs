@@ -42,9 +42,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 	[Export(typeof(IThreadsContent))]
 	sealed class ThreadsContent : IThreadsContent {
-		public object UIObject => threadsControl;
-		public IInputElement FocusedElement => threadsControl.ListView;
-		public FrameworkElement ZoomElement => threadsControl;
+		public object? UIObject => threadsControl;
+		public IInputElement? FocusedElement => threadsControl.ListView;
+		public FrameworkElement? ZoomElement => threadsControl;
 		public ListView ListView => threadsControl.ListView;
 		public ThreadsOperations Operations { get; }
 

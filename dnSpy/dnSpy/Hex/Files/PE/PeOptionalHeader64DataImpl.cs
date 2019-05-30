@@ -125,7 +125,7 @@ namespace dnSpy.Hex.Files.PE {
 			};
 		}
 
-		public static PeOptionalHeader64Data TryCreate(HexBufferFile file, HexPosition position, uint size) {
+		public static PeOptionalHeader64Data? TryCreate(HexBufferFile file, HexPosition position, uint size) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (size < 0x70)

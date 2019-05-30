@@ -37,12 +37,12 @@ namespace dnSpy.MainApp {
 	[ExportToolBarObject(OwnerGuid = ToolBarConstants.APP_TB_GUID, Group = ToolBarConstants.GROUP_APP_TB_MAIN_MENU, Order = 0)]
 	sealed class MainMenuToolbarCommand : ToolBarObjectBase {
 		readonly IMenuService menuService;
-		Menu menu;
+		Menu? menu;
 
 		[ImportingConstructor]
 		MainMenuToolbarCommand(IMenuService menuService) => this.menuService = menuService;
 
-		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) {
+		public override object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget) {
 			if (menu == null)
 				menu = menuService.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), commandTarget);
 			return menu;
@@ -57,20 +57,21 @@ namespace dnSpy.MainApp {
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public object SelectedItem {
+		public object? SelectedItem {
 			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					decompilerService.Decompiler = ((LanguageInfo)value).Decompiler;
+					decompilerService.Decompiler = ((LanguageInfo)value!).Decompiler;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedItem)));
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		sealed class LanguageInfo : ViewModelBase {
-			public IDecompiler Decompiler;
+			public LanguageInfo(IDecompiler decompiler) => Decompiler = decompiler;
+			public readonly IDecompiler Decompiler;
 			public string Name => Decompiler.UniqueNameUI;
 			public override string ToString() => Name;
 		}
@@ -78,7 +79,7 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		LanguageComboBoxToolbarCommand(IDecompilerService decompilerService) {
 			this.decompilerService = decompilerService;
-			infos = decompilerService.AllDecompilers.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Decompiler = a }).ToList();
+			infos = decompilerService.AllDecompilers.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo(a)).ToList();
 			UpdateSelectedItem();
 			comboBox = new ComboBox {
 				DisplayMemberPath = "Name",
@@ -93,13 +94,13 @@ namespace dnSpy.MainApp {
 
 		void UpdateSelectedItem() => SelectedItem = infos.First(a => a.Decompiler == decompilerService.Decompiler);
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) => UpdateSelectedItem();
-		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
+		public override object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget) => comboBox;
 	}
 
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.AutoSizeOptimize, Header = "res:FullScreenToolBarCommand", IsToggleButton = true, Group = ToolBarConstants.GROUP_APP_TB_MAIN_FULLSCREEN, Order = 0)]
 	sealed class FullScreenToolbarCommand : ToolBarButtonBase, IToolBarToggleButton {
 		[Import]
-		AppWindow appWindow = null;
+		AppWindow? appWindow = null;
 
 		public Binding GetBinding(IToolBarItemContext context) {
 			Debug.Assert(appWindow != null && appWindow.MainWindow != null);

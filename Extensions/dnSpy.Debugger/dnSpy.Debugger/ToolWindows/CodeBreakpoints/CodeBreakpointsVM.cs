@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				return labelsEditValueProvider;
 			}
 		}
-		IEditValueProvider labelsEditValueProvider;
+		IEditValueProvider? labelsEditValueProvider;
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly CodeBreakpointContext codeBreakpointContext;
@@ -129,9 +129,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.dbgBreakpointLocationFormatterService = dbgBreakpointLocationFormatterService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, dbgCodeBreakpointHitCountService, new SearchMatcher(searchColumnDefinitions)) {
+			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, dbgCodeBreakpointHitCountService, new SearchMatcher(searchColumnDefinitions), codeBreakpointFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = codeBreakpointFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {

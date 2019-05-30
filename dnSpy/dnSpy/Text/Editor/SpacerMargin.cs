@@ -49,7 +49,7 @@ namespace dnSpy.Text.Editor {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new SpacerMargin(wpfTextViewHost);
 	}
 
@@ -72,7 +72,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Spacer) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {

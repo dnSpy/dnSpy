@@ -38,10 +38,10 @@ namespace dnSpy.Text.Editor {
 			return line1.ExtentIncludingLineBreak != line2.ExtentIncludingLineBreak;
 		}
 
-		public static Geometry CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isMultiLine, bool clipToViewport = false) {
+		public static Geometry? CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isMultiLine, bool clipToViewport = false) {
 			var padding = isMultiLine ? LineMarkerPadding : TextMarkerPadding;
 			var pos = span.Start;
-			PathGeometry geo = null;
+			PathGeometry? geo = null;
 			bool createOutlinedPath = false;
 
 			while (pos <= span.End) {
@@ -77,15 +77,15 @@ namespace dnSpy.Text.Editor {
 				pos = new VirtualSnapshotPoint(line.GetPointAfterLineBreak());
 			}
 			if (createOutlinedPath)
-				geo = geo.GetOutlinedPathGeometry();
+				geo = geo!.GetOutlinedPathGeometry();
 			if (geo != null && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
 
-		public static Geometry CreateBoxGeometry(IWpfTextView textView, IList<VirtualSnapshotSpan> spans, bool isMultiLine, bool clipToViewport = false) {
+		public static Geometry? CreateBoxGeometry(IWpfTextView textView, IList<VirtualSnapshotSpan> spans, bool isMultiLine, bool clipToViewport = false) {
 			var padding = isMultiLine ? LineMarkerPadding : TextMarkerPadding;
-			PathGeometry geo = null;
+			PathGeometry? geo = null;
 			bool createOutlinedPath = false;
 
 			foreach (var span in spans) {
@@ -117,13 +117,13 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 			if (createOutlinedPath)
-				geo = geo.GetOutlinedPathGeometry();
+				geo = geo!.GetOutlinedPathGeometry();
 			if (geo != null && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
 
-		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath) {
+		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry? geo, ref bool createOutlinedPath) {
 			foreach (var bounds in textBounds) {
 				double left = bounds.Left - padding.Left;
 				double right = bounds.Right + padding.Right;

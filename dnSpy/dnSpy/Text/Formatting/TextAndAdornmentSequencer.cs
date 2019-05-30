@@ -75,7 +75,7 @@ namespace dnSpy.Text.Formatting {
 			if (SourceBuffer != TopBuffer)
 				throw new NotSupportedException();
 
-			List<AdornmentElementAndSpan> adornmentList = null;
+			List<AdornmentElementAndSpan>? adornmentList = null;
 			foreach (var tagSpan in tagAggregator.GetTags(topSpan)) {
 				if (adornmentList == null)
 					adornmentList = new List<AdornmentElementAndSpan>();

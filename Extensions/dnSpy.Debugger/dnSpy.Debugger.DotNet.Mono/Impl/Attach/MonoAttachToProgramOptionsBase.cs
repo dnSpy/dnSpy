@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Attach {
 		/// <summary>
 		/// The IP address <c>mono.exe</c> is listening on or null / empty string to use <c>127.0.0.1</c>
 		/// </summary>
-		public string Address { get; set; }
+		public string? Address { get; set; }
 
 		/// <summary>
 		/// The port <c>mono.exe</c> is listening on

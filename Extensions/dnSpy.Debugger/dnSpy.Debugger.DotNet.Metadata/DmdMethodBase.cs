@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Base class of .NET methods
 	/// </summary>
-	public abstract class DmdMethodBase : DmdMemberInfo, IDmdSecurityAttributeProvider, IEquatable<DmdMethodBase> {
+	public abstract class DmdMethodBase : DmdMemberInfo, IDmdSecurityAttributeProvider, IEquatable<DmdMethodBase?> {
 		/// <summary>
 		/// Gets the method kind
 		/// </summary>
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
-		public override DmdAppDomain AppDomain => DeclaringType.AppDomain;
+		public override DmdAppDomain AppDomain => DeclaringType!.AppDomain;
 
 		/// <summary>
 		/// Gets the method impl flags
@@ -141,20 +141,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Resolves a method reference and throws if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethodBase() => ResolveMethodBase(throwOnError: true);
+		public DmdMethodBase ResolveMethodBase() => ResolveMethodBase(throwOnError: true)!;
 
 		/// <summary>
 		/// Resolves a method reference and returns null if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethodBaseNoThrow() => ResolveMethodBase(throwOnError: false);
+		public DmdMethodBase? ResolveMethodBaseNoThrow() => ResolveMethodBase(throwOnError: false);
 
 		/// <summary>
 		/// Resolves a method reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdMethodBase ResolveMethodBase(bool throwOnError);
+		public abstract DmdMethodBase? ResolveMethodBase(bool throwOnError);
 
 		/// <summary>
 		/// Gets all parameters
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the method body
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdMethodBody GetMethodBody();
+		public abstract DmdMethodBody? GetMethodBody();
 
 		/// <summary>
 		/// Gets the method signature
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="genericMethodArguments">Generic method arguments</param>
 		/// <returns></returns>
-		public DmdMethodSignature GetMethodSignature(IList<Type> genericMethodArguments) => GetMethodSignature(genericMethodArguments.ToDmdType(AppDomain));
+		public DmdMethodSignature GetMethodSignature(IList<Type> genericMethodArguments) => GetMethodSignature(genericMethodArguments.ToDmdTypeNoNull(AppDomain));
 
 		/// <summary>
 		/// Gets the security attributes
@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static method</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public object Invoke(object context, object obj, object[] parameters) => Invoke(context, obj, DmdBindingFlags.Default, parameters);
+		public object? Invoke(object? context, object? obj, object?[] parameters) => Invoke(context, obj, DmdBindingFlags.Default, parameters);
 
 		/// <summary>
 		/// Calls the method
@@ -217,11 +217,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public abstract object Invoke(object context, object obj, DmdBindingFlags invokeAttr, object[] parameters);
+		public abstract object? Invoke(object? context, object? obj, DmdBindingFlags invokeAttr, object?[]? parameters);
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdMethodBase left, DmdMethodBase right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdMethodBase left, DmdMethodBase right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdMethodBase? left, DmdMethodBase? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdMethodBase? left, DmdMethodBase? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -229,14 +229,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdMethodBase other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdMethodBase? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// GetHashCode()
@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public sealed override string ToString() => DmdMemberFormatter.Format(this);
+		public sealed override string? ToString() => DmdMemberFormatter.Format(this);
 	}
 
 	/// <summary>

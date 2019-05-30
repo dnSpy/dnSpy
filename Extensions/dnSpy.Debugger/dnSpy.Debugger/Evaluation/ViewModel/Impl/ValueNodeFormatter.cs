@@ -23,8 +23,8 @@ using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	sealed class ValueNodeFormatter {
-		public DbgObjectIdService ObjectIdService { get; set; }
-		public DbgLanguage Language { get; set; }
+		public DbgObjectIdService? ObjectIdService { get; set; }
+		public DbgLanguage? Language { get; set; }
 
 		public void WriteExpander(IDbgTextWriter output, ValueNode vm) {
 			if (vm.TreeNode.LazyLoading)

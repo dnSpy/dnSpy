@@ -40,7 +40,7 @@ namespace dnSpy.Hex.HexGroups {
 				this.subGroup = subGroup;
 			}
 			public bool Equals(SubGroupKey other) => StringComparer.Ordinal.Equals(groupName, other.groupName) && StringComparer.OrdinalIgnoreCase.Equals(subGroup, other.subGroup);
-			public override bool Equals(object obj) => obj is SubGroupKey && Equals((SubGroupKey)obj);
+			public override bool Equals(object? obj) => obj is SubGroupKey && Equals((SubGroupKey)obj);
 			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(groupName) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(subGroup);
 			public override string ToString() => $"({groupName},{subGroup})";
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Hex.HexGroups {
 				this.name = name;
 			}
 			public bool Equals(OptionKey other) => subGroupKey.Equals(other.subGroupKey) && StringComparer.Ordinal.Equals(name, other.name);
-			public override bool Equals(object obj) => obj is OptionKey && Equals((OptionKey)obj);
+			public override bool Equals(object? obj) => obj is OptionKey && Equals((OptionKey)obj);
 			public override int GetHashCode() => subGroupKey.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(name);
 			public override string ToString() => subGroupKey.ToString() + ": " + name;
 		}
@@ -128,14 +128,14 @@ namespace dnSpy.Hex.HexGroups {
 				if (!option.Definition.CanBeSaved)
 					continue;
 
-				if (!TryGetValue(option, textValue, out object value))
+				if (!TryGetValue(option, textValue, out var value))
 					continue;
 
 				option.Value = value;
 			}
 		}
 
-		bool TryGetValue(HexViewGroupOption option, string textValue, out object value) {
+		bool TryGetValue(HexViewGroupOption option, string textValue, out object? value) {
 			var type = option.Definition.Type;
 			var c = TypeDescriptor.GetConverter(type);
 			try {
@@ -154,7 +154,7 @@ namespace dnSpy.Hex.HexGroups {
 			return false;
 		}
 
-		bool TryGetValueString(HexViewGroupOption option, out string valueString) {
+		bool TryGetValueString(HexViewGroupOption option, out string? valueString) {
 			if (!option.Definition.CanBeSaved) {
 				valueString = null;
 				return false;
@@ -212,7 +212,7 @@ namespace dnSpy.Hex.HexGroups {
 			if (!option.Definition.CanBeSaved)
 				return;
 			var sect = GetOrCreateOptionSection(groupName, option);
-			if (!TryGetValueString(option, out string valueString))
+			if (!TryGetValueString(option, out var valueString))
 				return;
 			sect.Attribute(OptionValueAttr, valueString);
 		}

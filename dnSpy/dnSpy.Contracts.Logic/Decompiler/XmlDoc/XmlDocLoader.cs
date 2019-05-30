@@ -30,12 +30,12 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 	/// Helps finding and loading .xml documentation.
 	/// </summary>
 	public static class XmlDocLoader {
-		static readonly Lazy<XmlDocumentationProvider> mscorlibDocumentation = new Lazy<XmlDocumentationProvider>(LoadMscorlibDocumentation);
-		static readonly ConditionalWeakTable<object, XmlDocumentationProvider> cache = new ConditionalWeakTable<object, XmlDocumentationProvider>();
+		static readonly Lazy<XmlDocumentationProvider?> mscorlibDocumentation = new Lazy<XmlDocumentationProvider?>(LoadMscorlibDocumentation);
+		static readonly ConditionalWeakTable<object, XmlDocumentationProvider?> cache = new ConditionalWeakTable<object, XmlDocumentationProvider?>();
 		static readonly string[] refAsmPathsV4;
 
-		static XmlDocumentationProvider LoadMscorlibDocumentation() {
-			string xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
+		static XmlDocumentationProvider? LoadMscorlibDocumentation() {
+			string? xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
 				?? FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_20);
 			if (xmlDocFile != null)
 				return XmlDocumentationProvider.Create(xmlDocFile);
@@ -46,14 +46,14 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <summary>
 		/// mscorlib documentation
 		/// </summary>
-		public static XmlDocumentationProvider MscorlibDocumentation => mscorlibDocumentation.Value;
+		public static XmlDocumentationProvider? MscorlibDocumentation => mscorlibDocumentation.Value;
 
 		/// <summary>
 		/// Loads XML documentation
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static XmlDocumentationProvider LoadDocumentation(ModuleDef module) {
+		public static XmlDocumentationProvider? LoadDocumentation(ModuleDef module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			return LoadDocumentation(module, module.Location, module.RuntimeVersion);
@@ -66,14 +66,14 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="assemblyFilename">Filename of the assembly or module</param>
 		/// <param name="runtimeVersion">Optional runtime version, eg. <see cref="ModuleDef.RuntimeVersion"/></param>
 		/// <returns></returns>
-		public static XmlDocumentationProvider LoadDocumentation(object key, string assemblyFilename, string runtimeVersion = null) {
+		public static XmlDocumentationProvider? LoadDocumentation(object key, string assemblyFilename, string? runtimeVersion = null) {
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			if (assemblyFilename == null)
 				throw new ArgumentNullException(nameof(assemblyFilename));
 			lock (cache) {
 				if (!cache.TryGetValue(key, out var xmlDoc)) {
-					string xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
+					string? xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
 					if (xmlDocFile == null) {
 						xmlDocFile = FindXmlDocumentation(Path.GetFileName(assemblyFilename), runtimeVersion);
 					}
@@ -123,7 +123,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static readonly string referenceAssembliesPath;
 		static readonly string frameworkPath;
 
-		static string FindXmlDocumentation(string assemblyFileName, string runtime) {
+		static string? FindXmlDocumentation(string assemblyFileName, string? runtime) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
 			if (runtime == null)
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				runtime = MDHeaderRuntimeVersion.MS_CLR_10;
 			runtime = FixRuntimeString(runtime);
 
-			string fileName;
+			string? fileName;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX))
 				fileName = LookupLocalizedXmlDoc(Path.Combine(frameworkPath, runtime, assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v1.0.3705", assemblyFileName));
@@ -180,7 +180,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			return runtime.Substring(0, min);
 		}
 
-		static string LookupLocalizedXmlDoc(string assemblyFileName) {
+		static string? LookupLocalizedXmlDoc(string assemblyFileName) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
 

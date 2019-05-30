@@ -30,8 +30,8 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueNodeImpl : DbgEngineValueNode {
-		public override string ErrorMessage => dnValueNode.ErrorMessage;
-		public override DbgEngineValue Value => value;
+		public override string? ErrorMessage => dnValueNode.ErrorMessage;
+		public override DbgEngineValue? Value => value;
 		public override string Expression => dnValueNode.Expression;
 		public override string ImageName => dnValueNode.ImageName;
 		public override bool IsReadOnly => value == null || dnValueNode.IsReadOnly;
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		readonly DbgDotNetEngineValueNodeFactoryImpl owner;
 		readonly DbgDotNetValueNode dnValueNode;
-		readonly DbgEngineValueImpl value;
+		readonly DbgEngineValueImpl? value;
 
 		public DbgEngineValueNodeImpl(DbgDotNetEngineValueNodeFactoryImpl owner, DbgDotNetValueNode dnValueNode) {
 			if (dnValueNode == null)
@@ -81,8 +81,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
-			DbgEngineValueNode[] res = null;
-			DbgDotNetValueNode[] dnNodes = null;
+			DbgEngineValueNode[]? res = null;
+			DbgDotNetValueNode[]? dnNodes = null;
 			try {
 				dnNodes = dnValueNode.GetChildren(evalInfo, index, count, options);
 				res = new DbgEngineValueNode[dnNodes.Length];
@@ -106,18 +106,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return res;
 		}
 
-		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
 			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
 				FormatCore(evalInfo, options, cultureInfo);
 			else
 				Format2(dispatcher, evalInfo, options, cultureInfo);
 
-			void Format2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, IDbgValueNodeFormatParameters options2, CultureInfo cultureInfo2) =>
+			void Format2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, IDbgValueNodeFormatParameters options2, CultureInfo? cultureInfo2) =>
 				dispatcher2.TryInvokeRethrow(() => FormatCore(evalInfo2, options2, cultureInfo2));
 		}
 
-		void FormatCore(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) {
+		void FormatCore(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
 			evalInfo.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
 			DbgValueFormatterOptions formatterOptions;
 			DbgValueFormatterTypeOptions typeFormatterOptions;

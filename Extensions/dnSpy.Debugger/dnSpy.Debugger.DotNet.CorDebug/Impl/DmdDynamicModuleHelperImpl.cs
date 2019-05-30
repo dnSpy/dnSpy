@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public override void Dispose() { }
 		}
 
-		public override DmdDataStream TryGetMethodBody(DmdModule module, int metadataToken, uint rva) {
+		public override DmdDataStream? TryGetMethodBody(DmdModule module, int metadataToken, uint rva) {
 			engine.VerifyCorDebugThread();
 
 			var dbgModule = module.GetDebuggerModule();
@@ -65,8 +65,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			var func = dnModule.CorModule.GetFunctionFromToken((uint)metadataToken);
 			var ilCode = func?.ILCode;
-			if (ilCode == null)
+			if (ilCode is null)
 				return null;
+			Debug.Assert(!(func is null));
 			ulong addr = ilCode.Address;
 			if (addr == 0)
 				return null;

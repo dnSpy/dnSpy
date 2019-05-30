@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <summary>
 		/// Gets the hoisted field or null if it's not a hoisted local
 		/// </summary>
-		public FieldDef HoistedField { get; }
+		public FieldDef? HoistedField { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="name">Name of the local</param>
 		/// <param name="hoistedField">Hoisted field or null if it's not a hoisted local/parameter</param>
 		/// <param name="flags">Local flags</param>
-		public DbgLocal(int index, string name, FieldDef hoistedField, DbgLocalFlags flags) {
+		public DbgLocal(int index, string name, FieldDef? hoistedField, DbgLocalFlags flags) {
 			Index = index;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			HoistedField = hoistedField;

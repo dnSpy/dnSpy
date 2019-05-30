@@ -24,7 +24,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.Debugger.ToolWindows {
 	sealed class SimpleProcessVM : ViewModelBase {
 		public string Name { get; private set; }
-		public DbgProcess Process { get; }
+		public DbgProcess? Process { get; }
 		public SimpleProcessVM(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));
 		public SimpleProcessVM(DbgProcess process, bool useHex) {
 			Process = process ?? throw new ArgumentNullException(nameof(process));

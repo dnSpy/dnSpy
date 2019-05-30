@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.IO;
 
@@ -46,7 +47,7 @@ namespace dndbg.DotNet {
 		/// <summary>
 		/// Gets the filename if the module is available on disk, else null
 		/// </summary>
-		string Filename { get; }
+		string? Filename { get; }
 
 		/// <summary>
 		/// Returns true if module is the manifest (first) module
@@ -72,7 +73,7 @@ namespace dndbg.DotNet {
 		/// <param name="fdToken">Field token</param>
 		/// <param name="size">Size of data</param>
 		/// <returns></returns>
-		byte[] ReadFieldInitialValue(uint fieldRva, uint fdToken, int size);
+		byte[]? ReadFieldInitialValue(uint fieldRva, uint fdToken, int size);
 
 		/// <summary>
 		/// Creates a resource reader or returns false on failure
@@ -82,6 +83,6 @@ namespace dndbg.DotNet {
 		/// <param name="resourceOffset">Resource offset</param>
 		/// <param name="resourceLength">Resource length</param>
 		/// <returns></returns>
-		bool TryCreateResourceStream(uint offset, out DataReaderFactory dataReaderFactory, out uint resourceOffset, out uint resourceLength);
+		bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength);
 	}
 }

@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.BackgroundImage {
 		/// Gets the default settings or null if none
 		/// </summary>
 		/// <returns></returns>
-		DefaultImageSettings GetDefaultImageSettings();
+		DefaultImageSettings? GetDefaultImageSettings();
 
 		/// <summary>
 		/// Returns true if the text view should use this instance's background image settings

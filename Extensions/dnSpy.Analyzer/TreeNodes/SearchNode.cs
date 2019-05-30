@@ -39,7 +39,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			asyncFetchChildrenHelper = new AsyncFetchChildrenHelper(this, () => asyncFetchChildrenHelper = null);
 			yield break;
 		}
-		AsyncFetchChildrenHelper asyncFetchChildrenHelper;
+		AsyncFetchChildrenHelper? asyncFetchChildrenHelper;
 
 		protected abstract IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct);
 		internal IEnumerable<AnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) => FetchChildren(token);

@@ -47,16 +47,16 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		readonly DisassemblyContentProviderFactoryDependencies deps;
 		readonly int bitness;
 		readonly DisassemblyContentFormatterOptions formatterOptions;
-		readonly Contracts.Disassembly.ISymbolResolver symbolResolver;
-		readonly string header;
+		readonly Contracts.Disassembly.ISymbolResolver? symbolResolver;
+		readonly string? header;
 		readonly NativeCodeOptimization optimization;
 		readonly NativeCodeBlock[] blocks;
-		readonly X86NativeCodeInfo codeInfo;
-		readonly NativeVariableInfo[] variableInfo;
-		readonly string methodName;
-		readonly string moduleName;
+		readonly X86NativeCodeInfo? codeInfo;
+		readonly NativeVariableInfo[]? variableInfo;
+		readonly string? methodName;
+		readonly string? moduleName;
 
-		public DisassemblyContentProviderFactory(DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public DisassemblyContentProviderFactory(DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver? symbolResolver, string? header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
 			if (blocks == null)
 				throw new ArgumentNullException(nameof(blocks));
 			this.deps = deps ?? throw new ArgumentNullException(nameof(deps));

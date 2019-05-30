@@ -54,15 +54,15 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 
 	abstract class LanguageExpressionCompiler : DbgDotNetExpressionCompiler {
 		protected abstract class EvalContextState {
-			public DbgModuleReference[] LastModuleReferences;
+			public DbgModuleReference[]? LastModuleReferences;
 			public ImmutableArray<MetadataBlock> LastMetadataBlocks;
 
 			public DSEEMethodDebugInfo MethodDebugInfo;
-			public object MethodDebugInfoKey;
+			public object? MethodDebugInfoKey;
 
-			public CompilerGeneratedVariableInfo[] CompilerGeneratedVariableInfos;
-			public bool[] NotCompilerGenerated;
-			public object CompilerGeneratedVariableInfosKey;
+			public CompilerGeneratedVariableInfo[]? CompilerGeneratedVariableInfos;
+			public bool[]? NotCompilerGenerated;
+			public object? CompilerGeneratedVariableInfosKey;
 		}
 
 		T GetEvalContextState<T>(DbgStackFrame frame) where T : EvalContextState, new() {
@@ -157,7 +157,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return (res, notCompilerGenerated);
 		}
 
-		DSEEMethodDebugInfo CreateMethodDebugInfo(DbgLanguageDebugInfo langDebugInfo, ref CompilerGeneratedVariableInfo[] compilerGeneratedVariableInfos, ref bool[] notCompilerGenerated) {
+		DSEEMethodDebugInfo CreateMethodDebugInfo(DbgLanguageDebugInfo langDebugInfo, ref CompilerGeneratedVariableInfo[]? compilerGeneratedVariableInfos, ref bool[]? notCompilerGenerated) {
 			var info = new DSEEMethodDebugInfo();
 			var methodDebugInfo = langDebugInfo.MethodDebugInfo;
 
@@ -252,7 +252,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return CSharp.MonoGeneratedNamesHelpers.TryGetHoistedLocalSlotIndex(name, out slotIndex);
 		}
 
-		ImmutableArray<string> GetParameterNames(MethodDef method, DbgParameter[] parameters) {
+		ImmutableArray<string?> GetParameterNames(MethodDef method, DbgParameter[] parameters) {
 			var ps = method.Parameters;
 			if (method.MethodSig.Params.Count == 0)
 				return default;
@@ -271,7 +271,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			if (valid)
 				return default;
 
-			var builder = ImmutableArray.CreateBuilder<string>(method.Parameters.Count);
+			var builder = ImmutableArray.CreateBuilder<string?>(method.Parameters.Count);
 			for (int i = 0; i < ps.Count; i++) {
 				var p = ps[i];
 				if (p.IsNormalMethodParameter) {
@@ -300,9 +300,9 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return IdentifierEscaper.Escape(name);
 		}
 
-		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string defaultNamespaceName);
+		protected abstract ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string? defaultNamespaceName);
 
-		protected static void AddDSEEImportRecord(ImmutableArray<DSEEImportRecord>.Builder builder, DbgImportInfo info, ref string defaultNamespaceName) {
+		protected static void AddDSEEImportRecord(ImmutableArray<DSEEImportRecord>.Builder builder, DbgImportInfo info, ref string? defaultNamespaceName) {
 			switch (info.TargetKind) {
 			case DbgImportInfoKind.Namespace:
 				builder.Add(new DSEEImportRecord(DSEEImportTargetKind.Namespace, info.Alias, info.Target, info.ExternAlias));
@@ -379,7 +379,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return builder.ToImmutableArray();
 		}
 
-		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string errorMessage, DbgDotNetText name) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string? errorMessage, DbgDotNetText name) {
 			if (errorMessage != null)
 				return new DbgDotNetCompilationResult(errorMessage);
 			Debug.Assert(compileResult != null);
@@ -387,7 +387,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				return new DbgDotNetCompilationResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var customTypeInfoGuid = compileResult.GetCustomTypeInfo(out var payload);
-			DbgDotNetCustomTypeInfo customTypeInfo;
+			DbgDotNetCustomTypeInfo? customTypeInfo;
 			if (payload != null)
 				customTypeInfo = new DbgDotNetCustomTypeInfo(customTypeInfoGuid, payload);
 			else
@@ -412,7 +412,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			return res;
 		}
 
-		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string errorMessage) {
+		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string? errorMessage) {
 			Debug.Assert(errorMessage == null || (assembly == null || assembly.Length == 0));
 
 			if (errorMessage != null)
@@ -487,13 +487,14 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				if ((info.Flags & DkmClrCompilationResultFlags.BoolResult) != 0)
 					flags |= DbgEvaluationResultFlags.BooleanExpression;
 
-				DbgDotNetCustomTypeInfo customTypeInfo;
+				DbgDotNetCustomTypeInfo? customTypeInfo;
 				if (info.CustomTypeInfo != null)
 					customTypeInfo = new DbgDotNetCustomTypeInfo(info.CustomTypeInfoId, info.CustomTypeInfo);
 				else
 					customTypeInfo = null;
 
 				var resultFlags = DbgDotNetCompiledExpressionResultFlags.None;
+				Debug.Assert(state.NotCompilerGenerated != null);
 				if (info.Kind == LocalAndMethodKind.Local && (uint)info.Index < (uint)state.NotCompilerGenerated.Length && !state.NotCompilerGenerated[info.Index])
 					resultFlags |= DbgDotNetCompiledExpressionResultFlags.CompilerGenerated;
 				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, null, resultFlags, info.Index);

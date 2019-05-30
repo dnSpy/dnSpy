@@ -45,7 +45,7 @@ namespace dnSpy.Commands {
 		}
 
 		sealed class CommandTargetCollection : ICommandTargetCollection {
-			RegisteredCommandElement registeredCommandElement;
+			RegisteredCommandElement? registeredCommandElement;
 
 			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) => this.registeredCommandElement = registeredCommandElement;
 
@@ -57,12 +57,12 @@ namespace dnSpy.Commands {
 				return registeredCommandElement.CanExecute(group, cmdId);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
 					registeredCommandElement = null;
 					return CommandTargetStatus.NotHandled;
@@ -71,9 +71,9 @@ namespace dnSpy.Commands {
 			}
 
 			public void AddFilter(ICommandTargetFilter filter, double order) =>
-				registeredCommandElement.AddFilter(filter, order);
+				registeredCommandElement?.AddFilter(filter, order);
 			public void RemoveFilter(ICommandTargetFilter filter) =>
-				registeredCommandElement.RemoveFilter(filter);
+				registeredCommandElement?.RemoveFilter(filter);
 		}
 
 		sealed class NextCommandTarget : ICommandTarget {
@@ -93,12 +93,12 @@ namespace dnSpy.Commands {
 				return CommandTargetStatus.NotHandled;
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				var filter = filterWeakRef.Target as ICommandTargetFilter;
 				var owner = ownerWeakRef.Target as RegisteredCommandElement;
 				if (filter != null && owner != null)
@@ -122,10 +122,10 @@ namespace dnSpy.Commands {
 			sourceElement.PreviewTextInput += SourceElement_PreviewTextInput;
 		}
 
-		UIElement TryGetSourceElement() => weakSourceElement.Target as UIElement;
+		UIElement? TryGetSourceElement() => weakSourceElement.Target as UIElement;
 		object TryGetTarget() => weakTarget.Target as object;
 
-		object TryGetTargetOrUnregister() {
+		object? TryGetTargetOrUnregister() {
 			var target = TryGetTarget();
 			if (target != null)
 				return target;
@@ -176,7 +176,7 @@ namespace dnSpy.Commands {
 			if (CommandTarget.CanExecute(cmd.Group, cmd.ID) != CommandTargetStatus.Handled)
 				return;
 
-			object result = null;
+			object? result = null;
 			var res = CommandTarget.Execute(cmd.Group, cmd.ID, cmd.Arguments, ref result);
 			if (res == CommandTargetStatus.Handled)
 				e.Handled = true;
@@ -197,7 +197,7 @@ namespace dnSpy.Commands {
 		}
 
 		CommandTargetStatus CanExecute(Guid group, int cmdId) => CanExecute(0, group, cmdId);
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) =>
+		CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) =>
 			Execute(0, group, cmdId, args, ref result);
 
 		CommandTargetStatus CanExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId) {
@@ -207,7 +207,7 @@ namespace dnSpy.Commands {
 			return CanExecute(index + 1, group, cmdId);
 		}
 
-		CommandTargetStatus ExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId, object args, ref object result) {
+		CommandTargetStatus ExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId, object? args, ref object? result) {
 			int index = IndexOf(filter);
 			if (index < 0)
 				return CommandTargetStatus.NotHandled;
@@ -229,7 +229,7 @@ namespace dnSpy.Commands {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		CommandTargetStatus Execute(int currentIndex, Guid group, int cmdId, object args, ref object result) {
+		CommandTargetStatus Execute(int currentIndex, Guid group, int cmdId, object? args, ref object? result) {
 			if (currentIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(currentIndex));
 			var infos = commandTargetInfos.ToArray();

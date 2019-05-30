@@ -142,6 +142,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		[ImportingConstructor]
 		ExceptionsVM(Lazy<DbgManager> dbgManager, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ExceptionFormatterProvider exceptionFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, DbgExceptionSettingsService exceptionSettingsService, DbgExceptionFormatterService exceptionFormatterService) {
+			selectedCategory = null!;
 			uiDispatcher.VerifyAccess();
 			AllItems = new BulkObservableCollection<ExceptionVM>();
 			SelectedItems = new ObservableCollection<ExceptionVM>();
@@ -154,9 +155,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			toVM = new Dictionary<DbgExceptionId, ExceptionVM>();
 			realAllItems = new List<ExceptionVM>();
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			exceptionContext = new ExceptionContext(uiDispatcher, classificationFormatMap, textElementProvider, exceptionSettingsService, exceptionFormatterService, new SearchMatcher(searchColumnDefinitions)) {
+			exceptionContext = new ExceptionContext(uiDispatcher, classificationFormatMap, textElementProvider, exceptionSettingsService, exceptionFormatterService, new SearchMatcher(searchColumnDefinitions), exceptionFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = exceptionFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {
@@ -480,10 +480,10 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			// The order must match searchColumnDefinitions
 			public string[] AllStrings => allStrings ?? (allStrings = new[] { Name, Category, Conditions });
 
-			string name;
-			string category;
-			string conditions;
-			string[] allStrings;
+			string? name;
+			string? category;
+			string? conditions;
+			string[]? allStrings;
 			public ExceptionVMCached(ExceptionVM vm) => VM = vm;
 		}
 

@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the mouse processor or null
 		/// </summary>
-		IGlyphTextMarkerHandlerMouseProcessor MouseProcessor { get; }
+		IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor { get; }
 
 		/// <summary>
 		/// Creates context menu objects
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="context">Context</param>
 		/// <param name="marker">Marker</param>
 		/// <returns></returns>
-		GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
 
 		/// <summary>
 		/// Gets the popup content or null if the next handler should be checked. The popup content is
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="context">Context</param>
 		/// <param name="marker">Marker</param>
 		/// <returns></returns>
-		FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
 	}
 
 	/// <summary>
@@ -74,14 +74,14 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Tooltip style or null. Can be the key of a style in the resources (eg. a <see cref="string"/>) or a <see cref="System.Windows.Style"/> instance
 		/// </summary>
-		public object Style { get; }
+		public object? Style { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="content">Text content to show in the tooltip</param>
 		/// <param name="style">Tooltip style or null. Can be the key of a style in the resources (eg. a <see cref="string"/>) or a <see cref="System.Windows.Style"/> instance</param>
-		public GlyphTextMarkerToolTip(string content, object style = null) {
+		public GlyphTextMarkerToolTip(string content, object? style = null) {
 			Content = content;
 			Style = style;
 		}
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="content">Content to show in the tooltip</param>
 		/// <param name="style">Tooltip style or null. Can be the key of a style in the resources (eg. a <see cref="string"/>) or a <see cref="System.Windows.Style"/> instance</param>
-		public GlyphTextMarkerToolTip(object content, object style) {
+		public GlyphTextMarkerToolTip(object content, object? style) {
 			Content = content;
 			Style = style;
 		}

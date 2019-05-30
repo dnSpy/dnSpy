@@ -23,8 +23,8 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class DotNetClassHook {
-		public virtual DbgDotNetValue CreateInstance(DotNetClassHookCallOptions options, DmdConstructorInfo ctor, ILValue[] arguments) => null;
-		public virtual DbgDotNetValue Call(DotNetClassHookCallOptions options, DbgDotNetValue objValue, DmdMethodBase method, ILValue[] arguments) => null;
+		public virtual DbgDotNetValue? CreateInstance(DotNetClassHookCallOptions options, DmdConstructorInfo ctor, ILValue[] arguments) => null;
+		public virtual DbgDotNetValue? Call(DotNetClassHookCallOptions options, DbgDotNetValue? objValue, DmdMethodBase method, ILValue[] arguments) => null;
 	}
 
 	enum DotNetClassHookCallOptions {

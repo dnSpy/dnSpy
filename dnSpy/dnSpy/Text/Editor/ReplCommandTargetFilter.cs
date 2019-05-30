@@ -30,9 +30,9 @@ namespace dnSpy.Text.Editor {
 
 		public ReplCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		ReplEditor TryGetInstance() =>
+		ReplEditor? TryGetInstance() =>
 			__replEditor ?? (__replEditor = ReplEditorUtils.TryGetInstance(textView) as ReplEditor);
-		ReplEditor __replEditor;
+		ReplEditor? __replEditor;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var replEditor = TryGetInstance();
@@ -197,12 +197,12 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var replEditor = TryGetInstance();
 			if (replEditor == null)
 				return CommandTargetStatus.NotHandled;
@@ -223,7 +223,7 @@ namespace dnSpy.Text.Editor {
 
 				case StandardIds.Redo:
 				case StandardIds.Undo:
-					replEditor.SearchText = null;
+					replEditor.SearchText = string.Empty;
 					return CommandTargetStatus.NotHandled;
 
 				default:

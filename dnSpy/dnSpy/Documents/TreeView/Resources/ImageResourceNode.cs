@@ -36,7 +36,7 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_IMAGE_RESOURCE_NODE)]
 	sealed class ImageResourceNodeProvider : IResourceNodeProvider {
-		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
 			if (er == null)
 				return null;
@@ -48,7 +48,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			return new ImageResourceNodeImpl(treeNodeGroup, er);
 		}
 
-		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			if (resourceElement.ResourceData.Code != ResourceTypeCode.ByteArray && resourceElement.ResourceData.Code != ResourceTypeCode.Stream)
 				return null;
 
@@ -157,8 +157,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 	}
 
 	sealed class ImageResourceElementNodeImpl : ImageResourceElementNode {
-		ImageSource imageSource;
-		byte[] imageData;
+		ImageSource? imageSource;
+		byte[]? imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMAGE_RESOURCE_ELEMENT_NODE_GUID);
 		protected override ImageReference GetIcon() => DsImages.Image;
@@ -196,7 +196,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
-		public override string CheckCanUpdateData(ResourceElement newResElem) {
+		public override string? CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;

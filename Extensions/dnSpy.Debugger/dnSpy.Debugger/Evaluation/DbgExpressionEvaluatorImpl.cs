@@ -39,6 +39,7 @@ namespace dnSpy.Debugger.Evaluation {
 		DbgEvaluationResult CreateResult(DbgRuntime runtime, DbgEngineEvaluationResult result) {
 			if (result.Error != null)
 				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.FormatSpecifiers, result.Flags);
+			Debug.Assert(result.Value != null);
 			try {
 				var value = new DbgValueImpl(runtime, result.Value);
 				runtime.CloseOnContinue(value);
@@ -50,11 +51,11 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
+		DbgEEAssignmentResult CreateResult(DbgEngineEEAssignmentResult result) => new DbgEEAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessageOrNull(result.Error));
 
-		public override object CreateExpressionEvaluatorState() => engineExpressionEvaluator.CreateExpressionEvaluatorState();
+		public override object? CreateExpressionEvaluatorState() => engineExpressionEvaluator.CreateExpressionEvaluatorState();
 
-		public override DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state) {
+		public override DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? state) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))

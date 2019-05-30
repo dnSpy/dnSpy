@@ -53,7 +53,7 @@ namespace dnSpy.Hex.HexGroups {
 			optionsStorage = new OptionsStorage(settingsService);
 		}
 
-		internal string GetSubGroup(WpfHexView hexView) {
+		internal string? GetSubGroup(WpfHexView hexView) {
 			foreach (var lz in tagOptionDefinitionProviders) {
 				var subGroup = lz.Value.GetSubGroup(hexView);
 				if (subGroup != null)

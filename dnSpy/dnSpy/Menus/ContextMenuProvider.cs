@@ -29,11 +29,11 @@ namespace dnSpy.Menus {
 		readonly MenuService menuService;
 		readonly FrameworkElement element;
 		readonly Guid guid;
-		readonly IGuidObjectsProvider provider;
-		readonly IContextMenuInitializer initCtxMenu;
+		readonly IGuidObjectsProvider? provider;
+		readonly IContextMenuInitializer? initCtxMenu;
 		readonly Guid ctxMenuGuid;
 
-		public ContextMenuProvider(MenuService menuService, FrameworkElement elem, Guid guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
+		public ContextMenuProvider(MenuService menuService, FrameworkElement elem, Guid guid, IGuidObjectsProvider? provider, IContextMenuInitializer? initCtxMenu, Guid? ctxMenuGuid) {
 			this.menuService = menuService;
 			element = elem;
 			this.guid = guid;

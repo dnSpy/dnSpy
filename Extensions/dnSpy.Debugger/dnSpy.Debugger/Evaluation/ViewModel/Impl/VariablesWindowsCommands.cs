@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		protected VariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) => this.operations = operations;
 
-		protected sealed override VariablesWindowCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override VariablesWindowCtxMenuContext? CreateContext(IMenuItemContext context) {
 			var vm = context.Find<IValueNodesVM>();
 			if (vm == null)
 				return null;
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		EditValueVariablesWindowCtxMenuCommand(Lazy<VariablesWindowOperations> operations) : base(operations) { }
 		public override void Execute(VariablesWindowCtxMenuContext context) => context.Operations.EditValue(context.VM);
 		public override bool IsEnabled(VariablesWindowCtxMenuContext context) => context.Operations.CanEditValue(context.VM);
-		public override string GetInputGestureText(VariablesWindowCtxMenuContext context) {
+		public override string? GetInputGestureText(VariablesWindowCtxMenuContext context) {
 			switch (context.VM.VariablesWindowKind) {
 			case VariablesWindowKind.Locals: return dnSpy_Debugger_Resources.ShortCutKeyF2;
 			case VariablesWindowKind.Autos: return dnSpy_Debugger_Resources.ShortCutKeyF2;

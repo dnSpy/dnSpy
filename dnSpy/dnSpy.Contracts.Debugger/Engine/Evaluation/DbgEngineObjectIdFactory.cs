@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		public abstract DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id);
+		public abstract DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data

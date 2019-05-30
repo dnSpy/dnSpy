@@ -58,7 +58,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 
 		public SubString? Current => current;
 
-		object IEnumerator.Current {
+		object? IEnumerator.Current {
 			get { Debug.Fail("'this' was boxed"); return current; }
 		}
 

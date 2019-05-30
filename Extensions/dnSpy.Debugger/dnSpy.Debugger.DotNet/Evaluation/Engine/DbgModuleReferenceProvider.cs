@@ -48,8 +48,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	}
 
 	readonly struct GetModuleReferencesResult {
-		public DbgModuleReference[] ModuleReferences { get; }
-		public string ErrorMessage { get; }
+		public DbgModuleReference[]? ModuleReferences { get; }
+		public string? ErrorMessage { get; }
 
 		public GetModuleReferencesResult(string errorMessage) {
 			ModuleReferences = null;
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					Size = size;
 				}
 				public bool Equals(Key other) => Address == other.Address && Size == other.Size && IsFileLayout == other.IsFileLayout;
-				public override bool Equals(object obj) => obj is Key other && Equals(other);
+				public override bool Equals(object? obj) => obj is Key other && Equals(other);
 				public override int GetHashCode() => Address.GetHashCode();
 			}
 			public readonly Dictionary<Key, DbgModuleReferenceImpl> ModuleReferences = new Dictionary<Key, DbgModuleReferenceImpl>();
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			RuntimeState(DbgRuntime runtime) => this.runtime = runtime;
 
 			public static RuntimeState GetRuntimeState(DbgRuntime runtime) {
-				if (runtime.TryGetData(out RuntimeState state))
+				if (runtime.TryGetData(out RuntimeState? state))
 					return state;
 				return CreateRuntimeState(runtime);
 			}
@@ -109,12 +109,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		sealed class ModuleReferencesState {
-			public DbgModuleReference[] ModuleReferences;
+			public DbgModuleReference[]? ModuleReferences;
 
 			/// <summary>
 			/// Module reference of source module
 			/// </summary>
-			public DbgModuleReference SourceModuleReference;
+			public DbgModuleReference? SourceModuleReference;
 
 			/// <summary>
 			/// Referenced assemblies that have been loaded, including all their current modules. If an
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			/// <summary>
 			/// Extra type references (from object ids, $exception and other aliases)
 			/// </summary>
-			public DmdType[] TypeReferences;
+			public DmdType[]? TypeReferences;
 		}
 
 		readonly struct AssemblyInfo {
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		readonly struct ModuleInfo {
 			public readonly DmdModule Module;
-			public readonly DbgModule DebuggerModuleOrNull;
+			public readonly DbgModule? DebuggerModuleOrNull;
 			public readonly int DynamicModuleVersion;
 			public readonly int DebuggerModuleVersion;
 			public ModuleInfo(DmdModule module) {
@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			// Not thread safe since all callers should call it on the correct engine thread
 			runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
 
-			if (module.TryGetData(out ModuleReferencesState state)) {
+			if (module.TryGetData(out ModuleReferencesState? state)) {
 				if (CanReuse(module.AppDomain, typeReferences, state))
 					return CreateGetModuleReferencesResult(state);
 			}
@@ -236,7 +236,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		GetModuleReferencesResult CreateGetModuleReferencesResult(ModuleReferencesState state) {
 			if (state.SourceModuleReference == null || state.SourceModuleReference.MetadataAddress == IntPtr.Zero || state.SourceModuleReference.MetadataSize == 0)
 				return new GetModuleReferencesResult(dnSpy_Debugger_DotNet_Resources.ModuleMetadataNotFoundOrInvalid);
-			return new GetModuleReferencesResult(state.ModuleReferences);
+			return new GetModuleReferencesResult(state.ModuleReferences!);
 		}
 
 		sealed class IntrinsicsAssemblyState {
@@ -249,13 +249,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		IntrinsicsAssemblyState GetIntrinsicsAssemblyState(DbgRuntime runtime, DmdAppDomain appDomain) {
-			if (appDomain.TryGetData(out IntrinsicsAssemblyState state))
+			if (appDomain.TryGetData(out IntrinsicsAssemblyState? state))
 				return state;
 			return GetOrCreateIntrinsicsAssemblyState(runtime, appDomain);
 		}
 
 		IntrinsicsAssemblyState GetOrCreateIntrinsicsAssemblyState(DbgRuntime runtime, DmdAppDomain appDomain) {
-			var info = new IntrinsicsAssemblyBuilder(appDomain.CorLib.GetName().FullName, appDomain.CorLib.ImageRuntimeVersion).Create();
+			var info = new IntrinsicsAssemblyBuilder(appDomain.CorLib!.GetName().FullName, appDomain.CorLib.ImageRuntimeVersion).Create();
 			const bool isFileLayout = true;
 			const bool isInMemory = false;
 			const bool isDynamic = false;
@@ -291,7 +291,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 			stack.Add(new AssemblyInfo(assembly));
 			stack.Add(new AssemblyInfo(intrinsicsState.Assembly));
-			stack.Add(new AssemblyInfo(appDomain.CorLib));
+			stack.Add(new AssemblyInfo(appDomain.CorLib!));
 
 			while (stack.Count > 0) {
 				var info = stack[stack.Count - 1];
@@ -317,7 +317,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var dnRuntime = runtime.GetDotNetRuntime();
 			foreach (var asmInfo in state.AssemblyInfos) {
 				foreach (var modInfo in asmInfo.Modules) {
-					DbgModuleReference modRef;
+					DbgModuleReference? modRef;
 					if (modInfo.Module.Assembly == intrinsicsState.Assembly)
 						modRef = intrinsicsState.ModuleReference;
 					else
@@ -339,7 +339,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				state.ModuleReferences = modRefs.ToArray();
 		}
 
-		static bool Equals(DbgModuleReference[] a, List<DbgModuleReference> b) {
+		static bool Equals(DbgModuleReference[]? a, List<DbgModuleReference> b) {
 			if (a == null)
 				return false;
 			if (a.Length != b.Count)
@@ -351,8 +351,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return true;
 		}
 
-		DbgModuleReference GetOrCreateModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo) {
-			DbgModuleReferenceImpl modRef;
+		DbgModuleReference? GetOrCreateModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo) {
+			DbgModuleReferenceImpl? modRef;
 			var module = modInfo.DebuggerModuleOrNull ?? modInfo.Module.GetDebuggerModule();
 			if (module?.HasAddress == true) {
 				var key = new RuntimeState.Key(module.ImageLayout == DbgImageLayout.File, module.Address, module.Size);
@@ -415,7 +415,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		sealed class RawModuleBytesModuleState {
 			public DbgDotNetRawModuleBytes RawModuleBytes;
-			public DbgModuleReferenceImpl ModuleReference;
+			public DbgModuleReferenceImpl? ModuleReference;
 
 			public bool Equals(in DbgDotNetRawModuleBytes other) =>
 				RawModuleBytes.RawBytes == other.RawBytes &&
@@ -428,7 +428,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				ModuleReference = moduleReference ?? throw new ArgumentNullException(nameof(moduleReference));
 		}
 
-		DbgModuleReferenceImpl GetOrCreateFileModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo, DbgModule module) {
+		DbgModuleReferenceImpl? GetOrCreateFileModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo, DbgModule module) {
 			Debug.Assert(!module.IsInMemory && File.Exists(module.Filename));
 			if (module.TryGetData<FileModuleReferenceState>(out var state))
 				return state.ModuleReference;
@@ -459,7 +459,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		bool CanReuse(DmdAppDomain appDomain, DmdType[] typeReferences, ModuleReferencesState state) {
-			if (state.TypeReferences.Length != typeReferences.Length)
+			if (state.TypeReferences!.Length != typeReferences.Length)
 				return false;
 			for (int i = 0; i < typeReferences.Length; i++) {
 				if ((object)typeReferences[i] != state.TypeReferences[i])

@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <summary>
 		/// Default value
 		/// </summary>
-		public object DefaultValue { get; set; }
+		public object? DefaultValue { get; set; }
 
 		/// <summary>
 		/// Gets the type
@@ -55,7 +55,12 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected TagOptionDefinition() => CanBeSaved = true;
+		protected TagOptionDefinition() {
+			CanBeSaved = true;
+			SubGroup = null!;
+			Name = null!;
+			Type = null!;
+		}
 	}
 
 	/// <summary>
@@ -66,7 +71,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// Constructor
 		/// </summary>
 		public TagOptionDefinition() {
-			DefaultValue = default(T);
+			DefaultValue = default(T)!;
 			Type = typeof(T);
 		}
 

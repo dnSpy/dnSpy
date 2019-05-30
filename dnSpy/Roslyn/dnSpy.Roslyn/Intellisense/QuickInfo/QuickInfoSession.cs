@@ -32,11 +32,11 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		readonly bool trackMouse;
 		readonly IQuickInfoBroker quickInfoBroker;
 		readonly ITextView textView;
-		CancellationTokenSource cancellationTokenSource;
+		CancellationTokenSource? cancellationTokenSource;
 		CancellationToken cancellationToken;
 
 		public event EventHandler Disposed;
-		public QuickInfoItem Item { get; private set; }
+		public QuickInfoItem? Item { get; private set; }
 		public QuickInfoState State { get; private set; }
 
 		static readonly object thisInstanceKey = new object();
@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			session.Start();
 		}
 
-		public static QuickInfoSession TryGetSession(IQuickInfoSession session) {
+		public static QuickInfoSession? TryGetSession(IQuickInfoSession session) {
 			if (session == null)
 				return null;
 			if (session.Properties.TryGetProperty(thisInstanceKey, out QuickInfoSession instance))

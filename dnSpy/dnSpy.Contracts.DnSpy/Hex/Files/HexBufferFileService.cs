@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <param name="checkNestedFiles">true to check nested files</param>
 		/// <returns></returns>
-		public abstract HexBufferFile GetFile(HexPosition position, bool checkNestedFiles);
+		public abstract HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles);
 
 		/// <summary>
 		/// Gets a <see cref="HexBufferFile"/> and structure at <paramref name="position"/> or null if

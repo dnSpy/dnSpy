@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -46,28 +47,28 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		sealed class BreakpointState : IDisposable {
-			public DbgLanguage Language;
+			public DbgLanguage? Language;
 			public DbgCodeBreakpointCondition Condition;
 
-			public SavedValue SavedValue {
+			public SavedValue? SavedValue {
 				get => savedValue;
 				set {
 					savedValue?.Dispose();
 					savedValue = value;
 				}
 			}
-			SavedValue savedValue;
+			SavedValue? savedValue;
 
-			public DbgEvaluationContext Context {
+			public DbgEvaluationContext? Context {
 				get => context;
 				set {
 					context?.Close();
 					context = value;
 				}
 			}
-			DbgEvaluationContext context;
+			DbgEvaluationContext? context;
 
-			public object ExpressionEvaluatorState;
+			public object? ExpressionEvaluatorState;
 
 			public void Dispose() {
 				Language = null;
@@ -82,7 +83,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			public abstract bool Equals(DbgEvaluationInfo evalInfo, SavedValue other);
 			public abstract void Dispose();
 
-			public static SavedValue TryCreateValue(DbgObjectIdService dbgObjectIdService, DbgValue value, string valueType) {
+			public static SavedValue? TryCreateValue(DbgObjectIdService dbgObjectIdService, DbgValue value, string valueType) {
 				switch (value.ValueType) {
 				case DbgSimpleValueType.Other:
 					if (value.HasRawValue && value.RawValue == null)
@@ -124,10 +125,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 			sealed class SimpleSavedValue : SavedValue {
 				readonly DbgSimpleValueType type;
-				readonly object value;
+				readonly object? value;
 				readonly string valueType;
 
-				public SimpleSavedValue(DbgSimpleValueType type, object value, string valueType) {
+				public SimpleSavedValue(DbgSimpleValueType type, object? value, string valueType) {
 					this.type = type;
 					this.value = value;
 					// It's needed if it's an enum value since 'value' contains the underlying type value
@@ -195,8 +196,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			if (expression == null)
 				return new DbgCodeBreakpointCheckResult("Missing expression");
 
-			DbgStackFrame frame = null;
-			DbgValue value = null;
+			DbgStackFrame? frame = null;
+			DbgValue? value = null;
 			try {
 				frame = thread.GetTopStackFrame();
 				if (frame == null)
@@ -205,31 +206,31 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
 				var cancellationToken = CancellationToken.None;
 				var state = GetState(boundBreakpoint, language, frame, condition, cancellationToken);
-				var evalInfo = new DbgEvaluationInfo(state.Context, frame, cancellationToken);
-				var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState);
+				var evalInfo = new DbgEvaluationInfo(state.Context!, frame, cancellationToken);
+				var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState!);
 				if (evalRes.Error != null)
 					return new DbgCodeBreakpointCheckResult(evalRes.Error);
-				value = evalRes.Value;
+				value = evalRes.Value!;
 
 				switch (condition.Kind) {
 				case DbgCodeBreakpointConditionKind.IsTrue:
 					switch (value.ValueType) {
-					case DbgSimpleValueType.Boolean:	return new DbgCodeBreakpointCheckResult((bool)value.RawValue);
-					case DbgSimpleValueType.Char1:		return new DbgCodeBreakpointCheckResult((byte)value.RawValue != 0);
-					case DbgSimpleValueType.CharUtf16:	return new DbgCodeBreakpointCheckResult((char)value.RawValue != 0);
-					case DbgSimpleValueType.Int8:		return new DbgCodeBreakpointCheckResult((sbyte)value.RawValue != 0);
-					case DbgSimpleValueType.Int16:		return new DbgCodeBreakpointCheckResult((short)value.RawValue != 0);
-					case DbgSimpleValueType.Int32:		return new DbgCodeBreakpointCheckResult((int)value.RawValue != 0);
-					case DbgSimpleValueType.Int64:		return new DbgCodeBreakpointCheckResult((long)value.RawValue != 0);
-					case DbgSimpleValueType.UInt8:		return new DbgCodeBreakpointCheckResult((byte)value.RawValue != 0);
-					case DbgSimpleValueType.UInt16:		return new DbgCodeBreakpointCheckResult((ushort)value.RawValue != 0);
-					case DbgSimpleValueType.UInt32:		return new DbgCodeBreakpointCheckResult((uint)value.RawValue != 0);
-					case DbgSimpleValueType.UInt64:		return new DbgCodeBreakpointCheckResult((ulong)value.RawValue != 0);
-					case DbgSimpleValueType.Float32:	return new DbgCodeBreakpointCheckResult((float)value.RawValue != 0);
-					case DbgSimpleValueType.Float64:	return new DbgCodeBreakpointCheckResult((double)value.RawValue != 0);
-					case DbgSimpleValueType.Decimal:	return new DbgCodeBreakpointCheckResult((decimal)value.RawValue != 0);
-					case DbgSimpleValueType.Ptr32:		return new DbgCodeBreakpointCheckResult((uint)value.RawValue != 0);
-					case DbgSimpleValueType.Ptr64:		return new DbgCodeBreakpointCheckResult((ulong)value.RawValue != 0);
+					case DbgSimpleValueType.Boolean:	return new DbgCodeBreakpointCheckResult((bool)value.RawValue!);
+					case DbgSimpleValueType.Char1:		return new DbgCodeBreakpointCheckResult((byte)value.RawValue! != 0);
+					case DbgSimpleValueType.CharUtf16:	return new DbgCodeBreakpointCheckResult((char)value.RawValue! != 0);
+					case DbgSimpleValueType.Int8:		return new DbgCodeBreakpointCheckResult((sbyte)value.RawValue! != 0);
+					case DbgSimpleValueType.Int16:		return new DbgCodeBreakpointCheckResult((short)value.RawValue! != 0);
+					case DbgSimpleValueType.Int32:		return new DbgCodeBreakpointCheckResult((int)value.RawValue! != 0);
+					case DbgSimpleValueType.Int64:		return new DbgCodeBreakpointCheckResult((long)value.RawValue! != 0);
+					case DbgSimpleValueType.UInt8:		return new DbgCodeBreakpointCheckResult((byte)value.RawValue! != 0);
+					case DbgSimpleValueType.UInt16:		return new DbgCodeBreakpointCheckResult((ushort)value.RawValue! != 0);
+					case DbgSimpleValueType.UInt32:		return new DbgCodeBreakpointCheckResult((uint)value.RawValue! != 0);
+					case DbgSimpleValueType.UInt64:		return new DbgCodeBreakpointCheckResult((ulong)value.RawValue! != 0);
+					case DbgSimpleValueType.Float32:	return new DbgCodeBreakpointCheckResult((float)value.RawValue! != 0);
+					case DbgSimpleValueType.Float64:	return new DbgCodeBreakpointCheckResult((double)value.RawValue! != 0);
+					case DbgSimpleValueType.Decimal:	return new DbgCodeBreakpointCheckResult((decimal)value.RawValue! != 0);
+					case DbgSimpleValueType.Ptr32:		return new DbgCodeBreakpointCheckResult((uint)value.RawValue! != 0);
+					case DbgSimpleValueType.Ptr64:		return new DbgCodeBreakpointCheckResult((ulong)value.RawValue! != 0);
 
 					case DbgSimpleValueType.Other:
 					case DbgSimpleValueType.Void:
@@ -262,8 +263,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		string GetType(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgValue value) {
 			const DbgValueFormatterTypeOptions options = DbgValueFormatterTypeOptions.IntrinsicTypeKeywords | DbgValueFormatterTypeOptions.Namespaces | DbgValueFormatterTypeOptions.Tokens;
-			const CultureInfo cultureInfo = null;
-			var sb = ObjectCache.AllocStringBuilder();
+			const CultureInfo? cultureInfo = null;
+			StringBuilder? sb = ObjectCache.AllocStringBuilder();
 			var output = new DbgStringBuilderTextWriter(sb);
 			language.Formatter.FormatType(evalInfo, output, value, options, cultureInfo);
 			return ObjectCache.FreeAndToString(ref sb);

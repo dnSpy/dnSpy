@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 
 		public System_Runtime_CompilerServices_RuntimeHelpers(IDebuggerRuntime runtime) => this.runtime = runtime;
 
-		public override DbgDotNetValue Call(DotNetClassHookCallOptions options, DbgDotNetValue objValue, DmdMethodBase method, ILValue[] arguments) {
+		public override DbgDotNetValue? Call(DotNetClassHookCallOptions options, DbgDotNetValue? objValue, DmdMethodBase method, ILValue[] arguments) {
 			switch (method.Name) {
 			case "InitializeArray":
 				if (!method.IsStatic)
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 				if (ps[0] != appDomain.System_Array || ps[1] != appDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeFieldHandle, isOptional: true))
 					break;
 				var field = (arguments[1] as RuntimeFieldHandleILValue)?.Field;
-				if ((object)field == null)
+				if (field is null)
 					break;
 				var arrayValue = runtime.ToDotNetValue(arguments[0]);
 				if (arrayValue.IsNull)

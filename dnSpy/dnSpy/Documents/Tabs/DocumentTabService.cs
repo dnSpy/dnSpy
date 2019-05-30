@@ -60,12 +60,12 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		TabContentImpl ActiveTabContentImpl => (TabContentImpl)TabGroupService.ActiveTabGroup?.ActiveTabContent;
+		TabContentImpl? ActiveTabContentImpl => (TabContentImpl?)TabGroupService.ActiveTabGroup?.ActiveTabContent;
 
 		TabContentImpl SafeActiveTabContentImpl {
 			get {
 				var g = SafeActiveTabGroup;
-				var impl = (TabContentImpl)g.ActiveTabContent;
+				var impl = (TabContentImpl?)g.ActiveTabContent;
 				if (impl != null)
 					return impl;
 				return CreateNewTab(g);
@@ -78,7 +78,7 @@ namespace dnSpy.Documents.Tabs {
 			return impl;
 		}
 
-		IDocumentTab IDocumentTabService.ActiveTab {
+		IDocumentTab? IDocumentTabService.ActiveTab {
 			get => ActiveTabContentImpl;
 			set {
 				if (value == null)
@@ -94,7 +94,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		ITabGroup GetTabGroup(TabContentImpl impl) {
+		ITabGroup? GetTabGroup(TabContentImpl impl) {
 			foreach (var g in TabGroupService.TabGroups) {
 				if (g.TabContents.Contains(impl))
 					return g;
@@ -131,7 +131,7 @@ namespace dnSpy.Documents.Tabs {
 			get {
 				var hash = new HashSet<IDocumentTab>();
 				foreach (var g in TabGroupService.TabGroups) {
-					var c = (TabContentImpl)g.ActiveTabContent;
+					var c = (TabContentImpl?)g.ActiveTabContent;
 					if (c != null) {
 						hash.Add(c);
 						yield return c;
@@ -194,10 +194,10 @@ namespace dnSpy.Documents.Tabs {
 			var hash = GetSelfAndDsDocumentNodeChildren(node);
 			foreach (TabContentImpl tab in VisibleFirstTabs)
 				tab.OnNodesRemoved(hash, () => CreateTabContent(Array.Empty<DocumentTreeNodeData>()));
-			decompilationCache.Clear(new HashSet<IDsDocument>(hash.Select(a => a.Document)));
+			decompilationCache.Clear(new HashSet<IDsDocument?>(hash.Select(a => a.Document)));
 		}
 
-		static HashSet<DsDocumentNode> GetSelfAndDsDocumentNodeChildren(DsDocumentNode node, HashSet<DsDocumentNode> hash = null) {
+		static HashSet<DsDocumentNode> GetSelfAndDsDocumentNodeChildren(DsDocumentNode node, HashSet<DsDocumentNode>? hash = null) {
 			if (hash == null)
 				hash = new HashSet<DsDocumentNode>();
 			hash.Add(node);
@@ -219,12 +219,12 @@ namespace dnSpy.Documents.Tabs {
 
 		void TabGroupService_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) {
 			if (e.Unselected != null) {
-				var impl = (TabContentImpl)e.Unselected.ActiveTabContent;
+				var impl = (TabContentImpl?)e.Unselected.ActiveTabContent;
 				if (impl != null)
 					impl.OnUnselected();
 			}
 			if (e.Selected != null) {
-				var impl = (TabContentImpl)e.Selected.ActiveTabContent;
+				var impl = (TabContentImpl?)e.Selected.ActiveTabContent;
 				if (impl != null) {
 					impl.OnSelected();
 					OnNewTabContentShown(impl);
@@ -340,7 +340,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		public DocumentTabContent TryCreateContent(DocumentTreeNodeData[] nodes) => documentTabContentFactoryService.CreateTabContent(nodes);
+		public DocumentTabContent? TryCreateContent(DocumentTreeNodeData[] nodes) => documentTabContentFactoryService.CreateTabContent(nodes);
 
 		DocumentTabContent CreateTabContent(DocumentTreeNodeData[] nodes) {
 			var content = TryCreateContent(nodes);
@@ -348,7 +348,7 @@ namespace dnSpy.Documents.Tabs {
 			return content ?? new NullDocumentTabContent();
 		}
 
-		internal void Add(ITabGroup group, DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown) {
+		internal void Add(ITabGroup group, DocumentTabContent tabContent, object? uiState, Action<ShowTabContentEventArgs> onShown) {
 			Debug.Assert(TabGroupService.TabGroups.Contains(group));
 			var tab = OpenEmptyTab(group);
 			tab.Show(tabContent, uiState, onShown);
@@ -363,7 +363,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		int disableSelectTreeNodes;
-		internal void OnNewTabContentShown(IDocumentTab documentTab) {
+		internal void OnNewTabContentShown(IDocumentTab? documentTab) {
 			if (documentTab == null)
 				return;
 			if (!isTreeViewVisible)
@@ -387,7 +387,7 @@ namespace dnSpy.Documents.Tabs {
 
 			// The treeview steals the focus so remember the current focused element. Don't restore
 			// the focus if it's a node in the treeview.
-			var focusedElem = Keyboard.FocusedElement;
+			IInputElement? focusedElem = Keyboard.FocusedElement;
 			if (DocumentTreeView.TreeView.UIObject.IsKeyboardFocusWithin)
 				focusedElem = null;
 			bool tabGroupHasFocus = TabGroupService.TabGroups.Any(a => a.IsKeyboardFocusWithin);
@@ -484,7 +484,7 @@ namespace dnSpy.Documents.Tabs {
 			g.Close(impl);
 		}
 
-		public IDocumentTab TryGetDocumentTab(ITabContent content) {
+		public IDocumentTab? TryGetDocumentTab(ITabContent? content) {
 			var impl = content as TabContentImpl;
 			if (impl == null)
 				return null;
@@ -515,11 +515,11 @@ namespace dnSpy.Documents.Tabs {
 			}
 			if (hash.Count == 0)
 				return;
-			decompilationCache.Clear(new HashSet<IDsDocument>(hash.Select(a => a.Document)));
+			decompilationCache.Clear(new HashSet<IDsDocument?>(hash.Select(a => a.Document)));
 
 			var tabs = new List<IDocumentTab>();
 			foreach (var tab in VisibleFirstTabs) {
-				bool refresh = tab.Content.Nodes.Any(a => hash.Contains(a.GetAncestorOrSelf<DsDocumentNode>()));
+				bool refresh = tab.Content.Nodes.Any(a => hash.Contains(a.GetAncestorOrSelf<DsDocumentNode>()!));
 				if (refresh)
 					tabs.Add(tab);
 			}
@@ -550,7 +550,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public void RefreshModifiedDocument(IDsDocument document) {
 			var documentsHash = GetModifiedDocuments(document);
-			decompilationCache.Clear(documentsHash);
+			decompilationCache.Clear(documentsHash!);
 
 			var tabs = new List<IDocumentTab>();
 			foreach (var tab in VisibleFirstTabs) {
@@ -566,20 +566,20 @@ namespace dnSpy.Documents.Tabs {
 
 		bool MustRefresh(IDocumentTab tab, IEnumerable<IDsDocument> documents) {
 			var modules = new HashSet<IDsDocument>(documents);
-			if (InModifiedModuleHelper.IsInModifiedModule(modules, tab.Content.Nodes))
+			if (InModifiedModuleHelper.IsInModifiedModule(modules!, tab.Content.Nodes))
 				return true;
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer != null && InModifiedModuleHelper.IsInModifiedModule(DocumentTreeView.DocumentService, modules, documentViewer.Content.ReferenceCollection.Select(a => a.Data.Reference)))
+			if (documentViewer != null && InModifiedModuleHelper.IsInModifiedModule(DocumentTreeView.DocumentService, modules!, documentViewer.Content.ReferenceCollection.Select(a => a.Data.Reference)))
 				return true;
 
 			return false;
 		}
 
-		public void FollowReference(object @ref, bool newTab, bool setFocus, Action<ShowTabContentEventArgs> onShown) {
+		public void FollowReference(object @ref, bool newTab, bool setFocus, Action<ShowTabContentEventArgs>? onShown) {
 			if (@ref == null)
 				return;
 
-			IDocumentTab tab = ActiveTabContentImpl;
+			IDocumentTab? tab = ActiveTabContentImpl;
 			var sourceTab = tab;
 			if (tab == null)
 				tab = SafeActiveTabContentImpl;

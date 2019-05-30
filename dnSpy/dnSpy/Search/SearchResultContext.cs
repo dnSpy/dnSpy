@@ -29,10 +29,11 @@ namespace dnSpy.Search {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 
-		public SearchResultContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
+		public SearchResultContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, IDecompiler decompiler) {
 			SyntaxHighlight = true;
 			ClassificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			TextElementProvider = textElementProvider ?? throw new ArgumentNullException(nameof(textElementProvider));
+			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 		}
 	}
 }

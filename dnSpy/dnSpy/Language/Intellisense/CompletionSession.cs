@@ -33,16 +33,16 @@ namespace dnSpy.Language.Intellisense {
 		public PropertyCollection Properties { get; }
 		public ITextView TextView { get; }
 		public ReadOnlyObservableCollection<CompletionSet> CompletionSets { get; }
-		public event EventHandler<ValueChangedEventArgs<CompletionSet>> SelectedCompletionSetChanged;
+		public event EventHandler<ValueChangedEventArgs<CompletionSet?>> SelectedCompletionSetChanged;
 		public bool IsDismissed { get; private set; }
 		public event EventHandler Dismissed;
 		public bool IsStarted { get; private set; }
-		public IIntellisensePresenter Presenter => completionPresenter;
+		public IIntellisensePresenter? Presenter => completionPresenter;
 		public event EventHandler PresenterChanged;
 		public event EventHandler Recalculated;
 		public event EventHandler Committed;
 
-		public CompletionSet SelectedCompletionSet {
+		public CompletionSet? SelectedCompletionSet {
 			get => selectedCompletionSet;
 			set {
 				if (value == null)
@@ -53,20 +53,20 @@ namespace dnSpy.Language.Intellisense {
 					return;
 				var oldValue = selectedCompletionSet;
 				selectedCompletionSet = value;
-				SelectedCompletionSetChanged?.Invoke(this, new ValueChangedEventArgs<CompletionSet>(oldValue, selectedCompletionSet));
+				SelectedCompletionSetChanged?.Invoke(this, new ValueChangedEventArgs<CompletionSet?>(oldValue, selectedCompletionSet));
 				Filter();
 				Match();
 			}
 		}
-		CompletionSet selectedCompletionSet;
+		CompletionSet? selectedCompletionSet;
 
 		readonly ObservableCollection<CompletionSet> completionSets;
 		readonly Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders;
 		readonly ITrackingPoint triggerPoint;
 		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
-		CompletionSessionCommandTargetFilter completionSessionCommandTargetFilter;
-		IIntellisensePresenter completionPresenter;
-		ICompletionSource[] completionSources;
+		CompletionSessionCommandTargetFilter? completionSessionCommandTargetFilter;
+		IIntellisensePresenter? completionPresenter;
+		ICompletionSource[]? completionSources;
 
 		public CompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders) {
 			completionSets = new ObservableCollection<CompletionSet>();
@@ -154,8 +154,7 @@ namespace dnSpy.Language.Intellisense {
 			if (IsDismissed)
 				throw new InvalidOperationException();
 			var completionSet = SelectedCompletionSet;
-			var completion = completionSet?.SelectionStatus.Completion;
-			if (completion != null) {
+			if (completionSet?.SelectionStatus.Completion is Completion completion) {
 				Debug.Assert(completionSet.SelectionStatus.IsSelected);
 				if (completion is ICustomCommit customCommit)
 					customCommit.Commit();
@@ -195,7 +194,7 @@ namespace dnSpy.Language.Intellisense {
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
-			if (selectedCompletionSet == null)
+			if (selectedCompletionSet is null)
 				return;
 			selectedCompletionSet.Filter();
 		}
@@ -205,11 +204,13 @@ namespace dnSpy.Language.Intellisense {
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
+			if (selectedCompletionSet is null)
+				throw new InvalidOperationException();
 			selectedCompletionSet.SelectBestMatch();
 			return selectedCompletionSet.SelectionStatus.Completion != null;
 		}
 
-		public ITrackingPoint GetTriggerPoint(ITextBuffer textBuffer) {
+		public ITrackingPoint? GetTriggerPoint(ITextBuffer textBuffer) {
 			if (!IsStarted)
 				throw new InvalidOperationException();
 			if (IsDismissed)

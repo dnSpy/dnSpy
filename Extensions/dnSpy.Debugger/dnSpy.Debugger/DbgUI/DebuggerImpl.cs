@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
+		public override string? GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
 
 		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.CanStartWithoutDebugging(out _);
 		public override void StartWithoutDebugging() {
@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		(DbgCodeLocation location, int frameIndex) GetCurrentStatementLocation() {
+		(DbgCodeLocation? location, int frameIndex) GetCurrentStatementLocation() {
 			var frames = dbgCallStackService.Value.Frames.Frames;
 			for (int i = 0; i < frames.Count; i++) {
 				var location = frames[i].Location;
@@ -193,9 +193,9 @@ namespace dnSpy.Debugger.DbgUI {
 			readonly Lazy<DbgManager> dbgManager;
 			readonly List<DbgCodeLocation> allLocations;
 
-			public DbgCodeLocation Location { get; }
+			public DbgCodeLocation? Location { get; }
 
-			public TextViewStatementLocationResult(Lazy<DbgManager> dbgManager, List<DbgCodeLocation> allLocations, DbgCodeLocation location) {
+			public TextViewStatementLocationResult(Lazy<DbgManager> dbgManager, List<DbgCodeLocation> allLocations, DbgCodeLocation? location) {
 				this.dbgManager = dbgManager;
 				this.allLocations = allLocations;
 				Location = location;
@@ -256,7 +256,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StepOutCurrentProcess() => Step(DbgStepKind.StepOutProcess);
 
 		sealed class StepperState : IDisposable {
-			public DbgStepper ActiveStepper;
+			public DbgStepper? ActiveStepper;
 
 			public void SetStepper(DbgStepper stepper) {
 				var oldStepper = ActiveStepper;
@@ -475,7 +475,7 @@ namespace dnSpy.Debugger.DbgUI {
 			var info = GetBreakInfo(breakInfos);
 			switch (info.Kind) {
 			case DbgBreakInfoKind.Message:
-				var e = (DbgMessageEventArgs)info.Data;
+				var e = (DbgMessageEventArgs)info.Data!;
 				switch (e.Kind) {
 				case DbgMessageKind.ModuleLoaded:
 					var module = ((DbgMessageModuleLoadedEventArgs)e).Module;
@@ -541,7 +541,7 @@ namespace dnSpy.Debugger.DbgUI {
 		static int GetPriority(DbgBreakInfo info) {
 			const int defaultPrio = int.MaxValue - 1;
 			if (info.Kind == DbgBreakInfoKind.Message) {
-				var e = (DbgMessageEventArgs)info.Data;
+				var e = (DbgMessageEventArgs)info.Data!;
 				switch (e.Kind) {
 				case DbgMessageKind.ExceptionThrown:
 					return 0;

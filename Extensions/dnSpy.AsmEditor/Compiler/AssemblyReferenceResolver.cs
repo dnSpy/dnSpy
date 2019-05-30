@@ -28,10 +28,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IAssemblyResolver assemblyResolver;
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef editedModule;
-		readonly TypeDef nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedTypeOrNull;
 		readonly List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)> rawModuleBytesList;
 
-		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedTypeOrNull) {
 			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == editedModule);
 			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public CompilerMetadataReference? Resolve(IAssembly asmRef) {
-			ModuleDef sourceModule = null;
+			ModuleDef? sourceModule = null;
 			var asm = assemblyResolver.Resolve(asmRef, sourceModule ?? editedModule);
 			if (asm == null)
 				return null;

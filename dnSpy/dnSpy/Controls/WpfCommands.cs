@@ -47,7 +47,7 @@ namespace dnSpy.Controls {
 			public bool Equals(CMKKey other) =>
 				command == other.command && modifiers == other.modifiers && key == other.key;
 
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				if (obj is CMKKey)
 					return Equals((CMKKey)obj);
 				return false;

@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Utilities {
 	static class ToolTipHelper {
-		public static string AddKeyboardShortcut(string tooltip, string shortcut) {
+		public static string AddKeyboardShortcut(string tooltip, string? shortcut) {
 			if (string.IsNullOrEmpty(shortcut))
 				return tooltip;
 			return $"{tooltip} ({shortcut})";

@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		sealed class DocKey : IDsDocumentNameKey {
 			readonly DbgModule module;
 			public DocKey(DbgModule module) => this.module = module ?? throw new ArgumentNullException(nameof(module));
-			public override bool Equals(object obj) => obj is DocKey o && module == o.module;
+			public override bool Equals(object? obj) => obj is DocKey o && module == o.module;
 			public override int GetHashCode() => module.GetHashCode();
 		}
 
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static DynamicModuleDefDocument CreateAssembly(List<DynamicModuleDefDocument> files) {
 			var manifest = files[0];
-			var file = new DynamicModuleDefDocument(manifest.ModuleId, manifest.DbgModule, manifest.ModuleDef, false);
+			var file = new DynamicModuleDefDocument(manifest.ModuleId, manifest.DbgModule, manifest.ModuleDef!, false);
 			file.files = new List<DynamicModuleDefDocument>(files);
 			return file;
 		}
@@ -61,6 +61,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 			return list;
 		}
-		List<DynamicModuleDefDocument> files;
+		List<DynamicModuleDefDocument>? files;
 	}
 }

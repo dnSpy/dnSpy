@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		[ImportingConstructor]
 		ToolTipObjectFactoryImpl(HexTextElementCreatorProvider hexTextElementCreatorProvider) => this.hexTextElementCreatorProvider = hexTextElementCreatorProvider;
 
-		public override object Create(HexToolTipContent content) {
+		public override object? Create(HexToolTipContent content) {
 			if (content == null)
 				throw new ArgumentNullException(nameof(content));
 

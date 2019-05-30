@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 			public VisualBasicMetadataContext MetadataContext;
 		}
 
-		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string defaultNamespaceName) {
+		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string? defaultNamespaceName) {
 			var fileLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
 			var projectLevelBuilder = ImmutableArray.CreateBuilder<DSEEImportRecord>(scope.Imports.Length);
 			defaultNamespaceName = null;
@@ -101,7 +101,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 			DbgDotNetText name;
 			if ((options & DbgEvaluationOptions.NoName) != 0)
 				name = DbgDotNetText.Empty;
-			else if (compileResult == null || errorMessage != null)
+			else if (errorMessage != null)
 				name = CreateErrorName(expression);
 			else
 				name = GetExpressionText(state.MetadataContext.EvaluationContext, state.MetadataContext.Compilation, expression, cancellationToken);

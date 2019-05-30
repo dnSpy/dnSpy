@@ -30,14 +30,14 @@ namespace dnSpy.Contracts.Scripting {
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="color">Color</param>
-		void Write(string text, object color = null);
+		void Write(string? text, object? color = null);
 
 		/// <summary>
 		/// Writes text
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="color">Color</param>
-		void Write(string text, TextColor color = TextColor.ReplScriptOutputText);
+		void Write(string? text, TextColor color = TextColor.ReplScriptOutputText);
 	}
 
 	/// <summary>

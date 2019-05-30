@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public override ModuleDef TryGetMetadata(DbgModule module, DbgLoadModuleOptions options) {
+		public override ModuleDef? TryGetMetadata(DbgModule module, DbgLoadModuleOptions options) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return null;
 		}
 
-		ModuleDef LoadNonDiskFile(ModuleId moduleId, DbgLoadModuleOptions options) {
+		ModuleDef? LoadNonDiskFile(ModuleId moduleId, DbgLoadModuleOptions options) {
 			if (UseMemoryModules || moduleId.IsDynamic || moduleId.IsInMemory || (options & DbgLoadModuleOptions.ForceMemory) != 0) {
 				var module = dbgModuleIdProviderService.GetModule(moduleId);
 				if (module != null)
@@ -75,9 +75,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		// Priority order: 1) active in-memory/dynamic module, 2) active module, 3) other module
-		ModuleDef LoadExisting(ModuleId moduleId) {
-			ModuleDef foundModule = null;
-			ModuleDef activeModule = null;
+		ModuleDef? LoadExisting(ModuleId moduleId) {
+			ModuleDef? foundModule = null;
+			ModuleDef? activeModule = null;
 			foreach (var info in dsDocumentProvider.DocumentInfos) {
 				if (info.Id != moduleId)
 					continue;
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return activeModule ?? foundModule;
 		}
 
-		public override ModuleDef TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {
+		public override ModuleDef? TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {
 			var mod = LoadNonDiskFile(moduleId, options) ?? LoadExisting(moduleId);
 			if (mod != null)
 				return mod;
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(moduleFilename), isAutoLoaded)?.ModuleDef;
 		}
 
-		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {
+		static string? GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {
 			if (string.IsNullOrEmpty(moduleFilename) || (string.IsNullOrEmpty(assemblyFullName) && !moduleNameOnly))
 				return null;
 			if (moduleNameOnly)

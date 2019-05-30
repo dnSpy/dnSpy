@@ -23,8 +23,8 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributeOptions {
-		public byte[] RawData;
-		public ICustomAttributeType Constructor;
+		public byte[]? RawData;
+		public ICustomAttributeType? Constructor;
 		public List<CAArgument> ConstructorArguments = new List<CAArgument>();
 		public List<CANamedArgument> NamedArguments = new List<CANamedArgument>();
 

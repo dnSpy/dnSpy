@@ -22,7 +22,7 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Images {
 	static class ImageReferenceHelper {
-		public static ImageReference? GetImageReference(object item, string iconName) {
+		public static ImageReference? GetImageReference(object item, string? iconName) {
 			if (string.IsNullOrEmpty(iconName))
 				return null;
 			int colonIndex = iconName.IndexOf(':');

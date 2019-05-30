@@ -41,7 +41,7 @@ namespace Example2.Extension {
 			output.Write(BoxedTextColor.Text, "Assembly Child");
 
 		// If you don't want the node to be appended to the children, override this
-		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
@@ -101,7 +101,7 @@ namespace Example2.Extension {
 			// If you don't want the output to be cached, call DisableCaching()
 			bool cacheOutput = true;
 			if (!cacheOutput)
-				(context.Output as IDocumentViewerOutput).DisableCaching();
+				(context.Output as IDocumentViewerOutput)?.DisableCaching();
 
 			// Create the output and a few references that other code in this extension will use, eg.
 			// to show a tooltip when hovering over the reference.
@@ -122,7 +122,7 @@ namespace Example2.Extension {
 		}
 
 		// If you don't want the node to be appended to the children, override this
-		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			// Make sure the order is unique. 0 is already used by the PE node, so use 1
@@ -160,7 +160,7 @@ namespace Example2.Extension {
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Comment, Message);
 
-		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(0);

@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Reference;
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly ModuleDocumentNode moduleNode;
 
@@ -48,13 +48,14 @@ namespace dnSpy.Documents.TreeView {
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.ReferencesFolder);
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
+			Debug.Assert(moduleNode.Document.ModuleDef != null);
 			foreach (var asmRef in moduleNode.Document.ModuleDef.GetAssemblyRefs())
 				yield return new AssemblyReferenceNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.AssemblyRefTreeNodeGroupReferences), moduleNode.Document.ModuleDef, asmRef);
 			foreach (var modRef in moduleNode.Document.ModuleDef.GetModuleRefs())
 				yield return new ModuleReferenceNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ModuleRefTreeNodeGroupReferences), modRef);
 		}
 
-		public override AssemblyReferenceNode Create(AssemblyRef asmRef) => Context.DocumentTreeView.Create(asmRef, moduleNode.Document.ModuleDef);
+		public override AssemblyReferenceNode Create(AssemblyRef asmRef) => Context.DocumentTreeView.Create(asmRef, moduleNode.Document.ModuleDef!);
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
 			filter.GetResult(this).FilterType;
 	}

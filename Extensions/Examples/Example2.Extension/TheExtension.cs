@@ -16,7 +16,7 @@ namespace Example2.Extension {
 			ShortDescription = "Example2 extension",
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 			// We don't care about any events
 		}
 	}

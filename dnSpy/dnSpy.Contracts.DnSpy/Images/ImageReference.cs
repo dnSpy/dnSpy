@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Assembly of image or null if <see cref="Name"/> is a URI
 		/// </summary>
-		public Assembly Assembly { get; }
+		public Assembly? Assembly { get; }
 
 		/// <summary>
 		/// Name of image
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Images {
 		/// </summary>
 		/// <param name="assembly">Assembly of image or null if <paramref name="name"/> is a pack: URI</param>
 		/// <param name="name">Name of image</param>
-		public ImageReference(Assembly assembly, string name) {
+		public ImageReference(Assembly? assembly, string name) {
 			Assembly = assembly;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="value">String to parse</param>
 		/// <param name="result">Result</param>
 		/// <returns></returns>
-		public static bool TryParse(string value, out ImageReference result) {
+		public static bool TryParse(string? value, out ImageReference result) {
 			result = default;
 			if (value == null)
 				return false;

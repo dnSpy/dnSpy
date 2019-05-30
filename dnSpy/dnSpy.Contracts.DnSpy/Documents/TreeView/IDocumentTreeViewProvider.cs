@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="filter">Filter or null</param>
 		/// <returns></returns>
-		IDocumentTreeView Create(IDocumentTreeNodeFilter filter);
+		IDocumentTreeView Create(IDocumentTreeNodeFilter? filter);
 	}
 }

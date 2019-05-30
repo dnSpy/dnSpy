@@ -40,6 +40,7 @@ namespace dnSpy.Text.Classification {
 		IClassificationFormatMap categoryMap;
 
 		protected ViewClassificationFormatMap(ClassificationFormatMapService classificationFormatMapService, string appearanceCategoryName) {
+			categoryMap = null!;
 			this.classificationFormatMapService = classificationFormatMapService ?? throw new ArgumentNullException(nameof(classificationFormatMapService));
 			this.appearanceCategoryName = appearanceCategoryName ?? throw new ArgumentNullException(nameof(appearanceCategoryName));
 		}

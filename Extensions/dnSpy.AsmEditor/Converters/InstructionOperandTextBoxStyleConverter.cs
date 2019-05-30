@@ -24,7 +24,7 @@ using System.Windows.Data;
 
 namespace dnSpy.AsmEditor.Converters {
 	sealed class InstructionOperandTextBoxStyleConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var elem = (FrameworkElement)values[0];
 			string rsrcName = (bool)values[1] ? "CilStringTextBoxStyle" : "CilNumberTextBoxStyle";
 			return elem.FindResource(rsrcName);

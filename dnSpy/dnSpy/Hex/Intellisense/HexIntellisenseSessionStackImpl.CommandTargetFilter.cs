@@ -62,12 +62,12 @@ namespace dnSpy.Hex.Intellisense {
 				return CommandTargetStatus.NotHandled;
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.HexEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId);
 					if (command != null && owner.ExecuteKeyboardCommand(command.Value))

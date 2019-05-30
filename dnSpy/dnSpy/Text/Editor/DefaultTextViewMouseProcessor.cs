@@ -242,7 +242,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 		bool mouseCaptured;
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 		double dispatcherTimerXCoord;
 
 		void StopScrolling() {

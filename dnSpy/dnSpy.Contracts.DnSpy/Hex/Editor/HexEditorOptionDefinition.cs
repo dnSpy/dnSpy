@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the default value
 		/// </summary>
-		public sealed override object DefaultValue => Default;
+		public sealed override object? DefaultValue => Default;
 
 		/// <summary>
 		/// Gets the option key
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the default value
 		/// </summary>
-		public virtual T Default => default;
+		public virtual T Default => default!;
 
 		/// <summary>
 		/// Checks whether the new value is valid
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 				return false;
 			var t = (T)proposedValue;
 			var res = IsValid(ref t);
-			proposedValue = t;
+			proposedValue = t!;
 			return res;
 		}
 

@@ -29,7 +29,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
 
 		readonly TaggerClassificationTypes taggerClassificationTypes;
-		SpanDataCollection<ClassificationTag> classifications;
+		SpanDataCollection<ClassificationTag>? classifications;
 		int classificationsVersion;
 
 		protected XmlTaggerBase(TaggerClassificationTypes taggerClassificationTypes) {
@@ -98,7 +98,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			return builder.Create();
 		}
 
-		ClassificationTag GetClassificationTag(XmlKind kind) {
+		ClassificationTag? GetClassificationTag(XmlKind kind) {
 			switch (kind) {
 			case XmlKind.EntityReference:
 				return taggerClassificationTypes.Attribute;

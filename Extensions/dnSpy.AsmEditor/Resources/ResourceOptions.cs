@@ -24,10 +24,10 @@ using dnlib.DotNet;
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ResourceOptions {
 		public ResourceType ResourceType;
-		public UTF8String Name;
+		public UTF8String? Name;
 		public ManifestResourceAttributes Attributes;
-		public AssemblyRef Assembly;
-		public FileDef File;
+		public AssemblyRef? Assembly;
+		public FileDef? File;
 
 		public ResourceOptions() {
 		}

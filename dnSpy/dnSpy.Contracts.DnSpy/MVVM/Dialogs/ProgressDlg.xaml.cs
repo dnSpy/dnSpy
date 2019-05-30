@@ -34,10 +34,11 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ProgressVM;
-				if (data != null)
+				if (data != null) {
 					data.OnCompleted += ProgressVM_OnCompleted;
-				if (data.HasCompleted)
-					OnCompleted();
+					if (data.HasCompleted)
+						OnCompleted();
+				}
 			};
 		}
 

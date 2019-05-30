@@ -28,7 +28,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportDocumentTabContentFactory(Order = TabConstants.ORDER_HEXDOCUMENTTABCONTENTFACTORY)]
 	sealed class HexDocumentTabContentFactory : IDocumentTabContentFactory {
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1) {
 				if (context.Nodes[0] is HexNode hexNode)
 					return new HexDocumentTabContent(hexNode);
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return GUID_SerializedContent;
 		}
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 			var hexNode = context.Nodes.Length != 1 ? null : context.Nodes[0] as HexNode;
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public override string Title => hexNode.ToString();
-		public override object ToolTip => hexNode.ToString();
+		public override object? ToolTip => hexNode.ToString();
 
 		readonly HexNode hexNode;
 
@@ -76,9 +76,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	sealed class HexDocumentTabUIContext : DocumentTabUIContext {
-		public override IInputElement FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
-		public override FrameworkElement ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
-		public override object UIObject => uiObj;
+		public override IInputElement? FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
+		public override FrameworkElement? ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
+		public override object? UIObject => uiObj;
 
 		readonly FrameworkElement uiObj;
 

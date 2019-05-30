@@ -97,7 +97,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return documentViewer;
 		}
 
-		public override IInputElement FocusedElement {
+		public override IInputElement? FocusedElement {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -108,7 +108,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public override object UIObject {
+		public override object? UIObject {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -116,7 +116,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public override FrameworkElement ZoomElement {
+		public override FrameworkElement? ZoomElement {
 			get {
 				if (isDisposed)
 					throw new ObjectDisposedException(nameof(IDocumentViewer));
@@ -136,7 +136,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			outputData.Clear();
 		}
 
-		public override object CreateUIState() {
+		public override object? CreateUIState() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (cachedEditorPositionState != null)
@@ -144,7 +144,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new EditorPositionState(documentViewerControl.TextView);
 		}
 
-		public override void RestoreUIState(object obj) {
+		public override void RestoreUIState(object? obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			var state = obj as EditorPositionState;
@@ -161,7 +161,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			else
 				InitializeState(state);
 		}
-		EditorPositionState cachedEditorPositionState;
+		EditorPositionState? cachedEditorPositionState;
 
 		void InitializeState(EditorPositionState state) {
 			var textView = documentViewerControl.TextView;
@@ -203,7 +203,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			cachedEditorPositionState = null;
 		}
 
-		public override object DeserializeUIState(ISettingsSection section) {
+		public override object? DeserializeUIState(ISettingsSection section) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (section == null)
@@ -222,7 +222,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new EditorPositionState(caretAffinity.Value, caretVirtualSpaces.Value, caretPosition.Value, viewportLeft.Value, topLinePosition.Value, topLineVerticalDistance.Value);
 		}
 
-		public override void SerializeUIState(ISettingsSection section, object obj) {
+		public override void SerializeUIState(ISettingsSection section, object? obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (section == null)
@@ -240,7 +240,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			section.Attribute("TopLineVerticalDistance", state.TopLineVerticalDistance);
 		}
 
-		public bool SetContent(DocumentViewerContent content, IContentType contentType) {
+		public bool SetContent(DocumentViewerContent content, IContentType? contentType) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (content == null)
@@ -264,7 +264,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			outputData.Add(key, data);
 		}
 
-		public object GetContentData(object key) {
+		public object? GetContentData(object key) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (key == null)
@@ -288,14 +288,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Debug.Assert(!isDisposed);
 			if (isDisposed)
 				return;
-			DocumentTab.TrySetFocus();
+			DocumentTab?.TrySetFocus();
 		}
 
 		void IDocumentViewerHelper.SetActive() {
 			Debug.Assert(!isDisposed);
 			if (isDisposed)
 				return;
-			DocumentTab.DocumentTabService.ActiveTab = DocumentTab;
+			if (DocumentTab is IDocumentTab tab)
+				tab.DocumentTabService.ActiveTab = tab;
 		}
 
 		public void HideCancelButton() {
@@ -304,13 +305,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			documentViewerControl.HideCancelButton();
 		}
 
-		public void MoveCaretToReference(object @ref, MoveCaretOptions options) {
+		public void MoveCaretToReference(object? @ref, MoveCaretOptions options) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			documentViewerControl.GoToLocation(@ref, options);
 		}
 
-		public void ShowCancelButton(string message, Action onCancel) {
+		public void ShowCancelButton(string? message, Action onCancel) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (onCancel == null)
@@ -369,13 +370,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return documentViewerControl.GetSelectedTextReferences();
 		}
 
-		public object SaveReferencePosition() {
+		public object? SaveReferencePosition() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			return documentViewerControl.SaveReferencePosition(this.GetMethodDebugService());
 		}
 
-		public bool RestoreReferencePosition(object obj) {
+		public bool RestoreReferencePosition(object? obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			return documentViewerControl.RestoreReferencePosition(this.GetMethodDebugService(), obj);

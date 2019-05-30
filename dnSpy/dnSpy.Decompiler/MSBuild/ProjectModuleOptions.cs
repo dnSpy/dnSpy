@@ -81,7 +81,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		/// <summary>
 		/// Decompiles baml data to a <see cref="Stream"/>
 		/// </summary>
-		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>> DecompileBaml;
+		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>>? DecompileBaml;
 
 		public ProjectModuleOptions(ModuleDef module, IDecompiler decompiler, DecompilationContext decompilationContext) {
 			Module = module ?? throw new ArgumentNullException(nameof(module));

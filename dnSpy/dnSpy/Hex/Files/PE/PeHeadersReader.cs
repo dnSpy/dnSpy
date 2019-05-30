@@ -26,11 +26,11 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files.PE {
 	sealed class PeHeadersReader {
-		public PeDosHeaderData DosHeader { get; private set; }
-		public PeFileHeaderData FileHeader { get; private set; }
-		public PeOptionalHeaderData OptionalHeader { get; private set; }
-		public PeSectionsData Sections { get; private set; }
-		public ImageSectionHeader[] SectionHeaders { get; private set; }
+		public PeDosHeaderData? DosHeader { get; private set; }
+		public PeFileHeaderData? FileHeader { get; private set; }
+		public PeOptionalHeaderData? OptionalHeader { get; private set; }
+		public PeSectionsData? Sections { get; private set; }
+		public ImageSectionHeader[]? SectionHeaders { get; private set; }
 		public bool IsFileLayout { get; private set; }
 
 		readonly HexBufferFile file;
@@ -94,7 +94,7 @@ namespace dnSpy.Hex.Files.PE {
 			return true;
 		}
 
-		PeOptionalHeaderData CreateOptionalHeader(HexPosition position, uint size) {
+		PeOptionalHeaderData? CreateOptionalHeader(HexPosition position, uint size) {
 			switch (file.Buffer.ReadUInt16(position)) {
 			case 0x010B: return PeOptionalHeader32DataImpl.TryCreate(file, position, size);
 			case 0x020B: return PeOptionalHeader64DataImpl.TryCreate(file, position, size);
@@ -102,7 +102,7 @@ namespace dnSpy.Hex.Files.PE {
 			}
 		}
 
-		PeSectionsData CreateSections(HexPosition position, int sects) {
+		PeSectionsData? CreateSections(HexPosition position, int sects) {
 			if (sects != 0 && (!file.Span.Contains(position) || !file.Span.Contains(position + ((ulong)sects * 0x28 - 1))))
 				return null;
 			var fields = new ArrayField<PeSectionData>[sects];
@@ -147,6 +147,7 @@ namespace dnSpy.Hex.Files.PE {
 		}
 
 		bool? DotNetCheckIsFileLayout() {
+			Debug.Assert(OptionalHeader != null);
 			if (OptionalHeader.DataDirectory.Data.FieldCount <= 14)
 				return null;
 			var dataDir = OptionalHeader.DataDirectory.Data[14];
@@ -194,6 +195,7 @@ namespace dnSpy.Hex.Files.PE {
 		HexPosition MemoryLayout_ToBufferPosition(uint rva) => file.Span.Start + rva;
 
 		HexPosition FileLayout_ToBufferPosition(uint rva) {
+			Debug.Assert(SectionHeaders != null);
 			var fileSpan = file.Span;
 			foreach (var sect in SectionHeaders) {
 				if (rva >= sect.VirtualAddress && rva < sect.VirtualAddress + Math.Max(sect.VirtualSize, sect.SizeOfRawData))

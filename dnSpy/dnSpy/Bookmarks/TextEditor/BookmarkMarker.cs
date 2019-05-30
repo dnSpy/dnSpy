@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -45,7 +46,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 		readonly Lazy<IGlyphTextMarkerService> glyphTextMarkerService;
 		readonly BookmarkGlyphTextMarkerLocationProviderService bookmarkGlyphTextMarkerLocationProviderService;
 		readonly BookmarkGlyphTextMarkerHandler bookmarkGlyphTextMarkerHandler;
-		BookmarkInfo[] bookmarkInfos;
+		BookmarkInfo[]? bookmarkInfos;
 
 		[ImportingConstructor]
 		BookmarkMarker(UIDispatcher uiDispatcher, Lazy<IGlyphTextMarkerService> glyphTextMarkerService, BookmarkGlyphTextMarkerLocationProviderService bookmarkGlyphTextMarkerLocationProviderService, BookmarkGlyphTextMarkerHandler bookmarkGlyphTextMarkerHandler) {
@@ -73,8 +74,8 @@ namespace dnSpy.Bookmarks.TextEditor {
 
 		sealed class BookmarkData {
 			public GlyphTextMarkerLocationInfo Location { get; }
-			public IGlyphTextMarker Marker { get; set; }
-			public BookmarkInfo Info { get; set; }
+			public IGlyphTextMarker? Marker { get; set; }
+			public BookmarkInfo? Info { get; set; }
 			public BookmarkData(GlyphTextMarkerLocationInfo location) => Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
@@ -84,7 +85,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			else {
 				var list = new List<(Bookmark bookmark, BookmarkData data)>(e.Objects.Count);
 				foreach (var bm in e.Objects) {
-					if (!bm.TryGetData(out BookmarkData data))
+					if (!bm.TryGetData(out BookmarkData? data))
 						continue;
 					list.Add((bm, data));
 				}
@@ -109,7 +110,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 
 		void OnBookmarksRemoved_UI(List<(Bookmark bookmark, BookmarkData data)> list) {
 			uiDispatcher.VerifyAccess();
-			glyphTextMarkerService.Value.Remove(list.Select(a => a.data.Marker).Where(a => a != null));
+			glyphTextMarkerService.Value.Remove(list.Select(a => a.data.Marker).OfType<IGlyphTextMarker>());
 		}
 
 		void BookmarksService_BookmarksModified(object sender, BookmarksModifiedEventArgs e) =>
@@ -119,9 +120,10 @@ namespace dnSpy.Bookmarks.TextEditor {
 			uiDispatcher.VerifyAccess();
 			var bms = new List<Bookmark>(bookmarks.Count);
 			var removedMarkers = new List<IGlyphTextMarker>(bookmarks.Count);
+			Debug.Assert(bookmarkInfos != null);
 			for (int i = 0; i < bookmarks.Count; i++) {
 				var bm = bookmarks[i];
-				if (!bm.TryGetData(out BookmarkData data))
+				if (!bm.TryGetData(out BookmarkData? data))
 					continue;
 				bms.Add(bm);
 				if (data.Marker == null)
@@ -137,9 +139,10 @@ namespace dnSpy.Bookmarks.TextEditor {
 		}
 
 		void UpdateMarker(Bookmark bm) {
-			if (!bm.TryGetData(out BookmarkData data))
+			if (!bm.TryGetData(out BookmarkData? data))
 				return;
 
+			Debug.Assert(bookmarkInfos != null);
 			var info = bookmarkInfos[(int)BookmarkImageUtilities.GetBookmarkKind(bm)];
 			if (data.Info == info && data.Marker != null)
 				return;

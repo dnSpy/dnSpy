@@ -30,7 +30,7 @@ namespace dnSpy.Text {
 		IContentType contentType;
 		TextVersion currentTextVersion;
 
-		public void ChangeContentType(IContentType newContentType, object editTag) {
+		public void ChangeContentType(IContentType newContentType, object? editTag) {
 			VerifyAccess();
 			if (newContentType == null)
 				throw new ArgumentNullException(nameof(newContentType));
@@ -45,7 +45,7 @@ namespace dnSpy.Text {
 			}
 		}
 
-		void CreateNewCurrentSnapshot(IList<ITextChange> changes, int? reiteratedVersionNumber = null, ITextSource afterTextSource = null) {
+		void CreateNewCurrentSnapshot(IList<ITextChange>? changes, int? reiteratedVersionNumber = null, ITextSource? afterTextSource = null) {
 			// It's null the first time it's called from the ctor
 			if (changes != null)
 				currentTextVersion = currentTextVersion.SetChanges(changes, reiteratedVersionNumber);
@@ -86,6 +86,8 @@ namespace dnSpy.Text {
 		public PropertyCollection Properties { get; }
 
 		public TextBuffer(IContentType contentType, string text) {
+			document = null!;
+			CurrentSnapshot = null!;
 			Properties = new PropertyCollection();
 			this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0, new object());
@@ -95,10 +97,10 @@ namespace dnSpy.Text {
 
 		public bool EditInProgress => textEditInProgress != null;
 		public bool CheckEditAccess() => CheckAccess();
-		TextEdit textEditInProgress;
+		TextEdit? textEditInProgress;
 
 		public ITextEdit CreateEdit() => CreateEdit(EditOptions.None,  null, null);
-		public ITextEdit CreateEdit(EditOptions options, int? reiteratedVersionNumber, object editTag) {
+		public ITextEdit CreateEdit(EditOptions options, int? reiteratedVersionNumber, object? editTag) {
 			VerifyAccess();
 			if (EditInProgress)
 				throw new InvalidOperationException("An edit operation is in progress");
@@ -134,12 +136,12 @@ namespace dnSpy.Text {
 			}
 		}
 
-		bool RaiseChangingGetIsCanceled(object editTag) {
+		bool RaiseChangingGetIsCanceled(object? editTag) {
 			var c = Changing;
 			if (c == null)
 				return false;
 
-			Action<TextContentChangingEventArgs> cancelAction = null;
+			Action<TextContentChangingEventArgs>? cancelAction = null;
 			var args = new TextContentChangingEventArgs(CurrentSnapshot, editTag, cancelAction);
 			foreach (EventHandler<TextContentChangingEventArgs> handler in c.GetInvocationList()) {
 				handler(this, args);
@@ -149,7 +151,7 @@ namespace dnSpy.Text {
 			return args.Canceled;
 		}
 
-		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, EditOptions options, int? reiteratedVersionNumber, object editTag) {
+		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, EditOptions options, int? reiteratedVersionNumber, object? editTag) {
 			VerifyAccess();
 			if (textEdit != textEditInProgress)
 				throw new InvalidOperationException();
@@ -177,7 +179,7 @@ namespace dnSpy.Text {
 				CreateNewCurrentSnapshot(changes, reiteratedVersionNumber, Document.CreateSnapshot());
 				var afterSnapshot = CurrentSnapshot;
 
-				TextContentChangedEventArgs args = null;
+				TextContentChangedEventArgs? args = null;
 				//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 				//		raised after all of these three events have been raised.
 				ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
@@ -203,7 +205,7 @@ namespace dnSpy.Text {
 			Document.SetOwnerThread(ownerThread);
 		}
 
-		Thread ownerThread;
+		Thread? ownerThread;
 		bool CheckAccess() => ownerThread == null || ownerThread == Thread.CurrentThread;
 		void VerifyAccess() {
 			if (!CheckAccess())

@@ -19,12 +19,12 @@
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	static class AccessorUtils {
-		public static DmdMethodInfo FilterAccessor(DmdGetAccessorOptions options, DmdMethodInfo method) {
+		public static DmdMethodInfo? FilterAccessor(DmdGetAccessorOptions options, DmdMethodInfo method) {
 			if ((options & DmdGetAccessorOptions.All) != 0)
 				return method;
-			if ((object)method == null)
+			if (method is null)
 				return null;
-			if (method.IsPrivate && (object)method.DeclaringType != method.ReflectedType)
+			if (method.IsPrivate && (object?)method.DeclaringType != method.ReflectedType)
 				return null;
 			if (method.IsPublic || (options & DmdGetAccessorOptions.NonPublic) != 0)
 				return method;

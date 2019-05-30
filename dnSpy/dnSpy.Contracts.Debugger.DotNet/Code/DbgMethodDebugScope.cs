@@ -141,17 +141,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <summary>
 		/// Target
 		/// </summary>
-		public string Target { get; }
+		public string? Target { get; }
 
 		/// <summary>
 		/// Alias
 		/// </summary>
-		public string Alias { get; }
+		public string? Alias { get; }
 
 		/// <summary>
 		/// Extern alias
 		/// </summary>
-		public string ExternAlias { get; }
+		public string? ExternAlias { get; }
 
 		/// <summary>
 		/// Constructor
@@ -161,7 +161,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="alias">Alias</param>
 		/// <param name="externAlias">Extern alias</param>
 		/// <param name="importScopeKind">VB import scope kind</param>
-		public DbgImportInfo(DbgImportInfoKind targetKind, string target = null, string alias = null, string externAlias = null, DbgVBImportScopeKind importScopeKind = DbgVBImportScopeKind.None) {
+		public DbgImportInfo(DbgImportInfoKind targetKind, string? target = null, string? alias = null, string? externAlias = null, DbgVBImportScopeKind importScopeKind = DbgVBImportScopeKind.None) {
 			TargetKind = targetKind;
 			Target = target;
 			Alias = alias;

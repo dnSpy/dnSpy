@@ -22,7 +22,7 @@ using dnlib.IO;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	static class MetadataConstantUtilities {
-		public static object GetValue(ElementType etype, ref DataReader reader) {
+		public static object? GetValue(ElementType etype, ref DataReader reader) {
 			switch (etype) {
 			case ElementType.Boolean:
 				if (reader.Length < 1)

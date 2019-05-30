@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Language.Intellisense {
 	sealed class QuickInfoPresenter : QuickInfoPresenterBase, ICustomIntellisensePresenter {
 		readonly Popup popup;
-		readonly IWpfTextView wpfTextView;
+		readonly IWpfTextView? wpfTextView;
 
 		public QuickInfoPresenter(IQuickInfoSession session)
 			: base(session) {
@@ -103,6 +103,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		bool ShouldDismiss(MouseEventArgs e) {
+			Debug.Assert(wpfTextView != null);
 			var mousePos = GetMousePoint(e.MouseDevice);
 			if (mousePos == null)
 				return true;

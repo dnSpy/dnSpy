@@ -24,7 +24,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	static class SyntheticValueFactory {
-		public static DbgDotNetValue TryCreateSyntheticValue(DmdType type, object constant) {
+		public static DbgDotNetValue? TryCreateSyntheticValue(DmdType type, object? constant) {
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:
 				if (constant is bool)
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override DmdType Type { get; }
 		public override bool IsNull => true;
 
-		public SyntheticNullValue(DmdType type) =>
+		public SyntheticNullValue(DmdType? type) =>
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 
 		public override DbgDotNetRawValue GetRawValue() => new DbgDotNetRawValue(DbgSimpleValueType.Other, null);

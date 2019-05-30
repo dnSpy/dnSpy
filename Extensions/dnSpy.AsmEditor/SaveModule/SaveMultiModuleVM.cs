@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public bool CanExecuteSave => string.IsNullOrEmpty(CanExecuteSaveError);
 		public bool CanShowModuleErrors => IsLoaded && !CanExecuteSave;
 
-		public string CanExecuteSaveError {
+		public string? CanExecuteSaveError {
 			get {
 				if (!IsLoaded)
 					return "It's only possible to save when loaded";
@@ -217,7 +217,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return saved;
 		}
 
-		public string GetSavedFileName(object obj) => GetSaveOptionsVM(obj)?.FileName;
+		public string? GetSavedFileName(object obj) => GetSaveOptionsVM(obj)?.FileName;
 
 		public void Save() {
 			if (!CanExecuteSave)
@@ -239,7 +239,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			dispatcher.BeginInvoke(DispatcherPriority.Background, action);
 		}
 
-		ModuleSaver moduleSaver;
+		ModuleSaver? moduleSaver;
 		void SaveAsync(SaveOptionsVM[] mods) {
 			DnSpyEventSource.Log.SaveDocumentsStart();
 			try {

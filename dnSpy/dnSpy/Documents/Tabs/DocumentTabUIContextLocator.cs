@@ -81,13 +81,13 @@ namespace dnSpy.Documents.Tabs {
 			return GetOrCreate(new Key(key), () => new ReferenceResult<T>(creator(), useStrongReference));
 		}
 
-		sealed class Key : IEquatable<Key> {
+		sealed class Key : IEquatable<Key?> {
 			readonly object obj;
 
 			public Key(object obj) => this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 
-			public bool Equals(Key other) => other != null && obj.Equals(other.obj);
-			public override bool Equals(object obj) => Equals(obj as Key);
+			public bool Equals(Key? other) => other != null && obj.Equals(other.obj);
+			public override bool Equals(object? obj) => Equals(obj as Key);
 			public override int GetHashCode() => obj.GetHashCode();
 		}
 

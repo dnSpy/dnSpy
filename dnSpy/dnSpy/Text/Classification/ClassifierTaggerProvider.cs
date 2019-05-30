@@ -41,7 +41,7 @@ namespace dnSpy.Text.Classification {
 			this.classifierProviders = classifierProviders.ToArray();
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 

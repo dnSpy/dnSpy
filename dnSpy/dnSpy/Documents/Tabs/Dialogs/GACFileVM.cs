@@ -36,25 +36,27 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public OpenFromGACVM Owner { get; }
 
 		public string VersionString => versionString ?? (versionString = (Version ?? new Version(0, 0, 0, 0)).ToString());
-		string versionString;
+		string? versionString;
 
 		public string CreatedBy {
 			get {
 				if (createdBy == null)
 					CalculateInfo();
+				Debug.Assert(createdBy != null);
 				return createdBy;
 			}
 		}
-		string createdBy;
+		string? createdBy;
 
 		public string FileVersion {
 			get {
 				if (fileVersion == null)
 					CalculateInfo();
+				Debug.Assert(fileVersion != null);
 				return fileVersion;
 			}
 		}
-		string fileVersion;
+		string? fileVersion;
 
 		public bool IsDuplicate {
 			get => isDuplicate;
@@ -88,7 +90,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			return string.Empty;
 		}
 
-		string GetCreatedBy(ModuleDef mod) {
+		string? GetCreatedBy(ModuleDef mod) {
 			var asm = mod.Assembly;
 			if (asm == null)
 				return null;

@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class NumberUtils {
-		public static bool TryConvertIntegerToUInt64ZeroExtend(object obj, out ulong result) {
+		public static bool TryConvertIntegerToUInt64ZeroExtend(object? obj, out ulong result) {
 			if (obj == null) {
 				result = 0;
 				return false;

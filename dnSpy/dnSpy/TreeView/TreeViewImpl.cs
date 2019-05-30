@@ -43,12 +43,12 @@ namespace dnSpy.TreeView {
 		public Control UIObject => sharpTreeView;
 		readonly SharpTreeView sharpTreeView;
 
-		object IStackedContentChild.UIObject => sharpTreeView;
+		object? IStackedContentChild.UIObject => sharpTreeView;
 
-		public TreeNodeData SelectedItem {
+		public TreeNodeData? SelectedItem {
 			get {
 				var node = sharpTreeView.SelectedItem as DsSharpTreeNode;
-				return node == null ? null : node.TreeNodeImpl.Data;
+				return node?.TreeNodeImpl.Data;
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace dnSpy.TreeView {
 		public TreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
 
 		readonly ITreeViewServiceImpl treeViewService;
-		readonly ITreeViewListener treeViewListener;
+		readonly ITreeViewListener? treeViewListener;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly object foregroundBrushResourceKey;
 
@@ -112,7 +112,7 @@ namespace dnSpy.TreeView {
 			SelectionChanged?.Invoke(this, Convert(e));
 
 		static TreeViewSelectionChangedEventArgs Convert(SelectionChangedEventArgs e) {
-			TreeNodeData[] added = null, removed = null;
+			TreeNodeData[]? added = null, removed = null;
 			if (e.AddedItems != null)
 				added = Convert(e.AddedItems);
 			if (e.RemovedItems != null)
@@ -258,12 +258,12 @@ namespace dnSpy.TreeView {
 				node.RefreshUI();
 		}
 
-		public TreeNodeData FromImplNode(object selectedItem) {
+		public TreeNodeData? FromImplNode(object? selectedItem) {
 			var node = selectedItem as DsSharpTreeNode;
-			return node == null ? null : node.TreeNodeImpl.Data;
+			return node?.TreeNodeImpl.Data;
 		}
 
-		public object ToImplNode(TreeNodeData node) {
+		public object? ToImplNode(TreeNodeData node) {
 			if (node == null)
 				return null;
 			var impl = node.TreeNode as TreeNodeImpl;

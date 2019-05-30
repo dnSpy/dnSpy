@@ -55,12 +55,12 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 	sealed class DbgFilterExpressionEvaluatorImpl : DbgFilterExpressionEvaluator {
 		readonly object lockObj;
 		Dictionary<string, CompiledExpr> toCompiledExpr;
-		WeakReference toCompiledExprWeakRef;
+		WeakReference? toCompiledExprWeakRef;
 
 		sealed class CompiledExpr {
-			public EvalDelegate Eval { get; }
-			public string CompilationError { get; }
-			public string RuntimeError { get; set; }
+			public EvalDelegate? Eval { get; }
+			public string? CompilationError { get; }
+			public string? RuntimeError { get; set; }
 			public CompiledExpr(EvalDelegate eval) => Eval = eval ?? throw new ArgumentNullException(nameof(eval));
 			public CompiledExpr(string compilationError) => CompilationError = compilationError ?? throw new ArgumentNullException(nameof(compilationError));
 		}
@@ -87,7 +87,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			}
 		}
 
-		public override string IsValidExpression(string expr) {
+		public override string? IsValidExpression(string expr) {
 			if (expr == null)
 				throw new ArgumentNullException(nameof(expr));
 			lock (lockObj) {
@@ -110,7 +110,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 
 			bool evalResult;
 			try {
-				evalResult = compiledExpr.Eval(variableProvider.MachineName, variableProvider.ProcessId, variableProvider.ProcessName, variableProvider.ThreadId, variableProvider.ThreadName);
+				evalResult = compiledExpr.Eval!(variableProvider.MachineName, variableProvider.ProcessId, variableProvider.ProcessName, variableProvider.ThreadId, variableProvider.ThreadName);
 			}
 			catch (Exception ex) {
 				compiledExpr.RuntimeError = string.Format(dnSpy_Roslyn_Resources.FilterExpressionEvaluator_CompiledExpressionThrewAnException, ex.GetType().FullName);
@@ -167,7 +167,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 				return new CompiledExpr(compRes.error);
 
 			try {
-				using (var delCreator = new EvalDelegateCreator(compRes.assembly, FilterExpressionClassName, EvalMethodName)) {
+				using (var delCreator = new EvalDelegateCreator(compRes.assembly!, FilterExpressionClassName, EvalMethodName)) {
 					var del = delCreator.CreateDelegate();
 					if (del != null)
 						return new CompiledExpr(del);
@@ -216,7 +216,7 @@ static class " + FilterExpressionClassName + @" {
 			return (filterText, exprOffset);
 		}
 
-		(byte[] assembly, string error) Compile(string expr, bool verifyExpr = false) {
+		(byte[]? assembly, string? error) Compile(string expr, bool verifyExpr = false) {
 			var info = CreateFilterClassSource(expr);
 			var filterExprClass = CSharpSyntaxTree.ParseText(info.exprSource, parseOptions);
 			var comp = CSharpCompilation.Create("filter-expr-eval", new[] { mscorlibSyntaxTree, filterExprClass }, options: compilationOptions);

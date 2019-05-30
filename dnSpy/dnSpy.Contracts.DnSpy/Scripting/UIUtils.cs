@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Scripting {
 
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
 
-			ExceptionDispatchInfo exInfo = null;
+			ExceptionDispatchInfo? exInfo = null;
 			dispatcher.Invoke(new Action(() => {
 				try {
 					a();
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Scripting {
 
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
 
-			ExceptionDispatchInfo exInfo = null;
+			ExceptionDispatchInfo? exInfo = null;
 			var res = (T)dispatcher.Invoke(new Func<T>(() => {
 				try {
 					return f();
@@ -99,10 +99,10 @@ namespace dnSpy.Contracts.Scripting {
 
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();
 
-			IEnumerator<T> enumerator = null;
+			IEnumerator<T>? enumerator = null;
 			for (;;) {
 				bool canContinue = false;
-				ExceptionDispatchInfo exInfo = null;
+				ExceptionDispatchInfo? exInfo = null;
 				var res = (T)dispatcher.Invoke(new Func<T>(() => {
 					try {
 						if (enumerator == null)

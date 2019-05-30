@@ -154,9 +154,7 @@ namespace dnSpy.Hex {
 				throw new ArgumentOutOfRangeException(nameof(options));
 
 			this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
-			columnOrder = TryCreateColumns(options.ColumnOrder ?? defaultColumnOrders);
-			if (columnOrder == null)
-				throw new ArgumentOutOfRangeException(nameof(options));
+			columnOrder = TryCreateColumns(options.ColumnOrder ?? defaultColumnOrders) ?? throw new ArgumentOutOfRangeException(nameof(options));
 			cellList = new List<HexCell>();
 			useRelativePositions = options.UseRelativePositions;
 			startPosition = options.StartPosition;
@@ -350,7 +348,7 @@ namespace dnSpy.Hex {
 			return length;
 		}
 
-		static ReadOnlyCollection<HexColumnType> TryCreateColumns(HexColumnType[] columnOrders) {
+		static ReadOnlyCollection<HexColumnType>? TryCreateColumns(HexColumnType[] columnOrders) {
 			var columns = columnOrders.ToList();
 			if (!columns.Contains(HexColumnType.Offset))
 				columns.Add(HexColumnType.Offset);
@@ -591,7 +589,7 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			visibleSpan = visStart == null ? default : VST.Span.FromBounds(visStart.Value, visEnd!.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			if (ValuesSpan != fullSpan)
 				throw new InvalidOperationException();
@@ -641,7 +639,7 @@ namespace dnSpy.Hex {
 				throw new InvalidOperationException();
 			if (visStart != null && visEnd == null)
 				visEnd = CurrentTextIndex;
-			visibleSpan = visStart == null ? default : VST.Span.FromBounds(visStart.Value, visEnd.Value);
+			visibleSpan = visStart == null ? default : VST.Span.FromBounds(visStart.Value, visEnd!.Value);
 			fullSpan = VST.Span.FromBounds(fullStart, CurrentTextIndex);
 			if (AsciiSpan != fullSpan)
 				throw new InvalidOperationException();

@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.TreeView {
 		readonly List<Action> uiThreadActions;
 		readonly Dispatcher dispatcher;
 		readonly TreeNodeData targetNode;
-		ITreeNode msgNode;
+		ITreeNode? msgNode;
 
 		/// <summary>
 		/// Constructor

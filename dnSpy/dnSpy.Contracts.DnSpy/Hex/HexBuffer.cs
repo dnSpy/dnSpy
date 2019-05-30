@@ -304,7 +304,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="reiteratedVersionNumber">Use by undo/redo to restore a previous version</param>
 		/// <param name="editTag">Edit tag, can be anything</param>
 		/// <returns></returns>
-		public abstract HexEdit CreateEdit(int? reiteratedVersionNumber, object editTag);
+		public abstract HexEdit CreateEdit(int? reiteratedVersionNumber, object? editTag);
 
 		/// <summary>
 		/// Replaces the <see cref="byte"/> at <paramref name="position"/> with <paramref name="value"/>

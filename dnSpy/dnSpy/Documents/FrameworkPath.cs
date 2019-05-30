@@ -164,7 +164,7 @@ namespace dnSpy.Documents {
 			Patch == other.Patch &&
 			StringComparer.Ordinal.Equals(Extra, other.Extra);
 
-		public override bool Equals(object obj) => obj is FrameworkVersion other && Equals(other);
+		public override bool Equals(object? obj) => obj is FrameworkVersion other && Equals(other);
 		public override int GetHashCode() => Major ^ Minor ^ Patch ^ StringComparer.Ordinal.GetHashCode(Extra ?? string.Empty);
 	}
 }

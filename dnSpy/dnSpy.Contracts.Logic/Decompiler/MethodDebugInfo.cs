@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Compiler name (<see cref="PredefinedCompilerNames"/>) or null
 		/// </summary>
-		public string CompilerName { get; }
+		public string? CompilerName { get; }
 
 		/// <summary>
 		/// Decompiler options version number
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the kickoff method or null
 		/// </summary>
-		public MethodDef KickoffMethod { get; }
+		public MethodDef? KickoffMethod { get; }
 
 		/// <summary>
 		/// Gets the parameters. There could be missing parameters, in which case use <see cref="Method"/>. This array isn't sorted.
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets async info or null if none
 		/// </summary>
-		public AsyncMethodDebugInfo AsyncInfo { get; }
+		public AsyncMethodDebugInfo? AsyncInfo { get; }
 
 		/// <summary>
 		/// Gets the root scope
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
 		/// <param name="asyncMethodDebugInfo">Async info or null</param>
-		public MethodDebugInfo(string compilerName, int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod, SourceParameter[] parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo asyncMethodDebugInfo) {
+		public MethodDebugInfo(string? compilerName, int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef? kickoffMethod, SourceParameter[]? parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo? asyncMethodDebugInfo) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
 			CompilerName = compilerName;

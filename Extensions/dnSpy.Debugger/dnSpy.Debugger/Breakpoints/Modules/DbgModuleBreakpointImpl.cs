@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
-		public override string ModuleName {
+		public override string? ModuleName {
 			get => Settings.ModuleName;
 			set {
 				var settings = Settings;
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
-		public override string AppDomainName {
+		public override string? AppDomainName {
 			get => Settings.AppDomainName;
 			set {
 				var settings = Settings;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
-		public override string ProcessName {
+		public override string? ProcessName {
 			get => Settings.ProcessName;
 			set {
 				var settings = Settings;
@@ -140,15 +140,14 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 			return true;
 		}
-		WeakReference moduleNameRegexWeakRef;
-		WeakReference appDomainNameRegexWeakRef;
-		WeakReference processNameRegexWeakRef;
+		WeakReference? moduleNameRegexWeakRef;
+		WeakReference? appDomainNameRegexWeakRef;
+		WeakReference? processNameRegexWeakRef;
 
-		bool WildcardsMatch(string wildcardsString, string value, ref WeakReference regexWeakRef) {
+		bool WildcardsMatch(string? wildcardsString, string value, ref WeakReference? regexWeakRef) {
 			if (string.IsNullOrEmpty(wildcardsString))
 				return true;
-			var regex = regexWeakRef?.Target as Regex;
-			if (regex == null)
+			if (!(regexWeakRef?.Target is Regex regex))
 				regexWeakRef = new WeakReference(regex = WildcardsUtils.CreateRegex(wildcardsString));
 			return regex.IsMatch(value ?? string.Empty);
 		}

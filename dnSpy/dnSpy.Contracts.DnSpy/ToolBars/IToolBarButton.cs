@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.ToolBars {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		string GetHeader(IToolBarItemContext context);
+		string? GetHeader(IToolBarItemContext context);
 
 		/// <summary>
 		/// Gets the icon or null to use the icon from the attribute
@@ -59,17 +59,17 @@ namespace dnSpy.Contracts.ToolBars {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		string GetToolTip(IToolBarItemContext context);
+		string? GetToolTip(IToolBarItemContext context);
 	}
 
 	/// <summary>Metadata</summary>
 	public interface IToolBarButtonMetadata : IToolBarItemMetadata {
 		/// <summary>See <see cref="ExportToolBarButtonAttribute.Header"/></summary>
-		string Header { get; }
+		string? Header { get; }
 		/// <summary>See <see cref="ExportToolBarButtonAttribute.Icon"/></summary>
-		string Icon { get; }
+		string? Icon { get; }
 		/// <summary>See <see cref="ExportToolBarButtonAttribute.ToolTip"/></summary>
-		string ToolTip { get; }
+		string? ToolTip { get; }
 		/// <summary>See <see cref="ExportToolBarButtonAttribute.IsToggleButton"/></summary>
 		bool IsToggleButton { get; }
 	}
@@ -87,17 +87,17 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <summary>
 		/// Toolbar button header property value
 		/// </summary>
-		public string Header { get; set; }
+		public string? Header { get; set; }
 
 		/// <summary>
 		/// Icon name
 		/// </summary>
-		public string Icon { get; set; }
+		public string? Icon { get; set; }
 
 		/// <summary>
 		/// Tooltip
 		/// </summary>
-		public string ToolTip { get; set; }
+		public string? ToolTip { get; set; }
 
 		/// <summary>
 		/// true if it's a toggle button. If true, you must implement <see cref="IToolBarToggleButton"/>.

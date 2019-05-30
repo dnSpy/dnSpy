@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
@@ -40,7 +41,7 @@ namespace dnSpy.Text.Editor {
 			readonly IWpfTextViewMargin margin;
 			readonly string marginName;
 			readonly Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders;
-			IMarginContextMenuHandler[] handlers;
+			IMarginContextMenuHandler[]? handlers;
 
 			public GuidObjectsProvider(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName, Lazy<IMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders) {
 				this.wpfTextViewHost = wpfTextViewHost;
@@ -68,6 +69,7 @@ namespace dnSpy.Text.Editor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				if (handlers == null)
 					InitializeHandlers();
+				Debug.Assert(handlers != null);
 
 				var point = Mouse.PrimaryDevice.GetPosition(margin.VisualElement);
 

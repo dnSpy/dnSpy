@@ -29,8 +29,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="module">Debugger metadata module object</param>
 		/// <returns></returns>
-		public static DbgModule GetDebuggerModule(this DmdModule module) {
-			if (module.TryGetData(out DbgModule dbgModule))
+		public static DbgModule? GetDebuggerModule(this DmdModule module) {
+			if (module.TryGetData(out DbgModule? dbgModule))
 				return dbgModule;
 			return null;
 		}

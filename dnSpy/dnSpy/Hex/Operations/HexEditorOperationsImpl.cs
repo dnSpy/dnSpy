@@ -54,10 +54,10 @@ namespace dnSpy.Hex.Operations {
 		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;
 
 		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ?? (__hexStructureInfoAggregator = hexStructureInfoAggregatorFactory.Value.Create(HexView));
-		HexStructureInfoAggregator __hexStructureInfoAggregator;
+		HexStructureInfoAggregator? __hexStructureInfoAggregator;
 
 		HexFileStructureInfoService HexFileStructureInfoService => __hexFileStructureInfoService ?? (__hexFileStructureInfoService = hexFileStructureInfoServiceFactory.Value.Create(HexView));
-		HexFileStructureInfoService __hexFileStructureInfoService;
+		HexFileStructureInfoService? __hexFileStructureInfoService;
 
 		readonly HexHtmlBuilderService htmlBuilderService;
 		readonly HexBufferFileService hexBufferFileService;
@@ -622,7 +622,7 @@ namespace dnSpy.Hex.Operations {
 
 		const string VS_COPY_FULL_LINE_DATA_FORMAT = "VisualStudioEditorOperationsLineCutCopyClipboardTag";
 		const string VS_COPY_BOX_DATA_FORMAT = "MSDEVColumnSelect";
-		bool CopyToClipboard(string text, string htmlText, bool isFullLineData, bool isBoxData) {
+		bool CopyToClipboard(string text, string? htmlText, bool isFullLineData, bool isBoxData) {
 			try {
 				var dataObj = new DataObject();
 				dataObj.SetText(text);
@@ -640,8 +640,8 @@ namespace dnSpy.Hex.Operations {
 			}
 		}
 
-		string TryCreateHtmlText(HexBufferSpan span) => TryCreateHtmlText(new NormalizedHexBufferSpanCollection(span));
-		string TryCreateHtmlText(NormalizedHexBufferSpanCollection spans) {
+		string? TryCreateHtmlText(HexBufferSpan span) => TryCreateHtmlText(new NormalizedHexBufferSpanCollection(span));
+		string? TryCreateHtmlText(NormalizedHexBufferSpanCollection spans) {
 			if (spans.Count == 0)
 				return null;
 
@@ -674,7 +674,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override bool CopySelectionText() {
-			string htmlText;
+			string? htmlText;
 			if (Selection.IsEmpty) {
 				var line = Caret.ContainingHexViewLine;
 				var lineExtentSpan = line.BufferSpan;
@@ -821,10 +821,10 @@ namespace dnSpy.Hex.Operations {
 		bool CopyHexValue(ulong value) =>
 			CopyToClipboard("0x" + value.ToString("X"), htmlText: null, isFullLineData: false, isBoxData: false);
 
-		PeHeaders TryGetPeHeaders() => TryGetPeHeaders(ActiveCaretBufferPosition);
-		PeHeaders TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
-		HexBufferFile TryGetFile() => TryGetFile(ActiveCaretBufferPosition);
-		HexBufferFile TryGetFile(HexPosition position) => hexBufferFileService.GetFile(position, checkNestedFiles: false);
+		PeHeaders? TryGetPeHeaders() => TryGetPeHeaders(ActiveCaretBufferPosition);
+		PeHeaders? TryGetPeHeaders(HexPosition position) => TryGetFile(position)?.GetHeaders<PeHeaders>();
+		HexBufferFile? TryGetFile() => TryGetFile(ActiveCaretBufferPosition);
+		HexBufferFile? TryGetFile(HexPosition position) => hexBufferFileService.GetFile(position, checkNestedFiles: false);
 
 		public override bool CanPaste {
 			get {
@@ -925,7 +925,7 @@ namespace dnSpy.Hex.Operations {
 			return PasteData(Get7BitEncodedLengthData(data));
 		}
 
-		static byte[] Get7BitEncodedLengthData(byte[] data) {
+		static byte[]? Get7BitEncodedLengthData(byte[] data) {
 			if (data == null)
 				return null;
 			uint len = (uint)data.Length;
@@ -945,7 +945,7 @@ namespace dnSpy.Hex.Operations {
 			return PasteData(GetBlobData(data));
 		}
 
-		static byte[] GetBlobData(byte[] data) {
+		static byte[]? GetBlobData(byte[] data) {
 			if (data == null)
 				return null;
 			uint len = (uint)data.Length;
@@ -958,7 +958,9 @@ namespace dnSpy.Hex.Operations {
 			return d;
 		}
 
-		bool PasteData(byte[] data) {
+		bool PasteData(byte[]? data) {
+			if (data == null)
+				return false;
 			if (data.Length == 0)
 				return true;
 			return PasteData(Caret.Position.Position.ActivePosition, data);
@@ -1032,7 +1034,7 @@ namespace dnSpy.Hex.Operations {
 			HexView.DisplayHexLineContainingBufferPosition(line.BufferStart, Math.Max(0, (HexView.ViewportHeight - line.Height) / 2), VSTE.ViewRelativePosition.Top);
 		}
 
-		WpfHexView GetZoomableView() {
+		WpfHexView? GetZoomableView() {
 			if (!Roles.Contains(PredefinedHexViewRoles.Zoomable))
 				return null;
 			var wpfHexView = HexView as WpfHexView;
@@ -1245,7 +1247,7 @@ namespace dnSpy.Hex.Operations {
 
 		public override void SelectNestedFile() => SelectFileCore(hexBufferFileService.GetFile(ActiveCaretBufferPosition, checkNestedFiles: true));
 		public override void SelectFile() => SelectFileCore(hexBufferFileService.GetFile(ActiveCaretBufferPosition, checkNestedFiles: false));
-		void SelectFileCore(HexBufferFile file) {
+		void SelectFileCore(HexBufferFile? file) {
 			if (file == null)
 				return;
 			SelectCore(file.Span);

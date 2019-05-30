@@ -43,7 +43,7 @@ namespace dnSpy.Disassembly.Viewer {
 			settings = new DisassemblyViewerServiceSettingsImpl();
 		}
 
-		public override void Show(DisassemblyContentProvider contentProvider, bool newTab, string title) {
+		public override void Show(DisassemblyContentProvider contentProvider, bool newTab, string? title) {
 			if (contentProvider == null)
 				throw new ArgumentNullException(nameof(contentProvider));
 

@@ -33,10 +33,10 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Search {
 	class SearchResult : ViewModelBase, ISearchResult, IMDTokenNode, IComparable<ISearchResult> {
-		IMDTokenProvider IMDTokenNode.Reference => Reference2;
-		IMDTokenProvider Reference2 => Object as IMDTokenProvider;
+		IMDTokenProvider? IMDTokenNode.Reference => Reference2;
+		IMDTokenProvider? Reference2 => Object as IMDTokenProvider;
 
-		public object Reference {
+		public object? Reference {
 			get {
 				if (Object is string ns)
 					return new NamespaceRef(Document, ns);
@@ -46,14 +46,18 @@ namespace dnSpy.Search {
 			}
 		}
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public SearchResultContext Context { get; set; }
 		public object Object { get; set; }
 		public object NameObject { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		public ImageReference ObjectImageReference { get; set; }
-		public object LocationObject { get; set; }
+		public object? LocationObject { get; set; }
 		public ImageReference LocationImageReference { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public IDsDocument Document { get; set; }
-		public object ObjectInfo { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+		public object? ObjectInfo { get; set; }
 
 		public void RefreshUI() {
 			OnPropertyChanged(nameof(NameUI));
@@ -61,7 +65,7 @@ namespace dnSpy.Search {
 			OnPropertyChanged(nameof(ToolTip));
 		}
 
-		public string ToolTip {
+		public string? ToolTip {
 			get {
 				var dsDocument = Document;
 				if (dsDocument == null)
@@ -80,7 +84,7 @@ namespace dnSpy.Search {
 		}
 
 		public object NameUI => CreateUI(NameObject, false);
-		public object LocationUI => CreateUI(LocationObject, true);
+		public object? LocationUI => CreateUI(LocationObject, true);
 
 		public override string ToString() {
 			var output = new StringBuilderTextColorOutput();
@@ -94,7 +98,7 @@ namespace dnSpy.Search {
 			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
-		object CreateUI(object o, bool includeNamespace) {
+		object CreateUI(object? o, bool includeNamespace) {
 			var writer = Cache.GetWriter();
 			try {
 				CreateUI(writer, o, includeNamespace);
@@ -106,7 +110,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void CreateUI(ITextColorWriter output, object o, bool includeNamespace) {
+		void CreateUI(ITextColorWriter output, object? o, bool includeNamespace) {
 			if (o is NamespaceSearchResult ns) {
 				output.WriteNamespace(ns.Namespace);
 				return;
@@ -208,7 +212,7 @@ namespace dnSpy.Search {
 		}
 
 		string GetCompareString() => compareString ?? (compareString = ToString());
-		string compareString = null;
+		string? compareString = null;
 	}
 
 	sealed class ErrorMessage {

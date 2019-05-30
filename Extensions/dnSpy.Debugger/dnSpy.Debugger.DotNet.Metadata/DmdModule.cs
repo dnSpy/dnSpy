@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isDynamic">true if it's a dynamic module</param>
 		/// <param name="fullyQualifiedName">Module filename or null</param>
 		/// <returns></returns>
-		public static string GetFullyQualifiedName(bool isInMemory, bool isDynamic, string fullyQualifiedName) {
+		public static string GetFullyQualifiedName(bool isInMemory, bool isDynamic, string? fullyQualifiedName) {
 			if (isDynamic)
 				return "<In Memory Module>";
 			if (isInMemory)
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if this is the corlib module
 		/// </summary>
-		public bool IsCorLib => this == AppDomain.CorLib.ManifestModule;
+		public bool IsCorLib => this == AppDomain.CorLib?.ManifestModule;
 
 		/// <summary>
 		/// Gets all types in this module
@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
+		public bool IsDefined(DmdType? attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
+		public DmdCustomAttributeData? FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
+		public DmdCustomAttributeData? FindCustomAttribute(DmdType? attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -202,14 +202,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
+		public DmdCustomAttributeData? FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
 
 		/// <summary>
 		/// Resolves a method
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken) => ResolveMethod(metadataToken, (IList<DmdType>)null, null);
+		public DmdMethodBase? ResolveMethod(int metadataToken) => ResolveMethod(metadataToken, (IList<DmdType>?)null, null);
 
 		/// <summary>
 		/// Resolves a method
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Token</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken, DmdResolveOptions options) => ResolveMethod(metadataToken, (IList<DmdType>)null, null, options);
+		public DmdMethodBase? ResolveMethod(int metadataToken, DmdResolveOptions options) => ResolveMethod(metadataToken, (IList<DmdType>?)null, null, options);
 
 		/// <summary>
 		/// Resolves a method
@@ -226,8 +226,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
-			ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
+		public DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) =>
+			ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a method
@@ -236,18 +236,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments) =>
-			ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
-
-		/// <summary>
-		/// Resolves a method
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <param name="options">Resolve options</param>
-		/// <returns></returns>
-		public abstract DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
+		public DmdMethodBase ResolveMethod(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments) =>
+			ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a method
@@ -257,7 +247,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdMethodBase ResolveMethod(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments, DmdResolveOptions options) =>
+		public abstract DmdMethodBase? ResolveMethod(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+
+		/// <summary>
+		/// Resolves a method
+		/// </summary>
+		/// <param name="metadataToken">Token</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public DmdMethodBase? ResolveMethod(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments, DmdResolveOptions options) =>
 			ResolveMethod(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
 
 		/// <summary>
@@ -265,7 +265,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken) => ResolveField(metadataToken, (IList<DmdType>)null, null);
+		public DmdFieldInfo? ResolveField(int metadataToken) => ResolveField(metadataToken, (IList<DmdType>?)null, null);
 
 		/// <summary>
 		/// Resolves a field
@@ -273,7 +273,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Token</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken, DmdResolveOptions options) => ResolveField(metadataToken, (IList<DmdType>)null, null, options);
+		public DmdFieldInfo? ResolveField(int metadataToken, DmdResolveOptions options) => ResolveField(metadataToken, (IList<DmdType>?)null, null, options);
 
 		/// <summary>
 		/// Resolves a field
@@ -282,8 +282,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
-			ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
+		public DmdFieldInfo ResolveField(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) =>
+			ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a field
@@ -292,18 +292,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments) =>
-			ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
-
-		/// <summary>
-		/// Resolves a field
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <param name="options">Resolve options</param>
-		/// <returns></returns>
-		public abstract DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
+		public DmdFieldInfo ResolveField(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments) =>
+			ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a field
@@ -313,7 +303,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveField(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments, DmdResolveOptions options) =>
+		public abstract DmdFieldInfo? ResolveField(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+
+		/// <summary>
+		/// Resolves a field
+		/// </summary>
+		/// <param name="metadataToken">Token</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public DmdFieldInfo? ResolveField(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments, DmdResolveOptions options) =>
 			ResolveField(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
 
 		/// <summary>
@@ -321,7 +321,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken) => ResolveType(metadataToken, (IList<DmdType>)null, null);
+		public DmdType? ResolveType(int metadataToken) => ResolveType(metadataToken, (IList<DmdType>?)null, null);
 
 		/// <summary>
 		/// Resolves a type
@@ -329,7 +329,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Token</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken, DmdResolveOptions options) => ResolveType(metadataToken, (IList<DmdType>)null, null, options);
+		public DmdType? ResolveType(int metadataToken, DmdResolveOptions options) => ResolveType(metadataToken, (IList<DmdType>?)null, null, options);
 
 		/// <summary>
 		/// Resolves a type
@@ -338,8 +338,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
-			ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
+		public DmdType ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) =>
+			ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a type
@@ -348,18 +348,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments) =>
-			ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
-
-		/// <summary>
-		/// Resolves a type
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <param name="options">Resolve options</param>
-		/// <returns></returns>
-		public abstract DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
+		public DmdType ResolveType(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments) =>
+			ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a type
@@ -369,7 +359,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdType ResolveType(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments, DmdResolveOptions options) =>
+		public abstract DmdType? ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+
+		/// <summary>
+		/// Resolves a type
+		/// </summary>
+		/// <param name="metadataToken">Token</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public DmdType? ResolveType(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments, DmdResolveOptions options) =>
 			ResolveType(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
 
 		/// <summary>
@@ -377,7 +377,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken) => ResolveMember(metadataToken, (IList<DmdType>)null, null);
+		public DmdMemberInfo? ResolveMember(int metadataToken) => ResolveMember(metadataToken, (IList<DmdType>?)null, null);
 
 		/// <summary>
 		/// Resolves a member
@@ -385,7 +385,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Token</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken, DmdResolveOptions options) => ResolveMember(metadataToken, (IList<DmdType>)null, null, options);
+		public DmdMemberInfo? ResolveMember(int metadataToken, DmdResolveOptions options) => ResolveMember(metadataToken, (IList<DmdType>?)null, null, options);
 
 		/// <summary>
 		/// Resolves a member
@@ -394,8 +394,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
-			ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
+		public DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) =>
+			ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a member
@@ -404,18 +404,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments) =>
-			ResolveMember(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), DmdResolveOptions.ThrowOnError);
-
-		/// <summary>
-		/// Resolves a member
-		/// </summary>
-		/// <param name="metadataToken">Token</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <param name="options">Resolve options</param>
-		/// <returns></returns>
-		public abstract DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
+		public DmdMemberInfo ResolveMember(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments) =>
+			ResolveMember(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a member
@@ -425,7 +415,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments, DmdResolveOptions options) =>
+		public abstract DmdMemberInfo? ResolveMember(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+
+		/// <summary>
+		/// Resolves a member
+		/// </summary>
+		/// <param name="metadataToken">Token</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public DmdMemberInfo? ResolveMember(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments, DmdResolveOptions options) =>
 			ResolveMember(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
 
 		/// <summary>
@@ -435,8 +435,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) =>
-			ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError);
+		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) =>
+			ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a method signature
@@ -445,18 +445,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericTypeArguments">Generic type arguments or null</param>
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <returns></returns>
-		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments) =>
-			ResolveMethodSignature(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), DmdResolveOptions.ThrowOnError);
-
-		/// <summary>
-		/// Resolves a method signature
-		/// </summary>
-		/// <param name="metadataToken">StandaloneSig token from a method body</param>
-		/// <param name="genericTypeArguments">Generic type arguments or null</param>
-		/// <param name="genericMethodArguments">Generic method arguments or null</param>
-		/// <param name="options">Resolve options</param>
-		/// <returns></returns>
-		public abstract DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
+		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments) =>
+			ResolveMethodSignature(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), DmdResolveOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Resolves a method signature
@@ -466,7 +456,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="genericMethodArguments">Generic method arguments or null</param>
 		/// <param name="options">Resolve options</param>
 		/// <returns></returns>
-		public DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<Type> genericTypeArguments, IList<Type> genericMethodArguments, DmdResolveOptions options) =>
+		public abstract DmdMethodSignature? ResolveMethodSignature(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+
+		/// <summary>
+		/// Resolves a method signature
+		/// </summary>
+		/// <param name="metadataToken">StandaloneSig token from a method body</param>
+		/// <param name="genericTypeArguments">Generic type arguments or null</param>
+		/// <param name="genericMethodArguments">Generic method arguments or null</param>
+		/// <param name="options">Resolve options</param>
+		/// <returns></returns>
+		public DmdMethodSignature? ResolveMethodSignature(int metadataToken, IList<Type>? genericTypeArguments, IList<Type>? genericMethodArguments, DmdResolveOptions options) =>
 			ResolveMethodSignature(metadataToken, genericTypeArguments.ToDmdType(AppDomain), genericMethodArguments.ToDmdType(AppDomain), options);
 
 		/// <summary>
@@ -474,7 +474,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="metadataToken">Token</param>
 		/// <returns></returns>
-		public abstract byte[] ResolveSignature(int metadataToken);
+		public abstract byte[]? ResolveSignature(int metadataToken);
 
 		/// <summary>
 		/// Resolves a string
@@ -495,14 +495,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public DmdType GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
+		public DmdType? GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type and throws if it couldn't be found
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError);
+		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Gets a type
@@ -510,8 +510,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="type">Type</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public DmdType GetType(Type type, DmdGetTypeOptions options) {
-			if ((object)type == null)
+		public DmdType? GetType(Type type, DmdGetTypeOptions options) {
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return GetType(type.FullName, options);
 		}
@@ -522,21 +522,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="className">Name of type</param>
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <returns></returns>
-		public DmdType GetType(string className, bool ignoreCase) => GetType(className, ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0);
+		public DmdType? GetType(string className, bool ignoreCase) => GetType(className, ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0);
 
 		/// <summary>
 		/// Gets a type
 		/// </summary>
 		/// <param name="className">Name of type</param>
 		/// <returns></returns>
-		public DmdType GetType(string className) => GetType(className, DmdGetTypeOptions.None);
+		public DmdType? GetType(string className) => GetType(className, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type and throws if it couldn't be found
 		/// </summary>
 		/// <param name="className">Name of type</param>
 		/// <returns></returns>
-		public DmdType GetTypeThrow(string className) => GetType(className, DmdGetTypeOptions.ThrowOnError);
+		public DmdType GetTypeThrow(string className) => GetType(className, DmdGetTypeOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Gets a type
@@ -545,7 +545,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="throwOnError">true to throw if the type couldn't be found</param>
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <returns></returns>
-		public DmdType GetType(string className, bool throwOnError, bool ignoreCase) =>
+		public DmdType? GetType(string className, bool throwOnError, bool ignoreCase) =>
 			GetType(className, (throwOnError ? DmdGetTypeOptions.ThrowOnError : 0) | (ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0));
 
 		/// <summary>
@@ -554,7 +554,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>)</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType GetType(string typeName, DmdGetTypeOptions options);
+		public abstract DmdType? GetType(string typeName, DmdGetTypeOptions options);
 
 		/// <summary>
 		/// Gets all global public static and instance fields
@@ -574,7 +574,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Field name</param>
 		/// <returns></returns>
-		public DmdFieldInfo GetField(string name) => GetField(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
+		public DmdFieldInfo? GetField(string name) => GetField(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
 
 		/// <summary>
 		/// Gets a global field
@@ -582,7 +582,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Field name</param>
 		/// <param name="bindingAttr">Binding attributes</param>
 		/// <returns></returns>
-		public DmdFieldInfo GetField(string name, DmdBindingFlags bindingAttr) => GlobalType.GetField(name, bindingAttr);
+		public DmdFieldInfo? GetField(string name, DmdBindingFlags bindingAttr) => GlobalType.GetField(name, bindingAttr);
 
 		/// <summary>
 		/// Gets all global public static or instance methods
@@ -605,7 +605,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Method parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
+		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType>? types) {
 			if (types == null)
 				return GlobalType.GetMethod(name, bindingAttr);
 			return GlobalType.GetMethod(name, bindingAttr, callConvention, types);
@@ -619,7 +619,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Method parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<Type> types) =>
+		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<Type>? types) =>
 			GetMethod(name, bindingAttr, callConvention, types.ToDmdType(AppDomain));
 
 		/// <summary>
@@ -628,7 +628,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Method name</param>
 		/// <param name="types">Method parameter types</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types);
+		public DmdMethodInfo? GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a global public static or instance method
@@ -636,14 +636,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Method name</param>
 		/// <param name="types">Method parameter types</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<Type> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
+		public DmdMethodInfo? GetMethod(string name, IList<Type> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Gets a global public static or instance method
 		/// </summary>
 		/// <param name="name">Method name</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, (IList<DmdType>)null);
+		public DmdMethodInfo? GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Gets all referenced assemblies
@@ -689,7 +689,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="rva">RVA of data</param>
 		/// <param name="size">Number of bytes to read</param>
 		/// <returns></returns>
-		public byte[] ReadMemory(uint rva, int size) {
+		public byte[]? ReadMemory(uint rva, int size) {
 			if (size == 0)
 				return Array.Empty<byte>();
 			var res = new byte[size];

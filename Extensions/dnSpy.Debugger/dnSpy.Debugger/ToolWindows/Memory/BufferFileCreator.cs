@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			readonly List<DbgRuntime> runtimes;
 			readonly Dictionary<HexPosition, int> moduleReferences;
 			readonly HashSet<DbgModule> addedModules;
-			DbgProcess process;
+			DbgProcess? process;
 
 			// UI thread
 			public ModuleListener(HexBufferFileServiceFactory hexBufferFileServiceFactory, IHexBufferInfo hexBufferInfo, UIDispatcher uiDispatcher) {
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// UI thread
-			void OnProcessChanged_UI(DbgProcess newProcess) {
+			void OnProcessChanged_UI(DbgProcess? newProcess) {
 				uiDispatcher.VerifyAccess();
 				if (disposed) {
 					Debug.Assert(process == null);

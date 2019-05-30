@@ -65,7 +65,7 @@ namespace dnSpy.Hex.HexGroups {
 			this.optionsStorage = optionsStorage;
 		}
 
-		HexViewGroupOptionCollection GetCollection(string tag) {
+		HexViewGroupOptionCollection GetCollection(string? tag) {
 			if (tag == null)
 				tag = string.Empty;
 
@@ -78,7 +78,7 @@ namespace dnSpy.Hex.HexGroups {
 		}
 
 		HexViewGroupOptionCollection ErrorCollection => errorCollection ?? (errorCollection = new HexViewGroupOptionCollection(Guid.NewGuid().ToString()));
-		HexViewGroupOptionCollection errorCollection;
+		HexViewGroupOptionCollection? errorCollection;
 
 		public override bool HasOption<T>(string tag, VSTE.EditorOptionKey<T> option) => HasOption(tag, option.Name);
 		public override bool HasOption(string tag, string optionId) {
@@ -89,8 +89,8 @@ namespace dnSpy.Hex.HexGroups {
 			return GetCollection(tag).HasOption(optionId);
 		}
 
-		public override T GetOptionValue<T>(string tag, VSTE.EditorOptionKey<T> option) => (T)GetOptionValue(tag, option.Name);
-		public override object GetOptionValue(string tag, string optionId) {
+		public override T GetOptionValue<T>(string tag, VSTE.EditorOptionKey<T> option) => (T)GetOptionValue(tag, option.Name)!;
+		public override object? GetOptionValue(string tag, string optionId) {
 			if (tag == null)
 				throw new ArgumentNullException(nameof(tag));
 			if (optionId == null)
@@ -99,7 +99,7 @@ namespace dnSpy.Hex.HexGroups {
 		}
 
 		public override void SetOptionValue<T>(string tag, VSTE.EditorOptionKey<T> option, T value) => SetOptionValue(tag, option.Name, value);
-		public override void SetOptionValue(string tag, string optionId, object value) {
+		public override void SetOptionValue(string tag, string optionId, object? value) {
 			if (tag == null)
 				throw new ArgumentNullException(nameof(tag));
 			if (optionId == null)
@@ -168,7 +168,7 @@ namespace dnSpy.Hex.HexGroups {
 			}
 		}
 
-		string GetSubGroup(WpfHexView hexView) => owner.GetSubGroup(hexView) ?? string.Empty;
+		string? GetSubGroup(WpfHexView hexView) => owner.GetSubGroup(hexView) ?? string.Empty;
 
 		void OptionChanged(WpfHexView hexView, VSTE.EditorOptionChangedEventArgs e) {
 			var coll = GetCollection(GetSubGroup(hexView));

@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public virtual object GetColor(TypeDef type) {
+		public virtual object GetColor(TypeDef? type) {
 			if (type == null)
 				return BoxedTextColor.Text;
 
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Decompiler {
 					}
 					else {
 						var baseTd = bt as TypeDef;
-						if (baseTd.Namespace == systemString && baseTd.Name == objectString)
+						if (baseTd != null && baseTd.Namespace == systemString && baseTd.Name == objectString)
 							return BoxedTextColor.StaticType;
 					}
 				}
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public virtual object GetColor(TypeRef type) {
+		public virtual object GetColor(TypeRef? type) {
 			if (type == null)
 				return BoxedTextColor.Text;
 
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="memberRef">Member</param>
 		/// <returns></returns>
-		public virtual object GetColor(IMemberRef memberRef) {
+		public virtual object GetColor(IMemberRef? memberRef) {
 			if (memberRef == null)
 				return BoxedTextColor.Text;
 
@@ -157,7 +157,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="genericSig">Generic signature</param>
 		/// <returns></returns>
-		public virtual object GetColor(GenericSig genericSig) {
+		public virtual object GetColor(GenericSig? genericSig) {
 			if (genericSig == null)
 				return BoxedTextColor.Text;
 
@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="genericParam">Generic parameter</param>
 		/// <returns></returns>
-		public virtual object GetColor(GenericParam genericParam) {
+		public virtual object GetColor(GenericParam? genericParam) {
 			if (genericParam == null)
 				return BoxedTextColor.Text;
 
@@ -195,7 +195,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="exportedType">Exported type</param>
 		/// <returns></returns>
-		public virtual object GetColor(ExportedType exportedType) {
+		public virtual object GetColor(ExportedType? exportedType) {
 			if (exportedType == null)
 				return BoxedTextColor.Text;
 
@@ -207,7 +207,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="typeSig">Type signature</param>
 		/// <returns></returns>
-		public virtual object GetColor(TypeSig typeSig) {
+		public virtual object GetColor(TypeSig? typeSig) {
 			typeSig = typeSig.RemovePinnedAndModifiers();
 			if (typeSig == null)
 				return BoxedTextColor.Text;
@@ -226,7 +226,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj">Object, eg. an instruction operand</param>
 		/// <returns></returns>
-		public virtual object GetColor(object obj) {
+		public virtual object GetColor(object? obj) {
 			if (obj == null)
 				return BoxedTextColor.Text;
 
@@ -296,13 +296,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public override object GetColor(TypeDef type) {
+		public override object GetColor(TypeDef? type) {
 			if (IsModule(type))
 				return BoxedTextColor.Module;
 			return base.GetColor(type);
 		}
 
-		static bool IsModule(TypeDef type) =>
+		static bool IsModule(TypeDef? type) =>
 			type != null && type.DeclaringType == null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
 		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
 		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");

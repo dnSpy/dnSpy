@@ -22,7 +22,7 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed partial class SwitchOperandControl : UserControl {
-		SwitchOperandsListHelper switchOperandsListHelper;
+		SwitchOperandsListHelper? switchOperandsListHelper;
 
 		public SwitchOperandControl() {
 			InitializeComponent();

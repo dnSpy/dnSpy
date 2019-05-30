@@ -26,7 +26,7 @@ using dnSpy.Contracts.TreeView.Text;
 namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsTreeViewNodeClassifierContext : TreeViewNodeClassifierContext {
 		public SearchMatcher SearchMatcher { get; }
-		public AppSettingsTreeViewNodeClassifierContext(SearchMatcher searchMatcher, string text, ITreeView treeView, TreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public AppSettingsTreeViewNodeClassifierContext(SearchMatcher searchMatcher, string text, ITreeView treeView, TreeNodeData node, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null)
 			: base(text, treeView, node, isToolTip, colorize, colors) => SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
 	}
 }

@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	static class DbgDotNetDispatcherExtensions {
 		public static bool TryInvokeRethrow<T>(this DbgDotNetDispatcher dispatcher, Func<T> callback, out T result) {
-			ExceptionDispatchInfo exceptionInfo = null;
+			ExceptionDispatchInfo? exceptionInfo = null;
 			bool success = dispatcher.TryInvoke(() => {
 				T res2;
 				try {
@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				}
 				catch (Exception ex) {
 					exceptionInfo = ExceptionDispatchInfo.Capture(ex);
-					res2 = default;
+					res2 = default!;
 				}
 				return res2;
 			}, out result);

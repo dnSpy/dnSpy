@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text.Operations;
@@ -39,7 +40,7 @@ namespace dnSpy.Text.Editor.Operations {
 			return textView.Properties.GetOrCreateSingletonProperty(textViewUndoManagerKey, () => new TextViewUndoManager(textView, this, textBufferUndoManagerProvider));
 		}
 
-		public bool TryGetTextViewUndoManager(IDsWpfTextView textView, out ITextViewUndoManager manager) {
+		public bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhenTrue] out ITextViewUndoManager? manager) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.TryGetProperty(textViewUndoManagerKey, out manager);

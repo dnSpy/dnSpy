@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
@@ -32,8 +33,8 @@ using MDS = Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
-		public override DbgCodeLocation Location { get; }
-		public override DbgModule Module { get; }
+		public override DbgCodeLocation? Location { get; }
+		public override DbgModule? Module { get; }
 		public override DbgStackFrameFlags Flags => DbgStackFrameFlags.None;
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
@@ -110,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			public ILFrameState(ILDbgEngineStackFrame ilFrame) => ILFrame = ilFrame;
 		}
 		public override void OnFrameCreated(DbgStackFrame frame) => frame.GetOrCreateData(() => new ILFrameState(this));
-		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, out ILDbgEngineStackFrame ilFrame) {
+		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, [NotNullWhenTrue] out ILDbgEngineStackFrame? ilFrame) {
 			if (frame.TryGetData<ILFrameState>(out var data)) {
 				ilFrame = data.ILFrame;
 				return true;
@@ -122,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
 			engine.VerifyMonoDebugThread();
 			methodMetadataToken = MonoFrame.Method.MetadataToken;
-			module = Module.GetReflectionModule() ?? throw new InvalidOperationException();
+			module = Module!.GetReflectionModule() ?? throw new InvalidOperationException();
 
 			TypeMirror[] typeGenArgs;
 			TypeMirror[] methGenArgs;
@@ -149,7 +150,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			return types;
 		}
 
-		internal DmdModule GetReflectionModule() => Module.GetReflectionModule() ?? throw new InvalidOperationException();
+		internal DmdModule GetReflectionModule() => Module!.GetReflectionModule() ?? throw new InvalidOperationException();
 
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}

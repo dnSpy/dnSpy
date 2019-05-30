@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Documents.Tabs.DocViewer {
 	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.DocumentViewer)]
 	sealed class DocumentViewerCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) != true)
 				return null;

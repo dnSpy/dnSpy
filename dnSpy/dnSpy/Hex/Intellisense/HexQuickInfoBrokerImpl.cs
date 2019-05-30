@@ -41,14 +41,14 @@ namespace dnSpy.Hex.Intellisense {
 			this.quickInfoSourceProviders = VSUTIL.Orderer.Order(quickInfoSourceProviders).ToArray();
 		}
 
-		public override HexQuickInfoSession TriggerQuickInfo(HexView hexView) {
+		public override HexQuickInfoSession? TriggerQuickInfo(HexView hexView) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			var triggerPoint = hexView.Caret.Position.Position.ActivePosition;
 			return TriggerQuickInfo(hexView, triggerPoint, trackMouse: false);
 		}
 
-		public override HexQuickInfoSession TriggerQuickInfo(HexView hexView, HexCellPosition triggerPoint, bool trackMouse) {
+		public override HexQuickInfoSession? TriggerQuickInfo(HexView hexView, HexCellPosition triggerPoint, bool trackMouse) {
 			if (hexView == null)
 				throw new ArgumentNullException(nameof(hexView));
 			if (triggerPoint.IsDefault)

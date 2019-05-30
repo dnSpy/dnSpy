@@ -386,7 +386,7 @@ namespace dnSpy.Hex.Formatting {
 			var lineParts = linePartsCollection.LineParts;
 			int linePartsIndexLocal = linePartsIndex;
 			int linePartsLengthLocal = linePartsLength;
-			List<object> list = null;
+			List<object>? list = null;
 			for (int i = 0; i < linePartsLengthLocal; i++) {
 				var part = lineParts[linePartsIndexLocal + i];
 				var adornment = part.AdornmentElement;
@@ -528,14 +528,14 @@ namespace dnSpy.Hex.Formatting {
 			return new VSTF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
 		}
 
-		public override TextRunProperties GetCharacterFormatting(int linePosition) {
+		public override TextRunProperties? GetCharacterFormatting(int linePosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
 
 			int column = GetFirstColumn(linePosition);
-			TextSpan<TextRun> lastTextSpan = null;
+			TextSpan<TextRun>? lastTextSpan = null;
 			foreach (var textSpan in TextLine.GetTextRunSpans()) {
 				lastTextSpan = textSpan;
 				if (column < textSpan.Length)
@@ -627,7 +627,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 			return drawingVisual;
 		}
-		DrawingVisual drawingVisual;
+		DrawingVisual? drawingVisual;
 
 		public override void RemoveVisual() {
 			if (!IsValid)
@@ -688,10 +688,10 @@ namespace dnSpy.Hex.Formatting {
 			isValid = false;
 			foreach (var t in textLines)
 				t.Dispose();
-			bufferLine = null;
-			linePartsCollection = null;
-			textLines = null;
-			drawingVisual = null;
+			bufferLine = null!;
+			linePartsCollection = null!;
+			textLines = null!;
+			drawingVisual = null!;
 		}
 	}
 }

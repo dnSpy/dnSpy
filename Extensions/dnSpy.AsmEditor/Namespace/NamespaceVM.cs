@@ -26,7 +26,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 		}
-		string name;
+		string? name;
 
 		public NamespaceVM(string name) {
 			origName = name;

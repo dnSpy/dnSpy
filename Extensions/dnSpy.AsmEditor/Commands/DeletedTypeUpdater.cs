@@ -37,10 +37,11 @@ namespace dnSpy.AsmEditor.Commands {
 		int typeIndex;
 
 		public DeletedTypeUpdater(ModuleDocumentNode modNode, TypeDef originalType) {
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalType);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalType);
+			if (node == null)
 				throw new InvalidOperationException();
-			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerNode = node;
+			parentNode = ownerNode.TreeNode.Parent!.Data;
 			ownerModule = originalType.Module;
 			ownerType = originalType.DeclaringType;
 			type = originalType;

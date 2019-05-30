@@ -70,7 +70,7 @@ namespace dnSpy.Text.Editor {
 		public ITextDataModel TextDataModel => TextViewModel.DataModel;
 		public ITextViewModel TextViewModel { get; }
 		public bool IsClosed { get; set; }
-		public ITrackingSpan ProvisionalTextHighlight { get; set; }//TODO: Use this prop
+		public ITrackingSpan? ProvisionalTextHighlight { get; set; }//TODO: Use this prop
 		public event EventHandler GotAggregateFocus;
 		public event EventHandler LostAggregateFocus;
 		public event EventHandler Closed;
@@ -80,7 +80,7 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler ViewportWidthChanged;
 		public event EventHandler<TextViewLayoutChangedEventArgs> LayoutChanged;
 		public event EventHandler<ZoomLevelChangedEventArgs> ZoomLevelChanged;
-		public IFormattedLineSource FormattedLineSource { get; private set; }
+		public IFormattedLineSource? FormattedLineSource { get; private set; }
 		public bool InLayout { get; private set; }
 		ITextViewLineCollection ITextView.TextViewLines => TextViewLines;
 		IWpfTextViewLineCollection IWpfTextView.TextViewLines => TextViewLines;
@@ -230,7 +230,7 @@ namespace dnSpy.Text.Editor {
 			NotifyTextViewCreated(TextViewModel.DataModel.ContentType, null);
 		}
 
-		void NotifyTextViewCreated(IContentType newContentType, IContentType oldContentType) {
+		void NotifyTextViewCreated(IContentType newContentType, IContentType? oldContentType) {
 			foreach (var lz in wpfTextViewCreationListeners) {
 				if (oldContentType != null && oldContentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
@@ -265,7 +265,7 @@ namespace dnSpy.Text.Editor {
 			else
 				RefreshScreen();
 		}
-		DispatcherTimer screenRefreshTimer;
+		DispatcherTimer? screenRefreshTimer;
 
 		void RefreshScreen() => DelayLayoutLines(true);
 		void RefreshScreenHandler(object sender, EventArgs e) {
@@ -486,7 +486,7 @@ namespace dnSpy.Text.Editor {
 			}));
 		}
 
-		public new Brush Background {
+		public new Brush? Background {
 			get => base.Background;
 			set {
 				if (base.Background != value) {
@@ -529,12 +529,12 @@ namespace dnSpy.Text.Editor {
 				// lines if we're raising LayoutChanged.
 				if (delayLayoutLinesInProgress && !raisingLayoutChanged)
 					DoDelayDisplayLines();
-				return wpfTextViewLineCollection;
+				return wpfTextViewLineCollection!;
 			}
 		}
-		WpfTextViewLineCollection wpfTextViewLineCollection;
+		WpfTextViewLineCollection? wpfTextViewLineCollection;
 
-		public double LineHeight => FormattedLineSource.LineHeight;
+		public double LineHeight => FormattedLineSource!.LineHeight;
 		public double ViewportTop => viewportTop;
 		public double ViewportBottom => ViewportTop + ViewportHeight;
 		public double ViewportRight => ViewportLeft + ViewportWidth;
@@ -689,6 +689,7 @@ namespace dnSpy.Text.Editor {
 		PhysicalLine CreatePhysicalLineNoCache(SnapshotPoint bufferPosition, double viewportWidthOverride) {
 			if (bufferPosition.Snapshot != TextSnapshot)
 				throw new ArgumentException();
+			Debug.Assert(FormattedLineSource != null);
 			if (formattedLineSourceIsInvalidated || FormattedLineSource.SourceTextSnapshot != TextSnapshot)
 				CreateFormattedLineSource(viewportWidthOverride);
 			return CreatePhysicalLineNoCache(FormattedLineSource, TextViewModel, VisualSnapshot, bufferPosition);
@@ -738,6 +739,7 @@ namespace dnSpy.Text.Editor {
 			if (invalidatedRegions.Capacity > 100)
 				invalidatedRegions.TrimExcess();
 
+			Debug.Assert(FormattedLineSource != null);
 			if (!(FormattedLineSource.SourceTextSnapshot == TextSnapshot && FormattedLineSource.TopTextSnapshot == VisualSnapshot))
 				invalidateAllLines = true;
 			if (invalidateAllLines || formattedLineSourceIsInvalidated) {
@@ -756,6 +758,9 @@ namespace dnSpy.Text.Editor {
 
 			var layoutHelper = new LayoutHelper(lineTransformProvider, newViewportTop ?? 0, oldVisibleLines, GetValidCachedLines(regionsToInvalidate), FormattedLineSource, TextViewModel, VisualSnapshot, TextSnapshot);
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
+			Debug.Assert(layoutHelper.AllVisibleLines != null);
+			Debug.Assert(layoutHelper.NewOrReformattedLines != null);
+			Debug.Assert(layoutHelper.TranslatedLines != null);
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
 			wpfTextViewLineCollection = new WpfTextViewLineCollection(this, TextSnapshot, layoutHelper.AllVisibleLines);
@@ -884,7 +889,7 @@ namespace dnSpy.Text.Editor {
 
 			Loaded += WpfTextView_Loaded;
 		}
-		MetroWindow metroWindow;
+		MetroWindow? metroWindow;
 
 		void WpfTextView_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= WpfTextView_Loaded;
@@ -910,10 +915,11 @@ namespace dnSpy.Text.Editor {
 					__lineTransformProvider = lineTransformProviderService.Create(this, removeExtraTextLineVerticalPixels);
 					recreateLineTransformProvider = false;
 				}
+				Debug.Assert(__lineTransformProvider != null);
 				return __lineTransformProvider;
 			}
 		}
-		ILineTransformProvider __lineTransformProvider;
+		ILineTransformProvider? __lineTransformProvider;
 		bool recreateLineTransformProvider;
 		bool removeExtraTextLineVerticalPixels;
 

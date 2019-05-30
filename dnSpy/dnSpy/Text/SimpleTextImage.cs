@@ -24,10 +24,10 @@ using Microsoft.VisualStudio.Text;
 namespace dnSpy.Text {
 	sealed class SimpleTextImage : ITextImage {
 		readonly string text;
-		uint[] lineOffsets;
+		uint[]? lineOffsets;
 
 		public char this[int position] => text[position];
-		public ITextImageVersion Version => null;
+		public ITextImageVersion? Version => null;
 		public int Length => text.Length;
 
 		public int LineCount {

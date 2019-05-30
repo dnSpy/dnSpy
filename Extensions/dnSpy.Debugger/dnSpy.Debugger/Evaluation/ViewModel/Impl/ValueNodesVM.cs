@@ -46,8 +46,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		sealed class RootNode : TreeNodeData {
 			public override Guid Guid => Guid.Empty;
-			public override object Text => null;
-			public override object ToolTip => null;
+			public override object? Text => null;
+			public override object? ToolTip => null;
 			public override ImageReference Icon => ImageReference.None;
 			public override void OnRefreshUI() { }
 		}
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		bool isOpen;
 		SelectNodeKind selectNodeKind;
 		Guid? lastRuntimeKindGuid;
-		DbgLanguage lastLanguage;
+		DbgLanguage? lastLanguage;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IValueNodesVM vm;
@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void OnValueNodeAssigned(string errorMessage, bool retry) {
+		void OnValueNodeAssigned(string? errorMessage, bool retry) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (errorMessage != null)
 				valueNodesContext.ShowMessageBox(errorMessage, ShowMessageBoxButtons.OK);
@@ -189,8 +189,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			refreshNameFields = false;
 			Guid? runtimeKindGuid;
 			DbgValueNodeInfo[] nodes;
-			DbgEvaluationInfo evalInfo;
-			DbgLanguage language;
+			DbgEvaluationInfo? evalInfo;
+			DbgLanguage? language;
 			bool forceRecreateAllNodes;
 			if (isOpen) {
 				var nodeInfo = valueNodesProvider.GetNodes(valueNodesContext.EvaluationOptions, valueNodesContext.ValueNodeEvaluationOptions, valueNodesContext.ValueNodeFormatParameters.NameFormatterOptions);
@@ -245,7 +245,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		ValueNodeImpl TryGetEditNode() {
+		ValueNodeImpl? TryGetEditNode() {
 			var children = rootNode.TreeNode.Children;
 			if (children.Count == 0)
 				return null;
@@ -263,7 +263,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					var node = (ValueNodeImpl)children[i].Data;
 					if (node.RawNode is DbgValueRawNode rootNode)
 						Debug.Assert(rootNode.DebuggerValueNode == infos[i].Node);
-					else if (infos[i].Node != null && infos[i].CausesSideEffects && infos[i].Node.HasError) {
+					else if (infos[i].Node != null && infos[i].CausesSideEffects && infos[i].Node!.HasError) {
 					}
 					else
 						Debug.Assert(infos[i].Node == null);
@@ -274,7 +274,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeKindGuid, DbgLanguage language, bool forceRecreateAllNodes) {
+		void RecreateRootChildrenCore_UI(DbgValueNodeInfo[] infos, Guid? runtimeKindGuid, DbgLanguage? language, bool forceRecreateAllNodes) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 
 			bool recreateAllNodes = forceRecreateAllNodes || runtimeKindGuid != lastRuntimeKindGuid || language != lastLanguage;
@@ -362,7 +362,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		static (int newIndex, int oldIndex) GetOldIndex(Dictionary<string, List<int>> dict, DbgValueNodeInfo[] newNodes, int newIndex, int minOldIndex) {
 			for (; newIndex < newNodes.Length; newIndex++) {
 				var info = newNodes[newIndex];
-				if (dict.TryGetValue(info.Id ?? info.Node.Expression, out var list)) {
+				if (dict.TryGetValue(info.Id ?? info.Node!.Expression, out var list)) {
 					for (int i = 0; i < list.Count; i++) {
 						int oldIndex = list[i];
 						if (oldIndex >= minOldIndex)
@@ -672,7 +672,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			RecreateRootChildrenDelay_UI();
 		}
 
-		void IValueNodesVM.EditExpression(string id, string expression) {
+		void IValueNodesVM.EditExpression(string? id, string expression) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			if (!valueNodesProvider.CanAddRemoveExpressions)
 				throw new InvalidOperationException();
@@ -697,7 +697,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		bool IEditValueNodeExpression.SupportsEditExpression => ((IValueNodesVM)this).CanAddRemoveExpressions;
-		void IEditValueNodeExpression.EditExpression(string id, string expression) => ((IValueNodesVM)this).EditExpression(id, expression);
+		void IEditValueNodeExpression.EditExpression(string? id, string expression) => ((IValueNodesVM)this).EditExpression(id, expression);
 		void IEditValueNodeExpression.AddExpressions(string[] expressions) => ((IValueNodesVM)this).AddExpressions(expressions);
 
 		void IDisposable.Dispose() {

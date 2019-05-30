@@ -92,7 +92,7 @@ namespace dnSpy.Hex.Files.PE {
 			};
 		}
 
-		public static PeDosHeaderData TryCreate(HexBufferFile file, HexPosition position) {
+		public static PeDosHeaderData? TryCreate(HexBufferFile file, HexPosition position) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (!file.Span.Contains(position) || !file.Span.Contains(position + 0x40 - 1))

@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 		[ImportingConstructor]
 		QuickInfoCommandTargetFilterProvider(HexQuickInfoBroker quickInfoBroker) => this.quickInfoBroker = quickInfoBroker;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			if (target is HexView hexView)
 				return new QuickInfoCommandTargetFilter(quickInfoBroker, hexView);
 			return null;
@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 	sealed class QuickInfoCommandTargetFilter : ICommandTargetFilter {
 		readonly HexQuickInfoBroker quickInfoBroker;
 		readonly HexView hexView;
-		HexQuickInfoSession quickInfoSession;
+		HexQuickInfoSession? quickInfoSession;
 
 		public QuickInfoCommandTargetFilter(HexQuickInfoBroker quickInfoBroker, HexView hexView) {
 			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
@@ -59,12 +59,12 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == CommandConstants.HexEditorGroup) {
 				switch ((HexEditorIds)cmdId) {
 				case HexEditorIds.QUICKINFO:

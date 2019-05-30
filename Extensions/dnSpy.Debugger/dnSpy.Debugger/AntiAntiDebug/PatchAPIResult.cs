@@ -21,8 +21,8 @@ using System;
 
 namespace dnSpy.Debugger.AntiAntiDebug {
 	readonly struct PatchAPIResult {
-		public readonly string ErrorMessage;
-		public readonly ProcessMemoryBlock Block;
+		public readonly string? ErrorMessage;
+		public readonly ProcessMemoryBlock? Block;
 		public readonly ulong NewFunctionAddress;
 		public readonly SimpleAPIPatch SimplePatch;
 

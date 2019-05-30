@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DbgDotNetValue value;
-		DbgDotNetValue derefValue;
+		DbgDotNetValue? derefValue;
 		bool initialized;
 
 		public PointerValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, string expression, DbgDotNetValue value) {
@@ -58,7 +58,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return derefValue != null ? 1UL : 0;
 		}
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
 			if (derefValue == null)
 				return Array.Empty<DbgDotNetValueNode>();
 			var derefExpr = valueNodeProviderFactory.GetDereferenceExpression(Expression);
@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if (res.ErrorMessage != null)
 				valueNode = valueNodeFactory.CreateError(evalInfo, DbgDotNetText.Empty, res.ErrorMessage, derefExpr, false);
 			else
-				valueNode = valueNodeFactory.Create(res.Provider, derefName, nodeInfo, derefExpr, PredefinedDbgValueNodeImageNames.DereferencedPointer, false, false, value.Type.GetElementType(), derefValue.Type, null, default, formatSpecifiers);
+				valueNode = valueNodeFactory.Create(res.Provider!, derefName, nodeInfo, derefExpr, PredefinedDbgValueNodeImageNames.DereferencedPointer, false, false, value.Type.GetElementType()!, derefValue.Type, null, default, formatSpecifiers);
 			return new[] { valueNode };
 		}
 

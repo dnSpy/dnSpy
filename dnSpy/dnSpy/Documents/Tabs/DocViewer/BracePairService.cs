@@ -50,7 +50,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ImportingConstructor]
 		BracePairViewTaggerProvider(IBracePairServiceProvider bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
 				return null;
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(BracePairViewTagger), () => new BracePairViewTagger(textView, bracePairServiceProvider.GetBracePairService(textView))) as ITagger<T>;
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ImportingConstructor]
 		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) != true)
 				return null;
@@ -100,9 +100,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.bracePairService = bracePairService;
 		}
 
-		IDocumentViewer TryGetInstance() =>
+		IDocumentViewer? TryGetInstance() =>
 			__documentViewer ?? (__documentViewer = DocumentViewerExtensions.TryGetDocumentViewer(textView.TextBuffer));
-		IDocumentViewer __documentViewer;
+		IDocumentViewer? __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (TryGetInstance() == null)
@@ -120,12 +120,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var documentViewer = TryGetInstance();
 			if (documentViewer == null)
 				return CommandTargetStatus.NotHandled;
@@ -243,7 +243,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 	sealed class BracePairService : IBracePairService {
 		readonly ITextView textView;
-		BracePairViewTagger tagger;
+		BracePairViewTagger? tagger;
 		BracePairCollection bracePairCollection;
 		bool canHighlightBraces;
 		BracePairResultCollection? currentBracePair;

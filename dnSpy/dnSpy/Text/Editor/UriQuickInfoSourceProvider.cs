@@ -39,7 +39,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		UriQuickInfoSourceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
-		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
+		public IQuickInfoSource? TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var textView = UriWpfTextViewCreationListener.TryGetTextView(textBuffer);
 			if (textView == null)
 				return null;
@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 		}
 
-		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan? applicableToSpan) {
 			applicableToSpan = null;
 
 			var triggerPoint = session.GetTriggerPoint(textView.TextSnapshot);

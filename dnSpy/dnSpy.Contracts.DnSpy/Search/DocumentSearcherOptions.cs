@@ -37,12 +37,12 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Gets the <see cref="ISearchComparer"/> instance
 		/// </summary>
-		public ISearchComparer SearchComparer { get; set; }
+		public ISearchComparer? SearchComparer { get; set; }
 
 		/// <summary>
 		/// Filter
 		/// </summary>
-		public IDocumentTreeNodeFilter Filter { get; set; }
+		public IDocumentTreeNodeFilter? Filter { get; set; }
 
 		/// <summary>
 		/// Searches decompiled data, eg. decompiled XAML

@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		internal StepEventRequest CreateStepRequest(ThreadMirror monoThread, Func<StepCompleteEventArgs, bool> onStep) {
 			debuggerThread.VerifyAccess();
-			var stepReq = vm.CreateStepRequest(monoThread);
+			var stepReq = vm!.CreateStepRequest(monoThread);
 
 			// There can be at most one stepper active at a time. This is a limitation of mono.
 			foreach (var kv in toStepper) {
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return stepReq;
 		}
 
-		bool OnStep(StepEventRequest stepReq) {
+		bool OnStep(StepEventRequest? stepReq) {
 			debuggerThread.VerifyAccess();
 			if (stepReq == null)
 				return false;

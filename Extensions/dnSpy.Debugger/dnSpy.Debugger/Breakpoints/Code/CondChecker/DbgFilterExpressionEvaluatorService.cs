@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.Text;
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgFilterExpressionEvaluatorService {
 		public abstract bool HasExpressionEvaluator { get; }
-		public abstract string IsValidExpression(string expr);
+		public abstract string? IsValidExpression(string expr);
 		public abstract DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider);
 		public abstract void Write(IDbgTextWriter output, string expr);
 	}
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		const string NoFEEError = "No filter expression evaluator available";
 
-		public override string IsValidExpression(string expr) {
+		public override string? IsValidExpression(string expr) {
 			if (expr == null)
 				throw new ArgumentNullException(nameof(expr));
 			if (dbgFilterExpressionEvaluator != null)

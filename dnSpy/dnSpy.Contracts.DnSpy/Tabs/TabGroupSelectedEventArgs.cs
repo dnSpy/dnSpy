@@ -27,19 +27,19 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Selected tab group or null
 		/// </summary>
-		public ITabGroup Selected { get; }
+		public ITabGroup? Selected { get; }
 
 		/// <summary>
 		/// Unselected tab group or null
 		/// </summary>
-		public ITabGroup Unselected { get; }
+		public ITabGroup? Unselected { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="selected">Selected tab group or null</param>
 		/// <param name="unselected">Unselected tab group or null</param>
-		public TabGroupSelectedEventArgs(ITabGroup selected, ITabGroup unselected) {
+		public TabGroupSelectedEventArgs(ITabGroup? selected, ITabGroup? unselected) {
 			Selected = selected;
 			Unselected = unselected;
 		}

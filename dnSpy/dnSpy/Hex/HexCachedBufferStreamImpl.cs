@@ -89,7 +89,7 @@ namespace dnSpy.Hex {
 					return cp;
 			}
 
-			CachedPage foundCp = null;
+			CachedPage? foundCp = null;
 			for (int i = 0; i < cachedPages.Length; i++) {
 				var cp = cachedPages[(i + lastHitIndex) % cachedPages.Length];
 				if (!cp.IsInitialized) {
@@ -389,7 +389,7 @@ namespace dnSpy.Hex {
 			if (length == 0)
 				return HexBytes.Empty;
 
-			BitArray bitArray = null;
+			BitArray? bitArray = null;
 			var destination = new byte[length];
 			long destinationIndex = 0;
 			long invalidBytes = 0, validBytes = 0;
@@ -491,7 +491,7 @@ namespace dnSpy.Hex {
 		protected override void DisposeCore() {
 			if (disposeStream)
 				simpleStream?.Dispose();
-			simpleStream = null;
+			simpleStream = null!;
 		}
 	}
 }

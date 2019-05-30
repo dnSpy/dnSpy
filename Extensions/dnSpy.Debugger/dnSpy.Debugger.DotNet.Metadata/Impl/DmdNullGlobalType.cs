@@ -23,28 +23,28 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdNullGlobalType : DmdTypeDef {
 		public override DmdModule Module { get; }
-		public override string MetadataNamespace => null;
-		public override string MetadataName => "<Module>";
+		public override string? MetadataNamespace => null;
+		public override string? MetadataName => "<Module>";
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic;
 
-		public DmdNullGlobalType(DmdModule module, IList<DmdCustomModifier> customModifiers) : base(1, customModifiers) =>
+		public DmdNullGlobalType(DmdModule module, IList<DmdCustomModifier>? customModifiers) : base(1, customModifiers) =>
 			Module = module ?? throw new ArgumentNullException(nameof(module));
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdNullGlobalType(Module, VerifyCustomModifiers(customModifiers)));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.Intern(new DmdNullGlobalType(Module, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdNullGlobalType(Module, null));
 
-		protected override DmdType GetDeclaringType() => null;
-		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) => null;
-		protected override DmdType[] CreateGenericParameters() => null;
+		protected override DmdType? GetDeclaringType() => null;
+		protected override DmdType? GetBaseTypeCore(IList<DmdType> genericTypeArguments) => null;
+		protected override DmdType[]? CreateGenericParameters() => null;
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) => null;
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) => null;
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) => null;
-		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdFieldInfo[]? ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdMethodBase[]? ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdPropertyInfo[]? ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) => null;
+		public override DmdEventInfo[]? ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) => null;
 
-		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) => null;
-		protected override DmdType[] CreateNestedTypes() => null;
-		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
+		protected override DmdType[]? ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) => null;
+		protected override DmdType[]? CreateNestedTypes() => null;
+		public override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() => (null, null);
 		protected override (int packingSize, int classSize) GetClassLayout() => (0, 0);
 	}
 }

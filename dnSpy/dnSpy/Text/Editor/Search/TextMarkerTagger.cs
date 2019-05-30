@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor.Search {
 		[ImportingConstructor]
 		TextMarkerTaggerProvider(ISearchServiceProvider searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
 			if (wpfTextView == null)
 				return null;

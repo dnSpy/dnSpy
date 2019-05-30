@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return info?.languageCompilerProvider.Icon;
 		}
 
-		public string GetHeader(CompilationKind kind) {
+		public string? GetHeader(CompilationKind kind) {
 			var info = GetLanguageCompilerProvider(kind);
 			if (info == null)
 				return null;

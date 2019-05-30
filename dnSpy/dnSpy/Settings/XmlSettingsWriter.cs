@@ -29,7 +29,7 @@ namespace dnSpy.Settings {
 		readonly ISettingsService mgr;
 		readonly string filename;
 
-		public XmlSettingsWriter(ISettingsService mgr, string filename = null) {
+		public XmlSettingsWriter(ISettingsService mgr, string? filename = null) {
 			this.mgr = mgr;
 			this.filename = filename ?? AppDirectories.SettingsFilename;
 		}

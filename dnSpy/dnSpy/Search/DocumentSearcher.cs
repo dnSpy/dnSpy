@@ -104,7 +104,7 @@ namespace dnSpy.Search {
 		}
 		bool hasStarted = false;
 
-		public ISearchResult SearchingResult { get; set; }
+		public ISearchResult? SearchingResult { get; set; }
 
 		void SearchNewThread(object o) {
 			try {

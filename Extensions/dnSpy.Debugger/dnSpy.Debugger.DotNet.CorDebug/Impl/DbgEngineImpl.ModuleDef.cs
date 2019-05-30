@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
 		sealed class AppDomainModuleState {
-			public ModuleContext ModuleContext;
+			public ModuleContext? ModuleContext;
 		}
 
 		void DnDebugger_OnCorModuleDefCreated(object sender, CorModuleDefCreatedEventArgs e) {

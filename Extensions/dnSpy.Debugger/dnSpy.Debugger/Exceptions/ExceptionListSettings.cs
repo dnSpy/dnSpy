@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Exceptions {
 			var flags = section.Attribute<DbgExceptionDefinitionFlags?>("Flags");
 			if (flags == null)
 				return false;
-			ReadOnlyCollection<DbgExceptionConditionSettings> condSettings;
+			ReadOnlyCollection<DbgExceptionConditionSettings>? condSettings;
 			var condSects = section.SectionsWithName("Conditions");
 			if (condSects.Length == 0)
 				condSettings = null;

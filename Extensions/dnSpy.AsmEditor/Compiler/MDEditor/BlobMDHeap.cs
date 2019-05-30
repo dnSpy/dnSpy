@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			newData = new List<byte[]>();
 		}
 
-		public uint Create(byte[] data) {
+		public uint Create(byte[]? data) {
 			if (currentOffset == 0) {
 				newData.Add(new byte[1]);
 				currentOffset++;

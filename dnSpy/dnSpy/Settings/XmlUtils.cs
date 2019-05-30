@@ -25,7 +25,7 @@ namespace dnSpy.Settings {
 	static class XmlUtils {
 		const char ESCAPE_CHAR = '©';
 
-		public static string EscapeAttributeValue(string s) {
+		public static string? EscapeAttributeValue(string s) {
 			if (s == null)
 				return null;
 			var sb = new StringBuilder(s.Length);
@@ -38,7 +38,7 @@ namespace dnSpy.Settings {
 			return sb.ToString();
 		}
 
-		public static string UnescapeAttributeValue(string s) {
+		public static string? UnescapeAttributeValue(string s) {
 			if (s == null)
 				return null;
 			if (s.IndexOf(ESCAPE_CHAR) < 0)
@@ -77,7 +77,7 @@ namespace dnSpy.Settings {
 
 		static bool IsHex(char c) => ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
 
-		public static string FilterAttributeName(string s) {
+		public static string? FilterAttributeName(string s) {
 			if (s == null || s.Length == 0)
 				return null;
 

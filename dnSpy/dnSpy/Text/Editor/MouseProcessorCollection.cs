@@ -25,13 +25,13 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	sealed class MouseProcessorCollection : IDisposable {
 		readonly UIElement mouseElement;
-		readonly UIElement manipulationElement;
+		readonly UIElement? manipulationElement;
 		readonly DefaultMouseProcessor defaultMouseProcessor;
 		readonly IMouseProcessor[] mouseProcessors;
 		readonly Func<MouseEventArgs, bool> allowEvent;
 		static readonly Func<MouseEventArgs, bool> defaultAllowEvent = a => true;
 
-		public MouseProcessorCollection(UIElement mouseElement, UIElement manipulationElement, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool> allowEvent) {
+		public MouseProcessorCollection(UIElement mouseElement, UIElement? manipulationElement, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool>? allowEvent) {
 			this.mouseElement = mouseElement ?? throw new ArgumentNullException(nameof(mouseElement));
 			this.manipulationElement = manipulationElement;
 			this.defaultMouseProcessor = defaultMouseProcessor ?? throw new ArgumentNullException(nameof(defaultMouseProcessor));

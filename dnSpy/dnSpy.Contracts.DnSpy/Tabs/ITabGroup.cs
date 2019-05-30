@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Any value can be written here. It's ignored by this instance.
 		/// </summary>
-		object Tag { get; set; }
+		object? Tag { get; set; }
 
 		/// <summary>
 		/// Gets the owner <see cref="ITabGroupService"/> instance
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Gets the active <see cref="ITabContent"/> or null if <see cref="TabContents"/> is empty
 		/// </summary>
-		ITabContent ActiveTabContent { get; set; }
+		ITabContent? ActiveTabContent { get; set; }
 
 		/// <summary>
 		/// Raised when a <see cref="ITabContent"/> is attached/detached

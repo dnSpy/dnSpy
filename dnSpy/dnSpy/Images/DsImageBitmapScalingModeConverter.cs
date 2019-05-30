@@ -25,7 +25,7 @@ using System.Windows.Media;
 
 namespace dnSpy.Images {
 	sealed class DsImageBitmapScalingModeConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
 			bool b = values.Length == 2;

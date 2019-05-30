@@ -43,7 +43,7 @@ namespace dnSpy.Text.Formatting {
 		public ITextAndAdornmentSequencer TextAndAdornmentSequencer { get; }
 		public TextRunProperties DefaultTextProperties => classificationFormatMap.DefaultTextProperties;
 
-		readonly ITextParagraphPropertiesFactoryService textParagraphPropertiesFactoryService;
+		readonly ITextParagraphPropertiesFactoryService? textParagraphPropertiesFactoryService;
 		readonly IClassifier aggregateClassifier;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly FormattedTextCache formattedTextCache;
@@ -54,7 +54,7 @@ namespace dnSpy.Text.Formatting {
 		// Should be enough...
 		const int MAX_LINE_LENGTH = 5000;
 
-		public FormattedLineSource(ITextFormatterProvider textFormatterProvider, ITextParagraphPropertiesFactoryService textParagraphPropertiesFactoryService, ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, IClassifier aggregateClassifier, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap, bool isViewWrapEnabled) {
+		public FormattedLineSource(ITextFormatterProvider textFormatterProvider, ITextParagraphPropertiesFactoryService? textParagraphPropertiesFactoryService, ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, IClassifier aggregateClassifier, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap, bool isViewWrapEnabled) {
 			if (textFormatterProvider == null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
 			if (sourceTextSnapshot == null)
@@ -104,7 +104,7 @@ namespace dnSpy.Text.Formatting {
 			var textSource = new LinePartsTextSource(linePartsCollection);
 			var lines = new Collection<IFormattedLine>();
 
-			TextLineBreak previousLineBreak = null;
+			TextLineBreak? previousLineBreak = null;
 			double autoIndent = BaseIndentation;
 			int column = 0;
 			int linePartsIndex = 0;
@@ -234,7 +234,7 @@ namespace dnSpy.Text.Formatting {
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
 				if (last.AdornmentElement == null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
-					list[list.Count - 1] = new LinePart(list.Count - 1, last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
+					list[list.Count - 1] = new LinePart(list.Count - 1, last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties!);
 					return;
 				}
 			}

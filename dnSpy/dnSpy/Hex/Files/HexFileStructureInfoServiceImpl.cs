@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Files {
 				return hexFileStructureInfoProviders;
 			}
 		}
-		HexFileStructureInfoProvider[] hexFileStructureInfoProviders;
+		HexFileStructureInfoProvider[]? hexFileStructureInfoProviders;
 
 		public HexFileStructureInfoServiceImpl(HexView hexView, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexFileStructureInfoProviderFactory, IOrderable>[] hexFileStructureInfoProviderFactories) {
 			if (hexBufferFileServiceFactory == null)
@@ -58,7 +58,7 @@ namespace dnSpy.Hex.Files {
 			return providers.ToArray();
 		}
 
-		public override HexIndexes[] GetSubStructureIndexes(HexPosition position) {
+		public override HexIndexes[]? GetSubStructureIndexes(HexPosition position) {
 			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;
@@ -97,7 +97,7 @@ namespace dnSpy.Hex.Files {
 			return true;
 		}
 
-		public override object GetToolTip(HexPosition position) {
+		public override object? GetToolTip(HexPosition position) {
 			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;
@@ -113,7 +113,7 @@ namespace dnSpy.Hex.Files {
 			return null;
 		}
 
-		public override object GetReference(HexPosition position) {
+		public override object? GetReference(HexPosition position) {
 			var info = hexBufferFileService.GetFileAndStructure(position);
 			if (info == null)
 				return null;

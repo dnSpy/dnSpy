@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Modules {
 			return true;
 		}
 
-		ModuleDef LoadModule(DbgModule module, DbgLoadModuleOptions options, ref bool canShowMessageBox) {
+		ModuleDef? LoadModule(DbgModule module, DbgLoadModuleOptions options, ref bool canShowMessageBox) {
 			if (!module.IsDotNetModule())
 				return null;
 

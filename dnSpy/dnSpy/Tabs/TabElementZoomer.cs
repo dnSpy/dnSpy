@@ -30,9 +30,9 @@ namespace dnSpy.Tabs {
 	sealed class TabElementZoomer : IDisposable {
 		readonly List<CommandBinding> commandBindings;
 		readonly List<KeyBinding> keyBindings;
-		FrameworkElement zoomElement;
-		IUIObjectProvider uiObjectProvider;
-		IZoomable zoomable;
+		FrameworkElement? zoomElement;
+		IUIObjectProvider? uiObjectProvider;
+		IZoomable? zoomable;
 
 		public TabElementZoomer() {
 			commandBindings = new List<CommandBinding>();
@@ -56,7 +56,7 @@ namespace dnSpy.Tabs {
 			keyBindings.Add(new KeyBinding(cmd, Key.NumPad0, ModifierKeys.Control));
 		}
 
-		public void InstallZoom(IUIObjectProvider provider, FrameworkElement elem) {
+		public void InstallZoom(IUIObjectProvider provider, FrameworkElement? elem) {
 			var zoomable = (provider as IZoomableProvider)?.Zoomable ?? provider as IZoomable;
 			if (zoomable != null)
 				InstallScaleCore(provider, zoomable);
@@ -72,7 +72,7 @@ namespace dnSpy.Tabs {
 			SetZoomValue(zoomable.ZoomValue, force: true);
 		}
 
-		void InstallScaleCore(IUIObjectProvider provider, FrameworkElement elem) {
+		void InstallScaleCore(IUIObjectProvider provider, FrameworkElement? elem) {
 			UninstallScale();
 			zoomElement = elem;
 			uiObjectProvider = provider;
@@ -125,7 +125,7 @@ namespace dnSpy.Tabs {
 			set => SetZoomValue(value, force: false);
 		}
 		double currentZoomValue = 1;
-		MetroWindow metroWindow;
+		MetroWindow? metroWindow;
 
 		void SetZoomValue(double value, bool force) {
 			var newZoomValue = value;
@@ -147,6 +147,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void AddScaleTransform() {
+			Debug.Assert(zoomElement != null);
 			var mwin = GetWindow();
 			if (mwin != null) {
 				mwin.SetScaleTransform(zoomElement, currentZoomValue);
@@ -154,7 +155,7 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		MetroWindow GetWindow() {
+		MetroWindow? GetWindow() {
 			Debug.Assert(zoomElement != null);
 			if (metroWindow != null)
 				return metroWindow;
@@ -184,7 +185,8 @@ namespace dnSpy.Tabs {
 		void ZoomElement_Loaded(object sender, RoutedEventArgs e) {
 			var fe = (FrameworkElement)sender;
 			fe.Loaded -= ZoomElement_Loaded;
-			AddScaleTransform();
+			if (zoomElement != null)
+				AddScaleTransform();
 		}
 
 		public void Dispose() => UninstallScale();

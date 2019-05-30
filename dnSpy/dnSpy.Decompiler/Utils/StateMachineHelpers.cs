@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
@@ -45,7 +46,7 @@ namespace dnSpy.Decompiler.Utils {
 			return false;
 		}
 
-		public static TypeDef GetStateMachineType(MethodDef method) {
+		public static TypeDef? GetStateMachineType(MethodDef method) {
 			var stateMachineType = GetStateMachineTypeCore(method);
 			if (stateMachineType == null)
 				return null;
@@ -62,12 +63,12 @@ namespace dnSpy.Decompiler.Utils {
 			return null;
 		}
 
-		static TypeDef GetStateMachineTypeCore(MethodDef method) =>
+		static TypeDef? GetStateMachineTypeCore(MethodDef method) =>
 			GetStateMachineTypeFromCustomAttributesCore(method) ??
 			GetAsyncStateMachineTypeFromInstructionsCore(method) ??
 			GetIteratorStateMachineTypeFromInstructionsCore(method);
 
-		static TypeDef GetStateMachineTypeFromCustomAttributesCore(MethodDef method) {
+		static TypeDef? GetStateMachineTypeFromCustomAttributesCore(MethodDef method) {
 			foreach (var ca in method.CustomAttributes) {
 				if (ca.ConstructorArguments.Count != 1)
 					continue;
@@ -93,7 +94,7 @@ namespace dnSpy.Decompiler.Utils {
 			EqualsName(tdr, System_Runtime_CompilerServices, AsyncStateMachineAttribute) ||
 			EqualsName(tdr, System_Runtime_CompilerServices, IteratorStateMachineAttribute);
 
-		static TypeDef GetAsyncStateMachineTypeFromInstructionsCore(MethodDef method) {
+		static TypeDef? GetAsyncStateMachineTypeFromInstructionsCore(MethodDef method) {
 			var body = method.Body;
 			if (body == null)
 				return null;
@@ -111,7 +112,7 @@ namespace dnSpy.Decompiler.Utils {
 			return null;
 		}
 
-		static TypeDef GetIteratorStateMachineTypeFromInstructionsCore(MethodDef method) {
+		static TypeDef? GetIteratorStateMachineTypeFromInstructionsCore(MethodDef method) {
 			if (!IsIteratorReturnType(method.MethodSig.GetRetType().RemovePinnedAndModifiers()))
 				return null;
 			var instrs = method.Body?.Instructions;
@@ -164,7 +165,7 @@ namespace dnSpy.Decompiler.Utils {
 			return false;
 		}
 
-		static MethodDef FindDispose(TypeDef type) {
+		static MethodDef? FindDispose(TypeDef type) {
 			foreach (var method in type.Methods) {
 				foreach (var o in method.Overrides) {
 					if (o.MethodDeclaration.Name != stringDispose)
@@ -205,7 +206,7 @@ namespace dnSpy.Decompiler.Utils {
 		/// <param name="method">A possible state machine MoveNext method</param>
 		/// <param name="kickoffMethod">Updated with kickoff method on success</param>
 		/// <returns></returns>
-		public static bool TryGetKickoffMethod(MethodDef method, out MethodDef kickoffMethod) {
+		public static bool TryGetKickoffMethod(MethodDef method, [NotNullWhenTrue] out MethodDef? kickoffMethod) {
 			kickoffMethod = null;
 			var declType = method.DeclaringType;
 
@@ -243,7 +244,7 @@ namespace dnSpy.Decompiler.Utils {
 			return false;
 		}
 
-		static bool TryGetKickoffMethodFromAttributes(TypeDef smType, out MethodDef kickoffMethod) {
+		static bool TryGetKickoffMethodFromAttributes(TypeDef smType, [NotNullWhenTrue] out MethodDef? kickoffMethod) {
 			foreach (var possibleKickoffMethod in smType.DeclaringType.Methods) {
 				if (GetStateMachineTypeFromCustomAttributesCore(possibleKickoffMethod) == smType) {
 					kickoffMethod = possibleKickoffMethod;

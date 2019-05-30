@@ -38,7 +38,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextViewMarkerService {
 		IWpfTextView TextView { get; }
-		void SetDotNetSpanMap(IDotNetSpanMap map);
+		void SetDotNetSpanMap(IDotNetSpanMap? map);
 	}
 
 	interface IGlyphTextMarkerListener {
@@ -51,17 +51,17 @@ namespace dnSpy.Text.Editor {
 
 		readonly IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl;
 		readonly IAdornmentLayer markerLayer;
-		ITagAggregator<IGlyphTextMarkerTag> glyphTextMarkerTagAggregator;
+		ITagAggregator<IGlyphTextMarkerTag>? glyphTextMarkerTagAggregator;
 		readonly GlyphTextViewMarkerGlyphTagger glyphTextViewMarkerGlyphTagTagger;
 		readonly GlyphTextViewMarkerGlyphTextMarkerTagger glyphTextViewMarkerGlyphTextMarkerTagTagger;
 		readonly GlyphTextViewMarkerClassificationTagger glyphTextViewMarkerClassificationTagTagger;
-		IDotNetSpanMap dotNetSpanMap;
+		IDotNetSpanMap? dotNetSpanMap;
 		readonly MarkerAndSpanCollection markerAndSpanCollection;
 		readonly IEditorFormatMap editorFormatMap;
 		readonly List<MarkerElement> markerElements;
 		bool useReducedOpacityForHighContrast;
 		bool isInContrastMode;
-		IGlyphTextMarkerListener glyphTextMarkerListener;
+		IGlyphTextMarkerListener? glyphTextMarkerListener;
 
 		sealed class MarkerAndSpanCollection {
 			readonly List<IGlyphTextMarkerImpl> allMarkers;
@@ -91,7 +91,7 @@ namespace dnSpy.Text.Editor {
 				this.owner = owner;
 			}
 
-			public void UpdateSpans(IDotNetSpanMap map) {
+			public void UpdateSpans(IDotNetSpanMap? map) {
 				inDocMarkers.Clear();
 				SelectedMarkersInDocumentCount = 0;
 				if (map != null) {
@@ -260,7 +260,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		bool ExistsIn(List<IGlyphTextMarkerImpl> list, IGlyphTextMarkerImpl marker) {
+		bool ExistsIn(List<IGlyphTextMarkerImpl>? list, IGlyphTextMarkerImpl marker) {
 			if (list == null)
 				return false;
 			foreach (var m in list) {
@@ -270,12 +270,12 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		List<IGlyphTextMarkerImpl> GetMarkers(VirtualSnapshotPoint virtualBufferPosition) {
+		List<IGlyphTextMarkerImpl>? GetMarkers(VirtualSnapshotPoint virtualBufferPosition) {
 			if (virtualBufferPosition.VirtualSpaces > 0)
 				return null;
 			var pos = virtualBufferPosition.Position.TranslateTo(TextView.TextSnapshot, PointTrackingMode.Negative);
 			var spans = new NormalizedSnapshotSpanCollection(new SnapshotSpan(pos, 0));
-			List<IGlyphTextMarkerImpl> list = null;
+			List<IGlyphTextMarkerImpl>? list = null;
 			foreach (var info in GetMarkers(spans, startOfSpanOnly: false)) {
 				if (list == null)
 					list = new List<IGlyphTextMarkerImpl>();
@@ -315,7 +315,7 @@ namespace dnSpy.Text.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
+			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
@@ -324,9 +324,9 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
+			public Pen? Pen {
 				get => pen;
 				set {
 					if (pen != value) {
@@ -335,15 +335,15 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public SnapshotSpan Span { get; }
 			public string FormatType { get; }
 			public string Type { get; }
-			public string SelectedType { get; }
+			public string? SelectedType { get; }
 			public int ZIndex { get; }
 
-			public MarkerElement(SnapshotSpan span, string formatType, string type, string selectedType, int zIndex, Geometry geometry) {
+			public MarkerElement(SnapshotSpan span, string formatType, string type, string? selectedType, int zIndex, Geometry geometry) {
 				if (span.Snapshot == null)
 					throw new ArgumentException();
 				Span = span;
@@ -401,7 +401,7 @@ namespace dnSpy.Text.Editor {
 			TextView.VisualElement.Dispatcher.VerifyAccess();
 			if (TextView.IsClosed)
 				return;
-			List<SnapshotSpan> intersectionSpans = null;
+			List<SnapshotSpan>? intersectionSpans = null;
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(TextView.TextSnapshot)) {
 					var intersection = TextView.TextViewLines.FormattedSpan.Intersection(span);
@@ -465,25 +465,21 @@ namespace dnSpy.Text.Editor {
 
 		bool ShouldUseHighContrastOpacity => useReducedOpacityForHighContrast && isInContrastMode;
 
-		Brush GetBackgroundBrush(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-			Brush fillBrush;
-
+		Brush? GetBackgroundBrush(ResourceDictionary props) {
 			const double BG_BRUSH_OPACITY = 0.8;
 			const double BG_BRUSH_HIGHCONTRAST_OPACITY = 0.5;
 			Brush newBrush;
-			if ((color = props[EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
-				newBrush = new SolidColorBrush(color.Value);
+			if (props[EditorFormatDefinition.BackgroundColorId] is Color color) {
+				newBrush = new SolidColorBrush(color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.BackgroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.BackgroundBrushId] is SolidColorBrush scBrush) {
 				newBrush = new SolidColorBrush(scBrush.Color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((fillBrush = props[MarkerFormatDefinition.FillId] as Brush) != null) {
+			else if (props[MarkerFormatDefinition.FillId] is Brush fillBrush) {
 				newBrush = fillBrush;
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();
@@ -501,19 +497,16 @@ namespace dnSpy.Text.Editor {
 			return newBrush;
 		}
 
-		Pen GetPen(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-
+		Pen? GetPen(ResourceDictionary props) {
 			const double PEN_THICKNESS = 1;
-			Pen newPen;
-			if ((color = props[EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+			Pen? newPen;
+			if (props[EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = new Pen(brush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = new Pen(scBrush, PEN_THICKNESS);
@@ -527,7 +520,7 @@ namespace dnSpy.Text.Editor {
 			return newPen;
 		}
 
-		MarkerElement TryCreateMarkerElement(SnapshotSpan span, IGlyphTextMarkerTag tag) {
+		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, IGlyphTextMarkerTag tag) {
 			Debug.Assert(tag.MarkerTypeName != null);
 			var geo = TextView.TextViewLines.GetMarkerGeometry(span);
 			if (geo == null)
@@ -582,7 +575,7 @@ namespace dnSpy.Text.Editor {
 			return service;
 		}
 
-		void IGlyphTextViewMarkerService.SetDotNetSpanMap(IDotNetSpanMap map) {
+		void IGlyphTextViewMarkerService.SetDotNetSpanMap(IDotNetSpanMap? map) {
 			if (dotNetSpanMap == map)
 				return;
 			dotNetSpanMap = map as IDotNetSpanMap;
@@ -698,7 +691,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		GlyphTextMarkerAndSpan[] GetGlyphTextMarkerAndSpan(SnapshotSpan span) {
-			List<GlyphTextMarkerAndSpan> result = null;
+			List<GlyphTextMarkerAndSpan>? result = null;
 			foreach (var info in GetMarkers(new NormalizedSnapshotSpanCollection(span), startOfSpanOnly: false)) {
 				if (result == null)
 					result = new List<GlyphTextMarkerAndSpan>();
@@ -717,7 +710,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public UIElement GenerateGlyph(IWpfTextViewLine line, GlyphTextMarkerGlyphTag glyphTag) {
+		public UIElement? GenerateGlyph(IWpfTextViewLine line, GlyphTextMarkerGlyphTag glyphTag) {
 			if (line == null)
 				throw new ArgumentNullException(nameof(line));
 			if (glyphTag == null)
@@ -795,7 +788,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		internal IGlyphTextMarkerImpl[] GetSortedGlyphTextMarkers(IWpfTextViewLine line) {
-			List<IGlyphTextMarkerImpl> markers = null;
+			List<IGlyphTextMarkerImpl>? markers = null;
 
 			if (markerAndSpanCollection.CountInDocument != 0) {
 				var spans = new NormalizedSnapshotSpanCollection(line.Extent);
@@ -827,7 +820,7 @@ namespace dnSpy.Text.Editor {
 			return new SnapshotSpan(snapshot, 0, 0);
 		}
 
-		internal IWpfTextViewLine GetVisibleLine(IGlyphTextMarkerImpl marker) {
+		internal IWpfTextViewLine? GetVisibleLine(IGlyphTextMarkerImpl marker) {
 			if (marker == null)
 				throw new ArgumentNullException(nameof(marker));
 

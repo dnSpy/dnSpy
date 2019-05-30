@@ -47,7 +47,7 @@ namespace dnSpy.ToolWindows {
 				focusable.Focus();
 		}
 
-		public IInputElement FocusedElement => Content.FocusedElement ?? Content.UIObject as IInputElement;
+		public IInputElement? FocusedElement => Content.FocusedElement ?? Content.UIObject as IInputElement;
 
 		public bool IsActive {
 			get => isActive;
@@ -60,11 +60,11 @@ namespace dnSpy.ToolWindows {
 		}
 		bool isActive;
 
-		public string Title => Content.Title;
+		public string? Title => Content.Title;
 
-		public object ToolTip => Content.ToolTip;
+		public object? ToolTip => Content.ToolTip;
 
-		public object UIObject {
+		public object? UIObject {
 			get {
 				if (contentPresenter == null) {
 					contentPresenter = new ContentPresenter { Content = this };
@@ -82,7 +82,7 @@ namespace dnSpy.ToolWindows {
 				return contentPresenter;
 			}
 		}
-		ContentPresenter contentPresenter;
+		ContentPresenter? contentPresenter;
 
 		void UpdateZoomElement() => elementZoomer.InstallZoom(Content, Content.ZoomElement);
 
@@ -96,14 +96,14 @@ namespace dnSpy.ToolWindows {
 
 		bool IsKeyboardFocusWithin {
 			get {
-				if (contentPresenter.IsKeyboardFocusWithin)
+				if (contentPresenter?.IsKeyboardFocusWithin == true)
 					return true;
 				var f = ContentUIObject as IInputElement;
 				return f != null && f.IsKeyboardFocusWithin;
 			}
 		}
 
-		public object ContentUIObject {
+		public object? ContentUIObject {
 			get {
 				if (!contentUIObject_initd) {
 					contentUIObject_initd = true;
@@ -119,20 +119,20 @@ namespace dnSpy.ToolWindows {
 				}
 			}
 		}
-		object contentUIObject;
+		object? contentUIObject;
 		bool contentUIObject_initd;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public ToolWindowContent Content { get; }
 
-		public ToolWindowGroup Owner {
+		public ToolWindowGroup? Owner {
 			get {
 				Debug.Assert(owner != null);
 				return owner;
 			}
-			set { owner = value; }
+			set => owner = value;
 		}
-		ToolWindowGroup owner;
+		ToolWindowGroup? owner;
 
 		readonly TabElementZoomer elementZoomer;
 
@@ -271,7 +271,7 @@ namespace dnSpy.ToolWindows {
 			if (fe == null)
 				return;
 
-			Owner.SetFocus(this);
+			Owner!.SetFocus(this);
 			Owner.TabGroup.ContextMenuProvider.Show(fe);
 		}
 	}

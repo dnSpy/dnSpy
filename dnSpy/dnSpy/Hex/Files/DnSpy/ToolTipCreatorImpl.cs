@@ -47,6 +47,6 @@ namespace dnSpy.Hex.Files.DnSpy {
 			ToolTipContentCreator = hexToolTipContentCreator ?? throw new ArgumentNullException(nameof(hexToolTipContentCreator));
 		}
 
-		public override object Create() => toolTipObjectFactory.Create(ToolTipContentCreator.Create());
+		public override object? Create() => toolTipObjectFactory.Create(ToolTipContentCreator.Create());
 	}
 }

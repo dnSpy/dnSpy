@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		[ImportingConstructor]
 		ActiveStatementTaggerProvider(ActiveStatementService activeStatementService) => this.activeStatementService = activeStatementService;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
 				return null;
 			return textView.TextBuffer.Properties.GetOrCreateSingletonProperty(() => new ActiveStatementTagger(activeStatementService, textView)) as ITagger<T>;

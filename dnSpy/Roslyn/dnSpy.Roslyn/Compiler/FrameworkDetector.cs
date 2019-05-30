@@ -74,7 +74,7 @@ namespace dnSpy.Roslyn.Compiler {
 			return FrameworkKind.Unknown;
 		}
 
-		static (string framework, string version, string profile) TryGetTargetFrameworkAttribute(AssemblyDef asm) {
+		static (string framework, string version, string? profile) TryGetTargetFrameworkAttribute(AssemblyDef asm) {
 			var ca = asm?.CustomAttributes.Find("System.Runtime.Versioning.TargetFrameworkAttribute");
 			if (ca == null)
 				return default;
@@ -97,8 +97,8 @@ namespace dnSpy.Roslyn.Compiler {
 			if (framework.Length == 0)
 				return default;
 
-			string versionStr = null;
-			string profile = null;
+			string? versionStr = null;
+			string? profile = null;
 			for (int i = 1; i < values.Length; i++) {
 				var kvp = values[i].Split('=');
 				if (kvp.Length != 2)

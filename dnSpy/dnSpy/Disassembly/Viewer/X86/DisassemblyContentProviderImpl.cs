@@ -34,13 +34,13 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		readonly INasmDisassemblySettings nasmSettings;
 		readonly IGasDisassemblySettings gasSettings;
 		readonly DisassemblyContentFormatterOptions formatterOptions;
-		readonly string header;
+		readonly string? header;
 		readonly NativeCodeOptimization optimization;
 		readonly Block[] blocks;
-		readonly X86NativeCodeInfo codeInfo;
-		readonly NativeVariableInfo[] variableInfo;
-		readonly string methodName;
-		readonly string moduleName;
+		readonly X86NativeCodeInfo? codeInfo;
+		readonly NativeVariableInfo[]? variableInfo;
+		readonly string? methodName;
+		readonly string? moduleName;
 		readonly SymbolResolverImpl symbolResolver;
 		bool hasRegisteredEvents;
 		bool closed;
@@ -87,7 +87,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			}
 		}
 
-		public DisassemblyContentProviderImpl(int bitness, CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, NativeCodeOptimization optimization, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public DisassemblyContentProviderImpl(int bitness, CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string? header, NativeCodeOptimization optimization, Block[] blocks, X86NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
 			this.bitness = bitness;
 			this.cachedSymbolResolver = cachedSymbolResolver ?? throw new ArgumentNullException(nameof(cachedSymbolResolver));
 			this.disasmSettings = disasmSettings ?? throw new ArgumentNullException(nameof(disasmSettings));

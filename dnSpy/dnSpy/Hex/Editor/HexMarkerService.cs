@@ -115,7 +115,7 @@ namespace dnSpy.Hex.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
+			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
 					if (value == null)
@@ -126,9 +126,9 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
+			public Pen? Pen {
 				get => pen;
 				set {
 					if (pen != value) {
@@ -137,7 +137,7 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public HexBufferSpan Span { get; }
 			public string Type { get; }
@@ -199,7 +199,7 @@ namespace dnSpy.Hex.Editor {
 			if (wpfHexView.IsClosed)
 				return;
 			wpfHexView.VisualElement.Dispatcher.VerifyAccess();
-			List<HexBufferSpan> intersectionSpans = null;
+			List<HexBufferSpan>? intersectionSpans = null;
 			foreach (var span in e.Spans) {
 				var intersection = wpfHexView.HexViewLines.FormattedSpan.Intersection(span);
 				if (intersection != null) {
@@ -261,6 +261,7 @@ namespace dnSpy.Hex.Editor {
 								markerElements.Add(markerElement);
 						}
 					}
+					Debug.Assert(line != null);
 
 					pos = line.BufferEnd;
 					if (pos > overlap.Value.End || pos >= formattedEnd)
@@ -290,24 +291,20 @@ namespace dnSpy.Hex.Editor {
 		bool ShouldUseHighContrastOpacity => useReducedOpacityForHighContrast && isInContrastMode;
 
 		Brush GetBackgroundBrush(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-			Brush fillBrush;
-
 			const double BG_BRUSH_OPACITY = 0.8;
 			const double BG_BRUSH_HIGHCONTRAST_OPACITY = 0.5;
 			Brush newBrush;
-			if ((color = props[VSTC.EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
-				newBrush = new SolidColorBrush(color.Value);
+			if (props[VSTC.EditorFormatDefinition.BackgroundColorId] is Color color) {
+				newBrush = new SolidColorBrush(color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((scBrush = props[VSTC.EditorFormatDefinition.BackgroundBrushId] as SolidColorBrush) != null) {
+			else if (props[VSTC.EditorFormatDefinition.BackgroundBrushId] is SolidColorBrush scBrush) {
 				newBrush = new SolidColorBrush(scBrush.Color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((fillBrush = props[VSTC.MarkerFormatDefinition.FillId] as Brush) != null) {
+			else if (props[VSTC.MarkerFormatDefinition.FillId] is Brush fillBrush) {
 				newBrush = fillBrush;
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();
@@ -328,19 +325,16 @@ namespace dnSpy.Hex.Editor {
 			return newBrush;
 		}
 
-		Pen GetPen(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-
+		Pen? GetPen(ResourceDictionary props) {
 			const double PEN_THICKNESS = 0.5;
-			Pen newPen;
-			if ((color = props[VSTC.EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+			Pen? newPen;
+			if (props[VSTC.EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = new Pen(brush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[VSTC.EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[VSTC.EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = new Pen(scBrush, PEN_THICKNESS);
@@ -354,7 +348,7 @@ namespace dnSpy.Hex.Editor {
 			return newPen;
 		}
 
-		MarkerElement TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
+		MarkerElement? TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
 			Debug.Assert(tag.Type != null);
 			var overlap = wpfHexView.WpfHexViewLines.FormattedSpan.Overlap(span);
 			if (overlap == null)
@@ -362,12 +356,12 @@ namespace dnSpy.Hex.Editor {
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetMarkerGeometry(overlap.Value, flags), overlap.Value, tag);
 		}
 
-		MarkerElement TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
+		MarkerElement? TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
 			Debug.Assert(tag.Type != null);
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetLineMarkerGeometry(line, span), line.BufferSpan, tag);
 		}
 
-		MarkerElement TryCreateMarkerElementCore(Geometry geo, HexBufferSpan span, HexMarkerTag tag) {
+		MarkerElement? TryCreateMarkerElementCore(Geometry? geo, HexBufferSpan span, HexMarkerTag tag) {
 			if (geo == null)
 				return null;
 

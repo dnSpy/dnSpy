@@ -36,11 +36,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			this.createItem = createItem;
 		}
 
-		public T TryGet(int index) {
+		public T? TryGet(int index) {
 			Debug.Assert(0 <= index && index < list.Length);
 			if ((uint)index >= (uint)list.Length)
 				return null;
-			return (T)list[index]?.Target;
+			return (T?)list[index]?.Target;
 		}
 
 		public T this[int index] {

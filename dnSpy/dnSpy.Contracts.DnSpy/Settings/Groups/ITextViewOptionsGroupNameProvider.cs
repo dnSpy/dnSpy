@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// </summary>
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
-		string TryGetGroupName(IWpfTextView textView);
+		string? TryGetGroupName(IWpfTextView textView);
 	}
 
 	/// <summary>Metadata</summary>

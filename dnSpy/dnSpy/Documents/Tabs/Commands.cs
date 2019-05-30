@@ -81,7 +81,7 @@ namespace dnSpy.Documents.Tabs {
 		public ToolbarFileOpenCommand()
 			: base(ApplicationCommands.Open) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.OpenToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlO);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.OpenToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlO);
 	}
 
 	[ExportAutoLoaded]
@@ -238,7 +238,7 @@ namespace dnSpy.Documents.Tabs {
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) => GetFilename(context) != null;
 
-		static string GetFilename(IMenuItemContext context) {
+		static string? GetFilename(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
 			var nodes = context.Find<TreeNodeData[]>();

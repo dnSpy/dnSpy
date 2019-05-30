@@ -57,7 +57,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>
 	sealed class ILAstDecompiler : DecompilerBase {
-		string uniqueNameUI;
+		readonly string uniqueNameUI;
 		Guid uniqueGuid;
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
@@ -65,9 +65,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		public override DecompilerSettingsBase Settings { get; }
 		const int settingsVersion = 1;
 
-		ILAstDecompiler(ILAstDecompilerSettings langSettings, double orderUI) {
+		ILAstDecompiler(ILAstDecompilerSettings langSettings, double orderUI, string uniqueNameUI) {
 			Settings = langSettings;
 			OrderUI = orderUI;
+			this.uniqueNameUI = uniqueNameUI;
 		}
 
 		public override double OrderUI { get; }
@@ -100,9 +101,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
 			var stateMachineKind = StateMachineKind.None;
-			MethodDef inlinedMethod = null;
-			AsyncMethodDebugInfo asyncInfo = null;
-			string compilerName = null;
+			MethodDef? inlinedMethod = null;
+			AsyncMethodDebugInfo? asyncInfo = null;
+			string? compilerName = null;
 			if (abortBeforeStep != null) {
 				var optimizer = new ILAstOptimizer();
 				optimizer.Optimize(context, ilMethod, out stateMachineKind, out inlinedMethod, out asyncInfo, abortBeforeStep.Value);
@@ -361,15 +362,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		internal static IEnumerable<ILAstDecompiler> GetDebugDecompilers(DecompilerSettingsService decompilerSettingsService) {
 			double orderUI = DecompilerConstants.ILAST_ILSPY_DEBUG_ORDERUI;
 			uint id = 0x64A926A5;
-			yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++) {
-				uniqueNameUI = "ILAst (unoptimized)",
+			yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++, "ILAst (unoptimized)") {
 				uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 				inlineVariables = false
 			};
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
-				yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++) {
-					uniqueNameUI = nextName,
+				yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++, nextName) {
 					uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 					abortBeforeStep = step
 				};
@@ -379,7 +378,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 		public override string FileExtension => ".il";
 
-		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef? t, bool includeNamespace, IHasCustomAttribute? attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 	}
 #endif

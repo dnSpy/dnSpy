@@ -29,11 +29,11 @@ using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	struct EnumInfo {
-		public ITypeDefOrRef EnumType;
-		public object Value;
+		public ITypeDefOrRef? EnumType;
+		public object? Value;
 		public bool IsArray;
 
-		public static EnumInfo CreateNullArray(ITypeDefOrRef type) => new EnumInfo() {
+		public static EnumInfo CreateNullArray(ITypeDefOrRef? type) => new EnumInfo() {
 			EnumType = type,
 			IsArray = true,
 		};
@@ -68,16 +68,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	abstract class EnumDataFieldVMBase : DataFieldVM<EnumInfo> {
 		EnumInfo enumInfo;
-		DataFieldVM enumUnderlyingTypeField;
+		DataFieldVM? enumUnderlyingTypeField;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand PickEnumTypeCommand => new RelayCommand(a => PickEnumType());
 
-		public ITypeDefOrRef EnumType {
+		public ITypeDefOrRef? EnumType {
 			get => enumInfo.EnumType;
 			set {
 				enumInfo.EnumType = value;
@@ -129,8 +129,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		protected override string ConvertToValue(out EnumInfo value) {
-			string error = null;
+		protected override string? ConvertToValue(out EnumInfo value) {
+			string? error = null;
 			value = enumInfo;
 			if (enumUnderlyingTypeField != null)
 				error = enumUnderlyingTypeField.ConvertToObjectValue(out value.Value);
@@ -159,8 +159,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				EnumType = type;
 		}
 
-		protected abstract DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value);
-		protected abstract DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType);
+		protected abstract DataFieldVM? CreateEnumUnderlyingTypeFieldFromValue(object value);
+		protected abstract DataFieldVM? CreateEnumUnderlyingTypeField(ElementType elementType);
 	}
 
 	sealed class EnumDataFieldVM : EnumDataFieldVMBase {
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: base(ownerModule, value, onUpdated) {
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value) {
+		protected override DataFieldVM? CreateEnumUnderlyingTypeFieldFromValue(object value) {
 			if (value is bool)		return new BooleanVM((bool)value, a => { });
 			if (value is char)		return new CharVM((char)value, a => { });
 			if (value is sbyte)		return new SByteVM((sbyte)value, a => { });
@@ -188,7 +188,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return null;
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType) {
+		protected override DataFieldVM? CreateEnumUnderlyingTypeField(ElementType elementType) {
 			switch (elementType) {
 			case ElementType.Boolean:	return new BooleanVM(a => { });
 			case ElementType.Char:		return new CharVM(a => { });
@@ -217,7 +217,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		{
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value) {
+		protected override DataFieldVM? CreateEnumUnderlyingTypeFieldFromValue(object value) {
 			if (value is IList<bool>)	return new BooleanListDataFieldVM((IList<bool>)value, a => { });
 			if (value is IList<char>)	return new CharListDataFieldVM((IList<char>)value, a => { });
 			if (value is IList<sbyte>)	return new SByteListDataFieldVM((IList<sbyte>)value, a => { });
@@ -233,7 +233,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return null;
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType) {
+		protected override DataFieldVM? CreateEnumUnderlyingTypeField(ElementType elementType) {
 			switch (elementType) {
 			case ElementType.Boolean:	return new BooleanListDataFieldVM(a => { });
 			case ElementType.Char:		return new CharListDataFieldVM(a => { });

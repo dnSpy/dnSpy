@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Disables assembly loading until Dispose() gets called
 		/// </summary>
-		public Func<IDisposable> GetDisableAssemblyLoad { get; set; }
+		public Func<IDisposable>? GetDisableAssemblyLoad { get; set; }
 
 		/// <summary>
 		/// true to calculate ILSpans. Used when debugging
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		/// <summary />
-		public IDisposable DisableAssemblyLoad() => GetDisableAssemblyLoad?.Invoke();
+		public IDisposable? DisableAssemblyLoad() => GetDisableAssemblyLoad?.Invoke();
 
 		/// <summary>
 		/// Gets or creates a cached object

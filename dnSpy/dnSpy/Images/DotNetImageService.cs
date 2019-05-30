@@ -185,18 +185,19 @@ namespace dnSpy.Images {
 			type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
 		static bool IsException(TypeDef type) {
-			if (IsSystemException(type))
+			TypeDef? td = type;
+			if (IsSystemException(td))
 				return true;
-			for (int i = 0; i < 1000 && type != null; i++) {
-				if (IsSystemException(type.BaseType))
+			for (int i = 0; i < 1000 && td != null; i++) {
+				if (IsSystemException(td.BaseType))
 					return true;
-				var bt = type.BaseType;
-				type = bt == null ? null : bt.ScopeType.ResolveTypeDef();
+				var bt = td.BaseType;
+				td = bt?.ScopeType.ResolveTypeDef();
 			}
 			return false;
 		}
 
-		static bool IsSystemException(ITypeDefOrRef type) =>
+		static bool IsSystemException(ITypeDefOrRef? type) =>
 			type != null &&
 			type.DeclaringType == null &&
 			type.Namespace == "System" &&

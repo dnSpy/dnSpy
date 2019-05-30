@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract IAssemblyResolver AssemblyResolver { get; }
 		public abstract IEnumerable<IDsDocument> Documents { get; }
 		public abstract IEnumerable<DocumentInfo> DocumentInfos { get; }
-		public abstract IDsDocument Find(IDsDocumentNameKey key);
+		public abstract IDsDocument? Find(IDsDocumentNameKey key);
 		public abstract IDsDocument GetOrAdd(IDsDocument document);
 	}
 
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return null;
 		}
 
-		public override IDsDocument Find(IDsDocumentNameKey key) => documentService.Find(key);
+		public override IDsDocument? Find(IDsDocumentNameKey key) => documentService.Find(key);
 		public override IDsDocument GetOrAdd(IDsDocument document) => documentService.GetOrAdd(document);
 	}
 }

@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		GlyphTextViewMarkerGlyphTextMarkerTaggerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
 			if (wpfTextView == null)

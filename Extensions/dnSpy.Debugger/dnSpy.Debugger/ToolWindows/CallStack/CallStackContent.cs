@@ -39,9 +39,9 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 	[Export(typeof(ICallStackContent))]
 	sealed class CallStackContent : ICallStackContent {
-		public object UIObject => callStackControl;
-		public IInputElement FocusedElement => callStackControl.ListView;
-		public FrameworkElement ZoomElement => callStackControl;
+		public object? UIObject => callStackControl;
+		public IInputElement? FocusedElement => callStackControl.ListView;
+		public FrameworkElement? ZoomElement => callStackControl;
 		public ListView ListView => callStackControl.ListView;
 		public CallStackOperations Operations { get; }
 

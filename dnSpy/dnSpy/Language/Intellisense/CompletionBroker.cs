@@ -44,14 +44,14 @@ namespace dnSpy.Language.Intellisense {
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
 		}
 
-		public ICompletionSession TriggerCompletion(ITextView textView) {
+		public ICompletionSession? TriggerCompletion(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			var triggerPoint = textView.TextSnapshot.CreateTrackingPoint(textView.Caret.Position.BufferPosition.Position, PointTrackingMode.Negative, TrackingFidelityMode.Forward);
 			return TriggerCompletion(textView, triggerPoint, trackCaret: true);
 		}
 
-		public ICompletionSession TriggerCompletion(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
+		public ICompletionSession? TriggerCompletion(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)

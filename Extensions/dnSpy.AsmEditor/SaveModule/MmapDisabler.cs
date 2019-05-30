@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 
-		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage peImage) {
+		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage? peImage) {
 			if (peImage != null && filenames.Contains(peImage.Filename))
 				MemoryMappedIOHelper.DisableMemoryMappedIO(peImage);
 		}

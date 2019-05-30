@@ -28,19 +28,19 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the namespace or null
 		/// </summary>
-		public string Namespace { get; }
+		public string? Namespace { get; }
 
 		/// <summary>
 		/// Gets the assembly, could be null
 		/// </summary>
-		public AssemblyRef Assembly { get; }
+		public AssemblyRef? Assembly { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="assembly">Target assembly</param>
 		/// <param name="namespace">Namespace</param>
-		public NamespaceReference(IAssembly assembly, string @namespace) {
+		public NamespaceReference(IAssembly? assembly, string? @namespace) {
 			Assembly = assembly.ToAssemblyRef();
 			Namespace = @namespace;
 		}
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is NamespaceReference && StringComparer.Ordinal.Equals(((NamespaceReference)obj).Namespace, Namespace);
+		public override bool Equals(object? obj) => obj is NamespaceReference && StringComparer.Ordinal.Equals(((NamespaceReference)obj).Namespace, Namespace);
 
 		/// <summary>
 		/// GetHashCode()

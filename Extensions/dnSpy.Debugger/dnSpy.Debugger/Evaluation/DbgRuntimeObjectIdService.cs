@@ -29,9 +29,9 @@ namespace dnSpy.Debugger.Evaluation {
 	abstract class DbgRuntimeObjectIdService {
 		public abstract event EventHandler ObjectIdsChanged;
 		public abstract bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options);
-		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options);
-		public abstract DbgObjectId GetObjectId(DbgValue value);
-		public abstract DbgObjectId GetObjectId(uint id);
+		public abstract DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options);
+		public abstract DbgObjectId? GetObjectId(DbgValue value);
+		public abstract DbgObjectId? GetObjectId(uint id);
 		public abstract DbgObjectId[] GetObjectIds();
 		public abstract void Remove(IList<DbgObjectId> objectIds);
 		public abstract bool Equals(DbgObjectId objectId, DbgValue value);
@@ -102,19 +102,20 @@ namespace dnSpy.Debugger.Evaluation {
 				return (isHidden || !objectIds.ContainsKey(valueImpl)) && dbgEngineObjectIdFactory.CanCreateObjectId(valueImpl.EngineValue);
 		}
 
-		public override DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
+		public override DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
 			if (values.Length == 0)
 				return Array.Empty<DbgObjectId>();
-			var res = new DbgObjectId[values.Length];
+			var res = new DbgObjectId?[values.Length];
 			bool isHidden = (options & CreateObjectIdOptions.Hidden) != 0;
 			lock (lockObj) {
 				for (int i = 0; i < values.Length; i++) {
 					var value = values[i] as DbgValueImpl;
 					if (value?.Runtime != Runtime)
 						throw new ArgumentException();
-					DbgObjectId objectId;
+					Debug.Assert(value != null);
+					DbgObjectId? objectId;
 					if (Runtime.IsClosed || value.IsClosed || (!isHidden && objectIds.ContainsKey(value)))
 						objectId = null;
 					else {
@@ -147,7 +148,7 @@ namespace dnSpy.Debugger.Evaluation {
 			return res;
 		}
 
-		public override DbgObjectId GetObjectId(DbgValue value) {
+		public override DbgObjectId? GetObjectId(DbgValue value) {
 			if (value == null)
 				throw new ArgumentNullException(nameof(value));
 			if (value.Runtime != Runtime)
@@ -163,7 +164,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override DbgObjectId GetObjectId(uint id) {
+		public override DbgObjectId? GetObjectId(uint id) {
 			if (Runtime.IsClosed)
 				return null;
 			lock (lockObj) {

@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public abstract bool CanExportBreakpoint { get; }
 		public abstract void ExportBreakpoint();
 		public abstract IList<DbgLanguage> GetLanguages();
-		public abstract DbgLanguage GetCurrentLanguage();
+		public abstract DbgLanguage? GetCurrentLanguage();
 		public abstract void SetCurrentLanguage(DbgLanguage language);
 		public abstract bool CanToggleUseHexadecimal { get; }
 		public abstract void ToggleUseHexadecimal();
@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
 			var process = vm.Frame.Process;
-			var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(vm.Frame.Location.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot));
+			var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(vm.Frame.Location!.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot));
 			if (bp != null)
 				dbgManager.Value.Run(process);
 		}
@@ -235,14 +235,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//TODO:
 		}
 
-		DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location) {
+		DbgCodeBreakpoint? TryGetBreakpoint(DbgCodeLocation location) {
 			if (location == null)
 				return null;
 			var bp = dbgCodeBreakpointsService.Value.TryGetBreakpoint(location);
 			return bp == null || bp.IsHidden ? null : bp;
 		}
 
-		(DbgCodeBreakpoint breakpoint, DbgCodeLocation location)? GetBreakpoint() {
+		(DbgCodeBreakpoint? breakpoint, DbgCodeLocation location)? GetBreakpoint() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var vm = SelectedItems[0] as NormalStackFrameVM;
@@ -347,7 +347,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				dbgCodeBreakpointSerializerService.Value.Save(new[] { bp });
 		}
 
-		DbgRuntime CurrentRuntime => dbgManager.Value.CurrentThread.Current?.Runtime;
+		DbgRuntime? CurrentRuntime => dbgManager.Value.CurrentThread.Current?.Runtime;
 
 		public override IList<DbgLanguage> GetLanguages() {
 			var runtime = CurrentRuntime;
@@ -356,7 +356,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			return dbgLanguageService.Value.GetLanguages(runtime.RuntimeKindGuid);
 		}
 
-		public override DbgLanguage GetCurrentLanguage() {
+		public override DbgLanguage? GetCurrentLanguage() {
 			var runtime = CurrentRuntime;
 			if (runtime == null)
 				return null;

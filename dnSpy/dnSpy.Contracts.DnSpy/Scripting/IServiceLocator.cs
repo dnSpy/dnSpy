@@ -27,13 +27,13 @@ namespace dnSpy.Contracts.Scripting {
 		/// </summary>
 		/// <typeparam name="T">Type of service</typeparam>
 		/// <returns></returns>
-		T Resolve<T>();
+		T Resolve<T>() where T : class;
 
 		/// <summary>
 		/// Resolves a service or returns null if not found
 		/// </summary>
 		/// <typeparam name="T">Type of service</typeparam>
 		/// <returns></returns>
-		T TryResolve<T>();
+		T? TryResolve<T>() where T : class;
 	}
 }

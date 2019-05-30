@@ -34,21 +34,20 @@ namespace dnSpy.Documents.Tabs {
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
-			static IMemberRef GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
+			static IMemberRef? GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 
-			internal static IMemberRef GetMemberRef(IMenuItemContext context, string guid) {
+			internal static IMemberRef? GetMemberRef(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
-				var @ref = context.Find<TextReference>();
-				return @ref == null ? null : @ref.Reference as IMemberRef;
+				return context.Find<TextReference>()?.Reference as IMemberRef;
 			}
 		}
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
 		sealed class SearchCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
-			static IMemberRef GetMemberRef(IMenuItemContext context) => CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
+			static IMemberRef? GetMemberRef(IMenuItemContext context) => CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
 			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 		}
 
@@ -87,7 +86,7 @@ namespace dnSpy.Documents.Tabs {
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetNodes(context));
 		}
 
-		static IMemberDef ResolveDef(IMemberRef mr) {
+		static IMemberDef? ResolveDef(IMemberRef? mr) {
 			if (mr is ITypeDefOrRef)
 				return ((ITypeDefOrRef)mr).ResolveTypeDef();
 			if (mr is IMethod && ((IMethod)mr).IsMethod)
@@ -97,7 +96,7 @@ namespace dnSpy.Documents.Tabs {
 			return mr as IMemberDef;
 		}
 
-		static IMemberDef Resolve(IMemberRef memberRef) {
+		static IMemberDef? Resolve(IMemberRef? memberRef) {
 			var member = ResolveDef(memberRef);
 			var md = member as MethodDef;
 			if (md == null)
@@ -140,7 +139,7 @@ namespace dnSpy.Documents.Tabs {
 			return member;
 		}
 
-		static bool IsPublic(IMemberRef memberRef) {
+		static bool IsPublic(IMemberRef? memberRef) {
 			var def = Resolve(memberRef);
 			if (def is TypeDef)
 				return IsAccessible((TypeDef)def);
@@ -241,7 +240,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		public static void SearchMsdn(IMemberRef memberRef) {
+		public static void SearchMsdn(IMemberRef? memberRef) {
 			if (memberRef != null)
 				SearchMsdn(GetAddress(memberRef));
 		}

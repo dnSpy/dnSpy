@@ -79,7 +79,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			};
 		}
 
-		public static DotNetMetadataHeaderData TryCreate(HexBufferFile file, HexSpan span, int stringLength, StorageStreamHeader[] storageStreamHeaders) {
+		public static DotNetMetadataHeaderData? TryCreate(HexBufferFile? file, HexSpan span, int stringLength, StorageStreamHeader[] storageStreamHeaders) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (!file.Span.Contains(span))

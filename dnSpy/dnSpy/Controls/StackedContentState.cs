@@ -42,7 +42,7 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		public static StackedContentState TryDeserialize(ISettingsSection section) {
+		public static StackedContentState? TryDeserialize(ISettingsSection section) {
 			var state = new StackedContentState();
 			bool? b = section.Attribute<bool?>(ISHORIZONTAL_ATTR);
 			if (b == null)

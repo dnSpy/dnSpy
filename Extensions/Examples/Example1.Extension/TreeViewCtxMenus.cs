@@ -28,7 +28,7 @@ namespace Example1.Extension {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override TVContext CreateContext(IMenuItemContext context) {
+		protected sealed override TVContext? CreateContext(IMenuItemContext context) {
 			// Make sure it's the file treeview
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
@@ -86,23 +86,23 @@ namespace Example1.Extension {
 			var node = GetTokenNode(context);
 			if (node != null) {
 				try {
-					Clipboard.SetText($"{node.Reference.MDToken.Raw:X8}");
+					Clipboard.SetText($"{node.Reference!.MDToken.Raw:X8}");
 				}
 				catch (ExternalException) { }
 			}
 		}
 
-		IMDTokenNode GetTokenNode(TVContext context) {
+		IMDTokenNode? GetTokenNode(TVContext context) {
 			if (context.Nodes.Length == 0)
 				return null;
 			return context.Nodes[0] as IMDTokenNode;
 		}
 
-		public override string GetHeader(TVContext context) {
+		public override string? GetHeader(TVContext context) {
 			var node = GetTokenNode(context);
 			if (node == null)
 				return string.Empty;
-			return $"Copy token {node.Reference.MDToken.Raw:X8}";
+			return $"Copy token {node.Reference!.MDToken.Raw:X8}";
 		}
 
 		public override bool IsVisible(TVContext context) => GetTokenNode(context) != null;
@@ -120,7 +120,7 @@ namespace Example1.Extension {
 			}
 		}
 
-		Instruction GetSecondInstruction(TVContext context) {
+		Instruction? GetSecondInstruction(TVContext context) {
 			if (context.Nodes.Length == 0)
 				return null;
 			var methNode = context.Nodes[0] as MethodNode;

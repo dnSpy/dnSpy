@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Language.Intellisense {
 	interface IIntellisensePresenterFactoryService {
-		IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session);
+		IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session);
 	}
 
 	[Export(typeof(IIntellisensePresenterFactoryService))]
@@ -38,7 +38,7 @@ namespace dnSpy.Language.Intellisense {
 		[ImportingConstructor]
 		IntellisensePresenterFactoryService([ImportMany] IEnumerable<Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>> intellisensePresenterProviders) => this.intellisensePresenterProviders = Orderer.Order(intellisensePresenterProviders).ToArray();
 
-		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 			var contentTypes = session.TextView.BufferGraph.GetTextBuffers(a => session.GetTriggerPoint(a) != null).Select(a => a.ContentType).ToArray();

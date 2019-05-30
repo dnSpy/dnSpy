@@ -34,12 +34,12 @@ namespace dnSpy.Hex.Files.PE {
 		public PeHeadersImpl(PeHeadersReader reader, HexSpan fileSpan) {
 			if (reader == null)
 				throw new ArgumentNullException(nameof(reader));
-			DosHeader = reader.DosHeader;
-			FileHeader = reader.FileHeader;
-			OptionalHeader = reader.OptionalHeader;
-			Sections = reader.Sections;
+			DosHeader = reader.DosHeader!;
+			FileHeader = reader.FileHeader!;
+			OptionalHeader = reader.OptionalHeader!;
+			Sections = reader.Sections!;
 			IsFileLayout = reader.IsFileLayout;
-			SectionHeaders = reader.SectionHeaders;
+			SectionHeaders = reader.SectionHeaders!;
 			this.fileSpan = fileSpan;
 		}
 

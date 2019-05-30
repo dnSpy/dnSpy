@@ -43,17 +43,17 @@ namespace dnSpy.Contracts.Documents {
 		/// <summary>
 		/// Gets the assembly or null if it's not a .NET file or if it's a netmodule
 		/// </summary>
-		AssemblyDef AssemblyDef { get; }
+		AssemblyDef? AssemblyDef { get; }
 
 		/// <summary>
 		/// Gets the module or null if it's not a .NET file
 		/// </summary>
-		ModuleDef ModuleDef { get; }
+		ModuleDef? ModuleDef { get; }
 
 		/// <summary>
 		/// Gets the PE image or null if it's not available
 		/// </summary>
-		IPEImage PEImage { get; }
+		IPEImage? PEImage { get; }
 
 		/// <summary>
 		/// Gets/sets the filename
@@ -162,7 +162,9 @@ namespace dnSpy.Contracts.Documents {
 					hash.Add(mod);
 					yield return mod;
 				}
-				var asm = mod.Assembly;
+				var asm = mod?.Assembly;
+				if (asm == null)
+					continue;
 				foreach (var m in asm.Modules) {
 					mod = m as T;
 					if (mod != null && !hash.Contains(mod)) {

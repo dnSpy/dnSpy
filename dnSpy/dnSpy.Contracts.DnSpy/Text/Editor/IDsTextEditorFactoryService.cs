@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IDsWpfTextView CreateTextView(TextViewCreatorOptions options);
+		IDsWpfTextView CreateTextView(TextViewCreatorOptions? options);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsWpfTextView"/> instance using <paramref name="textBuffer"/>
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="textBuffer">Text buffer</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IDsWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options);
+		IDsWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions? options);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsWpfTextView"/> instance using <paramref name="textBuffer"/>
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="roles">Roles</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options);
+		IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions? options);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsWpfTextView"/> instance using <paramref name="textBuffer"/>
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+		IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsWpfTextView"/> instance using <paramref name="dataModel"/>
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IDsWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+		IDsWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsWpfTextView"/> instance using <paramref name="viewModel"/>
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="parentOptions">Parent options</param>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		IDsWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options);
+		IDsWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsWpfTextViewHost"/> instance

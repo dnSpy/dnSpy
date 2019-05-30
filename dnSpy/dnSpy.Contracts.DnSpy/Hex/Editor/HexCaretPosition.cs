@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexCaretPosition && Equals((HexCaretPosition)obj);
+		public override bool Equals(object? obj) => obj is HexCaretPosition && Equals((HexCaretPosition)obj);
 
 		/// <summary>
 		/// GetHashCode()

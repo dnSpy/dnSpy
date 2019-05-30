@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		int GetHashCode_EventName(string a) => GetHashCode_Name(CaseInsensitiveEventNames, a);
 
-		static GenericInstSig GetGenericInstanceType(IMemberRefParent parent) {
+		static GenericInstSig? GetGenericInstanceType(IMemberRefParent parent) {
 			var ts = parent as TypeSpec;
 			if (ts == null)
 				return null;
@@ -215,7 +215,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return td != null && Equals(aAsm, td.Module.Assembly);
 		}
 
-		bool Equals(IAssembly aAsm, TypeRef a, IAssembly bAsm, TypeRef b) {
+		bool Equals(IAssembly? aAsm, TypeRef a, IAssembly? bAsm, TypeRef b) {
 			if (Equals(aAsm, bAsm))
 				return true;
 
@@ -226,7 +226,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return tda != null && tdb != null && Equals(tda.Module.Assembly, tdb.Module.Assembly);
 		}
 
-		bool Equals(IAssembly aAsm, ExportedType a, IAssembly bAsm, ExportedType b) {
+		bool Equals(IAssembly? aAsm, ExportedType a, IAssembly? bAsm, ExportedType b) {
 			if (Equals(aAsm, bAsm))
 				return true;
 
@@ -235,7 +235,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return tda != null && tdb != null && Equals(tda.Module.Assembly, tdb.Module.Assembly);
 		}
 
-		bool Equals(IAssembly aAsm, TypeRef a, IAssembly bAsm, ExportedType b) {
+		bool Equals(IAssembly? aAsm, TypeRef a, IAssembly? bAsm, ExportedType b) {
 			if (Equals(aAsm, bAsm))
 				return true;
 
@@ -266,13 +266,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			return td != null && Equals(a.Module, td.Module) && Equals(a.DefinitionAssembly, td.DefinitionAssembly);
 		}
 
-		bool TypeDefScopeEquals(TypeDef a, TypeDef b) {
-			if (a == null || b == null)
+		bool TypeDefScopeEquals(TypeDef? a, TypeDef? b) {
+			if (a is null || b is null)
 				return false;
 			return Equals(a.Module, b.Module);
 		}
 
-		bool Equals(TypeRef a, IModule ma, TypeRef b, IModule mb) {
+		bool Equals(TypeRef a, IModule? ma, TypeRef b, IModule? mb) {
 			if (Equals(ma, mb) && Equals(a.DefinitionAssembly, b.DefinitionAssembly))
 				return true;
 
@@ -284,7 +284,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				Equals(tda.Module, tdb.Module) && Equals(tda.DefinitionAssembly, tdb.DefinitionAssembly);
 		}
 
-		bool Equals(TypeRef a, IModule ma, ExportedType b, FileDef fb) {
+		bool Equals(TypeRef a, IModule? ma, ExportedType b, FileDef? fb) {
 			if (Equals(ma, fb) && Equals(a.DefinitionAssembly, b.DefinitionAssembly))
 				return true;
 
@@ -296,20 +296,20 @@ namespace dnSpy.AsmEditor.Compiler {
 				Equals(tda.Module, tdb.Module) && Equals(tda.DefinitionAssembly, tdb.DefinitionAssembly);
 		}
 
-		public bool Equals(IMemberRef a, IMemberRef b) {
+		public bool Equals(IMemberRef? a, IMemberRef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			IType ta, tb;
-			IField fa, fb;
-			IMethod ma, mb;
-			PropertyDef pa, pb;
-			EventDef ea, eb;
+			IType? ta, tb;
+			IField? fa, fb;
+			IMethod? ma, mb;
+			PropertyDef? pa, pb;
+			EventDef? ea, eb;
 
 			if ((ta = a as IType) != null && (tb = b as IType) != null)
 				result = Equals(ta, tb);
@@ -328,18 +328,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(IMemberRef a) {
-			if (a == null)
+		public int GetHashCode(IMemberRef? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
 
 			int result;
-			IType ta;
-			IField fa;
-			IMethod ma;
-			PropertyDef pa;
-			EventDef ea;
+			IType? ta;
+			IField? fa;
+			IMethod? ma;
+			PropertyDef? pa;
+			EventDef? ea;
 
 			if ((ta = a as IType) != null)
 				result = GetHashCode(ta);
@@ -362,20 +362,20 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public int GetHashCode(ITypeDefOrRef a) => GetHashCode((IType)a);
 
-		public bool Equals(IType a, IType b) {
+		public bool Equals(IType? a, IType? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			TypeDef tda, tdb;
-			TypeRef tra, trb;
-			TypeSpec tsa, tsb;
-			TypeSig sa, sb;
-			ExportedType eta, etb;
+			TypeDef? tda, tdb;
+			TypeRef? tra, trb;
+			TypeSpec? tsa, tsb;
+			TypeSig? sa, sb;
+			ExportedType? eta, etb;
 
 			if ((tda = a as TypeDef) != null & (tdb = b as TypeDef) != null)
 				result = Equals(tda, tdb);
@@ -434,18 +434,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(IType a) {
-			if (a == null)
+		public int GetHashCode(IType? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
 
 			int hash;
-			TypeDef td;
-			TypeRef tr;
-			TypeSpec ts;
-			TypeSig sig;
-			ExportedType et;
+			TypeDef? td;
+			TypeRef? tr;
+			TypeSpec? ts;
+			TypeSig? sig;
+			ExportedType? et;
 
 			if ((td = a as TypeDef) != null)
 				hash = GetHashCode(td);
@@ -464,20 +464,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(TypeRef a, TypeDef b) => Equals(b, a);
+		public bool Equals(TypeRef? a, TypeDef? b) => Equals(b, a);
 
-		public bool Equals(TypeDef a, TypeRef b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeDef? a, TypeRef? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			IModule bMod;
-			AssemblyRef bAsm;
-			TypeRef dtb;
+			IModule? bMod;
+			AssemblyRef? bAsm;
+			TypeRef? dtb;
 
 			var scope = b.ResolutionScope;
 
@@ -508,20 +508,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(ExportedType a, TypeDef b) => Equals(b, a);
+		public bool Equals(ExportedType? a, TypeDef? b) => Equals(b, a);
 
-		public bool Equals(TypeDef a, ExportedType b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeDef? a, ExportedType? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			ExportedType dtb;
-			FileDef bFile;
-			AssemblyRef bAsm;
+			ExportedType? dtb;
+			FileDef? bFile;
+			AssemblyRef? bAsm;
 
 			var scope = b.Implementation;
 
@@ -552,22 +552,22 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSpec a, TypeDef b) => Equals(b, a);
+		public bool Equals(TypeSpec? a, TypeDef? b) => Equals(b, a);
 
-		public bool Equals(TypeDef a, TypeSpec b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeDef? a, TypeSpec? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			return Equals(a, b.TypeSig);
 		}
 
-		public bool Equals(TypeSig a, TypeDef b) => Equals(b, a);
+		public bool Equals(TypeSig? a, TypeDef? b) => Equals(b, a);
 
-		public bool Equals(TypeDef a, TypeSig b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeDef? a, TypeSig? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -584,22 +584,22 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSpec a, TypeRef b) => Equals(b, a);
+		public bool Equals(TypeSpec? a, TypeRef? b) => Equals(b, a);
 
-		public bool Equals(TypeRef a, TypeSpec b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeRef? a, TypeSpec? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			return Equals(a, b.TypeSig);
 		}
 
-		public bool Equals(ExportedType a, TypeRef b) => Equals(b, a);
+		public bool Equals(ExportedType? a, TypeRef? b) => Equals(b, a);
 
-		public bool Equals(TypeRef a, ExportedType b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeRef? a, ExportedType? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -612,12 +612,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSig a, TypeRef b) => Equals(b, a);
+		public bool Equals(TypeSig? a, TypeRef? b) => Equals(b, a);
 
-		public bool Equals(TypeRef a, TypeSig b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeRef? a, TypeSig? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -634,32 +634,32 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(TypeSig a, TypeSpec b) => Equals(b, a);
+		public bool Equals(TypeSig? a, TypeSpec? b) => Equals(b, a);
 
-		public bool Equals(TypeSpec a, TypeSig b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeSpec? a, TypeSig? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			return Equals(a.TypeSig, b);
 		}
 
-		public bool Equals(ExportedType a, TypeSpec b) => Equals(b, a);
+		public bool Equals(ExportedType? a, TypeSpec? b) => Equals(b, a);
 
-		public bool Equals(TypeSpec a, ExportedType b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeSpec? a, ExportedType? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			return Equals(a.TypeSig, b);
 		}
 
-		public bool Equals(ExportedType a, TypeSig b) => Equals(b, a);
+		public bool Equals(ExportedType? a, TypeSig? b) => Equals(b, a);
 
-		public bool Equals(TypeSig a, ExportedType b) {
-			if ((object)a == (object)b)
+		public bool Equals(TypeSig? a, ExportedType? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -681,10 +681,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			// referenced by a ModuleRef. Use the same hash for all global types.
 			HASHCODE_MAGIC_GLOBAL_TYPE;
 
-		public bool Equals(TypeRef a, TypeRef b) {
+		public bool Equals(TypeRef? a, TypeRef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -697,8 +697,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(TypeRef a) {
-			if (a == null)
+		public int GetHashCode(TypeRef? a) {
+			if (a is null)
 				return TypeRefCanReferenceGlobalType ? GetHashCodeGlobalType() : 0;
 
 			int hash;
@@ -710,10 +710,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(ExportedType a, ExportedType b) {
+		public bool Equals(ExportedType? a, ExportedType? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -726,8 +726,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(ExportedType a) {
-			if (a == null)
+		public int GetHashCode(ExportedType? a) {
+			if (a is null)
 				return TypeRefCanReferenceGlobalType ? GetHashCodeGlobalType() : 0;
 			int hash;
 			hash = GetHashCode_TypeName(a.TypeName);
@@ -738,10 +738,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(TypeDef a, TypeDef b) {
+		public bool Equals(TypeDef? a, TypeDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -757,8 +757,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(TypeDef a) {
-			if (a == null || a.IsGlobalModuleType)
+		public int GetHashCode(TypeDef? a) {
+			if (a is null || a.IsGlobalModuleType)
 				return GetHashCodeGlobalType();
 
 			int hash;
@@ -770,10 +770,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(TypeSpec a, TypeSpec b) {
+		public bool Equals(TypeSpec? a, TypeSpec? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -784,16 +784,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(TypeSpec a) {
-			if (a == null)
+		public int GetHashCode(TypeSpec? a) {
+			if (a is null)
 				return 0;
 			return GetHashCode(a.TypeSig);
 		}
 
-		bool EqualsResolutionScope(TypeRef a, TypeRef b) {
+		bool EqualsResolutionScope(TypeRef? a, TypeRef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			var ra = a.ResolutionScope;
 			var rb = b.ResolutionScope;
@@ -805,10 +805,10 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 
 			bool result;
-			TypeRef ea, eb;
-			IModule ma, mb;
-			AssemblyRef aa, ab;
-			ModuleDef modDef;
+			TypeRef? ea, eb;
+			IModule? ma, mb;
+			AssemblyRef? aa, ab;
+			ModuleDef? modDef;
 
 			// if one of them is a TypeRef, the other one must be too
 			if ((ea = ra as TypeRef) != null | (eb = rb as TypeRef) != null)
@@ -840,10 +840,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		bool EqualsImplementation(ExportedType a, ExportedType b) {
+		bool EqualsImplementation(ExportedType? a, ExportedType? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			var ia = a.Implementation;
 			var ib = b.Implementation;
@@ -855,9 +855,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 
 			bool result;
-			ExportedType ea, eb;
-			FileDef fa, fb;
-			AssemblyRef aa, ab;
+			ExportedType? ea, eb;
+			FileDef? fa, fb;
+			AssemblyRef? aa, ab;
 
 			// if one of them is an ExportedType, the other one must be too
 			if ((ea = ia as ExportedType) != null | (eb = ib as ExportedType) != null)
@@ -881,10 +881,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		bool EqualsScope(TypeRef a, ExportedType b) {
-			if ((object)a == (object)b)
+		bool EqualsScope(TypeRef? a, ExportedType? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			var ra = a.ResolutionScope;
 			var ib = b.Implementation;
@@ -896,11 +896,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				return false;
 
 			bool result;
-			TypeRef ea;
-			ExportedType eb;
-			IModule ma;
-			FileDef fb;
-			AssemblyRef aa, ab;
+			TypeRef? ea;
+			ExportedType? eb;
+			IModule? ma;
+			FileDef? fb;
+			AssemblyRef? aa, ab;
 
 			// If one is a nested type, the other one must be too
 			if ((ea = ra as TypeRef) != null | (eb = ib as ExportedType) != null)
@@ -922,29 +922,29 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		bool Equals(FileDef a, FileDef b) {
+		bool Equals(FileDef? a, FileDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 
 			return UTF8String.CaseInsensitiveEquals(a.Name, b.Name);
 		}
 
-		bool Equals(IModule a, FileDef b) {
-			if ((object)a == (object)b)
+		bool Equals(IModule? a, FileDef? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 
 			//TODO: You should compare against the module's file name, not the name in the metadata!
 			return UTF8String.CaseInsensitiveEquals(a.Name, b.Name);
 		}
 
-		internal bool Equals(IModule a, IModule b) {
+		internal bool Equals(IModule? a, IModule? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!MscorlibIsNotSpecial && IsCorLib(a) && IsCorLib(b))
 				return true;
@@ -952,19 +952,19 @@ namespace dnSpy.AsmEditor.Compiler {
 			return UTF8String.CaseInsensitiveEquals(a.Name, b.Name) || (IsTargetOrSourceModule(a) && IsTargetOrSourceModule(b));
 		}
 
-		static bool IsCorLib(ModuleDef a) => a != null && a.IsManifestModule && a.Assembly.IsCorLib();
+		static bool IsCorLib(ModuleDef? a) => a != null && a.IsManifestModule && a.Assembly.IsCorLib();
 
-		static bool IsCorLib(IModule a) {
+		static bool IsCorLib(IModule? a) {
 			var mod = a as ModuleDef;
 			return mod != null && mod.IsManifestModule && mod.Assembly.IsCorLib();
 		}
 
 		static bool IsCorLib(IAssembly a) => a.IsCorLib();
 
-		bool Equals(ModuleDef a, ModuleDef b) {
+		bool Equals(ModuleDef? a, ModuleDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!MscorlibIsNotSpecial && IsCorLib(a) && IsCorLib(b))
 				return true;
@@ -977,10 +977,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		bool Equals(IAssembly a, IAssembly b) {
+		bool Equals(IAssembly? a, IAssembly? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!MscorlibIsNotSpecial && IsCorLib(a) && IsCorLib(b))
 				return true;
@@ -998,39 +998,39 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		bool IsTargetOrSourceAssembly(IAssembly a) => IsTargetAssembly(a) || IsSourceAssembly(a);
-		bool IsTargetAssembly(IAssembly a) => a != null && __AssemblyEquals(a, importOptions.TargetModule.Assembly);
-		bool IsSourceAssembly(IAssembly a) => a != null && __AssemblyEquals(a, importOptions.SourceModule.Assembly);
-		bool IsTargetOrSourceModule(IModule a) => IsTargetModule(a) || IsSourceModule(a);
-		bool IsTargetModule(IModule a) => a != null && __ModuleEquals(a, importOptions.TargetModule);
-		bool IsSourceModule(IModule a) => a != null && __ModuleEquals(a, importOptions.SourceModule);
-		bool __AssemblyEquals(IAssembly a, AssemblyDef b) {
-			if ((object)a == b)
+		bool IsTargetOrSourceAssembly(IAssembly? a) => IsTargetAssembly(a) || IsSourceAssembly(a);
+		bool IsTargetAssembly(IAssembly? a) => a != null && __AssemblyEquals(a, importOptions.TargetModule.Assembly);
+		bool IsSourceAssembly(IAssembly? a) => a != null && __AssemblyEquals(a, importOptions.SourceModule.Assembly);
+		bool IsTargetOrSourceModule(IModule? a) => IsTargetModule(a) || IsSourceModule(a);
+		bool IsTargetModule(IModule? a) => a != null && __ModuleEquals(a, importOptions.TargetModule);
+		bool IsSourceModule(IModule? a) => a != null && __ModuleEquals(a, importOptions.SourceModule);
+		bool __AssemblyEquals(IAssembly? a, AssemblyDef? b) {
+			if ((object?)a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a is AssemblyDef a2)
 				return a2 == b;
 			return AssemblyNameComparer.CompareAll.Equals(a, b);
 		}
-		bool __ModuleEquals(IModule a, ModuleDef b) {
-			if ((object)a == b)
+		bool __ModuleEquals(IModule? a, ModuleDef? b) {
+			if ((object?)a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a is ModuleDef a2)
 				return a2 == b;
 			return StringComparer.OrdinalIgnoreCase.Equals(a.Name, b.Name);
 		}
 
-		public bool Equals(TypeSig a, TypeSig b) {
+		public bool Equals(TypeSig? a, TypeSig? b) {
 			if (IgnoreModifiers) {
 				a = a.RemoveModifiers();
 				b = b.RemoveModifiers();
 			}
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1074,7 +1074,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					break;
 
 				case ElementType.Array:
-					ArraySig ara = a as ArraySig, arb = b as ArraySig;
+					ArraySig ara = (ArraySig)a, arb = (ArraySig)b;
 					result = ara.Rank == arb.Rank &&
 							Equals(ara.Sizes, arb.Sizes) &&
 							LowerBoundsEquals(ara.LowerBounds, arb.LowerBounds) &&
@@ -1084,14 +1084,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				case ElementType.ValueType:
 				case ElementType.Class:
 					if (RawSignatureCompare)
-						result = TokenEquals((a as ClassOrValueTypeSig).TypeDefOrRef, (b as ClassOrValueTypeSig).TypeDefOrRef);
+						result = TokenEquals(((ClassOrValueTypeSig)a).TypeDefOrRef, ((ClassOrValueTypeSig)b).TypeDefOrRef);
 					else
-						result = Equals((IType)(a as ClassOrValueTypeSig).TypeDefOrRef, (IType)(b as ClassOrValueTypeSig).TypeDefOrRef);
+						result = Equals((IType)((ClassOrValueTypeSig)a).TypeDefOrRef, (IType)((ClassOrValueTypeSig)b).TypeDefOrRef);
 					break;
 
 				case ElementType.Var:
 				case ElementType.MVar:
-					result = (a as GenericSig).Number == (b as GenericSig).Number;
+					result = ((GenericSig)a).Number == ((GenericSig)b).Number;
 					break;
 
 				case ElementType.GenericInst:
@@ -1110,25 +1110,25 @@ namespace dnSpy.AsmEditor.Compiler {
 					break;
 
 				case ElementType.FnPtr:
-					result = Equals((a as FnPtrSig).Signature, (b as FnPtrSig).Signature);
+					result = Equals(((FnPtrSig)a).Signature, ((FnPtrSig)b).Signature);
 					break;
 
 				case ElementType.CModReqd:
 				case ElementType.CModOpt:
 					if (RawSignatureCompare)
-						result = TokenEquals((a as ModifierSig).Modifier, (b as ModifierSig).Modifier) &&
+						result = TokenEquals(((ModifierSig)a).Modifier, ((ModifierSig)b).Modifier) &&
 								Equals(a.Next, b.Next);
 					else
-						result = Equals((IType)(a as ModifierSig).Modifier, (IType)(b as ModifierSig).Modifier) &&
+						result = Equals((IType)((ModifierSig)a).Modifier, (IType)((ModifierSig)b).Modifier) &&
 								Equals(a.Next, b.Next);
 					break;
 
 				case ElementType.ValueArray:
-					result = (a as ValueArraySig).Size == (b as ValueArraySig).Size && Equals(a.Next, b.Next);
+					result = ((ValueArraySig)a).Size == ((ValueArraySig)b).Size && Equals(a.Next, b.Next);
 					break;
 
 				case ElementType.Module:
-					result = (a as ModuleSig).Index == (b as ModuleSig).Index && Equals(a.Next, b.Next);
+					result = ((ModuleSig)a).Index == ((ModuleSig)b).Index && Equals(a.Next, b.Next);
 					break;
 
 				case ElementType.End:
@@ -1144,16 +1144,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		static bool TokenEquals(ITypeDefOrRef a, ITypeDefOrRef b) {
+		static bool TokenEquals(ITypeDefOrRef? a, ITypeDefOrRef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			return a.MDToken == b.MDToken;
 		}
 
-		public int GetHashCode(TypeSig a) {
-			if (a == null)
+		public int GetHashCode(TypeSig? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1182,7 +1182,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			case ElementType.Class:
 				// When comparing an ExportedType/TypeDef/TypeRef to a TypeDefOrRefSig/Class/ValueType,
 				// the ET is ignored, so we must ignore it when calculating the hash.
-				hash = GetHashCode((IType)(a as TypeDefOrRefSig).TypeDefOrRef);
+				hash = GetHashCode((IType)((TypeDefOrRefSig)a).TypeDefOrRef);
 				break;
 
 			case ElementType.Sentinel:
@@ -1211,16 +1211,16 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			case ElementType.Array:
 				// Don't include sizes and lower bounds since GetHashCode(Type) doesn't (and can't).
-				ArraySig ara = (ArraySig)a;
+				var ara = (ArraySig)a;
 				hash = HASHCODE_MAGIC_ET_ARRAY + (int)ara.Rank + GetHashCode(ara.Next);
 				break;
 
 			case ElementType.Var:
-				hash = HASHCODE_MAGIC_ET_VAR + (int)(a as GenericVar).Number;
+				hash = HASHCODE_MAGIC_ET_VAR + (int)((GenericVar)a).Number;
 				break;
 
 			case ElementType.MVar:
-				hash = HASHCODE_MAGIC_ET_MVAR + (int)(a as GenericMVar).Number;
+				hash = HASHCODE_MAGIC_ET_MVAR + (int)((GenericMVar)a).Number;
 				break;
 
 			case ElementType.GenericInst:
@@ -1235,11 +1235,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				break;
 
 			case ElementType.ValueArray:
-				hash = HASHCODE_MAGIC_ET_VALUEARRAY + (int)(a as ValueArraySig).Size + GetHashCode(a.Next);
+				hash = HASHCODE_MAGIC_ET_VALUEARRAY + (int)((ValueArraySig)a).Size + GetHashCode(a.Next);
 				break;
 
 			case ElementType.Module:
-				hash = HASHCODE_MAGIC_ET_MODULE + (int)(a as ModuleSig).Index + GetHashCode(a.Next);
+				hash = HASHCODE_MAGIC_ET_MODULE + (int)((ModuleSig)a).Index + GetHashCode(a.Next);
 				break;
 
 			case ElementType.End:
@@ -1254,10 +1254,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(IList<TypeSig> a, IList<TypeSig> b) {
+		public bool Equals(IList<TypeSig>? a, IList<TypeSig>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1278,8 +1278,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(IList<TypeSig> a) {
-			if (a == null)
+		public int GetHashCode(IList<TypeSig>? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1292,10 +1292,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return (int)hash;
 		}
 
-		bool Equals(IList<uint> a, IList<uint> b) {
+		bool Equals(IList<uint>? a, IList<uint>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;
@@ -1306,24 +1306,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return true;
 		}
 
-		bool Equals(IList<int> a, IList<int> b) {
+		bool LowerBoundsEquals(IList<int>? a, IList<int>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
-				return false;
-			if (a.Count != b.Count)
-				return false;
-			for (int i = 0; i < a.Count; i++) {
-				if (a[i] != b[i])
-					return false;
-			}
-			return true;
-		}
-
-		bool LowerBoundsEquals(IList<int> a, IList<int> b) {
-			if (a == b)
-				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != 0 && b.Count != 0 && a.Count != b.Count)
 				return false;
@@ -1337,12 +1323,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			return true;
 		}
 
-		public bool Equals(CallingConventionSig a, CallingConventionSig b) => Equals(a, b, true);
+		public bool Equals(CallingConventionSig? a, CallingConventionSig? b) => Equals(a, b, true);
 
-		bool Equals(CallingConventionSig a, CallingConventionSig b, bool compareHasThisFlag) {
+		bool Equals(CallingConventionSig? a, CallingConventionSig? b, bool compareHasThisFlag) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1361,22 +1347,22 @@ namespace dnSpy.AsmEditor.Compiler {
 				case CallingConvention.VarArg:
 				case CallingConvention.Property:
 				case CallingConvention.NativeVarArg:
-					MethodBaseSig ma = a as MethodBaseSig, mb = b as MethodBaseSig;
+					MethodBaseSig ma = (MethodBaseSig)a, mb = (MethodBaseSig)b;
 					result = ma != null && mb != null && Equals(ma, mb, compareHasThisFlag);
 					break;
 
 				case CallingConvention.Field:
-					FieldSig fa = a as FieldSig, fb = b as FieldSig;
+					FieldSig fa = (FieldSig)a, fb = (FieldSig)b;
 					result = fa != null && fb != null && Equals(fa, fb);
 					break;
 
 				case CallingConvention.LocalSig:
-					LocalSig la = a as LocalSig, lb = b as LocalSig;
+					LocalSig la = (LocalSig)a, lb = (LocalSig)b;
 					result = la != null && lb != null && Equals(la, lb);
 					break;
 
 				case CallingConvention.GenericInst:
-					GenericInstMethodSig ga = a as GenericInstMethodSig, gb = b as GenericInstMethodSig;
+					GenericInstMethodSig ga = (GenericInstMethodSig)a, gb = (GenericInstMethodSig)b;
 					result = ga != null && gb != null && Equals(ga, gb);
 					break;
 
@@ -1391,8 +1377,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(CallingConventionSig a) {
-			if (a == null)
+		public int GetHashCode(CallingConventionSig? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1407,22 +1393,22 @@ namespace dnSpy.AsmEditor.Compiler {
 			case CallingConvention.VarArg:
 			case CallingConvention.Property:
 			case CallingConvention.NativeVarArg:
-				MethodBaseSig ma = a as MethodBaseSig;
+				MethodBaseSig? ma = a as MethodBaseSig;
 				hash = ma == null ? 0 : GetHashCode(ma);
 				break;
 
 			case CallingConvention.Field:
-				FieldSig fa = a as FieldSig;
+				FieldSig? fa = a as FieldSig;
 				hash = fa == null ? 0 : GetHashCode(fa);
 				break;
 
 			case CallingConvention.LocalSig:
-				LocalSig la = a as LocalSig;
+				LocalSig? la = a as LocalSig;
 				hash = la == null ? 0 : GetHashCode(la);
 				break;
 
 			case CallingConvention.GenericInst:
-				GenericInstMethodSig ga = a as GenericInstMethodSig;
+				GenericInstMethodSig? ga = a as GenericInstMethodSig;
 				hash = ga == null ? 0 : GetHashCode(ga);
 				break;
 
@@ -1436,12 +1422,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MethodBaseSig a, MethodBaseSig b) => Equals(a, b, true);
+		public bool Equals(MethodBaseSig? a, MethodBaseSig? b) => Equals(a, b, true);
 
-		bool Equals(MethodBaseSig a, MethodBaseSig b, bool compareHasThisFlag) {
+		bool Equals(MethodBaseSig? a, MethodBaseSig? b, bool compareHasThisFlag) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1457,8 +1443,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(MethodBaseSig a) {
-			if (a == null)
+		public int GetHashCode(MethodBaseSig? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1500,10 +1486,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		public bool Equals(FieldSig a, FieldSig b) {
+		public bool Equals(FieldSig? a, FieldSig? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1514,8 +1500,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(FieldSig a) {
-			if (a == null)
+		public int GetHashCode(FieldSig? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1527,10 +1513,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(LocalSig a, LocalSig b) {
+		public bool Equals(LocalSig? a, LocalSig? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1541,8 +1527,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(LocalSig a) {
-			if (a == null)
+		public int GetHashCode(LocalSig? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1554,10 +1540,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(GenericInstMethodSig a, GenericInstMethodSig b) {
+		public bool Equals(GenericInstMethodSig? a, GenericInstMethodSig? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1568,8 +1554,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(GenericInstMethodSig a) {
-			if (a == null)
+		public int GetHashCode(GenericInstMethodSig? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1581,18 +1567,18 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(IMethod a, IMethod b) {
+		public bool Equals(IMethod? a, IMethod? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			MethodDef mda, mdb;
-			MemberRef mra, mrb;
-			MethodSpec msa, msb;
+			MethodDef? mda, mdb;
+			MemberRef? mra, mrb;
+			MethodSpec? msa, msb;
 
 			if ((mda = a as MethodDef) != null & (mdb = b as MethodDef) != null)
 				result = Equals(mda, mdb);
@@ -1611,16 +1597,16 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(IMethod a) {
-			if (a == null)
+		public int GetHashCode(IMethod? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
 
 			int hash;
-			MethodDef mda;
-			MemberRef mra;
-			MethodSpec msa;
+			MethodDef? mda;
+			MemberRef? mra;
+			MethodSpec? msa;
 
 			if ((mda = a as MethodDef) != null)
 				hash = GetHashCode(mda);
@@ -1635,12 +1621,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MemberRef a, MethodDef b) => Equals(b, a);
+		public bool Equals(MemberRef? a, MethodDef? b) => Equals(b, a);
 
-		public bool Equals(MethodDef a, MemberRef b) {
-			if ((object)a == (object)b)
+		public bool Equals(MethodDef? a, MemberRef? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1655,10 +1641,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(MethodDef a, MethodDef b) {
+		public bool Equals(MethodDef? a, MethodDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1672,8 +1658,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(MethodDef a) {
-			if (a == null)
+		public int GetHashCode(MethodDef? a) {
+			if (a is null)
 				return 0;
 
 			if (!recursionCounter.Increment())
@@ -1688,10 +1674,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MemberRef a, MemberRef b) {
+		public bool Equals(MemberRef? a, MemberRef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1704,8 +1690,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(MemberRef a) {
-			if (a == null)
+		public int GetHashCode(MemberRef? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1719,10 +1705,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MethodSpec a, MethodSpec b) {
+		public bool Equals(MethodSpec? a, MethodSpec? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1733,8 +1719,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(MethodSpec a) {
-			if (a == null)
+		public int GetHashCode(MethodSpec? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1745,24 +1731,24 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		bool Equals(IMemberRefParent a, IMemberRefParent b) {
+		bool Equals(IMemberRefParent? a, IMemberRefParent? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			ITypeDefOrRef ita, itb;
-			ModuleRef moda, modb;
-			MethodDef ma, mb;
-			TypeDef td;
+			ITypeDefOrRef? ita, itb;
+			ModuleRef? moda, modb;
+			MethodDef? ma, mb;
+			TypeDef? td;
 
 			if ((ita = a as ITypeDefOrRef) != null && (itb = b as ITypeDefOrRef) != null)
 				result = Equals((IType)ita, (IType)itb);
 			else if ((moda = a as ModuleRef) != null & (modb = b as ModuleRef) != null) {
-				ModuleDef omoda = moda.Module, omodb = modb.Module;
+				ModuleDef omoda = moda!.Module, omodb = modb!.Module;
 				result = Equals((IModule)moda, (IModule)modb) &&
 						Equals(omoda == null ? null : omoda.Assembly, omodb == null ? null : omodb.Assembly);
 			}
@@ -1779,15 +1765,15 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		int GetHashCode(IMemberRefParent a) {
-			if (a == null)
+		int GetHashCode(IMemberRefParent? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
 
 			int hash;
-			ITypeDefOrRef ita;
-			MethodDef ma;
+			ITypeDefOrRef? ita;
+			MethodDef? ma;
 
 			if ((ita = a as ITypeDefOrRef) != null)
 				hash = GetHashCode((IType)ita);
@@ -1804,17 +1790,17 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(IField a, IField b) {
+		public bool Equals(IField? a, IField? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
 
 			bool result;
-			FieldDef fa, fb;
-			MemberRef ma, mb;
+			FieldDef? fa, fb;
+			MemberRef? ma, mb;
 
 			if ((fa = a as FieldDef) != null & (fb = b as FieldDef) != null)
 				result = Equals(fa, fb);
@@ -1831,15 +1817,15 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(IField a) {
-			if (a == null)
+		public int GetHashCode(IField? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
 
 			int hash;
-			FieldDef fa;
-			MemberRef ma;
+			FieldDef? fa;
+			MemberRef? ma;
 
 			if ((fa = a as FieldDef) != null)
 				hash = GetHashCode(fa);
@@ -1852,12 +1838,12 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(MemberRef a, FieldDef b) => Equals(b, a);
+		public bool Equals(MemberRef? a, FieldDef? b) => Equals(b, a);
 
-		public bool Equals(FieldDef a, MemberRef b) {
-			if ((object)a == (object)b)
+		public bool Equals(FieldDef? a, MemberRef? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1871,10 +1857,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(FieldDef a, FieldDef b) {
+		public bool Equals(FieldDef? a, FieldDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1887,8 +1873,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(FieldDef a) {
-			if (a == null)
+		public int GetHashCode(FieldDef? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1902,10 +1888,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(PropertyDef a, PropertyDef b) {
+		public bool Equals(PropertyDef? a, PropertyDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1920,8 +1906,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(PropertyDef a) {
-			if (a == null)
+		public int GetHashCode(PropertyDef? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1936,10 +1922,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			return hash;
 		}
 
-		public bool Equals(EventDef a, EventDef b) {
+		public bool Equals(EventDef? a, EventDef? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1952,8 +1938,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public int GetHashCode(EventDef a) {
-			if (a == null)
+		public int GetHashCode(EventDef? a) {
+			if (a is null)
 				return 0;
 			if (!recursionCounter.Increment())
 				return 0;
@@ -1968,10 +1954,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		// Compares a with b, and a must be the global type
-		bool EqualsGlobal(TypeDef a, ModuleRef b) {
-			if ((object)a == (object)b)
+		bool EqualsGlobal(TypeDef? a, ModuleRef? b) {
+			if ((object?)a == b)
 				return true;	// both are null
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (!recursionCounter.Increment())
 				return false;
@@ -1984,7 +1970,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		static AssemblyDef GetAssembly(ModuleDef module) => module == null ? null : module.Assembly;
+		static AssemblyDef? GetAssembly(ModuleDef? module) => module == null ? null : module.Assembly;
 
 		static int GetHashCode_ElementType_MVar(int numGenericParams) => GetHashCode(numGenericParams, HASHCODE_MAGIC_ET_MVAR);
 
@@ -2002,10 +1988,10 @@ namespace dnSpy.AsmEditor.Compiler {
 
 	// From dnlib.DotNet.dnlib_Utils
 	static class dnlib_Utils {
-		static int CompareTo(Version a, Version b) {
-			if (a == null)
+		static int CompareTo(Version? a, Version? b) {
+			if (a is null)
 				a = new Version();
-			if (b == null)
+			if (b is null)
 				b = new Version();
 			if (a.Major != b.Major)
 				return a.Major.CompareTo(b.Major);

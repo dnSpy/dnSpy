@@ -24,7 +24,7 @@ using dnSpy.Contracts.Text.Classification;
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenDocumentListTextClassifierContext : TextClassifierContext {
 		public string SearchText { get; }
-		public OpenDocumentListTextClassifierContext(string searchText, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public OpenDocumentListTextClassifierContext(string? searchText, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null)
 			: base(text, tag, colorize, colors) => SearchText = searchText ?? string.Empty;
 	}
 }

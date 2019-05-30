@@ -147,56 +147,56 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(BaseTypeNode node);
+		DocumentTreeNodeFilterResult GetResult(BaseTypeNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(DerivedTypeNode node);
+		DocumentTreeNodeFilterResult GetResult(DerivedTypeNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node);
+		DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(ResourceNode node);
+		DocumentTreeNodeFilterResult GetResult(ResourceNode? node);
 
 		/// <summary>
 		/// Returns a filter result. The input can be null.
 		/// </summary>
 		/// <param name="node">Node, can be null</param>
 		/// <returns></returns>
-		DocumentTreeNodeFilterResult GetResult(ResourceElementNode node);
+		DocumentTreeNodeFilterResult GetResult(ResourceElementNode? node);
 
 		/// <summary>
 		/// Returns a filter result if it's any other <see cref="DocumentTreeNodeData"/> instance

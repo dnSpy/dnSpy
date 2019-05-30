@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// in a new tab. This would then be the older tab's content.</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref);
+		DocumentTabReferenceResult? Create(IDocumentTabService documentTabService, DocumentTabContent? sourceContent, object? @ref);
 	}
 
 	/// <summary>Metadata</summary>

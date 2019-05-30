@@ -28,13 +28,13 @@ namespace dnSpy.Hex.HexEditor {
 		public Guid Guid { get; }
 		public string Name { get; }
 
-		HexEditorOptions(HexViewOptionsGroup group, string subGroup, Guid guid, string name)
+		HexEditorOptions(HexViewOptionsGroup group, string subGroup, Guid guid, string? name)
 			: base(group, subGroup) {
 			Guid = guid;
-			Name = name;
+			Name = name ?? throw new ArgumentOutOfRangeException(nameof(name));
 		}
 
-		public static HexEditorOptions TryCreate(HexViewOptionsGroup group, IHexEditorOptionsDefinitionMetadata md) {
+		public static HexEditorOptions? TryCreate(HexViewOptionsGroup group, IHexEditorOptionsDefinitionMetadata md) {
 			if (group == null)
 				throw new ArgumentNullException(nameof(group));
 			if (md == null)

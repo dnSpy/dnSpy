@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs {
 		public BrowseBackCommand()
 			: base(NavigationCommands.BrowseBack) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateBackCommand, dnSpy_Resources.ShortCutKeyBackspace);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateBackCommand, dnSpy_Resources.ShortCutKeyBackspace);
 	}
 
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.Forwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs {
 		public BrowseForwardCommand()
 			: base(NavigationCommands.BrowseForward) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateForwardCommand, dnSpy_Resources.ShortCutKeyAltRightArrow);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateForwardCommand, dnSpy_Resources.ShortCutKeyAltRightArrow);
 	}
 
 	[ExportAutoLoaded]
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs {
 		void BrowseBack() {
 			if (!CanBrowseBack)
 				return;
-			documentTabService.ActiveTab.NavigateBackward();
+			documentTabService.ActiveTab!.NavigateBackward();
 		}
 
 		bool CanBrowseForward => documentTabService.ActiveTab?.CanNavigateForward == true;
@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs {
 		void BrowseForward() {
 			if (!CanBrowseForward)
 				return;
-			documentTabService.ActiveTab.NavigateForward();
+			documentTabService.ActiveTab!.NavigateForward();
 		}
 	}
 }

@@ -84,12 +84,12 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.decompiler = decompiler;
 		}
 
-		CilBody GetInitializeComponentBody() {
+		CilBody? GetInitializeComponentBody() {
 			var m = type.FindMethods("InitializeComponent").FirstOrDefault(a => a.Parameters.Count == 1 && !a.IsStatic);
 			return m?.Body;
 		}
 
-		string GetStartupUri(CilBody body) =>
+		string? GetStartupUri(CilBody body) =>
 			body?.Instructions.Where(a => a.Operand is string && ((string)a.Operand).EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)).Select(a => (string)a.Operand).FirstOrDefault();
 
 		public override void Create(DecompileContext ctx) {

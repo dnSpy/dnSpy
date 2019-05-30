@@ -30,7 +30,7 @@ namespace dnSpy.Documents.TreeView {
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => imgRef;
 		public override string Message { get; }
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly ImageReference imgRef;
 

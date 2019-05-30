@@ -71,10 +71,11 @@ namespace dnSpy.Hex.Formatting {
 			public override LineBreakCondition BreakAfter { get; }
 			public override bool HasFixedSize { get; }
 			public override int Length { get; }
-			public override TextRunProperties Properties { get; }
+			public override TextRunProperties? Properties { get; }
 			readonly HexAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(HexLinePart linePart) {
+				Debug.Assert(linePart.AdornmentElement != null);
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == VST.PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;

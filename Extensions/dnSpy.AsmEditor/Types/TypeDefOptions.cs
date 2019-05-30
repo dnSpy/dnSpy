@@ -27,13 +27,15 @@ namespace dnSpy.AsmEditor.Types {
 		public UTF8String Name;
 		public ushort? PackingSize;
 		public uint? ClassSize;
-		public ITypeDefOrRef BaseType;
+		public ITypeDefOrRef? BaseType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 		public List<GenericParam> GenericParameters = new List<GenericParam>();
 		public List<InterfaceImpl> Interfaces = new List<InterfaceImpl>();
 
 		public TypeDefOptions() {
+			Namespace = null!;
+			Name = null!;
 		}
 
 		public TypeDefOptions(TypeDef type) {

@@ -47,7 +47,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		protected EditFieldCommandTargetMenuItemBase(Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory) => this.hexBufferFileServiceFactory = hexBufferFileServiceFactory ?? throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 
-		protected override EditFieldCommandContext CreateContext(IMenuItemContext context) {
+		protected override EditFieldCommandContext? CreateContext(IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
 			if (hexView == null)
 				return null;

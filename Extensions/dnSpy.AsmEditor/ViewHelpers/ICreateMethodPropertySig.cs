@@ -28,6 +28,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// <param name="options">Create-options</param>
 		/// <param name="origSig">Signature to edit or null</param>
 		/// <returns></returns>
-		MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig);
+		MethodBaseSig? Create(MethodSigCreatorOptions options, MethodBaseSig? origSig);
 	}
 }

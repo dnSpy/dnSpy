@@ -21,10 +21,10 @@ using dndbg.Engine;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	readonly struct CreateCorValueResult {
-		public readonly CorValue Value;
+		public readonly CorValue? Value;
 		public readonly int HResult;
 		public readonly bool CanDispose;
-		public CreateCorValueResult(CorValue value, int hr, bool canDispose = true) {
+		public CreateCorValueResult(CorValue? value, int hr, bool canDispose = true) {
 			Value = value;
 			HResult = hr;
 			CanDispose = canDispose;

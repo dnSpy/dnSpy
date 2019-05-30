@@ -23,6 +23,6 @@ namespace dnSpy.Bookmarks.DotNet {
 	interface IDotNetBookmarkLocation {
 		ModuleId Module { get; }
 		uint Token { get; }
-		DotNetBookmarkLocationFormatter Formatter { get; set; }
+		DotNetBookmarkLocationFormatter? Formatter { get; set; }
 	}
 }

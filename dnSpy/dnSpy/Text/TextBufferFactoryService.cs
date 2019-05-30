@@ -97,7 +97,7 @@ namespace dnSpy.Text {
 		static class Cache {
 			public static void FreeReadBuffer(char[] buffer) => Interlocked.Exchange(ref __readBuffer, new WeakReference(buffer));
 			public static char[] GetReadBuffer() => Interlocked.Exchange(ref __readBuffer, null)?.Target as char[] ?? new char[BUF_LENGTH];
-			static WeakReference __readBuffer;
+			static WeakReference? __readBuffer;
 			const int BUF_LENGTH = 4096;
 		}
 	}

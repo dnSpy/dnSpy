@@ -30,13 +30,13 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="appDomain">Debugger app domain</param>
 		/// <returns></returns>
-		public static DmdAppDomain GetReflectionAppDomain(this DbgAppDomain appDomain) => (appDomain.InternalAppDomain as DbgDotNetInternalAppDomain)?.ReflectionAppDomain;
+		public static DmdAppDomain? GetReflectionAppDomain(this DbgAppDomain appDomain) => (appDomain.InternalAppDomain as DbgDotNetInternalAppDomain)?.ReflectionAppDomain;
 
 		/// <summary>
 		/// Gets the internal .NET app domain or null if it's not a managed app domain
 		/// </summary>
 		/// <param name="appDomain"></param>
 		/// <returns></returns>
-		public static DbgDotNetInternalAppDomain GetDotNetInternalAppDomain(this DbgAppDomain appDomain) => appDomain.InternalAppDomain as DbgDotNetInternalAppDomain;
+		public static DbgDotNetInternalAppDomain? GetDotNetInternalAppDomain(this DbgAppDomain appDomain) => appDomain.InternalAppDomain as DbgDotNetInternalAppDomain;
 	}
 }

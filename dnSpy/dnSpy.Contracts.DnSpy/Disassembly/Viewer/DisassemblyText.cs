@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		/// <summary>
 		/// Gets the reference or null
 		/// </summary>
-		public object Reference { get; }
+		public object? Reference { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		/// <param name="text">Text</param>
 		/// <param name="reference">Reference or null</param>
 		/// <param name="referenceFlags">Reference flags</param>
-		public DisassemblyText(object color, string text, object reference, DisassemblyReferenceFlags referenceFlags) {
+		public DisassemblyText(object color, string text, object? reference, DisassemblyReferenceFlags referenceFlags) {
 			Color = color ?? throw new ArgumentNullException(nameof(color));
 			Text = text ?? throw new ArgumentNullException(nameof(text));
 			Reference = reference;

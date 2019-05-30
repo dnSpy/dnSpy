@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorProcess : COMObject<ICorDebugProcess>, IEquatable<CorProcess> {
+	sealed class CorProcess : COMObject<ICorDebugProcess>, IEquatable<CorProcess?> {
 		public uint HelperThreadId {
 			get {
 				int hr = obj.GetHelperThreadID(out uint threadId);
@@ -146,7 +146,7 @@ namespace dndbg.Engine {
 			return 0;
 		}
 
-		public byte[] ReadMemory(ulong addr, int size) {
+		public byte[]? ReadMemory(ulong addr, int size) {
 			if (addr == 0 || size < 0)
 				return null;
 			var buf = new byte[size];
@@ -197,18 +197,8 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
-		public static bool operator ==(CorProcess a, CorProcess b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorProcess a, CorProcess b) => !(a == b);
-
-		public bool Equals(CorProcess other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorProcess);
+		public bool Equals(CorProcess? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorProcess);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Process] {ProcessId} CLR v{CLRVersion} Flags={DesiredNGENCompilerFlags}";
 	}

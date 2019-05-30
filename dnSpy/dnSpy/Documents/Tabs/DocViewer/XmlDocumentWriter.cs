@@ -29,7 +29,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	[ContentType(ContentTypes.Xaml)]
 	[ContentType(ContentTypes.Xml)]
 	sealed class XmlDocumentWriterProvider : IDocumentWriterProvider {
-		public IDocumentWriter Create(IContentType contentType) => new XmlDocumentWriter(contentType.IsOfType(ContentTypes.Xaml));
+		public IDocumentWriter? Create(IContentType contentType) => new XmlDocumentWriter(contentType.IsOfType(ContentTypes.Xaml));
 	}
 
 	sealed class XmlDocumentWriter : IDocumentWriter {

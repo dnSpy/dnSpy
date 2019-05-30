@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="extension">File extension, with or without the period</param>
 		/// <returns></returns>
-		internal static string TryGetContentTypeStringByExtension(string extension) {
+		internal static string? TryGetContentTypeStringByExtension(string extension) {
 			var comparer = StringComparer.InvariantCultureIgnoreCase;
 			if (comparer.Equals(extension, ".txt") || comparer.Equals(extension, "txt"))
 				return ContentTypes.PlainText;

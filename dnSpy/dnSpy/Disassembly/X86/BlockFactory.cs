@@ -50,9 +50,9 @@ namespace dnSpy.Disassembly.X86 {
 			public readonly TargetKind TargetKind;
 			public readonly NativeCodeBlockKind Kind;
 			public readonly ulong Address;
-			public readonly string Comment;
+			public readonly string? Comment;
 			public readonly List<X86InstructionInfo> Instructions;
-			public BlockInfo(TargetKind targetKind, NativeCodeBlockKind kind, ulong address, string comment) {
+			public BlockInfo(TargetKind targetKind, NativeCodeBlockKind kind, ulong address, string? comment) {
 				TargetKind = targetKind;
 				Kind = kind;
 				Address = address;
@@ -174,6 +174,8 @@ namespace dnSpy.Disassembly.X86 {
 					currentBlock = new BlockInfo(targetKind, origBlock.Kind, instr.IP, origBlock.Address == instr.IP ? origBlock.Comment : null);
 					newBlocks.Add(currentBlock);
 				}
+				// The addr of each block is always in the dictionary so currentBlock is initialized
+				Debug.Assert(currentBlock.Instructions != null);
 				currentBlock.Instructions.Add(new X86InstructionInfo(info.code, instr));
 			}
 
@@ -188,7 +190,7 @@ namespace dnSpy.Disassembly.X86 {
 				for (int j = 0; j < instructions.Count; j++)
 					x86Instructions[j] = instructions[j];
 
-				string label;
+				string? label;
 				FormatterOutputTextKind labelKind;
 				switch (block.TargetKind) {
 				case TargetKind.Unknown:

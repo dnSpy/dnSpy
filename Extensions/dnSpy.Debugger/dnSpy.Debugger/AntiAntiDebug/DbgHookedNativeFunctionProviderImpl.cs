@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			public string Filename { get; }
 			public ulong Address { get; }
 			public ulong EndAddress { get; }
-			public ExportedFunctions ExportedFunctions { get; set; }
+			public ExportedFunctions? ExportedFunctions { get; set; }
 
 			public ModuleInfo(ProcessModule module) {
 				Name = Path.GetFileName(module.FileName);
@@ -78,6 +78,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				var result = PatchAPI(address, info.Address, info.EndAddress);
 				if (result.ErrorMessage != null)
 					throw new DbgHookException(result.ErrorMessage);
+				Debug.Assert(result.Block != null);
 				simplePatches.Add(result.SimplePatch);
 				return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
 			}
@@ -94,6 +95,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			var result = PatchAPI(address, address, address + 1);
 			if (result.ErrorMessage != null)
 				throw new DbgHookException(result.ErrorMessage);
+			Debug.Assert(result.Block != null);
 			simplePatches.Add(result.SimplePatch);
 			return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
 		}
@@ -133,6 +135,10 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			if (!toModuleInfo.TryGetValue(dllName, out var info)) {
 				address = 0;
 				return false;
+			}
+			if (info.ExportedFunctions == null) {
+				using (var reader = new ExportedFunctionsReader(info.Filename, info.Address))
+					info.ExportedFunctions = reader.ReadExports();
 			}
 			return info.ExportedFunctions.TryGet(funcName, out address);
 		}

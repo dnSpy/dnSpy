@@ -26,7 +26,7 @@ using dnSpy.Properties;
 namespace dnSpy.Text.Settings {
 	abstract class AdvancedAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.AdvancedSettings;
-		public sealed override object UIObject => this;
+		public sealed override object? UIObject => this;
 
 		public bool ReferenceHighlighting {
 			get => referenceHighlighting;
@@ -85,7 +85,7 @@ namespace dnSpy.Text.Settings {
 
 		public EnumListVM BlockStructureLineKindVM { get; }
 		public BlockStructureLineKind BlockStructureLineKind {
-			get => (BlockStructureLineKind)BlockStructureLineKindVM.SelectedItem;
+			get => (BlockStructureLineKind)BlockStructureLineKindVM.SelectedItem!;
 			set => BlockStructureLineKindVM.SelectedItem = value;
 		}
 		static readonly EnumVM[] blockStructureLineKindList = new EnumVM[5] {

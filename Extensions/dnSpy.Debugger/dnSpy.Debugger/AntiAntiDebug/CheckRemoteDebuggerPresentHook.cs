@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		public bool IsEnabled(DbgNativeFunctionHookContext context) => debuggerSettings.AntiCheckRemoteDebuggerPresent;
 
-		public void Hook(DbgNativeFunctionHookContext context, out string errorMessage) {
+		public void Hook(DbgNativeFunctionHookContext context, out string? errorMessage) {
 			switch (context.Process.Architecture) {
 			case DbgArchitecture.X86:
 				HookX86(context, out errorMessage);
@@ -54,10 +54,10 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			}
 		}
 
-		void HookX86(DbgNativeFunctionHookContext context, out string errorMessage) =>
+		void HookX86(DbgNativeFunctionHookContext context, out string? errorMessage) =>
 			new CheckRemoteDebuggerPresentPatcherX86(context).TryPatchX86(out errorMessage);
 
-		void HookX64(DbgNativeFunctionHookContext context, out string errorMessage) =>
+		void HookX64(DbgNativeFunctionHookContext context, out string? errorMessage) =>
 			new CheckRemoteDebuggerPresentPatcherX86(context).TryPatchX64(out errorMessage);
 	}
 }

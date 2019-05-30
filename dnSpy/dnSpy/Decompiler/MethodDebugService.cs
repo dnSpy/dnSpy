@@ -53,7 +53,7 @@ namespace dnSpy.Decompiler {
 		readonly Dictionary<ModuleTokenId, MethodDebugInfo> dict;
 		readonly ITextSnapshot snapshot;
 		readonly IModuleIdProvider moduleIdProvider;
-		MethodSourceStatement[] sortedStatements;
+		MethodSourceStatement[]? sortedStatements;
 
 		public int Count => dict.Count;
 
@@ -135,6 +135,7 @@ namespace dnSpy.Decompiler {
 
 		TextSpan GetScopeSpan(int textPosition) {
 			int stmtIndex = GetScopeSpanStartIndex(textPosition);
+			Debug.Assert(sortedStatements != null);
 			if (stmtIndex >= 0) {
 				var scopeSpan = sortedStatements[stmtIndex].Statement.TextSpan;
 				if (scopeSpan.Contains(textPosition))
@@ -143,7 +144,7 @@ namespace dnSpy.Decompiler {
 			return new TextSpan(0, snapshot.Length);
 		}
 
-		List<MethodSourceStatement> Filter(List<MethodSourceStatement> methodStatements, int textPosition) {
+		List<MethodSourceStatement>? Filter(List<MethodSourceStatement>? methodStatements, int textPosition) {
 			if (methodStatements == null || methodStatements.Count <= 1)
 				return methodStatements;
 			var res = new List<MethodSourceStatement>();
@@ -189,8 +190,8 @@ namespace dnSpy.Decompiler {
 			return false;
 		}
 
-		List<MethodSourceStatement> FindByLineAndTextOffset(TextSpan scopeSpan, int lineStart, int lineEnd, int textPosition) {
-			List<MethodSourceStatement> list = null;
+		List<MethodSourceStatement>? FindByLineAndTextOffset(TextSpan scopeSpan, int lineStart, int lineEnd, int textPosition) {
+			List<MethodSourceStatement>? list = null;
 			foreach (var kv in dict) {
 				var info = kv.Value;
 				var sourceStatement = info.GetSourceStatementByTextOffset(lineStart, lineEnd, textPosition);
@@ -203,7 +204,7 @@ namespace dnSpy.Decompiler {
 			return list;
 		}
 
-		List<MethodSourceStatement> GetClosest(int lineStart, int lineEnd, int textPosition) {
+		List<MethodSourceStatement>? GetClosest(int lineStart, int lineEnd, int textPosition) {
 			var list = new List<MethodSourceStatement>();
 			foreach (var kv in dict) {
 				var info = kv.Value;
@@ -256,10 +257,10 @@ namespace dnSpy.Decompiler {
 			return null;
 		}
 
-		public MethodDebugInfo TryGetMethodDebugInfo(MethodDef method) =>
+		public MethodDebugInfo? TryGetMethodDebugInfo(MethodDef method) =>
 			TryGetMethodDebugInfo(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken));
 
-		public MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token) {
+		public MethodDebugInfo? TryGetMethodDebugInfo(ModuleTokenId token) {
 			dict.TryGetValue(token, out var info);
 			return info;
 		}
@@ -268,6 +269,7 @@ namespace dnSpy.Decompiler {
 			int position = span.Start;
 			int end = span.End;
 			int index = GetStartIndex(position);
+			Debug.Assert(sortedStatements != null);
 			if (index < 0)
 				yield break;
 			var array = sortedStatements;
@@ -304,6 +306,7 @@ namespace dnSpy.Decompiler {
 		int GetScopeSpanStartIndex(int position) {
 			if (sortedStatements == null)
 				InitializeSortedStatements();
+			Debug.Assert(sortedStatements != null);
 
 			int index = GetStartIndexCore(position);
 			var array = sortedStatements;
@@ -334,6 +337,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		int GetStartIndexCore(int position) {
+			Debug.Assert(sortedStatements != null);
 			var array = sortedStatements;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

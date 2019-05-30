@@ -51,7 +51,7 @@ namespace dnSpy.Analyzer {
 
 		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
 
-		TreeNodeData GetReference(IMenuItemContext context) {
+		TreeNodeData? GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
 

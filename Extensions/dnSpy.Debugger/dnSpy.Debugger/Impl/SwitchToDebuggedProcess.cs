@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Impl {
 	sealed class SwitchToDebuggedProcess : IDbgManagerStartListener {
 		readonly DebuggerSettings debuggerSettings;
 		bool ignoreSetForeground;
-		DbgProcess currentProcess;
+		DbgProcess? currentProcess;
 
 		[ImportingConstructor]
 		SwitchToDebuggedProcess(DebuggerSettings debuggerSettings) => this.debuggerSettings = debuggerSettings;
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
-			if (!e.Added && e.Objects.Contains(currentProcess))
+			if (!e.Added && e.Objects.Contains(currentProcess!))
 				currentProcess = null;
 		}
 

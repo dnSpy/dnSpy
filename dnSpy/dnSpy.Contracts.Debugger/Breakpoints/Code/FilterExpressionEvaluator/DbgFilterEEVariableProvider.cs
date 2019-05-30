@@ -45,6 +45,6 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// Thread name
 		/// </summary>
-		public abstract string ThreadName { get; }
+		public abstract string? ThreadName { get; }
 	}
 }

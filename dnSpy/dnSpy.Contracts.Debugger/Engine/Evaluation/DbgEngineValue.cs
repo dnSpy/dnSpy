@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// The value. It's only valid if <see cref="HasRawValue"/> is true. A null value is a valid value.
 		/// If it's an enum value, it's stored as the enum's underlying type (eg. <see cref="int"/>)
 		/// </summary>
-		public abstract object RawValue { get; }
+		public abstract object? RawValue { get; }
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.

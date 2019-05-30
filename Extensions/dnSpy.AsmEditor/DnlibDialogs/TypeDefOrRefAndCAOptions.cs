@@ -22,7 +22,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeDefOrRefAndCAOptions {
-		public ITypeDefOrRef TypeDefOrRef;
+		public ITypeDefOrRef? TypeDefOrRef;
 		public List<CustomAttribute> CustomAttributes { get; } = new List<CustomAttribute>();
 
 		public TypeDefOrRefAndCAOptions() {

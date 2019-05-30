@@ -31,14 +31,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MethodSpecOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickMethodCommand => new RelayCommand(a => PickMethod());
 
-		public IMethodDefOrRef Method {
+		public IMethodDefOrRef? Method {
 			get => method;
 			set {
 				if (method != value) {
@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		IMethodDefOrRef method;
+		IMethodDefOrRef? method;
 
 		public string MethodFullName {
 			get {

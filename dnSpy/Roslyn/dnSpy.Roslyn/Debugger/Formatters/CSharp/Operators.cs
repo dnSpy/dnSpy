@@ -51,7 +51,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			{ "op_UnaryPlus", "operator +".Split(' ') },
 		};
 
-		public static string[] TryGetOperatorInfo(string name) {
+		public static string[]? TryGetOperatorInfo(string name) {
 			nameToOperatorName.TryGetValue(name, out var list);
 			return list;
 		}

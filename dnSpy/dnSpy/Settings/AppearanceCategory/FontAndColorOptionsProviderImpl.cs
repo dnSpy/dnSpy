@@ -39,7 +39,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 	}
 
 	sealed class FontAndColorOptionsImpl : FontAndColorOptions {
-		public override string DisplayName => textAppearanceCategory.DisplayName;
+		public override string? DisplayName => textAppearanceCategory.DisplayName;
 		public override string Name => textAppearanceCategory.Category;
 		public override FontOption FontOption { get; }
 
@@ -49,8 +49,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		public FontAndColorOptionsImpl(TextAppearanceCategory textAppearanceCategory) {
 			this.textAppearanceCategory = textAppearanceCategory;
 			fontSettings = textAppearanceCategory.ThemeFontSettings.Active;
-			FontOption = new FontOption(fontSettings.FontType) {
-				FontFamily = fontSettings.FontFamily,
+			FontOption = new FontOption(fontSettings.FontType, fontSettings.FontFamily) {
 				FontSize = fontSettings.FontSize,
 			};
 		}

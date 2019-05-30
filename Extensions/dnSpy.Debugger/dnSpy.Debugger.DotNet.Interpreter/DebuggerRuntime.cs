@@ -43,14 +43,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <param name="index">Argument index</param>
 		/// <returns></returns>
-		public abstract ILValue LoadArgument(int index);
+		public abstract ILValue? LoadArgument(int index);
 
 		/// <summary>
 		/// Gets a local value or returns null on failure
 		/// </summary>
 		/// <param name="index">Local index</param>
 		/// <returns></returns>
-		public abstract ILValue LoadLocal(int index);
+		public abstract ILValue? LoadLocal(int index);
 
 		/// <summary>
 		/// Gets the address of an argument or returns null on failure
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="index">Argument index</param>
 		/// <param name="type">Type of the argument</param>
 		/// <returns></returns>
-		public abstract ILValue LoadArgumentAddress(int index, DmdType type);
+		public abstract ILValue? LoadArgumentAddress(int index, DmdType type);
 
 		/// <summary>
 		/// Gets the address of a local or returns null on failure
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="index">Local index</param>
 		/// <param name="type">Type of the local</param>
 		/// <returns></returns>
-		public abstract ILValue LoadLocalAddress(int index, DmdType type);
+		public abstract ILValue? LoadLocalAddress(int index, DmdType type);
 
 		/// <summary>
 		/// Writes to an argument or returns false on failure
@@ -90,35 +90,35 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="elementType">Element type</param>
 		/// <param name="length">Number of elements</param>
 		/// <returns></returns>
-		public abstract ILValue CreateSZArray(DmdType elementType, long length);
+		public abstract ILValue? CreateSZArray(DmdType elementType, long length);
 
 		/// <summary>
 		/// Creates a <see cref="RuntimeTypeHandle"/> value or returns null on failure
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public abstract ILValue CreateRuntimeTypeHandle(DmdType type);
+		public abstract ILValue? CreateRuntimeTypeHandle(DmdType type);
 
 		/// <summary>
 		/// Creates a <see cref="RuntimeFieldHandle"/> value or returns null on failure
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public abstract ILValue CreateRuntimeFieldHandle(DmdFieldInfo field);
+		public abstract ILValue? CreateRuntimeFieldHandle(DmdFieldInfo field);
 
 		/// <summary>
 		/// Creates a <see cref="RuntimeMethodHandle"/> value or returns null on failure
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		public abstract ILValue CreateRuntimeMethodHandle(DmdMethodBase method);
+		public abstract ILValue? CreateRuntimeMethodHandle(DmdMethodBase method);
 
 		/// <summary>
 		/// Creates a type without calling its constructor or returns null on failure. All fields are initialized to 0 or null depending on field type
 		/// </summary>
 		/// <param name="type">Type to create</param>
 		/// <returns></returns>
-		public abstract ILValue CreateTypeNoConstructor(DmdType type);
+		public abstract ILValue? CreateTypeNoConstructor(DmdType type);
 
 		/// <summary>
 		/// Boxes a value or returns null on failure
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value to box</param>
 		/// <param name="type">Target type</param>
 		/// <returns></returns>
-		public abstract ILValue Box(ILValue value, DmdType type);
+		public abstract ILValue? Box(ILValue value, DmdType type);
 
 		/// <summary>
 		/// Calls a static method or returns false on failure
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="arguments">Method arguments</param>
 		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public abstract bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue);
+		public abstract bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue);
 
 		/// <summary>
 		/// Creates a new instance and calls its constructor or returns null on failure. The constructor could be a CLR-generated array constructor
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="ctor">Constructor</param>
 		/// <param name="arguments">Constructor arguments</param>
 		/// <returns></returns>
-		public abstract ILValue CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments);
+		public abstract ILValue? CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments);
 
 		/// <summary>
 		/// Calls a static method or returns false on failure
@@ -153,21 +153,21 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="arguments">Method arguments</param>
 		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public abstract bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue);
+		public abstract bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue? returnValue);
 
 		/// <summary>
 		/// Returns the value of a static field or returns null on failure
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public abstract ILValue LoadStaticField(DmdFieldInfo field);
+		public abstract ILValue? LoadStaticField(DmdFieldInfo field);
 
 		/// <summary>
 		/// Returns the address of a static field or returns null on failure
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public abstract ILValue LoadStaticFieldAddress(DmdFieldInfo field);
+		public abstract ILValue? LoadStaticFieldAddress(DmdFieldInfo field);
 
 		/// <summary>
 		/// Stores a value in a static field or returns false on failure

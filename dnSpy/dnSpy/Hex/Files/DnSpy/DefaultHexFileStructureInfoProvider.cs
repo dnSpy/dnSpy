@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			this.hexFileImageReferenceProviders = hexFileImageReferenceProviders.ToArray();
 		}
 
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new DefaultHexFileStructureInfoProvider(toolTipCreatorFactory, hexFileImageReferenceProviders);
 	}
 
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			this.hexFileImageReferenceProviders = hexFileImageReferenceProviders ?? throw new ArgumentNullException(nameof(hexFileImageReferenceProviders));
 		}
 
-		public override object GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override object? GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 

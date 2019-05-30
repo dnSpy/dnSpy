@@ -104,7 +104,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 			var output = new DbgStringBuilderTextWriter(sb);
 			output.Write(DbgTextColor.Keyword, "new");
 			output.Write(DbgTextColor.Text, " ");
-			FormatTypeName(output, ctor.DeclaringType);
+			FormatTypeName(output, ctor.DeclaringType!);
 			output.Write(DbgTextColor.Punctuation, "(");
 			var castType = ctor.GetMethodSignature().GetParameterTypes()[0];
 			if (!expectedType.CanCastTo(castType)) {

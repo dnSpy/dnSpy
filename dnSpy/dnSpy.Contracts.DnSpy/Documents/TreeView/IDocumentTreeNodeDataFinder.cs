@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="documentTreeView">Owner</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		DocumentTreeNodeData FindNode(IDocumentTreeView documentTreeView, object @ref);
+		DocumentTreeNodeData? FindNode(IDocumentTreeView documentTreeView, object? @ref);
 	}
 
 	/// <summary>Metadata</summary>

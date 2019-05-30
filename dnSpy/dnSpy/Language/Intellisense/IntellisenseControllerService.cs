@@ -88,7 +88,7 @@ namespace dnSpy.Language.Intellisense {
 
 		sealed class ControllerInfo {
 			public Lazy<IIntellisenseControllerProvider, IContentTypeMetadata> Lazy { get; }
-			public IIntellisenseController Controller { get; set; }
+			public IIntellisenseController? Controller { get; set; }
 
 			public ControllerInfo(Lazy<IIntellisenseControllerProvider, IContentTypeMetadata> lazy) => Lazy = lazy;
 

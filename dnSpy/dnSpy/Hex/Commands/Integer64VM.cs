@@ -46,8 +46,8 @@ namespace dnSpy.Hex.Commands {
 		protected override string OnNewValue(ulong value) => SimpleTypeConverter.ToString(value, ulong.MinValue, ulong.MaxValue, null);
 
 		/// <inheritdoc/>
-		protected override string ConvertToValue(out ulong value) {
-			long v = SimpleTypeConverter.ParseInt64(StringValue, long.MinValue, long.MaxValue, out string error);
+		protected override string? ConvertToValue(out ulong value) {
+			long v = SimpleTypeConverter.ParseInt64(StringValue, long.MinValue, long.MaxValue, out var error);
 			if (error == null) {
 				value = (ulong)v;
 				return null;

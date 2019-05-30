@@ -71,7 +71,7 @@ namespace Example2.Extension {
 		[ImportingConstructor]
 		TextTaggerProvider(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
 			// All text content types (including C#/VB code) derive from the TEXT content
 			// type, so our tagger will get called to colorize every text file that's shown
 			// in a text editor.

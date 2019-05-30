@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the tooltip or null if none
 		/// </summary>
-		public virtual object ToolTip => null;
+		public virtual object? ToolTip => null;
 
 		/// <summary>
 		/// true if <see cref="Clone"/> can be called
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Written by the owner <see cref="IDocumentTab"/> instance
 		/// </summary>
-		public IDocumentTab DocumentTab {
+		public IDocumentTab? DocumentTab {
 			get => documentTab;
 			set {
 				if (value == null)
@@ -98,6 +98,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 					throw new InvalidOperationException();
 			}
 		}
-		IDocumentTab documentTab;
+		IDocumentTab? documentTab;
 	}
 }

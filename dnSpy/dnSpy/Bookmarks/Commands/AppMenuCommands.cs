@@ -56,7 +56,7 @@ namespace dnSpy.Bookmarks.Commands {
 			public EnableAllBookmarksCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
 			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.EnableAllBookmarks();
 			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanEnableAllBookmarks;
-			public override string GetHeader(IMenuItemContext context) {
+			public override string? GetHeader(IMenuItemContext context) {
 				switch (mainMenuOperations.Value.GetEnableAllBookmarksKind()) {
 				case EnableAllBookmarksKind.None:
 				case EnableAllBookmarksKind.Enable:		return dnSpy_Resources.EnableAllBookmarksCommand;

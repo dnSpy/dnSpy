@@ -55,7 +55,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				__documentViewer = DocumentViewer.TryGetInstance(wpfTextView);
 			return __documentViewer;
 		}
-		DocumentViewer __documentViewer;
+		DocumentViewer? __documentViewer;
 
 		readonly struct MouseReferenceInfo {
 			public SpanData<ReferenceInfo>? SpanData { get; }
@@ -168,7 +168,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new MouseReferenceInfo(spanData, spanData, loc.Position);
 		}
 		MouseReferenceInfo? clickedRef;
-		Cursor oldCursor;
+		Cursor? oldCursor;
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) => RestoreState();
 

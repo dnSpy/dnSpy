@@ -22,12 +22,14 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class ContextMenuHandler {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public string Header;
-		public string HeaderPlural;
+		public string? HeaderPlural;
 		public ImageReference? Icon;
-		public string InputGestureText;
+		public string? InputGestureText;
 		public ModifierKeys Modifiers = ModifierKeys.None;
 		public Key Key = Key.None;
 		public ICommand Command;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

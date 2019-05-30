@@ -27,7 +27,7 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files {
 	sealed class HexBufferFileImpl : HexBufferFile {
-		public override HexBufferFile ParentFile { get; }
+		public override HexBufferFile? ParentFile { get; }
 		public override event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
 		public override bool IsRemoved => isRemoved;
 		public override event EventHandler Removed;
@@ -49,13 +49,13 @@ namespace dnSpy.Hex.Files {
 		readonly Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories;
 		readonly Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories;
 		readonly SpanDataCollection<HexBufferFileImpl> files;
-		StructureProvider[] structureProviders;
-		BufferFileHeadersProvider[] bufferFileHeadersProviders;
+		StructureProvider[]? structureProviders;
+		BufferFileHeadersProvider[]? bufferFileHeadersProviders;
 		bool isInitializing;
 		bool isStructuresInitialized;
 		bool isRemoved;
 
-		public HexBufferFileImpl(HexBufferFile parentFile, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
+		public HexBufferFileImpl(HexBufferFile? parentFile, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
 			: base(buffer, span, name, filename, tags) {
 			if (parentFile?.Span.Contains(span) == false)
 				throw new ArgumentOutOfRangeException(nameof(span));
@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Files {
 			return newFiles;
 		}
 
-		public override HexBufferFile GetFile(HexPosition position, bool checkNestedFiles) {
+		public override HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles) {
 			var file = files.FindData(position);
 			if (file == null || !checkNestedFiles)
 				return file;
@@ -118,6 +118,7 @@ namespace dnSpy.Hex.Files {
 
 			// Always initialize this first to make sure nested files get created
 			CreateStructureProviders(true);
+			Debug.Assert(structureProviders != null);
 
 			if (checkNestedFiles && files.Count != 0) {
 				var file = files.FindData(position);
@@ -134,8 +135,9 @@ namespace dnSpy.Hex.Files {
 			return null;
 		}
 
-		public override ComplexData GetStructure(string id) {
+		public override ComplexData? GetStructure(string id) {
 			CreateStructureProviders(true);
+			Debug.Assert(structureProviders != null);
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(id);
 				if (structure != null)
@@ -144,7 +146,7 @@ namespace dnSpy.Hex.Files {
 			return null;
 		}
 
-		public override THeaders GetHeaders<THeaders>() {
+		public override THeaders? GetHeaders<THeaders>() where THeaders : class {
 			if (bufferFileHeadersProviders == null) {
 				CreateStructureProviders(true);
 				var list = new List<BufferFileHeadersProvider>(bufferFileHeadersProviderFactories.Length);
@@ -155,6 +157,7 @@ namespace dnSpy.Hex.Files {
 				}
 				bufferFileHeadersProviders = list.ToArray();
 			}
+			Debug.Assert(structureProviders != null);
 
 			foreach (var provider in structureProviders) {
 				var headers = provider.GetHeaders<THeaders>();

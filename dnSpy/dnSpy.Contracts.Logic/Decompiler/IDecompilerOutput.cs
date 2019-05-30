@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		void Write(string text, object reference, DecompilerReferenceFlags flags, object color);
+		void Write(string text, object? reference, DecompilerReferenceFlags flags, object color);
 
 		/// <summary>
 		/// Writes text, color and a reference. The text will be indented if needed.
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color);
+		void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color);
 
 		/// <summary>
 		/// Adds custom data to a list
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="start">Start position</param>
 		/// <param name="end">End position</param>
 		/// <param name="id">Reference id or null, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/></param>
-		public static void AddSpanReference(this IDecompilerOutput output, object reference, int start, int end, string id) =>
+		public static void AddSpanReference(this IDecompilerOutput output, object reference, int start, int end, string? id) =>
 			output.AddCustomData(PredefinedCustomDataIds.SpanReference, new SpanReference(reference, TextSpan.FromBounds(start, end), id));
 
 		/// <summary>

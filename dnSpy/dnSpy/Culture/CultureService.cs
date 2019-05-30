@@ -43,11 +43,12 @@ namespace dnSpy.Culture {
 	sealed class CultureService : ICultureService {
 		static readonly string DEFAULT_CULTURE = "en";
 
-		CultureInfo[] extraLanguages;
+		CultureInfo[]? extraLanguages;
 
 		public bool HasExtraLanguages {
 			get {
 				InitializeSupportedLanguages();
+				Debug.Assert(extraLanguages != null);
 				return extraLanguages.Length > 0;
 			}
 		}
@@ -55,6 +56,7 @@ namespace dnSpy.Culture {
 		public IEnumerable<LanguageInfo> AllLanguages {
 			get {
 				InitializeSupportedLanguages();
+				Debug.Assert(extraLanguages != null);
 				var langs = new HashSet<LanguageInfo>();
 				langs.Add(LanguageInfo.CreateSystemLanguage());
 				foreach (var ci in extraLanguages)
@@ -77,7 +79,7 @@ namespace dnSpy.Culture {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
 				if (value.Type == LanguageType.CultureInfo)
-					cultureSettings.UIName = value.CultureInfo.Name;
+					cultureSettings.UIName = value.CultureInfo?.Name ?? "???";
 				else {
 					Debug.Assert(value.Type == LanguageType.SystemLanguage);
 					cultureSettings.UIName = string.Empty;
@@ -85,7 +87,7 @@ namespace dnSpy.Culture {
 			}
 		}
 
-		CultureInfo UICulture => TryCreateCultureInfo(cultureSettings.UIName);
+		CultureInfo? UICulture => TryCreateCultureInfo(cultureSettings.UIName);
 
 		readonly CultureSettingsImpl cultureSettings;
 
@@ -97,7 +99,7 @@ namespace dnSpy.Culture {
 
 		public void Initialize(IAppCommandLineArgs args) => InitializeCulture(TryCreateCultureInfo(args.Culture));
 
-		void InitializeCulture(CultureInfo info) {
+		void InitializeCulture(CultureInfo? info) {
 			if (info == null)
 				return;
 
@@ -106,7 +108,7 @@ namespace dnSpy.Culture {
 			Debug.Assert(Thread.CurrentThread.CurrentUICulture.Equals(info));
 		}
 
-		static CultureInfo TryCreateCultureInfo(string name) {
+		static CultureInfo? TryCreateCultureInfo(string name) {
 			if (!string.IsNullOrEmpty(name)) {
 				try {
 					return new CultureInfo(name);

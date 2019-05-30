@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="isDynamic">true if it's a dynamic module</param>
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="nameOnly">true if <paramref name="asmFullName"/> is ignored</param>
-		public ModuleId(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
+		public ModuleId(string? asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
 			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
-		public static ModuleId Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
+		public static ModuleId Create(string? asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
 			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ModuleId other && Equals(other);
+		public override bool Equals(object? obj) => obj is ModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()

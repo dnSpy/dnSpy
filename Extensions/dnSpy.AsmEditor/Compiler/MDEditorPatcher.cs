@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly RawModuleBytes moduleData;
 		readonly byte* peFile;
 		readonly IAssembly tempAssembly;
-		readonly TypeDef nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedTypeOrNull;
 		readonly RemappedTypeTokens remappedTypeTokens;
 		readonly List<byte> sigBuilder;
 		readonly MetadataEditor mdEditor;
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool UpdateTypeReferences => (options & MDEditorPatcherOptions.UpdateTypeReferences) != 0;
 		bool AllowInternalAccess => (options & MDEditorPatcherOptions.AllowInternalAccess) != 0;
 
-		public MDEditorPatcher(RawModuleBytes moduleData, MetadataEditor mdEditor, IAssembly tempAssembly, TypeDef nonNestedEditedTypeOrNull, MDEditorPatcherOptions options) {
+		public MDEditorPatcher(RawModuleBytes moduleData, MetadataEditor mdEditor, IAssembly tempAssembly, TypeDef? nonNestedEditedTypeOrNull, MDEditorPatcherOptions options) {
 			this.moduleData = moduleData;
 			peFile = (byte*)moduleData.Pointer;
 			this.tempAssembly = tempAssembly;
@@ -66,7 +66,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Patch(ModuleDef module) {
-			if (UpdateTypeReferences) {
+			if (UpdateTypeReferences && !(nonNestedEditedTypeOrNull is null)) {
 				if (nonNestedEditedTypeOrNull.Module == module)
 					DeleteTypeDef(mdEditor, nonNestedEditedTypeOrNull);
 				PatchTypeRefsToEditedType(nonNestedEditedTypeOrNull);
@@ -552,14 +552,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				p += columnName.Offset;
 				for (uint i = 0; i < table.Rows; i++, p += rowSize) {
 					uint nameOffset = columnName.Size == 2 ? *(ushort*)p : *(uint*)p;
-					UTF8String foundCorlibName = null;
+					UTF8String? foundCorlibName = null;
 					foreach (var corlibName in corlibSimpleNames) {
 						if (StringsStreamNameEquals(ref stringsStream, nameOffset, corlibName.Data)) {
 							foundCorlibName = corlibName;
 							break;
 						}
 					}
-					if ((object)foundCorlibName == null)
+					if (foundCorlibName is null)
 						continue;
 
 					// Don't use any WinMD mscorlib refs (version = 255.255.255.255)

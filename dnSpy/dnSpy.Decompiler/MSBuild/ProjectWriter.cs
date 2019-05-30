@@ -190,7 +190,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				var projRefs = project.Module.GetAssemblyRefs().
 					Select(a => project.Module.Context.AssemblyResolver.Resolve(a, project.Module)).
 					Select(a => a == null ? null : FindOtherProject(a.ManifestModule.Location)).
-					Where(a => a != null).OrderBy(a => a.Filename, StringComparer.OrdinalIgnoreCase).ToArray();
+					OfType<Project>().OrderBy(a => a.Filename, StringComparer.OrdinalIgnoreCase).ToArray();
 				if (projRefs.Length > 0) {
 					writer.WriteStartElement("ItemGroup");
 					foreach (var otherProj in projRefs) {
@@ -278,7 +278,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		string GetToolsVersion() {
+		string? GetToolsVersion() {
 			switch (projectVersion) {
 			case ProjectVersion.VS2005: return null;
 			case ProjectVersion.VS2008: return "3.5";
@@ -338,7 +338,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		string GetAppDesignerFolder() {
+		string? GetAppDesignerFolder() {
 			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return null;
 			if (projectVersion >= ProjectVersion.VS2017)
@@ -346,7 +346,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return project.PropertiesFolder;
 		}
 
-		string GetNoWarnList() {
+		string? GetNoWarnList() {
 			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return "41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314";
 			return null;
@@ -374,7 +374,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return @"$(MSBuildToolsPath)\Microsoft.CSharp.targets";
 		}
 
-		string GetHintPath(AssemblyDef asm) {
+		string? GetHintPath(AssemblyDef? asm) {
 			if (asm == null)
 				return null;
 			if (IsGacPath(asm.ManifestModule.Location))

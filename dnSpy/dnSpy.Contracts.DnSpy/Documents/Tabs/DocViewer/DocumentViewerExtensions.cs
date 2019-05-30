@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <returns></returns>
-		public static IDocumentViewer TryGetDocumentViewer(this ITextBuffer textBuffer) {
+		public static IDocumentViewer? TryGetDocumentViewer(this ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			textBuffer.Properties.TryGetProperty(DocumentViewerTextBufferKey, out IDocumentViewer documentViewer);

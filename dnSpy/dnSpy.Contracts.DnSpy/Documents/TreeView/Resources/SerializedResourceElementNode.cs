@@ -31,9 +31,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// Serialized resource element node base class
 	/// </summary>
 	public abstract class SerializedResourceElementNode : ResourceElementNode {
-		object deserializedData;
+		object? deserializedData;
 
-		string DeserializedStringValue => deserializedData == null ? null : deserializedData.ToString();
+		string? DeserializedStringValue => deserializedData?.ToString();
 		bool IsSerialized => deserializedData == null;
 
 		/// <inheritdoc/>
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			get {
 				if (deserializedData == null)
 					return base.ValueString;
-				return ConvertObjectToString(deserializedData);
+				return ConvertObjectToString(deserializedData)!;
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			}
 		}
 
-		string ConvertObjectToString(object obj) {
+		string? ConvertObjectToString(object obj) {
 			if (obj == null)
 				return null;
 			if (!Context.DeserializeResources)
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <inheritdoc/>
-		public override string ToString(CancellationToken token, bool canDecompile) {
+		public override string? ToString(CancellationToken token, bool canDecompile) {
 			if (IsSerialized)
 				return null;
 			return DeserializedStringValue;

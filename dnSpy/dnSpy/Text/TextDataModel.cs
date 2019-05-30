@@ -28,7 +28,7 @@ namespace dnSpy.Text {
 		public ITextBuffer DocumentBuffer => textBuffer;
 		readonly ITextBuffer textBuffer;
 
-		EventHandler<TextDataModelContentTypeChangedEventArgs> realContentTypeChanged;
+		EventHandler<TextDataModelContentTypeChangedEventArgs>? realContentTypeChanged;
 		public event EventHandler<TextDataModelContentTypeChangedEventArgs> ContentTypeChanged {
 			add {
 				if (realContentTypeChanged == null)

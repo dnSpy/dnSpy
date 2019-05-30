@@ -32,10 +32,10 @@ namespace dnSpy.TreeView {
 		public IList<ITreeNode> Children => nodeList;
 		readonly SharpTreeNodeChildrenList nodeList;
 
-		public ITreeNode Parent {
+		public ITreeNode? Parent {
 			get {
 				var parent = (DsSharpTreeNode)nodeList.Node.Parent;
-				return parent == null ? null : parent.TreeNodeImpl;
+				return parent?.TreeNodeImpl;
 			}
 		}
 

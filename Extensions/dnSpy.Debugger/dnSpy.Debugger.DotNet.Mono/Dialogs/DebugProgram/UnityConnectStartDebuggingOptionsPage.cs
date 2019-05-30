@@ -45,10 +45,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			Initialize(dncOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
 			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		UnityConnectStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+		UnityConnectStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
 			if (options is UnityConnectStartDebuggingOptions connectOptions)
 				return connectOptions;
 			return CreateOptions(breakKind);

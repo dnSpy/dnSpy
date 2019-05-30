@@ -22,6 +22,6 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Formatting {
 	interface ITextParagraphPropertiesFactoryServiceSelector {
-		ITextParagraphPropertiesFactoryService Select(IContentType contentType);
+		ITextParagraphPropertiesFactoryService? Select(IContentType contentType);
 	}
 }

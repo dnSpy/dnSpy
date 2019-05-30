@@ -44,14 +44,14 @@ namespace dnSpy.Language.Intellisense {
 			this.signatureHelpSourceProviders = Orderer.Order(signatureHelpSourceProviders).ToArray();
 		}
 
-		public ISignatureHelpSession TriggerSignatureHelp(ITextView textView) {
+		public ISignatureHelpSession? TriggerSignatureHelp(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			var triggerPoint = textView.TextSnapshot.CreateTrackingPoint(textView.Caret.Position.BufferPosition.Position, PointTrackingMode.Negative, TrackingFidelityMode.Forward);
 			return TriggerSignatureHelp(textView, triggerPoint, trackCaret: true);
 		}
 
-		public ISignatureHelpSession TriggerSignatureHelp(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
+		public ISignatureHelpSession? TriggerSignatureHelp(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			if (triggerPoint == null)

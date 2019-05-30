@@ -74,16 +74,16 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				yield return cor20Hdr;
 			if (cor20Hdr != null && peStructureProvider.StorageSignature != null) {
 				yield return new StorageSignatureNode(peStructureProvider.StorageSignature);
-				yield return new StorageHeaderNode(peStructureProvider.StorageHeader);
+				yield return new StorageHeaderNode(peStructureProvider.StorageHeader!);
 				foreach (var storageStream in peStructureProvider.StorageStreams) {
 					if (storageStream.HeapKind == DotNetHeapKind.Tables)
-						yield return new TablesStorageStreamNode(storageStream, peStructureProvider.TablesStream);
+						yield return new TablesStorageStreamNode(storageStream, peStructureProvider.TablesStream!);
 					else
 						yield return new StorageStreamNode(storageStream);
 				}
 			}
 		}
-		WeakDocumentListener weakDocListener;
+		WeakDocumentListener? weakDocListener;
 
 		sealed class WeakDocumentListener {
 			readonly WeakReference nodeWeakRef;
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return true;
 		}
 
-		public MetadataTableRecordNode FindTokenNode(uint token) {
+		public MetadataTableRecordNode? FindTokenNode(uint token) {
 			if ((token & 0x00FFFFFF) == 0)
 				return null;
 			TreeNode.EnsureChildrenLoaded();
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return stgStreamNode?.FindTokenNode(token);
 		}
 
-		public HexNode FindNode(HexVM structure, HexField field) {
+		public HexNode? FindNode(HexVM structure, HexField field) {
 			if (structure is MetadataTableRecordVM mdTblRecord)
 				return FindTokenNode(mdTblRecord.Token.Raw);
 
@@ -152,7 +152,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
-		public override ITreeNodeGroup TreeNodeGroup => PETreeNodeGroup.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => PETreeNodeGroup.Instance;
 	}
 
 	sealed class PETreeNodeGroup : ITreeNodeGroup {

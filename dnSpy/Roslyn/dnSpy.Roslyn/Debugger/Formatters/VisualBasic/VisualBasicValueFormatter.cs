@@ -48,7 +48,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		bool UseToString => (options & ValueFormatterOptions.ToString) != 0;
 		bool NoDebuggerDisplay => (options & ValueFormatterOptions.NoDebuggerDisplay) != 0;
 
-		public VisualBasicValueFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo cultureInfo) {
+		public VisualBasicValueFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, ValueFormatterOptions options, CultureInfo? cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
@@ -115,9 +115,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					break;
 				}
 				else {
-					var objValue = value;
+					DbgDotNetValue? objValue = value;
 					DbgDotNetValueResult valueResult = default;
 					try {
+						Debug.Assert(info.fields != null);
 						foreach (var field in info.fields) {
 							valueResult = runtime.LoadField(evalInfo, objValue, field);
 							if (valueResult.Value != null)
@@ -149,8 +150,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			return true;
 		}
 
-		bool TryFormatKeyValuePair(DbgDotNetValue value, (DmdFieldInfo keyField, DmdFieldInfo valueField) info) {
-			if ((object)info.keyField == null)
+		bool TryFormatKeyValuePair(DbgDotNetValue value, (DmdFieldInfo? keyField, DmdFieldInfo? valueField) info) {
+			if ((object?)info.keyField == null)
 				return false;
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult keyResult = default, valueResult = default;
@@ -158,15 +159,15 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				keyResult = runtime.LoadField(evalInfo, value, info.keyField);
 				if (keyResult.ErrorMessage != null || keyResult.ValueIsException)
 					return false;
-				valueResult = runtime.LoadField(evalInfo, value, info.valueField);
+				valueResult = runtime.LoadField(evalInfo, value, info.valueField!);
 				if (valueResult.ErrorMessage != null || valueResult.ValueIsException)
 					return false;
 
 				OutputWrite(KeyValuePairTypeOpenParen, DbgTextColor.Punctuation);
-				Format(keyResult.Value);
+				Format(keyResult.Value!);
 				OutputWrite(",", DbgTextColor.Punctuation);
 				WriteSpace();
-				Format(valueResult.Value);
+				Format(valueResult.Value!);
 				OutputWrite(KeyValuePairTypeCloseParen, DbgTextColor.Punctuation);
 				return true;
 			}

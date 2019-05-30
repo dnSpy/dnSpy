@@ -55,7 +55,7 @@ namespace dnSpy.Hex.Formatting {
 			return point < BufferSpan.End;
 		}
 
-		public HexFormattedLine FindFormattedLineByBufferPosition(HexBufferPoint point) {
+		public HexFormattedLine? FindFormattedLineByBufferPosition(HexBufferPoint point) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(PhysicalLine));
 			if (point.Buffer != BufferSpan.Buffer)

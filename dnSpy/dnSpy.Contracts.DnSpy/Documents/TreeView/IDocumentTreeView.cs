@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="owner">Owner node or null if owner is the root node</param>
 		/// <param name="document">New document</param>
 		/// <returns></returns>
-		DsDocumentNode CreateNode(DsDocumentNode owner, IDsDocument document);
+		DsDocumentNode CreateNode(DsDocumentNode? owner, IDsDocument document);
 
 		/// <summary>
 		/// Removes <paramref name="nodes"/>. They must be top nodes (eg. <see cref="AssemblyDocumentNode"/>s)
@@ -97,63 +97,63 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="ref">Reference, eg. a <see cref="IMemberRef"/></param>
 		/// <returns></returns>
-		DocumentTreeNodeData FindNode(object @ref);
+		DocumentTreeNodeData? FindNode(object? @ref);
 
 		/// <summary>
 		/// Returns a <see cref="DsDocumentNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="document">Document</param>
 		/// <returns></returns>
-		DsDocumentNode FindNode(IDsDocument document);
+		DsDocumentNode? FindNode(IDsDocument? document);
 
 		/// <summary>
 		/// Returns a <see cref="AssemblyDocumentNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="assembly">Assembly</param>
 		/// <returns></returns>
-		AssemblyDocumentNode FindNode(AssemblyDef assembly);
+		AssemblyDocumentNode? FindNode(AssemblyDef? assembly);
 
 		/// <summary>
 		/// Returns a <see cref="ModuleDocumentNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		ModuleDocumentNode FindNode(ModuleDef module);
+		ModuleDocumentNode? FindNode(ModuleDef? module);
 
 		/// <summary>
 		/// Returns a <see cref="TypeNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		TypeNode FindNode(TypeDef type);
+		TypeNode? FindNode(TypeDef? type);
 
 		/// <summary>
 		/// Returns a <see cref="MethodNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		MethodNode FindNode(MethodDef method);
+		MethodNode? FindNode(MethodDef? method);
 
 		/// <summary>
 		/// Returns a <see cref="FieldNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		FieldNode FindNode(FieldDef field);
+		FieldNode? FindNode(FieldDef? field);
 
 		/// <summary>
 		/// Returns a <see cref="PropertyNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="property">Property</param>
 		/// <returns></returns>
-		PropertyNode FindNode(PropertyDef property);
+		PropertyNode? FindNode(PropertyDef? property);
 
 		/// <summary>
 		/// Returns a <see cref="EventNode"/> node or null if none could be found
 		/// </summary>
 		/// <param name="event">Event</param>
 		/// <returns></returns>
-		EventNode FindNode(EventDef @event);
+		EventNode? FindNode(EventDef? @event);
 
 		/// <summary>
 		/// Returns a <see cref="NamespaceNode"/> node or null if none could be found
@@ -161,7 +161,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="module">Owner module</param>
 		/// <param name="namespace">Namespace</param>
 		/// <returns></returns>
-		NamespaceNode FindNamespaceNode(IDsDocument module, string @namespace);
+		NamespaceNode? FindNamespaceNode(IDsDocument? module, string? @namespace);
 
 		/// <summary>
 		/// Gets the <see cref="IDocumentTreeNodeGroups"/> instance

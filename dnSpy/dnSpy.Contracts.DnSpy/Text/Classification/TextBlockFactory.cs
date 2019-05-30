@@ -172,7 +172,7 @@ namespace dnSpy.Contracts.Text.Classification {
 			return props.BackgroundBrushEmpty;
 		}
 
-		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties, Flags flags) {
+		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties? properties, Flags flags) {
 			var run = new DOC.Run(text);
 
 			if (properties == null)
@@ -206,10 +206,10 @@ namespace dnSpy.Contracts.Text.Classification {
 			return GetFontName(a) == GetFontName(b);
 		}
 
-		static string GetFontName(TextFormattingRunProperties props) {
+		static string? GetFontName(TextFormattingRunProperties props) {
 			if (props.TypefaceEmpty)
 				return string.Empty;
-			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string name))
+			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string? name))
 				name = null;
 			return name ?? string.Empty;
 		}

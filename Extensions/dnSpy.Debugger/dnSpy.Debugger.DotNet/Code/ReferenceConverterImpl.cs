@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents;
 namespace dnSpy.Debugger.DotNet.Code {
 	[ExportReferenceConverter]
 	sealed class ReferenceConverterImpl : ReferenceConverter {
-		public override void Convert(ref object reference) {
+		public override void Convert(ref object? reference) {
 			switch (reference) {
 			case DbgDotNetCodeLocation loc:
 				switch (loc.ILOffsetMapping) {

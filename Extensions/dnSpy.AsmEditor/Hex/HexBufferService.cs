@@ -31,9 +31,9 @@ using dnSpy.Contracts.Hex;
 namespace dnSpy.AsmEditor.Hex {
 	interface IHexBufferService {
 		HexBuffer GetOrCreate(IPEImage peImage);
-		HexBuffer GetOrCreate(string filename);
+		HexBuffer? GetOrCreate(string filename);
 		HexBuffer[] GetBuffers();
-		HexBuffer TryGet(string filename);
+		HexBuffer? TryGet(string filename);
 		HexBuffer[] Clear();
 	}
 
@@ -109,20 +109,20 @@ namespace dnSpy.AsmEditor.Hex {
 			return buffersToDispose.ToArray();
 		}
 
-		HexBuffer IHexBufferService.TryGet(string filename) {
+		HexBuffer? IHexBufferService.TryGet(string filename) {
 			filename = GetFullPath(filename);
 
 			lock (lockObj)
 				return TryGet_NoLock(filename);
 		}
 
-		HexBuffer TryGet_NoLock(string filename) {
+		HexBuffer? TryGet_NoLock(string filename) {
 			if (!filenameToBuffer.TryGetValue(filename, out object obj))
 				return null;
 			return TryGetBuffer(obj);
 		}
 
-		HexBuffer TryGetBuffer(object obj) {
+		HexBuffer? TryGetBuffer(object obj) {
 			if (obj is HexBuffer buffer)
 				return buffer;
 			var weakRef = obj as WeakReference;
@@ -130,12 +130,12 @@ namespace dnSpy.AsmEditor.Hex {
 			return weakRef?.Target as HexBuffer;
 		}
 
-		HexBuffer GetOrCreate(string filename) {
+		HexBuffer? GetOrCreate(string filename) {
 			if (!File.Exists(filename))
 				return null;
 			filename = GetFullPath(filename);
 
-			HexBuffer buffer;
+			HexBuffer? buffer;
 			lock (lockObj) {
 				buffer = TryGet_NoLock(filename);
 				if (buffer != null)
@@ -164,7 +164,7 @@ namespace dnSpy.AsmEditor.Hex {
 		HexBuffer GetOrCreate(IPEImage peImage) {
 			var filename = GetFullPath(peImage.Filename);
 
-			HexBuffer buffer;
+			HexBuffer? buffer;
 			lock (lockObj) {
 				buffer = TryGet_NoLock(filename);
 				if (buffer != null)
@@ -177,11 +177,11 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		HexBuffer IHexBufferService.GetOrCreate(IPEImage peImage) => GetOrCreate(peImage);
-		HexBuffer IHexBufferService.GetOrCreate(string filename) => GetOrCreate(filename);
+		HexBuffer? IHexBufferService.GetOrCreate(string filename) => GetOrCreate(filename);
 
 		HexBuffer[] IHexBufferService.GetBuffers() {
 			lock (lockObj)
-				return filenameToBuffer.Values.Select(a => TryGetBuffer(a)).Where(a => a != null).ToArray();
+				return filenameToBuffer.Values.Select(a => TryGetBuffer(a)).OfType<HexBuffer>().ToArray();
 		}
 
 		static string GetFullPath(string filename) {

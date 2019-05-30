@@ -19,13 +19,13 @@
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdCreatedParameterDef : DmdParameterDef {
-		public override string Name => null;
+		public override string? Name => null;
 		public override DmdParameterAttributes Attributes => 0;
 
 		public DmdCreatedParameterDef(DmdMemberInfo member, int position, DmdType parameterType) : base(0, member, position, parameterType) {
 		}
 
-		protected override (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes() => (null, null);
-		protected override (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => (null, true);
+		protected override (DmdCustomAttributeData[]? cas, DmdMarshalType? marshalType) CreateCustomAttributes() => (null, null);
+		protected override (object? rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => (null, true);
 	}
 }

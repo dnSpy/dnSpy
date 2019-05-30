@@ -25,7 +25,7 @@ namespace dnSpy.Text.Operations {
 	sealed class TextUndoPrimitive : ITextUndoPrimitive {
 		public bool CanRedo => !canUndo;
 		public bool CanUndo => canUndo;
-		public ITextUndoTransaction Parent { get; set; }
+		public ITextUndoTransaction? Parent { get; set; }
 
 		readonly ITextBuffer textBuffer;
 		readonly ChangeInfo info;

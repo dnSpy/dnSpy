@@ -78,18 +78,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public bool IsRawMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.RawBlob;
-		public bool IsFixedSysStringMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.FixedSysString;
-		public bool IsSafeArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.SafeArray;
-		public bool IsFixedArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.FixedArray;
-		public bool IsArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.Array;
-		public bool IsCustomMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.CustomMarshaler;
+		public bool IsRawMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.RawBlob;
+		public bool IsFixedSysStringMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.FixedSysString;
+		public bool IsSafeArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.SafeArray;
+		public bool IsFixedArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.FixedArray;
+		public bool IsArrayMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.Array;
+		public bool IsCustomMarshalType => (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.CustomMarshaler;
 
 		public bool IsInterfaceMarshalType {
 			get {
-				return (dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.IUnknown ||
-					(dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.IDispatch ||
-					(dnlib.DotNet.NativeType)NativeType.SelectedItem == dnlib.DotNet.NativeType.IntF;
+				return (dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.IUnknown ||
+					(dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.IDispatch ||
+					(dnlib.DotNet.NativeType)NativeType.SelectedItem! == dnlib.DotNet.NativeType.IntF;
 			}
 		}
 
@@ -149,10 +149,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM SafeArrayMarshalType_VariantType { get; }
 
 		public VariantType SafeArrayMarshalType_VT {
-			get {
-				return (safeArrayMarshalType_vt & ~VariantType.TypeMask) |
-					((VariantType)SafeArrayMarshalType_VariantType.SelectedItem & VariantType.TypeMask);
-			}
+			get => (safeArrayMarshalType_vt & ~VariantType.TypeMask) |
+					((VariantType)SafeArrayMarshalType_VariantType.SelectedItem! & VariantType.TypeMask);
 			set {
 				if (safeArrayMarshalType_vt != value) {
 					safeArrayMarshalType_vt = value;
@@ -172,7 +170,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool SafeArrayMarshalType_VT_Flags_IsEnabled {
 			get {
 				return SafeArrayMarshalType_VT_IsEnabled &&
-					(VariantType)SafeArrayMarshalType_VariantType.SelectedItem != VariantType.NotInitialized;
+					(VariantType)SafeArrayMarshalType_VariantType.SelectedItem! != VariantType.NotInitialized;
 			}
 		}
 
@@ -216,13 +214,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public NullableCompressedUInt32 ArrayMarshalType_ParamNum { get; }
 		public bool ArrayMarshalType_ParamNum_IsEnabled =>
 			ArrayMarshalType_NativeType_IsEnabled &&
-			(NativeType)ArrayMarshalType_NativeType.SelectedItem != dnlib.DotNet.NativeType.NotInitialized;
+			(NativeType)ArrayMarshalType_NativeType.SelectedItem! != dnlib.DotNet.NativeType.NotInitialized;
 		public NullableCompressedUInt32 ArrayMarshalType_NumElems { get; }
 		public bool ArrayMarshalType_NumElems_IsEnabled => ArrayMarshalType_ParamNum_IsEnabled && !ArrayMarshalType_ParamNum.IsNull;
 		public NullableCompressedUInt32 ArrayMarshalType_Flags { get; }
 		public bool ArrayMarshalType_Flags_IsEnabled => ArrayMarshalType_NumElems_IsEnabled && !ArrayMarshalType_NumElems.IsNull;
 
-		public string CustomMarshalType_GUID {
+		public string? CustomMarshalType_GUID {
 			get => customMarshalType_guid;
 			set {
 				if (customMarshalType_guid != value) {
@@ -232,11 +230,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string customMarshalType_guid;
+		string? customMarshalType_guid;
 
 		public bool CustomMarshalType_GUID_IsEnabled => IsEnabled;
 
-		public string CustomMarshalType_NativeTypeName {
+		public string? CustomMarshalType_NativeTypeName {
 			get => customMarshalType_nativeTypeName;
 			set {
 				if (customMarshalType_nativeTypeName != value) {
@@ -246,13 +244,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string customMarshalType_nativeTypeName;
+		string? customMarshalType_nativeTypeName;
 
 		public bool CustomMarshalType_NativeTypeName_IsEnabled => IsEnabled;
 		public TypeSigCreatorVM CustomMarshalType_CustMarshaler_TypeSigCreator { get; }
 		public bool CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled => IsEnabled;
 
-		public string CustomMarshalType_Cookie {
+		public string? CustomMarshalType_Cookie {
 			get => customMarshalType_cookie;
 			set {
 				if (customMarshalType_cookie != value) {
@@ -262,15 +260,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string customMarshalType_cookie;
+		string? customMarshalType_cookie;
 
 		public bool CustomMarshalType_Cookie_IsEnabled => IsEnabled;
 		public NullableCompressedUInt32 InterfaceMarshalType_IidParamIndex { get; }
 		public bool InterfaceMarshalType_IidParamIndex_IsEnabled => IsEnabled;
-		public string TypeString => NativeType.SelectedItem.ToString();
+		public string TypeString => NativeType.SelectedItem!.ToString();
 		void TypeStringUpdated() => OnPropertyChanged(nameof(TypeString));
 
-		public MarshalTypeVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public MarshalTypeVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			NativeType = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(NativeType, false);
 			RawMarshalType_Data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
@@ -340,7 +338,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler) {
+		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler) {
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
@@ -413,7 +411,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public MarshalType Type {
+		public MarshalType? Type {
 			get {
 				if (!IsEnabled)
 					return null;
@@ -423,29 +421,29 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (IsFixedSysStringMarshalType) {
 					int size = FixedSysStringMarshalType_Size_IsEnabled && !FixedSysStringMarshalType_Size.IsNull ?
-						(int)FixedSysStringMarshalType_Size.Value : -1;
+						(int)FixedSysStringMarshalType_Size.Value! : -1;
 					return new FixedSysStringMarshalType(size);
 				}
 				else if (IsSafeArrayMarshalType) {
-					var vt = (dnlib.DotNet.VariantType)SafeArrayMarshalType_VariantType.SelectedItem == VariantType.NotInitialized ?
+					var vt = (dnlib.DotNet.VariantType)SafeArrayMarshalType_VariantType.SelectedItem! == VariantType.NotInitialized ?
 						VariantType.NotInitialized : SafeArrayMarshalType_VT;
 					var userType = SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSig.ToTypeDefOrRef();
 					return new SafeArrayMarshalType(vt, userType);
 				}
 				else if (IsFixedArrayMarshalType) {
 					int size = FixedArrayMarshalType_Size_IsEnabled && !FixedArrayMarshalType_Size.IsNull ?
-						(int)FixedArrayMarshalType_Size.Value : -1;
-					var nt = (dnlib.DotNet.NativeType)FixedArrayMarshalType_NativeType.SelectedItem;
+						(int)FixedArrayMarshalType_Size.Value! : -1;
+					var nt = (dnlib.DotNet.NativeType)FixedArrayMarshalType_NativeType.SelectedItem!;
 					return new FixedArrayMarshalType(size, nt);
 				}
 				else if (IsArrayMarshalType) {
-					var nt = (dnlib.DotNet.NativeType)ArrayMarshalType_NativeType.SelectedItem;
+					var nt = (dnlib.DotNet.NativeType)ArrayMarshalType_NativeType.SelectedItem!;
 					int paramNum = ArrayMarshalType_ParamNum_IsEnabled && !ArrayMarshalType_ParamNum.IsNull ?
-						(int)ArrayMarshalType_ParamNum.Value : -1;
+						(int)ArrayMarshalType_ParamNum.Value! : -1;
 					int numElems = ArrayMarshalType_NumElems_IsEnabled && !ArrayMarshalType_NumElems.IsNull ?
-						(int)ArrayMarshalType_NumElems.Value : -1;
+						(int)ArrayMarshalType_NumElems.Value! : -1;
 					int flags = ArrayMarshalType_Flags_IsEnabled && !ArrayMarshalType_Flags.IsNull ?
-						(int)ArrayMarshalType_Flags.Value : -1;
+						(int)ArrayMarshalType_Flags.Value! : -1;
 					return new ArrayMarshalType(nt, paramNum, numElems, flags);
 				}
 				else if (IsCustomMarshalType) {
@@ -457,11 +455,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (IsInterfaceMarshalType) {
 					int iidParamIndex = InterfaceMarshalType_IidParamIndex_IsEnabled && !InterfaceMarshalType_IidParamIndex.IsNull ?
-						(int)InterfaceMarshalType_IidParamIndex.Value : -1;
-					return new InterfaceMarshalType((dnlib.DotNet.NativeType)NativeType.SelectedItem, iidParamIndex);
+						(int)InterfaceMarshalType_IidParamIndex.Value! : -1;
+					return new InterfaceMarshalType((dnlib.DotNet.NativeType)NativeType.SelectedItem!, iidParamIndex);
 				}
 				else if (IsMarshalType) {
-					return new MarshalType((dnlib.DotNet.NativeType)NativeType.SelectedItem);
+					return new MarshalType((dnlib.DotNet.NativeType)NativeType.SelectedItem!);
 				}
 				else
 					throw new InvalidOperationException();

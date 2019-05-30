@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetEngineValueNodeFactoryService {
-		public abstract DbgDotNetEngineValueNodeFactory Create(string languageGuid, DbgDotNetFormatter formatter);
+		public abstract DbgDotNetEngineValueNodeFactory? Create(string languageGuid, DbgDotNetFormatter formatter);
 	}
 
 	[Export(typeof(DbgDotNetEngineValueNodeFactoryService))]
@@ -52,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		public override DbgDotNetEngineValueNodeFactory Create(string languageGuid, DbgDotNetFormatter formatter) {
+		public override DbgDotNetEngineValueNodeFactory? Create(string languageGuid, DbgDotNetFormatter formatter) {
 			if (languageGuid == null)
 				throw new ArgumentNullException(nameof(languageGuid));
 			if (formatter == null)
@@ -75,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return null;
 		}
 
-		bool TryGetFactory(Guid guid, DbgDotNetFormatter formatter, out DbgDotNetEngineValueNodeFactory factory) {
+		bool TryGetFactory(Guid guid, DbgDotNetFormatter formatter, [NotNullWhenTrue] out DbgDotNetEngineValueNodeFactory? factory) {
 			if (!toLazyFactory.TryGetValue(guid, out var lz)) {
 				factory = null;
 				return false;

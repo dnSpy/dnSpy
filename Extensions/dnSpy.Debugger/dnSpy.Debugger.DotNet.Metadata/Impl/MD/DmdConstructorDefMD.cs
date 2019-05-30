@@ -35,17 +35,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			MethodImplementationFlags = (DmdMethodImplAttributes)row.ImplFlags;
 			Attributes = (DmdMethodAttributes)row.Flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
-			methodSignature = reader.ReadMethodSignature(row.Signature, DeclaringType.GetGenericArguments(), GetGenericArguments(), isProperty: false);
+			methodSignature = reader.ReadMethodSignature(row.Signature, DeclaringType!.GetGenericArguments(), GetGenericArguments(), isProperty: false);
 		}
 
-		protected override DmdType[] CreateGenericParameters() => reader.CreateGenericParameters(this);
+		protected override DmdType[]? CreateGenericParameters() => reader.CreateGenericParameters(this);
 
-		public override DmdMethodBody GetMethodBody() => reader.GetMethodBody(this, DeclaringType.GetGenericArguments(), GetGenericArguments());
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, DeclaringType.GetGenericArguments(), genericMethodArguments);
+		public override DmdMethodBody? GetMethodBody() => reader.GetMethodBody(this, DeclaringType!.GetGenericArguments(), GetGenericArguments());
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, DeclaringType!.GetGenericArguments(), genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override DmdParameterInfo[] CreateParameters() => reader.CreateParameters(this, createReturnParameter: false).parameters;
 
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() {
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			return (cas, sas);

@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		public void Execute() {
 			fileNodeCreator.Add();
-			undoCommandService.Value.MarkAsModified(undoCommandService.Value.GetUndoObject(fileNodeCreator.DocumentNode.Document));
+			undoCommandService.Value.MarkAsModified(undoCommandService.Value.GetUndoObject(fileNodeCreator.DocumentNode.Document)!);
 		}
 
 		public void Undo() => fileNodeCreator.Remove();
@@ -169,7 +169,7 @@ namespace dnSpy.AsmEditor.Module {
 		sealed class SavedState {
 			public ModuleKind ModuleKind;
 			public Characteristics Characteristics;
-			public AssemblyDocumentNode AssemblyFileNode;
+			public AssemblyDocumentNode? AssemblyFileNode;
 		}
 
 		ConvertNetModuleToAssemblyCommand(DocumentTreeNodeData[] nodes) {
@@ -194,6 +194,7 @@ namespace dnSpy.AsmEditor.Module {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+				Debug.Assert(!(module is null));
 
 				savedState.ModuleKind = module.Kind;
 				ModuleUtils.AddToNewAssemblyDef(module, ModuleKind.Dll, out savedState.Characteristics);
@@ -232,12 +233,12 @@ namespace dnSpy.AsmEditor.Module {
 				var node = nodes[i];
 				var savedState = savedStates[i];
 
-				int index = node.Context.DocumentTreeView.TreeView.Root.DataChildren.ToList().IndexOf(savedState.AssemblyFileNode);
+				int index = node.Context.DocumentTreeView.TreeView.Root.DataChildren.ToList().IndexOf(savedState.AssemblyFileNode!);
 				bool b = index >= 0;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				savedState.AssemblyFileNode.TreeNode.Children.Remove(node.TreeNode);
+				savedState.AssemblyFileNode!.TreeNode.Children.Remove(node.TreeNode);
 				node.Context.DocumentTreeView.TreeView.Root.Children[index] = node.TreeNode;
 
 				var module = node.Document.ModuleDef;
@@ -247,7 +248,7 @@ namespace dnSpy.AsmEditor.Module {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				module.Assembly.Modules.Remove(module);
+				module!.Assembly!.Modules.Remove(module);
 				module.Kind = savedState.ModuleKind;
 				module.Characteristics = savedState.Characteristics;
 			}
@@ -304,12 +305,12 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		readonly AssemblyDocumentNode[] nodes;
-		SavedState[] savedStates;
+		SavedState[]? savedStates;
 		sealed class SavedState {
-			public AssemblyDef AssemblyDef;
+			public AssemblyDef? AssemblyDef;
 			public ModuleKind ModuleKind;
 			public Characteristics Characteristics;
-			public ModuleDocumentNode ModuleNode;
+			public ModuleDocumentNode? ModuleNode;
 		}
 
 		ConvertAssemblyToNetModuleCommand(DocumentTreeNodeData[] nodes) => this.nodes = nodes.Cast<AssemblyDocumentNode>().ToArray();
@@ -326,7 +327,7 @@ namespace dnSpy.AsmEditor.Module {
 				savedStates[i] = new SavedState();
 				var savedState = savedStates[i];
 
-				int index = node.TreeNode.Parent.Children.IndexOf(node.TreeNode);
+				int index = node.TreeNode.Parent!.Children.IndexOf(node.TreeNode);
 				bool b = index >= 0;
 				Debug.Assert(b);
 				if (!b)
@@ -343,8 +344,8 @@ namespace dnSpy.AsmEditor.Module {
 				if (!b)
 					throw new InvalidOperationException();
 				node.TreeNode.EnsureChildrenLoaded();
-				savedState.AssemblyDef = module.Assembly;
-				module.Assembly.Modules.Remove(module);
+				savedState.AssemblyDef = module!.Assembly;
+				module.Assembly!.Modules.Remove(module);
 				savedState.ModuleKind = module.Kind;
 				ModuleUtils.WriteNewModuleKind(module, ModuleKind.NetModule, out savedState.Characteristics);
 			}
@@ -365,11 +366,11 @@ namespace dnSpy.AsmEditor.Module {
 				if (!b)
 					throw new InvalidOperationException();
 
-				module.Kind = savedState.ModuleKind;
+				module!.Kind = savedState.ModuleKind;
 				module.Characteristics = savedState.Characteristics;
-				savedState.AssemblyDef.Modules.Add(module);
+				savedState.AssemblyDef!.Modules.Add(module);
 
-				var parent = savedState.ModuleNode.TreeNode.Parent;
+				var parent = savedState.ModuleNode!.TreeNode.Parent!;
 				int index = parent.Children.IndexOf(savedState.ModuleNode.TreeNode);
 				b = index >= 0;
 				Debug.Assert(b);
@@ -398,7 +399,7 @@ namespace dnSpy.AsmEditor.Module {
 		protected AddNetModuleToAssemblyCommand(IUndoCommandService undoCommandService, DsDocumentNode asmNode, ModuleDocumentNode modNode, bool modNodeWasCreated) {
 			this.undoCommandService = undoCommandService;
 			if (!(asmNode is AssemblyDocumentNode))
-				asmNode = (AssemblyDocumentNode)asmNode.TreeNode.Parent.Data;
+				asmNode = (AssemblyDocumentNode)asmNode.TreeNode.Parent!.Data;
 			this.asmNode = (AssemblyDocumentNode)asmNode;
 			this.modNode = modNode;
 			this.modNodeWasCreated = modNodeWasCreated;
@@ -411,18 +412,18 @@ namespace dnSpy.AsmEditor.Module {
 			if (modNode.TreeNode.Parent != null)
 				throw new InvalidOperationException();
 			asmNode.TreeNode.EnsureChildrenLoaded();
-			asmNode.Document.AssemblyDef.Modules.Add(modNode.Document.ModuleDef);
+			asmNode.Document.AssemblyDef!.Modules.Add(modNode.Document.ModuleDef);
 			asmNode.Document.Children.Add(modNode.Document);
 			asmNode.TreeNode.AddChild(modNode.TreeNode);
 			if (modNodeWasCreated)
-				undoCommandService.MarkAsModified(undoCommandService.GetUndoObject(modNode.Document));
+				undoCommandService.MarkAsModified(undoCommandService.GetUndoObject(modNode.Document)!);
 		}
 
 		public void Undo() {
 			Debug.Assert(modNode.TreeNode.Parent != null);
 			if (modNode.TreeNode.Parent == null)
 				throw new InvalidOperationException();
-			asmNode.Document.AssemblyDef.Modules.Remove(modNode.Document.ModuleDef);
+			asmNode.Document.AssemblyDef!.Modules.Remove(modNode.Document.ModuleDef);
 			asmNode.Document.Children.Remove(modNode.Document);
 			bool b = asmNode.TreeNode.Children.Remove(modNode.TreeNode);
 			Debug.Assert(b);
@@ -480,10 +481,10 @@ namespace dnSpy.AsmEditor.Module {
 
 			var asmNode = (DsDocumentNode)nodes[0];
 			if (asmNode is ModuleDocumentNode)
-				asmNode = (AssemblyDocumentNode)asmNode.TreeNode.Parent.Data;
+				asmNode = (AssemblyDocumentNode)asmNode.TreeNode.Parent!.Data;
 
 			var win = new NetModuleOptionsDlg();
-			var data = new NetModuleOptionsVM(asmNode.Document.ModuleDef);
+			var data = new NetModuleOptionsVM(asmNode.Document.ModuleDef!);
 			win.DataContext = data;
 			win.Owner = appService.MainWindow;
 			if (win.ShowDialog() != true)
@@ -616,14 +617,14 @@ namespace dnSpy.AsmEditor.Module {
 			nodes.Length == 1 &&
 			nodes[0] is ModuleDocumentNode &&
 			nodes[0].TreeNode.Parent != null &&
-			nodes[0].TreeNode.Parent.Data is AssemblyDocumentNode;
+			nodes[0].TreeNode.Parent!.Data is AssemblyDocumentNode;
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes != null &&
 			nodes.Length == 1 &&
 			nodes[0] is ModuleDocumentNode &&
 			nodes[0].TreeNode.Parent != null &&
-			nodes[0].TreeNode.Parent.DataChildren.ToList().IndexOf(nodes[0]) > 0;
+			nodes[0].TreeNode.Parent!.DataChildren.ToList().IndexOf(nodes[0]) > 0;
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, Lazy<IDocumentSaver> documentSaver, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -643,7 +644,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		RemoveNetModuleFromAssemblyCommand(Lazy<IUndoCommandService> undoCommandService, ModuleDocumentNode modNode) {
 			this.undoCommandService = undoCommandService;
-			asmNode = (AssemblyDocumentNode)modNode.TreeNode.Parent.Data;
+			asmNode = (AssemblyDocumentNode)modNode.TreeNode.Parent!.Data;
 			Debug.Assert(asmNode != null);
 			this.modNode = modNode;
 			removeIndex = asmNode.TreeNode.DataChildren.ToList().IndexOf(modNode);
@@ -664,25 +665,25 @@ namespace dnSpy.AsmEditor.Module {
 			var children = asmNode.TreeNode.DataChildren.ToArray();
 			lock (asmNode.Document.Children.SyncRoot) {
 				bool b = removeIndex < children.Length && children[removeIndex] == modNode &&
-					removeIndex < asmNode.Document.AssemblyDef.Modules.Count &&
+					removeIndex < asmNode.Document.AssemblyDef!.Modules.Count &&
 					asmNode.Document.AssemblyDef.Modules[removeIndex] == modNode.Document.ModuleDef &&
 					removeIndexDocument < asmNode.Document.Children.Count &&
 					asmNode.Document.Children[removeIndexDocument] == modNode.Document;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				asmNode.Document.AssemblyDef.Modules.RemoveAt(removeIndex);
+				asmNode.Document.AssemblyDef!.Modules.RemoveAt(removeIndex);
 				asmNode.Document.Children.RemoveAt(removeIndexDocument);
 				asmNode.TreeNode.Children.RemoveAt(removeIndex);
 			}
-			undoCommandService.Value.MarkAsModified(undoCommandService.Value.GetUndoObject(asmNode.Document));
+			undoCommandService.Value.MarkAsModified(undoCommandService.Value.GetUndoObject(asmNode.Document)!);
 		}
 
 		public void Undo() {
 			Debug.Assert(modNode.TreeNode.Parent == null);
 			if (modNode.TreeNode.Parent != null)
 				throw new InvalidOperationException();
-			asmNode.Document.AssemblyDef.Modules.Insert(removeIndex, modNode.Document.ModuleDef);
+			asmNode.Document.AssemblyDef!.Modules.Insert(removeIndex, modNode.Document.ModuleDef);
 			asmNode.Document.Children.Insert(removeIndexDocument, modNode.Document);
 			asmNode.TreeNode.Children.Insert(removeIndex, modNode.TreeNode);
 		}
@@ -740,7 +741,7 @@ namespace dnSpy.AsmEditor.Module {
 
 			var asmNode = (ModuleDocumentNode)nodes[0];
 
-			var module = asmNode.Document.ModuleDef;
+			var module = asmNode.Document.ModuleDef!;
 			var data = new ModuleOptionsVM(module, new ModuleOptions(module), appService.DecompilerService);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
@@ -758,13 +759,13 @@ namespace dnSpy.AsmEditor.Module {
 		ModuleSettingsCommand(ModuleDocumentNode modNode, ModuleOptions newOptions) {
 			this.modNode = modNode;
 			this.newOptions = newOptions;
-			origOptions = new ModuleOptions(modNode.Document.ModuleDef);
+			origOptions = new ModuleOptions(modNode.Document.ModuleDef!);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditModuleCommand2;
 
 		void WriteModuleOptions(ModuleOptions theOptions) {
-			theOptions.CopyTo(modNode.Document.ModuleDef);
+			theOptions.CopyTo(modNode.Document.ModuleDef!);
 			modNode.TreeNode.TreeView.SelectItems(new[] { modNode });
 			modNode.TreeNode.RefreshUI();
 		}

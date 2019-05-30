@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
-		IReplaceListener Create(ITextView textView);
+		IReplaceListener? Create(ITextView textView);
 	}
 }

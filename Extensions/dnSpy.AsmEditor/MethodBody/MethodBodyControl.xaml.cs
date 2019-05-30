@@ -22,9 +22,9 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed partial class MethodBodyControl : UserControl {
-		LocalsListHelper localsListHelper;
-		InstructionsListHelper instructionsListHelper;
-		ExceptionHandlersListHelper exceptionHandlersListHelper;
+		LocalsListHelper? localsListHelper;
+		InstructionsListHelper? instructionsListHelper;
+		ExceptionHandlersListHelper? exceptionHandlersListHelper;
 
 		public MethodBodyControl() {
 			InitializeComponent();

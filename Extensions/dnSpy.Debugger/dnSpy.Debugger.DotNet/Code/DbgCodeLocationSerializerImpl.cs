@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		// PERF: Getting the serialized name of a method is slow if there are lots of assemblies
 		sealed class SerializedState {
 			public bool Initialized;
-			public string MethodAsString;
+			public string? MethodAsString;
 		}
 
 		public override void Serialize(ISettingsSection section, DbgCodeLocation location) {
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		public override DbgCodeLocation Deserialize(ISettingsSection section) {
+		public override DbgCodeLocation? Deserialize(ISettingsSection section) {
 			var token = section.Attribute<uint?>("Token");
 			var offset = section.Attribute<uint?>("Offset");
 			var assemblyFullName = section.Attribute<string>("AssemblyFullName");
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return location;
 		}
 
-		string GetMethodAsString(ModuleId moduleId, uint token) {
+		string? GetMethodAsString(ModuleId moduleId, uint token) {
 			var module = dbgMetadataService.Value.TryGetMetadata(moduleId, DbgLoadModuleOptions.AutoLoaded);
 			return (module?.ResolveToken(token) as MethodDef)?.ToString();
 		}

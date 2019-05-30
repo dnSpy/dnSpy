@@ -23,19 +23,19 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeSigCreatorOptions : ICloneable {
-		public string Title { get; set; }
+		public string? Title { get; set; }
 		public bool IsLocal { get; set; }
 		public bool CanAddGenericTypeVar { get; set; }
 		public bool CanAddGenericMethodVar { get; set; }
 		public bool NullTypeSigAllowed { get; set; }
 
-		public TypeDef OwnerType {
-			get => ownerType ?? (OwnerMethod == null ? null : OwnerMethod.DeclaringType);
+		public TypeDef? OwnerType {
+			get => ownerType ?? OwnerMethod?.DeclaringType;
 			set => ownerType = value;
 		}
-		TypeDef ownerType;
+		TypeDef? ownerType;
 
-		public MethodDef OwnerMethod { get; set; }
+		public MethodDef? OwnerMethod { get; set; }
 
 		public ModuleDef OwnerModule {
 			get => module;
@@ -52,14 +52,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public IDecompilerService DecompilerService { get; }
 
 		public TypeSigCreatorOptions(ModuleDef ownerModule, IDecompilerService decompilerService) {
-			OwnerModule = ownerModule;
-			Decompiler = decompilerService.Decompiler;
+			module = ownerModule ?? throw new ArgumentNullException(nameof(ownerModule));
+			decompiler = decompilerService.Decompiler ?? throw new ArgumentNullException(nameof(decompilerService));
 			DecompilerService = decompilerService;
 		}
 
 		public TypeSigCreatorOptions Clone() => (TypeSigCreatorOptions)MemberwiseClone();
 
-		public TypeSigCreatorOptions Clone(string title) {
+		public TypeSigCreatorOptions Clone(string? title) {
 			var clone = Clone();
 			clone.Title = title;
 			return clone;

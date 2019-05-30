@@ -52,7 +52,7 @@ namespace dnSpy.Extension {
 				loadedExtensions = value.ToArray();
 			}
 		}
-		LoadedExtension[] loadedExtensions = null;
+		LoadedExtension[]? loadedExtensions = null;
 
 		[ImportingConstructor]
 		ExtensionService([ImportMany] IEnumerable<Lazy<IAutoLoaded, IAutoLoadedMetadata>> mefAutoLoaded, [ImportMany] IEnumerable<Lazy<IExtension, IExtensionMetadata>> extensions) {
@@ -87,7 +87,7 @@ namespace dnSpy.Extension {
 			}
 		}
 
-		void NotifyExtensions(ExtensionEvent @event, object obj) {
+		void NotifyExtensions(ExtensionEvent @event, object? obj) {
 			foreach (var m in extensions)
 				m.Value.OnEvent(@event, obj);
 		}

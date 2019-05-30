@@ -136,7 +136,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override WpfHexViewMargin GetHexViewMargin(string marginName) {
+		public override WpfHexViewMargin? GetHexViewMargin(string marginName) {
 			foreach (var margin in containerMargins) {
 				if (margin == null)
 					continue;

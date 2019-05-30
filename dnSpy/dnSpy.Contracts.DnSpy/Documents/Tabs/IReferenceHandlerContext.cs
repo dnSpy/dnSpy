@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the source tab content or null
 		/// </summary>
-		DocumentTabContent SourceContent { get; }
+		DocumentTabContent? SourceContent { get; }
 	}
 }

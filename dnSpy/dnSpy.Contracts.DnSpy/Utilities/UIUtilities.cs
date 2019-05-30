@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="depo">Object</param>
 		/// <returns></returns>
-		public static DependencyObject GetParent(DependencyObject depo) {
+		public static DependencyObject? GetParent(DependencyObject depo) {
 			if (depo is Visual || depo is Visual3D)
 				return VisualTreeHelper.GetParent(depo);
 			else if (depo is FrameworkContentElement)
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Utilities {
 			return null;
 		}
 
-		static T GetItem<T>(DependencyObject view, object o) where T : class {
+		static T? GetItem<T>(DependencyObject view, object o) where T : class {
 			var depo = o as DependencyObject;
 			while (depo != null && !(depo is T) && depo != view)
 				depo = GetParent(depo);
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s).Replace("_", "__");
+		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s)!.Replace("_", "__");
 
 		/// <summary>
 		/// Truncates the string after <paramref name="length"/> characters and adds an elipsis at the end.
@@ -122,11 +122,11 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="element">Element to focus</param>
 		/// <param name="calledAfterFocus">Delegate that gets called once the element has gotten focus. Can be null.</param>
-		public static void Focus(IInputElement element, Action calledAfterFocus = null) {
+		public static void Focus(IInputElement? element, Action? calledAfterFocus = null) {
 			var uiElem = element as UIElement;
 			var fwkElem = element as FrameworkElement;
 			if (uiElem == null || (fwkElem != null && fwkElem.IsLoaded && fwkElem.IsVisible) || (fwkElem == null && uiElem.IsVisible)) {
-				element.Focus();
+				element?.Focus();
 				calledAfterFocus?.Invoke();
 				return;
 			}
@@ -135,10 +135,10 @@ namespace dnSpy.Contracts.Utilities {
 		}
 
 		sealed class FocusHelper {
-			readonly Action calledAfterFocus;
+			readonly Action? calledAfterFocus;
 			readonly UIElement element;
 
-			public FocusHelper(UIElement element, Action calledAfterFocus) {
+			public FocusHelper(UIElement element, Action? calledAfterFocus) {
 				this.element = element;
 				var fwkElem = element as FrameworkElement;
 				this.calledAfterFocus = calledAfterFocus;

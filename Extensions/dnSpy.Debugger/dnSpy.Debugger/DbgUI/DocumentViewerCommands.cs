@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			protected DocumentViewerCommand(Lazy<Debugger> debugger) => this.debugger = debugger;
 
-			protected sealed override Context CreateContext(IMenuItemContext context) {
+			protected sealed override Context? CreateContext(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				return new Context();
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger) {
 			}
 
-			public override string GetHeader(Context context) {
+			public override string? GetHeader(Context context) {
 				var filename = debugger.Value.GetCurrentExecutableFilename();
 				if (!File.Exists(filename))
 					return null;
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger) {
 			}
 
-			public override string GetHeader(Context context) {
+			public override string? GetHeader(Context context) {
 				switch (debugger.Value.GetToggleCreateBreakpointKind()) {
 				case ToggleCreateBreakpointKind.Add:	return dnSpy_Debugger_Resources.AddBreakpointCommand;
 				case ToggleCreateBreakpointKind.Delete:	return dnSpy_Debugger_Resources.DeleteBreakpointCommand;
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DbgUI {
 				: base(debugger) {
 			}
 
-			public override string GetHeader(Context context) {
+			public override string? GetHeader(Context context) {
 				switch (debugger.Value.GetToggleEnableBreakpointKind()) {
 				case ToggleEnableBreakpointKind.Enable:	return dnSpy_Debugger_Resources.EnableBreakpointCommand2;
 				case ToggleEnableBreakpointKind.Disable:return dnSpy_Debugger_Resources.DisableBreakpointCommand2;

@@ -43,32 +43,32 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the tables stream (#~ or #-) or null if none
 		/// </summary>
-		public abstract TablesHeap TablesStream { get; }
+		public abstract TablesHeap? TablesStream { get; }
 
 		/// <summary>
 		/// Gets the #Strings stream or null if none
 		/// </summary>
-		public abstract StringsHeap StringsStream { get; }
+		public abstract StringsHeap? StringsStream { get; }
 
 		/// <summary>
 		/// Gets the #US stream or null if none
 		/// </summary>
-		public abstract USHeap USStream { get; }
+		public abstract USHeap? USStream { get; }
 
 		/// <summary>
 		/// Gets the #GUID stream or null if none
 		/// </summary>
-		public abstract GUIDHeap GUIDStream { get; }
+		public abstract GUIDHeap? GUIDStream { get; }
 
 		/// <summary>
 		/// Gets the #Blob stream or null if none
 		/// </summary>
-		public abstract BlobHeap BlobStream { get; }
+		public abstract BlobHeap? BlobStream { get; }
 
 		/// <summary>
 		/// Gets the #Pdb stream or null if none
 		/// </summary>
-		public abstract PdbHeap PdbStream { get; }
+		public abstract PdbHeap? PdbStream { get; }
 
 		/// <summary>
 		/// Gets all heaps
@@ -80,6 +80,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ComplexData GetStructure(HexPosition position);
+		public abstract ComplexData? GetStructure(HexPosition position);
 	}
 }

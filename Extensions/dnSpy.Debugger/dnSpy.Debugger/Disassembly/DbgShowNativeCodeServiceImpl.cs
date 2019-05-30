@@ -29,11 +29,11 @@ using dnSpy.Contracts.Disassembly.Viewer;
 namespace dnSpy.Debugger.Disassembly {
 	abstract class DbgShowNativeCodeService {
 		public abstract bool CanShowNativeCode(DbgStackFrame frame);
-		public abstract bool ShowNativeCode(DbgStackFrame frame, string title = null);
+		public abstract bool ShowNativeCode(DbgStackFrame frame, string? title = null);
 		public abstract bool CanShowNativeCode(DbgBoundCodeBreakpoint boundBreakpoint);
-		public abstract bool ShowNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, string title = null);
+		public abstract bool ShowNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, string? title = null);
 		public abstract bool CanShowNativeCode(DbgRuntime runtime, DbgCodeLocation location);
-		public abstract bool ShowNativeCode(DbgRuntime runtime, DbgCodeLocation location, string title = null);
+		public abstract bool ShowNativeCode(DbgRuntime runtime, DbgCodeLocation location, string? title = null);
 	}
 
 	[Export(typeof(DbgShowNativeCodeService))]
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Disassembly {
 
 		DisassemblyContentFormatterOptions GetDisassemblyContentFormatterOptions() => DisassemblyContentFormatterOptions.None;
 
-		void Show(GetNativeCodeResult result, string title) {
+		void Show(GetNativeCodeResult result, string? title) {
 			var content = disassemblyContentProviderFactory.Value.Create(result.Code, GetDisassemblyContentFormatterOptions(), result.SymbolResolver, result.Header);
 			disassemblyViewerService.Value.Show(content, title);
 		}
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Disassembly {
 		public override bool CanShowNativeCode(DbgStackFrame frame) =>
 			dbgNativeCodeProvider.Value.CanGetNativeCode(frame);
 
-		public override bool ShowNativeCode(DbgStackFrame frame, string title) {
+		public override bool ShowNativeCode(DbgStackFrame frame, string? title) {
 			if (!dbgNativeCodeProvider.Value.TryGetNativeCode(frame, GetNativeCodeOptions(), out var result))
 				return false;
 			Show(result, title);
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Disassembly {
 		public override bool CanShowNativeCode(DbgBoundCodeBreakpoint boundBreakpoint) =>
 			dbgNativeCodeProvider.Value.CanGetNativeCode(boundBreakpoint);
 
-		public override bool ShowNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, string title) {
+		public override bool ShowNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, string? title) {
 			if (!dbgNativeCodeProvider.Value.TryGetNativeCode(boundBreakpoint, GetNativeCodeOptions(), out var result))
 				return false;
 			Show(result, title);
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Disassembly {
 		public override bool CanShowNativeCode(DbgRuntime runtime, DbgCodeLocation location) =>
 			dbgNativeCodeProvider.Value.CanGetNativeCode(runtime, location);
 
-		public override bool ShowNativeCode(DbgRuntime runtime, DbgCodeLocation location, string title) {
+		public override bool ShowNativeCode(DbgRuntime runtime, DbgCodeLocation location, string? title) {
 			if (!dbgNativeCodeProvider.Value.TryGetNativeCode(runtime, location, GetNativeCodeOptions(), out var result))
 				return false;
 			Show(result, title);

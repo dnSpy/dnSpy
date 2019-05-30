@@ -63,10 +63,10 @@ namespace dndbg.Engine {
 						return Name;
 					Interlocked.CompareExchange(ref fullName, CorAssembly.FullName, null);
 				}
-				return fullName;
+				return fullName!;
 			}
 		}
-		string fullName;
+		string? fullName;
 
 		public bool HasUnloaded { get; private set; }
 		public DnDebugger Debugger => AppDomain.Debugger;
@@ -85,7 +85,7 @@ namespace dndbg.Engine {
 		DnModule CreateModule(ICorDebugModule comModule) =>
 			new DnModule(this, comModule, Debugger.GetNextModuleId(), Process.GetNextModuleId(), AppDomain.GetNextModuleId());
 		internal void SetHasUnloaded() => HasUnloaded = true;
-		internal DnModule TryAdd(ICorDebugModule comModule) => modules.Add(comModule);
+		internal DnModule? TryAdd(ICorDebugModule? comModule) => modules.Add(comModule);
 
 		public DnModule[] Modules {
 			get {
@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public DnModule TryGetModule(ICorDebugModule comModule) {
+		public DnModule? TryGetModule(ICorDebugModule? comModule) {
 			Debugger.DebugVerifyThread();
 			return modules.TryGet(comModule);
 		}
@@ -130,7 +130,7 @@ namespace dndbg.Engine {
 			foreach (var m in created)
 				Debugger.CorModuleDefCreated(m);
 		}
-		CorAssemblyDef corAssemblyDef;
+		CorAssemblyDef? corAssemblyDef;
 
 		public override string ToString() => $"{UniqueId} {Name}";
 	}

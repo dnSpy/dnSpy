@@ -58,8 +58,8 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public IEnumerable<DefaultDocumentList> AllFiles =>
-			allFiles.Where(a => a.Files.Count > 0).
-					Select(a => new DefaultDocumentList(a.Name, a.Files.Select(b => b.ToDsDocumentInfo()))).
+			allFiles.Where(a => a.Files.Count > 0 && a.Name != null).
+					Select(a => new DefaultDocumentList(a.Name!, a.Files.Select(b => b.ToDsDocumentInfo()))).
 					Where(a => a.Documents.Length > 0);
 
 		public void Find() {
@@ -125,9 +125,9 @@ namespace dnSpy.Documents.Tabs {
 				wpa81.Name = "Windows Phone App 8.1";	// Another one has the identical name so add "App" to it
 			if (net30 != null)
 				net30.AddFilesFrom(net20);
-			if (net35 != null)
+			if (net35 != null && net30 != null)
 				net35.AddFilesFrom(net30);
-			if (net35C != null)
+			if (net35C != null && net30 != null)
 				net35C.AddFilesFrom(net30);
 			if (net20 != null)
 				net20.Name = ".NET Framework 2.0";
@@ -160,13 +160,13 @@ namespace dnSpy.Documents.Tabs {
 
 		sealed class RefFileList {
 			public string Filename { get; }
-			public string Redist { get; }
-			public string Name { get; set; }
-			public string RuntimeVersion { get; }
-			public string ToolsVersion { get; }
-			public string ShortName { get; }
-			public string IncludeFramework { get; }
-			public string TargetFrameworkDirectory { get; }
+			public string? Redist { get; }
+			public string? Name { get; set; }
+			public string? RuntimeVersion { get; }
+			public string? ToolsVersion { get; }
+			public string? ShortName { get; }
+			public string? IncludeFramework { get; }
+			public string? TargetFrameworkDirectory { get; }
 			public string TargetFilename { get; set; }
 			public List<RefFile> Files { get; } = new List<RefFile>();
 
@@ -261,20 +261,20 @@ namespace dnSpy.Documents.Tabs {
 			public void AddFilesFrom(RefFileList olderList) {
 				if (olderList == null)
 					return;
-				var existing = new HashSet<string>(Files.Select(a => a.AssemblyName), StringComparer.OrdinalIgnoreCase);
+				var existing = new HashSet<string?>(Files.Select(a => a.AssemblyName), StringComparer.OrdinalIgnoreCase);
 				Files.AddRange(olderList.Files.Where(a => !existing.Contains(a.AssemblyName)));
 			}
 		}
 
 		sealed class RefFile {
-			public string AssemblyName { get; }
-			public Version Version { get; }
-			public string PublicKeyToken { get; }
-			public string Culture { get; }
-			public string ProcessorArchitecture { get; }
+			public string? AssemblyName { get; }
+			public Version? Version { get; }
+			public string? PublicKeyToken { get; }
+			public string? Culture { get; }
+			public string? ProcessorArchitecture { get; }
 			public bool InGac { get; }
 			public bool IsRedistRoot { get; }
-			public string FileVersion { get; }
+			public string? FileVersion { get; }
 			public string Filename { get; }
 
 			public RefFile(XElement sect, string refFilePath) {

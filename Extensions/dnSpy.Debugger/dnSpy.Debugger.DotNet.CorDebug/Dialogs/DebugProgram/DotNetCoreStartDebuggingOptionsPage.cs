@@ -102,10 +102,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 			Initialize(dncOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
 			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
 				var dncOptions = CreateOptions(breakKind);
@@ -127,8 +127,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		void Initialize(DotNetCoreStartDebuggingOptions options) {
 			base.Initialize(options);
 			UseHost = options.UseHost;
-			HostFilename = options.Host;
-			HostArguments = options.HostArguments;
+			HostFilename = options.Host ?? string.Empty;
+			HostArguments = options.HostArguments ?? string.Empty;
 		}
 
 		public override StartDebuggingOptionsInfo GetOptions() {

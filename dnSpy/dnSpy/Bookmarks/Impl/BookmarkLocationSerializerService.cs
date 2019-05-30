@@ -28,7 +28,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Bookmarks.Impl {
 	abstract class BookmarkLocationSerializerService {
 		public abstract void Serialize(ISettingsSection section, BookmarkLocation location);
-		public abstract BookmarkLocation Deserialize(ISettingsSection section);
+		public abstract BookmarkLocation? Deserialize(ISettingsSection? section);
 	}
 
 	[Export(typeof(BookmarkLocationSerializerService))]
@@ -39,7 +39,7 @@ namespace dnSpy.Bookmarks.Impl {
 		BookmarkLocationSerializerServiceImpl([ImportMany] IEnumerable<Lazy<BookmarkLocationSerializer, IBookmarkLocationSerializerMetadata>> bookmarkLocationSerializers) =>
 			this.bookmarkLocationSerializers = bookmarkLocationSerializers.ToArray();
 
-		Lazy<BookmarkLocationSerializer, IBookmarkLocationSerializerMetadata> TryGetSerializer(string type) {
+		Lazy<BookmarkLocationSerializer, IBookmarkLocationSerializerMetadata>? TryGetSerializer(string type) {
 			foreach (var lz in bookmarkLocationSerializers) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0)
 					return lz;
@@ -63,7 +63,7 @@ namespace dnSpy.Bookmarks.Impl {
 			serializer.Value.Serialize(section, location);
 		}
 
-		public override BookmarkLocation Deserialize(ISettingsSection section) {
+		public override BookmarkLocation? Deserialize(ISettingsSection? section) {
 			if (section == null)
 				return null;
 

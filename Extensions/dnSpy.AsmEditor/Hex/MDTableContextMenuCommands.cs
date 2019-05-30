@@ -99,7 +99,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.cmd = cmd;
 		}
 
-		MDTableContext CreateMDTableContext() {
+		MDTableContext? CreateMDTableContext() {
 			var tab = documentTabService.ActiveTab;
 			if (tab != null) {
 				var listView = FindListView(tab);
@@ -110,7 +110,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		static ListView FindListView(IDocumentTab tab) {
+		static ListView? FindListView(IDocumentTab tab) {
 			var o = tab.UIContext.UIObject as DependencyObject;
 			while (o != null) {
 				if (o is ListView lv && InitDataTemplateAP.GetInitialize(lv))
@@ -145,24 +145,24 @@ namespace dnSpy.AsmEditor.Hex {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override MDTableContext CreateContext(IMenuItemContext context) => MenuMDTableCommand.ToMDTableContext(context.CreatorObject.Object, true);
+		protected sealed override MDTableContext? CreateContext(IMenuItemContext context) => MenuMDTableCommand.ToMDTableContext(context.CreatorObject.Object, true);
 	}
 
 	abstract class MenuMDTableCommand : MenuItemBase<MDTableContext> {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override MDTableContext CreateContext(IMenuItemContext context) => ToMDTableContext(context.CreatorObject.Object, false);
-		internal static MDTableContext ToMDTableContext(object obj, bool isContextMenu) => ToMDTableContext(obj as ListView, isContextMenu);
+		protected sealed override MDTableContext? CreateContext(IMenuItemContext context) => ToMDTableContext(context.CreatorObject.Object, false);
+		internal static MDTableContext? ToMDTableContext(object? obj, bool isContextMenu) => ToMDTableContext(obj as ListView, isContextMenu);
 
-		internal static MDTableContext ToMDTableContext(ListView listView, bool isContextMenu) {
+		internal static MDTableContext? ToMDTableContext(ListView? listView, bool isContextMenu) {
 			if (listView == null)
 				return null;
 			var mdVM = listView.DataContext as MetadataTableVM;
 			if (mdVM == null)
 				return null;
 
-			return new MDTableContext(listView, mdVM, (MetadataTableNode)mdVM.Owner, isContextMenu);
+			return new MDTableContext(listView, mdVM, (MetadataTableNode)mdVM.Owner!, isContextMenu);
 		}
 	}
 
@@ -237,13 +237,13 @@ namespace dnSpy.AsmEditor.Hex {
 				UIUtils.ScrollSelectAndSetFocus(context.ListView, recVM);
 		}
 
-		static MetadataTableRecordVM Ask(string title, MDTableContext context) => MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
-			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetadataTableVM.Rows, out string error);
+		static MetadataTableRecordVM? Ask(string title, MDTableContext context) => MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
+			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetadataTableVM.Rows, out var error);
 			if (!string.IsNullOrEmpty(error))
 				return null;
 			return context.MetadataTableVM.Get((int)(rid - 1));
 		}, s => {
-			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetadataTableVM.Rows, out string error);
+			uint rid = SimpleTypeConverter.ParseUInt32(s, 1, context.MetadataTableVM.Rows, out var error);
 			if (!string.IsNullOrEmpty(error))
 				return error;
 			if (rid == 0 || rid > context.MetadataTableVM.Rows)
@@ -283,7 +283,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static bool IsEnabledInternal(MDTableContext context) => GetAddressReference(context) != null;
 
-		static AddressReference GetAddressReference(MDTableContext context) {
+		static AddressReference? GetAddressReference(MDTableContext context) {
 			if (context.Records.Length == 0)
 				return null;
 			if (!context.ContiguousRecords())
@@ -370,14 +370,14 @@ namespace dnSpy.AsmEditor.Hex {
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			public override void Execute(MDTableContext context) => ExecuteInternal(context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
-			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
+			public override string? GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:PasteCommand", Icon = DsImagesAttribute.Paste, InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			public override void Execute(MDTableContext context) => ExecuteInternal(context);
 			public override bool IsEnabled(MDTableContext context) => IsEnabledInternal(context);
-			public override string GetHeader(MDTableContext context) => GetHeaderInternal(context);
+			public override string? GetHeader(MDTableContext context) => GetHeaderInternal(context);
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
@@ -392,7 +392,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static bool IsEnabledInternal(MDTableContext context) => GetPasteData(context) != null;
 
-		static byte[] GetPasteData(MDTableContext context) {
+		static byte[]? GetPasteData(MDTableContext context) {
 			if (context.Records.Length == 0)
 				return null;
 
@@ -410,7 +410,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return data;
 		}
 
-		static string GetHeaderInternal(MDTableContext context) {
+		static string? GetHeaderInternal(MDTableContext context) {
 			var data = GetPasteData(context);
 			if (data == null)
 				return null;

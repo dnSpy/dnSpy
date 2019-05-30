@@ -168,7 +168,7 @@ namespace dnSpy.Hex.Tagging {
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
 
-		void RaiseTagsChanged(HexBufferSpan span, object sender = null) {
+		void RaiseTagsChanged(HexBufferSpan span, object? sender = null) {
 			if (IsDisposed)
 				return;
 			hexTagAggregatorProxy.RaiseTagsChanged(sender ?? taggers, new HexTagsChangedEventArgs(span));

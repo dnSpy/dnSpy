@@ -33,9 +33,9 @@ using dnSpy.Contracts.Search;
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributeVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickAttributeTypeCommand => new RelayCommand(a => PickAttributeType());
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public ITypeDefOrRef AttributeType {
+		public ITypeDefOrRef? AttributeType {
 			get => attributeType;
 			set {
 				if (attributeType != value) {
@@ -68,14 +68,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		ITypeDefOrRef attributeType;
+		ITypeDefOrRef? attributeType;
 
 		public CANamedArgumentsVM CANamedArgumentsVM { get; }
 
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			origSa = sa;
 			this.ownerModule = ownerModule;
 			CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerService, ownerType, ownerMethod, a => {

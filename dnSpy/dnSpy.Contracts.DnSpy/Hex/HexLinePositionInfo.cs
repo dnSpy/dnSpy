@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the cell if any
 		/// </summary>
-		public HexCell Cell { get; }
+		public HexCell? Cell { get; }
 
 		HexLinePositionInfo(HexLinePositionInfoType type, int position, int cellPosition) {
 			Type = type;

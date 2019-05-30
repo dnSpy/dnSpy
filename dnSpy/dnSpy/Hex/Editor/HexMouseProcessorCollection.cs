@@ -25,13 +25,13 @@ using dnSpy.Contracts.Hex.Editor;
 namespace dnSpy.Hex.Editor {
 	sealed class HexMouseProcessorCollection : IDisposable {
 		readonly UIElement mouseElement;
-		readonly UIElement manipulationElement;
+		readonly UIElement? manipulationElement;
 		readonly DefaultHexMouseProcessor defaultMouseProcessor;
 		readonly HexMouseProcessor[] mouseProcessors;
 		readonly Func<MouseEventArgs, bool> allowEvent;
 		static readonly Func<MouseEventArgs, bool> defaultAllowEvent = a => true;
 
-		public HexMouseProcessorCollection(UIElement mouseElement, UIElement manipulationElement, DefaultHexMouseProcessor defaultMouseProcessor, HexMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool> allowEvent) {
+		public HexMouseProcessorCollection(UIElement mouseElement, UIElement? manipulationElement, DefaultHexMouseProcessor defaultMouseProcessor, HexMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool>? allowEvent) {
 			this.mouseElement = mouseElement ?? throw new ArgumentNullException(nameof(mouseElement));
 			this.manipulationElement = manipulationElement;
 			this.defaultMouseProcessor = defaultMouseProcessor ?? throw new ArgumentNullException(nameof(defaultMouseProcessor));

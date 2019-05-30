@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferSpan && Equals((HexBufferSpan)obj);
+		public override bool Equals(object? obj) => obj is HexBufferSpan && Equals((HexBufferSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()

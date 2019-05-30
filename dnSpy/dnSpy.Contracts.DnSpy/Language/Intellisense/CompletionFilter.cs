@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	sealed class CompletionFilter : ICompletionFilter {
 		readonly string searchText;
-		readonly int[] acronymMatchIndexes;
+		readonly int[]? acronymMatchIndexes;
 		const StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase;
 
 		/// <summary>
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		bool TryUpdateAcronymIndexes(string completionText) =>
-			AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, completionText);
+			AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes!, searchText, completionText);
 
 		public bool IsMatch(Completion completion) {
 			var completionText = completion.TryGetFilterText();

@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// <summary>
 		/// Gets the language or null if none
 		/// </summary>
-		public abstract DbgLanguage Language { get; }
+		public abstract DbgLanguage? Language { get; }
 		public abstract event EventHandler LanguageChanged;
 
 		/// <summary>
@@ -79,11 +79,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract bool CanAddRemoveExpressions { get; }
 		public abstract void DeleteExpressions(string[] ids);
 		public abstract void ClearAllExpressions();
-		public abstract void EditExpression(string id, string expression);
+		public abstract void EditExpression(string? id, string expression);
 		public abstract void AddExpressions(string[] expressions);
 
-		public abstract DbgEvaluationInfo TryGetEvaluationInfo();
-		public abstract DbgStackFrame TryGetFrame();
+		public abstract DbgEvaluationInfo? TryGetEvaluationInfo();
+		public abstract DbgStackFrame? TryGetFrame();
 
 		public abstract void RefreshAllNodes();
 	}
@@ -93,22 +93,22 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// null or the id of the value. Should be used if <see cref="DbgValueNode.Expression"/> isn't unique
 		/// or when <see cref="ValueNodesProvider.CanAddRemoveExpressions"/> is true
 		/// </summary>
-		public string Id { get; }
+		public string? Id { get; }
 
 		/// <summary>
 		/// null if it's been invalidated (it causes side effects and it wasn't re-evaluated or there was another error)
 		/// </summary>
-		public DbgValueNode Node { get; }
+		public DbgValueNode? Node { get; }
 
  		/// <summary>
 		/// Shown in Name column if <see cref="Node"/> is null, else it's ignored
 		/// </summary>
-		public string Expression { get; }
+		public string? Expression { get; }
 
 		/// <summary>
 		/// Shown in Value column if <see cref="Node"/> is null, else it's ignored
 		/// </summary>
-		public string ErrorMessage { get; }
+		public string? ErrorMessage { get; }
 
 		/// <summary>
 		/// The expression wasn't evaluated because it causes side effects

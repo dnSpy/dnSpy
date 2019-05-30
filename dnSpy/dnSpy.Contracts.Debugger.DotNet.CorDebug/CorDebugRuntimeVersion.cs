@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		public static bool operator !=(CorDebugRuntimeVersion left, CorDebugRuntimeVersion right) => !left.Equals(right);
 
 		public bool Equals(CorDebugRuntimeVersion other) => Kind == other.Kind && StringComparer.Ordinal.Equals(Version, other.Version);
-		public override bool Equals(object obj) => obj is CorDebugRuntimeVersion && Equals((CorDebugRuntimeVersion)obj);
+		public override bool Equals(object? obj) => obj is CorDebugRuntimeVersion && Equals((CorDebugRuntimeVersion)obj);
 		public override int GetHashCode() => (int)Kind ^ StringComparer.Ordinal.GetHashCode(Version ?? string.Empty);
 		public override string ToString() => $"{Kind} {Version}";
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

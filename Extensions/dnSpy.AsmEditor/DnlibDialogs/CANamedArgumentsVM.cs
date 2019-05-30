@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CANamedArgumentsVM : ListVM<CANamedArgumentVM, CANamedArgument> {
 		readonly Predicate<CANamedArgumentsVM> canAdd;
 
-		public CANamedArgumentsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
+		public CANamedArgumentsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
 			: base(null, null, ownerModule, decompilerService, ownerType, ownerMethod, true) => this.canAdd = canAdd;
 
 		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, decompilerService));

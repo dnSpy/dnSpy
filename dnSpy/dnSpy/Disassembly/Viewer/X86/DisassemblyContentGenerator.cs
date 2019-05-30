@@ -49,7 +49,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				this.kind = kind;
 				this.value = value;
 			}
-			public override bool Equals(object obj) => obj is AsmReference other && kind == other.kind && StringComparer.Ordinal.Equals(value, other.value);
+			public override bool Equals(object? obj) => obj is AsmReference other && kind == other.kind && StringComparer.Ordinal.Equals(value, other.value);
 			public override int GetHashCode() => (int)kind ^ StringComparer.Ordinal.GetHashCode(value ?? string.Empty);
 		}
 
@@ -142,7 +142,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			}
 		}
 
-		static string GetName(NativeVariableInfo[] variableInfo, in X86Variable varInfo) {
+		static string? GetName(NativeVariableInfo[] variableInfo, in X86Variable varInfo) {
 			foreach (var info in variableInfo) {
 				if (info.IsLocal == varInfo.IsLocal && info.Index == varInfo.Index)
 					return info.Name;
@@ -150,7 +150,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			return null;
 		}
 
-		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public static void Write(int bitness, DisassemblyContentOutput output, string? header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
 			if (variableInfo == null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {

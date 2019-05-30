@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		DocumentViewerContent Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType contentType);
+		DocumentViewerContent? Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType? contentType);
 
 		/// <summary>
 		/// Cache decompiled output
@@ -56,6 +56,6 @@ namespace dnSpy.Documents.Tabs {
 		/// Clear everything referencing <paramref name="modules"/>
 		/// </summary>
 		/// <param name="modules">Module</param>
-		void Clear(HashSet<IDsDocument> modules);
+		void Clear(HashSet<IDsDocument?> modules);
 	}
 }

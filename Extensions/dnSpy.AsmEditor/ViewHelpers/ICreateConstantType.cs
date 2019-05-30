@@ -37,6 +37,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// special Null classes.</param>
 		/// <param name="canceled">true if user canceled</param>
 		/// <returns></returns>
-		object Create(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled);
+		object? Create(ModuleDef ownerModule, object? value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions? options, out object? resultNoSpecialNull, out bool canceled);
 	}
 }

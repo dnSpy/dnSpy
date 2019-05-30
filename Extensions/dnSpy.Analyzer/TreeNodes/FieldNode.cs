@@ -46,7 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new FieldAccessNode(analyzedField, true);
 		}
 
-		public override IMemberRef Member => analyzedField;
-		public override IMDTokenProvider Reference => analyzedField;
+		public override IMemberRef? Member => analyzedField;
+		public override IMDTokenProvider? Reference => analyzedField;
 	}
 }

@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <returns></returns>
-		ITabSaver Create(IDocumentTab tab);
+		ITabSaver? Create(IDocumentTab tab);
 	}
 
 	/// <summary>Metadata</summary>

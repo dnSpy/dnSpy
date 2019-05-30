@@ -60,8 +60,8 @@ namespace dndbg.DotNet {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 			Interlocked.CompareExchange(ref blob, MDAPI.GetPermissionSetBlob(mdi, token) ?? Array.Empty<byte>(), null);
-			return blob;
+			return blob!;
 		}
-		byte[] blob;
+		byte[]? blob;
 	}
 }

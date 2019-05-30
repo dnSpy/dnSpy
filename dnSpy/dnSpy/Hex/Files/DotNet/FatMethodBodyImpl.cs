@@ -30,8 +30,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<UInt32Data> CodeSize { get; }
 		public override StructField<TokenData> LocalVarSigTok { get; }
 		public override StructField<VirtualArrayData<ByteData>> Instructions { get; }
-		public override StructField<VirtualArrayData<ByteData>> Padding { get; }
-		public override StructField<ExceptionHandlerTable> EHTable { get; }
+		public override StructField<VirtualArrayData<ByteData>>? Padding { get; }
+		public override StructField<ExceptionHandlerTable>? EHTable { get; }
 
 		protected override BufferField[] Fields { get; }
 

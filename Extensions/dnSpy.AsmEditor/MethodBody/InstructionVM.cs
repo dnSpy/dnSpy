@@ -30,7 +30,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionVM : ViewModelBase, IIndexedItem {
 		public static readonly InstructionVM Null = new InstructionVM(false);
-		InstructionOptions origOptions;
+		InstructionOptions? origOptions;
 
 		static readonly Code[] codeList;
 
@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public InstructionOperandVM InstructionOperandVM { get; }
 
-		public SequencePoint SequencePoint {
+		public SequencePoint? SequencePoint {
 			get => sequencePoint;
 			set {
 				if (sequencePoint != value) {
@@ -92,9 +92,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 			}
 		}
-		SequencePoint sequencePoint;
+		SequencePoint? sequencePoint;
 
 		InstructionVM(bool dummy) {
+			InstructionOperandVM = null!;
+			CodeVM = null!;
 		}
 
 		public InstructionVM() {
@@ -123,7 +125,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.Single:
 			case InstructionOperandType.Double:
 			case InstructionOperandType.String:
-				if (!InstructionOperandVM.Text.HasError)
+				if (!InstructionOperandVM.Text!.HasError)
 					return new Instruction(opCode, InstructionOperandVM.Text.ObjectValue);
 				return new Instruction(opCode);
 
@@ -199,7 +201,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Reinitialize();
 		}
 
-		void Reinitialize() => InitializeFrom(origOptions);
+		void Reinitialize() => InitializeFrom(origOptions!);
 		public InstructionOptions CreateInstructionOptions() => CopyTo(new InstructionOptions());
 
 		public void InitializeFrom(InstructionOptions options) {

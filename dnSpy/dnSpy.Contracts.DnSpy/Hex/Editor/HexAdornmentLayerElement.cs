@@ -43,12 +43,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Called when the adornment is removed
 		/// </summary>
-		public abstract VSTE.AdornmentRemovedCallback RemovedCallback { get; }
+		public abstract VSTE.AdornmentRemovedCallback? RemovedCallback { get; }
 
 		/// <summary>
 		/// Gets the tag
 		/// </summary>
-		public abstract object Tag { get; }
+		public abstract object? Tag { get; }
 
 		/// <summary>
 		/// Buffer span

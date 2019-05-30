@@ -32,9 +32,9 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 	sealed class UndoCommandServiceEventArgs : EventArgs {
 		public readonly UndoCommandServiceEventType Type;
-		public readonly IUndoObject UndoObject;
+		public readonly IUndoObject? UndoObject;
 
-		public UndoCommandServiceEventArgs(UndoCommandServiceEventType type, IUndoObject obj) {
+		public UndoCommandServiceEventArgs(UndoCommandServiceEventType type, IUndoObject? obj) {
 			Type = type;
 			UndoObject = obj;
 		}

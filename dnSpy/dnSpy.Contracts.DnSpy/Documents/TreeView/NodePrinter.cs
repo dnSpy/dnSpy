@@ -29,11 +29,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// Node printer
 	/// </summary>
 	public readonly struct NodePrinter {
-		static bool IsExe(ModuleDef mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
-		static bool IsExe(IPEImage peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(ModuleDef? mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(IPEImage? peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		static string GetFilename(IDsDocument document) {
-			string filename = null;
+			string? filename = null;
 			try {
 				filename = Path.GetFileName(document.Filename);
 			}

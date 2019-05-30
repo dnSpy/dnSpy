@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
 		readonly DbgDotNetCodeLocationImpl location;
 		readonly BreakpointFormatterServiceImpl owner;
-		WeakReference weakMethod;
+		WeakReference? weakMethod;
 
 		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgDotNetCodeLocationImpl location) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));

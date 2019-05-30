@@ -44,22 +44,22 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject {
+		static T? FindVisualChild<T>(DependencyObject obj) where T : DependencyObject {
 			int childrenCount = VisualTreeHelper.GetChildrenCount(obj);
 			for (int i = 0; i < childrenCount; i++) {
 				var child = VisualTreeHelper.GetChild(obj, i);
 				if (child is T res)
 					return res;
 
-				res = FindVisualChild<T>(child);
-				if (res != null)
-					return res;
+				var res2 = FindVisualChild<T>(child);
+				if (res2 != null)
+					return res2;
 			}
 
 			return null;
 		}
 
-		public static ScrollViewer TryGetScrollViewer(ListBox lb)=> FindVisualChild<ScrollViewer>(lb);
+		public static ScrollViewer? TryGetScrollViewer(ListBox lb)=> FindVisualChild<ScrollViewer>(lb);
 
 		public static int GetItemsPerPage(ListBox lb, int defaultValue) {
 			var scrollViewer = TryGetScrollViewer(lb);

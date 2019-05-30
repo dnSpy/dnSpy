@@ -34,7 +34,7 @@ namespace dnSpy.Text.Repl {
 			LanguageName = languageName;
 		}
 
-		public static ReplOptions TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, IReplOptionsDefinitionMetadata md) {
+		public static ReplOptions? TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, IReplOptionsDefinitionMetadata md) {
 			if (group == null)
 				throw new ArgumentNullException(nameof(group));
 			if (contentTypeRegistryService == null)

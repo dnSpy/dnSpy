@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="data">Data to add to the <see cref="DbgAppDomain"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the app domain but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgEngineAppDomain CreateAppDomain<T>(DbgInternalAppDomain internalAppDomain, string name, int id, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineAppDomain> onCreated = null) where T : class;
+		public abstract DbgEngineAppDomain CreateAppDomain<T>(DbgInternalAppDomain internalAppDomain, string name, int id, DbgEngineMessageFlags messageFlags, T? data, Action<DbgEngineAppDomain>? onCreated = null) where T : class;
 
 		/// <summary>
 		/// Creates a module. The engine has paused the program.
@@ -93,7 +93,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
 		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgEngineModule CreateModule(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags) =>
+		public DbgEngineModule CreateModule(DbgAppDomain? appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags) =>
 			CreateModule<object>(appDomain, internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version, messageFlags, null, null);
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="data">Data to add to the <see cref="DbgModule"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the module but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineModule> onCreated = null) where T : class;
+		public abstract DbgEngineModule CreateModule<T>(DbgAppDomain? appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags, T? data, Action<DbgEngineModule>? onCreated = null) where T : class;
 
 		/// <summary>
 		/// Creates a thread. The engine has paused the program.
@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="state">New <see cref="DbgThread.State"/> value</param>
 		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgEngineThread CreateThread(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags) =>
+		public DbgEngineThread CreateThread(DbgAppDomain? appDomain, string kind, ulong id, ulong? managedId, string? name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags) =>
 			CreateThread<object>(appDomain, kind, id, managedId, name, suspendedCount, state, messageFlags, null, null);
 
 		/// <summary>
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="data">Data to add to the <see cref="DbgThread"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the thread but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineThread> onCreated = null) where T : class;
+		public abstract DbgEngineThread CreateThread<T>(DbgAppDomain? appDomain, string kind, ulong id, ulong? managedId, string? name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags, T? data, Action<DbgEngineThread>? onCreated = null) where T : class;
 
 		/// <summary>
 		/// Creates an exception. The engine has paused the program.
@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="module">Module where exception was thrown or null if it's unknown</param>
 		/// <param name="messageFlags">Message flags</param>
 		/// <returns></returns>
-		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags) =>
+		public DbgException CreateException(DbgExceptionId id, DbgExceptionEventFlags flags, string? message, DbgThread? thread, DbgModule? module, DbgEngineMessageFlags messageFlags) =>
 			CreateException<object>(id, flags, message, thread, module, messageFlags, null, null);
 
 		/// <summary>
@@ -178,7 +178,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="data">Data to add to the <see cref="DbgException"/> or null if nothing gets added</param>
 		/// <param name="onCreated">Called right after creating the exception but before adding it to internal data structures. This can be null.</param>
 		/// <returns></returns>
-		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags, T data, Action<DbgException> onCreated = null) where T : class;
+		public abstract DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string? message, DbgThread? thread, DbgModule? module, DbgEngineMessageFlags messageFlags, T? data, Action<DbgException>? onCreated = null) where T : class;
 
 		/// <summary>
 		/// Value used when the bound breakpoint's address isn't known
@@ -193,9 +193,9 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="location">Breakpoint location</param>
 		/// <param name="module">Module or null if none</param>
 		/// <param name="address">Address or <see cref="BoundBreakpointNoAddress"/> if unknown</param>
-		/// <param name="message">Warning/error message or null if none</param>
+		/// <param name="message">Warning/error message or default if none</param>
 		/// <returns></returns>
-		public DbgEngineBoundCodeBreakpoint Create(DbgCodeLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message) =>
+		public DbgEngineBoundCodeBreakpoint? Create(DbgCodeLocation location, DbgModule? module, ulong address, DbgEngineBoundCodeBreakpointMessage message) =>
 			Create(new[] { new DbgBoundCodeBreakpointInfo<object>(location, module, address, message, null) }).FirstOrDefault();
 
 		/// <summary>
@@ -207,10 +207,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="location">Breakpoint location</param>
 		/// <param name="module">Module or null if none</param>
 		/// <param name="address">Address or <see cref="BoundBreakpointNoAddress"/> if unknown</param>
-		/// <param name="message">Warning/error message or null if none</param>
+		/// <param name="message">Warning/error message or default if none</param>
 		/// <param name="data">Data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public DbgEngineBoundCodeBreakpoint Create<T>(DbgCodeLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) where T : class =>
+		public DbgEngineBoundCodeBreakpoint Create<T>(DbgCodeLocation location, DbgModule? module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T? data) where T : class =>
 			Create(new[] { new DbgBoundCodeBreakpointInfo<T>(location, module, address, message, data) }).FirstOrDefault();
 
 		/// <summary>
@@ -233,7 +233,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="functionOffset">Function offset</param>
 		/// <param name="functionToken">Function token</param>
 		/// <returns></returns>
-		public abstract DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgCodeLocation location = null, DbgModule module = null, uint functionOffset = 0, uint functionToken = DbgEngineStackFrame.InvalidFunctionToken);
+		public abstract DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgCodeLocation? location = null, DbgModule? module = null, uint functionOffset = 0, uint functionToken = DbgEngineStackFrame.InvalidFunctionToken);
 	}
 
 	/// <summary>
@@ -254,7 +254,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the module or null if none
 		/// </summary>
-		public DbgModule Module { get; }
+		public DbgModule? Module { get; }
 
 		/// <summary>
 		/// Gets the address or <see cref="NoAddress"/> if it's not known
@@ -262,7 +262,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public ulong Address { get; }
 
 		/// <summary>
-		/// Gets the warning/error message or null if none
+		/// Gets the warning/error message or default if none
 		/// </summary>
 		public DbgEngineBoundCodeBreakpointMessage Message { get; }
 
@@ -270,7 +270,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Gets the data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added.
 		/// If the data implements <see cref="IDisposable"/>, it gets disposed when the bound breakpoint gets deleted.
 		/// </summary>
-		public T Data { get; }
+		public T? Data { get; }
 
 		/// <summary>
 		/// Constructor
@@ -278,10 +278,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="location">Location</param>
 		/// <param name="module">Module or null if none</param>
 		/// <param name="address">Address or <see cref="NoAddress"/> if it's not known</param>
-		/// <param name="message">Warning/error message or null if none</param>
+		/// <param name="message">Warning/error message or default if none</param>
 		/// <param name="data">Data to add to the <see cref="DbgBoundCodeBreakpoint"/> or null if nothing gets added.
 		/// If the data implements <see cref="IDisposable"/>, it gets disposed when the bound breakpoint gets deleted.</param>
-		public DbgBoundCodeBreakpointInfo(DbgCodeLocation location, DbgModule module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T data) {
+		public DbgBoundCodeBreakpointInfo(DbgCodeLocation location, DbgModule? module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T? data) {
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Module = module;
 			Address = address;

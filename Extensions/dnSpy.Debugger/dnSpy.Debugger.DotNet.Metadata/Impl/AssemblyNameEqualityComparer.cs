@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return ignorePublicKeyToken || PublicKeyTokenEquals(x.GetPublicKeyToken(), y.GetPublicKeyToken());
 		}
 
-		static bool PublicKeyTokenEquals(byte[] a, byte[] b) {
+		static bool PublicKeyTokenEquals(byte[]? a, byte[]? b) {
 			if (a == null)
 				a = Array.Empty<byte>();
 			if (b == null)

@@ -27,15 +27,15 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenFile : IOpenFile {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public OpenFile()
 			: this(null) {
 		}
 
-		public OpenFile(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public OpenFile(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public byte[] Open(string filter) {
+		public byte[]? Open(string? filter) {
 			var dialog = new OpenFileDialog() {
 				Filter = filter ?? PickFilenameConstants.AnyFilenameFilter,
 				RestoreDirectory = true,

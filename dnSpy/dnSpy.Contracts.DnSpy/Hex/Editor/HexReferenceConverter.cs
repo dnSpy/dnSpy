@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="hexView">Hex view</param>
 		/// <param name="reference">Reference</param>
 		/// <returns></returns>
-		public abstract object Convert(HexView hexView, object reference);
+		public abstract object? Convert(HexView hexView, object reference);
 	}
 }

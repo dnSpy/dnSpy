@@ -42,22 +42,22 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <summary>
 		/// Extra optional info, or null if none
 		/// </summary>
-		public NativeCodeInfo CodeInfo { get; }
+		public NativeCodeInfo? CodeInfo { get; }
 
 		/// <summary>
 		/// Variable info or null
 		/// </summary>
-		public NativeVariableInfo[] VariableInfo { get; }
+		public NativeVariableInfo[]? VariableInfo { get; }
 
 		/// <summary>
 		/// Method name or null
 		/// </summary>
-		public string MethodName { get; }
+		public string? MethodName { get; }
 
 		/// <summary>
 		/// Module name or null
 		/// </summary>
-		public string ModuleName { get; }
+		public string? ModuleName { get; }
 
 		/// <summary>
 		/// Constructor
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <param name="variableInfo">Variable info or null</param>
 		/// <param name="methodName">Method name or null</param>
 		/// <param name="moduleName">Module name or null</param>
-		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
 			Kind = kind;
 			Optimization = optimization;
 			Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));

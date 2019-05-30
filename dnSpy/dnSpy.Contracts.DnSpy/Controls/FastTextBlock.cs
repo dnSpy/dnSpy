@@ -115,16 +115,20 @@ namespace dnSpy.Contracts.Controls {
 			public override double FontHintingEmSize => 12;
 			public override double FontRenderingEmSize => (double)tb.GetValue(FontSizeProperty);
 			public override Brush ForegroundBrush => (Brush)tb.GetValue(ForegroundProperty);
-			public override TextDecorationCollection TextDecorations => null;
-			public override TextEffectCollection TextEffects => null;
+			public override TextDecorationCollection? TextDecorations => null;
+			public override TextEffectCollection? TextEffects => null;
 			public override Typeface Typeface => tb.GetTypeface();
 		}
 
 		class TextSrc : TextSource, IFastTextSource {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 			string text;
 			TextProps props;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
+				Debug.Assert(text != null);
+				Debug.Assert(props != null);
 				if (textSourceCharacterIndex >= text.Length) {
 					return new TextEndOfParagraph(1);
 				}
@@ -159,13 +163,13 @@ namespace dnSpy.Contracts.Controls {
 			public override double Indent => 0;
 			public override double LineHeight => 0;
 			public override TextAlignment TextAlignment => TextAlignment.Left;
-			public override TextMarkerProperties TextMarkerProperties => null;
+			public override TextMarkerProperties? TextMarkerProperties => null;
 			public override TextWrapping TextWrapping => TextWrapping.NoWrap;
 		}
 
 
-		ITextFormatter fmt = null;
-		TextLine line = null;
+		ITextFormatter? fmt = null;
+		TextLine? line = null;
 
 		Typeface GetTypeface() {
 			var fontFamily = (FontFamily)GetValue(FontFamilyProperty);
@@ -199,11 +203,13 @@ namespace dnSpy.Contracts.Controls {
 
 		protected override Size MeasureOverride(Size availableSize) {
 			EnsureText();
+			Debug.Assert(line != null);
 			return new Size(line.Width, line.Height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			EnsureText();
+			Debug.Assert(line != null);
 			line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
 		}
 	}

@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 
 namespace dndbg.Engine {
-	abstract class COMObject<T> : IEquatable<COMObject<T>> where T : class {
+	abstract class COMObject<T> : IEquatable<COMObject<T>?> where T : class {
 		public T RawObject => obj;
 		protected readonly T obj;
 
@@ -30,17 +30,8 @@ namespace dndbg.Engine {
 			this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 		}
 
-		public static bool operator ==(COMObject<T> a, COMObject<T> b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(COMObject<T> a, COMObject<T> b) => !(a == b);
-		public bool Equals(COMObject<T> other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as COMObject<T>);
+		public bool Equals(COMObject<T>? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as COMObject<T>);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

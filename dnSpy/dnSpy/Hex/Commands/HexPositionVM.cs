@@ -53,7 +53,7 @@ namespace dnSpy.Hex.Commands {
 		}
 
 		/// <inheritdoc/>
-		protected override string ConvertToValue(out HexPosition value) {
+		protected override string? ConvertToValue(out HexPosition value) {
 			if (HexPosition.TryParse(StringValue, out value)) {
 				if (!IsValid(value))
 					return string.Format(dnSpy_Resources.ValueMustBeWithinRange, Min, Max);

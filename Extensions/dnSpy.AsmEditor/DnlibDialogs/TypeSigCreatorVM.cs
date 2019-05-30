@@ -31,24 +31,24 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeSigCreatorVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public IShowWarningMessage ShowWarningMessage {
-			set { showWarningMessage = value; }
+			set => showWarningMessage = value;
 		}
-		IShowWarningMessage showWarningMessage;
+		IShowWarningMessage? showWarningMessage;
 
 		public ICreateTypeSigArray CreateTypeSigArray {
-			set { createTypeSigArray = value; }
+			set => createTypeSigArray = value;
 		}
-		ICreateTypeSigArray createTypeSigArray;
+		ICreateTypeSigArray? createTypeSigArray;
 
 		public ICreateMethodPropertySig CreateMethodPropertySig {
-			set { createMethodPropertySig = value; }
+			set => createMethodPropertySig = value;
 		}
-		ICreateMethodPropertySig createMethodPropertySig;
+		ICreateMethodPropertySig? createMethodPropertySig;
 
 		public string Title {
 			get {
@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public TypeSig TypeSig {
+		public TypeSig? TypeSig {
 			get => typeSig;
 			set {
 				if (typeSig != value) {
@@ -93,7 +93,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		TypeSig typeSig;
+		TypeSig? typeSig;
 
 		public bool CanShowTypeFullName => ShowTypeFullName && IsValidTypeSig;
 
@@ -159,9 +159,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public UInt32VM GenericVariableNumber { get; }
 
 		readonly TypeSigCreatorOptions options;
-		readonly TypeSig defaultTypeSig;
+		readonly TypeSig? defaultTypeSig;
 
-		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig defaultTypeSig = null) {
+		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig? defaultTypeSig = null) {
 			this.options = options.Clone();
 			this.defaultTypeSig = defaultTypeSig;
 			ArrayRank = new UInt32VM(2, a => { });
@@ -193,9 +193,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				TypeSig = TypeSig.Next;
 		}
 
-		TypeDefOrRefSig GetTypeSig() => GetTypeSig(dnSpy_AsmEditor_Resources.Pick_Type, VisibleMembersFlags.TypeDef);
+		TypeDefOrRefSig? GetTypeSig() => GetTypeSig(dnSpy_AsmEditor_Resources.Pick_Type, VisibleMembersFlags.TypeDef);
 
-		TypeDefOrRefSig GetTypeSig(string title, VisibleMembersFlags flags) {
+		TypeDefOrRefSig? GetTypeSig(string title, VisibleMembersFlags flags) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
@@ -259,6 +259,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool canAddFnPtr = true;
 
 		void AddGenericInstSig() {
+			if (createTypeSigArray is null)
+				throw new InvalidOperationException();
 			var origType = GetTypeSig(dnSpy_AsmEditor_Resources.Pick_GenericType, VisibleMembersFlags.GenericTypeDef);
 			if (origType == null)
 				return;

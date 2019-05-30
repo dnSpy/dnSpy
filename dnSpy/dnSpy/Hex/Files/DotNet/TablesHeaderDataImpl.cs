@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<ByteData> Log2Rid { get; }
 		public override StructField<UInt64FlagsData> ValidMask { get; }
 		public override StructField<UInt64FlagsData> SortedMask { get; }
-		public override StructField<UInt32Data> ExtraData { get; }
+		public override StructField<UInt32Data>? ExtraData { get; }
 		public override StructField<ArrayData<UInt32Data>> Rows { get; }
 
 		protected override BufferField[] Fields { get; }
@@ -143,7 +143,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			};
 			fields.Add(Rows);
 			if (hasExtraData)
-				fields.Add(ExtraData);
+				fields.Add(ExtraData!);
 			Fields = fields.ToArray();
 		}
 	}

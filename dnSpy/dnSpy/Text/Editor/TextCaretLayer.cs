@@ -37,10 +37,10 @@ namespace dnSpy.Text.Editor {
 		double left, top, width, height;
 		bool drawCaretShape;
 		bool overwriteMode;
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 		readonly CaretGeometry caretGeometry;
-		Brush caretBrush;
-		Brush overwriteCaretBrush;
+		Brush? caretBrush;
+		Brush? overwriteCaretBrush;
 
 		public bool OverwriteMode {
 			get => overwriteMode;
@@ -264,7 +264,7 @@ namespace dnSpy.Text.Editor {
 					return geometry;
 				}
 			}
-			Geometry geometry;
+			Geometry? geometry;
 			double width, height;
 
 			public CaretGeometry() {

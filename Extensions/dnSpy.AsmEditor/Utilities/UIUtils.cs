@@ -27,7 +27,7 @@ using System.Windows.Threading;
 
 namespace dnSpy.AsmEditor.Utilities {
 	static class UIUtils {
-		public static IEnumerable<DependencyObject> GetChildren(DependencyObject depo) {
+		public static IEnumerable<DependencyObject> GetChildren(DependencyObject? depo) {
 			if (depo == null)
 				yield break;
 			int count = VisualTreeHelper.GetChildrenCount(depo);
@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Utilities {
 				yield return VisualTreeHelper.GetChild(depo, i);
 		}
 
-		public static bool HasSelectedChildrenFocus(ListBox listBox) {
+		public static bool HasSelectedChildrenFocus(ListBox? listBox) {
 			if (listBox == null)
 				return false;
 

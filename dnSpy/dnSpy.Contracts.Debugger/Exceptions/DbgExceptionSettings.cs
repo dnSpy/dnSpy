@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="flags">Flags</param>
 		/// <param name="conditions">Conditions or null</param>
-		public DbgExceptionSettings(DbgExceptionDefinitionFlags flags, ReadOnlyCollection<DbgExceptionConditionSettings> conditions = null) {
+		public DbgExceptionSettings(DbgExceptionDefinitionFlags flags, ReadOnlyCollection<DbgExceptionConditionSettings>? conditions = null) {
 			Flags = flags;
 			Conditions = conditions == null || conditions.Count == 0 ? emptyConditionsCollection : conditions;
 		}
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			return Equals(Conditions, other.Conditions);
 		}
 
-		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings> a, ReadOnlyCollection<DbgExceptionConditionSettings> b) {
+		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings>? a, ReadOnlyCollection<DbgExceptionConditionSettings>? b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgExceptionSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgExceptionSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

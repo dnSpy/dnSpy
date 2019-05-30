@@ -32,7 +32,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		readonly StringBuilder sb;
 
-		public ILSpyEnvironmentProvider(StringBuilder sb = null) => this.sb = sb ?? new StringBuilder();
+		public ILSpyEnvironmentProvider(StringBuilder? sb = null) => this.sb = sb ?? new StringBuilder();
 
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute) {
 			var mr = attribute.Type.Annotations
@@ -53,7 +53,7 @@ if (entity != null) {
 }
 
 return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
-		public ICSharpCode.NRefactory.TypeSystem.IType ResolveType(ICSharpCode.NRefactory.VB.Ast.AstType type, ICSharpCode.NRefactory.VB.Ast.TypeDeclaration entity = null) => SpecialType.UnknownType;
+		public ICSharpCode.NRefactory.TypeSystem.IType ResolveType(ICSharpCode.NRefactory.VB.Ast.AstType type, ICSharpCode.NRefactory.VB.Ast.TypeDeclaration? entity = null) => SpecialType.UnknownType;
 
 		public TypeKind GetTypeKindForAstType(ICSharpCode.NRefactory.CSharp.AstType type) {
 			var annotation = type.Annotation<ITypeDefOrRef>();

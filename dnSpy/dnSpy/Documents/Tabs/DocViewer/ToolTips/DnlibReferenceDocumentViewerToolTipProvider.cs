@@ -33,7 +33,7 @@ using dnSpy.Decompiler.IL;
 namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	[ExportDocumentViewerToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
 	sealed class DnlibReferenceDocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
-		public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
+		public object? Create(IDocumentViewerToolTipProviderContext context, object? @ref) {
 			if (@ref is GenericParam gp)
 				return Create(context, gp);
 			if (@ref is IMemberRef mr)
@@ -51,7 +51,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			return null;
 		}
 
-		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr) {
+		string? GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr) {
 			var sb = new StringBuilder();
 			var doc = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			if (doc != null)
@@ -84,7 +84,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			return null;
 		}
 
-		static IMemberRef Resolve(IMemberRef mr) {
+		static IMemberRef? Resolve(IMemberRef mr) {
 			if (mr is ITypeDefOrRef)
 				return ((ITypeDefOrRef)mr).ResolveTypeDef();
 			if (mr is IMethod && ((IMethod)mr).IsMethod)

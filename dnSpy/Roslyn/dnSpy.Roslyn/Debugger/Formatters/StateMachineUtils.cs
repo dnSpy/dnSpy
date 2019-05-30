@@ -21,19 +21,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class StateMachineUtils {
 		const string StateMachineTypeNamePrefix = "VB$StateMachine_";
 
-		public static bool TryGetKickoffMethod(DmdMethodBase method, out DmdMethodBase kickoffMethod) {
-			var name = method.DeclaringType.MetadataName;
+		public static bool TryGetKickoffMethod(DmdMethodBase method, [NotNullWhenTrue] out DmdMethodBase? kickoffMethod) {
+			var name = method.DeclaringType!.MetadataName;
 			char c;
 			if (!string.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith(StateMachineTypeNamePrefix, StringComparison.Ordinal)))) {
 				var type = method.DeclaringType.DeclaringType;
-				if ((object)type != null) {
-					string attrName;
+				if (!(type is null)) {
+					string? attrName;
 					// These attributes could be missing from the type (eg. it's a Unity assembly)
 					if (method.DeclaringType.CanCastTo(type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_IAsyncStateMachine, isOptional: true)))
 						attrName = "System.Runtime.CompilerServices.AsyncStateMachineAttribute";
@@ -57,25 +58,26 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						}
 					}
 				}
-				var kickoffMethodName = (object)type == null ? null : GetKickoffMethodName(method.DeclaringType);
+				var kickoffMethodName = (object?)type == null ? null : GetKickoffMethodName(method.DeclaringType);
 				if (!string.IsNullOrEmpty(kickoffMethodName)) {
-					DmdMethodBase possibleKickoffMethod = null;
-					int methodGenArgs = method.ReflectedType.GetGenericArguments().Count - type.GetGenericArguments().Count;
-					foreach (var m in method.DeclaringType.DeclaringType.DeclaredMethods) {
+					Debug.Assert((object?)type != null);
+					DmdMethodBase? possibleKickoffMethod = null;
+					int methodGenArgs = method.ReflectedType!.GetGenericArguments().Count - type.GetGenericArguments().Count;
+					foreach (var m in method.DeclaringType!.DeclaringType!.DeclaredMethods) {
 						if (m.Name != kickoffMethodName)
 							continue;
 						var sig = m.GetMethodSignature();
 						if (sig.GenericParameterCount != methodGenArgs)
 							continue;
 
-						if ((object)possibleKickoffMethod != null) {
+						if ((object?)possibleKickoffMethod != null) {
 							// More than one method with the same name and partial signature
 							possibleKickoffMethod = null;
 							break;
 						}
 						possibleKickoffMethod = m;
 					}
-					if ((object)possibleKickoffMethod != null) {
+					if ((object?)possibleKickoffMethod != null) {
 						CreateMethod(method, possibleKickoffMethod, out kickoffMethod);
 						return true;
 					}
@@ -87,16 +89,16 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		}
 
 		static void CreateMethod(DmdMethodBase method, DmdMethodBase newMethod, out DmdMethodBase createdMethod) {
-			var smGenArgs = method.ReflectedType.GetGenericArguments();
+			var smGenArgs = method.ReflectedType!.GetGenericArguments();
 			Debug.Assert(method.GetGenericArguments().Count == 0, "Generic method args should be part of the state machine type");
-			createdMethod = AddTypeArguments(newMethod, smGenArgs);
-			Debug.Assert((object)createdMethod != null);
-			if ((object)createdMethod == null)
+			createdMethod = AddTypeArguments(newMethod, smGenArgs)!;
+			Debug.Assert(!(createdMethod is null));
+			if (createdMethod is null)
 				createdMethod = newMethod;
 		}
 
-		static string GetKickoffMethodName(DmdType type) {
-			var name = type.MetadataName;
+		static string? GetKickoffMethodName(DmdType type) {
+			var name = type.MetadataName ?? string.Empty;
 
 			if (name.StartsWith(StateMachineTypeNamePrefix)) {
 				int i = StateMachineTypeNamePrefix.Length;
@@ -131,8 +133,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return index < 0 ? name : name.Substring(0, index);
 		}
 
-		static DmdMethodBase AddTypeArguments(DmdMethodBase method, IList<DmdType> typeAndMethodGenArgs) {
-			var declType = method.ReflectedType;
+		static DmdMethodBase? AddTypeArguments(DmdMethodBase method, IList<DmdType> typeAndMethodGenArgs) {
+			var declType = method.ReflectedType!;
 			if (declType.IsConstructedGenericType)
 				return null;
 			int typeGenArgs = declType.GetGenericArguments().Count;
@@ -142,7 +144,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 			if (typeGenArgs != 0) {
 				var type = declType.MakeGenericType(typeAndMethodGenArgs.Take(typeGenArgs).ToArray());
-				method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true);
+				method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true)!;
 			}
 			if (methodGenArgs != 0)
 				method = ((DmdMethodInfo)method).MakeGenericMethod(typeAndMethodGenArgs.Skip(typeGenArgs).ToArray());

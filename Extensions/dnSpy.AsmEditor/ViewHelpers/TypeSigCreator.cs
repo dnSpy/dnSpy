@@ -23,15 +23,15 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class TypeSigCreator : ITypeSigCreator {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public TypeSigCreator()
 			: this(null) {
 		}
 
-		public TypeSigCreator(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public TypeSigCreator(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled) {
+		public TypeSig? Create(TypeSigCreatorOptions options, TypeSig? typeSig, out bool canceled) {
 			var data = new TypeSigCreatorVM(options, typeSig);
 			data.TypeSig = typeSig;
 			var win = new TypeSigCreatorDlg();

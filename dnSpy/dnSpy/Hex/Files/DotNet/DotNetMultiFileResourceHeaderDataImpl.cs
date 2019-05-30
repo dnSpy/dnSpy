@@ -30,9 +30,9 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<UInt32Data> MagicNum { get; }
 		public override StructField<UInt32Data> ResMgrHeaderVersion { get; }
 		public override StructField<UInt32Data> HeaderSize { get; }
-		public override StructField<VirtualArrayData<ByteData>> UnknownHeader { get; }
-		public override StructField<Bit7EncodedStringData> ReaderType { get; }
-		public override StructField<Bit7EncodedStringData> ResourceSetType { get; }
+		public override StructField<VirtualArrayData<ByteData>>? UnknownHeader { get; }
+		public override StructField<Bit7EncodedStringData>? ReaderType { get; }
+		public override StructField<Bit7EncodedStringData>? ResourceSetType { get; }
 		public override StructField<UInt32Data> Version { get; }
 		public override StructField<UInt32Data> NumResources { get; }
 		public override StructField<UInt32Data> NumTypes { get; }

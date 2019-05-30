@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Impl {
 			const int breakTimeoutMilliseconds = 5000;
 			readonly DbgManagerImpl owner;
 			readonly List<Info> infos;
-			DispatcherTimer timer;
+			DispatcherTimer? timer;
 
 			sealed class Info {
 				public EngineInfo EngineInfo { get; }

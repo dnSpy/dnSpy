@@ -24,11 +24,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET field
 	/// </summary>
-	public abstract class DmdFieldInfo : DmdMemberInfo, IEquatable<DmdFieldInfo> {
+	public abstract class DmdFieldInfo : DmdMemberInfo, IEquatable<DmdFieldInfo?> {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
-		public override DmdAppDomain AppDomain => DeclaringType.AppDomain;
+		public override DmdAppDomain AppDomain => DeclaringType!.AppDomain;
 
 		/// <summary>
 		/// Gets the member type
@@ -75,26 +75,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => Resolve(throwOnError);
+		public sealed override DmdMemberInfo? ResolveMember(bool throwOnError) => Resolve(throwOnError);
 
 		/// <summary>
 		/// Resolves a field reference and throws if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdFieldInfo Resolve() => Resolve(throwOnError: true);
+		public DmdFieldInfo Resolve() => Resolve(throwOnError: true)!;
 
 		/// <summary>
 		/// Resolves a field reference and returns null if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdFieldInfo ResolveNoThrow() => Resolve(throwOnError: false);
+		public DmdFieldInfo? ResolveNoThrow() => Resolve(throwOnError: false);
 
 		/// <summary>
 		/// Resolves a field reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdFieldInfo Resolve(bool throwOnError);
+		public abstract DmdFieldInfo? Resolve(bool throwOnError);
 
 		/// <summary>
 		/// Gets all required custom modifiers
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the constant value stored in metadata if any exists
 		/// </summary>
 		/// <returns></returns>
-		public abstract object GetRawConstantValue();
+		public abstract object? GetRawConstantValue();
 
 		/// <summary>
 		/// Gets the current value
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static field</param>
 		/// <returns></returns>
-		public abstract object GetValue(object context, object obj);
+		public abstract object? GetValue(object? context, object? obj);
 
 		/// <summary>
 		/// Sets a new value
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static field</param>
 		/// <param name="value">New value</param>
 		/// <param name="invokeAttr">Binding attributes</param>
-		public abstract void SetValue(object context, object obj, object value, DmdBindingFlags invokeAttr);
+		public abstract void SetValue(object? context, object? obj, object? value, DmdBindingFlags invokeAttr);
 
 		/// <summary>
 		/// Sets a new value
@@ -143,11 +143,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static field</param>
 		/// <param name="value">New value</param>
-		public void SetValue(object context, object obj, object value) => SetValue(context, obj, value, DmdBindingFlags.Default);
+		public void SetValue(object? context, object? obj, object? value) => SetValue(context, obj, value, DmdBindingFlags.Default);
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdFieldInfo left, DmdFieldInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdFieldInfo left, DmdFieldInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdFieldInfo? left, DmdFieldInfo? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdFieldInfo? left, DmdFieldInfo? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -155,14 +155,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdFieldInfo other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdFieldInfo? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdFieldInfo);
+		public override bool Equals(object? obj) => Equals(obj as DmdFieldInfo);
 
 		/// <summary>
 		/// GetHashCode()
@@ -174,6 +174,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public sealed override string ToString() => DmdMemberFormatter.Format(this);
+		public sealed override string? ToString() => DmdMemberFormatter.Format(this);
 	}
 }

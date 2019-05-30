@@ -37,6 +37,6 @@ namespace dnSpy.Scripting.Roslyn.Commands {
 		/// <param name="id">ID</param>
 		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this RoslynReplIds id, object arguments) => new CommandInfo(RoslynReplCommandConstants.RoslynReplGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this RoslynReplIds id, object? arguments) => new CommandInfo(RoslynReplCommandConstants.RoslynReplGroup, (int)id, arguments);
 	}
 }

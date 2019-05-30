@@ -213,8 +213,7 @@ namespace dnSpy.Analyzer {
 		}
 
 		public void Add(AnalyzerTreeNodeData node) {
-			if (node is EntityNode) {
-				var an = node as EntityNode;
+			if (node is EntityNode an) {
 				var found = TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					found.TreeNode.IsExpanded = true;
@@ -271,7 +270,7 @@ namespace dnSpy.Analyzer {
 			return @ref != null;
 		}
 
-		bool GoTo(IDocumentTab tab, MethodDef method, uint? ilOffset, object @ref) {
+		bool GoTo(IDocumentTab tab, MethodDef method, uint? ilOffset, object? @ref) {
 			if (method == null || ilOffset == null)
 				return false;
 			var documentViewer = tab.TryGetDocumentViewer();
@@ -298,7 +297,7 @@ namespace dnSpy.Analyzer {
 			return snapshot.GetLineFromPosition(position).LineNumber;
 		}
 
-		int? FindLocation(IEnumerable<SpanData<ReferenceInfo>> refs, ITextSnapshot snapshot, int endPos, object @ref) {
+		int? FindLocation(IEnumerable<SpanData<ReferenceInfo>> refs, ITextSnapshot snapshot, int endPos, object? @ref) {
 			int lb = GetLineNumber(snapshot, endPos);
 			foreach (var info in refs) {
 				var la = GetLineNumber(snapshot, info.Span.Start);
@@ -319,19 +318,19 @@ namespace dnSpy.Analyzer {
 			return -1;
 		}
 
-		static bool RefEquals(object a, object b) {
+		static bool RefEquals(object? a, object? b) {
 			if (Equals(a, b))
 				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+			if (a is null || b is null)
 				return false;
 
 			{
-				if (b is PropertyDef pb) {
+				if (b is PropertyDef) {
 					var tmp = a;
 					a = b;
 					b = tmp;
 				}
-				if (b is EventDef eb) {
+				if (b is EventDef) {
 					var tmp = a;
 					a = b;
 					b = tmp;

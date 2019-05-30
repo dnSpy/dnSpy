@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove(DbgEngineMessageFlags messageFlags) => appDomain.Remove(messageFlags);
 
-		public override void Update(UpdateOptions options, string name = null, int id = 0) => appDomain.Process.DbgManager.Dispatcher.BeginInvoke(() => {
+		public override void Update(UpdateOptions options, string? name, int id) => appDomain.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 			if (appDomain.IsClosed)
 				return;
 			if ((options & UpdateOptions.Name) != 0)

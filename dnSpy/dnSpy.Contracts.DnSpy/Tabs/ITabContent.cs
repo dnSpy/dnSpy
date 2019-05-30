@@ -29,23 +29,23 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Title. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		string Title { get; }
+		string? Title { get; }
 
 		/// <summary>
 		/// ToolTip or null. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		object ToolTip { get; }
+		object? ToolTip { get; }
 
 		/// <summary>
 		/// The UI object. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		object UIObject { get; }
+		object? UIObject { get; }
 
 		/// <summary>
 		/// Gets the element that should get focus when the tab is selected or null to use <see cref="UIObject"/>.
 		/// Implement <see cref="IFocusable"/> to set focus yourself.
 		/// </summary>
-		IInputElement FocusedElement { get; }
+		IInputElement? FocusedElement { get; }
 
 		/// <summary>
 		/// Called when the visibility changes

@@ -32,7 +32,7 @@ namespace dnSpy.Documents.Tabs {
 		[ImportingConstructor]
 		SaveService([ImportMany] IEnumerable<Lazy<ITabSaverProvider, ITabSaverProviderMetadata>> tabSaverProviders) => this.tabSaverProviders = tabSaverProviders.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
 
-		ITabSaver GetTabSaver(IDocumentTab tab) {
+		ITabSaver? GetTabSaver(IDocumentTab? tab) {
 			if (tab == null)
 				return null;
 			foreach (var provider in tabSaverProviders) {
@@ -43,17 +43,17 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		public bool CanSave(IDocumentTab tab) {
+		public bool CanSave(IDocumentTab? tab) {
 			var ts = GetTabSaver(tab);
 			return ts != null && ts.CanSave;
 		}
 
-		public string GetMenuHeader(IDocumentTab tab) {
+		public string GetMenuHeader(IDocumentTab? tab) {
 			var ts = GetTabSaver(tab);
-			return (ts == null ? null : ts.MenuHeader) ?? dnSpy_Resources.Button_Save;
+			return ts?.MenuHeader ?? dnSpy_Resources.Button_Save;
 		}
 
-		public void Save(IDocumentTab tab) {
+		public void Save(IDocumentTab? tab) {
 			var ts = GetTabSaver(tab);
 			if (ts == null || !ts.CanSave)
 				return;

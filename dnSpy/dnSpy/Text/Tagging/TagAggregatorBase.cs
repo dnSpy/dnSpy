@@ -136,10 +136,10 @@ namespace dnSpy.Text.Tagging {
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
 
-		void RaiseTagsChanged(SnapshotSpan span, object sender = null) {
+		void RaiseTagsChanged(SnapshotSpan span, object? sender = null) {
 			if (IsDisposed)
 				return;
-			IMappingSpan mappingSpan = null;
+			IMappingSpan? mappingSpan = null;
 			TagsChanged?.Invoke(sender ?? this, new TagsChangedEventArgs(mappingSpan = BufferGraph.CreateMappingSpan(span, SpanTrackingMode.EdgeExclusive)));
 			if (BatchedTagsChanged != null) {
 				lock (lockObj) {

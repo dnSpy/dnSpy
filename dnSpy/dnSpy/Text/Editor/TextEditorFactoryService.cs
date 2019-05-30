@@ -64,7 +64,7 @@ namespace dnSpy.Text.Editor {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly IThemeService themeService;
 		readonly Lazy<ITextViewUndoManagerProvider> textViewUndoManagerProvider;
-		ProviderSelector<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata> providerSelector;
+		ProviderSelector<ITextViewModelProvider, IContentTypeAndTextViewRoleMetadata>? providerSelector;
 
 		public ITextViewRoleSet AllPredefinedRoles => new TextViewRoleSet(allPredefinedRolesList);
 		public ITextViewRoleSet DefaultRoles => new TextViewRoleSet(defaultRolesList);
@@ -90,9 +90,9 @@ namespace dnSpy.Text.Editor {
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly IWpfTextView wpfTextView;
-			readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects;
+			readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects;
 
-			public GuidObjectsProvider(IWpfTextView wpfTextView, Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects) {
+			public GuidObjectsProvider(IWpfTextView wpfTextView, Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects) {
 				this.wpfTextView = wpfTextView;
 				this.createGuidObjects = createGuidObjects;
 			}
@@ -137,20 +137,20 @@ namespace dnSpy.Text.Editor {
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 		}
 
-		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions)null);
-		public IDsWpfTextView CreateTextView(TextViewCreatorOptions options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
+		public IWpfTextView CreateTextView() => CreateTextView((TextViewCreatorOptions?)null);
+		public IDsWpfTextView CreateTextView(TextViewCreatorOptions? options) => CreateTextView(textBufferFactoryService.CreateTextBuffer(), DefaultRoles, options);
 
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer) =>
-			CreateTextView(textBuffer, (TextViewCreatorOptions)null);
-		public IDsWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions options) {
+			CreateTextView(textBuffer, (TextViewCreatorOptions?)null);
+		public IDsWpfTextView CreateTextView(ITextBuffer textBuffer, TextViewCreatorOptions? options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return CreateTextView(new TextDataModel(textBuffer), DefaultRoles, editorOptionsFactoryService.GlobalOptions, options);
 		}
 
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles) =>
-			CreateTextView(textBuffer, roles, (TextViewCreatorOptions)null);
-		public IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions options) {
+			CreateTextView(textBuffer, roles, (TextViewCreatorOptions?)null);
+		public IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, TextViewCreatorOptions? options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (roles == null)
@@ -160,7 +160,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
 			CreateTextView(textBuffer, roles, parentOptions, null);
-		public IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		public IDsWpfTextView CreateTextView(ITextBuffer textBuffer, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (roles == null)
@@ -172,7 +172,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
 			CreateTextView(dataModel, roles, parentOptions, null);
-		public IDsWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		public IDsWpfTextView CreateTextView(ITextDataModel dataModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options) {
 			if (dataModel == null)
 				throw new ArgumentNullException(nameof(dataModel));
 			if (roles == null)
@@ -196,7 +196,7 @@ namespace dnSpy.Text.Editor {
 
 		public IWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions) =>
 			CreateTextView(viewModel, roles, parentOptions, null);
-		public IDsWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		public IDsWpfTextView CreateTextView(ITextViewModel viewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options) {
 			if (viewModel == null)
 				throw new ArgumentNullException(nameof(viewModel));
 			if (roles == null)
@@ -206,11 +206,11 @@ namespace dnSpy.Text.Editor {
 			return CreateTextViewImpl(viewModel, roles, parentOptions, options);
 		}
 
-		IDsWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions options) {
+		IDsWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options) {
 			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandService, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfTextViewConnectionListenerServiceProvider, bufferGraphFactoryService, wpfTextViewCreationListeners, textViewCreationListeners);
 
 			if (options?.MenuGuid != null) {
-				var guidObjectsProvider = new GuidObjectsProvider(wpfTextView, options?.CreateGuidObjects);
+				var guidObjectsProvider = new GuidObjectsProvider(wpfTextView, options.CreateGuidObjects);
 				menuService.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new ContextMenuInitializer(wpfTextView));
 			}
 

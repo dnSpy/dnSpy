@@ -31,7 +31,7 @@ namespace dnSpy.Metadata {
 		readonly Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>[] moduleIdFactoryProviders;
 		readonly ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>> moduleDictionary;
 		readonly ConditionalWeakTable<ModuleDef, StrongBox<ModuleId>>.CreateValueCallback callbackCreateCore;
-		IModuleIdFactory[] factories;
+		IModuleIdFactory[]? factories;
 
 		[ImportingConstructor]
 		ModuleIdProvider([ImportMany] IEnumerable<Lazy<IModuleIdFactoryProvider, IModuleIdFactoryProviderMetadata>> moduleIdFactoryProviders) {
@@ -40,7 +40,7 @@ namespace dnSpy.Metadata {
 			callbackCreateCore = CreateCore;
 		}
 
-		public ModuleId Create(ModuleDef module) {
+		public ModuleId Create(ModuleDef? module) {
 			if (module == null)
 				return new ModuleId();
 			var res = moduleDictionary.GetValue(module, callbackCreateCore).Value;

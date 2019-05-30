@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Debugger.CallStack.TextEditor {
 		/// </summary>
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
-		public abstract GlyphTextMarkerLocationInfo Create(DbgStackFrame frame);
+		public abstract GlyphTextMarkerLocationInfo? Create(DbgStackFrame frame);
 	}
 }

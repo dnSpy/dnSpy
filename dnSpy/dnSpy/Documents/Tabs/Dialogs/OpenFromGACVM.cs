@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
 
-		public object SelectedItem {
+		public object? SelectedItem {
 			get => selectedItem;
 			set {
 				if (selectedItem != value) {
@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		public bool SearchingGAC {
 			get => searchingGAC;
@@ -72,7 +72,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NotSearchingGAC => !SearchingGAC;
 
-		public string SearchText {
+		public string? SearchText {
 			get => searchText;
 			set {
 				if (searchText != value) {
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string searchText;
+		string? searchText;
 
 		public bool ShowDuplicates {
 			get => showDuplicates;

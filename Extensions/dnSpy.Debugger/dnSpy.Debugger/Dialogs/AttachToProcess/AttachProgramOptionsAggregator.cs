@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	abstract class AttachProgramOptionsAggregatorFactory {
-		public abstract AttachProgramOptionsAggregator Create(string[] providerNames);
+		public abstract AttachProgramOptionsAggregator Create(string[]? providerNames);
 	}
 
 	abstract class AttachProgramOptionsAggregator : IDisposable {

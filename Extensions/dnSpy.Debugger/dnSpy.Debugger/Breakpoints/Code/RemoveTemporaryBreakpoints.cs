@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
 			if (!dbgManager.IsDebugging) {
-				List<DbgCodeBreakpoint> bpsToRemove = null;
+				List<DbgCodeBreakpoint>? bpsToRemove = null;
 				foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
 					if (bp.IsTemporary) {
 						if (bpsToRemove == null)

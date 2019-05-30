@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Attach {
 			public const int SIZE = 16;
 		}
 
-		public static string TryGetCommandLine(IntPtr hProcess) {
+		public static string? TryGetCommandLine(IntPtr hProcess) {
 			try {
 				return TryGetCommandLineCore(hProcess);
 			}
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.Attach {
 		const int CommandLineOffset32 = 0x40;
 		const int CommandLineOffset64 = 0x70;
 
-		static string TryGetCommandLineCore(IntPtr hProcess) {
+		static string? TryGetCommandLineCore(IntPtr hProcess) {
 			int ptrSize = IntPtr.Size;
 
 			ushort cmdlineLength;

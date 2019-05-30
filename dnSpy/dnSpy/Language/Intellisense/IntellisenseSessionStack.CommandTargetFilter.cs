@@ -27,7 +27,7 @@ namespace dnSpy.Language.Intellisense {
 	sealed partial class IntellisenseSessionStack {
 		sealed class CommandTargetFilter : ICommandTargetFilter {
 			readonly IntellisenseSessionStack owner;
-			readonly IDsWpfTextView wpfTextView;
+			readonly IDsWpfTextView? wpfTextView;
 			bool hasHookedKeyboard;
 
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
@@ -63,12 +63,12 @@ namespace dnSpy.Language.Intellisense {
 				return CommandTargetStatus.NotHandled;
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.TextEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId);
 					if (command != null && owner.ExecuteKeyboardCommand(command.Value))

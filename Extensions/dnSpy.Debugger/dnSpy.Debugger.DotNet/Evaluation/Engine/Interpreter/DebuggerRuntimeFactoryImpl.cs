@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		sealed class State {
-			public DebuggerRuntimeImpl DebuggerRuntime;
+			public DebuggerRuntimeImpl? DebuggerRuntime;
 		}
 
 		public override DebuggerRuntime2 Create(DbgRuntime runtime) {

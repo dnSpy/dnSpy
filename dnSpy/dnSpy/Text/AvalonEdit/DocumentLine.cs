@@ -155,7 +155,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Gets the next line in the document.
 		/// </summary>
 		/// <returns>The line following this line, or null if this is the last line.</returns>
-		public DocumentLine NextLine {
+		public DocumentLine? NextLine {
 			get {
 				DebugVerifyAccess();
 
@@ -163,7 +163,7 @@ namespace dnSpy.Text.AvalonEdit {
 					return right.LeftMost;
 				}
 				else {
-					DocumentLine node = this;
+					DocumentLine? node = this;
 					DocumentLine oldNode;
 					do {
 						oldNode = node;
@@ -179,7 +179,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Gets the previous line in the document.
 		/// </summary>
 		/// <returns>The line before this line, or null if this is the first line.</returns>
-		public DocumentLine PreviousLine {
+		public DocumentLine? PreviousLine {
 			get {
 				DebugVerifyAccess();
 
@@ -187,7 +187,7 @@ namespace dnSpy.Text.AvalonEdit {
 					return left.RightMost;
 				}
 				else {
-					DocumentLine node = this;
+					DocumentLine? node = this;
 					DocumentLine oldNode;
 					do {
 						oldNode = node;

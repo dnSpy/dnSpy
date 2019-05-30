@@ -38,10 +38,10 @@ namespace dndbg.Engine {
 		public int VolatileThreadId => CorThread.VolatileThreadId;
 		public bool HasExited { get; private set; }
 
-		public DnAppDomain AppDomainOrNull {
+		public DnAppDomain? AppDomainOrNull {
 			get {
 				var comAppDomain = CorThread.AppDomain;
-				return comAppDomain == null ? null : Process.TryGetValidAppDomain(comAppDomain.RawObject);
+				return comAppDomain is null ? null : Process.TryGetValidAppDomain(comAppDomain.RawObject);
 			}
 		}
 

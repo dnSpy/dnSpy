@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		DbgDotNetRawValue Create(Value value, DmdType type, int recursionCounter) {
 			if (type.IsByRef)
-				type = type.GetElementType();
+				type = type.GetElementType()!;
 			if (recursionCounter > 2 || value == null)
 				return GetRawValueDefault(value, type);
 
@@ -78,11 +78,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				case ElementType.I:
 				case ElementType.U:
 					if (type.AppDomain.Runtime.PointerSize == 4)
-						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)(long)pv.Value);
-					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)(long)pv.Value);
+						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)(long)pv.Value!);
+					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)(long)pv.Value!);
 
 				case ElementType.Ptr:
-					ulong pval = (ulong)(long)pv.Value;
+					ulong pval = (ulong)(long)pv.Value!;
 					if (pval == 0)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
 					if (type.AppDomain.Runtime.PointerSize == 4)
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			case StructMirror sm:
 				if (!type.IsEnum) {
 					// Boxed value
-					PrimitiveValue bpv;
+					PrimitiveValue? bpv;
 					switch (DmdType.GetTypeCode(type)) {
 					case TypeCode.Boolean:
 						if (sm.Fields.Length == 1 && (bpv = sm.Fields[0] as PrimitiveValue) != null && bpv.Value is bool)
@@ -267,7 +267,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return default;
 				var ticksValue = values[0] as StructMirror;
 				var kindValue = values[1] as EnumMirror;
-				if (ticksValue == null || ticksValue == null)
+				if (ticksValue == null || kindValue == null)
 					return default;
 
 				if (ticksValue.Fields.Length != 1 || !(ticksValue.Fields[0] is PrimitiveValue ticksPM) || !(ticksPM.Value is long))
@@ -311,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return default;
 		}
 
-		DbgDotNetRawValue GetRawValueDefault(Value value, DmdType type) {
+		DbgDotNetRawValue GetRawValueDefault(Value? value, DmdType type) {
 			if (value is PrimitiveValue pv && pv.Value == null)
 				return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
 			return new DbgDotNetRawValue(DbgSimpleValueType.Other);

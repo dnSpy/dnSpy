@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Operations {
 				public bool MoveNext() => realEnumerator.MoveNext();
 				public void Dispose() {
 					state?.Dispose();
-					state = null;
+					state = null!;
 					realEnumerator.Dispose();
 				}
 

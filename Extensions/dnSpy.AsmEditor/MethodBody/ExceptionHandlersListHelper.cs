@@ -90,7 +90,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs) => ehs.Any(a => GetCatchTypeToken(a.CatchType) != null);
-		static uint? GetCatchTypeToken(ITypeDefOrRef type) => type == null ? (uint?)null : type.MDToken.Raw;
+		static uint? GetCatchTypeToken(ITypeDefOrRef? type) => type == null ? (uint?)null : type.MDToken.Raw;
 
 		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.NewItems != null)

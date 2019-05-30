@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DbgUI {
 			ActivateMainWindow();
 		}
 
-		(DbgCodeLocation location, int frameIndex) GetLocation() {
+		(DbgCodeLocation? location, int frameIndex) GetLocation() {
 			var frames = dbgCallStackService.Frames.Frames;
 			for (int i = 0; i < frames.Count; i++) {
 				var location = frames[i].Location;

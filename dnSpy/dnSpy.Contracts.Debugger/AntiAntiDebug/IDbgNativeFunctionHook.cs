@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.AntiAntiDebug {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="errorMessage">Updated with an error message if it failed or null if it was successful</param>
-		void Hook(DbgNativeFunctionHookContext context, out string errorMessage);
+		void Hook(DbgNativeFunctionHookContext context, out string? errorMessage);
 	}
 
 	/// <summary>Metadata</summary>

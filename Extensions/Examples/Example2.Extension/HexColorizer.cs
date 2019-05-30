@@ -62,7 +62,7 @@ namespace Example2.Extension {
 		[ImportingConstructor]
 		HexTaggerProviderImpl(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
-		public override IHexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
+		public override IHexTagger<T>? CreateTagger<T>(HexBuffer buffer) =>
 			new HexTaggerImpl(classificationTypeRegistryService) as IHexTagger<T>;
 	}
 

@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		public sealed override bool CanAddRemoveExpressions => true;
 		public abstract override void DeleteExpressions(string[] ids);
 		public abstract override void ClearAllExpressions();
-		public abstract override void EditExpression(string id, string expression);
+		public abstract override void EditExpression(string? id, string expression);
 		public abstract override void AddExpressions(string[] expressions);
 	}
 
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			public string Id { get; }
 			public string Expression { get; set; }
 			public bool ForceEval { get; set; }
-			public object ExpressionEvaluatorState { get; set; }
+			public object? ExpressionEvaluatorState { get; set; }
 
 			public ExpressionInfo(string id, string expression, bool forceEval) {
 				Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -175,7 +175,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			OnExpressionsChanged();
 		}
 
-		(int index, ExpressionInfo info) FindPrevExpression(int index, string id) {
+		(int index, ExpressionInfo? info) FindPrevExpression(int index, string id) {
 			if (index >= expressions.Count)
 				index = expressions.Count - 1;
 			for (; index >= 0; index--) {
@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			OnExpressionsChanged();
 		}
 
-		public override void EditExpression(string id, string expression) {
+		public override void EditExpression(string? id, string expression) {
 			var info = expressions.First(a => a.Id == id);
 			info.Expression = expression;
 			info.ForceEval = true;

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Options passed to <see cref="HexBufferLineFormatterFactoryService.Create(HexBuffer, HexBufferLineFormatterOptions)"/>
 	/// </summary>
-	public sealed class HexBufferLineFormatterOptions : IEquatable<HexBufferLineFormatterOptions> {
+	public sealed class HexBufferLineFormatterOptions : IEquatable<HexBufferLineFormatterOptions?> {
 		/// <summary>
 		/// Number of visible characters per line
 		/// </summary>
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Column order or null to use the default order
 		/// </summary>
-		public HexColumnType[] ColumnOrder { get; set; }
+		public HexColumnType[]? ColumnOrder { get; set; }
 
 		/// <summary>
 		/// Minimum <see cref="OffsetBitSize"/> value
@@ -151,7 +151,8 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(HexBufferLineFormatterOptions other) =>
+		public bool Equals(HexBufferLineFormatterOptions? other) =>
+			other != null &&
 			CharsPerLine == other.CharsPerLine &&
 			BytesPerLine == other.BytesPerLine &&
 			GroupSizeInBytes == other.GroupSizeInBytes &&
@@ -169,7 +170,7 @@ namespace dnSpy.Contracts.Hex {
 			ShowAscii == other.ShowAscii &&
 			HexColumnTypeArraysEquals(ColumnOrder, other.ColumnOrder);
 
-		static bool HexColumnTypeArraysEquals(HexColumnType[] a, HexColumnType[] b) {
+		static bool HexColumnTypeArraysEquals(HexColumnType[]? a, HexColumnType[]? b) {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -188,7 +189,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Other object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferLineFormatterOptions && Equals((HexBufferLineFormatterOptions)obj);
+		public override bool Equals(object? obj) => obj is HexBufferLineFormatterOptions && Equals((HexBufferLineFormatterOptions)obj);
 
 		/// <summary>
 		/// GetHashCode()
@@ -212,7 +213,7 @@ namespace dnSpy.Contracts.Hex {
 			ShowAscii.GetHashCode() ^
 			GetHexColumnTypeArrayHashCode(ColumnOrder);
 
-		int GetHexColumnTypeArrayHashCode(HexColumnType[] a) {
+		int GetHexColumnTypeArrayHashCode(HexColumnType[]? a) {
 			if (a == null)
 				return 0;
 			int hc = 0;

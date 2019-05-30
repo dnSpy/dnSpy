@@ -29,11 +29,11 @@ namespace dnSpy.Themes {
 	abstract class ColorInfo {
 		public readonly ColorType ColorType;
 		public readonly string Description;
-		public string DefaultForeground;
-		public string DefaultBackground;
-		public string DefaultColor3;
-		public string DefaultColor4;
-		public ColorInfo Parent;
+		public string? DefaultForeground;
+		public string? DefaultBackground;
+		public string? DefaultColor3;
+		public string? DefaultColor4;
+		public ColorInfo? Parent;
 
 		public ColorInfo[] Children {
 			get => children;
@@ -45,7 +45,7 @@ namespace dnSpy.Themes {
 		}
 		ColorInfo[] children = Array.Empty<ColorInfo>();
 
-		public abstract IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor);
+		public abstract IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor);
 
 		protected ColorInfo(ColorType colorType, string description) {
 			ColorType = colorType;
@@ -54,62 +54,62 @@ namespace dnSpy.Themes {
 	}
 
 	sealed class ColorColorInfo : ColorInfo {
-		public object BackgroundResourceKey;
-		public object ForegroundResourceKey;
+		public object? BackgroundResourceKey;
+		public object? ForegroundResourceKey;
 
 		public ColorColorInfo(ColorType colorType, string description)
 			: base(colorType, description) => ForegroundResourceKey = null;
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
 			if (ForegroundResourceKey != null) {
 				Debug.Assert(hlColor.Foreground != null);
-				yield return new Tuple<object, object>(ForegroundResourceKey, (hlColor.Foreground as SolidColorBrush).Color);
+				yield return new Tuple<object?, object>(ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground).Color);
 			}
 			if (BackgroundResourceKey != null) {
 				Debug.Assert(hlColor.Background != null);
-				yield return new Tuple<object, object>(BackgroundResourceKey, (hlColor.Background as SolidColorBrush).Color);
+				yield return new Tuple<object?, object>(BackgroundResourceKey, ((SolidColorBrush)hlColor.Background).Color);
 			}
 		}
 	}
 
 	sealed class BrushColorInfo : ColorInfo {
-		public object BackgroundResourceKey;
-		public object ForegroundResourceKey;
+		public object? BackgroundResourceKey;
+		public object? ForegroundResourceKey;
 
 		public BrushColorInfo(ColorType colorType, string description)
 			: base(colorType, description) {
 		}
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
 			if (ForegroundResourceKey != null) {
 				Debug.Assert(hlColor.Foreground != null);
-				yield return new Tuple<object, object>(ForegroundResourceKey, hlColor.Foreground);
+				yield return new Tuple<object?, object>(ForegroundResourceKey, hlColor.Foreground);
 			}
 			if (BackgroundResourceKey != null) {
 				Debug.Assert(hlColor.Background != null);
-				yield return new Tuple<object, object>(BackgroundResourceKey, hlColor.Background);
+				yield return new Tuple<object?, object>(BackgroundResourceKey, hlColor.Background);
 			}
 		}
 	}
 
 	sealed class DrawingBrushColorInfo : ColorInfo {
-		public object BackgroundResourceKey;
-		public object ForegroundResourceKey;
+		public object? BackgroundResourceKey;
+		public object? ForegroundResourceKey;
 		public bool IsHorizontal;
 
 		public DrawingBrushColorInfo(ColorType colorType, string description)
 			: base(colorType, description) => ForegroundResourceKey = null;
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
 			if (ForegroundResourceKey != null) {
 				Debug.Assert(hlColor.Foreground != null);
 				var brush = hlColor.Foreground;
-				yield return new Tuple<object, object>(ForegroundResourceKey, CreateDrawingBrush(brush));
+				yield return new Tuple<object?, object>(ForegroundResourceKey, CreateDrawingBrush(brush));
 			}
 			if (BackgroundResourceKey != null) {
 				Debug.Assert(hlColor.Background != null);
 				var brush = hlColor.Background;
-				yield return new Tuple<object, object>(BackgroundResourceKey, CreateDrawingBrush(brush));
+				yield return new Tuple<object?, object>(BackgroundResourceKey, CreateDrawingBrush(brush));
 			}
 		}
 
@@ -153,7 +153,7 @@ namespace dnSpy.Themes {
 	}
 
 	sealed class LinearGradientColorInfo : ColorInfo {
-		public object ResourceKey;
+		public object? ResourceKey;
 		public Point StartPoint;
 		public Point EndPoint;
 		public double[] GradientOffsets;
@@ -169,18 +169,18 @@ namespace dnSpy.Themes {
 			GradientOffsets = gradientOffsets;
 		}
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
 			var br = new LinearGradientBrush() {
 				StartPoint = StartPoint,
 				EndPoint = EndPoint,
 			};
 			for (int i = 0; i < GradientOffsets.Length; i++) {
-				var gs = new GradientStop(((SolidColorBrush)hlColor.GetBrushByIndex(i)).Color, GradientOffsets[i]);
+				var gs = new GradientStop(((SolidColorBrush)hlColor.GetBrushByIndex(i)!).Color, GradientOffsets[i]);
 				gs.Freeze();
 				br.GradientStops.Add(gs);
 			}
 			br.Freeze();
-			yield return new Tuple<object, object>(ResourceKey, br);
+			yield return new Tuple<object?, object>(ResourceKey, br);
 		}
 	}
 }

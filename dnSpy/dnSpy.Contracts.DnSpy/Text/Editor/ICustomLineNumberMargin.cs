@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="snapshotLine">Snapshot line</param>
 		/// <param name="state">State, initially null</param>
 		/// <returns></returns>
-		int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object state);
+		int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object? state);
 
 		/// <summary>
 		/// Gets <see cref="TextFormattingRunProperties"/> for the line number text
@@ -108,13 +108,13 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="lineNumber">Line number returned by <see cref="GetLineNumber(ITextViewLine, ITextSnapshotLine, ref object)"/></param>
 		/// <param name="state">State, initialized by <see cref="GetLineNumber(ITextViewLine, ITextSnapshotLine, ref object)"/></param>
 		/// <returns></returns>
-		TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object state);
+		TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object? state);
 
 		/// <summary>
 		/// Gets the default text formatting properties
 		/// </summary>
 		/// <returns></returns>
-		TextFormattingRunProperties GetDefaultTextFormattingRunProperties();
+		TextFormattingRunProperties? GetDefaultTextFormattingRunProperties();
 
 		/// <summary>
 		/// Gets called when text formatting properties have changed

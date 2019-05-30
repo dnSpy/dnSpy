@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) &&
 			(context.Find<TreeNodeData[]>() ?? Array.Empty<TreeNodeData>()).Any(a => GetDocument(a) != null);
 
-		static IDsDocument GetDocument(TreeNodeData node) {
+		static IDsDocument? GetDocument(TreeNodeData node) {
 			var fileNode = node as DsDocumentNode;
 			if (fileNode == null)
 				return null;
@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 			public override bool IsVisible(AsmEditorContext context) => RemoveAssemblyCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => RemoveAssemblyCommand.Execute(undoCommandService, documentSaver, appService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveAssemblyCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 			public override bool IsVisible(AsmEditorContext context) => RemoveAssemblyCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => RemoveAssemblyCommand.Execute(undoCommandService, documentSaver, appService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => RemoveAssemblyCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(TreeNodeData[] nodes) {
@@ -210,8 +210,8 @@ namespace dnSpy.AsmEditor.Assembly {
 			var modifiedRedoAsms = new HashSet<IUndoObject>(undoCommandService.RedoObjects);
 			foreach (var node in nodes) {
 				var uo = undoCommandService.GetUndoObject(node.Document);
-				bool isInUndo = modifiedUndoAsms.Contains(uo);
-				bool isInRedo = modifiedRedoAsms.Contains(uo);
+				bool isInUndo = modifiedUndoAsms.Contains(uo!);
+				bool isInRedo = modifiedRedoAsms.Contains(uo!);
 				yield return new UndoRedoInfo(node, isInUndo, isInRedo);
 			}
 		}
@@ -289,9 +289,9 @@ namespace dnSpy.AsmEditor.Assembly {
 				return;
 
 			var asmNode = (AssemblyDocumentNode)nodes[0];
-			var module = asmNode.Document.ModuleDef;
+			var module = asmNode.Document.ModuleDef!;
 
-			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.Document.AssemblyDef), module, appService.DecompilerService);
+			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.Document.AssemblyDef!), module, appService.DecompilerService);
 			var win = new AssemblyOptionsDlg();
 			win.DataContext = data;
 			win.Owner = appService.MainWindow;
@@ -304,7 +304,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		readonly AssemblyDocumentNode asmNode;
 		readonly AssemblyOptions newOptions;
 		readonly AssemblyOptions origOptions;
-		readonly AssemblyRefInfo[] assemblyRefInfos;
+		readonly AssemblyRefInfo[]? assemblyRefInfos;
 
 		readonly struct AssemblyRefInfo {
 			public readonly AssemblyRef AssemblyRef;
@@ -321,16 +321,16 @@ namespace dnSpy.AsmEditor.Assembly {
 		AssemblySettingsCommand(AssemblyDocumentNode asmNode, AssemblyOptions newOptions) {
 			this.asmNode = asmNode;
 			this.newOptions = newOptions;
-			origOptions = new AssemblyOptions(asmNode.Document.AssemblyDef);
+			origOptions = new AssemblyOptions(asmNode.Document.AssemblyDef!);
 
 			if (newOptions.Name != origOptions.Name)
-				assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.Document.ModuleDef).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.Document.AssemblyDef)).Select(a => new AssemblyRefInfo(a)).ToArray();
+				assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.Document.ModuleDef!).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.Document.AssemblyDef)).Select(a => new AssemblyRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditAssemblyCommand2;
 
 		public void Execute() {
-			newOptions.CopyTo(asmNode.Document.AssemblyDef);
+			newOptions.CopyTo(asmNode.Document.AssemblyDef!);
 			if (assemblyRefInfos != null) {
 				var pkt = newOptions.PublicKey.Token;
 				foreach (var info in assemblyRefInfos) {
@@ -346,7 +346,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public void Undo() {
-			origOptions.CopyTo(asmNode.Document.AssemblyDef);
+			origOptions.CopyTo(asmNode.Document.AssemblyDef!);
 			if (assemblyRefInfos != null) {
 				foreach (var info in assemblyRefInfos) {
 					info.AssemblyRef.Name = info.OrigName;
@@ -434,7 +434,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public void Execute() {
 			fileNodeCreator.Add();
-			undoCommandService.MarkAsModified(undoCommandService.GetUndoObject(fileNodeCreator.DocumentNode.Document));
+			undoCommandService.MarkAsModified(undoCommandService.GetUndoObject(fileNodeCreator.DocumentNode.Document)!);
 		}
 
 		public void Undo() => fileNodeCreator.Remove();

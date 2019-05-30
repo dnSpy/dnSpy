@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 		public CorDebugValueConverterImpl(DbgCorDebugInternalRuntimeImpl runtime) =>
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 
-		bool TryGetUInt32(object value, out uint result) {
+		bool TryGetUInt32(object? value, out uint result) {
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue)
@@ -74,19 +74,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 
 		Exception Invalid() => new InvalidOperationException();
 
-		char ICorDebugValueConverter.ToChar(object value) {
+		char ICorDebugValueConverter.ToChar(object? value) {
 			if (TryGetUInt32(value, out var result))
 				return (char)result;
 			throw Invalid();
 		}
 
-		int ICorDebugValueConverter.ToInt32(object value) {
+		int ICorDebugValueConverter.ToInt32(object? value) {
 			if (TryGetUInt32(value, out var result))
 				return (int)result;
 			throw Invalid();
 		}
 
-		unsafe char[] ICorDebugValueConverter.ToCharArray(object value) {
+		unsafe char[]? ICorDebugValueConverter.ToCharArray(object? value) {
 			if (value == null)
 				return null;
 

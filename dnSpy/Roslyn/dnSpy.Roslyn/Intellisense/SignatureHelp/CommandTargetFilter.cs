@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		[ImportingConstructor]
 		DefaultTextViewCommandTargetFilterProvider(Lazy<ISignatureHelpBroker> signatureHelpBroker) => this.signatureHelpBroker = signatureHelpBroker;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			if (target is ITextView textView && textView.Roles.ContainsAll(roles))
 				return new CommandTargetFilter(textView, signatureHelpBroker);
 			return null;
@@ -49,7 +49,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 	sealed class CommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 		readonly Lazy<ISignatureHelpBroker> signatureHelpBroker;
-		SignatureHelpSession session;
+		SignatureHelpSession? session;
 
 		public CommandTargetFilter(ITextView textView, Lazy<ISignatureHelpBroker> signatureHelpBroker) {
 			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
@@ -72,12 +72,12 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (!IsSupportedContentType)
 				return CommandTargetStatus.NotHandled;
 
@@ -85,7 +85,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 			// Make sure that changes to the text buffer have been applied before we try
 			// to get the sig helps from Roslyn.
-			nextCommandTarget.Execute(group, cmdId, args, ref result);
+			nextCommandTarget!.Execute(group, cmdId, args, ref result);
 
 			if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
@@ -178,7 +178,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		}
 
 		public void SetNextCommandTarget(ICommandTarget commandTarget) => nextCommandTarget = commandTarget;
-		ICommandTarget nextCommandTarget;
+		ICommandTarget? nextCommandTarget;
 
 		public void Dispose() {
 			CancelSession();

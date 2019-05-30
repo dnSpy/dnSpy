@@ -113,7 +113,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					var iter = reader.GetEnumerator();
 					while (iter.MoveNext()) {
 						ctx.CancellationToken.ThrowIfCancellationRequested();
-						string key = null;
+						string? key = null;
 						try {
 							key = iter.Key as string;
 							if (key == null)

@@ -44,7 +44,7 @@ namespace dnSpy.MainApp {
 		readonly ISettingsService settingsService;
 		readonly Lazy<IDsLoader, IDsLoaderMetadata>[] loaders;
 
-		WindowLoader windowLoader;
+		WindowLoader? windowLoader;
 
 		public event EventHandler OnAppLoaded;
 
@@ -78,11 +78,11 @@ namespace dnSpy.MainApp {
 		readonly ISettingsService settingsService;
 		readonly Lazy<IDsLoader, IDsLoaderMetadata>[] loaders;
 
-		Window window;
-		IDsLoaderContentProvider content;
-		DsLoaderControl dsLoaderControl;
-		IEnumerator<object> loaderEnumerator;
-		IAppCommandLineArgs appArgs;
+		Window? window;
+		IDsLoaderContentProvider? content;
+		DsLoaderControl? dsLoaderControl;
+		IEnumerator<object?>? loaderEnumerator;
+		IAppCommandLineArgs? appArgs;
 
 		public WindowLoader(DsLoaderService dsLoaderService, ISettingsService settingsService, Lazy<IDsLoader, IDsLoaderMetadata>[] loaders) {
 			this.dsLoaderService = dsLoaderService;
@@ -102,28 +102,28 @@ namespace dnSpy.MainApp {
 		}
 
 		void Window_ContentRendered(object sender, EventArgs e) {
-			window.ContentRendered -= Window_ContentRendered;
+			window!.ContentRendered -= Window_ContentRendered;
 			loaderEnumerator = LoadCode().GetEnumerator();
 			StartLoadAllCodeDelay();
 		}
 
-		IEnumerable<object> LoadCode() {
+		IEnumerable<object?> LoadCode() {
 			yield return null;
 			foreach (var l in loaders) {
 				var o = l.Value;
 				yield return null;
-				foreach (var a in o.Load(settingsService, appArgs))
+				foreach (var a in o.Load(settingsService, appArgs!))
 					yield return a;
 			}
 		}
 
-		void StartLoadAllCodeDelay() => window.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(LoadAllCode));
+		void StartLoadAllCodeDelay() => window!.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(LoadAllCode));
 
 		void LoadAllCode() {
 			var sw = Stopwatch.StartNew();
 			do {
-				if (!loaderEnumerator.MoveNext()) {
-					dsLoaderControl.progressBar.IsIndeterminate = false;
+				if (!loaderEnumerator!.MoveNext()) {
+					dsLoaderControl!.progressBar.IsIndeterminate = false;
 					LoadAllCodeFinished();
 					return;
 				}
@@ -135,8 +135,8 @@ namespace dnSpy.MainApp {
 		}
 
 		void LoadAllCodeFinished() {
-			content.RemoveLoadingContent();
-			window.IsEnabled = true;
+			content!.RemoveLoadingContent();
+			window!.IsEnabled = true;
 			// This is needed if there's nothing shown at startup (no tabs, no TV, etc), otherwise
 			// eg. Ctrl+Shift+K won't work.
 			window.Focus();

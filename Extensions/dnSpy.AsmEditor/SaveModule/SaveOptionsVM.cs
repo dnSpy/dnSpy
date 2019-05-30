@@ -26,7 +26,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public abstract SaveOptionsType Type { get; }
 		public abstract object UndoDocument { get; }
 
-		public string OriginalFileName { get; set; }
+		public string? OriginalFileName { get; set; }
 
 		public string FileName {
 			get => filename;
@@ -39,9 +39,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		string filename = string.Empty;
 
 		public IPickSaveFilename PickSaveFilename {
-			set { pickSaveFilename = value; }
+			set => pickSaveFilename = value;
 		}
-		IPickSaveFilename pickSaveFilename;
+		IPickSaveFilename? pickSaveFilename;
 
 		public ICommand PickNetExecutableFileNameCommand => new RelayCommand(a => OnPickNetExecutableFileName());
 
@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		protected abstract string GetExtension(string filename);
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(FileName))
 				return filename.ValidateFileName() ?? string.Empty;
 

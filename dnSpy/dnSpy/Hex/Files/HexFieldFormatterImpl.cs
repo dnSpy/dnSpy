@@ -82,13 +82,14 @@ namespace dnSpy.Hex.Files {
 			if (!structure.Span.Span.Contains(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
 			structure.WriteName(this);
+			ComplexData? str = structure;
 			for (;;) {
-				var field = structure.GetFieldByPosition(position);
+				var field = str.GetFieldByPosition(position);
 				if (field == null)
 					break;
 				field.WriteName(this);
-				structure = field.Data as ComplexData;
-				if (structure == null)
+				str = field.Data as ComplexData;
+				if (str == null)
 					break;
 			}
 		}

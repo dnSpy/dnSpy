@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -57,7 +58,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			DocumentWriterService = documentWriterService;
 		}
 
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) =>
 			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler);
 
 		public DecompileDocumentTabContent Create(DocumentTreeNodeData[] nodes) =>
@@ -74,7 +75,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return GUID_SerializedContent;
 		}
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 
@@ -118,7 +119,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public override object ToolTip {
+		public override object? ToolTip {
 			get {
 				if (nodes.Length == 0)
 					return null;
@@ -131,11 +132,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal bool WasNewContent { get; private set; }
 
 		sealed class DecompileContext {
-			public IDocumentViewerContentFactory DocumentViewerContentFactory;
-			public DecompileNodeContext DecompileNodeContext;
-			public DocumentViewerContent CachedContent;
-			public IAsyncShowContext AsyncShowContext;
-			public object SavedRefPos;
+			public IDocumentViewerContentFactory? DocumentViewerContentFactory;
+			public DecompileNodeContext? DecompileNodeContext;
+			public DocumentViewerContent? CachedContent;
+			public IAsyncShowContext? AsyncShowContext;
+			public object? SavedRefPos;
 		}
 
 		DecompileContext CreateDecompileContext(IShowContext ctx) {
@@ -165,7 +166,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void UpdateLanguage() {
-			if (DocumentTab.IsActiveTab)
+			if (DocumentTab?.IsActiveTab == true)
 				decompileDocumentTabContentFactory.DecompilerService.Decompiler = Decompiler;
 		}
 
@@ -174,23 +175,27 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override void OnShow(IShowContext ctx) {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
+			Debug.Assert(decompileContext.DecompileNodeContext != null);
 			decompileContext.CachedContent = decompileDocumentTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Decompiler, nodes, out var contentType);
 			decompileContext.DecompileNodeContext.ContentType = contentType;
 			ctx.Tag = decompileContext;
 		}
 
 		public override Task CreateContentAsync(IAsyncShowContext ctx) {
-			var decompileContext = (DecompileContext)ctx.Tag;
+			var decompileContext = (DecompileContext)ctx.Tag!;
 			decompileContext.AsyncShowContext = ctx;
+			Debug.Assert(decompileContext.DecompileNodeContext != null);
 			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = ctx.CancellationToken;
 			decompileDocumentTabContentFactory.DocumentTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 			return Task.CompletedTask;
 		}
 
 		public override void OnShowAsync(IShowContext ctx, IAsyncShowResult result) {
-			var decompileContext = (DecompileContext)ctx.Tag;
+			var decompileContext = (DecompileContext)ctx.Tag!;
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 
+			Debug.Assert(decompileContext.DecompileNodeContext != null);
+			Debug.Assert(decompileContext.DocumentViewerContentFactory != null);
 			var contentType = decompileContext.DecompileNodeContext.ContentType;
 			if (contentType == null) {
 				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
@@ -201,7 +206,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					decompileDocumentTabContentFactory.ContentTypeRegistryService.UnknownContentType;
 			}
 
-			DocumentViewerContent content;
+			DocumentViewerContent? content;
 			if (result.IsCanceled) {
 				var docViewContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
 				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextColor.Error);
@@ -231,12 +236,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public override bool NeedAsyncWork(IShowContext ctx) {
-			var decompileContext = (DecompileContext)ctx.Tag;
+			var decompileContext = (DecompileContext)ctx.Tag!;
 			if (decompileContext.CachedContent != null)
 				return false;
 
 			var uiCtx = (IDocumentViewer)ctx.UIContext;
-			uiCtx.ShowCancelButton(dnSpy_Resources.Decompiling, () => decompileContext.AsyncShowContext.Cancel());
+			uiCtx.ShowCancelButton(dnSpy_Resources.Decompiling, () => decompileContext.AsyncShowContext!.Cancel());
 			return true;
 		}
 	}

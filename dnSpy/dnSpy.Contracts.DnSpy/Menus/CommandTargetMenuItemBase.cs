@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		protected abstract ICommandTarget GetCommandTarget(IMenuItemContext context);
+		protected abstract ICommandTarget? GetCommandTarget(IMenuItemContext context);
 
 		/// <inheritdoc/>
 		public override bool IsVisible(IMenuItemContext context) => GetCommandTarget(context) != null;
@@ -109,7 +109,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		protected abstract ICommandTarget GetCommandTarget(TContext context);
+		protected abstract ICommandTarget? GetCommandTarget(TContext context);
 
 		/// <inheritdoc/>
 		public override bool IsVisible(TContext context) => GetCommandTarget(context) != null;

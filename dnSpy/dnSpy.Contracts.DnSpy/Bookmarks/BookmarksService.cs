@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		/// <param name="bookmark">Bookmark info</param>
 		/// <returns></returns>
-		public Bookmark Add(BookmarkInfo bookmark) => Add(new[] { bookmark }).FirstOrDefault();
+		public Bookmark? Add(BookmarkInfo bookmark) => Add(new[] { bookmark }).FirstOrDefault();
 
 		/// <summary>
 		/// Adds bookmarks. Duplicate bookmarks are ignored.

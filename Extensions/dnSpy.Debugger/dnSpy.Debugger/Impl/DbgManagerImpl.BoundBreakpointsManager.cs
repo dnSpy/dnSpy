@@ -100,8 +100,8 @@ namespace dnSpy.Debugger.Impl {
 				Dispatcher.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
-				List<DbgCodeBreakpoint> newEnabledBreakpoints = null;
-				List<DbgCodeBreakpoint> newDisabledBreakpoints = null;
+				List<DbgCodeBreakpoint>? newEnabledBreakpoints = null;
+				List<DbgCodeBreakpoint>? newDisabledBreakpoints = null;
 				foreach (var info in e.Breakpoints) {
 					var oldIsEnabled = info.OldSettings.IsEnabled;
 					var newIsEnabled = info.Breakpoint.Settings.IsEnabled;
@@ -181,8 +181,8 @@ namespace dnSpy.Debugger.Impl {
 			Dictionary<DbgEngine, List<DbgModule>> GetEngineModules(IList<DbgModule> modules) {
 				var dict = new Dictionary<DbgEngine, List<DbgModule>>();
 				lock (owner.lockObj) {
-					DbgRuntime lastRuntime = null;
-					List<DbgModule> lastList = null;
+					DbgRuntime? lastRuntime = null;
+					List<DbgModule>? lastList = null;
 					foreach (var module in modules) {
 						var runtime = module.Runtime;
 						if (runtime != lastRuntime) {
@@ -194,12 +194,12 @@ namespace dnSpy.Debugger.Impl {
 							if (!dict.TryGetValue(engine, out lastList))
 								dict.Add(engine, lastList = new List<DbgModule>());
 						}
-						lastList.Add(module);
+						lastList!.Add(module);
 					}
 				}
 				return dict;
 
-				DbgEngine GetEngine_NoLock(DbgRuntime runtime) {
+				DbgEngine? GetEngine_NoLock(DbgRuntime runtime) {
 					foreach (var info in owner.engines) {
 						if (info.Runtime == runtime)
 							return info.Engine;

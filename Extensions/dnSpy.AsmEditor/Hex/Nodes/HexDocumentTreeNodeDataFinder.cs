@@ -24,9 +24,9 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportDocumentTreeNodeDataFinder]
 	sealed class HexDocumentTreeNodeDataFinder : IDocumentTreeNodeDataFinder {
-		public DocumentTreeNodeData FindNode(IDocumentTreeView documentTreeView, object @ref) => FindNode(documentTreeView, @ref as TokenReference);
+		public DocumentTreeNodeData? FindNode(IDocumentTreeView documentTreeView, object? @ref) => FindNode(documentTreeView, @ref as TokenReference);
 
-		internal static MetadataTableRecordNode FindNode(IDocumentTreeView documentTreeView, TokenReference tokRef) {
+		internal static MetadataTableRecordNode? FindNode(IDocumentTreeView documentTreeView, TokenReference? tokRef) {
 			if (tokRef == null)
 				return null;
 

@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 
 		public bool AddAdornment(SnapshotSpan visualSpan, object tag, UIElement adornment) =>
 			AddAdornment(AdornmentPositioningBehavior.TextRelative, visualSpan, tag, adornment, null);
-		public bool AddAdornment(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
+		public bool AddAdornment(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback? removedCallback) {
 			if (adornment == null)
 				throw new ArgumentNullException(nameof(adornment));
 			if (visualSpan == null && behavior == AdornmentPositioningBehavior.TextRelative)
@@ -93,7 +93,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		public void RemoveAdornmentsByTag(object tag) {
+		public void RemoveAdornmentsByTag(object? tag) {
 			if (tag == null)
 				throw new ArgumentNullException(nameof(tag));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
@@ -205,7 +205,7 @@ namespace dnSpy.Text.Editor {
 		// Canvas.Top/Left default to NaN, not 0
 		static double ToDefault(double value, double defaultValue) => double.IsNaN(value) ? defaultValue : value;
 
-		static ITextViewLine GetLine(IList<ITextViewLine> lines, SnapshotSpan span) {
+		static ITextViewLine? GetLine(IList<ITextViewLine> lines, SnapshotSpan span) {
 			foreach (var line in lines) {
 				if (line.ExtentIncludingLineBreak.OverlapsWith(span))
 					return line;

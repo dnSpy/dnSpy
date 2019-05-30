@@ -105,7 +105,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public override bool IsEnabled(IMenuItemContext context) => GetInputElement() != null;
 
-		IInputElement GetInputElement() {
+		IInputElement? GetInputElement() {
 			var elem = Keyboard.FocusedElement;
 			return elem != null && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
 		}
@@ -116,7 +116,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			: base(cmdId) {
 		}
 
-		protected override ICommandTarget GetCommandTarget(IMenuItemContext context) {
+		protected override ICommandTarget? GetCommandTarget(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			return context.Find<IDocumentViewer>()?.TextView.CommandTarget;

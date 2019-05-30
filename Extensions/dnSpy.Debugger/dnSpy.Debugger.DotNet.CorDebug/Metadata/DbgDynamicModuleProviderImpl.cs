@@ -32,7 +32,7 @@ using dnSpy.Debugger.DotNet.CorDebug.Impl;
 namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 	[Export(typeof(DbgDynamicModuleProviderFactory))]
 	sealed class DbgDynamicModuleProviderFactoryImpl : DbgDynamicModuleProviderFactory {
-		public override DbgDynamicModuleProvider Create(DbgRuntime runtime) {
+		public override DbgDynamicModuleProvider? Create(DbgRuntime runtime) {
 			var engine = DbgEngineImpl.TryGetEngine(runtime);
 			if (engine != null)
 				return runtime.GetOrCreateData(() => new DbgDynamicModuleProviderImpl(engine));
@@ -57,11 +57,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 
 		sealed class DynamicModuleData {
 			public LastValidRids LastValidRids;
-			public CorModuleDef Metadata;
+			public CorModuleDef? Metadata;
 			public ModuleId ModuleId;
 		}
 
-		public override ModuleDef GetDynamicMetadata(DbgModule module, out ModuleId moduleId) {
+		public override ModuleDef? GetDynamicMetadata(DbgModule module, out ModuleId moduleId) {
 			var data = module.GetOrCreateData<DynamicModuleData>();
 			if (data.Metadata != null) {
 				moduleId = data.ModuleId;
@@ -71,10 +71,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 				if (data.Metadata != null)
 					return (metadata: data.Metadata, moduleId: data.ModuleId);
 				var info2 = engine.GetDynamicMetadata_EngineThread(module);
-				// DsDotNetDocumentBase sets EnableTypeDefFindCache to true and that property accesses the
-				// Types property. It must be initialized in the correct thread.
-				var t = info2.metadata.Types;
-				info2.metadata.DisableMDAPICalls = true;
+				if (!(info2.metadata is null)) {
+					// DsDotNetDocumentBase sets EnableTypeDefFindCache to true and that property accesses the
+					// Types property. It must be initialized in the correct thread.
+					_ = info2.metadata.Types;
+					info2.metadata.DisableMDAPICalls = true;
+				}
 				return info2;
 			});
 			data.ModuleId = info.moduleId;
@@ -83,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 			return data.Metadata;
 		}
 
-		CorModuleDef TryGetDynamicMetadata(DbgModule module) => module.GetOrCreateData<DynamicModuleData>().Metadata;
+		CorModuleDef? TryGetDynamicMetadata(DbgModule module) => module.GetOrCreateData<DynamicModuleData>().Metadata;
 
 		public override void LoadEverything(DbgModule[] modules, bool started) {
 			engine.VerifyCorDebugThread();
@@ -100,6 +102,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 			var cmod = TryGetDynamicMetadata(module);
 
 			var hash = new HashSet<uint>();
+			if (cmod is null)
+				return hash;
 
 			var oldLastValid = UpdateLastValidRids(data, cmod);
 			var lastValid = data.LastValidRids;

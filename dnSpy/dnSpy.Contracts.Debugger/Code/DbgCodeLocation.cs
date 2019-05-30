@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Code {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// Gets the hash code

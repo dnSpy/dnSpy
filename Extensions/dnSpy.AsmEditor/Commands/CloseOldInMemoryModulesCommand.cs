@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Commands {
 			this.appService = appService;
 		}
 
-		AssemblyDocumentNode[] GetNodes() {
+		AssemblyDocumentNode[]? GetNodes() {
 			var nodes = new List<AssemblyDocumentNode>();
 			foreach (var node in documentTreeView.TreeView.Root.DataChildren.OfType<AssemblyDocumentNode>()) {
 				var doc = node.Document;

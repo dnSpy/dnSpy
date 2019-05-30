@@ -31,7 +31,7 @@ namespace dnSpy.Text.Adornments {
 	sealed class ToolTipProvider : IToolTipProvider {
 		readonly IWpfTextView wpfTextView;
 		readonly ISpaceReservationManager spaceReservationManager;
-		ISpaceReservationAgent toolTipAgent;
+		ISpaceReservationAgent? toolTipAgent;
 
 #pragma warning disable CS0169
 		[Export(typeof(SpaceReservationManagerDefinition))]
@@ -83,7 +83,7 @@ namespace dnSpy.Text.Adornments {
 			}
 		}
 
-		UIElement GetUIElement(object toolTipContent) {
+		UIElement? GetUIElement(object toolTipContent) {
 			if (toolTipContent is UIElement elem)
 				return elem;
 			if (toolTipContent is string s)

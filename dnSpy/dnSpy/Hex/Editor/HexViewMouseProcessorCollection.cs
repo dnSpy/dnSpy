@@ -28,11 +28,11 @@ using dnSpy.Hex.MEF;
 namespace dnSpy.Hex.Editor {
 	sealed class HexViewMouseProcessorCollection {
 		readonly WpfHexView wpfHexView;
-		readonly WpfHexViewImpl wpfHexViewImpl;
+		readonly WpfHexViewImpl? wpfHexViewImpl;
 		readonly HexEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders;
 		readonly Func<MouseEventArgs, bool> allowEventDelegate;
-		HexMouseProcessorCollection mouseProcessorCollection;
+		HexMouseProcessorCollection? mouseProcessorCollection;
 
 		public HexViewMouseProcessorCollection(WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService, Lazy<HexMouseProcessorProvider, IOrderableTextViewRoleMetadata>[] mouseProcessorProviders) {
 			this.wpfHexView = wpfHexView;
@@ -62,13 +62,13 @@ namespace dnSpy.Hex.Editor {
 				if (mouseProcessor != null)
 					list.Add(mouseProcessor);
 			}
-			UIElement manipulationElem = null;//TODO:
+			UIElement? manipulationElem = null;//TODO:
 			mouseProcessorCollection = new HexMouseProcessorCollection(wpfHexView.VisualElement, manipulationElem, new DefaultHexViewMouseProcessor(wpfHexView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
 		void WpfHexView_Closed(object sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;
-			mouseProcessorCollection.Dispose();
+			mouseProcessorCollection?.Dispose();
 		}
 	}
 }

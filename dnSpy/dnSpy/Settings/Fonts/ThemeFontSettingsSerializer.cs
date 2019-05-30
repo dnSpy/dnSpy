@@ -53,7 +53,7 @@ namespace dnSpy.Settings.Fonts {
 				this.themeGuid = themeGuid;
 			}
 			public bool Equals(FontSettingsKey other) => StringComparer.Ordinal.Equals(name, other.name) && themeGuid == other.themeGuid;
-			public override bool Equals(object obj) => obj is FontSettingsKey && Equals((FontSettingsKey)obj);
+			public override bool Equals(object? obj) => obj is FontSettingsKey && Equals((FontSettingsKey)obj);
 			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(name) ^ themeGuid.GetHashCode();
 		}
 

@@ -35,20 +35,20 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="member">Member</param>
 		/// <returns></returns>
-		bool Write(IDecompilerOutput output, IMemberRef member);
+		bool Write(IDecompilerOutput output, IMemberRef? member);
 
 		/// <summary>
 		/// Writes a method signature
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="sig">Signature</param>
-		void Write(IDecompilerOutput output, MethodSig sig);
+		void Write(IDecompilerOutput output, MethodSig? sig);
 
 		/// <summary>
 		/// Writes a type
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="type">Type</param>
-		void Write(IDecompilerOutput output, TypeSig type);
+		void Write(IDecompilerOutput output, TypeSig? type);
 	}
 }

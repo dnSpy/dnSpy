@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.Field {
 		public EnumListVM FieldAccess { get; } = new EnumListVM(fieldAccessList);
 
 		public FieldAttributes Attributes {
-			get => (attributes & ~FieldAttributes.FieldAccessMask) | (FieldAttributes)(FieldAccess)FieldAccess.SelectedItem;
+			get => (attributes & ~FieldAttributes.FieldAccessMask) | (FieldAttributes)(FieldAccess)FieldAccess.SelectedItem!;
 			set {
 				if (attributes != value) {
 					attributes = value;
@@ -130,7 +130,7 @@ namespace dnSpy.AsmEditor.Field {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -139,9 +139,9 @@ namespace dnSpy.AsmEditor.Field {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public TypeSig FieldTypeSig {
+		public TypeSig? FieldTypeSig {
 			get => TypeSigCreator.TypeSig;
 			set => TypeSigCreator.TypeSig = value;
 		}
@@ -149,14 +149,14 @@ namespace dnSpy.AsmEditor.Field {
 		public string FieldTypeHeader => string.Format(dnSpy_AsmEditor_Resources.FieldType, TypeSigCreator.TypeSigDnlibFullName);
 
 		public TypeSigCreatorVM TypeSigCreator { get; }
-		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public Constant? Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
 		public ConstantVM ConstantVM { get; }
 		public MarshalTypeVM MarshalTypeVM { get; }
 		public NullableUInt32VM FieldOffset { get; }
 		public HexStringVM InitialValue { get; }
 		public UInt32VM RVA { get; }
 
-		public ImplMap ImplMap {
+		public ImplMap? ImplMap {
 			get => ImplMapVM.ImplMap;
 			set => ImplMapVM.ImplMap = value;
 		}
@@ -238,7 +238,7 @@ namespace dnSpy.AsmEditor.Field {
 			FieldOffset.Value = options.FieldOffset;
 			MarshalTypeVM.Type = options.MarshalType;
 			RVA.Value = (uint)options.RVA;
-			InitialValue.Value = options.InitialValue;
+			InitialValue.Value = options.InitialValue!;
 			ImplMap = options.ImplMap;
 			if (options.Constant != null) {
 				HasDefault = true;

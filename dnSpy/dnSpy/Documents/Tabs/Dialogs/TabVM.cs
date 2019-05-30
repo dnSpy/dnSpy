@@ -32,7 +32,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public string Name => Tab.Content.Title;
 		public TabsVM Owner { get; }
 
-		readonly IDsDocument document;
+		readonly IDsDocument? document;
 
 		public string Module {
 			get {

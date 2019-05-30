@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Editor {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 		}
 
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new LeftSelectionMargin(wpfHexViewMarginProviderCollectionProvider, wpfHexViewHost, editorOperationsFactoryService.GetEditorOperations(wpfHexViewHost.HexView));
 	}
 

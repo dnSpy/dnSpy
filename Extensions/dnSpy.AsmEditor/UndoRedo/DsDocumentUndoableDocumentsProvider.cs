@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		IEnumerable<IDsDocument> GetAllDocuments() => documentTabService.DocumentTreeView.GetAllCreatedDocumentNodes().Select(a => a.Document);
 
-		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
+		IUndoObject? IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			if (obj is DocumentTreeNodeData node) {
 				var documentNode = node.GetDocumentNode();
 				Debug.Assert(documentNode != null);
@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return false;
 		}
 
-		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetDocument(obj);
+		object? IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetDocument(obj);
 
 		IDsDocument GetDocumentFile(IDsDocument document) {
 			if (document is IDsDotNetDocument dnDocument) {
@@ -99,15 +99,15 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return document;
 		}
 
-		IDsDocument FindModule(ModuleDef module) => documentTabService.DocumentTreeView.FindNode(module)?.Document;
+		IDsDocument? FindModule(ModuleDef module) => documentTabService.DocumentTreeView.FindNode(module)?.Document;
 		IUndoObject GetUndoObject(IDsDocument document) => GetUndoObjectNoChecks(GetDocumentFile(document));
 
 		IUndoObject GetUndoObjectNoChecks(IDsDocument document) {
-			var uo = document.Annotation<UndoObject>() ?? document.AddAnnotation(new UndoObject());
+			var uo = document.Annotation<UndoObject>() ?? document.AddAnnotation(new UndoObject())!;
 			uo.Value = document;
 			return uo;
 		}
 
-		public static IDsDocument TryGetDocument(IUndoObject iuo) => (iuo as UndoObject)?.Value as IDsDocument;
+		public static IDsDocument? TryGetDocument(IUndoObject iuo) => (iuo as UndoObject)?.Value as IDsDocument;
 	}
 }

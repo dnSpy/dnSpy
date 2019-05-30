@@ -130,7 +130,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgILSpan && Equals((DbgILSpan)obj);
+		public override bool Equals(object? obj) => obj is DbgILSpan && Equals((DbgILSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()

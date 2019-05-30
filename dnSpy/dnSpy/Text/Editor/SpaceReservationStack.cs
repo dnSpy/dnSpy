@@ -49,7 +49,7 @@ namespace dnSpy.Text.Editor {
 
 		readonly IWpfTextView wpfTextView;
 		readonly string[] spaceReservationManagerNames;
-		readonly SpaceReservationManager[] spaceReservationManagers;
+		readonly SpaceReservationManager?[] spaceReservationManagers;
 
 		public SpaceReservationStack(IWpfTextView wpfTextView, string[] spaceReservationManagerNames) {
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
@@ -111,7 +111,7 @@ namespace dnSpy.Text.Editor {
 		public void Refresh() {
 			if (wpfTextView.IsClosed)
 				return;
-			GeometryGroup geometry = null;
+			GeometryGroup? geometry = null;
 			foreach (var mgr in SpaceReservationManagers) {
 				if (geometry == null)
 					geometry = new GeometryGroup();

@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -30,20 +31,20 @@ namespace dnSpy.Hex.Files.DotNet {
 	[VSUTIL.Name(PredefinedStructureProviderFactoryNames.DotNet)]
 	[VSUTIL.Order(After = PredefinedStructureProviderFactoryNames.PE)]
 	sealed class DotNetStructureProviderFactory : StructureProviderFactory {
-		public override StructureProvider Create(HexBufferFile file) => new DotNetStructureProvider(file);
+		public override StructureProvider? Create(HexBufferFile file) => new DotNetStructureProvider(file);
 	}
 
 	sealed class DotNetStructureProvider : StructureProvider {
 		readonly HexBufferFile file;
-		DotNetCor20Data cor20;
-		DotNetMetadataHeaderData mdHeader;
+		DotNetCor20Data? cor20;
+		DotNetMetadataHeaderData? mdHeader;
 		HexSpan metadataSpan;
-		DotNetHeap[] dotNetHeaps;
-		DotNetMetadataHeaders dotNetMetadataHeaders;
-		DotNetHeaders dotNetHeaders;
-		VirtualArrayData<ByteData> strongNameSignature;
-		DotNetMethodProvider dotNetMethodProvider;
-		DotNetResourceProvider dotNetResourceProvider;
+		DotNetHeap[]? dotNetHeaps;
+		DotNetMetadataHeaders? dotNetMetadataHeaders;
+		DotNetHeaders? dotNetHeaders;
+		VirtualArrayData<ByteData>? strongNameSignature;
+		DotNetMethodProvider? dotNetMethodProvider;
+		DotNetResourceProvider? dotNetResourceProvider;
 
 		public DotNetStructureProvider(HexBufferFile file) => this.file = file ?? throw new ArgumentNullException(nameof(file));
 
@@ -110,6 +111,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var mdReader = DotNetMetadataHeaderReader.TryCreate(file, span);
 			if (mdReader == null)
 				return;
+			Debug.Assert(mdReader.StorageStreamHeaders != null);
 			mdHeader = DotNetMetadataHeaderDataImpl.TryCreate(file, mdReader.MetadataHeaderSpan, (int)mdReader.VersionStringSpan.Length.ToUInt64(), mdReader.StorageStreamHeaders);
 			if (mdHeader == null)
 				return;
@@ -125,7 +127,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			strongNameSignature = ArrayData.CreateVirtualByteArray(new HexBufferSpan(file.Buffer, span.Value), name: "STRONGNAMESIGNATURE");
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			var cor20 = this.cor20;
 			if (cor20 != null) {
 				if (cor20.Span.Span.Contains(position))
@@ -149,7 +151,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		public override ComplexData GetStructure(string id) {
+		public override ComplexData? GetStructure(string id) {
 			switch (id) {
 			case PredefinedDotNetDataIds.Cor20:
 				return cor20;
@@ -163,7 +165,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		public override THeader GetHeaders<THeader>() =>
+		public override THeader? GetHeaders<THeader>() where THeader : class =>
 			dotNetMetadataHeaders as THeader ??
 			dotNetHeaders as THeader ??
 			dotNetMethodProvider as THeader ??

@@ -37,9 +37,9 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ResourceOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickAssemblyCommand => new RelayCommand(a => PickAssembly(), a => IsAssemblyLinked);
@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.Resources {
 			get {
 				var mask = ManifestResourceAttributes.VisibilityMask;
 				return (attrs & ~mask) |
-					(ManifestResourceAttributes)((int)(ResourceVisibility)ResourceVisibilityVM.SelectedItem << 0);
+					(ManifestResourceAttributes)((int)(ResourceVisibility)ResourceVisibilityVM.SelectedItem! << 0);
 			}
 			set {
 				if (attrs != value) {
@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		ManifestResourceAttributes attrs;
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -89,9 +89,9 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public AssemblyRef Assembly {
+		public AssemblyRef? Assembly {
 			get => assembly;
 			set {
 				if (assembly != value) {
@@ -102,12 +102,12 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		AssemblyRef assembly;
+		AssemblyRef? assembly;
 
 		public string AssemblyFullName => Assembly == null ? "null" : Assembly.FullName;
 		public HexStringVM FileHashValue { get; }
 
-		public string FileName {
+		public string? FileName {
 			get => fileName;
 			set {
 				if (fileName != value) {
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		UTF8String fileName;
+		UTF8String? fileName;
 
 		public bool FileContainsNoMetadata {
 			get => fileContainsNoMetadata;
@@ -180,7 +180,7 @@ namespace dnSpy.AsmEditor.Resources {
 			return options;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(AssemblyFullName)) {
 				if (Assembly == null)
 					return dnSpy_AsmEditor_Resources.Error_AssemblyFieldMustNotBeEmpty;

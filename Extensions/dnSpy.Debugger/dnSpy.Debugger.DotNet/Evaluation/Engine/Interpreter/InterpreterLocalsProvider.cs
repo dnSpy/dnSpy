@@ -36,11 +36,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		ReadOnlyCollection<DmdLocalVariableInfo> localVariables;
 
 		public InterpreterLocalsProvider(DebuggerRuntimeImpl runtime) {
+			localsProvider = null!;
+			realLocalVariables = null!;
+			localVariables = null!;
 			this.runtime = runtime;
 			extraLocals = new Dictionary<int, DbgDotNetValue>();
 		}
 
-		internal void Initialize(DmdMethodBody realMethodBody, VariablesProvider localsProvider) {
+		internal void Initialize(DmdMethodBody? realMethodBody, VariablesProvider localsProvider) {
 			Debug.Assert(extraLocals.Count == 0);
 			realLocalVariables = realMethodBody?.LocalVariables ?? emptyLocalVariableInfos;
 			this.localsProvider = localsProvider;
@@ -52,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			localsProvider.Initialize(evalInfo, method, body);
 		}
 
-		public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) {
+		public override DbgDotNetValue? GetValueAddress(int index, DmdType targetType) {
 			if ((uint)index < (uint)realLocalVariables.Count)
 				return localsProvider.GetValueAddress(index, targetType);
 			return null;
@@ -72,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
-		public override string SetVariable(int index, DmdType targetType, object value) {
+		public override string? SetVariable(int index, DmdType targetType, object? value) {
 			if ((uint)index < (uint)realLocalVariables.Count)
 				return localsProvider.SetVariable(index, targetType, value);
 			if ((uint)index < (uint)localVariables.Count) {
@@ -88,9 +91,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override void Clear() {
 			localsProvider.Clear();
 			extraLocals.Clear();
-			localsProvider = null;
-			realLocalVariables = null;
-			localVariables = null;
+			localsProvider = null!;
+			realLocalVariables = null!;
+			localVariables = null!;
 		}
 	}
 }

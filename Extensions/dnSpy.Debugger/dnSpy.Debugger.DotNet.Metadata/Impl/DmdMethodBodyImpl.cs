@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly byte[] ilBytes;
 
-		public DmdMethodBodyImpl(int localSignatureMetadataToken, int maxStackSize, bool initLocals, DmdLocalVariableInfo[] localVariables, DmdExceptionHandlingClause[] exceptionHandlingClauses, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, byte[] ilBytes) {
+		public DmdMethodBodyImpl(int localSignatureMetadataToken, int maxStackSize, bool initLocals, DmdLocalVariableInfo[] localVariables, DmdExceptionHandlingClause[] exceptionHandlingClauses, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, byte[] ilBytes) {
 			LocalSignatureMetadataToken = localSignatureMetadataToken;
 			MaxStackSize = maxStackSize;
 			InitLocals = initLocals;

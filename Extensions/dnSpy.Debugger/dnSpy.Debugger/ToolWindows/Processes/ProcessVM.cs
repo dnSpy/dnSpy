@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				}
 			}
 		}
-		string title;
+		string? title;
 
 		internal int Order { get; }
 
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			// it's cached here and disposed of when the DbgProcess is closed.
 			// It's no problem if we're debugging just one process, but try 5-20 processes.
 			// ;)
-			readonly Process process;
+			readonly Process? process;
 
 			public ProcessState(int pid) {
 				try {

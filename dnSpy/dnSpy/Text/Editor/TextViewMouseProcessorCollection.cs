@@ -29,11 +29,11 @@ using Microsoft.VisualStudio.Text.Operations;
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
 		readonly IWpfTextView wpfTextView;
-		readonly IDsWpfTextViewImpl dsWpfTextView;
+		readonly IDsWpfTextViewImpl? dsWpfTextView;
 		readonly Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly Func<MouseEventArgs, bool> allowEventDelegate;
-		MouseProcessorCollection mouseProcessorCollection;
+		MouseProcessorCollection? mouseProcessorCollection;
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 				if (mouseProcessor != null)
 					list.Add(mouseProcessor);
 			}
-			UIElement manipulationElem = null;//TODO:
+			UIElement? manipulationElem = null;//TODO:
 			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
@@ -75,7 +75,7 @@ namespace dnSpy.Text.Editor {
 		void WpfTextView_Closed(object sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged -= TextDataModel_ContentTypeChanged;
-			mouseProcessorCollection.Dispose();
+			mouseProcessorCollection?.Dispose();
 		}
 	}
 }

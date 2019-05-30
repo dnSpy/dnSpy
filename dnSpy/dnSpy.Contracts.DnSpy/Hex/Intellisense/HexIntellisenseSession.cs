@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Gets the presenter
 		/// </summary>
-		public abstract HexIntellisensePresenter Presenter { get; }
+		public abstract HexIntellisensePresenter? Presenter { get; }
 
 		/// <summary>
 		/// Raised after <see cref="Presenter"/> is changed

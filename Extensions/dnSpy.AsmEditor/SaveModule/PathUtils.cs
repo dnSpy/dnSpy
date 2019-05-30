@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static string ValidateFileName(this string filename) {
+		public static string? ValidateFileName(this string filename) {
 			if (string.IsNullOrEmpty(filename))
 				return dnSpy_AsmEditor_Resources.Error_Filename_Empty;
 			if (string.IsNullOrWhiteSpace(filename))

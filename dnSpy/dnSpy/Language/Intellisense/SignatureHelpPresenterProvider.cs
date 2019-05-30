@@ -44,7 +44,7 @@ namespace dnSpy.Language.Intellisense {
 			this.classificationFormatMapService = classificationFormatMapService;
 		}
 
-		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var signatureHelpSession = session as ISignatureHelpSession;
 			if (signatureHelpSession == null)
 				return null;

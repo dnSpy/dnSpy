@@ -86,7 +86,7 @@ namespace dnSpy.Controls {
 		/// Constructor
 		/// </summary>
 		/// <param name="o">Dependency object attached somewhere in a <see cref="Window"/> or the <see cref="Window"/> object itself</param>
-		public Screen(DependencyObject o) {
+		public Screen(DependencyObject? o) {
 			var helper = GetHelper(o);
 			IsValid = false;
 			info = default;
@@ -100,8 +100,8 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		static WindowInteropHelper GetHelper(DependencyObject o) {
-			if (o == null)
+		static WindowInteropHelper? GetHelper(DependencyObject? o) {
+			if (o is null)
 				return null;
 			var win = Window.GetWindow(o);
 			if (win == null)

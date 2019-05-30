@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
@@ -65,8 +66,8 @@ namespace dnSpy.Hex.Formatting {
 			return GenerateHtmlFragmentCore(hexView.BufferLines, spans, hexView, delimiter, cancellationToken);
 		}
 
-		string GenerateHtmlFragmentCore(HexBufferLineFormatter bufferLines, NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken) {
-			HexClassifier classifier = null;
+		string GenerateHtmlFragmentCore(HexBufferLineFormatter bufferLines, NormalizedHexBufferSpanCollection spans, HexView? hexView, string delimiter, CancellationToken cancellationToken) {
+			HexClassifier? classifier = null;
 			try {
 				VSTC.IClassificationFormatMap classificationFormatMap;
 				if (hexView != null) {
@@ -80,12 +81,14 @@ namespace dnSpy.Hex.Formatting {
 
 				const int tabSize = 4;
 				var builder = new HexHtmlBuilder(classificationFormatMap, delimiter, tabSize);
-				if (spans.Count != 0)
+				if (spans.Count != 0) {
+					Debug.Assert(classifier != null);
 					builder.Add(bufferLines, classifier, spans, cancellationToken);
+				}
 				return builder.Create();
 			}
 			finally {
-				classifier.Dispose();
+				classifier?.Dispose();
 			}
 		}
 	}

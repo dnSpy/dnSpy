@@ -35,11 +35,11 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		public string PrettyPrintedContent { get; }
 		public IList<TaggedText> ContentTaggedText { get; }
 		public IList<TaggedText> PrettyPrintedContentTaggedText { get; }
-		public string Documentation => null;
+		public string? Documentation => null;
 		public ReadOnlyCollection<IParameter> Parameters { get; }
 		public bool IsSelected { get; }
 
-		public IParameter CurrentParameter {
+		public IParameter? CurrentParameter {
 			get => currentParameter;
 			set {
 				if (value == null)
@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 				CurrentParameterChanged?.Invoke(this, new CurrentParameterChangedEventArgs(oldParam, currentParameter));
 			}
 		}
-		Parameter currentParameter;
+		Parameter? currentParameter;
 
 		public event EventHandler<CurrentParameterChangedEventArgs> CurrentParameterChanged;
 

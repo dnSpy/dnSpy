@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Gets the value or null if there was an error (<see cref="ErrorMessage"/>).
 		/// If <see cref="ValueIsException"/> is true, this is the thrown exception value.
 		/// </summary>
-		public DbgDotNetValue Value { get; }
+		public DbgDotNetValue? Value { get; }
 
 		/// <summary>
 		/// true if <see cref="Value"/> contains the thrown exception instead of the expected return value / field value
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the error message or null if there was no error
 		/// </summary>
-		public string ErrorMessage { get; }
+		public string? ErrorMessage { get; }
 
 		/// <summary>
 		/// true if there was an error, see <see cref="ErrorMessage"/>

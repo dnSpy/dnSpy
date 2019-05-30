@@ -51,12 +51,12 @@ namespace dnSpy.Language.Intellisense {
 		public ICommand SelectPreviousSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(-1));
 		public ICommand SelectNextSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(1));
 		public bool HasMoreThanOneSignature => session.Signatures.Count > 1;
-		public object SignatureCountObject => CreateSignatureCountObject();
+		public object? SignatureCountObject => CreateSignatureCountObject();
 		public bool HasSignatureDocumentationObject => !string.IsNullOrEmpty(currentSignature?.Documentation);
-		public object SignatureDocumentationObject => CreateSignatureDocumentationObject();
-		public object SignatureObject => CreateSignatureObject();
-		public object ParameterNameObject => CreateParameterNameObject();
-		public object ParameterDocumentationObject => CreateParameterDocumentationObject();
+		public object? SignatureDocumentationObject => CreateSignatureDocumentationObject();
+		public object? SignatureObject => CreateSignatureObject();
+		public object? ParameterNameObject => CreateParameterNameObject();
+		public object? ParameterDocumentationObject => CreateParameterDocumentationObject();
 
 		public bool HasParameter {
 			get {
@@ -67,7 +67,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		public ITrackingSpan PresentationSpan {
+		public ITrackingSpan? PresentationSpan {
 			get => presentationSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
@@ -76,7 +76,7 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 		}
-		ITrackingSpan presentationSpan;
+		ITrackingSpan? presentationSpan;
 
 		public double Opacity {
 			get => control.Opacity;
@@ -93,9 +93,9 @@ namespace dnSpy.Language.Intellisense {
 		readonly IClassifierAggregatorService classifierAggregatorService;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IContentType defaultExtendedContentType;
-		ISignature currentSignature;
-		IClassifier signatureClassifier;
-		IClassifier otherClassifier;
+		ISignature? currentSignature;
+		IClassifier? signatureClassifier;
+		IClassifier? otherClassifier;
 
 		const string DefaultExtendedContentTypeName = " default " + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix;
 #pragma warning disable CS0169
@@ -193,7 +193,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void UpdatePresentationSpan() => PresentationSpan = CalculatePresentationSpan();
-		ITrackingSpan CalculatePresentationSpan() {
+		ITrackingSpan? CalculatePresentationSpan() {
 			SnapshotSpan? currSpan = null;
 			SpanTrackingMode? spanTrackingMode = null;
 
@@ -211,12 +211,12 @@ namespace dnSpy.Language.Intellisense {
 					currSpan = new SnapshotSpan(snapshot, Span.FromBounds(Math.Min(currSpan.Value.Start.Position, span.Start.Position), Math.Max(currSpan.Value.End.Position, span.End.Position)));
 			}
 
-			return currSpan == null ? null : currSpan.Value.Snapshot.CreateTrackingSpan(currSpan.Value.Span, spanTrackingMode ?? SpanTrackingMode.EdgeInclusive);
+			return currSpan?.Snapshot.CreateTrackingSpan(currSpan.Value.Span, spanTrackingMode ?? SpanTrackingMode.EdgeInclusive);
 		}
 
 		void Control_MouseDown(object sender, MouseButtonEventArgs e) => IncrementSelectedSignature(1);
 
-		object CreateSignatureCountObject() {
+		object? CreateSignatureCountObject() {
 			if (session.IsDismissed)
 				return null;
 
@@ -230,7 +230,7 @@ namespace dnSpy.Language.Intellisense {
 			return TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize);
 		}
 
-		object CreateSignatureDocumentationObject() {
+		object? CreateSignatureDocumentationObject() {
 			if (session.IsDismissed)
 				return null;
 
@@ -238,11 +238,12 @@ namespace dnSpy.Language.Intellisense {
 			var doc = signature?.Documentation;
 			if (string.IsNullOrEmpty(doc))
 				return null;
+			Debug.Assert(signature != null);
 
 			return CreateUIObject(doc, GetExtendedClassifierContentType(), new SignatureDocumentationSignatureHelpClassifierContext(session, signature));
 		}
 
-		object CreateSignatureObject() {
+		object? CreateSignatureObject() {
 			if (session.IsDismissed)
 				return null;
 
@@ -336,7 +337,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		IContentType GetExtendedClassifierContentType() => TryGetExtendedClassifierContentTypeCore() ?? defaultExtendedContentType;
-		IContentType TryGetExtendedClassifierContentTypeCore() {
+		IContentType? TryGetExtendedClassifierContentTypeCore() {
 			var signature = session.SelectedSignature;
 			if (signature == null)
 				return null;
@@ -347,7 +348,7 @@ namespace dnSpy.Language.Intellisense {
 			return contentTypeRegistryService.GetContentType(bufferContentType.TypeName + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix);
 		}
 
-		object CreateParameterNameObject() {
+		object? CreateParameterNameObject() {
 			if (session.IsDismissed)
 				return null;
 
@@ -363,7 +364,7 @@ namespace dnSpy.Language.Intellisense {
 			return CreateUIObject(name, GetExtendedClassifierContentType(), new ParameterNameSignatureHelpClassifierContext(session, parameter, nameOffset));
 		}
 
-		object CreateParameterDocumentationObject() {
+		object? CreateParameterDocumentationObject() {
 			if (session.IsDismissed)
 				return null;
 

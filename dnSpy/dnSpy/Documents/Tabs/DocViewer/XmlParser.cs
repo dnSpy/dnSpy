@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Text;
 namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		readonly string text;
-		readonly XamlAttributeParser xamlAttributeParser;
+		readonly XamlAttributeParser? xamlAttributeParser;
 		readonly CodeBracesRangeFlags blockFlags;
 		readonly List<ReferenceInfo> references;
 		readonly List<CodeBracesRange> bracesInfo;
@@ -144,7 +144,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				this.refKind = refKind;
 			}
 
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				var other = obj as XmlNameTextViewerReference;
 				return other != null && nsRef.Equals(other.nsRef) && name == other.name && refKind == other.refKind;
 			}
@@ -155,7 +155,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		sealed class XmlNamespaceTextViewerReference {
 			public XmlNamespaceReference XmlNamespaceReference { get; }
 			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) => XmlNamespaceReference = nsRef ?? throw new ArgumentNullException(nameof(nsRef));
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				var other = obj as XmlNamespaceTextViewerReference;
 				return other != null && XmlNamespaceReference.Equals(other.XmlNamespaceReference);
 			}
@@ -188,7 +188,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return true;
 			}
 
-			public override bool Equals(object obj) => obj is SubString && Equals((SubString)obj);
+			public override bool Equals(object? obj) => obj is SubString && Equals((SubString)obj);
 
 			public override int GetHashCode() {
 				int h = 17;
@@ -418,7 +418,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		sealed class XmlNamespaces {
-			XmlNamespaces previous;
+			XmlNamespaces? previous;
 			readonly Dictionary<string, XmlNamespaceDefinition> namespaces;
 
 			public XmlNamespaces() => namespaces = new Dictionary<string, XmlNamespaceDefinition>(StringComparer.Ordinal);
@@ -428,11 +428,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				namespaces.Clear();
 			}
 
-			public void Initialize(XmlNamespaces previous) =>
+			public void Initialize(XmlNamespaces? previous) =>
 				this.previous = previous;
 
 			public XmlNamespaceDefinition GetOrCreate(string xmlNsAlias) {
-				var curr = this;
+				XmlNamespaces? curr = this;
 				XmlNamespaceDefinition def;
 				while (curr != null) {
 					if (curr.namespaces.TryGetValue(xmlNsAlias, out def))
@@ -459,7 +459,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				Alias = alias ?? throw new ArgumentNullException(nameof(alias));
 				Name = name ?? throw new ArgumentNullException(nameof(name));
 			}
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				var other = obj as XmlNamespaceDefinition;
 				return other != null && Name == other.Name;
 			}
@@ -468,10 +468,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		sealed class XmlNamespaceReference : IEquatable<XmlNamespaceReference> {
 			public string Alias { get; }
-			public XmlNamespaceDefinition Definition { get; set; }
+			public XmlNamespaceDefinition? Definition { get; set; }
 			public XmlNamespaceReference(string alias) => Alias = alias ?? throw new ArgumentNullException(nameof(alias));
 			public bool Equals(XmlNamespaceReference other) => Equals(Definition, other.Definition);
-			public override bool Equals(object obj) => obj is XmlNamespaceReference && Equals((XmlNamespaceReference)obj);
+			public override bool Equals(object? obj) => obj is XmlNamespaceReference && Equals((XmlNamespaceReference)obj);
 			public override int GetHashCode() => Definition?.GetHashCode() ?? 0;
 		}
 
@@ -485,7 +485,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return nsRef;
 		}
 
-		XmlNamespaceReference TryGetAttributeNamespaceReference(Span aliasSpan) {
+		XmlNamespaceReference? TryGetAttributeNamespaceReference(Span aliasSpan) {
 			foreach (var nsRef in xmlNamespaceReferences) {
 				if (Equals(aliasSpan, nsRef.Alias))
 					return nsRef;
@@ -527,7 +527,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 				case TokenKind.Name:
 					Undo(token);
-					var name = ReadNameToken().Value;
+					var name = ReadNameToken()!.Value;// Undo() was called so force '!'
 					var eq = GetNextToken();
 					if (eq.Kind != TokenKind.Equals)
 						break;

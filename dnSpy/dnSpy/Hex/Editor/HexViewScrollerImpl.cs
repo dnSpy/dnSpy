@@ -87,8 +87,8 @@ namespace dnSpy.Hex.Editor {
 					continue;
 
 				var bounds = lineSpan.IsTextSpan ?
-					line.GetNormalizedTextBounds(lineSpan.TextSpan.Value) :
-					line.GetNormalizedTextBounds(intersection.Value, lineSpan.SelectionFlags.Value);
+					line.GetNormalizedTextBounds(lineSpan.TextSpan!.Value) :
+					line.GetNormalizedTextBounds(intersection.Value, lineSpan.SelectionFlags!.Value);
 				foreach (var b in bounds) {
 					if (left > b.Left)
 						left = b.Left;

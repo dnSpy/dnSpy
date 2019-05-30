@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.REPL)]
 	sealed class ReplCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.ReplEditor) != true)
 				return null;

@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Attach {
 			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture ?? DbgArchitecture.X86, operatingSystem ?? DbgOperatingSystem.Windows);
 		}
 
-		static (string name, string title, string filename, string commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+		static (string? name, string? title, string? filename, string? commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
 			try {
 				return GetDefaultPropertiesCore(processProvider, attachProgramOptions);
 			}
@@ -87,8 +87,8 @@ namespace dnSpy.Debugger.Attach {
 			return default;
 		}
 
-		static (string name, string title, string filename, string commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
-			string name = null, title = null, filename = null, commandLine = null;
+		static (string? name, string? title, string? filename, string? commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+			string? name = null, title = null, filename = null, commandLine = null;
 			DbgArchitecture? arch = default;
 			DbgOperatingSystem? operatingSystem = default;
 

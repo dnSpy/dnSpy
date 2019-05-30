@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Debugger.Attach.Dialogs {
 		/// </summary>
 		/// <param name="options">Options or null to use the default options</param>
 		/// <returns></returns>
-		public abstract AttachToProgramOptions[] Show(ShowAttachToProcessDialogOptions options = null);
+		public abstract AttachToProgramOptions[] Show(ShowAttachToProcessDialogOptions? options = null);
 
 		/// <summary>
 		/// Shows the dialog box and attaches to the selected processes
 		/// </summary>
 		/// <param name="options">Options or null to use the default options</param>
-		public abstract void Attach(ShowAttachToProcessDialogOptions options = null);
+		public abstract void Attach(ShowAttachToProcessDialogOptions? options = null);
 	}
 }

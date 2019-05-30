@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		[ImportingConstructor]
 		OpenDocumentListTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => documentListMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.DocumentListMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new OpenDocumentListTextClassifier(documentListMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new OpenDocumentListTextClassifier(documentListMatchHighlightClassificationType);
 	}
 
 	sealed class OpenDocumentListTextClassifier : ITextClassifier {

@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) {
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) {
 			if (evalInfo == null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))

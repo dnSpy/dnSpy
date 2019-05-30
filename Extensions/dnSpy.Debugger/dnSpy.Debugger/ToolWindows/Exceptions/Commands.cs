@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		protected ExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent) => this.exceptionsContent = exceptionsContent;
 
-		protected sealed override ExceptionsCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override ExceptionsCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != exceptionsContent.Value.ListView)
@@ -174,9 +174,9 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		ExceptionsContextMenuEntry(ExceptionsCommandContext exceptionsCommandContext) => this.exceptionsCommandContext = exceptionsCommandContext;
 
 		public override void Execute(Context context) { }
-		protected override Context CreateContext(IMenuItemContext context) => CreateContext(exceptionsCommandContext, context);
+		protected override Context? CreateContext(IMenuItemContext context) => CreateContext(exceptionsCommandContext, context);
 
-		internal static Context CreateContext(ExceptionsCommandContext exceptionsCommandContext, IMenuItemContext context) {
+		internal static Context? CreateContext(ExceptionsCommandContext exceptionsCommandContext, IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != exceptionsCommandContext.ExceptionsContent.Value.ListView)

@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Decompiler {
 				return scopes;
 			}
 		}
-		List<MethodDebugScopeBuilder> scopes;
+		List<MethodDebugScopeBuilder>? scopes;
 
 		/// <summary>
 		/// Gets all new locals in the scope
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Decompiler {
 				return locals;
 			}
 		}
-		List<SourceLocal> locals;
+		List<SourceLocal>? locals;
 
 		/// <summary>
 		/// Gets all new imports in the scope
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Decompiler {
 				return imports;
 			}
 		}
-		List<ImportInfo> imports;
+		List<ImportInfo>? imports;
 
 		/// <summary>
 		/// Gets all new constants in the scope
@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Decompiler {
 				return constants;
 			}
 		}
-		List<MethodDebugConstant> constants;
+		List<MethodDebugConstant>? constants;
 
 		/// <summary>
 		/// Constructor

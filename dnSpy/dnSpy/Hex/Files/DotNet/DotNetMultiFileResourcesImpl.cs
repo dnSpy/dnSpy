@@ -132,10 +132,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			public HexSpan UnicodeNameAndOffsetSpan => HexSpan.FromBounds(UnicodeName.FullSpan.Start, UnicodeName.FullSpan.End + 4);
 			public Bit7String UnicodeName { get; }
 			public HexPosition DataStart { get; }
-			public ResData ResData => resData;
+			public ResData? ResData => resData;
 
 			public void SetData(ResData newData) => resData = newData;
-			ResData resData;
+			ResData? resData;
 
 			public ResourceInfo(int index, Bit7String unicodeName, HexPosition dataPos) {
 				Index = index;
@@ -224,7 +224,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				: base(typeCode, codeSpan, dataSpan, dataSpan) => Utf8TypeName = utf8TypeName;
 		}
 
-		ResData ReadData(Bit7String[] typeNames, HexPosition position, HexPosition endPosition) {
+		ResData? ReadData(Bit7String[] typeNames, HexPosition position, HexPosition endPosition) {
 			var start = position;
 			var codeTmp = Read7BitEncodedInt32(File.Buffer, ref position);
 			if (codeTmp == null)
@@ -273,7 +273,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public static DotNetMultiFileResourcesImpl TryRead(HexBufferFile file) {
+		public static DotNetMultiFileResourcesImpl? TryRead(HexBufferFile file) {
 			try {
 				return TryReadCore(file);
 			}
@@ -282,7 +282,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		static DotNetMultiFileResourcesImpl TryReadCore(HexBufferFile file) {
+		static DotNetMultiFileResourcesImpl? TryReadCore(HexBufferFile file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (file.Span.Length < 0x1C)
@@ -376,7 +376,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			if (!File.Span.Contains(position))
 				return null;
 			if (Header.Span.Span.Contains(position))
@@ -389,7 +389,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		ComplexData GetStructure(Data data) {
+		ComplexData? GetStructure(Data data) {
 			switch (data.Kind) {
 			case DataKind.UnicodeNameAndOffset:
 				var tdata = (UnicodeNameAndOffsetData)data;
@@ -403,7 +403,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					return null;
 				var span = new HexBufferSpan(File.Buffer, resData.FullSpan);
 				string resName = Encoding.Unicode.GetString(File.Buffer.ReadBytes(info.UnicodeName.StringSpan));
-				string typeName = null;
+				string? typeName = null;
 				var typeData = resData as TypeResData;
 				if (typeData != null)
 					typeName = Encoding.UTF8.GetString(File.Buffer.ReadBytes(typeData.Utf8TypeName.StringSpan));
@@ -425,7 +425,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		Data GetData(HexPosition position) {
+		Data? GetData(HexPosition position) {
 			var array = dataArray;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

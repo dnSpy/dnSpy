@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Settings.AppearanceCategory {
 		/// <summary>
 		/// Text shown in the UI
 		/// </summary>
-		public abstract string DisplayName { get; }
+		public abstract string? DisplayName { get; }
 
 		/// <summary>
 		/// Appearance category, eg. <see cref="AppearanceCategoryConstants.TextEditor"/>

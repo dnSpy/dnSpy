@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -31,7 +32,7 @@ using dnSpy.Debugger.DotNet.Mono.Impl;
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.UnityPlayer)]
 	sealed class UnityPlayerAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create(bool allFactories) => allFactories ? null : new UnityPlayerAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider? Create(bool allFactories) => allFactories ? null : new UnityPlayerAttachProgramOptionsProvider();
 	}
 
 	sealed class UnityPlayerAttachProgramOptionsProvider : AttachProgramOptionsProvider {
@@ -50,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 			public bool Equals(PlayerId other) =>
 				StringComparer.OrdinalIgnoreCase.Equals(ip ?? string.Empty, other.ip ?? string.Empty) &&
 				port == other.port;
-			public override bool Equals(object obj) =>
+			public override bool Equals(object? obj) =>
 				obj is PlayerId other && Equals(other);
 			public override int GetHashCode() =>
 				StringComparer.OrdinalIgnoreCase.GetHashCode(ip ?? string.Empty) ^ port;
@@ -92,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 		}
 
 		static readonly Regex playerAnnounceStringRegex = new Regex(@"^\[IP\] (\S+) \[Port\] (\d+) \[Flags\] (-?\d+) \[Guid\] (\d+) \[EditorId\] (\d+) \[Version\] (\d+) \[Id\] ([^\(]+)\(([^\)]+)\)(:(\d+))? \[Debug\] (\d+)");
-		bool TryParseUnityPlayerData(string s, out string ipAddress, out ushort port, out string playerId) {
+		bool TryParseUnityPlayerData(string s, [NotNullWhenTrue] out string? ipAddress, out ushort port, [NotNullWhenTrue] out string? playerId) {
 			ipAddress = null;
 			port = 0;
 			playerId = null;

@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the app domain or null if it's a process thread
 		/// </summary>
 		/// <returns></returns>
-		public abstract DbgAppDomain AppDomain { get; }
+		public abstract DbgAppDomain? AppDomain { get; }
 
 		/// <summary>
 		/// true if this is the main thread
@@ -117,8 +117,8 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the top stack frame or null if there's none
 		/// </summary>
 		/// <returns></returns>
-		public DbgStackFrame GetTopStackFrame() {
-			DbgStackWalker stackWalker = null;
+		public DbgStackFrame? GetTopStackFrame() {
+			DbgStackWalker? stackWalker = null;
 			try {
 				stackWalker = CreateStackWalker();
 				var frames = stackWalker.GetNextStackFrames(1);
@@ -141,7 +141,7 @@ namespace dnSpy.Contracts.Debugger {
 				throw new ArgumentOutOfRangeException(nameof(count));
 			if (count == 0)
 				return Array.Empty<DbgStackFrame>();
-			DbgStackWalker stackWalker = null;
+			DbgStackWalker? stackWalker = null;
 			try {
 				stackWalker = CreateStackWalker();
 				var frames = stackWalker.GetNextStackFrames(count);

@@ -79,7 +79,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		public MsgBoxButton? ShowIgnorableMessage(Guid guid, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
+		public MsgBoxButton? ShowIgnorableMessage(Guid guid, string message, MsgBoxButton buttons, Window? ownerWindow) {
 			if (ignoredMessages.Contains(guid))
 				return null;
 			Create(message, buttons, true, ownerWindow, out var win, out var vm);
@@ -91,13 +91,13 @@ namespace dnSpy.MainApp {
 			return win.ClickedButton;
 		}
 
-		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
+		public MsgBoxButton Show(string message, MsgBoxButton buttons, Window? ownerWindow) {
 			Create(message, buttons, false, ownerWindow, out var win, out var vm);
 			win.ShowDialog();
 			return win.ClickedButton;
 		}
 
-		public void Show(Exception exception, string msg = null, Window ownerWindow = null) {
+		public void Show(Exception exception, string? msg, Window? ownerWindow) {
 			string msgToShow;
 			if (exception != null) {
 				msgToShow = $"{msg ?? dnSpy_Resources.ExceptionMessage}\n\n{exception.ToString()}";
@@ -110,7 +110,7 @@ namespace dnSpy.MainApp {
 			Show(msgToShow, MsgBoxButton.OK, ownerWindow);
 		}
 
-		void Create(string message, MsgBoxButton buttons, bool hasDontShowAgain, Window ownerWindow, out MsgBoxDlg win, out MsgBoxVM vm) {
+		void Create(string message, MsgBoxButton buttons, bool hasDontShowAgain, Window? ownerWindow, out MsgBoxDlg win, out MsgBoxVM vm) {
 			win = new MsgBoxDlg();
 			var winTmp = win;
 			vm = new MsgBoxVM(message, button => winTmp.Close(button));
@@ -132,7 +132,7 @@ namespace dnSpy.MainApp {
 			catch (ExternalException) { }
 		}
 
-		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
+		public T Ask<T>(string labelMessage, string? defaultText, string? title, Func<string, T>? converter, Func<string, string?>? verifier, Window? ownerWindow) {
 			var win = new AskDlg();
 			if (converter == null)
 				converter = CreateDefaultConverter<T>();
@@ -146,8 +146,8 @@ namespace dnSpy.MainApp {
 			if (!string.IsNullOrWhiteSpace(title))
 				win.Title = title;
 			if (win.ShowDialog() != true)
-				return default;
-			return (T)vm.Value;
+				return default!;
+			return (T)vm.Value!;
 		}
 
 		Func<string, T> CreateDefaultConverter<T>() {
@@ -155,7 +155,7 @@ namespace dnSpy.MainApp {
 			return s => (T)c.ConvertFromInvariantString(s);
 		}
 
-		Func<string, string> CreateDefaultVerifier<T>() {
+		Func<string, string?> CreateDefaultVerifier<T>() {
 			var c = TypeDescriptor.GetConverter(typeof(T));
 			return s => {
 				if (c.IsValid(s))

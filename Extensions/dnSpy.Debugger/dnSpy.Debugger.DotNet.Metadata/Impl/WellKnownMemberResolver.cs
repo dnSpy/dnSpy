@@ -34,12 +34,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			wellKnownTypes = new DmdType[DmdWellKnownTypeUtils.WellKnownTypesCount];
 		}
 
-		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool onlyCorLib) {
+		public DmdType? GetWellKnownType(DmdWellKnownType wellKnownType, bool onlyCorLib) {
 			if ((uint)wellKnownType >= (uint)wellKnownTypes.Length)
 				return null;
 
 			ref var cachedType = ref wellKnownTypes[(int)wellKnownType];
-			if ((object)cachedType != null)
+			if (!(cachedType is null))
 				return cachedType;
 
 			lock (lockObj) {
@@ -66,12 +66,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 						foreach (var type in module.GetTypes()) {
 							if (DmdWellKnownTypeUtils.TryGetWellKnownType(DmdTypeName.Create(type), out var wkt)) {
 								ref var elem = ref wellKnownTypes[(int)wkt];
-								if ((object)elem == null)
+								if (elem is null)
 									elem = type;
 							}
 						}
 
-						if ((object)cachedType != null)
+						if (!(cachedType is null))
 							return cachedType;
 					}
 				}

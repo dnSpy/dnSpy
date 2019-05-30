@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		public override event EventHandler<EventArgs> DecompilerChanged;
 
-		public override IDecompiler Decompiler => decompiler;
-		IDecompiler decompiler;
+		public override IDecompiler Decompiler => decompiler!;
+		IDecompiler? decompiler;
 
 		[ImportingConstructor]
 		DbgDotNetDecompilerServiceImpl(IDecompilerService decompilerService, DbgLanguageService dbgLanguageService, [ImportMany] IEnumerable<Lazy<DbgDotNetDecompilerGuidProvider, IDbgDotNetDecompilerGuidProviderMetadata>> dbgDotNetDecompilerGuidProviders) {

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -36,10 +37,10 @@ namespace dnSpy.Roslyn.Debugger {
 		/*readonly*/ ImmutableArray<string> localVariableNames;
 		/*readonly*/ ImmutableArray<string> parameterNames;
 		readonly List<DSEELocalAndMethod> localAndMethodBuilder;
-		readonly ModuleDefUser generatedModule;
-		readonly TypeDef getLocalsType;
+		readonly ModuleDefUser? generatedModule;
+		readonly TypeDef? getLocalsType;
 		int methodNameIndex;
-		MethodSig lastMethodSig;
+		MethodSig? lastMethodSig;
 
 		const string getLocalsTypeNamespace = "";
 		const string getLocalsTypeName = "<>x";
@@ -80,15 +81,16 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		GenericParamConstraint Clone(GenericParamConstraint gpc) =>
-			new GenericParamConstraintUser((ITypeDefOrRef)generatedModule.Import(gpc.Constraint));
+			new GenericParamConstraintUser((ITypeDefOrRef)generatedModule!.Import(gpc.Constraint));
 
-		public byte[] Compile(out DSEELocalAndMethod[] locals, out string typeName, out string errorMessage) {
+		public byte[] Compile(out DSEELocalAndMethod[] locals, out string typeName, out string? errorMessage) {
 			if (generatedModule == null) {
 				locals = Array.Empty<DSEELocalAndMethod>();
 				typeName = string.Empty;
 				errorMessage = null;
 				return Array.Empty<byte>();
 			}
+			Debug.Assert(getLocalsType != null);
 
 			foreach (var p in sourceMethod.Parameters) {
 				var name = language.GetVariableName(GetName(p), isThis: p.IsHiddenThisParameter);
@@ -138,6 +140,8 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		(string methodName, DkmClrCompilationResultFlags flags) AddMethod(TypeSig type, int index, bool isLocal) {
+			Debug.Assert(generatedModule != null);
+			Debug.Assert(getLocalsType != null);
 			var methodName = methodNamePrefix + methodNameIndex++.ToString();
 
 			var callConv = CallingConvention.Default;
@@ -215,7 +219,8 @@ namespace dnSpy.Roslyn.Debugger {
 			}
 		}
 
-		Instruction LoadIndirect(TypeSig type) {
+		Instruction LoadIndirect(TypeSig? type) {
+			Debug.Assert(generatedModule != null);
 			switch (type.GetElementType()) {
 			case ElementType.Boolean:		return Instruction.Create(OpCodes.Ldind_I1);
 			case ElementType.Char:			return Instruction.Create(OpCodes.Ldind_U2);
@@ -244,7 +249,7 @@ namespace dnSpy.Roslyn.Debugger {
 			case ElementType.TypedByRef:	return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
 
 			case ElementType.GenericInst:
-				var gis = type as GenericInstSig;
+				var gis = (GenericInstSig)type!;
 				if (gis.GenericType.IsValueTypeSig)
 					return Instruction.Create(OpCodes.Ldobj, generatedModule.Import(type).ToTypeDefOrRef());
 				return Instruction.Create(OpCodes.Ldind_Ref);

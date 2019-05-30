@@ -32,7 +32,7 @@ namespace dnSpy.Text.Editor {
 	[TagType(typeof(IUrlTag))]
 	[ContentType(ContentTypes.Text)]
 	sealed class UriTaggerProvider : IViewTaggerProvider {
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
 			textView.Properties.GetOrCreateSingletonProperty(typeof(UriTagger), () => new UriTagger(textView)) as ITagger<T>;
 	}
 
@@ -65,7 +65,7 @@ namespace dnSpy.Text.Editor {
 			if (!enableLinks)
 				yield break;
 
-			ITextSnapshotLine line = null;
+			ITextSnapshotLine? line = null;
 			foreach (var span in spans) {
 				int pos = span.Start;
 
@@ -114,7 +114,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		static Uri TryCreateUri(string text) {
+		static Uri? TryCreateUri(string text) {
 			try {
 				return new Uri(text, UriKind.RelativeOrAbsolute);
 			}

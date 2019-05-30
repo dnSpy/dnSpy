@@ -35,7 +35,7 @@ namespace dnSpy.Hex {
 		readonly bool isVolatile;
 		readonly HexPosition endAddress;
 
-		public HexProcessSimpleBufferStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) {
+		public HexProcessSimpleBufferStream(IntPtr hProcess, string? name, bool isReadOnly, bool isVolatile) {
 			this.hProcess = hProcess;
 			Span = GetDefaultSpan(hProcess);
 			Name = name ?? GetDefaultName(hProcess);

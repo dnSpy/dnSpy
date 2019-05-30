@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="cmdId">Command ID</param>
 		/// <param name="args">Arguments or null</param>
 		/// <returns></returns>
-		CommandTargetStatus Execute(Guid group, int cmdId, object args = null);
+		CommandTargetStatus Execute(Guid group, int cmdId, object? args = null);
 
 		/// <summary>
 		/// Executes the command
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="args">Arguments or null</param>
 		/// <param name="result">Updated with the result</param>
 		/// <returns></returns>
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result);
+		CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result);
 
 		/// <summary>
 		/// Checks whether the command can execute. If it can execute, it must return <see cref="CommandTargetStatus.Handled"/>

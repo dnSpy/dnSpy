@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the <see cref="IZoomable"/> instance or null
 		/// </summary>
-		IZoomable Zoomable { get; }
+		IZoomable? Zoomable { get; }
 	}
 }

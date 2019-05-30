@@ -106,7 +106,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ImportingConstructor]
 		DocumentViewerUIElementTaggerProvider(IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider) => this.documentViewerUIElementServiceProvider = documentViewerUIElementServiceProvider;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
 				return null;
 			// We can't call textView.TextBuffer.TryGetDocumentViewer() since it hasn't completely
@@ -159,7 +159,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly ITextView textView;
 		readonly Dictionary<int, UIElement> cachedUIElements;
 		DocumentViewerUIElementCollection collection;
-		IDocumentViewerUIElementTagger tagger;
+		IDocumentViewerUIElementTagger? tagger;
 		int textVersionNumber;
 
 		public DocumentViewerUIElementService(ITextView textView) {

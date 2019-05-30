@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Creates <see cref="GuidObject"/>s, can be null
 		/// </summary>
-		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
+		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? CreateGuidObjects { get; set; }
 
 		/// <summary>
 		/// Clones this

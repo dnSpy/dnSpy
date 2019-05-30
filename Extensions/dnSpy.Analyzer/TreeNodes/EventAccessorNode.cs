@@ -22,9 +22,9 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventAccessorNode : MethodNode {
-		readonly string name;
+		readonly string? name;
 
-		public EventAccessorNode(MethodDef analyzedMethod, string name)
+		public EventAccessorNode(MethodDef analyzedMethod, string? name)
 			: base(analyzedMethod) => this.name = name;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {

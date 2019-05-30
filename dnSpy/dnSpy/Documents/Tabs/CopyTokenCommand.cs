@@ -77,7 +77,7 @@ namespace dnSpy.Documents.Tabs {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes?.Length == 0)
+				if (nodes == null || nodes.Length == 0)
 					return null;
 				var node = nodes[0] as IMDTokenNode;
 				return node?.Reference?.MDToken.Raw;

@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.Impl {
 	sealed class DbgBoundCodeBreakpointImpl : DbgBoundCodeBreakpoint {
 		public override DbgCodeBreakpoint Breakpoint => breakpoint;
 		public override DbgRuntime Runtime => runtime;
-		public override DbgModule Module => module;
+		public override DbgModule? Module => module;
 
 		public override ulong Address {
 			get {
@@ -47,11 +47,11 @@ namespace dnSpy.Debugger.Impl {
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
 		readonly DbgCodeBreakpoint breakpoint;
-		DbgModule module;
+		DbgModule? module;
 		ulong address;
 		DbgBoundCodeBreakpointMessage message;
 
-		public DbgBoundCodeBreakpointImpl(DbgRuntimeImpl runtime, DbgCodeBreakpoint breakpoint, DbgModule module, ulong address, DbgBoundCodeBreakpointMessage message) {
+		public DbgBoundCodeBreakpointImpl(DbgRuntimeImpl runtime, DbgCodeBreakpoint breakpoint, DbgModule? module, ulong address, DbgBoundCodeBreakpointMessage message) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		internal void UpdateModule_DbgThread(DbgModule module) {
+		internal void UpdateModule_DbgThread(DbgModule? module) {
 			Dispatcher.VerifyAccess();
 			if (this.module != module) {
 				this.module = module;

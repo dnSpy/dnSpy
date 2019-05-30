@@ -26,9 +26,9 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class StringsHeapImpl : StringsHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
-		KnownStringInfo[] knownStringInfos;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
+		KnownStringInfo[]? knownStringInfos;
 
 		readonly struct KnownStringInfo {
 			public HexSpan Span { get; }
@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			var info = GetStringInfo(position);
 			if (info != null)
 				return new StringsHeapRecordData(Span.Buffer, info.Value.String.StringSpan, info.Value.String.HasTerminator, this, info.Value.Tokens);
@@ -77,6 +77,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
+			Debug.Assert(knownStringInfos != null);
 
 			var pos = knownStringInfos[index].Span.Start;
 			var end = HexPosition.Min(Span.Span.End, pos + 0x1000);
@@ -115,7 +116,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			knownStringInfos = CreateKnownStringInfos(metadata.TablesStream);
 		}
 
-		KnownStringInfo[] CreateKnownStringInfos(TablesHeap tables) {
+		KnownStringInfo[] CreateKnownStringInfos(TablesHeap? tables) {
 			if (tables == null)
 				return Array.Empty<KnownStringInfo>();
 

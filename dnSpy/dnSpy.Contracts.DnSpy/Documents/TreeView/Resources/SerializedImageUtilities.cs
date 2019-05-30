@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
@@ -35,7 +36,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="serializedData">Serialized data</param>
 		/// <param name="imageData">Updated with the image data</param>
 		/// <returns></returns>
-		public static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData) {
+		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhenTrue] out byte[]? imageData) {
 			imageData = null;
 			if (CouldBeBitmap(module, typeName)) {
 				var dict = Deserializer.Deserialize(SystemDrawingBitmap.DefinitionAssembly.FullName, SystemDrawingBitmap.ReflectionFullName, serializedData);
@@ -63,8 +64,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			return false;
 		}
 
-		static bool CouldBeBitmap(ModuleDef module, string name) => CheckType(module, name, SystemDrawingBitmap);
-		static bool CouldBeIcon(ModuleDef module, string name) => CheckType(module, name, SystemDrawingIcon);
+		static bool CouldBeBitmap(ModuleDef? module, string name) => CheckType(module, name, SystemDrawingBitmap);
+		static bool CouldBeIcon(ModuleDef? module, string name) => CheckType(module, name, SystemDrawingIcon);
 
 		/// <summary>
 		/// Checks whether the type matches an expected type
@@ -73,7 +74,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="name">Type name</param>
 		/// <param name="expectedType">Expected type</param>
 		/// <returns></returns>
-		public static bool CheckType(ModuleDef module, string name, TypeRef expectedType) {
+		public static bool CheckType(ModuleDef? module, string name, TypeRef expectedType) {
 			if (module == null)
 				module = new ModuleDefUser();
 			var tr = TypeNameParser.ParseReflection(module, name, null);

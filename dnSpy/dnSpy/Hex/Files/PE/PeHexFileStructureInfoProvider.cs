@@ -29,7 +29,7 @@ namespace dnSpy.Hex.Files.PE {
 	[VSUTIL.Name(PredefinedHexFileStructureInfoProviderFactoryNames.PE)]
 	[VSUTIL.Order(Before = PredefinedHexFileStructureInfoProviderFactoryNames.Default)]
 	sealed class PeHexFileStructureInfoProviderFactory : HexFileStructureInfoProviderFactory {
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new PeHexFileStructureInfoProvider();
 	}
 
@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Files.PE {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, PeOptionalHeaderData optHdr, HexPosition position) {
 			if (optHdr.DataDirectory.Data.Span.Contains(position)) {
-				var data = (DataDirectoryData)optHdr.DataDirectory.Data.GetFieldByPosition(position).Data;
+				var data = (DataDirectoryData)optHdr.DataDirectory.Data.GetFieldByPosition(position)!.Data;
 				return DataDirectoryDataUtils.TryGetSpan(file, data, position);
 			}
 
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Files.PE {
 		}
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, PeSectionsData sections, HexPosition position) {
-			var data = (PeSectionData)sections.GetFieldByPosition(position)?.Data;
+			var data = (PeSectionData?)sections.GetFieldByPosition(position)?.Data;
 			if (data == null)
 				return null;
 

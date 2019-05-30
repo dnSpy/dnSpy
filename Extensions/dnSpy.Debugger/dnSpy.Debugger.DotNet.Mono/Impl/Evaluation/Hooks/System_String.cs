@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 
 		AppDomainMirror GetMonoAppDomain(DmdMemberInfo member) => DbgMonoDebugInternalAppDomainImpl.GetAppDomainMirror(member.AppDomain);
 
-		public override DbgDotNetValue CreateInstance(DmdConstructorInfo ctor, object[] arguments) {
+		public override DbgDotNetValue? CreateInstance(DmdConstructorInfo ctor, object?[] arguments) {
 			var appDomain = ctor.AppDomain;
 			var ps = ctor.GetMethodSignature().GetParameterTypes();
 			ValueLocation valueLocation;

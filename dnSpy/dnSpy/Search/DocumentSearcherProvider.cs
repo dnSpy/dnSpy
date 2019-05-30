@@ -48,9 +48,8 @@ namespace dnSpy.Search {
 				throw new ArgumentNullException(nameof(options));
 			if (documentTreeView == null)
 				throw new ArgumentNullException(nameof(documentTreeView));
-			var searchResultContext = new SearchResultContext(classificationFormatMap, textElementProvider) {
+			var searchResultContext = new SearchResultContext(classificationFormatMap, textElementProvider, decompilerService.Decompiler) {
 				SyntaxHighlight = true,
-				Decompiler = decompilerService.Decompiler,
 			};
 			return new DocumentSearcher(options, documentTreeView, dotNetImageService, searchResultContext);
 		}

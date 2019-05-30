@@ -75,14 +75,14 @@ namespace dnSpy.Hex.Editor {
 		readonly CaretGeometry valuesCaretGeometry;
 		readonly CaretGeometry asciiCaretGeometry;
 
-		Brush activeCaretBrush;
-		Brush activeOverwriteCaretBrush;
-		Brush inactiveCaretBrush;
-		Brush inactiveOverwriteCaretBrush;
+		Brush? activeCaretBrush;
+		Brush? activeOverwriteCaretBrush;
+		Brush? inactiveCaretBrush;
+		Brush? inactiveOverwriteCaretBrush;
 
 		bool drawCaretShape;
 		bool overwriteMode;
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 
 		public bool OverwriteMode {
 			get => overwriteMode;
@@ -295,7 +295,7 @@ namespace dnSpy.Hex.Editor {
 			return new Rect(left, top, right - left, bottom - top);
 		}
 
-		Rect GetCaretRect(HexViewLine line, bool drawOverwriteMode, HexColumnType column, HexCell cell, int cellPosition) {
+		Rect GetCaretRect(HexViewLine line, bool drawOverwriteMode, HexColumnType column, HexCell? cell, int cellPosition) {
 			if (cell == null)
 				return new Rect();
 
@@ -388,7 +388,7 @@ namespace dnSpy.Hex.Editor {
 			public bool IsOverwriteMode { get; private set; }
 			public Rect Rect => rect;
 
-			public Geometry Geometry {
+			public Geometry? Geometry {
 				get {
 					if (!visible) {
 						Debug.Assert(geometry == null);
@@ -402,7 +402,7 @@ namespace dnSpy.Hex.Editor {
 					return geometry;
 				}
 			}
-			Geometry geometry;
+			Geometry? geometry;
 			Rect rect;
 			bool visible;
 

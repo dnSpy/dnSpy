@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 			: base(document) => Debug.Assert(document.PEImage != null && document.ModuleDef == null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.PEImage);
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.PEImage!);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
@@ -43,6 +43,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			Debug.Assert(Document.PEImage != null);
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
 				new NodePrinter().Write(output, decompiler, Document);
 			else {

@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException("TModel is an invalid type");
 		}
 
-		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod)
 			: base(editString, createString, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 

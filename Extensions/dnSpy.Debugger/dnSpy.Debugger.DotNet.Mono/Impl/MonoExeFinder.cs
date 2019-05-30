@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		const string MONO_PROGRAM_FILES_DIR = "Mono";
 		const string MONO_PROGRAM_FILES_DIR_BIN = "bin";
 
-		public static string Find(MonoExeOptions options) {
+		public static string? Find(MonoExeOptions options) {
 			if ((options & (MonoExeOptions.Prefer32 | MonoExeOptions.Prefer64)) == 0) {
 				if (IntPtr.Size == 4)
 					options |= MonoExeOptions.Prefer32;
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
-		static void Find(MonoExeOptions options, out string mono32, out string mono64) {
+		static void Find(MonoExeOptions options, out string? mono32, out string? mono64) {
 			mono32 = null;
 			mono64 = null;
 			foreach (var dir in GetDirectories()) {

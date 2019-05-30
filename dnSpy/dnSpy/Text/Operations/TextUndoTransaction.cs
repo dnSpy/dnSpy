@@ -27,7 +27,7 @@ namespace dnSpy.Text.Operations {
 		public bool CanRedo => State == UndoTransactionState.Undone;
 		public bool CanUndo => State == UndoTransactionState.Completed;
 		public ITextUndoHistory History => history;
-		public IMergeTextUndoTransactionPolicy MergePolicy { get; set; }
+		public IMergeTextUndoTransactionPolicy? MergePolicy { get; set; }
 		public ITextUndoTransaction Parent { get; }
 		public UndoTransactionState State { get; private set; }
 		public IList<ITextUndoPrimitive> UndoPrimitives => readOnlyUndoPrimitives;

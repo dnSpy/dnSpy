@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// <summary>
 		/// Path to <c>mono.exe</c> or null / empty string if it should be auto detected
 		/// </summary>
-		public string MonoExePath { get; set; }
+		public string? MonoExePath { get; set; }
 
 		/// <summary>
 		/// <c>mono.exe</c> options

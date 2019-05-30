@@ -30,7 +30,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class FieldAccessNode : SearchNode {
 		readonly bool showWrites; // true: show writes; false: show read access
 		readonly FieldDef analyzedField;
-		Lazy<Hashtable> foundMethods;
+		Lazy<Hashtable>? foundMethods;
 		readonly object hashLock = new object();
 
 		public FieldAccessNode(FieldDef analyzedField, bool showWrites) {
@@ -56,12 +56,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (!method.HasBody)
 					continue;
-				Instruction foundInstr = null;
+				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
-						IField fr = instr.Operand as IField;
+						IField? fr = instr.Operand as IField;
 						if (fr.ResolveFieldDef() == analyzedField &&
-							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType)) {
+							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr!.DeclaringType)) {
 							foundInstr = instr;
 							break;
 						}
@@ -97,7 +97,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		bool HasAlreadyBeenFound(MethodDef method) {
-			Hashtable hashtable = foundMethods.Value;
+			Hashtable hashtable = foundMethods!.Value;
 			lock (hashLock) {
 				if (hashtable.Contains(method)) {
 					return true;

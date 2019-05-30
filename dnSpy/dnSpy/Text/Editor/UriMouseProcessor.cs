@@ -81,7 +81,7 @@ namespace dnSpy.Text.Editor {
 		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
 
-		IMappingTagSpan<IUrlTag> GetUriSpan(MouseEventArgs e) {
+		IMappingTagSpan<IUrlTag>? GetUriSpan(MouseEventArgs e) {
 			if (!IsControlDown)
 				return null;
 			var loc = MouseLocation.Create(wpfTextView, e, insertionPosition: false);

@@ -28,7 +28,7 @@ namespace dnSpy.MainApp {
 	sealed class AppCommandLineArgs : IAppCommandLineArgs {
 		const char ARG_SEP = ':';
 
-		public string SettingsFilename { get; }
+		public string? SettingsFilename { get; }
 		public IEnumerable<string> Filenames => filenames;
 		public bool SingleInstance { get; }
 		public bool Activate { get; }
@@ -36,7 +36,7 @@ namespace dnSpy.MainApp {
 		public string Culture { get; }
 		public string SelectMember { get; }
 		public bool NewTab { get; }
-		public string SearchText { get; }
+		public string? SearchText { get; }
 		public string SearchFor { get; }
 		public string SearchIn { get; }
 		public string Theme { get; }
@@ -256,7 +256,7 @@ namespace dnSpy.MainApp {
 
 		public bool HasArgument(string argName) => userArgs.ContainsKey(argName);
 
-		public string GetArgumentValue(string argName) {
+		public string? GetArgumentValue(string argName) {
 			userArgs.TryGetValue(argName, out string value);
 			return value;
 		}

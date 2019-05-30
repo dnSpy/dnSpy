@@ -30,6 +30,6 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="imageReference">Image reference</param>
 		/// <param name="options">Image options</param>
 		/// <returns></returns>
-		BitmapSource GetImage(ImageReference imageReference, ImageOptions options);
+		BitmapSource? GetImage(ImageReference imageReference, ImageOptions options);
 	}
 }

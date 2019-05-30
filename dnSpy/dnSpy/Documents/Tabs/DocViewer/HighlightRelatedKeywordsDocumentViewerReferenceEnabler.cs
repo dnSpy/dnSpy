@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Documents.Tabs.DocViewer {
 	[ExportDocumentViewerReferenceEnablerProvider(PredefinedSpanReferenceIds.HighlightRelatedKeywords)]
 	sealed class HighlightRelatedKeywordsDocumentViewerReferenceEnablerProvider : IDocumentViewerReferenceEnablerProvider {
-		public IDocumentViewerReferenceEnabler Create(IDocumentViewer documentViewer) =>
+		public IDocumentViewerReferenceEnabler? Create(IDocumentViewer documentViewer) =>
 			new HighlightRelatedKeywordsDocumentViewerReferenceEnabler(documentViewer);
 	}
 

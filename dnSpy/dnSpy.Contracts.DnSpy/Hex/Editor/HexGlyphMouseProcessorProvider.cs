@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="wpfHexViewHost">Hex view host</param>
 		/// <param name="margin">Margin</param>
 		/// <returns></returns>
-		public abstract HexMouseProcessor GetAssociatedMouseProcessor(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin margin);
+		public abstract HexMouseProcessor? GetAssociatedMouseProcessor(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin margin);
 	}
 }

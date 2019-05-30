@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.AsmEditor.Compiler;
@@ -30,9 +31,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		sealed class ReferenceInfo : IDisposable {
 			public readonly RawModuleBytes RawData;
 			readonly CompilerMetadataReference mdRef;
-			public ModuleDefMD Module;
+			public ModuleDefMD? Module;
 
-			public IAssembly Assembly => mdRef.Assembly;
+			public IAssembly? Assembly => mdRef.Assembly;
 
 			public ReferenceInfo(RawModuleBytes rawData, in CompilerMetadataReference mdRef) {
 				RawData = rawData;
@@ -49,7 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.references[i] = new ReferenceInfo(references[i].rawData, references[i].mdRef);
 		}
 
-		public AssemblyDef Resolve(IAssembly assembly, ModuleDef sourceModule) {
+		public AssemblyDef? Resolve(IAssembly assembly, ModuleDef sourceModule) {
 			if (TryResolve(assembly, AssemblyNameComparer.CompareAll, out var resolvedAssembly))
 				return resolvedAssembly;
 			if (TryResolve(assembly, AssemblyNameComparer.NameAndPublicKeyTokenOnly, out resolvedAssembly))
@@ -59,7 +60,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		bool TryResolve(IAssembly assemblyReference, AssemblyNameComparer comparer, out AssemblyDef assembly) {
+		bool TryResolve(IAssembly assemblyReference, AssemblyNameComparer comparer, [NotNullWhenTrue] out AssemblyDef? assembly) {
 			foreach (var reference in references) {
 				if (comparer.Equals(reference.Assembly, assemblyReference)) {
 					assembly = GetModule(reference)?.Assembly;

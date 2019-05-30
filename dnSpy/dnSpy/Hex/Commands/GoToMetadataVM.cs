@@ -116,9 +116,9 @@ namespace dnSpy.Hex.Commands {
 
 		public uint OffsetTokenValue => offsetTokenVM.Value;
 
-		readonly PeHeaders peHeaders;
+		readonly PeHeaders? peHeaders;
 
-		public GoToMetadataVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders peHeaders, uint value) {
+		public GoToMetadataVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders? peHeaders, uint value) {
 			if (buffer == null)
 				throw new ArgumentNullException(nameof(buffer));
 			if (mdHeaders == null)
@@ -140,8 +140,9 @@ namespace dnSpy.Hex.Commands {
 		sealed class OffsetTokenVM : NumberDataFieldVM<uint, uint> {
 			readonly HexBuffer buffer;
 			readonly DotNetMetadataHeaders mdHeaders;
-			readonly PeHeaders peHeaders;
-			public OffsetTokenVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders peHeaders, uint value, Action<DataFieldVM> onUpdated)
+			readonly PeHeaders? peHeaders;
+
+			public OffsetTokenVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders? peHeaders, uint value, Action<DataFieldVM> onUpdated)
 				: base(onUpdated, uint.MinValue, uint.MaxValue, null) {
 				SetValueFromConstructor(value);
 				this.buffer = buffer;
@@ -162,8 +163,8 @@ namespace dnSpy.Hex.Commands {
 
 			protected override string OnNewValue(uint value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
-			protected override string ConvertToValue(out uint value) {
-				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out string error);
+			protected override string? ConvertToValue(out uint value) {
+				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out var error);
 				if (error != null)
 					return error;
 				return CheckOffsetToken(value) ? null : dnSpy_Resources.GoToMetadataInvalidOffsetOrToken;
@@ -211,7 +212,7 @@ namespace dnSpy.Hex.Commands {
 				}
 			}
 
-			MDTable GetMDTable(uint token) {
+			MDTable? GetMDTable(uint token) {
 				var tablesStream = mdHeaders.TablesStream;
 				if (tablesStream == null)
 					return null;

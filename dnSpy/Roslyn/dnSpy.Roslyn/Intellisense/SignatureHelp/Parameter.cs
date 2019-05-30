@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -37,19 +38,21 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			get {
 				if (documentationTaggedText == null)
 					InitializeDocumentation();
+				Debug.Assert(documentationTaggedText != null);
 				return documentationTaggedText;
 			}
 		}
-		TaggedText[] documentationTaggedText;
+		TaggedText[]? documentationTaggedText;
 
 		public string Documentation {
 			get {
 				if (documentation == null)
 					InitializeDocumentation();
+				Debug.Assert(documentation != null);
 				return documentation;
 			}
 		}
-		string documentation;
+		string? documentation;
 
 		readonly SignatureHelpParameter parameter;
 

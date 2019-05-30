@@ -43,7 +43,7 @@ namespace dnSpy.Decompiler {
 				get { yield break; }
 			}
 
-			public override bool Equals(object obj) => obj is DummySettings;
+			public override bool Equals(object? obj) => obj is DummySettings;
 			public override int GetHashCode() => 0;
 		}
 

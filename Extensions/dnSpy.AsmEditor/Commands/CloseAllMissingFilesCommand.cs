@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Commands {
 			this.appService = appService;
 		}
 
-		UnknownDocumentNode[] GetNodes() {
+		UnknownDocumentNode[]? GetNodes() {
 			var nodes = documentTreeView.TreeView.Root.DataChildren.OfType<UnknownDocumentNode>().ToArray();
 			return nodes.Length == 0 ? null : nodes;
 		}

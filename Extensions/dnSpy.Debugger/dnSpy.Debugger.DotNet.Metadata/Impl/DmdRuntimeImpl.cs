@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return appDomains.ToArray();
 		}
 
-		public override DmdAppDomain GetAppDomain(int id) {
+		public override DmdAppDomain? GetAppDomain(int id) {
 			lock (appDomainsLockObj) {
 				foreach (var appDomain in appDomains) {
 					if (appDomain.Id == id)

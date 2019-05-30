@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="contentTypeRegistryService">Content type registry service</param>
 		/// <param name="kind">Kind</param>
 		/// <returns></returns>
-		IContentType GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind);
+		IContentType? GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind);
 	}
 }

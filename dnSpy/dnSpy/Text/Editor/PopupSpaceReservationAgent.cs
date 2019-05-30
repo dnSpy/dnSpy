@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor {
 		Rect ToScreenRect(Rect wpfRect) => new Rect(ToScreenPoint(wpfRect.TopLeft), ToScreenPoint(wpfRect.BottomRight));
 		Point ToScreenPoint(Point point) => wpfTextView.VisualElement.PointToScreen(point);
 
-		public Geometry PositionAndDisplay(Geometry reservedSpace) {
+		public Geometry? PositionAndDisplay(Geometry reservedSpace) {
 			var spanBoundsTmp = GetVisualSpanBounds();
 			if (spanBoundsTmp == null || spanBoundsTmp.Value.IsEmpty)
 				return null;

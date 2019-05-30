@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="obj">Data</param>
 		/// <returns></returns>
-		public static byte[] Serialize(object obj) {
+		public static byte[] Serialize(object? obj) {
 			//TODO: The asm names of the saved types are saved in the serialized data. If the current
 			//		module is eg. a .NET 2.0 asm, you should replace the versions from 4.0.0.0 to 2.0.0.0.
 			var formatter = new BinaryFormatter();
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="data">Serialized data</param>
 		/// <param name="obj">Deserialized data</param>
 		/// <returns></returns>
-		public static string Deserialize(byte[] data, out object obj) {
+		public static string Deserialize(byte[] data, out object? obj) {
 			try {
 				obj = new BinaryFormatter().Deserialize(new MemoryStream(data));
 				return string.Empty;
@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="typeAsString">Data as a string</param>
 		/// <param name="obj">Updated with the deserialized data</param>
 		/// <returns></returns>
-		public static string CreateObjectFromString(Type targetType, string typeAsString, out object obj) {
+		public static string CreateObjectFromString(Type targetType, string typeAsString, out object? obj) {
 			obj = null;
 			try {
 				var typeConverter = TypeDescriptor.GetConverter(targetType);

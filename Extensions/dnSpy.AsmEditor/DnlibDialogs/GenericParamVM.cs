@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				var mask = GenericParamAttributes.VarianceMask;
 				return (attributes & ~mask) |
-					((GenericParamAttributes)((int)(GPVariance)GPVarianceVM.SelectedItem << 0) & GenericParamAttributes.VarianceMask);
+					((GenericParamAttributes)((int)(GPVariance)GPVarianceVM.SelectedItem! << 0) & GenericParamAttributes.VarianceMask);
 			}
 			set {
 				if (attributes != value) {
@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
 		public UInt16VM Number { get; }
 		public TypeDefOrRefAndCAsVM<GenericParamConstraint> TypeDefOrRefAndCAsVM { get; }
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			this.ownerModule = ownerModule;
 			origOptions = options;
 			Number = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });

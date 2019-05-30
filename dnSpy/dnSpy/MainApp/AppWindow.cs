@@ -42,9 +42,9 @@ namespace dnSpy.MainApp {
 		public IAppStatusBar StatusBar => statusBar;
 		readonly AppStatusBar statusBar;
 
-		Window IAppWindow.MainWindow => mainWindow;
-		internal MainWindow MainWindow => mainWindow;
-		MainWindow mainWindow;
+		Window IAppWindow.MainWindow => mainWindow!;
+		internal MainWindow MainWindow => mainWindow!;
+		MainWindow? mainWindow;
 
 		public IWpfCommands MainWindowCommands => mainWindowCommands;
 		readonly IWpfCommands mainWindowCommands;
@@ -54,7 +54,11 @@ namespace dnSpy.MainApp {
 		public string AssemblyInformationalVersion => assemblyInformationalVersion;
 		readonly string assemblyInformationalVersion;
 
-		public IAppCommandLineArgs CommandLineArgs { get; set; }
+		public IAppCommandLineArgs CommandLineArgs {
+			get => commandLineArgs!;
+			set => commandLineArgs = value;
+		}
+		IAppCommandLineArgs? commandLineArgs;
 
 		sealed class UISettings {
 			static readonly Guid SETTINGS_GUID = new Guid("33E1988B-8EFF-4F4C-A064-FA99A7D0C64D");
@@ -66,7 +70,11 @@ namespace dnSpy.MainApp {
 			public SavedWindowState SavedWindowState;
 			public MainWindowControlState MainWindowControlState;
 
-			public UISettings(ISettingsService settingsService) => this.settingsService = settingsService;
+			public UISettings(ISettingsService settingsService) {
+				this.settingsService = settingsService;
+				SavedWindowState = null!;
+				MainWindowControlState = null!;
+			}
 
 			public void Read() {
 				var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
@@ -158,7 +166,7 @@ namespace dnSpy.MainApp {
 			if (e.Cancel)
 				return;
 
-			uiSettings.SavedWindowState = new SavedWindowState(mainWindow);
+			uiSettings.SavedWindowState = new SavedWindowState(mainWindow!);
 			uiSettings.MainWindowControlState = mainWindowControl.CreateState();
 			uiSettings.Write();
 		}
@@ -193,7 +201,7 @@ namespace dnSpy.MainApp {
 				appToolBar.Initialize(mainWindow);
 		}
 
-		void UpdateTitle() => mainWindow.Title = GetDefaultTitle();
+		void UpdateTitle() => mainWindow!.Title = GetDefaultTitle();
 
 		string GetDefaultTitle() => $"{Constants.DnSpy} {AssemblyInformationalVersion} ({string.Join(", ", titleInfos.ToArray())})";
 		readonly List<string> titleInfos = new List<string>();

@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		/// </summary>
 		public abstract DmdType Type { get; }
 		public abstract Value Load();
-		public abstract string Store(Value value);
+		public abstract string? Store(Value value);
 		public ValueLocation Dereference() {
 			if (!Type.IsByRef)
 				throw new InvalidOperationException();
@@ -51,17 +51,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		Value value;
 
-		public NoValueLocation(DmdType type, Value value) {
+		public NoValueLocation(DmdType type, Value? value) {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			this.value = value ?? throw new ArgumentNullException(nameof(value));
 		}
 
 		public override Value Load() => value;
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			this.value = value;
 			return null;
 		}
-		protected override ValueLocation DereferenceCore() => new NoValueLocation(Type.GetElementType(), value);
+		protected override ValueLocation DereferenceCore() => new NoValueLocation(Type.GetElementType()!, value);
 	}
 
 	sealed class LocalValueLocation : ValueLocation {
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return frame.MonoFrame.GetValue(locals[index]);
 		}
 
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			var locals = frame.MonoFrame.Method.GetLocals();
 			if ((uint)index >= (uint)locals.Length)
 				return PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway;
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return null;
 		}
 
-		protected override ValueLocation DereferenceCore() => new LocalValueLocation(Type.GetElementType(), frame, index);
+		protected override ValueLocation DereferenceCore() => new LocalValueLocation(Type.GetElementType()!, frame, index);
 	}
 
 	sealed class ArgumentValueLocation : ValueLocation {
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return frame.MonoFrame.GetValue(parameters[index]);
 		}
 
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			var parameters = frame.MonoFrame.Method.GetParameters();
 			if ((uint)index >= (uint)parameters.Length)
 				return PredefinedEvaluationErrorMessages.CannotReadLocalOrArgumentMaybeOptimizedAway;
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return null;
 		}
 
-		protected override ValueLocation DereferenceCore() => new ArgumentValueLocation(Type.GetElementType(), frame, index);
+		protected override ValueLocation DereferenceCore() => new ArgumentValueLocation(Type.GetElementType()!, frame, index);
 	}
 
 	sealed class ThisValueLocation : ValueLocation {
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		public override Value Load() => frame.MonoFrame.GetThis();
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			if (frame.MonoFrame.VirtualMachine.Version.AtLeast(2, 44)) {
 				frame.MonoFrame.SetThis(value);
 				return null;
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			else
 				return dnSpy_Debugger_DotNet_Mono_Resources.Error_CanNotWriteToThisArgument;
 		}
-		protected override ValueLocation DereferenceCore() => new ThisValueLocation(Type.GetElementType(), frame);
+		protected override ValueLocation DereferenceCore() => new ThisValueLocation(Type.GetElementType()!, frame);
 	}
 
 	sealed class ArrayElementValueLocation : ValueLocation {
@@ -159,11 +159,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		public override Value Load() => arrayMirror[(int)index];
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			arrayMirror[(int)index] = value;
 			return null;
 		}
-		protected override ValueLocation DereferenceCore() => new ArrayElementValueLocation(Type.GetElementType(), arrayMirror, index);
+		protected override ValueLocation DereferenceCore() => new ArrayElementValueLocation(Type.GetElementType()!, arrayMirror, index);
 	}
 
 	sealed class StaticFieldValueLocation : ValueLocation {
@@ -180,11 +180,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		public override Value Load() => field.DeclaringType.GetValue(field, thread);
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			field.DeclaringType.SetValue(field, value);
 			return null;
 		}
-		protected override ValueLocation DereferenceCore() => new StaticFieldValueLocation(Type.GetElementType(), thread, field);
+		protected override ValueLocation DereferenceCore() => new StaticFieldValueLocation(Type.GetElementType()!, thread, field);
 	}
 
 	sealed class ReferenceTypeFieldValueLocation : ValueLocation {
@@ -201,11 +201,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		public override Value Load() => objectMirror.GetValue(field);
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			objectMirror.SetValue(field, value);
 			return null;
 		}
-		protected override ValueLocation DereferenceCore() => new ReferenceTypeFieldValueLocation(Type.GetElementType(), objectMirror, field);
+		protected override ValueLocation DereferenceCore() => new ReferenceTypeFieldValueLocation(Type.GetElementType()!, objectMirror, field);
 	}
 
 	sealed class ValueTypeFieldValueLocation : ValueLocation {
@@ -230,7 +230,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		ValueTypeFieldValueLocation(ValueTypeFieldValueLocation other) {
-			Type = other.Type.GetElementType();
+			Type = other.Type.GetElementType()!;
 			containingLocation = other.containingLocation;
 			field = other.field;
 			valueIndex = other.valueIndex;
@@ -254,15 +254,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(structMirror?.Type == structType);
 			if (structMirror?.Type != structType)
 				throw new InvalidOperationException();
-			return structMirror.Fields[valueIndex];
+			return structMirror!.Fields[valueIndex];
 		}
 
-		public override string Store(Value value) {
+		public override string? Store(Value value) {
 			var structMirror = containingLocation.Load() as StructMirror;
 			Debug.Assert(structMirror?.Type == structType);
 			if (structMirror?.Type != structType)
 				throw new InvalidOperationException();
-			structMirror.Fields[valueIndex] = value;
+			structMirror!.Fields[valueIndex] = value;
 			return containingLocation.Store(structMirror);
 		}
 

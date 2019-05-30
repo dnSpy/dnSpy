@@ -71,15 +71,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfacePropertyImplementedByNode(analyzedProperty);
 		}
 
-		public static AnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+		public static AnalyzerTreeNodeData? TryCreateAnalyzer(IMemberRef? member, IDecompiler decompiler) {
 			if (CanShow(member, decompiler))
-				return new PropertyNode(member as PropertyDef);
+				return new PropertyNode((PropertyDef)member!);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, IDecompiler decompiler) => member is PropertyDef;
-		public override IMemberRef Member => analyzedProperty;
-		public override IMDTokenProvider Reference => analyzedProperty;
+		public static bool CanShow(IMemberRef? member, IDecompiler decompiler) => member is PropertyDef;
+		public override IMemberRef? Member => analyzedProperty;
+		public override IMDTokenProvider? Reference => analyzedProperty;
 	}
 }

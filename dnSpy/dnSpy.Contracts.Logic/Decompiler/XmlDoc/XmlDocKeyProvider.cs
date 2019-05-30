@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="member">Member</param>
 		/// <param name="b">String builder</param>
 		/// <returns></returns>
-		public static StringBuilder GetKey(IMemberRef member, StringBuilder b) {
+		public static StringBuilder? GetKey(IMemberRef member, StringBuilder b) {
 			if (member == null)
 				return null;
 			b.Clear();
@@ -53,8 +53,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				AppendTypeName(b, member.DeclaringType.ToTypeSig());
 				b.Append('.');
 				b.Append(member.Name.Replace('.', '#'));
-				IList<Parameter> parameters;
-				TypeSig explicitReturnType = null;
+				IList<Parameter>? parameters;
+				TypeSig? explicitReturnType = null;
 				if (member.IsPropertyDef) {
 					parameters = GetParameters((PropertyDef)member).ToList();
 				}
@@ -171,7 +171,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 		}
 
-		static int AppendTypeNameWithArguments(StringBuilder b, ITypeDefOrRef type, IList<TypeSig> genericArguments) {
+		static int AppendTypeNameWithArguments(StringBuilder b, ITypeDefOrRef? type, IList<TypeSig> genericArguments) {
 			if (type == null)
 				return 0;
 			int outerTypeParameterCount = 0;
@@ -226,7 +226,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="module">Module to search</param>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		public static IMemberRef FindMemberByKey(ModuleDef module, string key) {
+		public static IMemberRef? FindMemberByKey(ModuleDef module, string key) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (key == null || key.Length < 2 || key[1] != ':')
@@ -247,7 +247,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 		}
 
-		static IMemberRef FindMember(ModuleDef module, string key, Func<TypeDef, IEnumerable<IMemberRef>> memberSelector) {
+		static IMemberRef? FindMember(ModuleDef module, string key, Func<TypeDef, IEnumerable<IMemberRef>> memberSelector) {
 			int parenPos = key.IndexOf('(');
 			int dotPos;
 			if (parenPos > 0) {
@@ -258,7 +258,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 			if (dotPos < 0)
 				return null;
-			TypeDef type = FindType(module, key.Substring(2, dotPos - 2));
+			TypeDef? type = FindType(module, key.Substring(2, dotPos - 2));
 			if (type == null)
 				return null;
 			string shortName;
@@ -268,11 +268,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			else {
 				shortName = key.Substring(dotPos + 1);
 			}
-			IMemberRef shortNameMatch = null;
+			IMemberRef? shortNameMatch = null;
 			var sb = new StringBuilder();
 			foreach (IMemberRef member in memberSelector(type)) {
 				var memberKey = GetKey(member, sb);
-				if (memberKey.CheckEquals(key))
+				if (memberKey?.CheckEquals(key) == true)
 					return member;
 				if (shortName == member.Name.Replace('.', '#'))
 					shortNameMatch = member;
@@ -281,11 +281,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			return shortNameMatch;
 		}
 
-		static TypeDef FindType(ModuleDef module, string name) {
+		static TypeDef? FindType(ModuleDef module, string name) {
 			int pos = name.LastIndexOf('.');
 			if (string.IsNullOrEmpty(name))
 				return null;
-			TypeDef type = module.Find(name, true);
+			TypeDef? type = module.Find(name, true);
 			if (type == null && pos > 0) { // Original code only entered if ns.Length > 0
 										   // try if this is a nested type
 				type = FindType(module, name.Substring(0, pos));

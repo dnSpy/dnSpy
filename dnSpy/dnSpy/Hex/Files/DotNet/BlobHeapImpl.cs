@@ -29,9 +29,9 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class BlobHeapImpl : BlobHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
-		BlobDataInfo[] blobDataInfos;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
+		BlobDataInfo[]? blobDataInfos;
 
 		enum BlobDataKind {
 			None,
@@ -88,7 +88,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			blobDataInfos = CreateBlobDataInfos(metadata.TablesStream);
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			var info = GetBlobDataInfo(position);
 			if (info != null)
 				return GetStructure(info.Value, position);
@@ -96,7 +96,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		ComplexData GetStructure(BlobDataInfo info, HexPosition position) {
+		ComplexData? GetStructure(BlobDataInfo info, HexPosition position) {
 			var pos = info.Span.Start;
 			var lengthStart = pos;
 			var len = ReadCompressedUInt32(ref pos) ?? -1;
@@ -136,6 +136,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		BlobDataInfo? GetBlobDataInfo(HexPosition position) {
+			Debug.Assert(blobDataInfos != null);
 			if (!Span.Contains(position))
 				return null;
 			var index = GetIndex(position);
@@ -144,7 +145,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return blobDataInfos[index];
 		}
 
-		BlobDataInfo[] CreateBlobDataInfos(TablesHeap tables) {
+		BlobDataInfo[] CreateBlobDataInfos(TablesHeap? tables) {
 			if (tables == null || Span.IsEmpty)
 				return Array.Empty<BlobDataInfo>();
 
@@ -233,7 +234,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				if (offs1 == 0)
 					continue;
 
-				List<uint> tokens;
+				List<uint>? tokens;
 				if (dict.TryGetValue(offs1, out var info))
 					tokens = info.Tokens;
 				else {
@@ -267,7 +268,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				uint offs2 = bigBlob ? buffer.ReadUInt32(recPos + colInfo2.Offset) : buffer.ReadUInt16(recPos + colInfo2.Offset);
 
 				{
-					List<uint> tokens;
+					List<uint>? tokens;
 					if (offs1 == 0)
 						tokens = null;
 					else if (dict.TryGetValue(offs1, out var info))
@@ -285,7 +286,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				}
 
 				{
-					List<uint> tokens;
+					List<uint>? tokens;
 					if (offs2 == 0)
 						tokens = null;
 					else if (dict.TryGetValue(offs2, out var info))

@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Editor {
 				public static bool operator ==(LinePosition a, LinePosition b) => a.Equals(b);
 				public static bool operator !=(LinePosition a, LinePosition b) => !a.Equals(b);
 				public bool Equals(LinePosition other) => EqualLines(Line, other.Line) && Column == other.Column;
-				public override bool Equals(object obj) => obj is LinePosition && Equals((LinePosition)obj);
+				public override bool Equals(object? obj) => obj is LinePosition && Equals((LinePosition)obj);
 				public override int GetHashCode() => (Line?.GetHashCode() ?? 0) ^ Column.GetHashCode();
 				static bool EqualLines(HexBufferLine a, HexBufferLine b) {
 					if ((object)a == b)
@@ -145,7 +145,7 @@ namespace dnSpy.Hex.Editor {
 				timer.Stop();
 				timerStart = null;
 			}
-			Stopwatch timerStart;
+			Stopwatch? timerStart;
 
 			void Timer_Tick(object sender, EventArgs e) {
 				if (owner.IsClosed || !owner.VisualElement.IsVisible || position == null || !owner.BufferLines.BufferSpan.Contains(position.Value.Line.BufferSpan)) {
@@ -170,8 +170,8 @@ namespace dnSpy.Hex.Editor {
 				return timerStart.ElapsedMilliseconds * 10000;
 			}
 
-			List<MouseHoverHandler> GetHandlersToNotify() {
-				List<MouseHoverHandler> list = null;
+			List<MouseHoverHandler>? GetHandlersToNotify() {
+				List<MouseHoverHandler>? list = null;
 				long elapsedTicks = GetElapsedTimerStartTicks();
 				foreach (var h in handlers) {
 					if (h.Raised)

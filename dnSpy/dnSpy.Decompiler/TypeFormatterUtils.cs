@@ -63,7 +63,7 @@ namespace dnSpy.Decompiler {
 		public const int MAX_RECURSION = 200;
 		public const int MAX_OUTPUT_LEN = 1024 * 4;
 
-		public static string FilterName(string s) {
+		public static string FilterName(string? s) {
 			const int MAX_NAME_LEN = 0x100;
 			if (s == null)
 				return "<<NULL>>";
@@ -101,7 +101,7 @@ namespace dnSpy.Decompiler {
 			return s.Substring(index + 1);
 		}
 
-		public static string GetNumberOfOverloadsString(TypeDef type, string name) {
+		public static string? GetNumberOfOverloadsString(TypeDef type, string name) {
 			int overloads = TypeFormatterUtils.GetNumberOfOverloads(type, name);
 			if (overloads == 1)
 				return $" (+ {dnSpy_Decompiler_Resources.ToolTip_OneMethodOverload})";
@@ -110,7 +110,7 @@ namespace dnSpy.Decompiler {
 			return null;
 		}
 
-		static int GetNumberOfOverloads(TypeDef type, string name) {
+		static int GetNumberOfOverloads(TypeDef? type, string name) {
 			var hash = new HashSet<MethodDef>(MethodEqualityComparer.DontCompareDeclaringTypes);
 			while (type != null) {
 				foreach (var m in type.Methods) {
@@ -122,7 +122,7 @@ namespace dnSpy.Decompiler {
 			return hash.Count - 1;
 		}
 
-		public static string GetPropertyName(IMethod method) {
+		public static string? GetPropertyName(IMethod? method) {
 			if (method == null)
 				return null;
 			var name = method.Name;
@@ -155,16 +155,17 @@ namespace dnSpy.Decompiler {
 		public static bool IsSystemValueTuple(GenericInstSig gis) => GetSystemValueTupleRank(gis) >= 0;
 
 		static int GetSystemValueTupleRank(GenericInstSig gis) {
+			GenericInstSig? gis2 = gis;
 			int rank = 0;
 			for (int i = 0; i < 1000; i++) {
-				int currentRank = GetValueTupleSimpleRank(gis);
+				int currentRank = GetValueTupleSimpleRank(gis2);
 				if (currentRank < 0)
 					return -1;
 				if (rank < 8)
 					return rank + currentRank;
 				rank += currentRank - 1;
-				gis = gis.GenericArguments[currentRank - 1] as GenericInstSig;
-				if (gis == null)
+				gis2 = gis2.GenericArguments[currentRank - 1] as GenericInstSig;
+				if (gis2 == null)
 					return -1;
 			}
 			return -1;
@@ -195,11 +196,11 @@ namespace dnSpy.Decompiler {
 			return rank;
 		}
 
-		public static bool IsDelegate(TypeDef td) => td != null &&
+		public static bool IsDelegate(TypeDef? td) => td != null &&
 			new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 			td.BaseType.DefinitionAssembly.IsCorLib();
 
-		public static (PropertyDef property, AccessorKind kind) TryGetProperty(MethodDef method) {
+		public static (PropertyDef? property, AccessorKind kind) TryGetProperty(MethodDef? method) {
 			if (method == null)
 				return (null, AccessorKind.None);
 			foreach (var p in method.DeclaringType.Properties) {
@@ -211,7 +212,7 @@ namespace dnSpy.Decompiler {
 			return (null, AccessorKind.None);
 		}
 
-		public static (EventDef @event, AccessorKind kind) TryGetEvent(MethodDef method) {
+		public static (EventDef? @event, AccessorKind kind) TryGetEvent(MethodDef? method) {
 			if (method == null)
 				return (null, AccessorKind.None);
 			foreach (var e in method.DeclaringType.Events) {
@@ -223,33 +224,33 @@ namespace dnSpy.Decompiler {
 			return (null, AccessorKind.None);
 		}
 
-		public static bool IsDeprecated(IMethod method) {
+		public static bool IsDeprecated(IMethod? method) {
 			var md = method.ResolveMethodDef();
 			if (md == null)
 				return false;
 			return IsDeprecated(md.CustomAttributes);
 		}
 
-		public static bool IsDeprecated(IField field) {
+		public static bool IsDeprecated(IField? field) {
 			var fd = field.ResolveFieldDef();
 			if (fd == null)
 				return false;
 			return IsDeprecated(fd.CustomAttributes);
 		}
 
-		public static bool IsDeprecated(PropertyDef prop) {
+		public static bool IsDeprecated(PropertyDef? prop) {
 			if (prop == null)
 				return false;
 			return IsDeprecated(prop.CustomAttributes);
 		}
 
-		public static bool IsDeprecated(EventDef evt) {
+		public static bool IsDeprecated(EventDef? evt) {
 			if (evt == null)
 				return false;
 			return IsDeprecated(evt.CustomAttributes);
 		}
 
-		public static bool IsDeprecated(ITypeDefOrRef type) {
+		public static bool IsDeprecated(ITypeDefOrRef? type) {
 			var td = type.ResolveTypeDef();
 			if (td == null)
 				return false;
@@ -293,7 +294,7 @@ namespace dnSpy.Decompiler {
 			return false;
 		}
 
-		static bool IsAwaitableType(TypeSig type) {
+		static bool IsAwaitableType(TypeSig? type) {
 			if (type == null)
 				return false;
 
@@ -303,7 +304,7 @@ namespace dnSpy.Decompiler {
 			return IsAwaitableType(td);
 		}
 
-		static bool IsAwaitableType(TypeDef td) {
+		static bool IsAwaitableType(TypeDef? td) {
 			if (td == null)
 				return false;
 
@@ -356,7 +357,7 @@ namespace dnSpy.Decompiler {
 			return flags;
 		}
 
-		public static bool HasConstant(IHasConstant hc, out CustomAttribute constantAttribute) {
+		public static bool HasConstant(IHasConstant? hc, out CustomAttribute? constantAttribute) {
 			constantAttribute = null;
 			if (hc == null)
 				return false;
@@ -377,8 +378,8 @@ namespace dnSpy.Decompiler {
 			return false;
 		}
 
-		public static bool TryGetConstant(IHasConstant hc, CustomAttribute constantAttribute, out object constant) {
-			if (hc.Constant != null) {
+		public static bool TryGetConstant(IHasConstant? hc, CustomAttribute? constantAttribute, out object? constant) {
+			if (hc?.Constant != null) {
 				constant = hc.Constant.Value;
 				return true;
 			}
@@ -440,16 +441,16 @@ namespace dnSpy.Decompiler {
 
 		public static bool IsReadOnlyProperty(PropertyDef property) => HasIsReadOnlyAttribute(property.CustomAttributes);
 
-		public static bool IsReadOnlyMethod(MethodDef method) {
+		public static bool IsReadOnlyMethod(MethodDef? method) {
 			if (method == null || method.IsConstructor)
 				return false;
 			return HasIsReadOnlyAttribute(method.Parameters.ReturnParameter.ParamDef?.CustomAttributes);
 		}
 
-		public static bool IsReadOnlyParameter(ParamDef pd) => HasIsReadOnlyAttribute(pd?.CustomAttributes);
-		public static bool IsReadOnlyType(TypeDef td) => HasIsReadOnlyAttribute(td?.CustomAttributes);
+		public static bool IsReadOnlyParameter(ParamDef? pd) => HasIsReadOnlyAttribute(pd?.CustomAttributes);
+		public static bool IsReadOnlyType(TypeDef? td) => HasIsReadOnlyAttribute(td?.CustomAttributes);
 
-		static bool HasIsReadOnlyAttribute(CustomAttributeCollection customAttributes) {
+		static bool HasIsReadOnlyAttribute(CustomAttributeCollection? customAttributes) {
 			if (customAttributes == null)
 				return false;
 			for (int i = 0; i < customAttributes.Count; i++) {

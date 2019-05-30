@@ -34,7 +34,7 @@ using Microsoft.Win32.SafeHandles;
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgThreadImpl : DbgThread {
 		public override DbgRuntime Runtime => runtime;
-		public override DbgAppDomain AppDomain => appDomain;
+		public override DbgAppDomain? AppDomain => appDomain;
 		public override string Kind => kind;
 		public override string Name => name;
 		public override int SuspendedCount => suspendedCount;
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 			set => Dispatcher.BeginInvoke(() => WriteUIName_DbgThread(value));
 		}
-		string userName;
+		string? userName;
 
 		public override ReadOnlyCollection<DbgStateInfo> State {
 			get {
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly DbgRuntimeImpl runtime;
 		readonly SafeAccessTokenHandle hThread;
 		readonly HashSet<DbgObject> autoCloseObjects;
-		DbgAppDomainImpl appDomain;
+		DbgAppDomainImpl? appDomain;
 		string kind;
 		ulong id;
 		ulong? managedId;
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Impl {
 		ReadOnlyCollection<DbgStateInfo> state;
 		static readonly ReadOnlyCollection<DbgStateInfo> emptyState = new ReadOnlyCollection<DbgStateInfo>(Array.Empty<DbgStateInfo>());
 
-		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
+		public DbgThreadImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl? appDomain, string kind, ulong id, ulong? managedId, string? name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
 			lockObj = new object();
 			autoCloseObjects = new HashSet<DbgObject>();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.Impl {
 			this.kind = kind;
 			this.id = id;
 			this.managedId = managedId;
-			this.name = name;
+			this.name = name ?? string.Empty;
 			this.suspendedCount = suspendedCount;
 			this.state = state ?? emptyState;
 			const int dwDesiredAccess = NativeMethods.THREAD_QUERY_INFORMATION;
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		internal void UpdateAppDomain_DbgThread(DbgAppDomainImpl appDomain) {
+		internal void UpdateAppDomain_DbgThread(DbgAppDomainImpl? appDomain) {
 			Dispatcher.VerifyAccess();
 			if (this.appDomain != appDomain) {
 				// Caller has verified that it's a valid app domain
@@ -115,13 +115,14 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void UpdateKind_DbgThread(string kind) {
+		internal void UpdateKind_DbgThread(string? kind) {
 			Dispatcher.VerifyAccess();
 			bool raiseEvent, raiseUINameEvent;
 			lock (lockObj) {
 				var oldUIName = GetUINameNoDefaultName_NoLock();
-				raiseEvent = this.kind != kind;
-				this.kind = kind;
+				raiseEvent = this.kind != kind && kind != null;
+				if (raiseEvent)
+					this.kind = kind!;
 				raiseUINameEvent = oldUIName != GetUINameNoDefaultName_NoLock();
 			}
 			if (raiseEvent)
@@ -152,13 +153,14 @@ namespace dnSpy.Debugger.Impl {
 				OnPropertyChanged(nameof(ManagedId));
 		}
 
-		internal void UpdateName_DbgThread(string name) {
+		internal void UpdateName_DbgThread(string? name) {
 			Dispatcher.VerifyAccess();
 			bool raiseEvent, raiseUINameEvent;
 			lock (lockObj) {
 				var oldUIName = GetUINameNoDefaultName_NoLock();
-				raiseEvent = this.name != name;
-				this.name = name;
+				raiseEvent = this.name != name && name != null;
+				if (raiseEvent)
+					this.name = name!;
 				raiseUINameEvent = oldUIName != GetUINameNoDefaultName_NoLock();
 			}
 			if (raiseEvent)
@@ -175,7 +177,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void UpdateState_DbgThread(ReadOnlyCollection<DbgStateInfo> state) {
+		internal void UpdateState_DbgThread(ReadOnlyCollection<DbgStateInfo>? state) {
 			Dispatcher.VerifyAccess();
 			if (state == null)
 				state = emptyState;
@@ -228,7 +230,7 @@ namespace dnSpy.Debugger.Impl {
 			OnPropertyChanged(nameof(UIName));
 		}
 
-		string GetUINameNoDefaultName_NoLock() {
+		string? GetUINameNoDefaultName_NoLock() {
 			if (userName != null)
 				return userName;
 

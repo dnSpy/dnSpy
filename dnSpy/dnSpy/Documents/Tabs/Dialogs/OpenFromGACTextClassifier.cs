@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		[ImportingConstructor]
 		OpenFromGACTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => gacMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.GacMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new OpenFromGACTextClassifier(gacMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new OpenFromGACTextClassifier(gacMatchHighlightClassificationType);
 	}
 
 	sealed class OpenFromGACTextClassifier : ITextClassifier {

@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -52,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		readonly Lazy<IContentTypeRegistryService> contentTypeRegistryService;
 		readonly OutputLoggerSettings outputLoggerSettings;
 		readonly Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService;
-		IOutputTextPane textPane;
+		IOutputTextPane? textPane;
 
 		[ImportingConstructor]
 		OutputLogger(UIDispatcher uiDispatcher, Lazy<IOutputService> outputService, Lazy<IContentTypeRegistryService> contentTypeRegistryService, OutputLoggerSettings outputLoggerSettings, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService) {
@@ -100,6 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			if (dbgManager.IsDebugging) {
 				UI(() => {
 					Initialize_UI();
+					Debug.Assert(textPane != null);
 					if (outputLoggerSettings.ShowDebugOutputLog)
 						outputService.Value.Select(GUID_OUTPUT_LOGGER_DEBUG);
 					textPane.Clear();
@@ -111,6 +113,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			uiDispatcher.VerifyAccess();
 			if (textPane == null)
 				Initialize_UI();
+			Debug.Assert(textPane != null);
 			textPane.WriteLine(color, text);
 		}
 
@@ -118,6 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			uiDispatcher.VerifyAccess();
 			if (textPane == null)
 				Initialize_UI();
+			Debug.Assert(textPane != null);
 			textPane.Write(color, text);
 		}
 
@@ -218,7 +222,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 
 		string GetExceptionName(DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
 
-		string GetProcessName(DbgProcess process) {
+		string GetProcessName(DbgProcess? process) {
 			if (process == null)
 				return "???";
 			var name = process.Name;
@@ -236,8 +240,8 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			return filename;
 		}
 
-		string GetProcessNameWithPID(DbgProcess process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";
-		string GetModuleName(DbgModule module) => module?.Name ?? "???";
+		string GetProcessNameWithPID(DbgProcess? process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";
+		string GetModuleName(DbgModule? module) => module?.Name ?? "???";
 
 		string FilterUserMessage(string s) {
 			if (s == null)

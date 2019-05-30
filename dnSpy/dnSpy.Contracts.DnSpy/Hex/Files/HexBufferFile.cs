@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Parent file or null if it's not a nested file
 		/// </summary>
-		public abstract HexBufferFile ParentFile { get; }
+		public abstract HexBufferFile? ParentFile { get; }
 
 		/// <summary>
 		/// true if it's a nested file (<see cref="ParentFile"/> is not null)
@@ -129,7 +129,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <param name="checkNestedFiles">true to check nested files</param>
 		/// <returns></returns>
-		public abstract HexBufferFile GetFile(HexPosition position, bool checkNestedFiles);
+		public abstract HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles);
 
 		/// <summary>
 		/// true if it has been removed
@@ -147,7 +147,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <param name="checkNestedFiles">true to check nested files, false to only check this file</param>
 		/// <returns></returns>
-		public ComplexData GetStructure(HexPosition position, bool checkNestedFiles = true) =>
+		public ComplexData? GetStructure(HexPosition position, bool checkNestedFiles = true) =>
 			GetFileAndStructure(position, checkNestedFiles)?.Structure;
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="id">Id, see eg. <see cref="PE.PredefinedPeDataIds"/></param>
 		/// <returns></returns>
-		public abstract ComplexData GetStructure(string id);
+		public abstract ComplexData? GetStructure(string id);
 
 		/// <summary>
 		/// true if <see cref="StructuresInitialized"/> has been raised
@@ -180,7 +180,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <typeparam name="THeaders">Type</typeparam>
 		/// <returns></returns>
-		public abstract THeaders GetHeaders<THeaders>() where THeaders : class, IBufferFileHeaders;
+		public abstract THeaders? GetHeaders<THeaders>() where THeaders : class, IBufferFileHeaders;
 
 		/// <summary>
 		/// Aligns <paramref name="position"/> up. The returned position is aligned relative to the

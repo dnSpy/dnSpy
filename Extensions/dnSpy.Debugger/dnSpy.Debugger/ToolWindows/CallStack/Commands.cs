@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		protected CallStackCtxMenuCommand(Lazy<ICallStackContent> callStackContent) => this.callStackContent = callStackContent;
 
-		protected sealed override CallStackCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override CallStackCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != callStackContent.Value.ListView)
@@ -269,7 +269,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public override void Execute(CallStackCtxMenuContext context) => context.Operations.EnableBreakpoint();
 		public override bool IsEnabled(CallStackCtxMenuContext context) => context.Operations.CanEnableBreakpoint;
 		public override bool IsVisible(CallStackCtxMenuContext context) => context.Operations.BreakpointsCommandKind == BreakpointsCommandKind.Edit;
-		public override string GetHeader(CallStackCtxMenuContext context) => context.Operations.IsBreakpointEnabled ? dnSpy_Debugger_Resources.DisableBreakpointCommand2 : dnSpy_Debugger_Resources.EnableBreakpointCommand2;
+		public override string? GetHeader(CallStackCtxMenuContext context) => context.Operations.IsBreakpointEnabled ? dnSpy_Debugger_Resources.DisableBreakpointCommand2 : dnSpy_Debugger_Resources.EnableBreakpointCommand2;
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.BREAKPOINTS_GUID, Header = "res:SettingsCommand2", Icon = DsImagesAttribute.Settings, Group = Constants.GROUP_BREAKPOINTS_EDIT, Order = 0)]

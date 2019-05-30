@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		public static DbgLanguageDebugInfo TryGetLanguageDebugInfo(this DbgEvaluationContext context) {
+		public static DbgLanguageDebugInfo? TryGetLanguageDebugInfo(this DbgEvaluationContext context) {
 			if (context.TryGetData<DbgLanguageDebugInfo>(out var info))
 				return info;
 			return null;

@@ -339,7 +339,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static Encoding TryGetEncoding(this VSTE.IEditorOptions options) {
+		public static Encoding? TryGetEncoding(this VSTE.IEditorOptions options) {
 			if (options == null)
 				throw new ArgumentNullException(nameof(options));
 			var codePage = options.GetEncodingCodePage();

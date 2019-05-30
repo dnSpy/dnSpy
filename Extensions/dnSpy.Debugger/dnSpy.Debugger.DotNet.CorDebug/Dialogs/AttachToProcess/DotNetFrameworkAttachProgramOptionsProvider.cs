@@ -30,7 +30,7 @@ using DEMH = dndbg.COM.MetaHost;
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetFramework)]
 	sealed class DotNetFrameworkAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create(bool allFactories) => new DotNetFrameworkAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider? Create(bool allFactories) => new DotNetFrameworkAttachProgramOptionsProvider();
 	}
 
 	sealed class DotNetFrameworkAttachProgramOptionsProvider : AttachProgramOptionsProvider {

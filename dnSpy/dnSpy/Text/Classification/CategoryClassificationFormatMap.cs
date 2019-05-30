@@ -69,13 +69,13 @@ namespace dnSpy.Text.Classification {
 		readonly Dictionary<IClassificationType, int> toClassificationTypeOrder;
 		readonly Dictionary<string, string> classificationToEditorFormatMapKey;
 		readonly ResourceDictionary defaultResourceDictionary;
-		TextFormattingRunProperties defaultTextFormattingRunProperties;
+		TextFormattingRunProperties? defaultTextFormattingRunProperties;
 
 		sealed class ClassificationInfo {
-			public ResourceDictionary ExplicitResourceDictionary { get; set; }
-			public ResourceDictionary InheritedResourceDictionary { get; set; }
-			public TextFormattingRunProperties ExplicitTextProperties { get; set; }
-			public TextFormattingRunProperties InheritedTextProperties { get; set; }
+			public ResourceDictionary? ExplicitResourceDictionary { get; set; }
+			public ResourceDictionary? InheritedResourceDictionary { get; set; }
+			public TextFormattingRunProperties? ExplicitTextProperties { get; set; }
+			public TextFormattingRunProperties? InheritedTextProperties { get; set; }
 			public Lazy<EditorFormatDefinition, IClassificationFormatMetadata> Lazy { get; }
 			public IClassificationType ClassificationType { get; }
 
@@ -134,8 +134,8 @@ namespace dnSpy.Text.Classification {
 		}
 
 		sealed class ClassificationFormatMetadata : IClassificationFormatMetadata {
-			public IEnumerable<string> After { get; }
-			public IEnumerable<string> Before { get; }
+			public IEnumerable<string>? After { get; }
+			public IEnumerable<string>? Before { get; }
 			public IEnumerable<string> ClassificationTypeNames { get; }
 			public string Name { get; }
 			public bool UserVisible { get; }
@@ -146,7 +146,7 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
+		ClassificationInfo? TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
 			if (!toClassificationInfo.TryGetValue(classificationType, out var info)) {
 				if (!toEditorFormatDefinition.TryGetValue(classificationType, out var lazy)) {
 					if (!canCreate)
@@ -220,7 +220,7 @@ namespace dnSpy.Text.Classification {
 			foreach (var bt in baseTypes)
 				AddBaseTypes(list, bt);
 		}
-		ClassificationTypeComparer classificationTypeComparer;
+		ClassificationTypeComparer? classificationTypeComparer;
 
 		public string GetEditorFormatMapKey(IClassificationType classificationType) {
 			if (classificationType == null)

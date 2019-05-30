@@ -29,7 +29,7 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Documents.Tabs {
 	static class GoToEntryPointCommand {
-		internal static ModuleDef GetCurrentModule(IDocumentTabService documentTabService) {
+		internal static ModuleDef? GetCurrentModule(IDocumentTabService documentTabService) {
 			var tab = documentTabService.ActiveTab;
 			if (tab == null)
 				return null;
@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(documentTabService, context) != null;
 
-			static MethodDef GetEntryPoint(IDocumentTabService documentTabService, IMenuItemContext context) {
+			static MethodDef? GetEntryPoint(IDocumentTabService documentTabService, IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				var module = GetCurrentModule(documentTabService);
@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(context) != null;
 
-			static MethodDef GetEntryPoint(IMenuItemContext context) {
+			static MethodDef? GetEntryPoint(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
@@ -95,7 +95,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(documentTabService, context) != null;
 
-			static MethodDef GetModuleCctor(IDocumentTabService documentTabService, IMenuItemContext context) {
+			static MethodDef? GetModuleCctor(IDocumentTabService documentTabService, IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				var module = GoToEntryPointCommand.GetCurrentModule(documentTabService);
@@ -121,7 +121,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(context) != null;
 
-			static MethodDef GetModuleCctor(IMenuItemContext context) {
+			static MethodDef? GetModuleCctor(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();

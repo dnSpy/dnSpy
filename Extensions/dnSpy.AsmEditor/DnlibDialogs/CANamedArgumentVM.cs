@@ -34,9 +34,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class CANamedArgumentVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand PickEnumTypeCommand => new RelayCommand(a => PickEnumType(), a => PickEnumTypeCanExecute());
 
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public ITypeDefOrRef EnumType {
+		public ITypeDefOrRef? EnumType {
 			get => enumType;
 			set {
 				if (enumType != value) {
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		ITypeDefOrRef enumType;
+		ITypeDefOrRef? enumType;
 
 		public string PickEnumToolTip {
 			get {
@@ -75,11 +75,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public bool EnumIsSelected =>
-			(ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Enum ||
-			(ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray;
+			(ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Enum ||
+			(ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.EnumArray;
 
 		public bool IsField {
-			get => (NamedArgType)NamedArgTypeEnumList.SelectedItem == NamedArgType.Field;
+			get => (NamedArgType)NamedArgTypeEnumList.SelectedItem! == NamedArgType.Field;
 			set {
 				if (value)
 					NamedArgTypeEnumList.SelectedItem = NamedArgType.Field;
@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
 		public EnumListVM ConstantTypeEnumList { get; }
 		public EnumListVM NamedArgTypeEnumList { get; }
@@ -149,6 +149,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly ModuleDef ownerModule;
 
 		public CANamedArgumentVM(ModuleDef ownerModule, CANamedArgument namedArg, TypeSigCreatorOptions options) {
+			CAArgumentVM = null!;
 			this.ownerModule = ownerModule;
 			originalNamedArg = namedArg.Clone();
 			ConstantTypeEnumList = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
@@ -166,7 +167,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void UpdateArgumentType() {
 			if (CAArgumentVM != null) {
-				var ct = (ConstantType)ConstantTypeEnumList.SelectedItem;
+				var ct = (ConstantType)ConstantTypeEnumList.SelectedItem!;
 				if (ct != ConstantType.Object && ct != ConstantType.ObjectArray)
 					CAArgumentVM.ConstantTypeVM.ConstantTypeEnumList.SelectedItem = ct;
 				CAArgumentVM.StorageType = GetType(ct);
@@ -201,7 +202,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			HasErrorUpdated();
 		}
 
-		static ConstantType GetConstantType(TypeSig type, out ITypeDefOrRef enumType) {
+		static ConstantType GetConstantType(TypeSig type, out ITypeDefOrRef? enumType) {
 			enumType = null;
 			var t = type.RemovePinnedAndModifiers();
 			switch (t.GetElementType())
@@ -264,7 +265,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CANamedArgument CreateCANamedArgument() {
 			if (!modified)
 				return originalNamedArg.Clone();
-			var type = GetType((ConstantType)ConstantTypeEnumList.SelectedItem);
+			var type = GetType((ConstantType)ConstantTypeEnumList.SelectedItem!);
 			return new CANamedArgument(IsField, type, Name, CAArgumentVM.CreateCAArgument(type));
 		}
 

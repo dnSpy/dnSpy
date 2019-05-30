@@ -38,10 +38,10 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			Loader(Lazy<VariablesWindowOperations> variablesWindowOperations) => VariablesWindowControl.variablesWindowOperations = variablesWindowOperations;
 		}
 
-		public ListView ListView => treeViewContentPresenter.Content as ListView;
+		public ListView? ListView => treeViewContentPresenter.Content as ListView;
 		public VariablesWindowControl() => InitializeComponent();
 		public void SetTreeView(ITreeView treeView, VariablesWindowKind windowKind) {
-			var listView = (ListView)treeView?.UIObject;
+			var listView = (ListView?)treeView?.UIObject;
 			if (treeViewContentPresenter.Content == listView)
 				return;
 			if (treeViewContentPresenter.Content is UIElement oldElem)
@@ -49,8 +49,8 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			if (listView != null)
 				listView.PreviewTextInput += TreeView_PreviewTextInput;
 			treeViewContentPresenter.Content = listView;
-			AutomationPeerMemoryLeakWorkaround.SetEmptyCount(listView, GetEmptyCount(windowKind));
 			if (listView != null) {
+				AutomationPeerMemoryLeakWorkaround.SetEmptyCount(listView, GetEmptyCount(windowKind));
 				var gridView = (GridView)FindResource("GridView");
 				listView.View = gridView;
 			}

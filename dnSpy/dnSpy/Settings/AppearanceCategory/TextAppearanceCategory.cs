@@ -36,14 +36,14 @@ namespace dnSpy.Settings.AppearanceCategory {
 	}
 
 	sealed class TextAppearanceCategory : ITextAppearanceCategory {
-		public string DisplayName => def.DisplayName;
+		public string? DisplayName => def.DisplayName;
 		public string Category => def.Category;
 		public bool IsUserVisible => def.IsUserVisible;
 		public ThemeFontSettings ThemeFontSettings { get; }
 
 		readonly TextAppearanceCategoryDefinition def;
-		ResourceDictionary resourceDictionary;
-		FontSettings activeFontSettings;
+		ResourceDictionary? resourceDictionary;
+		FontSettings? activeFontSettings;
 
 		public TextAppearanceCategory(TextAppearanceCategoryDefinition def, ThemeFontSettings themeFontSettings) {
 			this.def = def ?? throw new ArgumentNullException(nameof(def));
@@ -89,6 +89,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		}
 
 		ResourceDictionary CreateResourceDictionaryCore(ITheme theme) {
+			Debug.Assert(activeFontSettings != null);
 			var res = new ResourceDictionary();
 
 			var tc = theme.GetColor(def.ColorType);

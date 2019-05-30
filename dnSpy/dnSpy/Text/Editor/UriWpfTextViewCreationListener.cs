@@ -33,7 +33,7 @@ namespace dnSpy.Text.Editor {
 
 		public void TextViewCreated(IWpfTextView textView) => textView.TextBuffer.Properties.AddProperty(textViewKey, textView);
 
-		public static IWpfTextView TryGetTextView(ITextBuffer textBuffer) {
+		public static IWpfTextView? TryGetTextView(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (textBuffer.Properties.TryGetProperty(textViewKey, out IWpfTextView wpfTextView))

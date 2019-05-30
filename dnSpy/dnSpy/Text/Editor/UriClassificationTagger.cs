@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor {
 			classificationTag = new ClassificationTag(themeClassificationTypeService.GetClassificationType(TextColor.Url));
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
 			new UriClassificationTagger(classificationTag, buffer, viewTagAggregatorFactoryService.CreateTagAggregator<IUrlTag>(textView)) as ITagger<T>;
 	}
 

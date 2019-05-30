@@ -23,7 +23,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	sealed class UndoObject : IUndoObject {
 		public bool IsDirty { get; set; }
 		public int SavedCommand { get; set; }
-		public object Value { get; set; }
+		public object? Value { get; set; }
 
 		public UndoObject() {
 		}

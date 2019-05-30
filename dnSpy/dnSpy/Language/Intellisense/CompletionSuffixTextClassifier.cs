@@ -36,7 +36,7 @@ namespace dnSpy.Language.Intellisense {
 		[ImportingConstructor]
 		CompletionSuffixTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) => new CompletionSuffixTextClassifier(themeClassificationTypeService);
+		public ITextClassifier? Create(IContentType contentType) => new CompletionSuffixTextClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionSuffixTextClassifier : ITextClassifier {

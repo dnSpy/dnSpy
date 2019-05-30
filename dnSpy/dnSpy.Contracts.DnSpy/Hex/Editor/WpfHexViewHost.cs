@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="marginName">Name of margin</param>
 		/// <returns></returns>
-		public abstract WpfHexViewMargin GetHexViewMargin(string marginName);
+		public abstract WpfHexViewMargin? GetHexViewMargin(string marginName);
 
 		/// <summary>
 		/// Gets the hex view

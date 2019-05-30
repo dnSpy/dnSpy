@@ -23,23 +23,23 @@ using dnlib.DotNet.Emit;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlerOptions {
-		public InstructionVM TryStart;
-		public InstructionVM TryEnd;
-		public InstructionVM FilterStart;
-		public InstructionVM HandlerStart;
-		public InstructionVM HandlerEnd;
-		public ITypeDefOrRef CatchType;
+		public InstructionVM? TryStart;
+		public InstructionVM? TryEnd;
+		public InstructionVM? FilterStart;
+		public InstructionVM? HandlerStart;
+		public InstructionVM? HandlerEnd;
+		public ITypeDefOrRef? CatchType;
 		public ExceptionHandlerType HandlerType;
 
 		public ExceptionHandlerOptions() {
 		}
 
 		public ExceptionHandlerOptions(Dictionary<object, object> ops, ExceptionHandler eh) {
-			TryStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryStart);
-			TryEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryEnd);
-			FilterStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.FilterStart);
-			HandlerStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.HandlerStart);
-			HandlerEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.HandlerEnd);
+			TryStart = (InstructionVM?)BodyUtils.TryGetVM(ops, eh.TryStart);
+			TryEnd = (InstructionVM?)BodyUtils.TryGetVM(ops, eh.TryEnd);
+			FilterStart = (InstructionVM?)BodyUtils.TryGetVM(ops, eh.FilterStart);
+			HandlerStart = (InstructionVM?)BodyUtils.TryGetVM(ops, eh.HandlerStart);
+			HandlerEnd = (InstructionVM?)BodyUtils.TryGetVM(ops, eh.HandlerEnd);
 			CatchType = eh.CatchType;
 			HandlerType = eh.HandlerType;
 		}

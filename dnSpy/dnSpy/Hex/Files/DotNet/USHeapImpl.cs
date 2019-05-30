@@ -19,21 +19,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class USHeapImpl : USHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
-		USString[] usStringInfos;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
+		USString[]? usStringInfos;
 
 		public USHeapImpl(HexBufferSpan span)
 			: base(span) {
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			var info = GetStringInfo(position);
 			if (info != null)
 				return new USHeapRecordData(Span.Buffer, info.Value.LengthSpan, info.Value.StringSpan, info.Value.TerminalByteSpan, this);
@@ -47,6 +48,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
+			Debug.Assert(usStringInfos != null);
 			return usStringInfos[index];
 		}
 
@@ -88,6 +90,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (array == null) {
 				Initialize();
 				array = usStringInfos;
+				Debug.Assert(array != null);
 			}
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

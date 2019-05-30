@@ -33,12 +33,12 @@ namespace dnSpy.Hex.Files.DotNet {
 	[VSUTIL.Name(PredefinedHexFileStructureInfoProviderFactoryNames.DotNet)]
 	[VSUTIL.Order(Before = PredefinedHexFileStructureInfoProviderFactoryNames.Default)]
 	sealed class DotNetHexFileStructureInfoProviderFactory : HexFileStructureInfoProviderFactory {
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new DotNetHexFileStructureInfoProvider();
 	}
 
 	sealed class DotNetHexFileStructureInfoProvider : HexFileStructureInfoProvider {
-		public override HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override HexIndexes[]? GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			if (structure is DotNetMethodBody body) {
 				if (body.Kind == DotNetMethodBodyKind.Tiny)
 					return Array.Empty<HexIndexes>();
@@ -194,7 +194,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, DotNetMultiFileResourceHeaderData multiResourceHeader, HexPosition position) {
 			if (multiResourceHeader.NamePositions.Data.Span.Span.Contains(position)) {
-				var data = (UInt32Data)multiResourceHeader.NamePositions.Data.GetFieldByPosition(position).Data;
+				var data = (UInt32Data)multiResourceHeader.NamePositions.Data.GetFieldByPosition(position)!.Data;
 				uint offset = data.ReadValue();
 				var nameOffs = multiResourceHeader.Span.Span.End;
 				var pos = nameOffs + offset;
@@ -208,7 +208,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, DotNetMetadataHeaderData header, HexPosition position) {
 			if (header.StreamHeaders.Data.Span.Span.Contains(position)) {
-				var stream = (DotNetStorageStream)header.StreamHeaders.Data.GetFieldByPosition(position).Data;
+				var stream = (DotNetStorageStream)header.StreamHeaders.Data.GetFieldByPosition(position)!.Data;
 				if (stream.Offset.Data.Span.Span.Contains(position)) {
 					uint offset = stream.Offset.Data.ReadValue();
 					uint size = stream.Size.Data.ReadValue();
@@ -241,7 +241,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					var smallTable = (SmallExceptionHandlerTable)ehTable.Data;
 					if (!smallTable.Clauses.Data.Span.Span.Contains(position))
 						return null;
-					var clause = (SmallExceptionClause)smallTable.Clauses.Data.GetFieldByPosition(position)?.Data;
+					var clause = (SmallExceptionClause?)smallTable.Clauses.Data.GetFieldByPosition(position)?.Data;
 					if (clause == null)
 						return null;
 					HexSpan? span;
@@ -260,7 +260,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					var fatTable = (FatExceptionHandlerTable)ehTable.Data;
 					if (!fatTable.Clauses.Data.Span.Span.Contains(position))
 						return null;
-					var clause = (FatExceptionClause)fatTable.Clauses.Data.GetFieldByPosition(position)?.Data;
+					var clause = (FatExceptionClause?)fatTable.Clauses.Data.GetFieldByPosition(position)?.Data;
 					if (clause == null)
 						return null;
 					HexSpan? span;

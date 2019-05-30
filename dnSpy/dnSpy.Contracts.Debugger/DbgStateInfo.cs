@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgStateInfo info && Equals(info);
+		public override bool Equals(object? obj) => obj is DbgStateInfo info && Equals(info);
 
 		/// <summary>
 		/// Gets the hash code

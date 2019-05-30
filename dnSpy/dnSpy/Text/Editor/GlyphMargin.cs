@@ -68,7 +68,7 @@ namespace dnSpy.Text.Editor {
 			this.marginContextMenuHandlerProviderService = marginContextMenuHandlerProviderService;
 		}
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new GlyphMargin(menuService, wpfTextViewHost, viewTagAggregatorFactoryService, editorFormatMapService, glyphMouseProcessorProviders, glyphFactoryProviders, marginContextMenuHandlerProviderService);
 	}
 
@@ -82,12 +82,12 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] lazyGlyphMouseProcessorProviders;
 		readonly Lazy<IGlyphFactoryProvider, IGlyphMetadata>[] lazyGlyphFactoryProviders;
-		MouseProcessorCollection mouseProcessorCollection;
+		MouseProcessorCollection? mouseProcessorCollection;
 		readonly Dictionary<Type, GlyphFactoryInfo> glyphFactories;
-		ITagAggregator<IGlyphTag> tagAggregator;
-		IEditorFormatMap editorFormatMap;
-		Dictionary<object, LineInfo> lineInfos;
-		Canvas iconCanvas;
+		ITagAggregator<IGlyphTag>? tagAggregator;
+		IEditorFormatMap? editorFormatMap;
+		Dictionary<object, LineInfo>? lineInfos;
+		Canvas? iconCanvas;
 		Canvas[] childCanvases;
 
 		readonly struct GlyphFactoryInfo {
@@ -164,7 +164,7 @@ namespace dnSpy.Text.Editor {
 			DsImage.SetZoom(this, e.NewZoomLevel / 100);
 		}
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Glyph) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -191,7 +191,8 @@ namespace dnSpy.Text.Editor {
 			return list.ToArray();
 		}
 
-		void InitializeGlyphFactories(IContentType beforeContentType, IContentType afterContentType) {
+		void InitializeGlyphFactories(IContentType? beforeContentType, IContentType afterContentType) {
+			Debug.Assert(iconCanvas != null);
 			var oldFactories = new Dictionary<IGlyphFactoryProvider, IGlyphFactory>();
 			foreach (var info in glyphFactories.Values)
 				oldFactories[info.FactoryProvider] = info.Factory;
@@ -202,7 +203,7 @@ namespace dnSpy.Text.Editor {
 			foreach (var lazy in lazyGlyphFactoryProviders) {
 				if (!afterContentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
-				IGlyphFactory glyphFactory = null;
+				IGlyphFactory? glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
 					Debug.Assert(type != null);
 					if (type == null)
@@ -275,7 +276,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void RefreshEverything() {
-			lineInfos.Clear();
+			lineInfos!.Clear();
 			foreach (var c in childCanvases)
 				c.Children.Clear();
 			OnNewLayout(wpfTextViewHost.TextView.TextViewLines, Array.Empty<ITextViewLine>());
@@ -288,6 +289,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void OnNewLayout(IList<ITextViewLine> newOrReformattedLines, IList<ITextViewLine> translatedLines) {
+			Debug.Assert(lineInfos != null);
 			var newInfos = new Dictionary<object, LineInfo>();
 
 			foreach (var line in newOrReformattedLines)
@@ -332,6 +334,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		List<IconInfo> CreateIconInfos(IWpfTextViewLine line) {
+			Debug.Assert(tagAggregator != null);
 			var icons = new List<IconInfo>();
 			foreach (var mappingSpan in tagAggregator.GetTags(line.ExtentAsMappingSpan)) {
 				var tag = mappingSpan.Tag;
@@ -362,14 +365,14 @@ namespace dnSpy.Text.Editor {
 
 		void TagAggregator_BatchedTagsChanged(object sender, BatchedTagsChangedEventArgs e) {
 			Dispatcher.VerifyAccess();
-			HashSet<ITextViewLine> checkedLines = null;
+			HashSet<ITextViewLine>? checkedLines = null;
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(wpfTextViewHost.TextView.TextSnapshot))
 					Update(span, ref checkedLines);
 			}
 		}
 
-		void Update(SnapshotSpan span, ref HashSet<ITextViewLine> checkedLines) {
+		void Update(SnapshotSpan span, ref HashSet<ITextViewLine>? checkedLines) {
 			Debug.Assert(span.Snapshot == wpfTextViewHost.TextView.TextSnapshot);
 			var intersection = span.Intersection(wpfTextViewHost.TextView.TextViewLines.FormattedSpan);
 			if (intersection == null)
@@ -392,6 +395,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Update(IWpfTextViewLine line) {
+			Debug.Assert(lineInfos != null);
 			Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
 			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
@@ -426,8 +430,8 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextViewHost.IsClosed)
 				return;
 			hasRegisteredEvents = true;
-			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
-			tagAggregator.BatchedTagsChanged += TagAggregator_BatchedTagsChanged;
+			editorFormatMap!.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
+			tagAggregator!.BatchedTagsChanged += TagAggregator_BatchedTagsChanged;
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 		}
 

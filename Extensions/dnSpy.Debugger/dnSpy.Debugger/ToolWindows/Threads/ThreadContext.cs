@@ -54,13 +54,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public SearchMatcher SearchMatcher { get; }
 		public ClassifiedTextWriter ClassifiedTextWriter { get; }
 
-		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, SearchMatcher searchMatcher) {
+		public ThreadContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, SearchMatcher searchMatcher, ThreadFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextBlockContentInfoFactory = textBlockContentInfoFactory;
 			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
 			ClassifiedTextWriter = new ClassifiedTextWriter();
+			Formatter = formatter;
 		}
 	}
 }

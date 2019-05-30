@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor {
 			fontSettings.PropertyChanged += FontSettings_PropertyChanged;
 			UpdateFont(fontSettings);
 		}
-		FontSettings prevFontSettings;
+		FontSettings? prevFontSettings;
 
 		void UpdateFont(FontSettings fontSettings) =>
 			Application.Current.Resources["TextEditorFontFamily"] = fontSettings.FontFamily;
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 		}
 	}
 }

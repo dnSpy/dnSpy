@@ -37,9 +37,9 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Edit tag
 		/// </summary>
-		public object EditTag { get; }
+		public object? EditTag { get; }
 
-		readonly Action<HexContentChangingEventArgs> cancelAction;
+		readonly Action<HexContentChangingEventArgs>? cancelAction;
 
 		/// <summary>
 		/// Constructor
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="beforeVersion">Version before the change</param>
 		/// <param name="editTag">Edit tag</param>
 		/// <param name="cancelAction">Called when <see cref="Cancel"/> gets called</param>
-		public HexContentChangingEventArgs(HexVersion beforeVersion, object editTag, Action<HexContentChangingEventArgs> cancelAction) {
+		public HexContentChangingEventArgs(HexVersion beforeVersion, object? editTag, Action<HexContentChangingEventArgs>? cancelAction) {
 			BeforeVersion = beforeVersion;
 			EditTag = editTag;
 			this.cancelAction = cancelAction;

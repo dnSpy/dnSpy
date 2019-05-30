@@ -23,9 +23,9 @@ using dnlib.DotNet;
 namespace dnSpy.Decompiler {
 	readonly struct FormatterMethodInfo {
 		public readonly ModuleDef ModuleDef;
-		public readonly IList<TypeSig> TypeGenericParams;
-		public readonly IList<TypeSig> MethodGenericParams;
-		public readonly MethodDef MethodDef;
+		public readonly IList<TypeSig>? TypeGenericParams;
+		public readonly IList<TypeSig>? MethodGenericParams;
+		public readonly MethodDef? MethodDef;
 		public readonly MethodSig MethodSig;
 		public readonly bool RetTypeIsLastArgType;
 		public readonly bool IncludeReturnTypeInArgsList;

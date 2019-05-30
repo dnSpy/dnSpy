@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.Code {
 		/// </summary>
 		/// <param name="section">Serialized section</param>
 		/// <returns></returns>
-		public abstract DbgCodeLocation Deserialize(ISettingsSection section);
+		public abstract DbgCodeLocation? Deserialize(ISettingsSection section);
 	}
 
 	/// <summary>Metadata</summary>

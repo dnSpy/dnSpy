@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using Iced.Intel;
 using II = Iced.Intel;
@@ -25,7 +26,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 	sealed class IsDebuggerPresentPatcherX86 : PatcherX86 {
 		public IsDebuggerPresentPatcherX86(DbgNativeFunctionHookContext context) : base(context) { }
 
-		public bool TryPatchX86(out string errorMessage) {
+		public bool TryPatchX86([NotNullWhenFalse] out string? errorMessage) {
 			var function = functionProvider.GetFunction(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName);
 
 			/*
@@ -49,7 +50,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			return true;
 		}
 
-		public bool TryPatchX64(out string errorMessage) {
+		public bool TryPatchX64([NotNullWhenFalse] out string? errorMessage) {
 			var function = functionProvider.GetFunction(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName);
 
 			/*

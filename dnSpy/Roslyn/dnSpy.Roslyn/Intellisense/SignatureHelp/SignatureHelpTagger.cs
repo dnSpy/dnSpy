@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		protected SignatureHelpTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			var session = buffer.TryGetSignatureHelpSession();
 			if (session == null)
 				return null;

@@ -44,12 +44,12 @@ namespace dnSpy.Hex.Editor.Search {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == CommandConstants.StandardGroup) {
 				switch ((StandardIds)cmdId) {
 				case StandardIds.Find:
@@ -99,12 +99,12 @@ namespace dnSpy.Hex.Editor.Search {
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) => hexViewSearchService.CanExecuteSearchControl(group, cmdId);
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) =>
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) =>
 			hexViewSearchService.ExecuteSearchControl(group, cmdId, args, ref result);
 
 		public void SetNextCommandTarget(ICommandTarget commandTarget) { }

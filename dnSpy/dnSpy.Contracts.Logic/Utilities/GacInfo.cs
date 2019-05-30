@@ -275,7 +275,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		public static string FindInGac(IAssembly asm) => FindInGac(asm, -1);
+		public static string? FindInGac(IAssembly asm) => FindInGac(asm, -1);
 
 		/// <summary>
 		/// Finds an assembly in the GAC
@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="asm">Assembly</param>
 		/// <param name="version">2, 4, or -1</param>
 		/// <returns></returns>
-		public static string FindInGac(IAssembly asm, int version) {
+		public static string? FindInGac(IAssembly? asm, int version) {
 			if (asm == null)
 				return null;
 			var pkt = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);

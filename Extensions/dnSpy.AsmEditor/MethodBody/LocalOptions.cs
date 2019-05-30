@@ -23,8 +23,8 @@ using dnlib.DotNet.Pdb;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalOptions {
-		public TypeSig Type;
-		public string Name;
+		public TypeSig? Type;
+		public string? Name;
 		public PdbLocalAttributes Attributes;
 
 		public LocalOptions() {

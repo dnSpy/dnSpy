@@ -23,7 +23,7 @@ using System.Windows;
 
 namespace dnSpy.AsmEditor.Hex {
 	static class ClipboardUtils {
-		public static byte[] GetData(bool canBeEmpty) {
+		public static byte[]? GetData(bool canBeEmpty) {
 			string s;
 			try {
 				s = Clipboard.GetText();
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return HexStringToByteArray(s);
 		}
 
-		static byte[] HexStringToByteArray(string s) {
+		static byte[]? HexStringToByteArray(string s) {
 			if (s == null)
 				return null;
 			if (s.Length % 2 != 0)

@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				e.BoundBreakpoint.Breakpoint.Remove();
 		}
 
-		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
+		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread? thread) {
 			if (thread == null)
 				return false;
 			var bp = (DbgCodeBreakpointImpl)boundBreakpoint.Breakpoint;

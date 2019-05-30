@@ -55,7 +55,7 @@ namespace dnSpy.Output.Settings {
 			: base(options) {
 			this.options = options;
 			ShowTimestamps = options.ShowTimestamps;
-			TimestampDateTimeFormat = options.TimestampDateTimeFormat;
+			timestampDateTimeFormat = options.TimestampDateTimeFormat;
 		}
 
 		public override void OnApply() {

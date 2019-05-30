@@ -115,13 +115,15 @@ namespace dnSpy.Documents.Tabs {
 			readonly CancellationTokenSource cancellationTokenSource;
 			readonly CancellationToken cancellationToken;
 			readonly Dispatcher dispatcher;
-			readonly IBamlDecompiler bamlDecompiler;
-			readonly IXamlOutputOptionsProvider xamlOutputOptionsProvider;
+			readonly IBamlDecompiler? bamlDecompiler;
+			readonly IXamlOutputOptionsProvider? xamlOutputOptionsProvider;
 
 			internal ExportToProjectDlg dlg;
 			internal ExportToProjectVM vm;
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 			public ExportTask(ExportProjectCommand owner, ModuleDef[] modules) {
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 				this.owner = owner;
 				this.modules = modules;
 				cancellationTokenSource = new CancellationTokenSource();
@@ -159,6 +161,7 @@ namespace dnSpy.Documents.Tabs {
 						GetDisableAssemblyLoad = () => owner.documentTreeView.DocumentService.DisableAssemblyLoad(),
 						AsyncMethodBodyDecompilation = false,
 					};
+					Debug.Assert(vm.Directory != null);
 					var options = new ProjectCreatorOptions(vm.Directory, cancellationToken);
 					options.ProjectVersion = vm.ProjectVersion;
 					if (vm.CreateSolution)
@@ -167,7 +170,7 @@ namespace dnSpy.Documents.Tabs {
 					options.ProgressListener = this;
 
 					bool hasProjectGuid = vm.ProjectGuid.Value != null;
-					string guidFormat = null;
+					string? guidFormat = null;
 					int guidNum = 0;
 					if (hasProjectGuid) {
 						string guidStr = vm.ProjectGuid.Value.ToString();
@@ -221,7 +224,7 @@ namespace dnSpy.Documents.Tabs {
 				catch {
 				}
 			}
-			string fileToOpen;
+			string? fileToOpen;
 
 			public void Error(string message) {
 				bool start;
@@ -281,7 +284,7 @@ namespace dnSpy.Documents.Tabs {
 			return string.Format(dnSpy_Resources.ExportToProject_ExportNFilesMessage, modules.Length);
 		}
 
-		static string GetSolutionFilename(IEnumerable<ModuleDef> modules) {
+		static string? GetSolutionFilename(IEnumerable<ModuleDef> modules) {
 			foreach (var e in modules.OrderBy(a => (a.Characteristics & Characteristics.Dll) == 0 ? 0 : 1)) {
 				var name = e.IsManifestModule && e.Assembly != null ? GetSolutionName(e.Assembly.Name) : GetSolutionName(e.Name);
 				if (!string.IsNullOrWhiteSpace(name))
@@ -291,7 +294,7 @@ namespace dnSpy.Documents.Tabs {
 			return GetSolutionName("solution");
 		}
 
-		static string GetSolutionName(string name) {
+		static string? GetSolutionName(string name) {
 			if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
 				name = name.Substring(0, name.Length - 4);
 			else if (name.EndsWith(".netmodule", StringComparison.OrdinalIgnoreCase))
@@ -302,7 +305,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		ModuleDef[] GetModules() {
-			var hashSet = new HashSet<ModuleDef>();
+			var hashSet = new HashSet<ModuleDef?>();
 			foreach (var n in documentTreeView.TreeView.TopLevelSelection) {
 				var asmNode = n.GetAssemblyNode();
 				if (asmNode != null) {
@@ -317,7 +320,7 @@ namespace dnSpy.Documents.Tabs {
 					hashSet.Add(modNode.Document.ModuleDef);
 			}
 			hashSet.Remove(null);
-			return hashSet.ToArray();
+			return hashSet.ToArray()!;
 		}
 	}
 
@@ -333,7 +336,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTabService = documentTabService;
 		}
 
-		public override string GetHeader(IMenuItemContext context) => saveService.GetMenuHeader(documentTabService.ActiveTab);
+		public override string? GetHeader(IMenuItemContext context) => saveService.GetMenuHeader(documentTabService.ActiveTab);
 	}
 
 	[ExportMenuItem(InputGestureText = "res:SaveKey", Icon = DsImagesAttribute.Save, Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
@@ -349,16 +352,16 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) => GetTabGroup(context) != null;
-		public override string GetHeader(IMenuItemContext context) => saveService.GetMenuHeader(GetDocumentTab(context));
+		public override string? GetHeader(IMenuItemContext context) => saveService.GetMenuHeader(GetDocumentTab(context));
 
-		ITabGroup GetTabGroup(IMenuItemContext context) {
+		ITabGroup? GetTabGroup(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID))
 				return null;
 			var g = context.Find<ITabGroup>();
 			return g != null && documentTabService.Owns(g) ? g : null;
 		}
 
-		IDocumentTab GetDocumentTab(IMenuItemContext context) {
+		IDocumentTab? GetDocumentTab(IMenuItemContext context) {
 			var g = GetTabGroup(context);
 			return g == null ? null : documentTabService.TryGetDocumentTab(g.ActiveTabContent);
 		}

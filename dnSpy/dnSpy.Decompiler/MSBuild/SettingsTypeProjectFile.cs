@@ -80,7 +80,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return defsToRemove;
 		}
 		readonly object defsToRemoveLock = new object();
-		IMemberDef[] defsToRemove;
+		IMemberDef[]? defsToRemove;
 
 		IEnumerable<IMemberDef> CalculateDefsToRemove() {
 			var defaultProp = FindDefaultProperty();
@@ -98,7 +98,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		PropertyDef FindDefaultProperty() {
+		PropertyDef? FindDefaultProperty() {
 			foreach (var p in Type.Properties) {
 				if (p.Name != "Default")
 					continue;

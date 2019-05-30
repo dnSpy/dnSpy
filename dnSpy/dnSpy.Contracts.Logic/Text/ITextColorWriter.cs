@@ -29,14 +29,14 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void Write(object color, string text);
+		void Write(object color, string? text);
 
 		/// <summary>
 		/// Writes text
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void Write(TextColor color, string text);
+		void Write(TextColor color, string? text);
 	}
 
 	/// <summary>
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="writer">Writer</param>
 		/// <param name="text">Text</param>
-		public static void WriteLine(this ITextColorWriter writer, string text = null) {
+		public static void WriteLine(this ITextColorWriter writer, string? text = null) {
 			writer.Write(BoxedTextColor.Text, text);
 			writer.Write(BoxedTextColor.Text, Environment.NewLine);
 		}

@@ -43,7 +43,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		[ImportingConstructor]
 		DotNetHexFileStructureInfoProviderFactory(ToolTipCreatorFactory toolTipCreatorFactory) => this.toolTipCreatorFactory = toolTipCreatorFactory;
 
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new DotNetHexFileStructureInfoProvider(toolTipCreatorFactory);
 	}
 
@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 
 		public DotNetHexFileStructureInfoProvider(ToolTipCreatorFactory toolTipCreatorFactory) => this.toolTipCreatorFactory = toolTipCreatorFactory ?? throw new ArgumentNullException(nameof(toolTipCreatorFactory));
 
-		public override object GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override object? GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) {
 			if (structure is DotNetMethodBody body)
 				return GetToolTip(body, position);
 
@@ -95,7 +95,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			}
 		}
 
-		object GetToolTip(DotNetMethodBody body, HexPosition position) {
+		object? GetToolTip(DotNetMethodBody body, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
@@ -112,7 +112,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		object GetToolTip(DotNetEmbeddedResource resource, HexPosition position) {
+		object? GetToolTip(DotNetEmbeddedResource resource, HexPosition position) {
 			var mdHeaders = resource.ResourceProvider.File.GetHeaders<DotNetMetadataHeaders>();
 			Debug.Assert(mdHeaders != null);
 			if (mdHeaders == null)
@@ -148,7 +148,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return ImageReferenceUtils.GetImageReference(filename) ?? DsImages.Dialog;
 		}
 
-		object GetToolTip(MultiResourceDataHeaderData resDataHdr, HexPosition position) {
+		object? GetToolTip(MultiResourceDataHeaderData resDataHdr, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
@@ -177,7 +177,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		object GetToolTip(GuidHeapRecordData guidRecord, HexPosition position) {
+		object? GetToolTip(GuidHeapRecordData guidRecord, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
@@ -197,7 +197,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		object GetToolTip(StringsHeapRecordData stringsRecord, HexPosition position) {
+		object? GetToolTip(StringsHeapRecordData stringsRecord, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
@@ -220,7 +220,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		object GetToolTip(USHeapRecordData usRecord, HexPosition position) {
+		object? GetToolTip(USHeapRecordData usRecord, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
@@ -235,7 +235,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		object GetToolTip(BlobHeapRecordData blobRecord, HexPosition position) {
+		object? GetToolTip(BlobHeapRecordData blobRecord, HexPosition position) {
 			var toolTipCreator = toolTipCreatorFactory.Create();
 			var contentCreator = toolTipCreator.ToolTipContentCreator;
 
@@ -258,7 +258,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		object GetToolTip(TableRecordData tableRecord, HexPosition position) {
+		object? GetToolTip(TableRecordData tableRecord, HexPosition position) {
 			var tablesHeap = tableRecord.TablesHeap;
 			Debug.Assert((uint)tableRecord.Token.Table < (uint)tablesHeap.MDTables.Count);
 			if ((uint)tableRecord.Token.Table >= (uint)tablesHeap.MDTables.Count)
@@ -303,7 +303,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return toolTipCreator.Create();
 		}
 
-		static string GetString(StringsHeap heap, ColumnInfo column, HexPosition position) {
+		static string? GetString(StringsHeap? heap, ColumnInfo column, HexPosition position) {
 			if (heap == null)
 				return null;
 			uint value = column.Size == 2 ? heap.Span.Buffer.ReadUInt16(position) : heap.Span.Buffer.ReadUInt32(position);
@@ -313,14 +313,14 @@ namespace dnSpy.Hex.Files.DnSpy {
 			return heap.Read(value, MAX_LEN);
 		}
 
-		static Guid? GetGuid(GUIDHeap heap, ColumnInfo column, HexPosition position) {
+		static Guid? GetGuid(GUIDHeap? heap, ColumnInfo column, HexPosition position) {
 			if (heap == null)
 				return null;
 			uint index = column.Size == 2 ? heap.Span.Buffer.ReadUInt16(position) : heap.Span.Buffer.ReadUInt32(position);
 			return heap.Read(index);
 		}
 
-		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override object? GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
 			if (structure is DotNetMethodBody body)
 				return GetReference(file, body, position);
 			return null;

@@ -39,8 +39,8 @@ namespace dnSpy.TreeView {
 		public override object ExpandedIcon => treeNodeImpl.Data.ExpandedIcon ?? treeNodeImpl.Data.Icon;
 		public override object Icon => treeNodeImpl.Data.Icon;
 		public override bool SingleClickExpandsChildren => treeNodeImpl.Data.SingleClickExpandsChildren;
-		public override object Text => treeNodeImpl.Data.Text;
-		public override object ToolTip => treeNodeImpl.Data.ToolTip;
+		public override object? Text => treeNodeImpl.Data.Text;
+		public override object? ToolTip => treeNodeImpl.Data.ToolTip;
 		protected override void LoadChildren() => treeNodeImpl.TreeView.AddChildren(treeNodeImpl);
 		public override bool ShowExpander => treeNodeImpl.Data.ShowExpander(base.ShowExpander);
 		public override Brush Foreground => treeNodeImpl.TreeView.GetNodeForegroundBrush();

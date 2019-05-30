@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Contracts.Settings.HexGroups {

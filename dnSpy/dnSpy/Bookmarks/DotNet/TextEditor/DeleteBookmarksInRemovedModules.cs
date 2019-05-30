@@ -34,7 +34,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
-		BookmarksService bookmarksService;
+		BookmarksService? bookmarksService;
 
 		[ImportingConstructor]
 		DeleteBookmarksInRemovedModules(UIDispatcher uiDispatcher, Lazy<IDocumentTabService> documentTabService, Lazy<IModuleIdProvider> moduleIdProvider) {
@@ -64,7 +64,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 				var removed = new HashSet<ModuleId>(e.Documents.Select(a => moduleIdProvider.Value.Create(a.ModuleDef)));
 				existing.Remove(new ModuleId());
 				removed.Remove(new ModuleId());
-				List<Bookmark> bookmarksToRemove = null;
+				List<Bookmark>? bookmarksToRemove = null;
 				foreach (var bm in bookmarksService.Bookmarks) {
 					if (!(bm.Location is IDotNetBookmarkLocation loc))
 						continue;

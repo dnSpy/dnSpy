@@ -157,8 +157,8 @@ namespace dnSpy_Console {
 
 		public void Write(string text, object color) => AddText(text, color);
 		public void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
-		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
-		public void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, index, length, color);
+		public void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
+		public void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) => AddText(text, index, length, color);
 		public override string ToString() => writer.ToString();
 		public void Dispose() => writer.Dispose();
 	}
@@ -176,9 +176,9 @@ namespace dnSpy_Console {
 		int numThreads;
 		int mdToken;
 		int spaces;
-		string typeName;
+		string? typeName;
 		ProjectVersion projectVersion = ProjectVersion.VS2010;
-		string outputDir;
+		string? outputDir;
 		string slnName = "solution.sln";
 		readonly List<string> files;
 		readonly List<string> asmPaths;
@@ -240,7 +240,7 @@ namespace dnSpy_Console {
 
 		static IBamlDecompiler TryLoadBamlDecompiler() => TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.x", "dnSpy.BamlDecompiler.BamlDecompiler");
 
-		static Assembly TryLoad(string asmName) {
+		static Assembly? TryLoad(string asmName) {
 			try {
 				return Assembly.Load(asmName);
 			}
@@ -252,7 +252,7 @@ namespace dnSpy_Console {
 		static T TryCreateType<T>(string asmName, string typeFullName) {
 			var asm = TryLoad(asmName);
 			var type = asm?.GetType(typeFullName);
-			return type == null ? default : (T)Activator.CreateInstance(type);
+			return type == null ? default! : (T)Activator.CreateInstance(type);
 		}
 
 		public int Run(string[] args) {
@@ -315,9 +315,9 @@ namespace dnSpy_Console {
 
 		readonly struct UsageInfo {
 			public string Option { get; }
-			public string OptionArgument { get; }
+			public string? OptionArgument { get; }
 			public string Description { get; }
-			public UsageInfo(string option, string optionArgument, string description) {
+			public UsageInfo(string option, string? optionArgument, string description) {
 				Option = option;
 				OptionArgument = optionArgument;
 				Description = description;
@@ -363,7 +363,7 @@ namespace dnSpy_Console {
 			new HelpInfo(dnSpy_Console_Resources.ExampleDescription5, @"-t system.int32 --gac-file ""mscorlib, Version=4.0.0.0"""),
 		};
 
-		string GetOptionName(IDecompilerOption opt, string extraPrefix = null) {
+		string GetOptionName(IDecompilerOption opt, string? extraPrefix = null) {
 			var prefix = "--" + extraPrefix;
 			var o = prefix + FixInvalidSwitchChars((opt.Name != null ? opt.Name : opt.Guid.ToString()));
 			if (reservedOptions.Contains(o))
@@ -444,8 +444,8 @@ namespace dnSpy_Console {
 				throw new ErrorException(dnSpy_Console_Resources.MissingOptions);
 
 			bool canParseCommands = true;
-			IDecompiler lang = null;
-			Dictionary<string, (IDecompilerOption setOption, Action<string> setOptionValue)> langDict = null;
+			IDecompiler? lang = null;
+			Dictionary<string, (IDecompilerOption setOption, Action<string?> setOptionValue)>? langDict = null;
 			for (int i = 0; i < args.Length; i++) {
 				if (lang == null) {
 					lang = GetLanguage();
@@ -461,7 +461,7 @@ namespace dnSpy_Console {
 				// **********************************************************************
 
 				if (canParseCommands && arg[0] == '-') {
-					string error;
+					string? error;
 					switch (arg) {
 					case "--":
 						canParseCommands = false;
@@ -612,7 +612,8 @@ namespace dnSpy_Console {
 						break;
 
 					default:
-						(IDecompilerOption option, Action<string> setOptionValue) tuple;
+						(IDecompilerOption option, Action<string?> setOptionValue) tuple;
+						Debug.Assert(langDict != null);
 						if (langDict.TryGetValue(arg, out tuple)) {
 							bool hasArg = tuple.option.Type != typeof(bool);
 							if (hasArg && next == null)
@@ -632,7 +633,7 @@ namespace dnSpy_Console {
 		}
 
 		static int ParseInt32(string s) {
-			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out string error);
+			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out var error);
 			if (!string.IsNullOrEmpty(error))
 				throw new ErrorException(error);
 			return v;
@@ -640,8 +641,8 @@ namespace dnSpy_Console {
 
 		static string ParseString(string s) => s;
 
-		Dictionary<string, (IDecompilerOption option, Action<string> setOptionValue)> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
-			var dict = new Dictionary<string, (IDecompilerOption, Action<string>)>();
+		Dictionary<string, (IDecompilerOption option, Action<string?> setOptionValue)> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
+			var dict = new Dictionary<string, (IDecompilerOption, Action<string?>)>();
 
 			if (decompiler == null)
 				return dict;
@@ -649,14 +650,14 @@ namespace dnSpy_Console {
 			foreach (var tmp in decompiler.Settings.Options) {
 				var opt = tmp;
 				if (opt.Type == typeof(bool)) {
-					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = true));
-					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = (opt, new Action<string>(a => opt.Value = false));
-					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = (opt, new Action<string>(a => opt.Value = false));
+					dict[GetOptionName(opt)] = (opt, new Action<string?>(a => opt.Value = true));
+					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = (opt, new Action<string?>(a => opt.Value = false));
+					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = (opt, new Action<string?>(a => opt.Value = false));
 				}
 				else if (opt.Type == typeof(int))
-					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseInt32(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string?>(a => opt.Value = ParseInt32(a)));
 				else if (opt.Type == typeof(string))
-					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseString(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string?>(a => opt.Value = ParseString(a)));
 				else
 					Debug.Fail($"Unsupported type: {opt.Type}");
 			}
@@ -692,7 +693,7 @@ namespace dnSpy_Console {
 				if (files.Count != 1)
 					throw new ErrorException(dnSpy_Console_Resources.OnlyOneFileCanBeDecompiled);
 
-				IMemberDef member;
+				IMemberDef? member;
 				if (typeName != null)
 					member = FindType(files[0].Module, typeName);
 				else
@@ -837,7 +838,7 @@ namespace dnSpy_Console {
 			assemblyResolver.FindExactMatch = oldFindExactMatch;
 		}
 
-		IEnumerable<ProjectModuleOptions> DumpDir(string path, string pattern) {
+		IEnumerable<ProjectModuleOptions> DumpDir(string path, string? pattern) {
 			pattern = pattern ?? "*";
 			Stack<string> stack = new Stack<string>();
 			stack.Push(path);
@@ -853,7 +854,7 @@ namespace dnSpy_Console {
 		}
 
 		IEnumerable<DirectoryInfo> GetDirs(string path) {
-			IEnumerable<FileSystemInfo> fsysIter = null;
+			IEnumerable<FileSystemInfo>? fsysIter = null;
 			try {
 				fsysIter = new DirectoryInfo(path).EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly);
 			}
@@ -869,7 +870,7 @@ namespace dnSpy_Console {
 			foreach (var info in fsysIter) {
 				if ((info.Attributes & System.IO.FileAttributes.Directory) == 0)
 					continue;
-				DirectoryInfo di = null;
+				DirectoryInfo? di = null;
 				try {
 					di = new DirectoryInfo(info.FullName);
 				}
@@ -894,7 +895,7 @@ namespace dnSpy_Console {
 		}
 
 		IEnumerable<FileInfo> GetFiles(string path, string pattern) {
-			IEnumerable<FileSystemInfo> fsysIter = null;
+			IEnumerable<FileSystemInfo>? fsysIter = null;
 			try {
 				fsysIter = new DirectoryInfo(path).EnumerateFileSystemInfos(pattern, SearchOption.TopDirectoryOnly);
 			}
@@ -910,7 +911,7 @@ namespace dnSpy_Console {
 			foreach (var info in fsysIter) {
 				if ((info.Attributes & System.IO.FileAttributes.Directory) != 0)
 					continue;
-				FileInfo fi = null;
+				FileInfo? fi = null;
 				try {
 					fi = new FileInfo(info.FullName);
 				}
@@ -925,7 +926,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		ProjectModuleOptions OpenNetFile(string file) {
+		ProjectModuleOptions? OpenNetFile(string file) {
 			try {
 				file = Path.GetFullPath(file);
 				if (!File.Exists(file))

@@ -42,7 +42,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		GlyphTextViewMarkerGlyphTaggerProvider(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl) => this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
 			if (wpfTextView == null)
@@ -92,7 +92,7 @@ namespace dnSpy.Text.Editor {
 			PredefinedDsTextViewRoles.CanHaveGlyphTextMarkerService,
 		};
 
-		public IGlyphFactory GetGlyphFactory(IWpfTextView view, IWpfTextViewMargin margin) {
+		public IGlyphFactory? GetGlyphFactory(IWpfTextView view, IWpfTextViewMargin margin) {
 			if (!view.Roles.ContainsAny(textViewRoles))
 				return null;
 			var service = GlyphTextViewMarkerService.GetOrCreate(glyphTextMarkerServiceImpl, view);
@@ -105,7 +105,7 @@ namespace dnSpy.Text.Editor {
 
 		public GlyphTextViewMarkerGlyphFactory(GlyphTextViewMarkerService service) => this.service = service;
 
-		public UIElement GenerateGlyph(IWpfTextViewLine line, IGlyphTag tag) {
+		public UIElement? GenerateGlyph(IWpfTextViewLine line, IGlyphTag tag) {
 			var glyphTag = tag as GlyphTextMarkerGlyphTag;
 			if (glyphTag == null)
 				return null;

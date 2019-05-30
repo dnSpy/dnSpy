@@ -90,12 +90,12 @@ namespace dnSpy.Text {
 					TryCreate(typeName, 0);
 			}
 
-			ContentType TryGet(string typeName) {
+			ContentType? TryGet(string typeName) {
 				owner.contentTypes.TryGetValue(typeName, out var contentType);
 				return contentType;
 			}
 
-			ContentType TryCreate(string typeName, int recurse) {
+			ContentType? TryCreate(string typeName, int recurse) {
 				var ct = TryGet(typeName);
 				if (ct != null)
 					return ct;
@@ -128,7 +128,7 @@ namespace dnSpy.Text {
 		ContentTypeRegistryService([ImportMany] IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
 			contentTypes = new Dictionary<string, ContentType>(StringComparer.OrdinalIgnoreCase);
 			mimeTypeToContentType = new Dictionary<string, ContentType>(StringComparer.Ordinal);
-			const string mimeType = null;
+			const string? mimeType = null;
 			AddContentTypeInternal_NoLock(UnknownContentTypeName, Array.Empty<string>(), mimeType);
 			new ContentTypeCreator(this, contentTypeDefinitions);
 		}
@@ -136,12 +136,12 @@ namespace dnSpy.Text {
 		public IContentType AddContentType(string typeName, IEnumerable<string> baseTypes) {
 			if (StringComparer.OrdinalIgnoreCase.Equals(typeName, UnknownContentTypeName))
 				throw new ArgumentException("Guid is reserved", nameof(typeName));
-			const string mimeType = null;
+			const string? mimeType = null;
 			lock (lockObj)
 				return AddContentTypeInternal_NoLock(typeName, baseTypes, mimeType);
 		}
 
-		IContentType AddContentTypeInternal_NoLock(string typeName, IEnumerable<string> baseTypesEnumerable, string mimeType) {
+		IContentType AddContentTypeInternal_NoLock(string typeName, IEnumerable<string> baseTypesEnumerable, string? mimeType) {
 			if (contentTypes.ContainsKey(typeName))
 				throw new ArgumentException("Content type already exists", nameof(typeName));
 			var btGuids = baseTypesEnumerable.ToArray();
@@ -151,7 +151,7 @@ namespace dnSpy.Text {
 			return AddContentType_NoLock(typeName, baseTypes, mimeType);
 		}
 
-		ContentType AddContentType_NoLock(string typeName, IContentType[] baseTypes, string mimeType) {
+		ContentType AddContentType_NoLock(string typeName, IContentType[] baseTypes, string? mimeType) {
 			bool addMimeType;
 			if (string.IsNullOrWhiteSpace(mimeType)) {
 				addMimeType = false;
@@ -166,7 +166,7 @@ namespace dnSpy.Text {
 			var ct = new ContentType(typeName, mimeType, baseTypes);
 			contentTypes.Add(typeName, ct);
 			if (addMimeType)
-				mimeTypeToContentType.Add(mimeType, ct);
+				mimeTypeToContentType.Add(mimeType!, ct);
 			return ct;
 		}
 
@@ -189,7 +189,7 @@ namespace dnSpy.Text {
 			}
 		}
 
-		public IContentType GetContentTypeForMimeType(string mimeType) {
+		public IContentType? GetContentTypeForMimeType(string mimeType) {
 			if (string.IsNullOrWhiteSpace(mimeType))
 				throw new ArgumentException();
 			lock (lockObj) {
@@ -205,7 +205,7 @@ namespace dnSpy.Text {
 			}
 		}
 
-		public string GetMimeType(IContentType type) {
+		public string? GetMimeType(IContentType type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
 			if (type is ContentType ct)

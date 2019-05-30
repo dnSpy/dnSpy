@@ -138,7 +138,7 @@ namespace dnSpy.Text {
 		static class Cache {
 			public static void FreeReadBuffer(char[] buffer) => Interlocked.Exchange(ref __readBuffer, buffer);
 			public static char[] GetReadBuffer() => Interlocked.Exchange(ref __readBuffer, null) ?? new char[BUF_LENGTH];
-			static char[] __readBuffer;
+			static char[]? __readBuffer;
 			const int BUF_LENGTH = 4096;
 
 			public static List<uint> GetOffsetBuilder() {
@@ -151,7 +151,7 @@ namespace dnSpy.Text {
 				Interlocked.Exchange(ref __offsetBuilderWeakRef, new WeakReference(list));
 				return res;
 			}
-			static WeakReference __offsetBuilderWeakRef;
+			static WeakReference? __offsetBuilderWeakRef;
 		}
 	}
 }

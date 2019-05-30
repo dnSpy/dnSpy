@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the menu header, eg. "_Save..." or null to use the default "_Save..." string
 		/// </summary>
-		string MenuHeader { get; }
+		string? MenuHeader { get; }
 
 		/// <summary>
 		/// Saves the tab

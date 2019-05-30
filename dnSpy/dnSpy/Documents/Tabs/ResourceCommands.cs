@@ -42,15 +42,14 @@ namespace dnSpy.Documents.Tabs {
 			ResourceName = resourceName;
 		}
 
-		public static ResourceRef TryCreate(object o) {
+		public static ResourceRef? TryCreate(object? o) {
 			if (o is PropertyDef pd) {
 				if (pd.SetMethod != null)
 					return null;
 				o = pd.GetMethod;
 			}
 			var md = o as MethodDef;
-			var type = md?.DeclaringType;
-			if (type == null)
+			if (!(md?.DeclaringType is TypeDef type))
 				return null;
 			var resourceName = GetResourceName(md);
 			if (resourceName == null)
@@ -65,7 +64,7 @@ namespace dnSpy.Documents.Tabs {
 			return new ResourceRef(module, resourcesFilename, resourceName);
 		}
 
-		static string GetResourcesFilename(TypeDef type) {
+		static string? GetResourcesFilename(TypeDef type) {
 			foreach (var m in type.Methods) {
 				if (!m.IsStatic)
 					continue;
@@ -78,8 +77,8 @@ namespace dnSpy.Documents.Tabs {
 				if (body == null)
 					continue;
 
-				ITypeDefOrRef resourceType = null;
-				string resourceName = null;
+				ITypeDefOrRef? resourceType = null;
+				string? resourceName = null;
 				foreach (var instr in body.Instructions) {
 					if (instr.OpCode.Code == Code.Ldstr) {
 						resourceName = instr.Operand as string;
@@ -102,7 +101,7 @@ namespace dnSpy.Documents.Tabs {
 			return null;
 		}
 
-		static string GetResourceName(MethodDef method) {
+		static string? GetResourceName(MethodDef method) {
 			if (!IsResourcesClass(method.DeclaringType))
 				return null;
 
@@ -111,7 +110,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 
 			bool foundGetMethod = false;
-			string resourceName = null;
+			string? resourceName = null;
 			foreach (var instr in body.Instructions) {
 				if (instr.OpCode.Code == Code.Ldstr) {
 					resourceName = instr.Operand as string;
@@ -163,13 +162,13 @@ namespace dnSpy.Documents.Tabs {
 
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
-			static ResourceRef TryCreate(TextReference @ref) {
+			static ResourceRef? TryCreate(TextReference @ref) {
 				if (@ref == null)
 					return null;
 				return ResourceRef.TryCreate(@ref.Reference);
 			}
 
-			static ResourceRef TryCreate(IMenuItemContext context) {
+			static ResourceRef? TryCreate(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				return TryCreate(context.Find<TextReference>());
@@ -187,7 +186,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
-			static ResourceRef TryCreate(TreeNodeData[] nodes) {
+			static ResourceRef? TryCreate(TreeNodeData[] nodes) {
 				if (nodes == null || nodes.Length != 1)
 					return null;
 				if (nodes[0] is IMDTokenNode tokNode)
@@ -195,7 +194,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			}
 
-			static ResourceRef TryCreate(IMenuItemContext context) {
+			static ResourceRef? TryCreate(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				return TryCreate(context.Find<TreeNodeData[]>());
@@ -204,9 +203,9 @@ namespace dnSpy.Documents.Tabs {
 			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));
 		}
 
-		static bool IsVisible(ResourceRef resRef) => resRef != null;
+		static bool IsVisible(ResourceRef? resRef) => resRef != null;
 
-		static void Execute(IDocumentTabService documentTabService, ResourceRef resRef) {
+		static void Execute(IDocumentTabService documentTabService, ResourceRef? resRef) {
 			if (resRef == null)
 				return;
 			var modNode = documentTabService.DocumentTreeView.FindNode(resRef.Module);

@@ -101,14 +101,14 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// Gets the selected item
 		/// </summary>
-		public new object SelectedItem {
+		public new object? SelectedItem {
 			get {
 				if (Index < 0 || Index >= list.Count)
 					return null;
 				return list[Index].Value;
 			}
 			set {
-				if (!object.Equals(SelectedItem, value))
+				if (value != null && !object.Equals(SelectedItem, value))
 					SelectedIndex = GetIndex(value);
 			}
 		}
@@ -126,7 +126,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="list">Initial value</param>
 		/// <param name="onChanged">Called when the selected item gets changed</param>
-		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int> onChanged)
+		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int>? onChanged)
 			: base(list, onChanged) {
 		}
 

@@ -27,13 +27,13 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionVM : ViewModelBase {
-		public object ImageUIObject { get; }
+		public object? ImageUIObject { get; }
 		public object DisplayTextObject => this;
 		public object SuffixObject => this;
 		public Completion Completion { get; }
 
 		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ?? (attributeIcons = CreateAttributeIcons());
-		IEnumerable<CompletionIconVM> attributeIcons;
+		IEnumerable<CompletionIconVM>? attributeIcons;
 
 		public CompletionVM(Completion completion) {
 			Completion = completion ?? throw new ArgumentNullException(nameof(completion));
@@ -41,7 +41,7 @@ namespace dnSpy.Language.Intellisense {
 			ImageUIObject = CreateImageUIObject(completion);
 		}
 
-		static object CreateImageUIObject(Completion completion) {
+		static object? CreateImageUIObject(Completion completion) {
 			var dsCompletion = completion as DsCompletion;
 			if (dsCompletion == null) {
 				var iconSource = completion.IconSource;
@@ -60,7 +60,7 @@ namespace dnSpy.Language.Intellisense {
 			return new DsImage { ImageReference = imageReference };
 		}
 
-		static object CreateImageUIObject(CompletionIcon icon) {
+		static object? CreateImageUIObject(CompletionIcon icon) {
 			var dsIcon = icon as DsCompletionIcon;
 			if (dsIcon == null) {
 				var iconSource = icon.IconSource;
@@ -84,7 +84,7 @@ namespace dnSpy.Language.Intellisense {
 			return image;
 		}
 
-		public static CompletionVM TryGet(Completion completion) {
+		public static CompletionVM? TryGet(Completion completion) {
 			if (completion == null)
 				return null;
 			if (completion.Properties.TryGetProperty(typeof(CompletionVM), out CompletionVM vm))

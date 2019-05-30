@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Documents;
@@ -29,7 +30,7 @@ namespace dnSpy.Documents {
 		readonly Window ownerWindow;
 		readonly HashSet<IDsDocument> hash;
 		readonly List<IDsDocument> loadedDocuments;
-		DocumentToLoad[] documentsToLoad;
+		DocumentToLoad[]? documentsToLoad;
 
 		public bool IsIndeterminate => false;
 		public double ProgressMinimum => 0;
@@ -68,6 +69,7 @@ namespace dnSpy.Documents {
 		}
 
 		public void Execute(IProgress progress) {
+			Debug.Assert(documentsToLoad != null);
 			for (int i = 0; i < documentsToLoad.Length; i++) {
 				progress.ThrowIfCancellationRequested();
 				var f = documentsToLoad[i];

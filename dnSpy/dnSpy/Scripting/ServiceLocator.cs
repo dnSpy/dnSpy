@@ -29,24 +29,26 @@ using Microsoft.VisualStudio.Composition;
 namespace dnSpy.Scripting {
 	[Export, Export(typeof(IServiceLocator))]
 	sealed class ServiceLocator : IServiceLocator {
-		Dispatcher dispatcher;
+		Dispatcher? dispatcher;
 
-		public T Resolve<T>() {
+		public T Resolve<T>() where T : class {
 			Debug.Assert(exportProvider != null);
+			Debug.Assert(dispatcher != null);
 			if (exportProvider == null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => exportProvider.GetExportedValue<T>());
 		}
 
-		public T TryResolve<T>() {
+		public T? TryResolve<T>() where T : class {
 			Debug.Assert(exportProvider != null);
+			Debug.Assert(dispatcher != null);
 			if (exportProvider == null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => {
 				// VS-MEF doesn't have GetExportedValueOrDefault()
 				var res = exportProvider.GetExports<T, IDictionary<string, object>>(null).SingleOrDefault();
 				if (res == null)
-					return default;
+					return null;
 				return res.Value;
 			});
 		}
@@ -57,6 +59,6 @@ namespace dnSpy.Scripting {
 				throw new InvalidOperationException();
 			this.exportProvider = exportProvider ?? throw new ArgumentNullException(nameof(exportProvider));
 		}
-		ExportProvider exportProvider;
+		ExportProvider? exportProvider;
 	}
 }

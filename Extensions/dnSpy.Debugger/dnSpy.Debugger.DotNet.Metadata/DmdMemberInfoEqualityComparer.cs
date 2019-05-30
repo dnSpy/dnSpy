@@ -24,10 +24,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Compares types, members, parameters
 	/// </summary>
 	public sealed class DmdMemberInfoEqualityComparer :
-			IEqualityComparer<DmdMemberInfo>, IEqualityComparer<DmdType>, IEqualityComparer<DmdFieldInfo>,
-			IEqualityComparer<DmdMethodBase>, IEqualityComparer<DmdConstructorInfo>, IEqualityComparer<DmdMethodInfo>,
-			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
-			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<IDmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
+			IEqualityComparer<DmdMemberInfo?>, IEqualityComparer<DmdType?>, IEqualityComparer<DmdFieldInfo?>,
+			IEqualityComparer<DmdMethodBase?>, IEqualityComparer<DmdConstructorInfo?>, IEqualityComparer<DmdMethodInfo?>,
+			IEqualityComparer<DmdPropertyInfo?>, IEqualityComparer<DmdEventInfo?>, IEqualityComparer<DmdParameterInfo?>,
+			IEqualityComparer<DmdMethodSignature?>, IEqualityComparer<IDmdAssemblyName?>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
 		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers and
 		/// MD arrays' lower bounds and sizes are ignored.
@@ -74,28 +74,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdMemberInfoEqualityComparer(DmdSigComparerOptions options) => this.options = options;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public bool Equals(DmdMemberInfo x, DmdMemberInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMemberInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdType x, DmdType y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdType obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdFieldInfo x, DmdFieldInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdFieldInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodBase x, DmdMethodBase y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodBase obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdConstructorInfo x, DmdConstructorInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdConstructorInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodInfo x, DmdMethodInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdPropertyInfo x, DmdPropertyInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdPropertyInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdEventInfo x, DmdEventInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdEventInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdParameterInfo x, DmdParameterInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdParameterInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodSignature x, DmdMethodSignature y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodSignature obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(IDmdAssemblyName x, IDmdAssemblyName y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(IDmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMemberInfo? x, DmdMemberInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMemberInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdType? x, DmdType? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdType? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdFieldInfo? x, DmdFieldInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdFieldInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMethodBase? x, DmdMethodBase? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMethodBase? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdConstructorInfo? x, DmdConstructorInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdConstructorInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMethodInfo? x, DmdMethodInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMethodInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdPropertyInfo? x, DmdPropertyInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdPropertyInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdEventInfo? x, DmdEventInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdEventInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdParameterInfo? x, DmdParameterInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdParameterInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMethodSignature? x, DmdMethodSignature? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMethodSignature? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(IDmdAssemblyName? x, IDmdAssemblyName? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(IDmdAssemblyName? obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdCustomModifier x, DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

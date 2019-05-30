@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <param name="expectedType">Expected type</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
+		public abstract DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options);
+		public abstract DbgDotNetValueNode CreateException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates an exception value node
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options);
+		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates a return value node
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="options">Options</param>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string> formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method);
+		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method);
 
 		/// <summary>
 		/// Creates an error value node

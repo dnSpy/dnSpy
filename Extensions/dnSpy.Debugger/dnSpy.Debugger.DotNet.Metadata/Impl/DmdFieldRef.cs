@@ -28,39 +28,39 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override string Name { get; }
 		public override DmdType FieldType { get; }
 		public override bool IsMetadataReference => true;
-		public override DmdType DeclaringType => __resolvedField_DONT_USE?.DeclaringType ?? declaringTypeRef;
-		public override DmdType ReflectedType => DeclaringType;
+		public override DmdType? DeclaringType => __resolvedField_DONT_USE?.DeclaringType ?? declaringTypeRef;
+		public override DmdType? ReflectedType => DeclaringType;
 		public override int MetadataToken => ResolvedField.MetadataToken;
 		public override DmdFieldAttributes Attributes => ResolvedField.Attributes;
 		public override uint FieldRVA => ResolvedField.FieldRVA;
 
-		DmdFieldDef ResolvedField => GetResolvedField(throwOnError: true);
-		DmdFieldDef GetResolvedField(bool throwOnError) {
-			if ((object)__resolvedField_DONT_USE != null)
+		DmdFieldDef ResolvedField => GetResolvedField(throwOnError: true)!;
+		DmdFieldDef? GetResolvedField(bool throwOnError) {
+			if (!(__resolvedField_DONT_USE is null))
 				return __resolvedField_DONT_USE;
 
-			DmdFieldDef newResolvedField = null;
+			DmdFieldDef? newResolvedField = null;
 			var declType = declaringTypeRef.Resolve(throwOnError);
-			if ((object)declType != null) {
+			if (!(declType is null)) {
 				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
-				var nonGenericInstDeclTypeField = (DmdFieldDef)nonGenericInstDeclType?.GetField(Name, rawFieldType, throwOnError: false);
-				if ((object)nonGenericInstDeclTypeField != null) {
-					newResolvedField = (object)nonGenericInstDeclTypeField.DeclaringType == declType ?
+				var nonGenericInstDeclTypeField = (DmdFieldDef?)nonGenericInstDeclType?.GetField(Name, rawFieldType, throwOnError: false);
+				if (!(nonGenericInstDeclTypeField is null)) {
+					newResolvedField = (object?)nonGenericInstDeclTypeField.DeclaringType == declType ?
 						nonGenericInstDeclTypeField :
-						(DmdFieldDef)declType.GetField(nonGenericInstDeclTypeField.Module, nonGenericInstDeclTypeField.MetadataToken);
-					Debug.Assert((object)newResolvedField != null);
+						(DmdFieldDef?)declType.GetField(nonGenericInstDeclTypeField.Module, nonGenericInstDeclTypeField.MetadataToken);
+					Debug.Assert(!(newResolvedField is null));
 				}
 			}
-			if ((object)newResolvedField != null) {
+			if (!(newResolvedField is null)) {
 				Interlocked.CompareExchange(ref __resolvedField_DONT_USE, newResolvedField, null);
-				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedField_DONT_USE.ReflectedType, declaringTypeRef));
+				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedField_DONT_USE!.ReflectedType, declaringTypeRef));
 				return __resolvedField_DONT_USE;
 			}
 			if (throwOnError)
 				throw new FieldResolveException(this);
 			return null;
 		}
-		volatile DmdFieldDef __resolvedField_DONT_USE;
+		volatile DmdFieldDef? __resolvedField_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdType rawFieldType;
@@ -72,8 +72,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			FieldType = fieldType ?? throw new ArgumentNullException(nameof(fieldType));
 		}
 
-		public override DmdFieldInfo Resolve(bool throwOnError) => GetResolvedField(throwOnError);
-		public override object GetRawConstantValue() => ResolvedField.GetRawConstantValue();
+		public override DmdFieldInfo? Resolve(bool throwOnError) => GetResolvedField(throwOnError);
+		public override object? GetRawConstantValue() => ResolvedField.GetRawConstantValue();
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedField.GetCustomAttributesData();
 	}
 }

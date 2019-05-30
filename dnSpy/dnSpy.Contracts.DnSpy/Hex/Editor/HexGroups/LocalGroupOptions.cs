@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 	/// <summary>
 	/// Local group options
 	/// </summary>
-	public sealed class LocalGroupOptions : IEquatable<LocalGroupOptions> {
+	public sealed class LocalGroupOptions : IEquatable<LocalGroupOptions?> {
 		/// <summary><see cref="DefaultHexViewOptions.ShowOffsetColumnId"/></summary>
 		public bool ShowOffsetColumn { get; set; }
 		/// <summary><see cref="DefaultHexViewOptions.ShowValuesColumnId"/></summary>
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(LocalGroupOptions other) =>
+		public bool Equals(LocalGroupOptions? other) =>
 			other != null &&
 			ShowOffsetColumn == other.ShowOffsetColumn &&
 			ShowValuesColumn == other.ShowValuesColumn &&
@@ -149,7 +149,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is LocalGroupOptions && Equals((LocalGroupOptions)obj);
+		public override bool Equals(object? obj) => obj is LocalGroupOptions && Equals((LocalGroupOptions)obj);
 
 		/// <summary>
 		/// GetHashCode()

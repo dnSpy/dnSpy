@@ -46,12 +46,12 @@ namespace dnSpy.Text.Editor {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new CustomLineNumberMarginImpl(wpfTextViewHost, classificationFormatMapService, textFormatterProvider);
 	}
 
 	sealed class CustomLineNumberMarginImpl : LineNumberMarginBase, ICustomLineNumberMargin {
-		ICustomLineNumberMarginOwner owner;
+		ICustomLineNumberMarginOwner? owner;
 
 		public CustomLineNumberMarginImpl(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider)
 			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
@@ -66,10 +66,10 @@ namespace dnSpy.Text.Editor {
 		}
 
 		sealed class CustomLineNumberState : LineNumberState {
-			public object State;
+			public object? State;
 		}
 
-		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state) {
+		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState? state) {
 			if (owner == null)
 				return null;
 			CustomLineNumberState customState;
@@ -95,10 +95,10 @@ namespace dnSpy.Text.Editor {
 			if (owner == null)
 				throw new InvalidOperationException();
 			var customState = (CustomLineNumberState)state;
-			return owner.GetLineNumberTextFormattingRunProperties(viewLine, customState.SnapshotLine, lineNumber, customState.State);
+			return owner.GetLineNumberTextFormattingRunProperties(viewLine, customState.SnapshotLine!, lineNumber, customState.State);
 		}
 
-		protected override TextFormattingRunProperties GetDefaultTextFormattingRunProperties() => owner?.GetDefaultTextFormattingRunProperties();
+		protected override TextFormattingRunProperties? GetDefaultTextFormattingRunProperties() => owner?.GetDefaultTextFormattingRunProperties();
 		protected override void OnTextPropertiesChangedCore() => owner?.OnTextPropertiesChanged(classificationFormatMap);
 		protected override void RegisterEventsCore() => owner?.OnVisible();
 		protected override void UnregisterEventsCore() => owner?.OnInvisible();

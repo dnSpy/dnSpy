@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return false;
 		}
 
-		ModuleDef GetModule(ModuleId module, ReadOnlyCollection<object> options) =>
+		ModuleDef? GetModule(ModuleId module, ReadOnlyCollection<object> options) =>
 			dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.None);
 
 		bool GoTo(DotNetMethodBodyReference bodyRef, ReadOnlyCollection<object> options) {
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return true;
 		}
 
-		static bool MoveCaretTo(IDocumentViewer documentViewer, IMemberDef def) {
+		static bool MoveCaretTo(IDocumentViewer? documentViewer, IMemberDef def) {
 			if (documentViewer == null)
 				return false;
 			var data = documentViewer.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && a.Data.Reference == def);
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			});
 		}
 
-		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
+		bool MoveCaretToCurrentStatement(IDocumentViewer? documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
 			if (documentViewer == null)
 				return false;
 			if (MoveCaretTo(documentViewer, module, offset))
@@ -197,7 +197,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, module, out var methodDebugService))
 				return false;
 
-			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module).GetSourceStatementByCodeOffset(offset);
+			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module)!.GetSourceStatementByCodeOffset(offset);
 			if (sourceStatement == null)
 				return false;
 
@@ -231,9 +231,10 @@ namespace dnSpy.Debugger.DotNet.Code {
 				memFile.UpdateMemory();
 			else {
 				var mod = dbgMetadataService.Value.TryGetMetadata(module.Module, DbgLoadModuleOptions.ForceMemory | DbgLoadModuleOptions.AutoLoaded);
-				method = mod?.ResolveToken(module.Token) as MethodDef;
-				if (method == null)
+				var md = mod?.ResolveToken(module.Token) as MethodDef;
+				if (md == null)
 					return;
+				method = md;
 			}
 
 			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: false);

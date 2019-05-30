@@ -22,6 +22,6 @@ using dnSpy.Contracts.Command;
 namespace dnSpy.Debugger.ToolWindows.TextView {
 	static class DebuggerToolWindowIdsExtensions {
 		public static CommandInfo ToCommandInfo(this DebuggerToolWindowIds id) => new CommandInfo(DebuggerCommandConstants.DebuggerToolWindowGroup, (int)id);
-		public static CommandInfo ToCommandInfo(this DebuggerToolWindowIds id, object arguments) => new CommandInfo(DebuggerCommandConstants.DebuggerToolWindowGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this DebuggerToolWindowIds id, object? arguments) => new CommandInfo(DebuggerCommandConstants.DebuggerToolWindowGroup, (int)id, arguments);
 	}
 }

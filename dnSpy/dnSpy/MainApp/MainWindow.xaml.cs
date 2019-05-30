@@ -22,7 +22,7 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class MainWindow : MetroWindow {
-		public MainWindow(object content) {
+		public MainWindow(object? content) {
 			InitializeComponent();
 			contentPresenter.Content = content;
 			CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));

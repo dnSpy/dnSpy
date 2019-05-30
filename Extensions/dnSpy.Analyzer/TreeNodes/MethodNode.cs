@@ -70,7 +70,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfaceMethodImplementedByNode(analyzedMethod);
 		}
 
-		public override IMemberRef Member => analyzedMethod;
-		public override IMDTokenProvider Reference => analyzedMethod;
+		public override IMemberRef? Member => analyzedMethod;
+		public override IMDTokenProvider? Reference => analyzedMethod;
 	}
 }

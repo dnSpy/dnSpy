@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.Commands {
 			this.documentTabService = documentTabService;
 		}
 
-		CodeContext CreateContext() {
+		CodeContext? CreateContext() {
 			var documentViewer = documentTabService.ActiveTab.TryGetDocumentViewer();
 			if (documentViewer == null)
 				return null;

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using Microsoft.VisualStudio.Utilities;
@@ -72,7 +73,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		readonly Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors;
 		readonly Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders;
-		DocumentViewerOutput documentViewerOutput;
+		DocumentViewerOutput? documentViewerOutput;
 
 		public DocumentViewerContentFactory(Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors, Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders) {
 			this.documentViewerPostProcessors = documentViewerPostProcessors ?? throw new ArgumentNullException(nameof(documentViewerPostProcessors));
@@ -81,25 +82,28 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		sealed class DocumentViewerCustomDataContext : IDocumentViewerCustomDataContext, IDisposable {
-			public string Text { get; private set; }
-			public IDocumentViewer DocumentViewer { get; private set; }
+			public string Text => text!;
+			public IDocumentViewer DocumentViewer => documentViewer!;
 			public IContentType ContentType { get; }
-			Dictionary<string, object> customDataDict;
-			Dictionary<string, object> resultDict;
+			string? text;
+			IDocumentViewer? documentViewer;
+			Dictionary<string, object>? customDataDict;
+			Dictionary<string, object>? resultDict;
 
 			public DocumentViewerCustomDataContext(IDocumentViewer documentViewer, string text, IContentType contentType, Dictionary<string, object> customDataDict) {
-				DocumentViewer = documentViewer;
-				Text = text;
+				this.documentViewer = documentViewer;
+				this.text = text;
 				ContentType = contentType;
 				this.customDataDict = customDataDict;
 				resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
 			}
 
-			internal Dictionary<string, object> GetResultDictionary() => resultDict;
+			internal Dictionary<string, object>? GetResultDictionary() => resultDict;
 
 			public void AddCustomData(string id, object data) {
 				if (customDataDict == null)
 					throw new ObjectDisposedException(nameof(IDocumentViewerCustomDataContext));
+				Debug.Assert(resultDict != null);
 				if (id == null)
 					throw new ArgumentNullException(nameof(id));
 				if (resultDict.ContainsKey(id))
@@ -120,30 +124,33 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			public void Dispose() {
-				Text = null;
-				DocumentViewer = null;
+				text = null;
+				documentViewer = null;
 				customDataDict = null;
 				resultDict = null;
 			}
 		}
 
 		sealed class DocumentViewerPostProcessorContext : IDocumentViewerPostProcessorContext, IDisposable {
-			public string Text { get; private set; }
-			public IDocumentViewerOutput DocumentViewerOutput { get; private set; }
-			public IDocumentViewer DocumentViewer { get; private set; }
+			public string Text => text!;
+			public IDocumentViewerOutput DocumentViewerOutput => documentViewerOutput!;
+			public IDocumentViewer DocumentViewer => documentViewer!;
 			public IContentType ContentType { get; }
+			string? text;
+			IDocumentViewerOutput? documentViewerOutput;
+			IDocumentViewer? documentViewer;
 
 			public DocumentViewerPostProcessorContext(IDocumentViewerOutput documentViewerOutput, IDocumentViewer documentViewer, string text, IContentType contentType) {
-				DocumentViewerOutput = documentViewerOutput;
-				DocumentViewer = documentViewer;
-				Text = text;
+				this.documentViewerOutput = documentViewerOutput;
+				this.documentViewer = documentViewer;
+				this.text = text;
 				ContentType = contentType;
 			}
 
 			public void Dispose() {
-				Text = null;
-				DocumentViewer = null;
-				DocumentViewerOutput = null;
+				text = null;
+				documentViewer = null;
+				documentViewerOutput = null;
 			}
 		}
 
@@ -167,7 +174,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					lz.Value.OnCustomData(context);
 				var output = documentViewerOutput;
 				documentViewerOutput = null;
-				return output.CreateContent(context.GetResultDictionary());
+				return output.CreateContent(context.GetResultDictionary()!);
 			}
 		}
 	}

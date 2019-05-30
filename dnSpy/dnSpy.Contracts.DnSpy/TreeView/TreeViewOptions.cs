@@ -58,17 +58,17 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// <see cref="ITreeView"/> listener
 		/// </summary>
-		public ITreeViewListener TreeViewListener { get; set; }
+		public ITreeViewListener? TreeViewListener { get; set; }
 
 		/// <summary>
 		/// The root node or null
 		/// </summary>
-		public TreeNodeData RootNode { get; set; }
+		public TreeNodeData? RootNode { get; set; }
 
 		/// <summary>
 		/// Foreground brush resource key or null to use the default color
 		/// </summary>
-		public object ForegroundBrushResourceKey { get; set; }
+		public object? ForegroundBrushResourceKey { get; set; }
 
 		/// <summary>
 		/// Constructor

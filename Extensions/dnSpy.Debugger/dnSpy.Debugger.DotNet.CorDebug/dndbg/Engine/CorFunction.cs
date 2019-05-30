@@ -24,18 +24,18 @@ using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction> {
-		public CorModule Module {
+	sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction?> {
+		public CorModule? Module {
 			get {
-				if (module != null)
+				if (!(module is null))
 					return module;
 				int hr = obj.GetModule(out var mod);
-				return module = hr < 0 || mod == null ? null : new CorModule(mod);
+				return module = hr < 0 || mod is null ? null : new CorModule(mod);
 			}
 		}
-		CorModule module;
+		CorModule? module;
 
-		public CorClass Class {
+		public CorClass? Class {
 			get {
 				int hr = obj.GetClass(out var cls);
 				if (hr >= 0 && cls != null)
@@ -44,7 +44,7 @@ namespace dndbg.Engine {
 				// Here if it's an extern method, eg. it's not IL code, but native code
 
 				var mod = Module;
-				Debug.Assert(mod != null);
+				Debug.Assert(!(mod is null));
 				var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 				uint tdOwner = 0x02000000 + MDAPI.GetMethodOwnerRid(mdi, Token);
 				return mod?.GetClassFromToken(tdOwner);
@@ -98,21 +98,21 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorCode ILCode {
+		public CorCode? ILCode {
 			get {
 				int hr = obj.GetILCode(out var code);
 				return hr < 0 || code == null ? null : new CorCode(code);
 			}
 		}
 
-		public CorCode NativeCode {
+		public CorCode? NativeCode {
 			get {
 				int hr = obj.GetNativeCode(out var code);
 				return hr < 0 || code == null ? null : new CorCode(code);
 			}
 		}
 
-		public CorFunction(ICorDebugFunction func, CorModule module = null)
+		public CorFunction(ICorDebugFunction func, CorModule? module = null)
 			: base(func) {
 		}
 
@@ -121,19 +121,10 @@ namespace dndbg.Engine {
 			return attributes;
 		}
 
-		public string GetName() => MDAPI.GetMethodName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
+		public string? GetName() => MDAPI.GetMethodName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
-		public static bool operator ==(CorFunction a, CorFunction b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorFunction a, CorFunction b) => !(a == b);
-		public bool Equals(CorFunction other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorFunction);
+		public bool Equals(CorFunction? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorFunction);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

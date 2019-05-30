@@ -29,7 +29,7 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Hex.Intellisense {
 	sealed class HexQuickInfoPresenter : HexQuickInfoPresenterBase, IHexCustomIntellisensePresenter {
 		readonly Popup popup;
-		readonly WpfHexView wpfHexView;
+		readonly WpfHexView? wpfHexView;
 
 		public HexQuickInfoPresenter(HexQuickInfoSession session)
 			: base(session) {
@@ -110,6 +110,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		bool ShouldDismiss(MouseEventArgs e) {
+			Debug.Assert(wpfHexView != null);
 			var mousePos = GetMousePoint(e.MouseDevice);
 			if (mousePos == null)
 				return true;

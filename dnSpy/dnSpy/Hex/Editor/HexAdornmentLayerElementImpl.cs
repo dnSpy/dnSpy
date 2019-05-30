@@ -26,11 +26,11 @@ namespace dnSpy.Hex.Editor {
 	sealed class HexAdornmentLayerElementImpl : HexAdornmentLayerElement {
 		public override UIElement Adornment { get; }
 		public override VSTE.AdornmentPositioningBehavior Behavior { get; }
-		public override VSTE.AdornmentRemovedCallback RemovedCallback { get; }
-		public override object Tag { get; }
+		public override VSTE.AdornmentRemovedCallback? RemovedCallback { get; }
+		public override object? Tag { get; }
 		public override HexBufferSpan? VisualSpan { get; }
 
-		public HexAdornmentLayerElementImpl(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object tag, UIElement adornment, VSTE.AdornmentRemovedCallback removedCallback) {
+		public HexAdornmentLayerElementImpl(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object? tag, UIElement adornment, VSTE.AdornmentRemovedCallback? removedCallback) {
 			Adornment = adornment;
 			Behavior = behavior;
 			RemovedCallback = removedCallback;

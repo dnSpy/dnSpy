@@ -27,13 +27,13 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 	[ExportDbgDotNetFormatter(DbgDotNetLanguageGuids.VisualBasic)]
 	sealed class VisualBasicFormatter : LanguageFormatter {
-		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DmdType type, DbgDotNetValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) =>
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DmdType type, DbgDotNetValue? value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) =>
 			new VisualBasicTypeFormatter(output, options.ToTypeFormatterOptions(), cultureInfo).Format(type, value);
 
-		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) =>
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) =>
 			new VisualBasicValueFormatter(output, evalInfo, this, options.ToValueFormatterOptions(), cultureInfo).Format(value);
 
-		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
 			new VisualBasicStackFrameFormatter(output, evalInfo, this, options, valueOptions.ToValueFormatterOptions(), cultureInfo).Format();
 	}
 }

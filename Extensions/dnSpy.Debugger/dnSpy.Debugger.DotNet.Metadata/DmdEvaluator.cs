@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="ctor">Constructor</param>
 		/// <param name="arguments">Arguments passed to the constructor</param>
 		/// <returns></returns>
-		public abstract object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments);
+		public abstract object? CreateInstance(object? context, DmdConstructorInfo ctor, object?[] arguments);
 
 		/// <summary>
 		/// Executes a method
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a constructor or a static method</param>
 		/// <param name="arguments">Arguments passed to the method</param>
 		/// <returns></returns>
-		public abstract object Invoke(object context, DmdMethodBase method, object obj, object[] arguments);
+		public abstract object? Invoke(object? context, DmdMethodBase method, object? obj, object?[] arguments);
 
 		/// <summary>
 		/// Loads a field
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <returns></returns>
-		public abstract object LoadField(object context, DmdFieldInfo field, object obj);
+		public abstract object? LoadField(object? context, DmdFieldInfo field, object? obj);
 
 		/// <summary>
 		/// Stores a value in a field
@@ -57,6 +57,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="value">Value to store in the field</param>
-		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value);
+		public abstract void StoreField(object? context, DmdFieldInfo field, object? obj, object? value);
 	}
 }

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// x:ClassModifier value string when type is internal
 		/// </summary>
-		public string InternalClassModifier { get; set; }
+		public string? InternalClassModifier { get; set; }
 
 		/// <summary>
 		/// Creates a new instance

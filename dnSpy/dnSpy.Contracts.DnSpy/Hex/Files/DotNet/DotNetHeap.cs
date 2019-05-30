@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual ComplexData GetStructure(HexPosition position) => null;
+		public virtual ComplexData? GetStructure(HexPosition position) => null;
 
 		/// <summary>
 		/// Checks whether <paramref name="offset"/> is valid. Note that some heaps
@@ -150,14 +150,14 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// </summary>
 		/// <param name="token">Token</param>
 		/// <returns></returns>
-		public TableRecordData GetRecord(uint token) => GetRecord(new MDToken(token));
+		public TableRecordData? GetRecord(uint token) => GetRecord(new MDToken(token));
 
 		/// <summary>
 		/// Gets a record or null if <paramref name="token"/> is invalid
 		/// </summary>
 		/// <param name="token">Token</param>
 		/// <returns></returns>
-		public abstract TableRecordData GetRecord(MDToken token);
+		public abstract TableRecordData? GetRecord(MDToken token);
 	}
 
 	/// <summary>

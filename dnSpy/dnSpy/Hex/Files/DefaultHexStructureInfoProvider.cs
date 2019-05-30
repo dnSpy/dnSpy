@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Files {
 				yield return new HexStructureField(structure.Span, HexStructureFieldKind.Structure);
 		}
 
-		public override object GetToolTip(HexPosition position) => hexFileStructureInfoService.GetToolTip(position);
-		public override object GetReference(HexPosition position) => hexFileStructureInfoService.GetReference(position);
+		public override object? GetToolTip(HexPosition position) => hexFileStructureInfoService.GetToolTip(position);
+		public override object? GetReference(HexPosition position) => hexFileStructureInfoService.GetReference(position);
 	}
 }

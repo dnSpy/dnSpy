@@ -31,10 +31,10 @@ namespace dnSpy.Text.Editor {
 		public IDsWpfTextView TextView => TextViewHost.TextView;
 		public IDsWpfTextViewHost TextViewHost { get; }
 		public ITextBuffer TextBuffer => TextViewHost.TextView.TextBuffer;
-		public object UIObject => TextViewHost.HostControl;
-		public IInputElement FocusedElement => TextViewHost.TextView.VisualElement;
-		public FrameworkElement ZoomElement => TextViewHost.TextView.VisualElement;
-		public object Tag { get; set; }
+		public object? UIObject => TextViewHost.HostControl;
+		public IInputElement? FocusedElement => TextViewHost.TextView.VisualElement;
+		public FrameworkElement? ZoomElement => TextViewHost.TextView.VisualElement;
+		public object? Tag { get; set; }
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly CodeEditor codeEditor;

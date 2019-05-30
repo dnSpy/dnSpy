@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as TabVM;
 			var tag = parameter as string;
 			if (vm == null || tag == null)

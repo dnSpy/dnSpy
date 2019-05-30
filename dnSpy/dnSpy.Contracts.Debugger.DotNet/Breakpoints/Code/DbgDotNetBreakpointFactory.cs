@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		/// <param name="token">Token of a method within the module</param>
 		/// <param name="offset">IL offset of the breakpoint within the method body</param>
 		/// <returns></returns>
-		public DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset) =>
+		public DbgCodeBreakpoint? Create(ModuleId module, uint token, uint offset) =>
 			Create(module, token, offset, new DbgCodeBreakpointSettings { IsEnabled = true });
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		/// <param name="offset">IL offset of the tracepoint within the method body</param>
 		/// <param name="message">Message</param>
 		/// <returns></returns>
-		public DbgCodeBreakpoint CreateTracepoint(ModuleId module, uint token, uint offset, string message) =>
+		public DbgCodeBreakpoint? CreateTracepoint(ModuleId module, uint token, uint offset, string message) =>
 			Create(module, token, offset, new DbgCodeBreakpointSettings { IsEnabled = true, Trace = new DbgCodeBreakpointTrace(message, @continue: true) });
 
 		/// <summary>
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		/// <param name="offset">IL offset of the breakpoint within the method body</param>
 		/// <param name="settings">Breakpoint settings</param>
 		/// <returns></returns>
-		public DbgCodeBreakpoint Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings settings) =>
+		public DbgCodeBreakpoint? Create(ModuleId module, uint token, uint offset, DbgCodeBreakpointSettings settings) =>
 			Create(new[] { new DbgDotNetBreakpointInfo(module, token, offset, settings) }).FirstOrDefault();
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Breakpoints.Code {
 		/// <param name="token">Token of a method within the module</param>
 		/// <param name="offset">IL offset of the breakpoint within the method body</param>
 		/// <returns></returns>
-		public abstract DbgCodeBreakpoint TryGetBreakpoint(ModuleId module, uint token, uint offset);
+		public abstract DbgCodeBreakpoint? TryGetBreakpoint(ModuleId module, uint token, uint offset);
 	}
 
 	/// <summary>

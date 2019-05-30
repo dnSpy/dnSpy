@@ -24,22 +24,22 @@ using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 
 namespace dndbg.Engine {
-	sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {
-		public CorFrame Callee {
+	sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame?> {
+		public CorFrame? Callee {
 			get {
 				int hr = obj.GetCallee(out var calleeFrame);
 				return hr < 0 || calleeFrame == null ? null : new CorFrame(calleeFrame);
 			}
 		}
 
-		public CorFrame Caller {
+		public CorFrame? Caller {
 			get {
 				int hr = obj.GetCaller(out var callerFrame);
 				return hr < 0 || callerFrame == null ? null : new CorFrame(callerFrame);
 			}
 		}
 
-		public CorChain Chain {
+		public CorChain? Chain {
 			get {
 				int hr = obj.GetChain(out var chain);
 				return hr < 0 || chain == null ? null : new CorChain(chain);
@@ -98,14 +98,14 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorFunction Function {
+		public CorFunction? Function {
 			get {
 				int hr = obj.GetFunction(out var func);
 				return hr < 0 || func == null ? null : new CorFunction(func);
 			}
 		}
 
-		public CorCode Code {
+		public CorCode? Code {
 			get {
 				int hr = obj.GetCode(out var code);
 				return hr < 0 || code == null ? null : new CorCode(code);
@@ -140,7 +140,7 @@ namespace dndbg.Engine {
 				rangeStart = rangeEnd = 0;
 		}
 
-		public CorStepper CreateStepper() {
+		public CorStepper? CreateStepper() {
 			int hr = obj.CreateStepper(out var stepper);
 			return hr < 0 || stepper == null ? null : new CorStepper(stepper);
 		}
@@ -175,7 +175,7 @@ namespace dndbg.Engine {
 			return nf.CanSetIP(offset) == 0;
 		}
 
-		public CorValue GetILLocal(uint index, out int hr) {
+		public CorValue? GetILLocal(uint index, out int hr) {
 			var ilf = obj as ICorDebugILFrame;
 			if (ilf == null) {
 				hr = -1;
@@ -185,7 +185,7 @@ namespace dndbg.Engine {
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
-		public CorValue GetILArgument(uint index, out int hr) {
+		public CorValue? GetILArgument(uint index, out int hr) {
 			var ilf = obj as ICorDebugILFrame;
 			if (ilf == null) {
 				hr = -1;
@@ -195,7 +195,7 @@ namespace dndbg.Engine {
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
-		public CorValue GetILLocal(ILCodeKind kind, uint index) {
+		public CorValue? GetILLocal(ILCodeKind kind, uint index) {
 			var ilf4 = obj as ICorDebugILFrame4;
 			if (ilf4 == null)
 				return null;
@@ -203,9 +203,9 @@ namespace dndbg.Engine {
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
-		public CorValue GetILLocal(ILCodeKind kind, int index) => GetILLocal(kind, (uint)index);
+		public CorValue? GetILLocal(ILCodeKind kind, int index) => GetILLocal(kind, (uint)index);
 
-		public CorCode GetCode(ILCodeKind kind) {
+		public CorCode? GetCode(ILCodeKind kind) {
 			var ilf4 = obj as ICorDebugILFrame4;
 			if (ilf4 == null)
 				return null;
@@ -216,16 +216,17 @@ namespace dndbg.Engine {
 		public bool GetTypeAndMethodGenericParameters(out CorType[] typeGenArgs, out CorType[] methGenArgs) {
 			var func = Function;
 			var module = func?.Module;
-			if (module == null) {
+			if (module is null) {
 				typeGenArgs = Array.Empty<CorType>();
 				methGenArgs = Array.Empty<CorType>();
 				return false;
 			}
+			Debug.Assert(!(func is null));
 
 			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
 			var gas = new List<CorType>(TypeParameters);
 			var cls = func.Class;
-			int typeGenArgsCount = cls == null ? 0 : GetCountGenericParameters(mdi, cls.Token);
+			int typeGenArgsCount = cls is null ? 0 : GetCountGenericParameters(mdi, cls.Token);
 			int methGenArgsCount = GetCountGenericParameters(mdi, func.Token);
 			Debug.Assert(typeGenArgsCount + methGenArgsCount == gas.Count);
 			typeGenArgs = new CorType[typeGenArgsCount];
@@ -239,9 +240,9 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		static int GetCountGenericParameters(IMetaDataImport mdi, uint token) => MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token).Length;
+		static int GetCountGenericParameters(IMetaDataImport? mdi, uint token) => MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token).Length;
 
-		public CorValue GetReturnValueForILOffset(uint offset) {
+		public CorValue? GetReturnValueForILOffset(uint offset) {
 			var ilf3 = obj as ICorDebugILFrame3;
 			if (ilf3 == null)
 				return null;
@@ -249,17 +250,8 @@ namespace dndbg.Engine {
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
-		public static bool operator ==(CorFrame a, CorFrame b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorFrame a, CorFrame b) => !(a == b);
-		public bool Equals(CorFrame other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorFrame);
+		public bool Equals(CorFrame? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorFrame);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

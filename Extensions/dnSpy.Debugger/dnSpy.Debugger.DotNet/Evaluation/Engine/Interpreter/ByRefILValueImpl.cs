@@ -22,18 +22,18 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class ByRefILValueImpl : AddressILValue, IDebuggerRuntimeILValue {
-		public override DmdType Type => byRefValue.Type;
+		public override DmdType? Type => byRefValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => byRefValue;
 
 		readonly DbgDotNetValue byRefValue;
 
 		public ByRefILValueImpl(DebuggerRuntimeImpl runtime, DbgDotNetValue byRefValue)
-			: base(runtime, byRefValue.Type.GetElementType()) {
+			: base(runtime, byRefValue.Type.GetElementType()!) {
 			this.byRefValue = byRefValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(byRefValue.LoadIndirect());
-		protected override void WriteValue(object value) => runtime.StoreIndirect(byRefValue, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.RecordValue(byRefValue.LoadIndirect());
+		protected override void WriteValue(object? value) => runtime.StoreIndirect(byRefValue, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ByRefILValueImpl addr &&
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	}
 
 	sealed class PointerILValue : AddressILValue, IDebuggerRuntimeILValue {
-		public override DmdType Type => pointerValue.Type;
+		public override DmdType? Type => pointerValue.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => pointerValue;
 
 		readonly DbgDotNetValue pointerValue;
 
 		public PointerILValue(DebuggerRuntimeImpl runtime, DbgDotNetValue pointerValue)
-			: base(runtime, pointerValue.Type.GetElementType()) {
+			: base(runtime, pointerValue.Type.GetElementType()!) {
 			this.pointerValue = pointerValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.RecordValue(pointerValue.LoadIndirect());
-		protected override void WriteValue(object value) => runtime.StoreIndirect(pointerValue, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.RecordValue(pointerValue.LoadIndirect());
+		protected override void WriteValue(object? value) => runtime.StoreIndirect(pointerValue, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is PointerILValue addr &&

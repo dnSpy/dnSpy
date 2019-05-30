@@ -78,7 +78,7 @@ namespace dnSpy.Roslyn.Compiler {
 		readonly ITextViewUndoManagerProvider textViewUndoManagerProvider;
 		readonly ProjectId projectId;
 		readonly HashSet<DocumentId> loadedDocuments;
-		AdhocWorkspace workspace;
+		AdhocWorkspace? workspace;
 
 		protected RoslynLanguageCompiler(CompilationKind kind, ICodeEditorProvider codeEditorProvider, IRoslynDocumentationProviderFactory docFactory, IRoslynDocumentChangedService roslynDocumentChangedService, ITextViewUndoManagerProvider textViewUndoManagerProvider) {
 			this.kind = kind;
@@ -162,7 +162,7 @@ namespace dnSpy.Roslyn.Compiler {
 			}
 		}
 
-		static bool CollectionEquals<TElement>(IReadOnlyList<TElement> a, IReadOnlyList<TElement> b) where TElement : class {
+		static bool CollectionEquals<TElement>(IReadOnlyList<TElement>? a, IReadOnlyList<TElement>? b) where TElement : class {
 			if (a == b)
 				return true;
 			if (a == null || b == null)
@@ -205,6 +205,7 @@ namespace dnSpy.Roslyn.Compiler {
 		}
 
 		public ICodeDocument[] AddDocuments(CompilerDocumentInfo[] documents) {
+			Debug.Assert(workspace != null);
 			var newDocuments = new List<RoslynCodeDocument>();
 
 			foreach (var doc in documents)
@@ -226,6 +227,7 @@ namespace dnSpy.Roslyn.Compiler {
 		}
 
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {
+			Debug.Assert(workspace != null);
 			var project = workspace.CurrentSolution.Projects.First();
 			Debug.Assert(project.SupportsCompilation);
 			var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
@@ -252,7 +254,7 @@ namespace dnSpy.Roslyn.Compiler {
 
 		CompilationResult Compile(Compilation compilation, CancellationToken cancellationToken) {
 			var peStream = new MemoryStream();
-			MemoryStream pdbStream = null;
+			MemoryStream? pdbStream = null;
 			var emitOpts = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
 			if (emitOpts.DebugInformationFormat == DebugInformationFormat.Pdb || emitOpts.DebugInformationFormat == DebugInformationFormat.PortablePdb)
 				pdbStream = new MemoryStream();

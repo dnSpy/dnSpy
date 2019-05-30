@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public EventDef EventDef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => EventDef;
+		IMDTokenProvider? IMDTokenNode.Reference => EventDef;
 
 		/// <summary>
 		/// Constructor

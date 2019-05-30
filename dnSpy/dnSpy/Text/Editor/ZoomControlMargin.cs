@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		ZoomControlMarginProvider(IEditorOperationsFactoryService editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new ZoomControlMargin(wpfTextViewHost, editorOperationsFactoryService.GetEditorOperations(wpfTextViewHost.TextView));
 	}
 
@@ -73,7 +73,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.ZoomControl, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -155,7 +155,7 @@ namespace dnSpy.Text.Editor {
 			else
 				UnregisterEvents();
 		}
-		IWpfTextViewMargin horizontalScrollBarMargin;
+		IWpfTextViewMargin? horizontalScrollBarMargin;
 
 		void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) =>
 			Height = e.NewSize.Height;

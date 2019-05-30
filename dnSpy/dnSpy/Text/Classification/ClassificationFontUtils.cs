@@ -89,7 +89,7 @@ namespace dnSpy.Text.Classification {
 			return textRunProps;
 		}
 
-		static Brush GetBrush(ResourceDictionary dict, string brushId, string colorId, string opacityId, double? defaultOpacity, Brush defaultBrush) {
+		static Brush? GetBrush(ResourceDictionary dict, string brushId, string colorId, string opacityId, double? defaultOpacity, Brush? defaultBrush) {
 			var brush = dict[brushId] as Brush;
 			if (brush == null) {
 				var color = dict[colorId] as Color?;

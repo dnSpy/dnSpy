@@ -30,7 +30,7 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_COMPILER);
 		public override Guid Guid => new Guid("D1163C8F-F590-4A2D-9539-EE4E9CCE64B2");
 		public override string Title => "Visual Basic";
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public VisualBasicCompilerSettingsPage(VisualBasicCompilerSettingsBase compilerSettings) {
 			_global_compilerSettings = compilerSettings;

@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionSessionCommandTargetFilter : ICommandTargetFilter {
 		readonly ICompletionSession completionSession;
-		readonly IDsWpfTextView dsWpfTextView;
+		readonly IDsWpfTextView? dsWpfTextView;
 		readonly int minimumCaretPosition;
 
 		public CompletionSessionCommandTargetFilter(ICompletionSession completionSession) {
@@ -55,7 +55,7 @@ namespace dnSpy.Language.Intellisense {
 					// This matches what VS does. It prevents you from accidentally committing
 					// something when you select the current input text by pressing Shift+Home
 					// and then pressing eg. " or some other commit-character.
-					var curr = completionSession.SelectedCompletionSet.SelectionStatus;
+					var curr = completionSession.SelectedCompletionSet!.SelectionStatus;
 					completionSession.SelectedCompletionSet.SelectionStatus = new CompletionSelectionStatus(curr.Completion, isSelected: false, isUnique: curr.IsUnique);
 				}
 			}
@@ -76,12 +76,12 @@ namespace dnSpy.Language.Intellisense {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == CommandConstants.StandardGroup) {
 				switch ((StandardIds)cmdId) {
 				case StandardIds.Paste:

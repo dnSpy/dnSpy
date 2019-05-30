@@ -21,8 +21,8 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodOverrideOptions {
-		public IMethodDefOrRef MethodBody;
-		public IMethodDefOrRef MethodDeclaration;
+		public IMethodDefOrRef? MethodBody;
+		public IMethodDefOrRef? MethodDeclaration;
 
 		public MethodOverrideOptions() {
 		}

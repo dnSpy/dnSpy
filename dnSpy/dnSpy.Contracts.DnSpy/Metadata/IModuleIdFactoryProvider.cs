@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// Creates a <see cref="IModuleIdFactory"/> or returns null
 		/// </summary>
 		/// <returns></returns>
-		IModuleIdFactory Create();
+		IModuleIdFactory? Create();
 	}
 
 	/// <summary>Metadata</summary>

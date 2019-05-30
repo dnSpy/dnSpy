@@ -57,9 +57,9 @@ namespace dnSpy.Documents.Tabs {
 		readonly Dictionary<Key, Item> cachedItems = new Dictionary<Key, Item>();
 
 		sealed class Item {
-			public DocumentViewerContent Content;
+			public DocumentViewerContent? Content;
 			public IContentType ContentType;
-			public WeakReference WeakContent;
+			public WeakReference? WeakContent;
 			DateTime LastHitUTC;
 
 			/// <summary>
@@ -116,7 +116,7 @@ namespace dnSpy.Documents.Tabs {
 				return true;
 			}
 
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				if (!(obj is Key))
 					return false;
 				return Equals((Key)obj);
@@ -141,19 +141,20 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static void AddTimerWait(DecompilationCache dc) {
-			Timer timer = null;
+			Timer? timer = null;
 			var weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
-				timer.Dispose();
+				timer!.Dispose();
 				var self = (DecompilationCache)weakSelf.Target;
 				if (self != null) {
 					self.ClearOld();
 					AddTimerWait(self);
 				}
-			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
+			}, null, Timeout.Infinite, Timeout.Infinite);
+			timer.Change(CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public DocumentViewerContent Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType contentType) {
+		public DocumentViewerContent? Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType? contentType) {
 			var settings = decompiler.Settings;
 			lock (lockObj) {
 				var key = new Key(decompiler, nodes, settings);
@@ -184,7 +185,7 @@ namespace dnSpy.Documents.Tabs {
 				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {
 					if (kv.Value.Age.TotalMilliseconds > OLD_ITEM_MS) {
 						kv.Value.MakeWeakReference();
-						if (kv.Value.WeakContent != null && kv.Value.WeakContent.Target == null)
+						if (kv.Value.WeakContent is WeakReference wc && wc.Target == null)
 							cachedItems.Remove(kv.Key);
 					}
 				}
@@ -196,7 +197,7 @@ namespace dnSpy.Documents.Tabs {
 				cachedItems.Clear();
 		}
 
-		public void Clear(HashSet<IDsDocument> modules) {
+		public void Clear(HashSet<IDsDocument?> modules) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
 					if (InModifiedModuleHelper.IsInModifiedModule(modules, kv.Key.Nodes) ||
@@ -208,7 +209,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument> modules, Item item) {
+		static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument?> modules, Item item) {
 			var result = item.Content;
 			if (result == null && item.WeakContent != null)
 				result = (DocumentViewerContent)item.WeakContent.Target;
@@ -220,9 +221,9 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	static class InModifiedModuleHelper {
-		public static bool IsInModifiedModule(HashSet<IDsDocument> modules, IEnumerable<DocumentTreeNodeData> nodes) {
+		public static bool IsInModifiedModule(HashSet<IDsDocument?> modules, IEnumerable<DocumentTreeNodeData> nodes) {
 			foreach (var node in nodes) {
-				var modNode = (DsDocumentNode)node.GetModuleNode() ?? node.GetAssemblyNode();
+				var modNode = (DsDocumentNode?)node.GetModuleNode() ?? node.GetAssemblyNode();
 				if (modNode == null || modules.Contains(modNode.Document))
 					return true;
 			}
@@ -230,12 +231,12 @@ namespace dnSpy.Documents.Tabs {
 			return false;
 		}
 
-		public static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument> modules, IEnumerable<object> references) {
+		public static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument?> modules, IEnumerable<object?> references) {
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 			foreach (var r in references.Distinct()) {
-				IAssembly asmRef = null;
-				if (r is IType)
-					asmRef = (r as IType).DefinitionAssembly;
+				IAssembly? asmRef = null;
+				if (r is IType t)
+					asmRef = t.DefinitionAssembly;
 				if (asmRef == null && r is IMemberRef) {
 					var type = ((IMemberRef)r).DeclaringType;
 					if (type != null)

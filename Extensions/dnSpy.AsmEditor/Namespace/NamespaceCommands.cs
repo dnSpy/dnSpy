@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
+			public override string? GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteNamespaceCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteNamespaceCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
+			public override string? GetHeader(AsmEditorContext context) => GetCommandName(context.Nodes.Length);
 		}
 
 		static string GetCommandName(int count) =>
@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		struct DeleteModelNodes {
-			ModuleInfo[] infos;
+			ModuleInfo[]? infos;
 
 			sealed class ModuleInfo {
 				public readonly ModuleDef Module;
@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		DeleteModelNodes modelNodes;
 
 		DeleteNamespaceCommand(NamespaceNode[] nodes) {
-			parents = nodes.Select(a => (DocumentTreeNodeData)a.TreeNode.Parent.Data).ToArray();
+			parents = nodes.Select(a => (DocumentTreeNodeData)a.TreeNode.Parent!.Data).ToArray();
 			this.nodes = new DeletableNodes<NamespaceNode>(nodes);
 			modelNodes = new DeleteModelNodes();
 		}
@@ -216,7 +216,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			nodes.Any(a => ((NamespaceNode)a).Name != string.Empty) &&
 			IsInSameModule(nodes) &&
 			nodes[0].TreeNode.Parent != null &&
-			nodes[0].TreeNode.Parent.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
+			nodes[0].TreeNode.Parent!.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		static bool IsInSameModule(DocumentTreeNodeData[] nodes) {
 			if (nodes == null || nodes.Length == 0)
@@ -243,22 +243,22 @@ namespace dnSpy.AsmEditor.Namespace {
 			Debug.Assert(nsNodes.Length > 0);
 			this.nodes = new DeletableNodes<NamespaceNode>(nsNodes);
 			nsTarget = GetTarget();
-			typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule(), nsNodes);
+			typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule()!, nsNodes);
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.MoveTypesToEmptyNamespaceCommand;
 
-		readonly NamespaceNode nsTarget;
+		readonly NamespaceNode? nsTarget;
 		DeletableNodes<NamespaceNode> nodes;
-		ModelInfo[] infos;
+		ModelInfo[]? infos;
 		readonly TypeRefInfo[] typeRefInfos;
 
 		sealed class ModelInfo {
-			public UTF8String[] Namespaces;
+			public UTF8String[]? Namespaces;
 			public DeletableNodes<TypeNode> TypeNodes;
 		}
 
-		NamespaceNode GetTarget() => nodes.Nodes.Length == 0 ? null : (NamespaceNode)nodes.Nodes[0].TreeNode.Parent.DataChildren.First(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
+		NamespaceNode? GetTarget() => nodes.Nodes.Length == 0 ? null : (NamespaceNode)nodes.Nodes[0].TreeNode.Parent!.DataChildren.First(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		public void Execute() {
 			Debug.Assert(infos == null);
@@ -281,7 +281,7 @@ namespace dnSpy.AsmEditor.Namespace {
 					var typeNode = info.TypeNodes.Nodes[j];
 					info.Namespaces[j] = typeNode.TypeDef.Namespace;
 					typeNode.TypeDef.Namespace = UTF8String.Empty;
-					nsTarget.TreeNode.Children.Add(typeNode.TreeNode);
+					nsTarget!.TreeNode.Children.Add(typeNode.TreeNode);
 				}
 			}
 
@@ -297,8 +297,8 @@ namespace dnSpy.AsmEditor.Namespace {
 			for (int i = infos.Length - 1; i >= 0; i--) {
 				var info = infos[i];
 
-				for (int j = info.Namespaces.Length - 1; j >= 0; j--) {
-					var typeNode = (TypeNode)nsTarget.TreeNode.Children[nsTarget.TreeNode.Children.Count - 1].Data;
+				for (int j = info.Namespaces!.Length - 1; j >= 0; j--) {
+					var typeNode = (TypeNode)nsTarget!.TreeNode.Children[nsTarget.TreeNode.Children.Count - 1].Data;
 					nsTarget.TreeNode.Children.RemoveAt(nsTarget.TreeNode.Children.Count - 1);
 					bool b = info.TypeNodes.Nodes[j] == typeNode;
 					Debug.Assert(b);
@@ -320,7 +320,8 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public IEnumerable<object> ModifiedObjects {
 			get {
-				yield return nsTarget;
+				if (nsTarget != null)
+					yield return nsTarget;
 				foreach (var n in nodes.Nodes)
 					yield return n;
 			}
@@ -381,7 +382,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			if (nsNode.Name == data.Name)
 				return;
 
-			undoCommandService.Value.Add(new RenameNamespaceCommand(data.Name, nsNode));
+			undoCommandService.Value.Add(new RenameNamespaceCommand(data.Name!, nsNode));
 		}
 
 		readonly string newName;
@@ -408,7 +409,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			this.newName = newName;
 			origName = nsNode.Name;
 			this.nsNode = nsNode;
-			existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
+			existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent!.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
 			Debug.Assert(module != null);

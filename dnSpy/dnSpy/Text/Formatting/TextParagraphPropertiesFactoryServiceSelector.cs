@@ -29,7 +29,7 @@ namespace dnSpy.Text.Formatting {
 	sealed class TextParagraphPropertiesFactoryServiceSelector : ITextParagraphPropertiesFactoryServiceSelector {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>[] textParagraphPropertiesFactoryServices;
-		ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata> providerSelector;
+		ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		TextParagraphPropertiesFactoryServiceSelector(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>> textParagraphPropertiesFactoryServices) {
@@ -37,7 +37,7 @@ namespace dnSpy.Text.Formatting {
 			this.textParagraphPropertiesFactoryServices = textParagraphPropertiesFactoryServices.ToArray();
 		}
 
-		public ITextParagraphPropertiesFactoryService Select(IContentType contentType) {
+		public ITextParagraphPropertiesFactoryService? Select(IContentType contentType) {
 			if (providerSelector == null)
 				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices);
 			return providerSelector.GetProviders(contentType).FirstOrDefault()?.Value;

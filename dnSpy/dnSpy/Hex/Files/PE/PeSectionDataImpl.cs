@@ -106,7 +106,7 @@ namespace dnSpy.Hex.Files.PE {
 			};
 		}
 
-		public static PeSectionData TryCreate(HexBufferFile file, HexPosition position) {
+		public static PeSectionData? TryCreate(HexBufferFile file, HexPosition position) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (!file.Span.Contains(position) || !file.Span.Contains(position + 0x28 - 1))

@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		ZoomControlMarginProvider(HexEditorOperationsFactoryService editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new ZoomControlMargin(wpfHexViewHost, editorOperationsFactoryService.GetEditorOperations(wpfHexViewHost.HexView));
 	}
 
@@ -128,7 +128,7 @@ namespace dnSpy.Hex.Editor {
 				else
 					owner.UnregisterEvents();
 			}
-			WpfHexViewMargin horizontalScrollBarMargin;
+			WpfHexViewMargin? horizontalScrollBarMargin;
 
 			void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) =>
 				Height = e.NewSize.Height;
@@ -175,7 +175,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateVisibility() => zoomControl.Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public override HexViewMargin GetHexViewMargin(string marginName) =>
+		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedHexMarginNames.ZoomControl, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {

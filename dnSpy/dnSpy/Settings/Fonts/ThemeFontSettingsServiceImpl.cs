@@ -88,7 +88,7 @@ namespace dnSpy.Settings.Fonts {
 			return settings;
 		}
 
-		ThemeFontSettingsImpl TryGetSettings(string name) {
+		ThemeFontSettingsImpl? TryGetSettings(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			if (toSettings.TryGetValue(name, out var settings))

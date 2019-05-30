@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return runtime.CanCreateObjectId(dnValue);
 		}
 
-		public override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) {
+		public override DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id) {
 			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
 			var runtime = dnValue.TryGetDotNetRuntime();
 			if (runtime == null)

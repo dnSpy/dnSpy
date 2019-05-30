@@ -54,9 +54,9 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		ProcessesContextMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
 
 		public override void Execute(Context context) { }
-		protected override Context CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
+		protected override Context? CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
 
-		internal static Context CreateContext(ProcessHexBufferProvider processHexBufferProvider, IMenuItemContext context) {
+		internal static Context? CreateContext(ProcessHexBufferProvider processHexBufferProvider, IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
 			if (hexView == null)
 				return null;
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		string GetProcessHeader(Process process, int pid) {
+		string GetProcessHeader(Process? process, int pid) {
 			try {
 				if (process != null) {
 					var title = Filter(process.MainWindowTitle, 200);

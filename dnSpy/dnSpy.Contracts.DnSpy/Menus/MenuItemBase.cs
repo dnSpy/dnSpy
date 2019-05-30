@@ -31,11 +31,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <inheritdoc/>
 		public virtual bool IsVisible(IMenuItemContext context) => true;
 		/// <inheritdoc/>
-		public virtual string GetHeader(IMenuItemContext context) => null;
+		public virtual string? GetHeader(IMenuItemContext context) => null;
 		/// <inheritdoc/>
 		public virtual ImageReference? GetIcon(IMenuItemContext context) => null;
 		/// <inheritdoc/>
-		public virtual string GetInputGestureText(IMenuItemContext context) => null;
+		public virtual string? GetInputGestureText(IMenuItemContext context) => null;
 		/// <inheritdoc/>
 		public virtual bool IsChecked(IMenuItemContext context) => false;
 	}
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Menu item context</param>
 		/// <returns></returns>
-		protected abstract TContext CreateContext(IMenuItemContext context);
+		protected abstract TContext? CreateContext(IMenuItemContext context);
 
 		/// <summary>
 		/// Gets the context key. Should be a unique value per class, eg. an <see cref="object"/>
@@ -62,12 +62,12 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Menu item context</param>
 		/// <returns></returns>
-		protected TContext GetCachedContext(IMenuItemContext context) {
+		protected TContext? GetCachedContext(IMenuItemContext context) {
 			var key = CachedContextKey;
 			if (key == null)
 				return CreateContext(context);
 
-			return context.GetOrCreateState(key, () => CreateContext(context));
+			return context.GetOrCreateState<TContext>(key, () => CreateContext(context)!);
 		}
 
 		void IMenuItem.Execute(IMenuItemContext context) {
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Menus {
 			return ctx != null && IsVisible(ctx);
 		}
 
-		string IMenuItem.GetHeader(IMenuItemContext context) {
+		string? IMenuItem.GetHeader(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? GetHeader(ctx) : null;
 		}
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.Menus {
 			return ctx != null ? GetIcon(ctx) : null;
 		}
 
-		string IMenuItem.GetInputGestureText(IMenuItemContext context) {
+		string? IMenuItem.GetInputGestureText(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
 			return ctx != null ? GetInputGestureText(ctx) : null;
 		}
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		public virtual string GetHeader(TContext context) => null;
+		public virtual string? GetHeader(TContext context) => null;
 
 		/// <summary>
 		/// Returns the icon or null to use the default value from the attribute
@@ -145,7 +145,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		public virtual string GetInputGestureText(TContext context) => null;
+		public virtual string? GetInputGestureText(TContext context) => null;
 
 		/// <summary>
 		/// Returns true if it's checked

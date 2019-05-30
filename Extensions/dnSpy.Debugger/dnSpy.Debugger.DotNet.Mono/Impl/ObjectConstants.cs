@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using Mono.Debugger.Soft;
 
@@ -34,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			this.thread = thread;
 		}
 
-		public bool TryCreate(out ObjectConstants objectConstants) {
+		public bool TryCreate([NotNullWhenTrue] out ObjectConstants? objectConstants) {
 			try {
 				var offsetToStringData = GetOffsetToStringData();
 				if (offsetToStringData != null) {
@@ -51,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return false;
 		}
 
-		Value Call(MethodMirror method, IList<Value> arguments) {
+		Value? Call(MethodMirror method, IList<Value> arguments) {
 			const InvokeOptions invokeOptions = InvokeOptions.DisableBreakpoints | InvokeOptions.SingleThreaded | InvokeOptions.Virtual;
 			var asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, invokeOptions, null, null);
 			if (asyncRes.AsyncWaitHandle.WaitOne(FuncEvalTimeoutMilliseconds))
@@ -112,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
-		MethodMirror GetCreateInstance(TypeMirror arrayType) {
+		MethodMirror? GetCreateInstance(TypeMirror arrayType) {
 			foreach (var method in arrayType.GetMethods()) {
 				if (method.Name != nameof(Array.CreateInstance))
 					continue;

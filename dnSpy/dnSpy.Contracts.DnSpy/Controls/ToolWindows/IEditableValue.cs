@@ -135,14 +135,14 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 	sealed class EditableValueImpl : EditableValue {
 		readonly Func<EditableValueTextInfo> getText;
-		readonly Action<string> setText;
+		readonly Action<string?> setText;
 		readonly Func<bool> canEdit;
 		static readonly Func<bool> defaultCanEdit = () => true;
 
 		public override EditableValueOptions Options { get; }
 		public override bool CanEdit => canEdit();
 
-		public EditableValueImpl(Func<string> getText, Action<string> setText, Func<bool> canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
+		public EditableValueImpl(Func<string?> getText, Action<string?> setText, Func<bool>? canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
 			if (getText == null)
 				throw new ArgumentNullException(nameof(getText));
 			this.getText = () => new EditableValueTextInfo(getText() ?? string.Empty);
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			Options = options;
 		}
 
-		public EditableValueImpl(Func<EditableValueTextInfo> getText, Action<string> setText, Func<bool> canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
+		public EditableValueImpl(Func<EditableValueTextInfo> getText, Action<string?> setText, Func<bool>? canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
 			this.getText = getText ?? throw new ArgumentNullException(nameof(getText));
 			this.setText = setText ?? throw new ArgumentNullException(nameof(setText));
 			this.canEdit = canEdit ?? defaultCanEdit;

@@ -19,12 +19,13 @@
 
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 	static class CorDebugUtils {
-		public static bool TryGetInternalRuntime(DbgProcess process, out DbgCorDebugInternalRuntime runtime) {
+		public static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhenTrue] out DbgCorDebugInternalRuntime? runtime) {
 			runtime = null;
 			var dbgRuntime = process.Runtimes.FirstOrDefault();
 			Debug.Assert(dbgRuntime != null);

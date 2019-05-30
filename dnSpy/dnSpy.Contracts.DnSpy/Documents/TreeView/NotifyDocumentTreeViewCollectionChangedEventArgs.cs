@@ -35,8 +35,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public DsDocumentNode[] Nodes { get; private set; }
 
-		NotifyDocumentTreeViewCollectionChangedEventArgs() {
-		}
+		NotifyDocumentTreeViewCollectionChangedEventArgs(DsDocumentNode[] nodes) => Nodes = nodes;
 
 		/// <summary>
 		/// Creates a <see cref="NotifyDocumentTreeViewCollection.Clear"/> instance
@@ -45,9 +44,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateClear(DsDocumentNode[] clearedDocuments) {
 			Debug.Assert(clearedDocuments != null);
-			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
+			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(clearedDocuments);
 			e.Type = NotifyDocumentTreeViewCollection.Clear;
-			e.Nodes = clearedDocuments;
 			return e;
 		}
 
@@ -58,9 +56,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateAdd(DsDocumentNode document) {
 			Debug.Assert(document != null);
-			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
+			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(new DsDocumentNode[] { document });
 			e.Type = NotifyDocumentTreeViewCollection.Add;
-			e.Nodes = new DsDocumentNode[] { document };
 			return e;
 		}
 
@@ -71,9 +68,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateRemove(DsDocumentNode[] documents) {
 			Debug.Assert(documents != null);
-			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
+			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(documents);
 			e.Type = NotifyDocumentTreeViewCollection.Remove;
-			e.Nodes = documents;
 			return e;
 		}
 	}

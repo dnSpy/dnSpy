@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.Exceptions {
 		bool ModuleNameEquals(DbgExceptionConditionSettings settings, DbgException exception) =>
 			CompareStrings(exception.Module?.Name, settings.Condition);
 
-		bool CompareStrings(string s, string wildcardString) {
+		bool CompareStrings(string? s, string? wildcardString) {
 			if (s == null || wildcardString == null)
 				return false;
 			return WildcardsUtils.CreateRegex(wildcardString).IsMatch(s);

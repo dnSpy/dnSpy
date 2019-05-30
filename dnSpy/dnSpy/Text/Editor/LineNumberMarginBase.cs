@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -46,8 +47,8 @@ namespace dnSpy.Text.Editor {
 		protected readonly IClassificationFormatMap classificationFormatMap;
 		readonly Layer textLayer;
 		Dictionary<object, Line> identityTagToLine;
-		TextParagraphProperties defaultTextParagraphProperties;
-		TextFormatter textFormatter;
+		TextParagraphProperties? defaultTextParagraphProperties;
+		TextFormatter? textFormatter;
 		bool useDisplayMode;
 		int currentMaxLineDigits;
 		double lineNumberTextRight;
@@ -71,7 +72,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, this.marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -172,11 +173,12 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 			var newDict = new Dictionary<object, Line>();
-			LineNumberState lineNumberState = null;
+			LineNumberState? lineNumberState = null;
 			foreach (var viewLine in textViewLines) {
 				var lineNumber = GetLineNumber(viewLine, ref lineNumberState);
 				if (lineNumber == null)
 					continue;
+				Debug.Assert(lineNumberState != null);
 
 				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line) || line.Number != lineNumber)
 					line = CreateLine(viewLine, lineNumberState, lineNumber.Value);
@@ -192,22 +194,22 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected class LineNumberState {
-			public ITextSnapshotLine SnapshotLine;
+			public ITextSnapshotLine? SnapshotLine;
 		}
 
-		protected abstract int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state);
+		protected abstract int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState? state);
 
 		string GetLineNumberString(int lineNumber) => lineNumber.ToString(CultureInfo.CurrentUICulture.NumberFormat);
 
 		Line CreateLine(ITextViewLine viewLine, LineNumberState lineNumberState, int lineNumber) {
 			var lineNumberString = GetLineNumberString(lineNumber);
 			var lineNumberSource = new LineNumberSource(lineNumberString, GetLineNumberTextFormattingRunProperties(viewLine, lineNumberState, lineNumber));
-			var textLine = textFormatter.FormatLine(lineNumberSource, 0, 0, defaultTextParagraphProperties, null);
+			var textLine = textFormatter!.FormatLine(lineNumberSource, 0, 0, defaultTextParagraphProperties, null);
 			return new Line(lineNumber, textLine, lineNumberTextRight, viewLine.TextTop + viewLine.Baseline - textLine.TextBaseline);
 		}
 
 		protected abstract TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, LineNumberState state, int lineNumber);
-		protected abstract TextFormattingRunProperties GetDefaultTextFormattingRunProperties();
+		protected abstract TextFormattingRunProperties? GetDefaultTextFormattingRunProperties();
 		protected virtual void OnTextPropertiesChangedCore() { }
 
 		void OnTextPropertiesChanged() {
@@ -314,7 +316,7 @@ namespace dnSpy.Text.Editor {
 				}
 				return drawingVisual;
 			}
-			DrawingVisual drawingVisual;
+			DrawingVisual? drawingVisual;
 
 			public void Dispose() {
 				drawingVisual = null;

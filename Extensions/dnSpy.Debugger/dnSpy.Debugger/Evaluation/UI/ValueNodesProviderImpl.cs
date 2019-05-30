@@ -32,23 +32,23 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public override event EventHandler IsReadOnlyChanged;
 		public override bool IsReadOnly => isReadOnly;
 		public override event EventHandler LanguageChanged;
-		public override DbgLanguage Language => language;
+		public override DbgLanguage? Language => language;
 		bool isReadOnly;
 		bool isOpen;
-		DbgLanguage language;
+		DbgLanguage? language;
 		readonly EvalContextInfo evalContextInfo;
 
 		sealed class EvalContextInfo {
-			public DbgEvaluationInfo EvalInfo {
+			public DbgEvaluationInfo? EvalInfo {
 				get => __evalInfo_DONT_USE;
 				set {
 					__evalInfo_DONT_USE?.Context.Close();
 					__evalInfo_DONT_USE = value;
 				}
 			}
-			DbgEvaluationInfo __evalInfo_DONT_USE;
+			DbgEvaluationInfo? __evalInfo_DONT_USE;
 
-			public DbgLanguage Language;
+			public DbgLanguage? Language;
 
 			public void Clear() {
 				EvalInfo = null;
@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			SetIsReadOnly_UI(newIsReadOnly);
 		}
 
-		(DbgLanguage language, DbgStackFrame frame) TryGetLanguage() {
+		(DbgLanguage? language, DbgStackFrame? frame) TryGetLanguage() {
 			if (!isOpen)
 				return (null, null);
 			var frame = dbgCallStackService.Value.ActiveFrame;
@@ -148,6 +148,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var info = TryGetLanguage();
 			if (info.frame == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false, recreateAllNodes: false);
+			Debug.Assert(info.language != null);
 			var evalInfo = TryGetEvaluationInfo(info);
 			if (evalInfo == null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
@@ -187,7 +188,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowValueNodesProvider.ClearAllExpressions();
 		}
 
-		public override void EditExpression(string id, string expression) {
+		public override void EditExpression(string? id, string expression) {
 			if (!CanAddRemoveExpressions)
 				throw new InvalidOperationException();
 			variablesWindowValueNodesProvider.EditExpression(id, expression);
@@ -199,14 +200,15 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowValueNodesProvider.AddExpressions(expressions);
 		}
 
-		public override DbgEvaluationInfo TryGetEvaluationInfo() => TryGetEvaluationInfo(TryGetLanguage());
+		public override DbgEvaluationInfo? TryGetEvaluationInfo() => TryGetEvaluationInfo(TryGetLanguage());
 
-		DbgEvaluationInfo TryGetEvaluationInfo((DbgLanguage language, DbgStackFrame frame) info) {
+		DbgEvaluationInfo? TryGetEvaluationInfo((DbgLanguage? language, DbgStackFrame? frame) info) {
 			if (evalContextInfo.EvalInfo != null && evalContextInfo.Language == info.language && evalContextInfo.EvalInfo.Frame == info.frame)
 				return evalContextInfo.EvalInfo;
 
 			evalContextInfo.Language = info.language;
 			if (info.frame != null) {
+				Debug.Assert(info.language != null);
 				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
 				var cancellationToken = CancellationToken.None;
 				var context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);
@@ -217,7 +219,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			return evalContextInfo.EvalInfo;
 		}
 
-		public override DbgStackFrame TryGetFrame() => TryGetLanguage().frame;
+		public override DbgStackFrame? TryGetFrame() => TryGetLanguage().frame;
 
 		public override void RefreshAllNodes() {
 			uiDispatcher.VerifyAccess();

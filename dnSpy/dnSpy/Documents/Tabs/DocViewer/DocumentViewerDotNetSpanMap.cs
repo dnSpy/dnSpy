@@ -32,8 +32,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IModuleIdProvider moduleIdProvider;
 		readonly IReadOnlyList<MethodDebugInfo> methodDebugInfos;
 		readonly SpanDataCollection<ReferenceInfo> references;
-		Dictionary<ModuleTokenId, MethodDebugInfo> toMethodDebugInfo;
-		Dictionary<ModuleTokenId, Span> toTokenInfo;
+		Dictionary<ModuleTokenId, MethodDebugInfo>? toMethodDebugInfo;
+		Dictionary<ModuleTokenId, Span>? toTokenInfo;
 
 		public DocumentViewerDotNetSpanMap(IModuleIdProvider moduleIdProvider, IReadOnlyList<MethodDebugInfo> methodDebugInfos, SpanDataCollection<ReferenceInfo> references) {
 			this.moduleIdProvider = moduleIdProvider ?? throw new ArgumentNullException(nameof(moduleIdProvider));

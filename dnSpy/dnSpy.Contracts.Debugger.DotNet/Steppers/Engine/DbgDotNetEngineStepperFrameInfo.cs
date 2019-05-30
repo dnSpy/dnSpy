@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
+
 namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 	/// <summary>
 	/// Frame info needed by the stepper
@@ -39,7 +41,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// <param name="token">Method token</param>
 		/// <param name="offset">IL offset</param>
 		/// <returns></returns>
-		public abstract bool TryGetLocation(out DbgModule module, out uint token, out uint offset);
+		public abstract bool TryGetLocation([NotNullWhenTrue] out DbgModule? module, out uint token, out uint offset);
 
 		/// <summary>
 		/// Checks if this frame is the same as another frame <paramref name="other"/>

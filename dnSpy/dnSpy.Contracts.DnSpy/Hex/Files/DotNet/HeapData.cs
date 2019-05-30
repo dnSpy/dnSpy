@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the terminator or null if there's none
 		/// </summary>
-		public StructField<ByteData> Terminator { get; }
+		public StructField<ByteData>? Terminator { get; }
 
 		/// <summary>
 		/// Gets the fields
@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the terminal byte or null if none exists
 		/// </summary>
-		public StructField<ByteData> TerminalByte { get; }
+		public StructField<ByteData>? TerminalByte { get; }
 
 		/// <summary>
 		/// Gets the fields

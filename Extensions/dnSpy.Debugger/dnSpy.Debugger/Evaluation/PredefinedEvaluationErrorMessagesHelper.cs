@@ -48,11 +48,15 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public static string GetErrorMessage(string error) {
-			if (error == null)
-				return null;
 			if (toErrorMessage.TryGetValue(error, out var msg))
 				return msg;
 			return error;
+		}
+
+		public static string? GetErrorMessageOrNull(string? error) {
+			if (error == null)
+				return null;
+			return GetErrorMessage(error);
 		}
 	}
 

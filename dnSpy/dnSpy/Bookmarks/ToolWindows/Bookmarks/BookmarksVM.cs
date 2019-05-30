@@ -98,7 +98,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				return nameEditValueProvider;
 			}
 		}
-		IEditValueProvider nameEditValueProvider;
+		IEditValueProvider? nameEditValueProvider;
 
 		IEditValueProvider LabelsEditValueProvider {
 			get {
@@ -108,7 +108,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				return labelsEditValueProvider;
 			}
 		}
-		IEditValueProvider labelsEditValueProvider;
+		IEditValueProvider? labelsEditValueProvider;
 
 		public event EventHandler OnShowChanged;
 		public event EventHandler AllItemsFiltered;
@@ -143,9 +143,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			this.bookmarkLocationFormatterService = bookmarkLocationFormatterService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			bookmarkContext = new BookmarkContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
+			bookmarkContext = new BookmarkContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions), bookmarkFormatterProvider.Create()) {
 				SyntaxHighlight = bookmarksSettings.SyntaxHighlight,
-				Formatter = bookmarkFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {

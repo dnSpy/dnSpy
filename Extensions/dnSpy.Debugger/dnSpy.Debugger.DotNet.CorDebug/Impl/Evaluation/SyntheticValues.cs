@@ -24,7 +24,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	static class SyntheticValueFactory {
-		static DmdType TryGetType(DmdAppDomain appDomain, object value) {
+		static DmdType? TryGetType(DmdAppDomain appDomain, object value) {
 			if (value == null)
 				return null;
 
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return null;
 		}
 
-		public static DbgDotNetValue TryCreateSyntheticValue(DmdType type, object constant) {
+		public static DbgDotNetValue? TryCreateSyntheticValue(DmdType type, object? constant) {
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:
 				if (constant is bool)

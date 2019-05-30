@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 	sealed class EditValueImpl : IEditValue {
 		public event EventHandler<EditCompletedEventArgs> EditCompleted;
-		public object UIObject => uiControl;
+		public object? UIObject => uiControl;
 		public bool IsKeyboardFocused => wpfTextView.HasAggregateFocus;
 
 		sealed class UIControl : ContentControl {
@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		public void Cancel() => OnEditCompleted(null);
 		public void Commit() => OnEditCompleted(wpfTextView.TextBuffer.CurrentSnapshot.GetText());
 
-		void OnEditCompleted(string text) {
+		void OnEditCompleted(string? text) {
 			EditCompleted?.Invoke(this, new EditCompletedEventArgs(text));
 			Dispose();
 		}
@@ -187,7 +187,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.TextEditor - 100)]
 	sealed class EditValueCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(EditValueConstants.EditValueTextViewRole) != true)
 				return null;
@@ -201,7 +201,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 		EditValueImpl TryGetInstance() =>
 			__editValueImpl ?? (__editValueImpl = EditValueImpl.TryGetInstance(textView));
-		EditValueImpl __editValueImpl;
+		EditValueImpl? __editValueImpl;
 
 		public EditValueCommandTargetFilter(ITextView textView) => this.textView = textView;
 
@@ -221,12 +221,12 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var editValueImpl = TryGetInstance();
 			if (editValueImpl == null)
 				return CommandTargetStatus.NotHandled;

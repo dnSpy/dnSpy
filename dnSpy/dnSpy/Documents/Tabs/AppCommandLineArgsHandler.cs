@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs {
 			if (string.IsNullOrEmpty(args.SelectMember))
 				return false;
 
-			uint token = SimpleTypeConverter.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out string error);
+			uint token = SimpleTypeConverter.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out var error);
 			if (string.IsNullOrEmpty(error)) {
 				var mod = GetLoadedFiles(args).FirstOrDefault();
 				var member = mod?.ResolveToken(token);

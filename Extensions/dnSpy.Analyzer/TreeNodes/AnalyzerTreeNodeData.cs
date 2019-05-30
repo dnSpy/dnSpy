@@ -32,7 +32,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData {
 		public override Guid Guid => Guid.Empty;
 		public sealed override bool SingleClickExpandsChildren => Context.SingleClickExpandsChildren;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public IAnalyzerTreeNodeDataContext Context { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		protected abstract ImageReference GetIcon(IDotNetImageService dnImgMgr);
 		protected virtual ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => null;
 		public sealed override ImageReference Icon => GetIcon(Context.DotNetImageService);
@@ -44,7 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
-		public sealed override object Text {
+		public sealed override object? Text {
 			get {
 				var cached = cachedText?.Target;
 				if (cached != null)
@@ -63,10 +65,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 		}
-		WeakReference cachedText;
+		WeakReference? cachedText;
 
 		protected abstract void Write(ITextColorWriter output, IDecompiler decompiler);
-		public sealed override object ToolTip => null;
+		public sealed override object? ToolTip => null;
 		public sealed override string ToString() => ToString(Context.Decompiler);
 
 		public string ToString(IDecompiler decompiler) {
@@ -138,6 +140,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup => TheTreeNodeGroup.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TheTreeNodeGroup.Instance;
 	}
 }

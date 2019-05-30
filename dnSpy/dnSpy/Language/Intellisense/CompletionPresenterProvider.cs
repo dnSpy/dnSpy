@@ -41,7 +41,7 @@ namespace dnSpy.Language.Intellisense {
 			this.completionUIElementProviders = Orderer.Order(completionUIElementProviders).ToArray();
 		}
 
-		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var completionSession = session as ICompletionSession;
 			if (completionSession == null)
 				return null;

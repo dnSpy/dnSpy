@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Debugger;
@@ -33,8 +34,8 @@ using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	abstract class DbgInMemoryModuleService {
-		public abstract ModuleDef LoadModule(DbgModule module);
-		public abstract ModuleDef FindModule(DbgModule module);
+		public abstract ModuleDef? LoadModule(DbgModule module);
+		public abstract ModuleDef? FindModule(DbgModule module);
 	}
 
 	[Export(typeof(DbgInMemoryModuleService))]
@@ -59,9 +60,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		sealed class RuntimeInfo {
 			readonly DbgInMemoryModuleServiceImpl owner;
 			public DbgAssemblyInfoProvider AssemblyInfoProvider { get; }
-			public DbgDynamicModuleProvider DynamicModuleProvider { get; }
-			public ClassLoader ClassLoader { get; }
-			public RuntimeInfo(DbgInMemoryModuleServiceImpl owner, DbgAssemblyInfoProvider dbgAssemblyInfoProvider, DbgDynamicModuleProvider dbgDynamicModuleProvider, ClassLoader classLoader) {
+			public DbgDynamicModuleProvider? DynamicModuleProvider { get; }
+			public ClassLoader? ClassLoader { get; }
+			public RuntimeInfo(DbgInMemoryModuleServiceImpl owner, DbgAssemblyInfoProvider dbgAssemblyInfoProvider, DbgDynamicModuleProvider? dbgDynamicModuleProvider, ClassLoader? classLoader) {
 				this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 				AssemblyInfoProvider = dbgAssemblyInfoProvider ?? throw new ArgumentNullException(nameof(dbgAssemblyInfoProvider));
 				DynamicModuleProvider = dbgDynamicModuleProvider;
@@ -122,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					if (assemblyInfoProvider == null)
 						continue;
 
-					ClassLoader classLoader;
+					ClassLoader? classLoader;
 					var dynamicModuleProvider = dbgDynamicModuleProviderService.Create(r);
 					if (dynamicModuleProvider == null)
 						classLoader = null;
@@ -140,14 +141,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader?.LoadClass(e.Module, e.LoadedClassToken);
-		bool TryGetRuntimeInfo(DbgRuntime runtime, out RuntimeInfo info) => runtime.TryGetData(out info);
+		bool TryGetRuntimeInfo(DbgRuntime runtime, [NotNullWhenTrue] out RuntimeInfo? info) => runtime.TryGetData(out info);
 
 		void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) {
 			if (e.Added) {
 				if (!TryGetRuntimeInfo((DbgRuntime)sender, out var info))
 					return;
 
-				List<(DbgModule manifestModule, DbgModule module)> list = null;
+				List<(DbgModule manifestModule, DbgModule module)>? list = null;
 				foreach (var module in e.Objects) {
 					var manifestModule = info.AssemblyInfoProvider.GetManifestModule(module);
 					// If it's the manifest module, it can't possibly have been inserted in the treeview
@@ -207,7 +208,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
-						MemoryModuleDefDocument newFile = null;
+						MemoryModuleDefDocument? newFile = null;
 						try {
 							newFile = MemoryModuleDefDocument.Create(this, module, UseDebugSymbols);
 						}
@@ -216,10 +217,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 						Debug.Assert(newFile != null);
 						if (newFile != null) {
+							Debug.Assert(newFile.ModuleDef != null);
 							UpdateResolver(newFile.ModuleDef);
 							asmNode.Document.Children.Add(newFile);
 							RemoveFromAssembly(newFile.ModuleDef);
-							asmNode.Document.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
+							asmNode.Document.ModuleDef!.Assembly.Modules.Add(newFile.ModuleDef);
 							asmNode.TreeNode.Children.Add(documentTreeView.Value.TreeView.Create(documentTreeView.Value.CreateNode(asmNode, newFile)));
 						}
 					}
@@ -238,9 +240,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				module.Context = DsDotNetDocumentBase.CreateModuleContext(documentProvider.AssemblyResolver);
 		}
 
-		IDsDocument FindDocument(IDsDocumentNameKey key) => documentProvider.Find(key);
+		IDsDocument? FindDocument(IDsDocumentNameKey key) => documentProvider.Find(key);
 
-		public override ModuleDef LoadModule(DbgModule module) {
+		public override ModuleDef? LoadModule(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (module.IsDynamic)
@@ -248,7 +250,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return LoadMemoryModule(module);
 		}
 
-		ModuleDef LoadDynamicModule(DbgModule module) {
+		ModuleDef? LoadDynamicModule(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 
@@ -289,7 +291,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return null;
 
 				var files = new List<DynamicModuleDefDocument>(modules.Length);
-				DynamicModuleDefDocument resDoc = null;
+				DynamicModuleDefDocument? resDoc = null;
 				foreach (var m in modules) {
 					var md = info.DynamicModuleProvider.GetDynamicMetadata(m, out var moduleId);
 					if (md == null)
@@ -312,7 +314,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		ModuleDef LoadMemoryModule(DbgModule module) {
+		ModuleDef? LoadMemoryModule(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 
@@ -327,7 +329,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (doc != null)
 				return doc;
 
-			MemoryModuleDefDocument result = null;
+			MemoryModuleDefDocument? result = null;
 			lock (lockObj) {
 				doc = FindMemoryModule(module);
 				if (doc != null)
@@ -353,7 +355,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					MemoryModuleDefDocument modDoc;
 					try {
 						modDoc = MemoryModuleDefDocument.Create(this, m, UseDebugSymbols);
-						UpdateResolver(modDoc.ModuleDef);
+						UpdateResolver(modDoc.ModuleDef!);
 						if (m == module)
 							result = modDoc;
 					}
@@ -370,14 +372,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var asm = docs[0].AssemblyDef;
 				if (asm == null) {
 					if (docs.Count > 1) {
-						asm = docs[0].ModuleDef.UpdateRowId(new AssemblyDefUser("???"));
+						asm = docs[0].ModuleDef!.UpdateRowId(new AssemblyDefUser("???"));
 						asm.Modules.Add(docs[0].ModuleDef);
 					}
 				}
-				asm.Modules.Clear();
+				asm?.Modules.Clear();
 				for (int i = 0; i < docs.Count; i++) {
-					RemoveFromAssembly(docs[i].ModuleDef);
-					asm.Modules.Add(docs[i].ModuleDef);
+					RemoveFromAssembly(docs[i].ModuleDef!);
+					asm!.Modules.Add(docs[i].ModuleDef);
 				}
 
 				var addedFile = documentProvider.GetOrAdd(asmFile);
@@ -393,7 +395,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return result.ModuleDef;
 		}
 
-		public override ModuleDef FindModule(DbgModule module) {
+		public override ModuleDef? FindModule(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (module.IsDynamic)
@@ -402,13 +404,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return FindMemoryModule(module) ?? FindDynamicModule(module);
 		}
 
-		ModuleDef FindDynamicModule(DbgModule module) {
+		ModuleDef? FindDynamicModule(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			return AllDynamicModuleDefDocuments.FirstOrDefault(a => a.DbgModule == module)?.ModuleDef;
 		}
 
-		ModuleDef FindMemoryModule(DbgModule module) {
+		ModuleDef? FindMemoryModule(DbgModule module) {
 			if (module == null)
 				throw new ArgumentNullException(nameof(module));
 			if (!module.HasAddress)
@@ -444,7 +446,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void RefreshBodies(MemoryModuleDefDocument document) {
 			uiDispatcher.VerifyAccess();
 
-			if (document.ModuleDef.EnableTypeDefFindCache) {
+			if (document.ModuleDef!.EnableTypeDefFindCache) {
 				document.ModuleDef.EnableTypeDefFindCache = false;
 				document.ModuleDef.EnableTypeDefFindCache = true;
 			}

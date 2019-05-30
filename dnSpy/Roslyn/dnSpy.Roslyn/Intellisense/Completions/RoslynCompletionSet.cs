@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		protected override int GetMruIndex(Completion completion) => mruCompletionService.GetMruIndex(completion.DisplayText);
 
 		protected override void Filter(List<Completion> filteredResult, IList<Completion> completions) {
-			List<string> filteredTags = null;
+			List<string>? filteredTags = null;
 
 			var filters = Filters;
 			Debug.Assert(filters != null);
@@ -172,18 +172,18 @@ matched:
 		/// <param name="completion">Completion</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<CompletionDescription> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken = default) {
+		public Task<CompletionDescription?> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken = default) {
 			if (completion == null)
 				throw new ArgumentNullException(nameof(completion));
 
 			var info = CompletionInfo.Create(textView.TextSnapshot);
 			if (info == null)
-				return Task.FromResult<CompletionDescription>(null);
+				return Task.FromResult<CompletionDescription?>(null);
 
 			return completionService.GetDescriptionAsync(info.Value.Document, completion.CompletionItem, cancellationToken);
 		}
 
-		IContentType ICompletionSetContentTypeProvider.GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind) {
+		IContentType? ICompletionSetContentTypeProvider.GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind) {
 			switch (kind) {
 			case CompletionClassifierKind.DisplayText:
 				return contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionDisplayTextRoslyn);

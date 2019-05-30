@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 		public ILVMImpl() => debuggerILInterpreter = new DebuggerILInterpreter();
 
 		public override ILVMExecuteState CreateExecuteState(DmdMethodBase method) {
-			if ((object)method == null)
+			if (method is null)
 				throw new ArgumentNullException(nameof(method));
 			return new ILVMExecuteStateImpl(method);
 		}
@@ -44,8 +44,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 	sealed class ILVMExecuteStateImpl : ILVMExecuteState {
 		public DmdMethodBase Method { get; }
-		public DmdMethodBody Body { get; }
-		public byte[] ILBytes { get; }
+		public DmdMethodBody? Body { get; }
+		public byte[]? ILBytes { get; }
 
 		public ILVMExecuteStateImpl(DmdMethodBase method) {
 			Method = method;

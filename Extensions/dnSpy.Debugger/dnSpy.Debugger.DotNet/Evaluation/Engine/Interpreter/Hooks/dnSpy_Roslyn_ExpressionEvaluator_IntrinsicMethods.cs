@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 
 		public dnSpy_Roslyn_ExpressionEvaluator_IntrinsicMethods(IDebuggerRuntime runtime) => this.runtime = runtime;
 
-		public override DbgDotNetValue Call(DotNetClassHookCallOptions options, DbgDotNetValue objValue, DmdMethodBase method, ILValue[] arguments) {
+		public override DbgDotNetValue? Call(DotNetClassHookCallOptions options, DbgDotNetValue? objValue, DmdMethodBase method, ILValue[] arguments) {
 			if (!method.Module.IsSynthetic)
 				return null;
 			Debug.Assert(method.IsStatic);
@@ -117,14 +117,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 				// public unsafe static T* GetVariableAddress<T>(string name)
 				if (!sig.ReturnType.IsPointer)
 					break;
-				type = sig.ReturnType.GetElementType();
-				var origMethod = method.ReflectedType.GetMethod(method.Module, method.MetadataToken);
-				Debug.Assert((object)origMethod != null);
+				type = sig.ReturnType.GetElementType()!;
+				var origMethod = method.ReflectedType!.GetMethod(method.Module, method.MetadataToken);
+				Debug.Assert(!(origMethod is null));
 				sig = origMethod.GetMethodSignature();
 				ps = sig.GetParameterTypes();
 				if (sig.GenericParameterCount == 1 && sig.ReturnType.IsPointer &&
-					sig.ReturnType.GetElementType().TypeSignatureKind == DmdTypeSignatureKind.MethodGenericParameter &&
-					sig.ReturnType.GetElementType().GenericParameterPosition == 0 && ps.Count == 1 && ps[0] == appDomain.System_String) {
+					sig.ReturnType.GetElementType()!.TypeSignatureKind == DmdTypeSignatureKind.MethodGenericParameter &&
+					sig.ReturnType.GetElementType()!.GenericParameterPosition == 0 && ps.Count == 1 && ps[0] == appDomain.System_String) {
 					name = runtime.ToString(arguments[0]);
 					return runtime.GetVariableAddress(type, name);
 				}

@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferPoint && Equals((HexBufferPoint)obj);
+		public override bool Equals(object? obj) => obj is HexBufferPoint && Equals((HexBufferPoint)obj);
 
 		/// <summary>
 		/// GetHashCode()

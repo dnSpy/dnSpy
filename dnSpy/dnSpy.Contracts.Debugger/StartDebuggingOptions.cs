@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Where to break, see <see cref="PredefinedBreakKinds"/>
 		/// </summary>
-		public string BreakKind { get; set; }
+		public string? BreakKind { get; set; }
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/>

@@ -22,6 +22,7 @@ using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
+using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -63,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						newNode = valueNodeFactory.CreateError(evalInfo, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects);
 					else {
 						bool isReadOnly = (evalRes.Flags & DbgEvaluationResultFlags.ReadOnly) != 0;
-						newNode = valueNodeFactory.Create(evalInfo, evalRes.Name, evalRes.Value, evalRes.FormatSpecifiers, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type);
+						newNode = valueNodeFactory.Create(evalInfo, evalRes.Name, evalRes.Value!, evalRes.FormatSpecifiers, info.NodeOptions, info.Expression, evalRes.ImageName, isReadOnly, causesSideEffects, evalRes.Type!);
 					}
 					res[i] = newNode;
 				}
@@ -91,10 +92,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		DbgEngineValueNode[] CreateCore(DbgEvaluationInfo evalInfo, DbgEngineObjectId[] objectIds, DbgValueNodeEvaluationOptions options) {
-			DbgDotNetValue objectIdValue = null;
+			DbgDotNetValue? objectIdValue = null;
 			var res = new DbgEngineValueNode[objectIds.Length];
 			try {
-				var output = ObjectCache.AllocDotNetTextOutput();
+				DbgDotNetTextOutput? output = ObjectCache.AllocDotNetTextOutput();
 				for (int i = 0; i < res.Length; i++) {
 					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					var objectId = (DbgEngineObjectIdImpl)objectIds[i];

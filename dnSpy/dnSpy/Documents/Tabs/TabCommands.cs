@@ -103,13 +103,13 @@ namespace dnSpy.Documents.Tabs {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override TabGroupContext CreateContext(IMenuItemContext context) => CreateContextInternal(context);
+		protected sealed override TabGroupContext? CreateContext(IMenuItemContext context) => CreateContextInternal(context);
 
 		protected readonly IDocumentTabService documentTabService;
 
 		protected CtxMenuTabGroupCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-		TabGroupContext CreateContextInternal(IMenuItemContext context) {
+		TabGroupContext? CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID))
 				return null;
 			var tabGroup = context.Find<ITabGroup>();
@@ -327,12 +327,12 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) {
 			var @ref = GetReference(context, out var documentViewer);
 			if (@ref != null)
-				documentViewer.DocumentTab.FollowReferenceNewTab(@ref);
+				documentViewer!.DocumentTab.FollowReferenceNewTab(@ref);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) => GetReference(context, out var documentViewer) != null;
 
-		static object GetReference(IMenuItemContext context, out IDocumentViewer documentViewer) {
+		static object? GetReference(IMenuItemContext context, out IDocumentViewer? documentViewer) {
 			documentViewer = null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
@@ -342,13 +342,13 @@ namespace dnSpy.Documents.Tabs {
 			return context.Find<TextReference>();
 		}
 
-		public override string GetInputGestureText(IMenuItemContext context) =>
+		public override string? GetInputGestureText(IMenuItemContext context) =>
 			context.OpenedFromKeyboard ? dnSpy_Resources.OpenInNewTabKey2 : dnSpy_Resources.OpenInNewTabKey3;
 	}
 
 	sealed class MenuTabGroupContext {
 		public readonly ITabGroupService TabGroupService;
-		public readonly ITabGroup TabGroup;
+		public readonly ITabGroup? TabGroup;
 
 		public MenuTabGroupContext(ITabGroupService tabGroupService) {
 			TabGroup = tabGroupService.ActiveTabGroup;
@@ -360,7 +360,7 @@ namespace dnSpy.Documents.Tabs {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override MenuTabGroupContext CreateContext(IMenuItemContext context) {
+		protected sealed override MenuTabGroupContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.APP_MENU_WINDOW_GUID))
 				return null;
 

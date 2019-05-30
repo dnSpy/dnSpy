@@ -43,10 +43,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return parameters;
 		}
 
-		protected override DmdType[] CreateGenericParameters() => null;
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
-		public override DmdMethodBody GetMethodBody() => null;
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => null;
+		protected override DmdType[]? CreateGenericParameters() => null;
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() => (null, null);
+		public override DmdMethodBody? GetMethodBody() => null;
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => null;
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override uint GetRVA() => 0;
 	}

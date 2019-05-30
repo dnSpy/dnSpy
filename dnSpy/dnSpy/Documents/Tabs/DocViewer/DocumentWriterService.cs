@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				output.Write(text, BoxedTextColor.Text);
 		}
 
-		IDocumentWriter GetDocumentWriter(IContentType contentType) {
+		IDocumentWriter? GetDocumentWriter(IContentType contentType) {
 			foreach (var lz in documentWriterProviders) {
 				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;

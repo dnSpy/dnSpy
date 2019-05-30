@@ -124,14 +124,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 	sealed class NormalStackFrameVM : StackFrameVM {
 		public DbgStackFrame Frame => frame;
-		DbgLanguage language;
+		DbgLanguage? language;
 		DbgStackFrame frame;
 
-		DbgEvaluationContext evaluationContext;
+		DbgEvaluationContext? evaluationContext;
 
 		readonly Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind;
 
-		public NormalStackFrameVM(DbgLanguage language, DbgStackFrame frame, ICallStackContext context, int index, Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind)
+		public NormalStackFrameVM(DbgLanguage? language, DbgStackFrame frame, ICallStackContext context, int index, Func<NormalStackFrameVM, BreakpointKind?> getBreakpointKind)
 			: base(context) {
 			this.language = language;
 			this.frame = frame;
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			this.getBreakpointKind = getBreakpointKind ?? throw new ArgumentNullException(nameof(getBreakpointKind));
 		}
 
-		public void SetLanguage_UI(DbgLanguage language) {
+		public void SetLanguage_UI(DbgLanguage? language) {
 			this.language = language;
 			evaluationContext?.Close();
 			evaluationContext = null;
@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			RefreshBreakpoint_UI();
 		}
 
-		public void SetFrame_UI(DbgLanguage language, DbgStackFrame frame) {
+		public void SetFrame_UI(DbgLanguage? language, DbgStackFrame frame) {
 			this.language = language;
 			this.frame = frame;
 			evaluationContext?.Close();
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		protected override ClassifiedTextCollection CreateName() {
 			Debug.Assert(language != null);
 			if (language != null && !frame.IsClosed) {
-				const CultureInfo cultureInfo = null;
+				const CultureInfo? cultureInfo = null;
 				CancellationToken cancellationToken = default;
 
 				if (evaluationContext == null)
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		public override void Dispose() {
 			language = null;
-			frame = null;
+			frame = null!;
 			evaluationContext?.Close();
 			evaluationContext = null;
 		}

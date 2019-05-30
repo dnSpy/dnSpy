@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				ToParameters(debugInfo.Parameters), ToSourceStatements(debugInfo.Statements),
 				ToScope(debugInfo.Scope), ToAsyncMethodDebugInfo(debugInfo.AsyncInfo));
 
-		static DbgCompilerKind ToCompiler(string compilerName) {
+		static DbgCompilerKind ToCompiler(string? compilerName) {
 			if (compilerName == null)
 				return DbgCompilerKind.Unknown;
 			switch (compilerName) {
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		static DbgAsyncMethodDebugInfo ToAsyncMethodDebugInfo(AsyncMethodDebugInfo asyncInfo) {
+		static DbgAsyncMethodDebugInfo? ToAsyncMethodDebugInfo(AsyncMethodDebugInfo? asyncInfo) {
 			if (asyncInfo == null)
 				return null;
 

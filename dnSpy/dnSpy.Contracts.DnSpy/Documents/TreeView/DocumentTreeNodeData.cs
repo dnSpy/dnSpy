@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Gets the data shown in the UI
 		/// </summary>
-		public sealed override object Text {
+		public sealed override object? Text {
 			get {
 				var cached = cachedText?.Target;
 				if (cached != null)
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				}
 			}
 		}
-		WeakReference cachedText;
+		WeakReference? cachedText;
 
 		/// <summary>
 		/// Writes the contents
@@ -123,7 +123,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Gets the data shown in a tooltip
 		/// </summary>
-		public sealed override object ToolTip {
+		public sealed override object? ToolTip {
 			get {
 				var writer = Cache.GetWriter();
 				WriteCore(writer, Context.Decompiler, DocumentNodeWriteOptions.ToolTip);
@@ -164,6 +164,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		protected DocumentTreeNodeData() {
+			Context = null!;
 		}
 
 		/// <summary>
@@ -212,7 +213,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		}
 		int filterVersion;
 
-		static void Filter(DocumentTreeNodeData node) {
+		static void Filter(DocumentTreeNodeData? node) {
 			if (node == null)
 				return;
 			var res = node.GetFilterType(node.Context.Filter);
@@ -344,28 +345,28 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static AssemblyDocumentNode GetAssemblyNode(this TreeNodeData self) => self.GetAncestorOrSelf<AssemblyDocumentNode>();
+		public static AssemblyDocumentNode? GetAssemblyNode(this TreeNodeData? self) => self.GetAncestorOrSelf<AssemblyDocumentNode>();
 
 		/// <summary>
 		/// Gets the <see cref="ModuleDocumentNode"/> owner or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static ModuleDocumentNode GetModuleNode(this TreeNodeData self) => self.GetAncestorOrSelf<ModuleDocumentNode>();
+		public static ModuleDocumentNode? GetModuleNode(this TreeNodeData? self) => self.GetAncestorOrSelf<ModuleDocumentNode>();
 
 		/// <summary>
 		/// Gets the first <see cref="DsDocumentNode"/> owner or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static DsDocumentNode GetDocumentNode(this TreeNodeData self) => self.GetAncestorOrSelf<DsDocumentNode>();
+		public static DsDocumentNode? GetDocumentNode(this TreeNodeData? self) => self.GetAncestorOrSelf<DsDocumentNode>();
 
 		/// <summary>
 		/// Gets the <see cref="DsDocumentNode"/> top node or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static DsDocumentNode GetTopNode(this TreeNodeData self) {
+		public static DsDocumentNode? GetTopNode(this TreeNodeData? self) {
 			var root = self == null ? null : self.TreeNode.TreeView.Root;
 			while (self != null) {
 				if (self is DsDocumentNode found) {
@@ -386,7 +387,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ModuleDef GetModule(this TreeNodeData self) {
+		public static ModuleDef? GetModule(this TreeNodeData? self) {
 			var node = self.GetDocumentNode();
 			return node == null ? null : node.Document.ModuleDef;
 		}

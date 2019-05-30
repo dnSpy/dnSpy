@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	[Export(typeof(IReplaceListenerProvider))]
 	sealed class ReplEditorReplaceListenerProvider : IReplaceListenerProvider {
-		public IReplaceListener Create(ITextView textView) {
+		public IReplaceListener? Create(ITextView textView) {
 			var replEditor = ReplEditorUtils.TryGetInstance(textView) as ReplEditor;
 			if (replEditor == null)
 				return null;

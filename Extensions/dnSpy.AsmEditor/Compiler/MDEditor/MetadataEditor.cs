@@ -38,6 +38,12 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		public TablesMDHeap TablesHeap { get; }
 
 		public MetadataEditor(RawModuleBytes moduleData, Metadata metadata) {
+			BlobHeap = null!;
+			GuidHeap = null!;
+			StringsHeap = null!;
+			USHeap = null!;
+			TablesHeap = null!;
+
 			this.moduleData = moduleData ?? throw new ArgumentNullException(nameof(moduleData));
 			this.metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
 
@@ -69,15 +75,15 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 					break;
 				}
 			}
-			if (BlobHeap == null)
+			if (BlobHeap is null)
 				heaps.Add(BlobHeap = new BlobMDHeap(this, metadata.BlobStream));
-			if (GuidHeap == null)
+			if (GuidHeap is null)
 				heaps.Add(GuidHeap = new GuidMDHeap(this, metadata.GuidStream));
-			if (StringsHeap == null)
+			if (StringsHeap is null)
 				heaps.Add(StringsHeap = new StringsMDHeap(this, metadata.StringsStream));
-			if (USHeap == null)
+			if (USHeap is null)
 				heaps.Add(USHeap = new USMDHeap(this, metadata.USStream));
-			if (TablesHeap == null)
+			if (TablesHeap is null)
 				throw new InvalidOperationException();
 		}
 
@@ -94,7 +100,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			return rid;
 		}
 
-		static byte[] GetPublicKeyOrTokenBytes(PublicKeyBase pkb) {
+		static byte[]? GetPublicKeyOrTokenBytes(PublicKeyBase pkb) {
 			if (pkb is PublicKey pk)
 				return pk.Data;
 			if (pkb is PublicKeyToken pkt)

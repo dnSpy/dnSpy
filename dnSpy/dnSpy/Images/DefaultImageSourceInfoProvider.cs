@@ -30,13 +30,14 @@ using dnSpy.Contracts.Images;
 namespace dnSpy.Images {
 	sealed class DefaultImageSourceInfoProvider : IImageSourceInfoProvider {
 		readonly Assembly assembly;
-		Dictionary<string, ImageSourceInfo[]> nameToInfosDict;
+		Dictionary<string, ImageSourceInfo[]>? nameToInfosDict;
 
 		public DefaultImageSourceInfoProvider(Assembly assembly) => this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 
-		public ImageSourceInfo[] GetImageSourceInfos(string name) {
+		public ImageSourceInfo[]? GetImageSourceInfos(string name) {
 			if (nameToInfosDict == null)
 				InitializeResources();
+			Debug.Assert(nameToInfosDict != null);
 			if (nameToInfosDict.TryGetValue(name, out var infos))
 				return infos;
 			return null;
@@ -63,7 +64,7 @@ namespace dnSpy.Images {
 							if (elem.Name != null && elem.Name.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase)) {
 								var imageName = elem.Name.Substring(imagesPrefix.Length);
 								var nameNoExt = RemoveExtension(imageName);
-								string nameKey = null;
+								string? nameKey = null;
 								ImageSourceInfo? info = null;
 								if (imageName.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) || imageName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 									nameKey = nameNoExt;

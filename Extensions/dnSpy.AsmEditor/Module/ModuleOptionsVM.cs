@@ -42,9 +42,9 @@ namespace dnSpy.AsmEditor.Module {
 		readonly ModuleOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand PickManagedEntryPointCommand => new RelayCommand(a => PickManagedEntryPoint());
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
@@ -296,7 +296,7 @@ namespace dnSpy.AsmEditor.Module {
 				DllCharacteristics &= ~flag;
 		}
 
-		public string RuntimeVersion {
+		public string? RuntimeVersion {
 			get => options.RuntimeVersion;
 			set {
 				options.RuntimeVersion = value;
@@ -381,7 +381,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 		EntryPointType entryPointEnum;
 
-		public IManagedEntryPoint ManagedEntryPoint {
+		public IManagedEntryPoint? ManagedEntryPoint {
 			get => managedEntryPoint;
 			set {
 				if (managedEntryPoint != value) {
@@ -392,10 +392,10 @@ namespace dnSpy.AsmEditor.Module {
 				}
 			}
 		}
-		IManagedEntryPoint managedEntryPoint;
+		IManagedEntryPoint? managedEntryPoint;
 
 		public string EntryPointName => GetEntryPointString(80);
-		public string EntryPointNameToolTip => ManagedEntryPoint == null ? null : GetEntryPointString(500);
+		public string? EntryPointNameToolTip => ManagedEntryPoint == null ? null : GetEntryPointString(500);
 
 		string GetEntryPointString(int maxChars) {
 			var ep = ManagedEntryPoint;
@@ -428,10 +428,10 @@ namespace dnSpy.AsmEditor.Module {
 			this.options = new ModuleOptions();
 			origOptions = options;
 			ModuleKind = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, (a, b) => {
-				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
+				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem!);
 			});
 			Machine = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, (a, b) => {
-				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.PE.Machine)Machine.SelectedItem);
+				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.PE.Machine)Machine.SelectedItem!);
 			});
 			Mvid = new NullableGuidVM(a => HasErrorUpdated());
 			EncId = new NullableGuidVM(a => HasErrorUpdated());
@@ -447,7 +447,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		void OnClrVersionChanged() {
-			var clrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;
+			var clrVersion = (Module.ClrVersion)ClrVersion.SelectedItem!;
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
 			if (clrValues == null)
 				return;
@@ -508,11 +508,11 @@ namespace dnSpy.AsmEditor.Module {
 			options.EncId = EncId.Value;
 			options.EncBaseId = EncBaseId.Value;
 			options.Name = Name;
-			options.Kind = (ModuleKind)ModuleKind.SelectedItem;
+			options.Kind = (ModuleKind)ModuleKind.SelectedItem!;
 			options.Characteristics = Characteristics;
 			options.DllCharacteristics = DllCharacteristics;
 			options.RuntimeVersion = RuntimeVersion;
-			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem;
+			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem!;
 			options.Cor20HeaderFlags = Cor20HeaderFlags;
 			options.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion.Value;
 			options.TablesHeaderVersion = TablesHeaderVersion.Value;
@@ -548,7 +548,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(RuntimeVersion))
 				return SaveModule.MetadataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
 

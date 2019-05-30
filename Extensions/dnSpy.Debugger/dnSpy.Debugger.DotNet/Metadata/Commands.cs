@@ -33,12 +33,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		abstract class CommandBase : MenuItemBase<Context> {
-			protected sealed override Context CreateContext(IMenuItemContext context) {
+			protected sealed override Context? CreateContext(IMenuItemContext context) {
 				var doc = GetDocument(context);
 				return doc == null ? null : new Context(doc);
 			}
 
-			MemoryModuleDefDocument GetDocument(IMenuItemContext context) {
+			MemoryModuleDefDocument? GetDocument(IMenuItemContext context) {
 				var doc = GetTreeNode(context).GetModuleNode()?.Document as MemoryModuleDefDocument;
 				if (doc == null)
 					return null;
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return doc;
 			}
 
-			protected abstract DocumentTreeNodeData GetTreeNode(IMenuItemContext context);
+			protected abstract DocumentTreeNodeData? GetTreeNode(IMenuItemContext context);
 			protected void ExecuteInternal(Context context) => context.MemoryModuleDefDocument.UpdateMemory();
 		}
 
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 
-			protected override DocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
+			protected override DocumentTreeNodeData? GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			public override void Execute(Context context) => ExecuteInternal(context);
 
-			protected override DocumentTreeNodeData GetTreeNode(IMenuItemContext context) {
+			protected override DocumentTreeNodeData? GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return documentTreeView.TreeView.SelectedItem as DocumentTreeNodeData;
 				return null;

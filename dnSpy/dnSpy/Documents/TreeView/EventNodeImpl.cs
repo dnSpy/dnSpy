@@ -31,7 +31,7 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.EVENT_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, EventDef.FullName);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(EventDef);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		public EventNodeImpl(ITreeNodeGroup treeNodeGroup, EventDef @event)
 			: base(@event) => TreeNodeGroup = treeNodeGroup;

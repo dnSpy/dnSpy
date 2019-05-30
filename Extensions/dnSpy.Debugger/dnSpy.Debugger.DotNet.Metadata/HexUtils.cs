@@ -19,7 +19,7 @@
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class HexUtils {
-		public static byte[] ParseBytes(string hexString) {
+		public static byte[]? ParseBytes(string hexString) {
 			try {
 				if (hexString.Length % 2 != 0)
 					return null;

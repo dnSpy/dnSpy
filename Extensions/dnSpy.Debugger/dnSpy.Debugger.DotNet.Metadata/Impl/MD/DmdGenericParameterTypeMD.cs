@@ -27,26 +27,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeBase declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdTypeBase declaringType, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers)
 			: base(rid, declaringType, name, position, attributes, customModifiers) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+		public DmdGenericParameterTypeMD(DmdEcma335MetadataReader reader, uint rid, DmdMethodBase declaringMethod, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers)
 			: base(rid, declaringMethod, name, position, attributes, customModifiers) =>
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-		protected override DmdType[] CreateGenericParameterConstraints() {
+		protected override DmdType[]? CreateGenericParameterConstraints() {
 			var ridList = reader.Metadata.GetGenericParamConstraintRidList(Rid);
 			if (ridList.Count == 0)
 				return null;
 
-			IList<DmdType> genericTypeArguments, genericMethodArguments;
-			if ((object)DeclaringMethod != null) {
-				genericTypeArguments = DeclaringMethod.DeclaringType.GetGenericArguments();
+			IList<DmdType> genericTypeArguments;
+			IList<DmdType>? genericMethodArguments;
+			if (!(DeclaringMethod is null)) {
+				genericTypeArguments = DeclaringMethod.DeclaringType!.GetGenericArguments();
 				genericMethodArguments = DeclaringMethod.GetGenericArguments();
 			}
 			else {
-				genericTypeArguments = DeclaringType.GetGenericArguments();
+				genericTypeArguments = DeclaringType!.GetGenericArguments();
 				genericMethodArguments = null;
 			}
 
@@ -58,20 +59,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				if (!CodedToken.TypeDefOrRef.Decode(row.Constraint, out uint token))
 					return null;
 				var type = Module.ResolveType((int)token, genericTypeArguments, genericMethodArguments, DmdResolveOptions.None);
-				if ((object)type == null)
+				if (type is null)
 					return null;
 				gpcList[i] = type;
 			}
 			return gpcList;
 		}
 
-		DmdGenericParameterTypeMD Clone(IList<DmdCustomModifier> customModifiers) =>
-			(object)DeclaringMethod != null ?
+		DmdGenericParameterTypeMD Clone(IList<DmdCustomModifier>? customModifiers) =>
+			!(DeclaringMethod is null) ?
 			new DmdGenericParameterTypeMD(reader, Rid, DeclaringMethod, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
-			new DmdGenericParameterTypeMD(reader, Rid, (DmdTypeBase)DeclaringType, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
+			new DmdGenericParameterTypeMD(reader, Rid, (DmdTypeBase)DeclaringType!, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 
 		// Don't intern these since only the generic parameter position is checked and not the decl type / method
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(VerifyCustomModifiers(customModifiers));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => Clone(VerifyCustomModifiers(customModifiers));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : Clone(null);
 	}
 }

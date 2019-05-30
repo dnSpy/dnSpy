@@ -53,7 +53,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap tablesHeap)
+		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap? tablesHeap)
 			: base(file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
@@ -71,7 +71,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			return HexSpan.FromBounds(peHeaders.RvaToBufferPosition(methodBodyRvas[0].Rva), info.Span.End);
 		}
 
-		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable methodTable) {
+		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable? methodTable) {
 			if (methodTable == null)
 				return Array.Empty<MethodBodyRvaAndRid>();
 			var list = new List<MethodBodyRvaAndRid>((int)methodTable.Rows);
@@ -119,7 +119,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override bool IsMethodPosition(HexPosition position) => methodBodiesSpan.Contains(position);
 
-		public override DotNetMethodBody GetMethodBody(HexPosition position) {
+		public override DotNetMethodBody? GetMethodBody(HexPosition position) {
 			if (!IsMethodPosition(position))
 				return null;
 

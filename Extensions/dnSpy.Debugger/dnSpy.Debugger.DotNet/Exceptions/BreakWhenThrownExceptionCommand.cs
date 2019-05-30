@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			protected CommandBase(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) =>
 				this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 
-			protected sealed override string CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
+			protected sealed override string? CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
 
 			public override void Execute(string context) {
 				if (context == null)
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				}
 			}
 
-			string GetExceptionTypeName(IMenuItemContext context) {
+			string? GetExceptionTypeName(IMenuItemContext context) {
 				var td = GetTypeDef(context);
 				if (td == null)
 					return null;
@@ -62,13 +62,14 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			}
 
 			static bool IsException(TypeDef type) {
-				if (IsSystemException(type))
+				TypeDef? td = type;
+				if (IsSystemException(td))
 					return true;
-				for (int i = 0; i < 1000 && type != null; i++) {
-					if (IsSystemException(type.BaseType))
+				for (int i = 0; i < 1000 && td != null; i++) {
+					if (IsSystemException(td.BaseType))
 						return true;
-					var bt = type.BaseType;
-					type = bt == null ? null : bt.ScopeType.ResolveTypeDef();
+					var bt = td.BaseType;
+					td = bt?.ScopeType.ResolveTypeDef();
 				}
 				return false;
 			}
@@ -82,9 +83,9 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 
 			static string GetExceptionString(TypeDef td) => td.ReflectionFullName;
 
-			protected abstract TypeDef GetTypeDef(IMenuItemContext context);
+			protected abstract TypeDef? GetTypeDef(IMenuItemContext context);
 
-			protected TypeDef GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
+			protected TypeDef? GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
@@ -96,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				return (node.Reference as ITypeDefOrRef).ResolveTypeDef();
 			}
 
-			protected TypeDef GetTypeDefFromReference(IMenuItemContext context, string guid) {
+			protected TypeDef? GetTypeDefFromReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 
@@ -118,7 +119,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				: base(dbgExceptionSettingsService) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
+			protected override TypeDef? GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 		}
 
 		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = DsImagesAttribute.Add, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 1000)]
@@ -131,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				: base(dbgExceptionSettingsService) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
+			protected override TypeDef? GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 		}
 	}
 }

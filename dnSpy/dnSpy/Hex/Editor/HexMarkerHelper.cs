@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Editor {
 			return lineNum1 != lineNum2;
 		}
 
-		public static void AddGeometries(WpfHexView hexView, Collection<VSTF.TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath) {
+		public static void AddGeometries(WpfHexView hexView, Collection<VSTF.TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry? geo, ref bool createOutlinedPath) {
 			foreach (var bounds in textBounds) {
 				double left = bounds.Left - padding.Left;
 				double right = bounds.Right + padding.Right;

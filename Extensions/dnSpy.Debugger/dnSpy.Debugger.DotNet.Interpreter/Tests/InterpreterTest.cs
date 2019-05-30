@@ -100,9 +100,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 
 		sealed class DmdEvaluatorImpl : DmdEvaluator {
 			public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) => throw new NotImplementedException();
-			public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) => throw new NotImplementedException();
-			public override object LoadField(object context, DmdFieldInfo field, object obj) => throw new NotImplementedException();
-			public override void StoreField(object context, DmdFieldInfo field, object obj, object value) => throw new NotImplementedException();
+			public override object? Invoke(object? context, DmdMethodBase method, object? obj, object?[] parameters) => throw new NotImplementedException();
+			public override object? LoadField(object? context, DmdFieldInfo field, object? obj) => throw new NotImplementedException();
+			public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) => throw new NotImplementedException();
 		}
 
 		TestRuntime CreateTestRuntime() {

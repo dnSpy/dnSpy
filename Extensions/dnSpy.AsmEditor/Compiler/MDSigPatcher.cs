@@ -137,14 +137,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		byte[] GetResult() {
+		byte[]? GetResult() {
 			Debug.Assert(currPos == endPos, "We didn't read the full signature or it has garbage bytes");
 			if (!usingBuilder)
 				return null;
 			return sigBuilder.ToArray();
 		}
 
-		public static byte[] PatchTypeSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
+		public static byte[]? PatchTypeSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			try {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchTypeSignature();
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		public static byte[] PatchCallingConventionSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
+		public static byte[]? PatchCallingConventionSignature(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
 			try {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchCallingConventionSignature();

@@ -126,11 +126,11 @@ namespace dnSpy.AsmEditor.Types {
 							TypeAttributes.StringFormatMask |
 							TypeAttributes.CustomFormatMask;
 				return (attributes & ~mask) |
-					((TypeAttributes)((int)(Types.TypeVisibility)TypeVisibility.SelectedItem << 0) & TypeAttributes.VisibilityMask) |
-					((TypeAttributes)((int)(Types.TypeLayout)TypeLayout.SelectedItem << 3) & TypeAttributes.LayoutMask) |
-					((TypeAttributes)((int)(Types.TypeSemantics)TypeSemantics.SelectedItem << 5) & TypeAttributes.ClassSemanticsMask) |
-					((TypeAttributes)((int)(Types.TypeStringFormat)TypeStringFormat.SelectedItem << 16) & TypeAttributes.StringFormatMask) |
-					((TypeAttributes)((int)(Types.TypeCustomFormat)TypeCustomFormat.SelectedItem << 22) & TypeAttributes.CustomFormatMask);
+					((TypeAttributes)((int)(Types.TypeVisibility)TypeVisibility.SelectedItem! << 0) & TypeAttributes.VisibilityMask) |
+					((TypeAttributes)((int)(Types.TypeLayout)TypeLayout.SelectedItem! << 3) & TypeAttributes.LayoutMask) |
+					((TypeAttributes)((int)(Types.TypeSemantics)TypeSemantics.SelectedItem! << 5) & TypeAttributes.ClassSemanticsMask) |
+					((TypeAttributes)((int)(Types.TypeStringFormat)TypeStringFormat.SelectedItem! << 16) & TypeAttributes.StringFormatMask) |
+					((TypeAttributes)((int)(Types.TypeCustomFormat)TypeCustomFormat.SelectedItem! << 22) & TypeAttributes.CustomFormatMask);
 			}
 			set {
 				if (attributes != value) {
@@ -211,7 +211,7 @@ namespace dnSpy.AsmEditor.Types {
 				Attributes &= ~flag;
 		}
 
-		public string Namespace {
+		public string? Namespace {
 			get => ns;
 			set {
 				if (ns != value) {
@@ -220,9 +220,9 @@ namespace dnSpy.AsmEditor.Types {
 				}
 			}
 		}
-		UTF8String ns;
+		UTF8String? ns;
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -231,12 +231,12 @@ namespace dnSpy.AsmEditor.Types {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
 		public NullableUInt16VM PackingSize { get; }
 		public NullableUInt32VM ClassSize { get; }
 
-		public TypeSig BaseTypeSig {
+		public TypeSig? BaseTypeSig {
 			get => TypeSigCreator.TypeSig;
 			set => TypeSigCreator.TypeSig = value;
 		}
@@ -250,7 +250,7 @@ namespace dnSpy.AsmEditor.Types {
 
 		readonly ModuleDef ownerModule;
 
-		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType) {
+		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
@@ -302,13 +302,13 @@ namespace dnSpy.AsmEditor.Types {
 			HasErrorUpdated();
 		}
 
-		bool IsSystemValueType(IType type) =>
+		bool IsSystemValueType(IType? type) =>
 			new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "ValueType")) &&
-			type.DefinitionAssembly.IsCorLib();
+			type!.DefinitionAssembly.IsCorLib();
 
-		bool IsSystemEnum(IType type) =>
+		bool IsSystemEnum(IType? type) =>
 			new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "Enum")) &&
-			type.DefinitionAssembly.IsCorLib();
+			type!.DefinitionAssembly.IsCorLib();
 
 		void InitializeTypeKind() {
 			if (OnTypeKindChanged_called)
@@ -331,41 +331,41 @@ namespace dnSpy.AsmEditor.Types {
 
 		bool IsClass() =>
 			IsClassBaseType(BaseTypeSig) &&
-			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class;
+			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Class;
 
 		bool IsStaticClass() =>
 			new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.Object.TypeDefOrRef) &&
-			BaseTypeSig.DefinitionAssembly.IsCorLib() &&
-			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			BaseTypeSig!.DefinitionAssembly.IsCorLib() &&
+			(Types.TypeLayout)TypeLayout.SelectedItem! == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Class &&
 			Abstract &&
 			Sealed;
 
 		bool IsInterface() =>
 			BaseTypeSig == null &&
-			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Interface &&
+			(Types.TypeLayout)TypeLayout.SelectedItem! == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Interface &&
 			Abstract &&
 			!Sealed;
 
 		bool IsStruct() =>
 			IsSystemValueType(BaseTypeSig) &&
-			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Class &&
 			!Abstract &&
 			Sealed;
 
 		bool IsEnum() =>
 			IsSystemEnum(BaseTypeSig) &&
-			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			(Types.TypeLayout)TypeLayout.SelectedItem! == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Class &&
 			!Abstract &&
 			Sealed;
 
 		bool IsDelegate() =>
 			new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
-			BaseTypeSig.DefinitionAssembly.IsCorLib() &&
-			(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
-			(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
+			BaseTypeSig!.DefinitionAssembly.IsCorLib() &&
+			(Types.TypeLayout)TypeLayout.SelectedItem! == Types.TypeLayout.AutoLayout &&
+			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Class &&
 			!Abstract &&
 			Sealed;
 
@@ -383,7 +383,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		void OnTypeKindChanged2() {
-			switch ((Types.TypeKind)TypeKind.SelectedItem) {
+			switch ((Types.TypeKind)TypeKind.SelectedItem!) {
 			case Types.TypeKind.Unknown:
 				break;
 
@@ -437,7 +437,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 		}
 
-		bool IsClassBaseType(IType type) =>
+		bool IsClassBaseType(IType? type) =>
 			type != null &&
 			!IsSystemEnum(type) &&
 			!IsSystemValueType(type);

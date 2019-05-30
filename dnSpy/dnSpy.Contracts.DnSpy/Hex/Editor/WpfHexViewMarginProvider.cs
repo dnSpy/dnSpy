@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="wpfHexViewHost">WPF hex view host</param>
 		/// <param name="marginContainer">Margin container</param>
 		/// <returns></returns>
-		public abstract WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer);
+		public abstract WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer);
 	}
 }

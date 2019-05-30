@@ -77,7 +77,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		static string GetCommon(string[] namespaces) {
-			string foundNs = null;
+			string? foundNs = null;
 			var sb = new StringBuilder();
 			foreach (var ns in namespaces) {
 				Debug.Assert(IsValidNamespace(ns));

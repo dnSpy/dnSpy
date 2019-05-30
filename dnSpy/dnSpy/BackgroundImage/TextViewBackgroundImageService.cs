@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.BackgroundImage {
 	sealed class TextViewBackgroundImageService : BackgroundImageService {
 		readonly IWpfTextView wpfTextView;
-		IAdornmentLayer adornmentLayer;
+		IAdornmentLayer? adornmentLayer;
 
 #pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
@@ -74,7 +74,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		protected override void AddImageToAdornmentLayerCore(Image image) =>
-			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, image, null);
+			adornmentLayer!.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, image, null);
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
 			ViewClosed();

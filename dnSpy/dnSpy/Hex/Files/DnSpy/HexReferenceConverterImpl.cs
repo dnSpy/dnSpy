@@ -35,14 +35,14 @@ namespace dnSpy.Hex.Files.DnSpy {
 		[ImportingConstructor]
 		HexReferenceConverterImpl(BufferToDocumentNodeService bufferToDocumentNodeService) => this.bufferToDocumentNodeService = bufferToDocumentNodeService;
 
-		public override object Convert(HexView hexView, object reference) {
+		public override object? Convert(HexView hexView, object reference) {
 			if (reference is HexMethodReference methodRef)
 				return ConvertMethodReference(methodRef);
 
 			return reference;
 		}
 
-		MethodStatementReference ConvertMethodReference(HexMethodReference methodRef) {
+		MethodStatementReference? ConvertMethodReference(HexMethodReference methodRef) {
 			var docNode = bufferToDocumentNodeService.Find(methodRef.File);
 			if (docNode == null)
 				return null;
@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 	}
 
 	abstract class BufferToDocumentNodeService {
-		public abstract DsDocumentNode Find(HexBufferFile file);
+		public abstract DsDocumentNode? Find(HexBufferFile file);
 	}
 
 	[Export(typeof(BufferToDocumentNodeService))]
@@ -80,7 +80,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		[ImportingConstructor]
 		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-		public override DsDocumentNode Find(HexBufferFile file) {
+		public override DsDocumentNode? Find(HexBufferFile file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (file.Filename == string.Empty)

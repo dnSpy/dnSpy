@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -72,8 +73,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
 		}
 
-		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
-		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
+		ITextView? GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
+		ITextView? GetTextView(IDocumentTab? tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
 		readonly struct LocationsResult : IDisposable {
 			public readonly DbgTextViewBreakpointLocationResult? locRes;
@@ -92,11 +93,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		LocationsResult GetLocations(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		LocationsResult GetLocations(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			var allLocations = new List<DbgCodeLocation>();
 			var textView = GetTextView(tab);
 			if (textView == null)
 				return new LocationsResult(dbgManager, null, allLocations);
+			Debug.Assert(tab != null);
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
@@ -154,7 +156,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		IDocumentTab GetTab(ITextView textView) {
+		IDocumentTab? GetTab(ITextView textView) {
 			foreach (var g in documentTabService.Value.TabGroupService.TabGroups) {
 				foreach (var t in g.TabContents) {
 					var tab = t as IDocumentTab;
@@ -194,7 +196,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		ToggleCreateBreakpointInfoResult GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		ToggleCreateBreakpointInfoResult GetToggleCreateBreakpointInfo(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			using (var info = GetLocations(tab, position)) {
 				var locRes = info.locRes;
 				var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);

@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Impl {
 			this.boundCodeBreakpointsService = boundCodeBreakpointsService ?? throw new ArgumentNullException(nameof(boundCodeBreakpointsService));
 		}
 
-		public override DbgEngineAppDomain CreateAppDomain<T>(DbgInternalAppDomain internalAppDomain, string name, int id, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineAppDomain> onCreated) {
+		public override DbgEngineAppDomain CreateAppDomain<T>(DbgInternalAppDomain internalAppDomain, string name, int id, DbgEngineMessageFlags messageFlags, T? data, Action<DbgEngineAppDomain>? onCreated) where T : class {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var appDomain = new DbgAppDomainImpl(runtime, internalAppDomain, name, id);
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Impl {
 			return engineAppDomain;
 		}
 
-		DbgAppDomainImpl VerifyOptionalAppDomain(DbgAppDomain appDomain) {
+		DbgAppDomainImpl? VerifyOptionalAppDomain(DbgAppDomain? appDomain) {
 			if (appDomain == null)
 				return null;
 			var appDomainImpl = appDomain as DbgAppDomainImpl;
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.Impl {
 			return appDomainImpl;
 		}
 
-		public override DbgEngineModule CreateModule<T>(DbgAppDomain appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineModule> onCreated) {
+		public override DbgEngineModule CreateModule<T>(DbgAppDomain? appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version, DbgEngineMessageFlags messageFlags, T? data, Action<DbgEngineModule>? onCreated) where T : class {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var module = new DbgModuleImpl(runtime, VerifyOptionalAppDomain(appDomain), internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.Impl {
 			return engineModule;
 		}
 
-		public override DbgEngineThread CreateThread<T>(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags, T data, Action<DbgEngineThread> onCreated) {
+		public override DbgEngineThread CreateThread<T>(DbgAppDomain? appDomain, string kind, ulong id, ulong? managedId, string? name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state, DbgEngineMessageFlags messageFlags, T? data, Action<DbgEngineThread>? onCreated) where T : class {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var thread = new DbgThreadImpl(runtime, VerifyOptionalAppDomain(appDomain), kind, id, managedId, name, suspendedCount, state);
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.Impl {
 			return engineThread;
 		}
 
-		public override DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string message, DbgThread thread, DbgModule module, DbgEngineMessageFlags messageFlags, T data, Action<DbgException> onCreated) {
+		public override DbgException CreateException<T>(DbgExceptionId id, DbgExceptionEventFlags flags, string? message, DbgThread? thread, DbgModule? module, DbgEngineMessageFlags messageFlags, T? data, Action<DbgException>? onCreated) where T : class {
 			if (id.IsDefaultId)
 				throw new ArgumentException();
 			var exception = new DbgExceptionImpl(runtime, id, flags, message, thread, module);
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.Impl {
 				return Array.Empty<DbgEngineBoundCodeBreakpoint>();
 			var bps = new List<DbgEngineBoundCodeBreakpoint>(infos.Length);
 			var bpImpls = new List<DbgEngineBoundCodeBreakpointImpl>(infos.Length);
-			List<IDisposable> dataToDispose = null;
+			List<IDisposable>? dataToDispose = null;
 
 			var allBreakpoints = boundCodeBreakpointsService.Value.Breakpoints;
 			var dict = new Dictionary<DbgCodeLocation, DbgCodeBreakpoint>(allBreakpoints.Length);
@@ -155,7 +155,7 @@ namespace dnSpy.Debugger.Impl {
 			return bps.ToArray();
 		}
 
-		public override DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgCodeLocation location, DbgModule module, uint functionOffset, uint functionToken) {
+		public override DbgEngineStackFrame CreateSpecialStackFrame(string name, DbgCodeLocation? location, DbgModule? module, uint functionOffset, uint functionToken) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			return new SpecialDbgEngineStackFrame(name, location, module, functionOffset, functionToken);

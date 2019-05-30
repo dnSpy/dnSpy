@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Property {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -81,16 +81,16 @@ namespace dnSpy.AsmEditor.Property {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public PropertySig PropertySig {
+		public PropertySig? PropertySig {
 			get => MethodSigCreator.PropertySig;
 			set => MethodSigCreator.PropertySig = value;
 		}
 
-		public string PropertySigHeader => string.Format(dnSpy_AsmEditor_Resources.PropertyX, MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig.ToString());
+		public string PropertySigHeader => string.Format(dnSpy_AsmEditor_Resources.PropertyX, MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig!.ToString());
 		public MethodSigCreatorVM MethodSigCreator { get; }
-		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public Constant? Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
 		public ConstantVM ConstantVM { get; }
 		public MethodDefsVM GetMethodsVM { get; }
 		public MethodDefsVM SetMethodsVM { get; }
@@ -166,11 +166,11 @@ namespace dnSpy.AsmEditor.Property {
 			options.PropertySig = PropertySig;
 			options.Constant = HasDefault ? Constant : null;
 			options.GetMethods.Clear();
-			options.GetMethods.AddRange(GetMethodsVM.Collection.Select(a => a.Method));
+			options.GetMethods.AddRange(GetMethodsVM.Collection.Select(a => a.Method!));
 			options.SetMethods.Clear();
-			options.SetMethods.AddRange(SetMethodsVM.Collection.Select(a => a.Method));
+			options.SetMethods.AddRange(SetMethodsVM.Collection.Select(a => a.Method!));
 			options.OtherMethods.Clear();
-			options.OtherMethods.AddRange(OtherMethodsVM.Collection.Select(a => a.Method));
+			options.OtherMethods.AddRange(OtherMethodsVM.Collection.Select(a => a.Method!));
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;

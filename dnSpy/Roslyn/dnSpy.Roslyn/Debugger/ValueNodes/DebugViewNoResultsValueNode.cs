@@ -31,16 +31,16 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	sealed class DebugViewNoResultsValueNode : DbgDotNetValueNode {
-		public override DmdType ExpectedType => null;
-		public override DmdType ActualType => null;
-		public override string ErrorMessage => null;
-		public override DbgDotNetValue Value => null;
+		public override DmdType? ExpectedType => null;
+		public override DmdType? ActualType => null;
+		public override string? ErrorMessage => null;
+		public override DbgDotNetValue? Value => null;
 		public override DbgDotNetText Name => emptyPropertyName;
 		public override string Expression { get; }
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Property;
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
-		public override ReadOnlyCollection<string> FormatSpecifiers => null;
+		public override ReadOnlyCollection<string>? FormatSpecifiers => null;
 		public override bool? HasChildren => false;
 
 		const string EmptyPropertyName = "Empty";
@@ -52,22 +52,22 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			noResultsName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, emptyMessage));
 		}
 
-		public static DebugViewNoResultsValueNode TryCreate(DbgEvaluationInfo evalInfo, string expression, DbgDotNetValueResult valueResult) {
+		public static DebugViewNoResultsValueNode? TryCreate(DbgEvaluationInfo evalInfo, string expression, DbgDotNetValueResult valueResult) {
 			DbgDotNetValueResult getterResult = default;
 			try {
 				if (!valueResult.ValueIsException)
 					return null;
-				var appDomain = valueResult.Value.Type.AppDomain;
+				var appDomain = valueResult.Value!.Type.AppDomain;
 				var emptyProperty = valueResult.Value.Type.GetProperty(EmptyPropertyName, DmdSignatureCallingConvention.HasThis | DmdSignatureCallingConvention.Property, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false);
 				var emptyGetter = emptyProperty?.GetGetMethod(DmdGetAccessorOptions.All);
-				if ((object)emptyGetter == null)
+				if ((object?)emptyGetter == null)
 					return null;
 
 				var runtime = evalInfo.Runtime.GetDotNetRuntime();
 				getterResult = runtime.Call(evalInfo, valueResult.Value, emptyGetter, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
 				if (!getterResult.IsNormalResult)
 					return null;
-				var rawValue = getterResult.Value.GetRawValue();
+				var rawValue = getterResult.Value!.GetRawValue();
 				if (!rawValue.HasRawValue || rawValue.ValueType != DbgSimpleValueType.StringUtf16 || !(rawValue.RawValue is string emptyMessage))
 					return null;
 				return new DebugViewNoResultsValueNode(expression, emptyMessage);
@@ -77,7 +77,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		public override bool FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override bool FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
 			noResultsName.WriteTo(output);
 			return true;
 		}

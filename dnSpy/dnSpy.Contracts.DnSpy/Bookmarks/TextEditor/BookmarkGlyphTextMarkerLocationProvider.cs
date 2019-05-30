@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 		/// </summary>
 		/// <param name="bookmark">Bookmark</param>
 		/// <returns></returns>
-		public abstract GlyphTextMarkerLocationInfo GetLocation(Bookmark bookmark);
+		public abstract GlyphTextMarkerLocationInfo? GetLocation(Bookmark bookmark);
 	}
 
 	/// <summary>Metadata</summary>

@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				throw new DbgHookException($"Couldn't open process {process.Id} ({process.Name})");
 		}
 
-		ProcessMemoryBlockImpl GetCloseBlock(ulong moduleAddress, ulong moduleEndAddress) {
+		ProcessMemoryBlockImpl? GetCloseBlock(ulong moduleAddress, ulong moduleEndAddress) {
 			foreach (var mem in allocatedMemory) {
 				if (process.Architecture != DbgArchitecture.X64)
 					return mem;

@@ -28,7 +28,7 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 namespace dnSpy.BackgroundImage {
 	sealed class HexViewBackgroundImageService : BackgroundImageService {
 		readonly WpfHexView wpfHexView;
-		HexAdornmentLayer adornmentLayer;
+		HexAdornmentLayer? adornmentLayer;
 
 #pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
@@ -75,7 +75,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		protected override void AddImageToAdornmentLayerCore(Image image) =>
-			adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, image, null);
+			adornmentLayer!.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, image, null);
 
 		void WpfHexView_Closed(object sender, EventArgs e) {
 			ViewClosed();

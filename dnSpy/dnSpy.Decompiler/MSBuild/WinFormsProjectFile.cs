@@ -56,7 +56,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return defsToRemove;
 		}
 		readonly object defsToRemoveLock = new object();
-		IMemberDef[] defsToRemove;
+		IMemberDef[]? defsToRemove;
 
 		IEnumerable<IMemberDef> CalculateDefsToRemove() {
 			var m = GetInitializeComponent();
@@ -74,7 +74,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		MethodDef GetInitializeComponent() {
+		MethodDef? GetInitializeComponent() {
 			foreach (var m in Type.Methods) {
 				if (m.Access != MethodAttributes.Private)
 					continue;
@@ -91,7 +91,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return null;
 		}
 
-		MethodDef GetDispose() {
+		MethodDef? GetDispose() {
 			foreach (var m in Type.Methods) {
 				if (m.Access != MethodAttributes.Family)
 					continue;

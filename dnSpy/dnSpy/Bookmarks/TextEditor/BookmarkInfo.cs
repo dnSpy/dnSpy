@@ -24,12 +24,12 @@ namespace dnSpy.Bookmarks.TextEditor {
 	sealed class BookmarkInfo {
 		public BookmarkKind Kind { get; }
 		public ImageReference? ImageReference { get; }
-		public string MarkerTypeName { get; }
-		public string SelectedMarkerTypeName { get; }
-		public IClassificationType ClassificationType { get; }
+		public string? MarkerTypeName { get; }
+		public string? SelectedMarkerTypeName { get; }
+		public IClassificationType? ClassificationType { get; }
 		public int ZIndex { get; }
 
-		public BookmarkInfo(BookmarkKind kind, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex) {
+		public BookmarkInfo(BookmarkKind kind, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex) {
 			Kind = kind;
 			ImageReference = BookmarkImageUtilities.GetImage(kind);
 			MarkerTypeName = markerTypeName;

@@ -181,7 +181,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DnModuleId other && Equals(other);
+		public override bool Equals(object? obj) => obj is DnModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()

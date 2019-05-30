@@ -31,24 +31,18 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Gets the suffix or null
 		/// </summary>
-		public string Suffix { get; }
+		public string? Suffix { get; }
 
 		/// <summary>
 		/// Gets the text that is used to filter this item
 		/// </summary>
-		public string FilterText { get; protected set; }
+		public string FilterText { get; }
 
 		/// <summary>
 		/// Gets the icon
 		/// </summary>
 		public virtual ImageReference ImageReference => imageReference ?? (imageReference = GetImageReference()).Value;
 		ImageReference? imageReference;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public DsCompletion() {
-		}
 
 		/// <summary>
 		/// Constructor
@@ -61,7 +55,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="iconAutomationText">Icon automation text or null</param>
 		/// <param name="attributeIcons">Attribute icons shown on the right side</param>
 		/// <param name="suffix">Text shown after the normal completion text</param>
-		public DsCompletion(string displayText, string filterText = null, string insertionText = null, string description = null, ImageReference imageReference = default, string iconAutomationText = null, IEnumerable<DsCompletionIcon> attributeIcons = null, string suffix = null)
+		public DsCompletion(string displayText, string? filterText = null, string? insertionText = null, string? description = null, ImageReference imageReference = default, string? iconAutomationText = null, IEnumerable<DsCompletionIcon>? attributeIcons = null, string? suffix = null)
 			: base(displayText, insertionText, description, default, iconAutomationText, attributeIcons) {
 			if (displayText == null)
 				throw new ArgumentNullException(nameof(displayText));

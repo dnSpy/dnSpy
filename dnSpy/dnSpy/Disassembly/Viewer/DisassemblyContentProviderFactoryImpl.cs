@@ -32,7 +32,7 @@ namespace dnSpy.Disassembly.Viewer {
 		[ImportingConstructor]
 		DisassemblyContentProviderFactoryImpl(DisassemblyContentProviderFactoryDependencies x86Deps) => this.x86Deps = x86Deps;
 
-		public override DisassemblyContentProvider Create(NativeCode code, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver symbolResolver, string header) {
+		public override DisassemblyContentProvider Create(NativeCode code, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver? symbolResolver, string? header) {
 			if (code.Blocks == null)
 				throw new ArgumentException();
 

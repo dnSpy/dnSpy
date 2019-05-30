@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <returns></returns>
-		public abstract DbgDynamicModuleProvider Create(DbgRuntime runtime);
+		public abstract DbgDynamicModuleProvider? Create(DbgRuntime runtime);
 	}
 }

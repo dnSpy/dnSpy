@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		/// </summary>
 		event EventHandler UnderlyingStreamChanged;
 
-		DbgProcess Process { get; }
+		DbgProcess? Process { get; }
 		event EventHandler UnderlyingProcessChanged;
 	}
 
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		sealed class BufferState : IHexBufferInfo {
 			public HexBuffer Buffer { get; }
 			DebuggerHexBufferStream DebuggerHexBufferStream { get; }
-			public DbgProcess Process { get; private set; }
+			public DbgProcess? Process { get; private set; }
 			public event EventHandler UnderlyingStreamChanged;
 			public event EventHandler UnderlyingProcessChanged;
 
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				DebuggerHexBufferStream = debuggerHexBufferStream ?? throw new ArgumentNullException(nameof(debuggerHexBufferStream));
 			}
 
-			public void SetUnderlyingStream(HexBufferStream stream, DbgProcess process) {
+			public void SetUnderlyingStream(HexBufferStream? stream, DbgProcess? process) {
 				if (Process == process && DebuggerHexBufferStream.UnderlyingStream == stream)
 					return;
 				Process = process;
@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		ProcessInfo TryGetProcessInfo_UI(int pid) {
+		ProcessInfo? TryGetProcessInfo_UI(int pid) {
 			uiDispatcher.VerifyAccess();
 			foreach (var info in processInfos) {
 				if (info.Process.Id == pid)
@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		BufferState TryGetBufferState_UI(HexBuffer buffer) {
+		BufferState? TryGetBufferState_UI(HexBuffer buffer) {
 			uiDispatcher.VerifyAccess();
 			foreach (var bufferState in bufferStates) {
 				if (bufferState.Buffer == buffer)
@@ -291,7 +291,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 					continue;
 				if (bufferState.Process == null)
 					continue;
-				if (bufferState.Process != callerState.Process)
+				if (bufferState.Process != callerState?.Process)
 					continue;
 				bufferState.InvalidateSpan(e.Changes);
 			}
@@ -304,7 +304,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			buffer.Disposed -= Buffer_Disposed;
 			buffer.ChangedLowPriority -= Buffer_ChangedLowPriority;
 			var bufferState = TryGetBufferState_UI(buffer);
-			bool b = bufferStates.Remove(bufferState);
+			bool b = bufferStates.Remove(bufferState!);
 			Debug.Assert(b);
 		}
 

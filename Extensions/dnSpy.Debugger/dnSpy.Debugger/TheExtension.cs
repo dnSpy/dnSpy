@@ -32,6 +32,6 @@ namespace dnSpy.Debugger {
 			ShortDescription = dnSpy_Debugger_Resources.Plugin_ShortDescription,
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) { }
+		public void OnEvent(ExtensionEvent @event, object? obj) { }
 	}
 }

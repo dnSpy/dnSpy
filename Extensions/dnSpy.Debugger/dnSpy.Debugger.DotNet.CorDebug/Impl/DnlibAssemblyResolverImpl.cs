@@ -34,9 +34,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dict = new Dictionary<IAssembly, AssemblyDef>(AssemblyNameComparer.CompareAll);
 		}
 
-		public AssemblyDef Resolve(IAssembly assembly, ModuleDef sourceModule) {
+		public AssemblyDef? Resolve(IAssembly assembly, ModuleDef sourceModule) {
 			engine.VerifyCorDebugThread();
-			if (dict.TryGetValue(assembly, out var res))
+			AssemblyDef? res;
+			if (dict.TryGetValue(assembly, out res))
 				return res;
 			res = Lookup_CorDebug(assembly);
 			if (res != null) {
@@ -46,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return res;
 		}
 
-		AssemblyDef Lookup_CorDebug(IAssembly assembly) {
+		AssemblyDef? Lookup_CorDebug(IAssembly assembly) {
 			engine.VerifyCorDebugThread();
 			if (assembly == null)
 				return null;

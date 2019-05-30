@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public static DbgDotNetValue GetDotNetValue(this DbgValue value) => value.InternalValue as DbgDotNetValue;
+		public static DbgDotNetValue? GetDotNetValue(this DbgValue value) => value.InternalValue as DbgDotNetValue;
 	}
 }

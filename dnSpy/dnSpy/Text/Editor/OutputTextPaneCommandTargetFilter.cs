@@ -31,7 +31,7 @@ namespace dnSpy.Text.Editor {
 
 		IOutputTextPane TryGetInstance() =>
 			__outputTextPane ?? (__outputTextPane = OutputTextPaneUtils.TryGetInstance(textView));
-		IOutputTextPane __outputTextPane;
+		IOutputTextPane? __outputTextPane;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (TryGetInstance() == null)
@@ -50,12 +50,12 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var textPane = TryGetInstance();
 			if (textPane == null)
 				return CommandTargetStatus.NotHandled;

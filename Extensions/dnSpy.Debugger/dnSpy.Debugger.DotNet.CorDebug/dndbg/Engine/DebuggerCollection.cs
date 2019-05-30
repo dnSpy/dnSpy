@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		public TValue TryGet(TKey key) {
+		public TValue? TryGet(TKey? key) {
 			if (key == null)
 				return null;
 
@@ -49,7 +49,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		public TValue Add(TKey key) {
+		public TValue? Add(TKey? key) {
 			if (key == null)
 				return null;
 
@@ -66,7 +66,7 @@ namespace dndbg.Engine {
 		/// Removes the item
 		/// </summary>
 		/// <param name="key">Key</param>
-		public bool Remove(TKey key) {
+		public bool Remove(TKey? key) {
 			if (key == null)
 				return false;
 

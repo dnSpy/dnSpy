@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 
 		public System_String(ICorDebugRuntime runtime) => this.runtime = runtime;
 
-		public override DbgDotNetValue CreateInstance(DmdConstructorInfo ctor, object[] arguments) {
+		public override DbgDotNetValue? CreateInstance(DmdConstructorInfo ctor, object?[] arguments) {
 			var appDomain = ctor.AppDomain;
 			var ps = ctor.GetMethodSignature().GetParameterTypes();
 			switch (ps.Count) {

@@ -300,8 +300,8 @@ namespace dnSpy.Contracts.Hex {
 				}
 				else
 					cells = collection.GetCells(overlapSpan.Value);
-				HexCell firstCell = null;
-				HexCell lastCell = null;
+				HexCell? firstCell = null;
+				HexCell? lastCell = null;
 				foreach (var cell in cells) {
 					if (!((cell.GroupIndex == 0 && group0) || (cell.GroupIndex == 1 && group1)))
 						continue;
@@ -309,7 +309,7 @@ namespace dnSpy.Contracts.Hex {
 						firstCell = cell;
 						lastCell = cell;
 					}
-					else if (lastCell.Index + 1 == cell.Index && lastCell.GroupIndex == cell.GroupIndex)
+					else if (lastCell!.Index + 1 == cell.Index && lastCell.GroupIndex == cell.GroupIndex)
 						lastCell = cell;
 					else {
 						yield return Create(collection, firstCell, lastCell, overlapSpan.Value);
@@ -317,7 +317,7 @@ namespace dnSpy.Contracts.Hex {
 					}
 				}
 				if (firstCell != null)
-					yield return Create(collection, firstCell, lastCell, overlapSpan.Value);
+					yield return Create(collection, firstCell, lastCell!, overlapSpan.Value);
 				yield break;
 			}
 			if ((flags & HexSpanSelectionFlags.AllVisibleCells) != 0) {
@@ -453,6 +453,7 @@ namespace dnSpy.Contracts.Hex {
 				break;
 
 			case HexLinePositionInfoType.ValueCellSeparator:
+				Debug.Assert(position.Cell != null);
 				Debug.Assert(position.Cell.CellSpan.End == position.Position);
 				position = HexLinePositionInfo.CreateValue(position.Cell.CellSpan.End - 1, position.Cell);
 				break;
@@ -477,6 +478,7 @@ namespace dnSpy.Contracts.Hex {
 			case HexLinePositionInfoType.AsciiCell:
 				if (!IsAsciiColumnPresent)
 					return null;
+				Debug.Assert(cell != null);
 				if (onlyVisibleCells && !cell.HasData) {
 					var visible = GetVisible(AsciiCells, cell);
 					if (visible == null)
@@ -487,6 +489,7 @@ namespace dnSpy.Contracts.Hex {
 				return new HexCellPosition(HexColumnType.Ascii, cell.BufferStart, cellPosition);
 
 			case HexLinePositionInfoType.ValueCell:
+				Debug.Assert(cell != null);
 				if (!IsValuesColumnPresent)
 					return null;
 				if (onlyVisibleCells && !cell.HasData) {

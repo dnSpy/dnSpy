@@ -31,10 +31,10 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		readonly IDecompiler decompiler;
 		readonly MethodDef method;
 		readonly CancellationToken cancellationToken;
-		DecompilerOutputImpl output;
-		MethodDebugInfo debugInfo;
+		DecompilerOutputImpl? output;
+		MethodDebugInfo? debugInfo;
 
-		public DecompiledCodeProvider(IDecompiler decompiler, MethodDef method, CancellationToken cancellationToken) {
+		public DecompiledCodeProvider(IDecompiler? decompiler, MethodDef method, CancellationToken cancellationToken) {
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			this.method = method ?? throw new ArgumentNullException(nameof(method));
 			this.cancellationToken = cancellationToken;
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 		}
 
-		(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
+		(MethodDebugInfo debugInfo, MethodDebugInfo? stateMachineDebugInfoOrNull) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
 			output.Initialize(methodToken);
 			decompiler.Decompile(method, output, ctx);
 			var info = output.TryGetMethodDebugInfo();

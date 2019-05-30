@@ -31,6 +31,6 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Returns headers or null. This method is called after <see cref="StructureProvider.GetHeaders{THeader}"/>
 		/// </summary>
 		/// <returns></returns>
-		public abstract THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
+		public abstract THeader? GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
 	}
 }

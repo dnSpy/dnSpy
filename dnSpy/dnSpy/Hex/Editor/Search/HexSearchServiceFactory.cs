@@ -24,7 +24,7 @@ using dnSpy.Contracts.Hex.Operations;
 namespace dnSpy.Hex.Editor.Search {
 	abstract class HexSearchServiceFactory {
 		public abstract bool IsSearchDataValid(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian);
-		public abstract HexSearchService TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian);
+		public abstract HexSearchService? TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian);
 	}
 
 	[Export(typeof(HexSearchServiceFactory))]
@@ -63,11 +63,11 @@ namespace dnSpy.Hex.Editor.Search {
 			}
 		}
 
-		public override HexSearchService TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian) {
+		public override HexSearchService? TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian) {
 			if (searchString == string.Empty)
 				return null;
 
-			byte[] data;
+			byte[]? data;
 			switch (dataKind) {
 			case HexDataKind.Bytes:
 				if (!hexSearchServiceProvider.IsValidByteSearchString(searchString))

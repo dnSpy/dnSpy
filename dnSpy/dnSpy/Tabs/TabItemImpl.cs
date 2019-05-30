@@ -58,8 +58,8 @@ namespace dnSpy.Tabs {
 			public bool IsActive => impl.IsActive;
 			internal void IsActiveChanged() => OnPropertyChanged(nameof(IsActive));
 
-			public object ToolTip => impl.tabContent.ToolTip;
-			public string Header => impl.tabContent.Title;
+			public object? ToolTip => impl.tabContent.ToolTip;
+			public string? Header => impl.tabContent.Title;
 			public ICommand CloseCommand => new RelayCommand(a => impl.Close(), a => impl.CanClose);
 
 			public TheHeader(TabItemImpl impl) {
@@ -83,7 +83,7 @@ namespace dnSpy.Tabs {
 
 		readonly TheHeader theHeader;
 
-		public TabItemImpl(TabGroup tabGroup, ITabContent tabContent, object objStyle) {
+		public TabItemImpl(TabGroup tabGroup, ITabContent tabContent, object? objStyle) {
 			this.tabGroup = tabGroup;
 			this.tabContent = tabContent;
 			Content = tabContent.UIObject;

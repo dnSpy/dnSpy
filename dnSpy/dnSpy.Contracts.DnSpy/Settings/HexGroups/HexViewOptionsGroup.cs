@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <param name="tag">Hex buffer tag, eg. <see cref="PredefinedHexBufferTags.File"/></param>
 		/// <param name="optionId">Option name</param>
 		/// <returns></returns>
-		public abstract object GetOptionValue(string tag, string optionId);
+		public abstract object? GetOptionValue(string tag, string optionId);
 
 		/// <summary>
 		/// Gets the current value
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <param name="tag">Hex buffer tag, eg. <see cref="PredefinedHexBufferTags.File"/></param>
 		/// <param name="optionId">Option name</param>
 		/// <param name="value">New value</param>
-		public abstract void SetOptionValue(string tag, string optionId, object value);
+		public abstract void SetOptionValue(string tag, string optionId, object? value);
 
 		/// <summary>
 		/// Writes a new value

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,7 +41,7 @@ namespace dnSpy.Tabs {
 	}
 
 	sealed class TabGroup : ViewModelBase, ITabGroup, IStackedContentChild {
-		public object Tag { get; set; }
+		public object? Tag { get; set; }
 
 		public event EventHandler<TabContentAttachedEventArgs> TabContentAttached {
 			add => tabContentAttached.Add(value);
@@ -77,11 +78,8 @@ namespace dnSpy.Tabs {
 		internal int Count => tabControl.Items.Count;
 		public bool IsKeyboardFocusWithin => tabControl.IsKeyboardFocusWithin;
 
-		public ITabContent ActiveTabContent {
-			get {
-				var act = ActiveTabItemImpl;
-				return act == null ? null : act.TabContent;
-			}
+		public ITabContent? ActiveTabContent {
+			get => ActiveTabItemImpl?.TabContent;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -170,7 +168,7 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		TabItemImpl GetTabItemImpl(ITabContent content) {
+		TabItemImpl? GetTabItemImpl(ITabContent content) {
 			foreach (TabItemImpl impl in tabControl.Items) {
 				if (impl.TabContent == content)
 					return impl;
@@ -178,7 +176,7 @@ namespace dnSpy.Tabs {
 			return null;
 		}
 
-		internal TabItemImpl ActiveTabItemImpl {
+		internal TabItemImpl? ActiveTabItemImpl {
 			get {
 				int index = tabControl.SelectedIndex == -1 ? 0 : tabControl.SelectedIndex;
 				if (index >= tabControl.Items.Count)
@@ -190,14 +188,14 @@ namespace dnSpy.Tabs {
 		public ITabGroupService TabGroupService => tabGroupService;
 		readonly TabGroupService tabGroupService;
 
-		object IStackedContentChild.UIObject => tabControl;
+		object? IStackedContentChild.UIObject => tabControl;
 
 		readonly TabControl tabControl;
 		readonly IWpfFocusService wpfFocusService;
 		readonly TabGroupServiceOptions options;
 
-		public IContextMenuProvider ContextMenuProvider => contextMenuProvider;
-		readonly IContextMenuProvider contextMenuProvider;
+		public IContextMenuProvider ContextMenuProvider => contextMenuProvider ?? throw new InvalidOperationException();
+		readonly IContextMenuProvider? contextMenuProvider;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly TabGroup tabGroup;
@@ -241,7 +239,7 @@ namespace dnSpy.Tabs {
 			Debug.Assert(e.RemovedItems.Count <= 1);
 			Debug.Assert(e.AddedItems.Count <= 1);
 
-			TabItemImpl selected = null, unselected = null;
+			TabItemImpl? selected = null, unselected = null;
 			if (e.RemovedItems.Count >= 1) {
 				unselected = e.RemovedItems[0] as TabItemImpl;
 				if (unselected == null)
@@ -257,7 +255,7 @@ namespace dnSpy.Tabs {
 			tabGroupService.OnSelectionChanged(this, selected, unselected);
 		}
 
-		internal bool Contains(TabItemImpl impl) => tabControl.Items.Contains(impl);
+		internal bool Contains(TabItemImpl? impl) => tabControl.Items.Contains(impl);
 
 		void OnStylePropChange() {
 			OnPropertyChanged(nameof(TabGroupState));
@@ -301,7 +299,7 @@ namespace dnSpy.Tabs {
 			IsActive = false;
 		}
 
-		TabItemImpl GetTabItemImpl(object o) {
+		TabItemImpl? GetTabItemImpl(object o) {
 			var tabItem = o as TabItemImpl;
 			if (tabItem == null)
 				return null;
@@ -319,7 +317,7 @@ namespace dnSpy.Tabs {
 
 		bool IsDragArea(object sender, MouseEventArgs e, TabItem tabItem) => IsDraggableAP.GetIsDraggable(e.OriginalSource as FrameworkElement);
 
-		bool GetTabItem(object sender, MouseEventArgs e, out TabItemImpl tabItem, out TabControl tabControl) {
+		bool GetTabItem(object sender, MouseEventArgs e, [NotNullWhenTrue] out TabItemImpl? tabItem, [NotNullWhenTrue] out TabControl? tabControl) {
 			tabItem = null;
 			tabControl = null;
 
@@ -377,8 +375,8 @@ namespace dnSpy.Tabs {
 		}
 
 		bool GetInfo(object sender, DragEventArgs e,
-					out TabItemImpl tabItemSource, out TabItemImpl tabItemTarget,
-					out TabGroup tabGroupSource, out TabGroup tabGroupTarget,
+					[NotNullWhenTrue] out TabItemImpl? tabItemSource, [NotNullWhenTrue] out TabItemImpl? tabItemTarget,
+					[NotNullWhenTrue] out TabGroup? tabGroupSource, [NotNullWhenTrue] out TabGroup? tabGroupTarget,
 					bool canBeSame) {
 			tabItemSource = tabItemTarget = null;
 			tabGroupSource = tabGroupTarget = null;
@@ -473,10 +471,10 @@ namespace dnSpy.Tabs {
 			return res;
 		}
 
-		public bool MoveToAndSelect(TabGroup dstTabGroup, TabItemImpl srcTabItem, int insertIndex) {
+		public bool MoveToAndSelect(TabGroup dstTabGroup, TabItemImpl? srcTabItem, int insertIndex) {
 			bool res = MoveTo(dstTabGroup, srcTabItem, insertIndex);
 			if (res)
-				dstTabGroup.SetSelectedTab(srcTabItem);
+				dstTabGroup.SetSelectedTab(srcTabItem!);
 			return res;
 		}
 
@@ -489,7 +487,7 @@ namespace dnSpy.Tabs {
 				return MoveTo(dstTabGroup, srcTabItem, -1);
 		}
 
-		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl srcTabItem, int insertIndex) {
+		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl? srcTabItem, int insertIndex) {
 			Debug.Assert(Contains(srcTabItem));
 			if (srcTabItem == null)
 				return false;
@@ -617,7 +615,7 @@ namespace dnSpy.Tabs {
 			NotifyIfEmtpy();
 		}
 
-		void RemoveTabItem(TabItemImpl tabItem) {
+		void RemoveTabItem(TabItemImpl? tabItem) {
 			if (tabItem == null)
 				return;
 			Debug.Assert(tabControl.Items.Contains(tabItem));

@@ -130,7 +130,7 @@ namespace dndbg.DotNet {
 		void InitDeclSecurities_NoLock() => declSecurities = null;
 		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
-		protected override MethodBody GetMethodBody_NoLock() =>
+		protected override MethodBody? GetMethodBody_NoLock() =>
 			readerModule.ReadMethodBody(this, origRva, origAttributes, origImplAttributes, new GenericParamContext(ownerType, this));
 
 		public void UpdateParams() {
@@ -184,7 +184,7 @@ namespace dndbg.DotNet {
 			Interlocked.CompareExchange(ref overrides, tmp, null);
 		}
 
-		protected override ImplMap GetImplMap_NoLock() {
+		protected override ImplMap? GetImplMap_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 

@@ -64,7 +64,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				yield return delMeth;
 		}
 
-		MethodDef FindInitializeComponent() {
+		MethodDef? FindInitializeComponent() {
 			foreach (var md in Type.FindMethods("InitializeComponent")) {
 				if (md.IsStatic || md.Parameters.Count != 1)
 					continue;
@@ -76,7 +76,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return null;
 		}
 
-		MethodDef FindConnectMethod() {
+		MethodDef? FindConnectMethod() {
 			foreach (var md in Type.Methods) {
 				if (IsConnect(md))
 					return md;
@@ -113,7 +113,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		// Finds 'internal Delegate _CreateDelegate(Type delegateType, string handler)' which is
 		// called by XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate()
-		MethodDef FindCreateDelegateMethod() {
+		MethodDef? FindCreateDelegateMethod() {
 			foreach (var m in Type.Methods) {
 				if (m.Name != "_CreateDelegate")
 					continue;

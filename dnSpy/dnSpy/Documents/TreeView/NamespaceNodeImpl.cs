@@ -33,7 +33,7 @@ namespace dnSpy.Documents.TreeView {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
 			dnImgMgr.GetNamespaceImageReference();
 		public override NodePathName NodePathName => new NodePathName(Guid, Name);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		public NamespaceNodeImpl(ITreeNodeGroup treeNodeGroup, string name, List<TypeDef> types)
 			: base(name) {
@@ -44,11 +44,11 @@ namespace dnSpy.Documents.TreeView {
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			foreach (var type in typesToCreate)
+			foreach (var type in typesToCreate!)
 				yield return new TypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.TypeTreeNodeGroupNamespace), type);
 			typesToCreate = null;
 		}
-		List<TypeDef> typesToCreate;
+		List<TypeDef>? typesToCreate;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			new NodePrinter().WriteNamespace(output, decompiler, Name);

@@ -70,7 +70,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// Given a compiler-generated type, returns the method where that type is used.
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
-		static MethodDef GetOriginalCodeLocation(TypeDef type) {
+		static MethodDef? GetOriginalCodeLocation(TypeDef type) {
 			if (type != null && type.DeclaringType != null && IsCompilerGenerated(type)) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
@@ -89,7 +89,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		static MethodDef GetTypeConstructor(TypeDef type) => type.FindConstructors().FirstOrDefault();
 
-		static MethodDef FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
+		static MethodDef? FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
@@ -110,7 +110,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static MethodDef FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
+		static MethodDef? FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -128,7 +128,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static TypeDef ResolveWithinSameModule(ITypeDefOrRef type) {
+		static TypeDef? ResolveWithinSameModule(ITypeDefOrRef type) {
 			if (type != null && type.Scope == type.Module)
 				return type.ResolveTypeDef();
 			return null;

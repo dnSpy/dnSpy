@@ -68,9 +68,9 @@ namespace dnSpy.Debugger.Evaluation {
 
 		sealed class RuntimeInfo {
 			public Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>[] Providers { get; }
-			public ReadOnlyCollection<DbgLanguage> Languages { get; set; }
-			public DbgLanguage CurrentLanguage { get; set; }
-			public string DefaultLanguageName { get; set; }
+			public ReadOnlyCollection<DbgLanguage>? Languages { get; set; }
+			public DbgLanguage? CurrentLanguage { get; set; }
+			public string? DefaultLanguageName { get; set; }
 
 			public RuntimeInfo(Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>[] providers) =>
 				Providers = providers ?? throw new ArgumentNullException(nameof(providers));

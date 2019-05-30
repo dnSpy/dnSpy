@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="namespace">Namespace of custom attribute</param>
 		/// <param name="name">Name of custom attribute</param>
 		/// <returns></returns>
-		public static bool IsDefined(this IHasCustomAttribute provider, UTF8String @namespace, UTF8String name) {
+		public static bool IsDefined(this IHasCustomAttribute? provider, UTF8String? @namespace, UTF8String? name) {
 			if (provider == null || provider.CustomAttributes.Count == 0)
 				return false;
 			foreach (var ca in provider.CustomAttributes) {
@@ -62,18 +62,18 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="rva">Updated with the RVA</param>
 		/// <param name="fileOffset">Updated with the file offset</param>
 		/// <returns></returns>
-		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset) {
+		public static bool GetRVA(this IMemberDef? member, out uint rva, out long fileOffset) {
 			rva = 0;
 			fileOffset = 0;
 
-			if (member is MethodDef)
-				rva = (uint)(member as MethodDef).RVA;
-			else if (member is FieldDef)
-				rva = (uint)(member as FieldDef).RVA;
+			if (member is MethodDef method)
+				rva = (uint)method.RVA;
+			else if (member is FieldDef field)
+				rva = (uint)field.RVA;
 			if (rva == 0)
 				return false;
 
-			var fo = member.Module.ToFileOffset(rva);
+			var fo = member!.Module.ToFileOffset(rva);
 			if (fo == null)
 				return false;
 			fileOffset = fo.Value;
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="module">Module</param>
 		/// <param name="rva">RVA</param>
 		/// <returns></returns>
-		public static uint? ToFileOffset(this ModuleDef module, uint rva) {
+		public static uint? ToFileOffset(this ModuleDef? module, uint rva) {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (m == null)
 				return null;
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="body">Method body, can be null</param>
 		/// <returns></returns>
-		public static int GetCodeSize(this CilBody body) {
+		public static int GetCodeSize(this CilBody? body) {
 			if (body == null || body.Instructions.Count == 0)
 				return 0;
 			var instr = body.Instructions[body.Instructions.Count - 1];
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		public static IList<Parameter> GetParameters(this IMethod method) {
+		public static IList<Parameter> GetParameters(this IMethod? method) {
 			if (method == null || method.MethodSig == null)
 				return new List<Parameter>();
 
@@ -148,8 +148,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static HashSet<MethodDef> GetPropertyAndEventMethods(this TypeDef type) {
-			var hash = new HashSet<MethodDef>();
+		public static HashSet<MethodDef?> GetPropertyAndEventMethods(this TypeDef type) {
+			var hash = new HashSet<MethodDef?>();
 			foreach (var p in type.Properties) {
 				foreach (var m in p.GetAllMethods())
 					hash.Add(m);
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="property">Property to check</param>
 		/// <returns></returns>
-		public static bool IsIndexer(this PropertyDef property) {
+		public static bool IsIndexer(this PropertyDef? property) {
 			if (property == null || property.PropertySig.GetParamCount() == 0)
 				return false;
 
@@ -193,7 +193,7 @@ namespace dnSpy.Contracts.Decompiler {
 			return false;
 		}
 
-		static string GetDefaultMemberName(TypeDef type) {
+		static string? GetDefaultMemberName(TypeDef type) {
 			if (type == null)
 				return null;
 			foreach (var ca in type.CustomAttributes.FindAll("System.Reflection.DefaultMemberAttribute")) {
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static TypeDef Resolve(this IType type) => type?.ScopeType.ResolveTypeDef();
+		public static TypeDef? Resolve(this IType? type) => type?.ScopeType.ResolveTypeDef();
 
 		/// <summary>
 		/// Returns true if the fields can be sorted and false if the original metadata order must be used

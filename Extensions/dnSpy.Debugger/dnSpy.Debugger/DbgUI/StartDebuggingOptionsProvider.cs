@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.StartDebugging;
@@ -65,14 +66,14 @@ namespace dnSpy.Debugger.DbgUI {
 			return string.Empty;
 		}
 
-		public string GetCurrentExecutableFilename() {
+		public string? GetCurrentExecutableFilename() {
 			var filename = GetCurrentFilename();
 			if (PortableExecutableFileHelpers.IsExecutable(filename))
 				return filename;
 			return null;
 		}
 
-		public (StartDebuggingOptions options, StartDebuggingOptionsInfoFlags flags) GetStartDebuggingOptions(string defaultBreakKind) {
+		public (StartDebuggingOptions options, StartDebuggingOptionsInfoFlags flags) GetStartDebuggingOptions(string? defaultBreakKind) {
 			var breakKind = defaultBreakKind ?? PredefinedBreakKinds.DontBreak;
 			var filename = GetCurrentFilename();
 			var context = new StartDebuggingOptionsPageContext(filename);
@@ -85,9 +86,9 @@ namespace dnSpy.Debugger.DbgUI {
 			var lastOptions = mru.TryGetLastOptions();
 			foreach (var page in pages) {
 				if (oldOptions?.pageGuid == page.Guid)
-					page.InitializePreviousOptions(WithBreakKind(oldOptions.Value.options, defaultBreakKind));
+					page.InitializePreviousOptions(WithBreakKind(oldOptions!.Value.options, defaultBreakKind));
 				else if (oldOptions == null && lastOptions?.pageGuid == page.Guid)
-					page.InitializeDefaultOptions(filename, breakKind, WithBreakKind(lastOptions.Value.options, defaultBreakKind));
+					page.InitializeDefaultOptions(filename, breakKind, WithBreakKind(lastOptions!.Value.options, defaultBreakKind));
 				else
 					page.InitializeDefaultOptions(filename, breakKind, null);
 			}
@@ -114,7 +115,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return (info.Options, info.Flags);
 		}
 
-		static StartDebuggingOptions WithBreakKind(StartDebuggingOptions options, string breakKind) {
+		static StartDebuggingOptions WithBreakKind(StartDebuggingOptions options, string? breakKind) {
 			if (breakKind == null)
 				return options;
 			options = (StartDebuggingOptions)options.Clone();
@@ -139,7 +140,7 @@ namespace dnSpy.Debugger.DbgUI {
 						if (page.Guid == lastGuid)
 							return lastGuid;
 
-						if (firstResult == null || order < firstOrder.Value) {
+						if (firstResult == null || order < firstOrder!.Value) {
 							firstResult = page.Guid;
 							firstOrder = order;
 						}
@@ -166,7 +167,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return true;
 		}
 
-		public bool StartWithoutDebugging(out string error) {
+		public bool StartWithoutDebugging([NotNullWhenFalse]out string? error) {
 			if (!TryGetStartWithoutDebuggingInfo(out var filename, out _))
 				throw new InvalidOperationException();
 			return dbgProcessStarterService.Value.TryStart(filename, out error);

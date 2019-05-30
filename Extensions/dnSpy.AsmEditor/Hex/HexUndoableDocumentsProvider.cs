@@ -36,15 +36,15 @@ namespace dnSpy.AsmEditor.Hex {
 
 		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => a != null);
 
-		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
+		IUndoObject? IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			if (obj is HexBuffer buffer)
 				return TryGetUndoObject(buffer);
 			return null;
 		}
 
 		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => TryGetHexBuffer(obj) != null;
-		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetHexBuffer(obj);
-		internal static HexBuffer TryGetHexBuffer(IUndoObject iuo) => (iuo as UndoObject)?.Value as HexBuffer;
+		object? IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetHexBuffer(obj);
+		internal static HexBuffer? TryGetHexBuffer(IUndoObject? iuo) => (iuo as UndoObject)?.Value as HexBuffer;
 
 		static IUndoObject TryGetUndoObject(HexBuffer buffer) {
 			buffer.Properties.TryGetProperty(undoObjectKey, out IUndoObject undoObject);

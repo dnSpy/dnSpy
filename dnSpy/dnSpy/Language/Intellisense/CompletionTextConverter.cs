@@ -24,7 +24,7 @@ using System.Windows.Data;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionTextConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var func = parameter as string;
 			if (func == null)
 				return null;

@@ -36,6 +36,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="line">Line</param>
 		/// <param name="tag">Tag</param>
 		/// <returns></returns>
-		public abstract UIElement GenerateGlyph(WpfHexViewLine line, HexGlyphTag tag);
+		public abstract UIElement? GenerateGlyph(WpfHexViewLine line, HexGlyphTag tag);
 	}
 }

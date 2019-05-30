@@ -51,35 +51,35 @@ namespace dnSpy.AsmEditor.Compiler {
 	}
 
 	sealed class AddUpdatedNodesHelper {
-		readonly AssemblyDocumentNode asmNode;
+		readonly AssemblyDocumentNode? asmNode;
 		readonly ModuleDocumentNode modNode;
 		readonly TypeNodeCreator[] newTypeNodeCreators;
-		readonly ResourceNodeCreator resourceNodeCreator;
+		readonly ResourceNodeCreator? resourceNodeCreator;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
-		readonly DeclSecurity[] newAssemblyDeclSecurities;
-		readonly DeclSecurity[] origAssemblyDeclSecurities;
-		readonly CustomAttribute[] newAssemblyCustomAttributes;
-		readonly CustomAttribute[] newModuleCustomAttributes;
-		readonly CustomAttribute[] origAssemblyCustomAttributes;
-		readonly CustomAttribute[] origModuleCustomAttributes;
-		readonly ExportedType[] newExportedTypes;
-		readonly ExportedType[] origExportedTypes;
-		readonly Version newAssemblyVersion;
-		readonly Version origAssemblyVersion;
+		readonly DeclSecurity[]? newAssemblyDeclSecurities;
+		readonly DeclSecurity[]? origAssemblyDeclSecurities;
+		readonly CustomAttribute[]? newAssemblyCustomAttributes;
+		readonly CustomAttribute[]? newModuleCustomAttributes;
+		readonly CustomAttribute[]? origAssemblyCustomAttributes;
+		readonly CustomAttribute[]? origModuleCustomAttributes;
+		readonly ExportedType[]? newExportedTypes;
+		readonly ExportedType[]? origExportedTypes;
+		readonly Version? newAssemblyVersion;
+		readonly Version? origAssemblyVersion;
 
 		public AddUpdatedNodesHelper(Lazy<IMethodAnnotations> methodAnnotations, Lazy<IResourceNodeFactory> resourceNodeFactory, IDocumentTreeView documentTreeView, ModuleDocumentNode modNode, ModuleImporter importer) {
 			asmNode = modNode.TreeNode.Parent?.Data as AssemblyDocumentNode;
 			this.modNode = modNode;
 			var dict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var t in importer.NewNonNestedTypes) {
-				var ns = (t.TargetType.Namespace ?? UTF8String.Empty).String;
+				var ns = (t.TargetType!.Namespace ?? UTF8String.Empty).String;
 				if (!dict.TryGetValue(ns, out var list))
 					dict[ns] = list = new List<TypeDef>();
 				list.Add(t.TargetType);
 			}
 			newTypeNodeCreators = dict.Values.Select(a => new TypeNodeCreator(modNode, a)).ToArray();
 			existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
-			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
+			if (!importer.MergedNonNestedTypes.All(a => a.TargetType!.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
 			newAssemblyDeclSecurities = importer.NewAssemblyDeclSecurities;
 			newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
@@ -91,14 +91,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (newAssemblyCustomAttributes != null)
 				origAssemblyCustomAttributes = modNode.Document.AssemblyDef?.CustomAttributes.ToArray();
 			if (newModuleCustomAttributes != null)
-				origModuleCustomAttributes = modNode.Document.ModuleDef.CustomAttributes.ToArray();
+				origModuleCustomAttributes = modNode.Document.ModuleDef!.CustomAttributes.ToArray();
 			if (newExportedTypes != null)
-				origExportedTypes = modNode.Document.ModuleDef.ExportedTypes.ToArray();
+				origExportedTypes = modNode.Document.ModuleDef!.ExportedTypes.ToArray();
 			if (newAssemblyVersion != null)
 				origAssemblyVersion = modNode.Document.AssemblyDef?.Version;
 
-			if (importer.NewResources.Length != 0) {
-				var module = modNode.Document.ModuleDef;
+			if (importer.NewResources!.Length != 0) {
+				var module = modNode.Document.ModuleDef!;
 				var rsrcListNode = GetResourceListTreeNode(modNode);
 				Debug.Assert(rsrcListNode != null);
 				if (rsrcListNode != null) {
@@ -123,27 +123,27 @@ namespace dnSpy.AsmEditor.Compiler {
 			for (int i = 0; i < existingTypeNodeUpdaters.Length; i++)
 				existingTypeNodeUpdaters[i].Add();
 			if (origAssemblyDeclSecurities != null && newAssemblyDeclSecurities != null) {
-				modNode.Document.AssemblyDef.DeclSecurities.Clear();
+				modNode.Document.AssemblyDef!.DeclSecurities.Clear();
 				foreach (var ds in newAssemblyDeclSecurities)
 					modNode.Document.AssemblyDef.DeclSecurities.Add(ds);
 			}
 			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
-				modNode.Document.AssemblyDef.CustomAttributes.Clear();
+				modNode.Document.AssemblyDef!.CustomAttributes.Clear();
 				foreach (var ca in newAssemblyCustomAttributes)
 					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
 			}
 			if (origModuleCustomAttributes != null && newModuleCustomAttributes != null) {
-				modNode.Document.ModuleDef.CustomAttributes.Clear();
+				modNode.Document.ModuleDef!.CustomAttributes.Clear();
 				foreach (var ca in newModuleCustomAttributes)
 					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
 			}
 			if (origExportedTypes != null && newExportedTypes != null) {
-				modNode.Document.ModuleDef.ExportedTypes.Clear();
+				modNode.Document.ModuleDef!.ExportedTypes.Clear();
 				foreach (var et in newExportedTypes)
 					modNode.Document.ModuleDef.ExportedTypes.Add(et);
 			}
 			if (newAssemblyVersion != null && origAssemblyVersion != null) {
-				modNode.Document.AssemblyDef.Version = newAssemblyVersion;
+				modNode.Document.AssemblyDef!.Version = newAssemblyVersion;
 				refresh = true;
 			}
 			resourceNodeCreator?.Add();
@@ -155,26 +155,26 @@ namespace dnSpy.AsmEditor.Compiler {
 			bool refresh = false;
 			resourceNodeCreator?.Remove();
 			if (newAssemblyVersion != null && origAssemblyVersion != null) {
-				modNode.Document.AssemblyDef.Version = origAssemblyVersion;
+				modNode.Document.AssemblyDef!.Version = origAssemblyVersion;
 				refresh = true;
 			}
 			if (origExportedTypes != null && newExportedTypes != null) {
-				modNode.Document.ModuleDef.ExportedTypes.Clear();
+				modNode.Document.ModuleDef!.ExportedTypes.Clear();
 				foreach (var et in origExportedTypes)
 					modNode.Document.ModuleDef.ExportedTypes.Add(et);
 			}
 			if (origModuleCustomAttributes != null && newModuleCustomAttributes != null) {
-				modNode.Document.ModuleDef.CustomAttributes.Clear();
+				modNode.Document.ModuleDef!.CustomAttributes.Clear();
 				foreach (var ca in origModuleCustomAttributes)
 					modNode.Document.ModuleDef.CustomAttributes.Add(ca);
 			}
 			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
-				modNode.Document.AssemblyDef.CustomAttributes.Clear();
+				modNode.Document.AssemblyDef!.CustomAttributes.Clear();
 				foreach (var ca in origAssemblyCustomAttributes)
 					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
 			}
 			if (origAssemblyDeclSecurities != null && newAssemblyDeclSecurities != null) {
-				modNode.Document.AssemblyDef.DeclSecurities.Clear();
+				modNode.Document.AssemblyDef!.DeclSecurities.Clear();
 				foreach (var ds in origAssemblyDeclSecurities)
 					modNode.Document.AssemblyDef.DeclSecurities.Add(ds);
 			}

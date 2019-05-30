@@ -24,8 +24,8 @@ using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Operations {
 	sealed class TextSearchNavigator : ITextSearchNavigator {
-		public string SearchTerm { get; set; }
-		public string ReplaceTerm { get; set; }
+		public string? SearchTerm { get; set; }
+		public string? ReplaceTerm { get; set; }
 		public FindOptions SearchOptions { get; set; }
 		public SnapshotSpan? CurrentResult => currentResult;
 		SnapshotSpan? currentResult;
@@ -44,7 +44,7 @@ namespace dnSpy.Text.Operations {
 		}
 		SnapshotPoint? startPoint;
 
-		public ITrackingSpan SearchSpan {
+		public ITrackingSpan? SearchSpan {
 			get => searchSpan;
 			set {
 				if (value == null)
@@ -54,7 +54,7 @@ namespace dnSpy.Text.Operations {
 				searchSpan = value;
 			}
 		}
-		ITrackingSpan searchSpan;
+		ITrackingSpan? searchSpan;
 
 		readonly ITextBuffer buffer;
 		readonly ITextSearchService2 textSearchService2;

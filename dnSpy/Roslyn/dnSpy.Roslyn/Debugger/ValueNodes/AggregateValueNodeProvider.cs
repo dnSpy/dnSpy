@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) =>
 			providers[0].GetChildCount(evalInfo) + (uint)(providers.Length - 1);
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
 			if (count == 0)
 				return Array.Empty<DbgDotNetValueNode>();
 

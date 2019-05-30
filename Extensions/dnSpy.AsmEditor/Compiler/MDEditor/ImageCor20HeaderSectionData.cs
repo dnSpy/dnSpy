@@ -26,11 +26,11 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		const uint headerSize = 0x48;
 
 		readonly DotNetMetadataSectionData mdData;
-		readonly StrongNameSignatureSectionData snData;
+		readonly StrongNameSignatureSectionData? snData;
 		long cor20HeaderMetadataDataDirPosition;
 		long cor20HeaderStrongnameDataDirPosition;
 
-		public ImageCor20HeaderSectionData(DotNetMetadataSectionData mdData, StrongNameSignatureSectionData snData) {
+		public ImageCor20HeaderSectionData(DotNetMetadataSectionData mdData, StrongNameSignatureSectionData? snData) {
 			this.mdData = mdData;
 			this.snData = snData;
 		}

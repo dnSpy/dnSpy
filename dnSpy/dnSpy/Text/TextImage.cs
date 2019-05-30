@@ -26,7 +26,7 @@ namespace dnSpy.Text {
 	sealed class TextImage : ITextImage {
 		internal TextBuffer TextBuffer { get; }
 		readonly ITextSource textSource;
-		uint[] lineOffsets;
+		uint[]? lineOffsets;
 
 		public char this[int position] => textSource.GetCharAt(position);
 		public ITextImageVersion Version { get; }

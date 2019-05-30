@@ -132,7 +132,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			return other;
 		}
 
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as ILSettings;
 			return other != null &&
 				ShowILComments == other.ShowILComments &&

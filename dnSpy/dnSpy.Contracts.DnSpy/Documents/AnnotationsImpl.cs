@@ -22,13 +22,13 @@ using System.Linq;
 
 namespace dnSpy.Contracts.Documents {
 	sealed class AnnotationsImpl : IAnnotations {
-		public T AddAnnotation<T>(T annotation) where T : class {
+		public T? AddAnnotation<T>(T? annotation) where T : class {
 			if (annotation != null)
 				list.Add(annotation);
 			return annotation;
 		}
 
-		public T Annotation<T>() where T : class => (T)list.FirstOrDefault(a => a is T);
+		public T? Annotation<T>() where T : class => (T)list.FirstOrDefault(a => a is T);
 		public IEnumerable<T> Annotations<T>() where T : class => list.OfType<T>();
 
 		public void RemoveAnnotations<T>() where T : class {

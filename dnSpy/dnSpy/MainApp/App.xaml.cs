@@ -73,23 +73,23 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		static void ShowException(Exception ex) {
+		static void ShowException(Exception? ex) {
 			string msg = ex?.ToString() ?? "Unknown exception";
 			MessageBox.Show(msg, Constants.DnSpy, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
 		long resourceManagerTokensOffset;
-		volatile Assembly[] mefAssemblies;
-		AppWindow appWindow;
-		ExtensionService extensionService;
-		IDsLoaderService dsLoaderService;
+		volatile Assembly[]? mefAssemblies;
+		AppWindow? appWindow;
+		ExtensionService? extensionService;
+		IDsLoaderService? dsLoaderService;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		readonly IAppCommandLineArgs args;
-		ExportProvider exportProvider;
+		ExportProvider? exportProvider;
 
 		Task<ExportProvider> initializeMEFTask;
-		Stopwatch startupStopwatch;
+		Stopwatch? startupStopwatch;
 		public App(bool readSettings, Stopwatch startupStopwatch) {
 			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
 
@@ -152,7 +152,7 @@ namespace dnSpy.MainApp {
 			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info.bin");
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
+		IExportProviderFactory? TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
 			resourceManagerTokensOffset = -1;
 			if (!useCache)
 				return null;
@@ -165,13 +165,14 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+		IExportProviderFactory? TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+			Debug.Assert(mefAssemblies != null);
 			resourceManagerTokensOffset = -1;
 			var filename = GetCachedCompositionConfigurationFilename();
 			if (!File.Exists(filename))
 				return null;
 
-			Stream cachedStream = null;
+			Stream? cachedStream = null;
 			try {
 				try {
 					cachedStream = File.OpenRead(filename);
@@ -202,6 +203,9 @@ namespace dnSpy.MainApp {
 
 			var catalog = ComposableCatalog.Create(resolver).AddParts(parts);
 			var config = CompositionConfiguration.Create(catalog);
+			// If this fails/throws, one of the following is probably true:
+			//	- you didn't build all projects or all files aren't in the same output dir
+			//	- netcoreapp: dnSpy isn't the startup project (eg. dnSpy-x86 is)
 			Debug.Assert(config.ThrowOnErrors() == config);
 
 			writingCachedMefFile = true;
@@ -216,6 +220,7 @@ namespace dnSpy.MainApp {
 
 		bool writingCachedMefFile;
 		async Task SaveMefStateAsync(CompositionConfiguration config) {
+			Debug.Assert(mefAssemblies != null);
 			string filename = GetCachedCompositionConfigurationFilename();
 			bool fileCreated = false;
 			bool deleteFile = true;
@@ -255,6 +260,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void UpdateResourceManagerTokens() {
+			Debug.Assert(mefAssemblies != null);
 			var tokensOffset = resourceManagerTokensOffset;
 			if (tokensOffset < 0)
 				return;
@@ -472,6 +478,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e) {
+			Debug.Assert(appWindow != null);
 			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
 
 			var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
@@ -549,7 +556,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
-			startupStopwatch.Stop();
+			startupStopwatch!.Stop();
 			DnSpyEventSource.Log.StartupStop();
 			var sw = startupStopwatch;
 			startupStopwatch = null;
@@ -557,9 +564,9 @@ namespace dnSpy.MainApp {
 			if (args.ShowStartupTime)
 				ShowElapsedTime(sw);
 
-			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
-			appWindow.AppLoaded = true;
-			extensionService.OnAppLoaded();
+			dsLoaderService!.OnAppLoaded -= DsLoaderService_OnAppLoaded;
+			appWindow!.AppLoaded = true;
+			extensionService!.OnAppLoaded();
 			HandleAppArgs(args);
 		}
 
@@ -567,6 +574,8 @@ namespace dnSpy.MainApp {
 		static void ShowElapsedTime(Stopwatch sw) => MsgBox.Instance.Show($"{sw.ElapsedMilliseconds} ms, {sw.ElapsedTicks} ticks");
 
 		void HandleAppArgs(IAppCommandLineArgs appArgs) {
+			Debug.Assert(exportProvider != null);
+			Debug.Assert(appWindow != null);
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
 				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
 
@@ -593,11 +602,13 @@ namespace dnSpy.MainApp {
 		}
 
 		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
+			Debug.Assert(exportProvider != null);
 			foreach (var handler in exportProvider.GetExports<IAppCommandLineArgsHandler>().OrderBy(a => a.Value.Order))
 				handler.Value.OnNewArgs(appArgs);
 		}
 
-		IDecompiler GetDecompiler(string language) {
+		IDecompiler? GetDecompiler(string language) {
+			Debug.Assert(exportProvider != null);
 			if (string.IsNullOrEmpty(language))
 				return null;
 

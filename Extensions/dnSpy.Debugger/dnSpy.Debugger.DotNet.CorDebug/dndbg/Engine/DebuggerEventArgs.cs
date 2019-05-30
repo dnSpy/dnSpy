@@ -70,10 +70,10 @@ namespace dndbg.Engine {
 	}
 
 	sealed class NameChangedDebuggerEventArgs : DebuggerEventArgs {
-		public DnAppDomain AppDomain { get; }
-		public DnThread Thread { get; }
+		public DnAppDomain? AppDomain { get; }
+		public DnThread? Thread { get; }
 
-		public NameChangedDebuggerEventArgs(DnAppDomain appDomain, DnThread thread) {
+		public NameChangedDebuggerEventArgs(DnAppDomain? appDomain, DnThread? thread) {
 			AppDomain = appDomain;
 			Thread = thread;
 		}

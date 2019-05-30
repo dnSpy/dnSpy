@@ -42,9 +42,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 	[Export(typeof(IProcessesContent))]
 	sealed class ProcessesContent : IProcessesContent {
-		public object UIObject => processesControl;
-		public IInputElement FocusedElement => processesControl.ListView;
-		public FrameworkElement ZoomElement => processesControl;
+		public object? UIObject => processesControl;
+		public IInputElement? FocusedElement => processesControl.ListView;
+		public FrameworkElement? ZoomElement => processesControl;
 		public ListView ListView => processesControl.ListView;
 		public ProcessesOperations Operations { get; }
 

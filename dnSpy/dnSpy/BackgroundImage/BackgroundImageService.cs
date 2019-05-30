@@ -27,7 +27,7 @@ using dnSpy.Contracts.BackgroundImage;
 namespace dnSpy.BackgroundImage {
 	abstract class BackgroundImageService : IImageSourceServiceListener {
 		readonly IImageSourceService imageSourceService;
-		Image currentImage;
+		Image? currentImage;
 
 		protected BackgroundImageService(IImageSourceService imageSourceService) =>
 			this.imageSourceService = imageSourceService ?? throw new ArgumentNullException(nameof(imageSourceService));

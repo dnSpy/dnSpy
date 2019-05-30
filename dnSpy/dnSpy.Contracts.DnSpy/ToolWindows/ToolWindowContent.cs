@@ -32,19 +32,19 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// UI object; a WPF UI element or an object with a <see cref="DataTemplate"/>.
 		/// If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		public abstract object UIObject { get; }
+		public abstract object? UIObject { get; }
 
 		/// <summary>
 		/// The element that gets focus or null if none, see also <see cref="IFocusable"/>
 		/// </summary>
-		public abstract IInputElement FocusedElement { get; }
+		public abstract IInputElement? FocusedElement { get; }
 
 		/// <summary>
 		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none,
 		/// see also <see cref="IZoomableProvider"/> and <see cref="IZoomable"/>.
 		/// If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		public abstract FrameworkElement ZoomElement { get; }
+		public abstract FrameworkElement? ZoomElement { get; }
 
 		/// <summary>
 		/// Gets the guid of this content
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// ToolTip or null. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		public virtual object ToolTip => null;
+		public virtual object? ToolTip => null;
 
 		/// <summary>
 		/// Called when the visibility changes

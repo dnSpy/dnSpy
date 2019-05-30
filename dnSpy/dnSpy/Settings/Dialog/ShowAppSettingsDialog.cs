@@ -39,7 +39,7 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Settings.Dialog {
 	interface IPageUIObjectLoader {
-		object GetUIObject(AppSettingsPage page);
+		object? GetUIObject(AppSettingsPage page);
 	}
 
 	sealed class ShowAppSettingsDialog : ViewModelBase, IDisposable, IContentConverter, IPageUIObjectLoader {
@@ -51,9 +51,9 @@ namespace dnSpy.Settings.Dialog {
 		readonly Lazy<IAppSettingsPageProvider>[] appSettingsPageProviders;
 		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] appSettingsModifiedListeners;
 		readonly PageContext pageContext;
-		AppSettingsPageVM[] allPages;
-		AppSettingsPageVM rootVM;
-		AppSettingsDlg appSettingsDlg;
+		AppSettingsPageVM[]? allPages;
+		AppSettingsPageVM? rootVM;
+		AppSettingsDlg? appSettingsDlg;
 		int converterVersion;
 
 		public object TreeViewUIObject => pageContext.TreeView.UIObject;
@@ -87,7 +87,8 @@ namespace dnSpy.Settings.Dialog {
 			converterVersion = ContentConverterProperties.DefaultContentConverterVersion + 1;
 		}
 
-		object IPageUIObjectLoader.GetUIObject(AppSettingsPage page) {
+		object? IPageUIObjectLoader.GetUIObject(AppSettingsPage page) {
+			Debug.Assert(appSettingsDlg != null);
 			var oldCursor = appSettingsDlg.Cursor;
 			try {
 				appSettingsDlg.Cursor = Cursors.Wait;
@@ -124,7 +125,7 @@ namespace dnSpy.Settings.Dialog {
 			ContentConverterProperties.SetContentConverterVersion(appSettingsDlg, converterVersion);
 			appSettingsDlg.Owner = ownerWindow ?? throw new ArgumentNullException(nameof(ownerWindow));
 
-			AppSettingsPageVM selectedItem = null;
+			AppSettingsPageVM? selectedItem = null;
 			if (guid != null)
 				selectedItem = allPages.FirstOrDefault(a => a.Page.Guid == guid.Value);
 			if (selectedItem == null)
@@ -135,7 +136,7 @@ namespace dnSpy.Settings.Dialog {
 				pageContext.TreeView.SelectItems(new[] { selectedItem });
 
 			bool saveSettings = appSettingsDlg.ShowDialog() == true;
-			LastSelectedGuid = (pageContext.TreeView.SelectedItem as AppSettingsPageVM)?.VisiblePage.Page.Guid;
+			LastSelectedGuid = (pageContext.TreeView.SelectedItem as AppSettingsPageVM)?.VisiblePage?.Page.Guid;
 
 			var appRefreshSettings = new AppRefreshSettings();
 			if (saveSettings) {
@@ -161,6 +162,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void InitializeKeyboardBindings() {
+			Debug.Assert(appSettingsDlg != null);
 			var cmd = new RelayCommand(a => {
 				appSettingsDlg.searchTextBox.Focus();
 				appSettingsDlg.searchTextBox.SelectAll();
@@ -170,6 +172,9 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void FilterTreeView(string searchText) {
+			Debug.Assert(allPages != null);
+			Debug.Assert(rootVM != null);
+			Debug.Assert(appSettingsDlg != null);
 			if (string.IsNullOrWhiteSpace(searchText))
 				searchText = string.Empty;
 			if (searchText == string.Empty) {
@@ -207,6 +212,8 @@ namespace dnSpy.Settings.Dialog {
 		bool isFiltering;
 
 		void RefreshAllNodes() {
+			Debug.Assert(allPages != null);
+			Debug.Assert(appSettingsDlg != null);
 			foreach (var page in allPages)
 				page.ClearUICache();
 			foreach (var page in allPages)
@@ -227,6 +234,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		bool IsVisible(AppSettingsPageVM page, SearchMatcher matcher) {
+			Debug.Assert(appSettingsDlg != null);
 			pageStringsList.Clear();
 			pageTitlesList.Clear();
 			var p = page;
@@ -261,7 +269,7 @@ namespace dnSpy.Settings.Dialog {
 			return content;
 		}
 
-		object TryConvert(object content, object ownerControl) {
+		object? TryConvert(object content, object ownerControl) {
 			if (!isFiltering)
 				return null;
 			var textContent = content as string;
@@ -407,7 +415,7 @@ namespace dnSpy.Settings.Dialog {
 			public override double Order => order;
 			public override string Title => title;
 			public override ImageReference Icon => icon;
-			public override object UIObject => null;
+			public override object? UIObject => null;
 			readonly string title;
 			readonly double order;
 			readonly Guid guid;
@@ -425,7 +433,7 @@ namespace dnSpy.Settings.Dialog {
 			public override void OnApply() { }
 		}
 
-		static AppSettingsPageVM TryCreate(object obj, IAppSettingsPageContainerMetadata md, PageContext context) {
+		static AppSettingsPageVM? TryCreate(object obj, IAppSettingsPageContainerMetadata md, PageContext context) {
 			Guid? guid = md.Guid == null ? null : TryParseGuid(md.Guid);
 			Debug.Assert(guid != null, "Invalid GUID");
 			if (guid == null)
@@ -439,7 +447,7 @@ namespace dnSpy.Settings.Dialog {
 			if (string.IsNullOrEmpty(md.Title))
 				return null;
 
-			var title = ResourceHelper.GetString(obj, md.Title);
+			var title = ResourceHelper.GetString(obj, md.Title)!;
 			var icon = ImageReferenceHelper.GetImageReference(obj, md.Icon) ?? ImageReference.None;
 			return new AppSettingsPageVM(new AppSettingsPageContainer(title, md.Order, guid.Value, parentGuid.Value, icon), context);
 		}

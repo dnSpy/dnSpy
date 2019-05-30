@@ -25,30 +25,30 @@ namespace dndbg.Engine {
 
 	abstract class CLRTypeAttachInfo {
 		public abstract CLRType CLRType { get; }
-		public abstract string Version { get; }
+		public abstract string? Version { get; }
 	}
 
 	sealed class DesktopCLRTypeAttachInfo : CLRTypeAttachInfo {
 		public override CLRType CLRType => CLRType.Desktop;
-		public override string Version => DebuggeeVersion;
+		public override string? Version => DebuggeeVersion;
 
 		/// <summary>
 		/// null if we should auto detect the version, else it should be a version of an already
 		/// installed CLR, eg. "v2.0.50727" etc.
 		/// </summary>
-		public string DebuggeeVersion { get; }
+		public string? DebuggeeVersion { get; }
 
-		public DesktopCLRTypeAttachInfo(string debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
+		public DesktopCLRTypeAttachInfo(string? debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
 	}
 
 	sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {
 		public override CLRType CLRType => CLRType.CoreCLR;
 
-		public override string Version { get; }
-		public string DbgShimFilename { get; }
-		public string CoreCLRFilename { get; }
+		public override string? Version { get; }
+		public string? DbgShimFilename { get; }
+		public string? CoreCLRFilename { get; }
 
-		public CoreCLRTypeAttachInfo(string version, string dbgShimFilename, string coreclrFilename) {
+		public CoreCLRTypeAttachInfo(string? version, string? dbgShimFilename, string? coreclrFilename) {
 			Version = version;
 			DbgShimFilename = dbgShimFilename;
 			CoreCLRFilename = coreclrFilename;
@@ -69,7 +69,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// An <see cref="IDebugMessageDispatcher"/> instance. Can't be null.
 		/// </summary>
-		public IDebugMessageDispatcher DebugMessageDispatcher { get; set; }
+		public IDebugMessageDispatcher? DebugMessageDispatcher { get; set; }
 
 		/// <summary>
 		/// Debug options

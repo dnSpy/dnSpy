@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Editor {
 		readonly WpfHexView wpfHexView;
 		readonly VSTC.IEditorFormatMap editorFormatMap;
 		readonly CurrentLineHighlighterElement currentLineHighlighterElement;
-		HexAdornmentLayer adornmentLayer;
+		HexAdornmentLayer? adornmentLayer;
 		bool isActive;
 		bool selectionIsEmpty;
 		bool enabled;
@@ -138,6 +138,7 @@ namespace dnSpy.Hex.Editor {
 				adornmentLayer?.RemoveAllAdornments();
 				return;
 			}
+			Debug.Assert(adornmentLayer != null);
 
 			var line = wpfHexView.Caret.ContainingHexViewLine;
 			if (line.IsVisible()) {
@@ -197,7 +198,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class CurrentLineHighlighterElement : UIElement {
 		const int PEN_THICKNESS = 2;
 
-		public Brush BackgroundBrush {
+		public Brush? BackgroundBrush {
 			get => backgroundBrush;
 			set {
 				if (!TWPF.BrushComparer.Equals(backgroundBrush, value)) {
@@ -206,9 +207,9 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 		}
-		Brush backgroundBrush;
+		Brush? backgroundBrush;
 
-		public Brush ForegroundBrush {
+		public Brush? ForegroundBrush {
 			get => foregroundBrush;
 			set {
 				if (!TWPF.BrushComparer.Equals(foregroundBrush, value)) {
@@ -225,11 +226,11 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 		}
-		Brush foregroundBrush;
-		Pen pen;
+		Brush? foregroundBrush;
+		Pen? pen;
 
 		Rect geometryRect;
-		Geometry geometry;
+		Geometry? geometry;
 
 		public void SetLine(HexViewLine line, double width) {
 			if (line == null)

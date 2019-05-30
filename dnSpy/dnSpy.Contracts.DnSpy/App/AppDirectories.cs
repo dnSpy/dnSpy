@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.App {
 		public static string SettingsFilename => settingsFilename;
 		static string settingsFilename;
 
-		internal static void SetSettingsFilename(string filename) {
+		internal static void SetSettingsFilename(string? filename) {
 			if (hasCalledSetSettingsFilename)
 				throw new InvalidOperationException();
 			hasCalledSetSettingsFilename = true;

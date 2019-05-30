@@ -34,6 +34,6 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexQuickInfoSource TryCreateQuickInfoSource(HexView hexView);
+		public abstract HexQuickInfoSource? TryCreateQuickInfoSource(HexView hexView);
 	}
 }

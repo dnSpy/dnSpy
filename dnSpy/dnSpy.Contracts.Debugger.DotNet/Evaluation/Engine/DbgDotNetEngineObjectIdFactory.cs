@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		public sealed override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) => dbgEngineObjectIdFactory.CreateObjectId(value, id);
+		public sealed override DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id) => dbgEngineObjectIdFactory.CreateObjectId(value, id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data

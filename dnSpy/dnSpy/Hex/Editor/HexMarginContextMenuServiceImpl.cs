@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Hex.Editor;
@@ -39,7 +40,7 @@ namespace dnSpy.Hex.Editor {
 			readonly WpfHexViewMargin margin;
 			readonly string marginName;
 			readonly Lazy<HexMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders;
-			IHexMarginContextMenuHandler[] handlers;
+			IHexMarginContextMenuHandler[]? handlers;
 
 			public GuidObjectsProvider(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin margin, string marginName, Lazy<HexMarginContextMenuHandlerProvider, IMarginContextMenuHandlerProviderMetadata>[] marginContextMenuHandlerProviders) {
 				this.wpfHexViewHost = wpfHexViewHost;
@@ -67,6 +68,7 @@ namespace dnSpy.Hex.Editor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				if (handlers == null)
 					InitializeHandlers();
+				Debug.Assert(handlers != null);
 
 				var point = Mouse.PrimaryDevice.GetPosition(margin.VisualElement);
 

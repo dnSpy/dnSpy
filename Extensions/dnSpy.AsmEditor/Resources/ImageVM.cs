@@ -22,7 +22,7 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageVM : ViewModelBase {
-		public ImageSource ImageSource {
+		public ImageSource? ImageSource {
 			get => imageSource;
 			set {
 				if (imageSource != value) {
@@ -31,8 +31,8 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		ImageSource imageSource;
+		ImageSource? imageSource;
 
-		public ImageVM(ImageSource imageSource) => this.imageSource = imageSource;
+		public ImageVM(ImageSource? imageSource) => this.imageSource = imageSource;
 	}
 }

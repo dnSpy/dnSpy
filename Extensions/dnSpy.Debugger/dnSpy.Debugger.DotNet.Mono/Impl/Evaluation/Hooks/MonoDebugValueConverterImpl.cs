@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 		public MonoDebugValueConverterImpl(DbgMonoDebugInternalRuntimeImpl runtime) =>
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 
-		bool TryGetUInt32(object value, out uint result) {
+		bool TryGetUInt32(object? value, out uint result) {
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue)
@@ -74,19 +74,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 
 		Exception Invalid() => new InvalidOperationException();
 
-		char IMonoDebugValueConverter.ToChar(object value) {
+		char IMonoDebugValueConverter.ToChar(object? value) {
 			if (TryGetUInt32(value, out var result))
 				return (char)result;
 			throw Invalid();
 		}
 
-		int IMonoDebugValueConverter.ToInt32(object value) {
+		int IMonoDebugValueConverter.ToInt32(object? value) {
 			if (TryGetUInt32(value, out var result))
 				return (int)result;
 			throw Invalid();
 		}
 
-		unsafe char[] IMonoDebugValueConverter.ToCharArray(object value) {
+		unsafe char[]? IMonoDebugValueConverter.ToCharArray(object? value) {
 			if (value == null)
 				return null;
 

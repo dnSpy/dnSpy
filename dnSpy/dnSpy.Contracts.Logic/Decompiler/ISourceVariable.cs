@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the real local or parameter or null if it's a decompiler generated variable
 		/// </summary>
-		IVariable Variable { get; }
+		IVariable? Variable { get; }
 
 		/// <summary>
 		/// true if this is a local
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the hoisted field or null if it's not a hoisted local/parameter
 		/// </summary>
-		FieldDef HoistedField { get; }
+		FieldDef? HoistedField { get; }
 
 		/// <summary>
 		/// Gets the flags

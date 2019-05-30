@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		[ImportingConstructor]
 		TaggedTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) =>
+		public ITextClassifier? Create(IContentType contentType) =>
 			new TaggedTextClassifier(themeClassificationTypeService);
 	}
 

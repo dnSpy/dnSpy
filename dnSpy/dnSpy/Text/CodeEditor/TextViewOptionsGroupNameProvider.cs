@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.CodeEditor {
 	[ExportTextViewOptionsGroupNameProvider]
 	sealed class TextViewOptionsGroupNameProvider : ITextViewOptionsGroupNameProvider {
-		public string TryGetGroupName(IWpfTextView textView) {
+		public string? TryGetGroupName(IWpfTextView textView) {
 			if (textView.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor))
 				return PredefinedTextViewGroupNames.CodeEditor;
 			return null;

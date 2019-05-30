@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public override Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
 		public override double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
 		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
@@ -178,7 +178,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			for (int i = 0; i < filterObjs.Length; i++)
 				DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
 
-			FilterDraggedItems = DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
+			filterDraggedItems = DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
 
 			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
 			memberKindVMs = new MemberKindVM[defObjs.Length];
@@ -242,7 +242,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
-		public override string[] GetSearchStrings() => MemberKindsArray.Select(a => a.Text).Concat(DocumentFilterTypes.Select(a => a.Text)).ToArray();
+		public override string[]? GetSearchStrings() => MemberKindsArray.Select(a => a.Text).Concat(DocumentFilterTypes.Select(a => a.Text)).ToArray();
 	}
 
 	sealed class MemberKindVM : ViewModelBase {

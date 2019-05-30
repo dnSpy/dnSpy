@@ -29,13 +29,13 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	readonly struct EvalArgumentResult {
-		public string ErrorMessage { get; }
-		public CorValue CorValue { get; }
+		public string? ErrorMessage { get; }
+		public CorValue? CorValue { get; }
 		public EvalArgumentResult(string errorMessage) {
 			ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 			CorValue = null;
 		}
-		public EvalArgumentResult(CorValue corValue) {
+		public EvalArgumentResult(CorValue? corValue) {
 			ErrorMessage = null;
 			CorValue = corValue ?? throw new ArgumentNullException(nameof(corValue));
 		}
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return new EvalArgumentResult(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
 			if (res.Value.WasCancelled)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.FuncEvalTimedOut);
-			return new EvalArgumentResult(res.Value.ResultOrException);
+			return new EvalArgumentResult(res.Value.ResultOrException!);
 		}
 	}
 
@@ -65,8 +65,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			this.createdValues = createdValues;
 		}
 
-		public unsafe EvalArgumentResult Convert(object value, DmdType defaultType, out DmdType type) {
-			if (value == null) {
+		public unsafe EvalArgumentResult Convert(object? value, DmdType defaultType, out DmdType type) {
+			if (value is null) {
 				type = defaultType;
 				return new EvalArgumentResult(dnEval.CreateNull());
 			}
@@ -80,11 +80,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (value is DbgDotNetValueImpl dnValueImpl) {
 				type = dnValueImpl.Type;
 				var corValue = dnValueImpl.TryGetCorValue();
-				if (corValue != null)
+				if (!(corValue is null))
 					return new EvalArgumentResult(corValue);
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
-			DmdType origType = null;
+			DmdType? origType = null;
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue) {
@@ -224,10 +224,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return EvalArgumentResult.Create(res, hr);
 			Debug.Assert(array.Length > 0);
 
-			CorValue elem = null;
+			CorValue? elem = null;
 			bool error = true;
 			try {
-				var arrayValue = res.Value.ResultOrException;
+				var arrayValue = res.Value.ResultOrException!;
 				for (int i = 0; i < array.Length; i++) {
 					var s = array[i];
 					if (s == null)
@@ -236,21 +236,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					var stringValueRes = Convert(s, elementType, out var type2);
 					if (stringValueRes.ErrorMessage != null)
 						return stringValueRes;
-					if (!stringValueRes.CorValue.IsReference)
+					if (!stringValueRes.CorValue!.IsReference)
 						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
-					var av = arrayValue;
+					CorValue? av = arrayValue;
 					if (av.IsReference) {
 						av = av.GetDereferencedValue(out hr);
-						if (av == null)
+						if (av is null)
 							return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
 					}
 					if (av?.IsArray != true)
 						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
-					Debug.Assert(elem == null);
+					Debug.Assert(elem is null);
 					elem = av.GetElementAtPosition(i, out hr);
-					if (elem == null)
+					if (elem is null)
 						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
 
 					hr = elem.SetReferenceAddress(stringValueRes.CorValue.ReferenceAddress);
@@ -261,7 +261,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					elem = null;
 				}
 
-				var eaRes = new EvalArgumentResult(AddValue(type, res.Value.ResultOrException));
+				var eaRes = new EvalArgumentResult(AddValue(type, res.Value.ResultOrException!));
 				error = false;
 				return eaRes;
 			}
@@ -284,10 +284,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			bool error = true;
 			try {
 				Debug.Assert(length > 0);
-				var arrayValue = res.Value.ResultOrException;
+				CorValue? arrayValue = res.Value.ResultOrException!;
 				if (arrayValue.IsReference) {
 					arrayValue = arrayValue.GetDereferencedValue(out hr);
-					if (arrayValue != null)
+					if (!(arrayValue is null))
 						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
 				}
 				Debug.Assert(arrayValue?.IsArray == true);
@@ -297,7 +297,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (addr == null)
 					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
-				hr = appDomain.Process.WriteMemory(addr.Value.Address, array, length * elementSize, out int sizeWritten);
+				if (!(appDomain.Process is CorProcess process))
+					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+				hr = process.WriteMemory(addr.Value.Address, array, length * elementSize, out int sizeWritten);
 				if (hr < 0 || sizeWritten != length * elementSize)
 					return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
@@ -357,10 +359,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		CorType GetType(DmdType type) => CorDebugTypeCreator.GetType(engine, appDomain, type);
 
-		CorValue AddValue(DmdType type, CorValue value) {
-			if (value != null && !value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef)
+		CorValue? AddValue(DmdType type, CorValue? value) {
+			if (!(value is null) && !value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef)
 				value = value.GetDereferencedValue(out int hr)?.CreateHandle(CorDebugHandleType.HANDLE_STRONG) ?? value;
-			if (value != null) {
+			if (!(value is null)) {
 				try {
 					createdValues.Add(value);
 				}
@@ -376,7 +378,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = dnEval.CreateDontCallConstructor(GetType(type), out int hr);
 			var argRes = EvalArgumentResult.Create(res, hr);
 			var value = AddValue(type, argRes.CorValue);
-			if (value != null)
+			if (!(value is null))
 				return new EvalArgumentResult(value);
 			return argRes;
 		}
@@ -385,7 +387,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(new byte[1] { value });
 			return res;
@@ -395,7 +397,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -405,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -415,7 +417,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -425,7 +427,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(reflectionAppDomain.System_Single);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -435,7 +437,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(reflectionAppDomain.System_Double);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -445,7 +447,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(reflectionAppDomain.System_Decimal);
 			if (res.ErrorMessage != null)
 				return res;
-			Debug.Assert(res.CorValue.DereferencedValue != null && res.CorValue.DereferencedValue.BoxedValue != null);
+			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(GetBytes(value));
 			return res;

@@ -83,9 +83,9 @@ namespace dnSpy.Contracts.Debugger.Disassembly {
 	/// <summary>Metadata</summary>
 	public interface IDbgRuntimeNativeCodeProviderMetadata {
 		/// <summary>See <see cref="ExportDbgRuntimeNativeCodeProviderAttribute.Guid"/></summary>
-		string Guid { get; }
+		string? Guid { get; }
 		/// <summary>See <see cref="ExportDbgRuntimeNativeCodeProviderAttribute.RuntimeKindGuid"/></summary>
-		string RuntimeKindGuid { get; }
+		string? RuntimeKindGuid { get; }
 		/// <summary>See <see cref="ExportDbgRuntimeNativeCodeProviderAttribute.Order"/></summary>
 		double Order { get; }
 	}
@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Debugger.Disassembly {
 		/// <param name="guid">Runtime GUID or null, see <see cref="PredefinedDbgRuntimeGuids"/></param>
 		/// <param name="runtimeKindGuid">Runtime kind GUID or null, see <see cref="PredefinedDbgRuntimeKindGuids"/></param>
 		/// <param name="order">Order</param>
-		public ExportDbgRuntimeNativeCodeProviderAttribute(string guid, string runtimeKindGuid, double order = double.MaxValue)
+		public ExportDbgRuntimeNativeCodeProviderAttribute(string? guid, string? runtimeKindGuid, double order = double.MaxValue)
 			: base(typeof(DbgRuntimeNativeCodeProvider)) {
 			Guid = guid;
 			RuntimeKindGuid = runtimeKindGuid;
@@ -111,12 +111,12 @@ namespace dnSpy.Contracts.Debugger.Disassembly {
 		/// <summary>
 		/// Gets the runtime GUID or null, see <see cref="PredefinedDbgRuntimeGuids"/>
 		/// </summary>
-		public string Guid { get; }
+		public string? Guid { get; }
 
 		/// <summary>
 		/// Gets the runtime kind GUID or null, see <see cref="PredefinedDbgRuntimeKindGuids"/>
 		/// </summary>
-		public string RuntimeKindGuid { get; }
+		public string? RuntimeKindGuid { get; }
 
 		/// <summary>
 		/// Order

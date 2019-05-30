@@ -56,8 +56,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 				yield break;
 
 			var snapshot = spans[0].Snapshot;
-			MethodDef method = null;
-			List<uint> ilOffsets = null;
+			MethodDef? method = null;
+			List<uint>? ilOffsets = null;
 			foreach (var span in spans) {
 				foreach (var info in methodDebugService.GetStatementsByTextSpan(span.Span)) {
 					if (info.Method != method) {

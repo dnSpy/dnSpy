@@ -24,7 +24,7 @@ using dnSpy.Properties;
 namespace dnSpy.Text.Settings {
 	abstract class ScrollBarsAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.ScrollBarsSettings;
-		public sealed override object UIObject => this;
+		public sealed override object? UIObject => this;
 
 		public bool HorizontalScrollBar {
 			get => horizontalScrollBar;

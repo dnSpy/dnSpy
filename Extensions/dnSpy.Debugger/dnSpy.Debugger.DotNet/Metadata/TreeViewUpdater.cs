@@ -33,11 +33,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		readonly DynamicModuleDefDocument Document;
 		readonly ModuleDocumentNode ModuleNode;
 		readonly HashSet<uint> modifiedTypes;
-		readonly HashSet<uint> loadedClassTokens;
+		readonly HashSet<uint>? loadedClassTokens;
 		readonly HashSet<TypeDef> checkedTypes;
 		readonly ModuleDocumentNode modNode;
 
-		public TreeViewUpdater(IDocumentTabService documentTabService, DynamicModuleDefDocument document, ModuleDocumentNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
+		public TreeViewUpdater(IDocumentTabService documentTabService, DynamicModuleDefDocument document, ModuleDocumentNode node, HashSet<uint> modifiedTypes, HashSet<uint>? loadedClassTokens) {
 			Debug.Assert(node.Document == document);
 			this.documentTabService = documentTabService ?? throw new ArgumentNullException(nameof(documentTabService));
 			Document = document ?? throw new ArgumentNullException(nameof(document));
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			bool needRedecompile = false;
 			foreach (uint token in tokensList) {
-				var td = Document.ModuleDef.ResolveToken(token) as TypeDef;
+				var td = Document.ModuleDef!.ResolveToken(token) as TypeDef;
 				Debug.Assert(td != null);
 				if (td == null)
 					continue;
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		void CreateTypeNodes(List<TypeDef> types) {
-			TypeNode parentNode = null;
+			TypeNode? parentNode = null;
 			foreach (var type in types) {
 				bool wasLoaded = loadedClassTokens?.Contains(type.MDToken.Raw) ?? false;
 
@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (typeNode.TreeNode.LazyLoading)
 				return;
 
-			var existing = new HashSet<object>();
+			var existing = new HashSet<object?>();
 			foreach (var child in typeNode.TreeNode.DataChildren) {
 				if (child is IMDTokenNode tokenNode)
 					existing.Add(tokenNode.Reference);

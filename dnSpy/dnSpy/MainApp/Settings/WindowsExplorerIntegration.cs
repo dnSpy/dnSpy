@@ -51,7 +51,7 @@ namespace dnSpy.MainApp.Settings {
 				int count = 0;
 				try {
 					foreach (var ext in openExtensions) {
-						string name;
+						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
 							name = key == null ? null : key.GetValue(string.Empty) as string;
 						if (string.IsNullOrEmpty(name))
@@ -87,7 +87,7 @@ namespace dnSpy.MainApp.Settings {
 
 				try {
 					foreach (var ext in openExtensions) {
-						string name;
+						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
 							name = key?.GetValue(string.Empty) as string;
 

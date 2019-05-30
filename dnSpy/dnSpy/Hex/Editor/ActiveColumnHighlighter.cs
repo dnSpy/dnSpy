@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -70,7 +71,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class ActiveColumnHighlighterService {
 		readonly WpfHexView wpfHexView;
 		readonly VSTC.IEditorFormatMap editorFormatMap;
-		HexAdornmentLayer adornmentLayer;
+		HexAdornmentLayer? adornmentLayer;
 		bool enabled;
 		readonly List<RectangleElement> rectangleElements;
 
@@ -78,9 +79,9 @@ namespace dnSpy.Hex.Editor {
 			public HexColumnType Column { get; }
 			readonly Rect rect;
 			readonly Brush brush;
-			readonly Pen pen;
+			readonly Pen? pen;
 
-			public RectangleElement(HexColumnType column, Rect rect, Brush brush, Pen pen) {
+			public RectangleElement(HexColumnType column, Rect rect, Brush brush, Pen? pen) {
 				Canvas.SetTop(this, 0);
 				Column = column;
 				this.rect = rect;
@@ -166,7 +167,7 @@ namespace dnSpy.Hex.Editor {
 			else
 				UpdateRectanglesPositions(e);
 		}
-		HexBufferLineFormatter latestBufferLines;
+		HexBufferLineFormatter? latestBufferLines;
 
 		void UpdateRectanglesPositions(HexViewLayoutChangedEventArgs e) {
 			var d = e.NewViewState.ViewportTop - e.OldViewState.ViewportTop;
@@ -200,6 +201,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllRectangles();
 			if (!enabled)
 				return;
+			Debug.Assert(adornmentLayer != null);
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;
@@ -231,24 +233,20 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		Brush GetBackgroundBrush(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-			Brush fillBrush;
-
+		Brush? GetBackgroundBrush(ResourceDictionary props) {
 			const double BG_BRUSH_OPACITY = 0.4;
 			Brush newBrush;
-			if ((color = props[VSTC.EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
-				newBrush = new SolidColorBrush(color.Value);
+			if (props[VSTC.EditorFormatDefinition.BackgroundColorId] is Color color) {
+				newBrush = new SolidColorBrush(color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((scBrush = props[VSTC.EditorFormatDefinition.BackgroundBrushId] as SolidColorBrush) != null) {
+			else if (props[VSTC.EditorFormatDefinition.BackgroundBrushId] is SolidColorBrush scBrush) {
 				newBrush = new SolidColorBrush(scBrush.Color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((fillBrush = props[VSTC.MarkerFormatDefinition.FillId] as Brush) != null) {
+			else if (props[VSTC.MarkerFormatDefinition.FillId] is Brush fillBrush) {
 				newBrush = fillBrush;
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();

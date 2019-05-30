@@ -30,7 +30,7 @@ namespace dnSpy.Documents.TreeView {
 	sealed class DerivedTypeNodeImpl : DerivedTypeNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.DERIVEDTYPE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, TypeDef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 		public override TypeDef TypeDef => TryGetTypeDef() ?? new TypeDefUser("???");
 		TypeDef TryGetTypeDef() => (TypeDef)weakRefTypeDef.Target;
 		readonly WeakReference weakRefTypeDef;
@@ -62,7 +62,7 @@ namespace dnSpy.Documents.TreeView {
 			if (td != null)
 				derivedTypesFinder = new DerivedTypesFinder(this, td);
 		}
-		DerivedTypesFinder derivedTypesFinder;
+		DerivedTypesFinder? derivedTypesFinder;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var td = TryGetTypeDef();

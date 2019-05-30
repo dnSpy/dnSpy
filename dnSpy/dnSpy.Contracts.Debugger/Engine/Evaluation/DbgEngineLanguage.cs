@@ -83,6 +83,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="location">Location or null</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken);
+		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation? location, CancellationToken cancellationToken);
 	}
 }

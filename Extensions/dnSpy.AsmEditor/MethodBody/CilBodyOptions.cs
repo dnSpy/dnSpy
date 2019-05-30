@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public List<Instruction> Instructions = new List<Instruction>();
 		public List<ExceptionHandler> ExceptionHandlers = new List<ExceptionHandler>();
 		public List<Local> Locals = new List<Local>();
-		public PdbMethod PdbMethod;//TODO: Use this
+		public PdbMethod? PdbMethod;//TODO: Use this
 
 		public CilBodyOptions() {
 		}

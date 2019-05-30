@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		[ImportingConstructor]
 		HexAddressReferenceFileTabContentCreator(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator, IDocumentTreeView documentTreeView) => this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult? Create(IDocumentTabService documentTabService, DocumentTabContent? sourceContent, object? @ref) {
 			var addrRef = @ref as AddressReference;
 			if (addrRef == null)
 				addrRef = (@ref as TextReference)?.Reference as AddressReference;
@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return null;
 		}
 
-		DocumentTabReferenceResult Create(AddressReference addrRef, IDocumentTreeView documentTreeView) {
+		DocumentTabReferenceResult? Create(AddressReference addrRef, IDocumentTreeView documentTreeView) {
 			var content = hexViewDocumentTabContentCreator.Value.TryCreate(addrRef.Filename);
 			if (content == null)
 				return null;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				return;
 
 			if (!uiContext.HexView.VisualElement.IsLoaded) {
-				RoutedEventHandler loaded = null;
+				RoutedEventHandler? loaded = null;
 				loaded = (s, e2) => {
 					uiContext.HexView.VisualElement.Loaded -= loaded;
 					InitializeHexView(uiContext.HexView, start, end);

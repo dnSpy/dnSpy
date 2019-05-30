@@ -35,7 +35,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		[ImportingConstructor]
 		XamlTaggerProvider(XamlTaggerClassificationTypes xamlTaggerClassificationTypes) => this.xamlTaggerClassificationTypes = xamlTaggerClassificationTypes;
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag => new XamlTagger(xamlTaggerClassificationTypes) as ITagger<T>;
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag => new XamlTagger(xamlTaggerClassificationTypes) as ITagger<T>;
 	}
 
 	sealed class XamlTagger : XmlTaggerBase {
@@ -65,7 +65,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			}
 		}
 
-		ClassificationTag GetClassificationTag(XamlKind kind) {
+		ClassificationTag? GetClassificationTag(XamlKind kind) {
 			switch (kind) {
 			case XamlKind.Delimiter:
 				return xamlTaggerClassificationTypes.Delimiter;

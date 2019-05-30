@@ -88,7 +88,7 @@ namespace dnSpy.Search {
 
 		public ObservableCollection<ISearchResult> SearchResults { get; }
 
-		public ISearchResult SelectedSearchResult {
+		public ISearchResult? SelectedSearchResult {
 			get => selectedSearchResult;
 			set {
 				if (selectedSearchResult != value) {
@@ -97,7 +97,7 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		ISearchResult selectedSearchResult;
+		ISearchResult? selectedSearchResult;
 
 		public string SearchText {
 			get => searchText;
@@ -109,7 +109,7 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		string searchText;
+		string searchText = string.Empty;
 		readonly DelayedAction delayedSearch;
 
 		public IDecompiler Decompiler {
@@ -127,9 +127,11 @@ namespace dnSpy.Search {
 		readonly IDocumentSearcherProvider fileSearcherProvider;
 		readonly IDocumentTreeView documentTreeView;
 
-		public SearchControlVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings) {
+		public SearchControlVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings, IDecompiler decompiler) {
+			this.selectedSearchTypeVM = null!;
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.documentTreeView = documentTreeView;
+			this.decompiler = decompiler;
 			SearchSettings = searchSettings;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
@@ -168,7 +170,7 @@ namespace dnSpy.Search {
 			SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 		}
 
-		void Add(SearchType searchType, string name, ImageReference icon, string toolTip, VisibleMembersFlags flags) =>
+		void Add(SearchType searchType, string name, ImageReference icon, string? toolTip, VisibleMembersFlags flags) =>
 			SearchTypeVMs.Add(new SearchTypeVM(searchType, name, toolTip, icon, flags));
 		void DelayStartSearch() => Restart();
 
@@ -193,7 +195,7 @@ namespace dnSpy.Search {
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
 
-				switch ((SearchLocation)SearchLocationVM.SelectedItem) {
+				switch ((SearchLocation)SearchLocationVM.SelectedItem!) {
 				case SearchLocation.AllFiles:
 					fileSearcher.Start(GetAllFilesToSearch());
 					break;
@@ -215,7 +217,7 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		IDocumentSearcher fileSearcher;
+		IDocumentSearcher? fileSearcher;
 		bool searchCompleted;
 
 		bool CanSearchFile(DsDocumentNode node) =>
@@ -223,7 +225,7 @@ namespace dnSpy.Search {
 		IEnumerable<DsDocumentNode> GetAllFilesToSearch() =>
 			documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Where(a => CanSearchFile(a));
 		IEnumerable<DsDocumentNode> GetSelectedFilesToSearch() =>
-			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct();
+			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct()!;
 
 		IEnumerable<DsDocumentNode> GetAllFilesInSameDirToSearch() {
 			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.Document.Filename)).Select(a => Path.GetDirectoryName(a.Document.Filename));
@@ -244,8 +246,9 @@ namespace dnSpy.Search {
 		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
 			if (sender == null || sender != fileSearcher || searchCompleted)
 				return;
+			Debug.Assert(fileSearcher != null);
 			searchCompleted = true;
-			SearchResults.Remove(fileSearcher.SearchingResult);
+			SearchResults.Remove(fileSearcher.SearchingResult!);
 			TooManyResults = fileSearcher.TooManyResults;
 		}
 

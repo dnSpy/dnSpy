@@ -24,7 +24,7 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.Documents.TreeView {
 	[ExportDsDocumentNodeProvider(Order = double.MaxValue)]
 	sealed class DefaultDsDocumentNodeProvider : IDsDocumentNodeProvider {
-		public DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document) {
+		public DsDocumentNode? Create(IDocumentTreeView documentTreeView, DsDocumentNode? owner, IDsDocument document) {
 			if (document is IDsDotNetDocument dnDocument) {
 				Debug.Assert(document.ModuleDef != null);
 				if (document.AssemblyDef == null || owner != null)

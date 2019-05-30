@@ -57,7 +57,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		}
 		static readonly object hasTriggeredQuickInfoKey = new object();
 
-		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan? applicableToSpan) {
 			applicableToSpan = null;
 
 			var qiSession = QuickInfoSession.TryGetSession(session);

@@ -46,6 +46,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="linePosition">Line position</param>
 		/// <returns></returns>
-		public abstract TextRunProperties GetCharacterFormatting(int linePosition);
+		public abstract TextRunProperties? GetCharacterFormatting(int linePosition);
 	}
 }

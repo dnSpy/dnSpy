@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -52,7 +53,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		public virtual string StoreIndirect(DbgEvaluationInfo evalInfo, object value) =>
+		public virtual string? StoreIndirect(DbgEvaluationInfo evalInfo, object? value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
@@ -71,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <param name="dimensionInfos">Dimension base indexes and lengths</param>
 		/// <returns></returns>
-		public virtual bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
+		public virtual bool GetArrayInfo(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			elementCount = 0;
 			dimensionInfos = null;
 			return false;
@@ -103,7 +104,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="index">Zero-based index of the element</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		public virtual string SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object value) =>
+		public virtual string? SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object? value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
@@ -134,7 +135,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Returns the <see cref="IDbgDotNetRuntime"/> instance or null if it's unknown
 		/// </summary>
 		/// <returns></returns>
-		public virtual IDbgDotNetRuntime TryGetDotNetRuntime() => null;
+		public virtual IDbgDotNetRuntime? TryGetDotNetRuntime() => null;
 
 		/// <summary>
 		/// Called when its owner (<see cref="DbgEngineValue"/>) gets closed
@@ -185,7 +186,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// The value. It's only valid if <see cref="HasRawValue"/> is true. A null value is a valid value.
 		/// If it's an enum value, it's stored as the enum's underlying type (eg. <see cref="int"/>)
 		/// </summary>
-		public object RawValue { get; }
+		public object? RawValue { get; }
 
 		/// <summary>
 		/// Constructor
@@ -203,7 +204,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="valueType">Type</param>
 		/// <param name="rawValue">Value</param>
-		public DbgDotNetRawValue(DbgSimpleValueType valueType, object rawValue) {
+		public DbgDotNetRawValue(DbgSimpleValueType valueType, object? rawValue) {
 			Debug.Assert(valueType != DbgSimpleValueType.Void);
 			ValueType = valueType;
 			HasRawValue = true;

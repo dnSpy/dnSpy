@@ -23,15 +23,15 @@ using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Text.Editor {
 	sealed class CommonGuidObjectsProvider : IGuidObjectsProvider {
-		readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects;
-		readonly IGuidObjectsProvider guidObjectsProvider;
+		readonly Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects;
+		readonly IGuidObjectsProvider? guidObjectsProvider;
 
-		CommonGuidObjectsProvider(Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects, IGuidObjectsProvider guidObjectsProvider) {
+		CommonGuidObjectsProvider(Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects, IGuidObjectsProvider? guidObjectsProvider) {
 			this.createGuidObjects = createGuidObjects;
 			this.guidObjectsProvider = guidObjectsProvider;
 		}
 
-		public static Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> Create(Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> createGuidObjects, IGuidObjectsProvider guidObjectsProvider) {
+		public static Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> Create(Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? createGuidObjects, IGuidObjectsProvider? guidObjectsProvider) {
 			var provider = new CommonGuidObjectsProvider(createGuidObjects, guidObjectsProvider);
 			return provider.GetGuidObjects;
 		}

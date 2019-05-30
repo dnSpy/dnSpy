@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Evaluation {
 			ValueNodeFactory = new DbgValueNodeFactoryImpl(this, runtimeKindGuid, engineLanguage.ValueNodeFactory);
 		}
 
-		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, DbgEvaluationContextOptions options, TimeSpan funcEvalTimeout, CancellationToken cancellationToken) {
+		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation? location, DbgEvaluationContextOptions options, TimeSpan funcEvalTimeout, CancellationToken cancellationToken) {
 			if (runtime == null)
 				throw new ArgumentNullException(nameof(runtime));
 			if (runtime.RuntimeKindGuid != RuntimeKindGuid)

@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteTypeDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteTypeDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteTypeCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 20)]
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteTypeDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteTypeDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteTypeCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 20)]
@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteTypeDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteTypeDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(CodeContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(CodeContext context) => DeleteTypeDefCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(DocumentTreeNodeData[] nodes) {
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		struct DeleteModelNodes {
-			ModelInfo[] infos;
+			ModelInfo[]? infos;
 
 			readonly struct ModelInfo {
 				public readonly IList<TypeDef> OwnerList;
@@ -259,7 +259,7 @@ namespace dnSpy.AsmEditor.Types {
 			if (modNode == null)
 				throw new InvalidOperationException();
 			nsNodeCreator = new NamespaceNodeCreator(options.Namespace, modNode);
-			typeNode = modNode.Context.DocumentTreeView.Create(options.CreateTypeDef(modNode.Document.ModuleDef));
+			typeNode = modNode.Context.DocumentTreeView.Create(options.CreateTypeDef(modNode.Document.ModuleDef!));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateTypeCommand2;
@@ -338,7 +338,7 @@ namespace dnSpy.AsmEditor.Types {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -346,7 +346,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			var ownerNode = nodes[0];
 			if (!(ownerNode is TypeNode))
-				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
 			Debug.Assert(typeNode != null);
 			if (typeNode == null)
@@ -381,7 +381,7 @@ namespace dnSpy.AsmEditor.Types {
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			nestedType = ownerType.Create(options.CreateTypeDef(modNode.Document.ModuleDef));
+			nestedType = ownerType.Create(options.CreateTypeDef(modNode.Document.ModuleDef!));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateNestedTypeCommand2;
@@ -481,11 +481,11 @@ namespace dnSpy.AsmEditor.Types {
 		readonly TypeNode typeNode;
 		readonly TypeDefOptions newOptions;
 		readonly TypeDefOptions origOptions;
-		readonly NamespaceNodeCreator nsNodeCreator;
+		readonly NamespaceNodeCreator? nsNodeCreator;
 		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
-		readonly TypeRefInfo[] typeRefInfos;
+		readonly TypeRefInfo[]? typeRefInfos;
 
 		readonly struct TypeRefInfo {
 			public readonly TypeRef TypeRef;
@@ -505,7 +505,7 @@ namespace dnSpy.AsmEditor.Types {
 			newOptions = options;
 			origOptions = new TypeDefOptions(typeNode.TypeDef);
 
-			origParentNode = (DocumentTreeNodeData)typeNode.TreeNode.Parent.Data;
+			origParentNode = (DocumentTreeNodeData)typeNode.TreeNode.Parent!.Data;
 			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(typeNode.TreeNode);
 			Debug.Assert(origParentChildIndex >= 0);
 			if (origParentChildIndex < 0)
@@ -513,7 +513,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			nameChanged = origOptions.Name != newOptions.Name;
 			if (origParentNode is NamespaceNode) {
-				var modNode = (ModuleDocumentNode)origParentNode.TreeNode.Parent.Data;
+				var modNode = (ModuleDocumentNode)origParentNode.TreeNode.Parent!.Data;
 				if (newOptions.Namespace != origOptions.Namespace)
 					nsNodeCreator = new NamespaceNodeCreator(newOptions.Namespace, modNode);
 			}

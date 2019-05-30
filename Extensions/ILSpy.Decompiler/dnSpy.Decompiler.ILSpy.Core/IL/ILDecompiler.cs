@@ -104,7 +104,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
 			if (xmldoc == null)
 				yield break;
-			string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
+			var doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			if (string.IsNullOrEmpty(doc))
 				yield break;
 
@@ -186,10 +186,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			rd.WriteModuleHeader(mod);
 		}
 
-		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef? t, bool includeNamespace, IHasCustomAttribute? attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 
-		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {
+		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute? typeAttributes) {
 			if (!(member is ITypeDefOrRef) && ILDecompilerUtils.Write(TextColorWriterToDecompilerOutput.Create(output), member))
 				return;
 

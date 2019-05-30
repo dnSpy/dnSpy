@@ -26,7 +26,7 @@ namespace dnSpy.Text.CodeEditor {
 		public override Guid Guid => guid;
 		public override double Order => order;
 		public override string Title => title;
-		public override object UIObject => null;
+		public override object? UIObject => null;
 		public override void OnApply() { }
 		readonly Guid guid;
 		readonly double order;

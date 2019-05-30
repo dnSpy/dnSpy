@@ -35,7 +35,7 @@ namespace dnSpy.Text.Formatting {
 			this.maxCacheSize = maxCacheSize;
 		}
 
-		public IFormattedLine FindFormattedLineByBufferPosition(SnapshotPoint point) {
+		public IFormattedLine? FindFormattedLineByBufferPosition(SnapshotPoint point) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(PhysicalLineCache));
 			for (int i = 0; i < cache.Count; i++) {

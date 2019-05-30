@@ -35,12 +35,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			get {
 				if (__debugMessageDispatcher == null)
 					Interlocked.CompareExchange(ref __debugMessageDispatcher, new DebugMessageDispatcher(Dispatcher), null);
-				return __debugMessageDispatcher;
+				return __debugMessageDispatcher!;
 			}
 		}
-		volatile DebugMessageDispatcher __debugMessageDispatcher;
+		volatile DebugMessageDispatcher? __debugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
+			Dispatcher = null!;
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -66,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			callDispatcherRunEvent.WaitOne();
 			callDispatcherRunEvent.Close();
-			callDispatcherRunEvent = null;
+			callDispatcherRunEvent = null!;
 
 			if (!terminate)
 				Dispatcher.Run();

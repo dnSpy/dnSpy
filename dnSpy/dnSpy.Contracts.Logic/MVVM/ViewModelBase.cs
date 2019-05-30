@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.MVVM {
 		protected void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
 		string IDataErrorInfo.Error { get { throw new NotImplementedException(); } }
-		string IDataErrorInfo.this[string columnName] => Verify(columnName);
+		string? IDataErrorInfo.this[string columnName] => Verify(columnName);
 
 		/// <summary>
 		/// true if there's an error
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="columnName">Name of property</param>
 		/// <returns></returns>
-		protected virtual string Verify(string columnName) => string.Empty;
+		protected virtual string? Verify(string columnName) => string.Empty;
 
 		/// <summary>
 		/// Call this method if some property's error state changed

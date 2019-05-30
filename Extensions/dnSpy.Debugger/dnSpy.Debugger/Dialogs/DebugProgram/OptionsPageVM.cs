@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		public bool IsValid => StartDebuggingOptionsPage.IsValid;
 		public event EventHandler IsValidChanged;
 
-		public object UIObject => StartDebuggingOptionsPage.UIObject;
+		public object? UIObject => StartDebuggingOptionsPage.UIObject;
 		public string Name => StartDebuggingOptionsPage.DisplayName;
 
 		public OptionsPageVM(StartDebuggingOptionsPage page) {

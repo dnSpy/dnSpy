@@ -34,7 +34,7 @@ namespace dnSpy.Text.CodeEditor {
 			LanguageName = languageName;
 		}
 
-		public static CodeEditorOptions TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, ICodeEditorOptionsDefinitionMetadata md) {
+		public static CodeEditorOptions? TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, ICodeEditorOptionsDefinitionMetadata md) {
 			if (group == null)
 				throw new ArgumentNullException(nameof(group));
 			if (contentTypeRegistryService == null)

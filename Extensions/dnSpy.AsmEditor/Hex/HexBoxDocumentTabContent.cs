@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Hex {
 		[ImportingConstructor]
 		HexViewDocumentTabContentFactory(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator) => this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
 
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("3125CEDA-98DE-447E-9363-8583A45BDE8C");
 
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return GUID_SerializedContent;
 		}
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 
@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	interface IHexViewDocumentTabContentCreator {
-		HexViewDocumentTabContent TryCreate(string filename);
+		HexViewDocumentTabContent? TryCreate(string filename);
 	}
 
 	[Export(typeof(IHexViewDocumentTabContentCreator))]
@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.hexEditorGroupFactoryService = hexEditorGroupFactoryService;
 		}
 
-		public HexViewDocumentTabContent TryCreate(string filename) {
+		public HexViewDocumentTabContent? TryCreate(string filename) {
 			var buffer = hexBufferService.Value.GetOrCreate(filename);
 			if (buffer == null)
 				return null;
@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		public override object ToolTip => Filename;
+		public override object? ToolTip => Filename;
 		public string Filename => buffer.Name;
 
 		readonly HexBuffer buffer;
@@ -116,9 +116,9 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	sealed class HexViewDocumentTabUIContext : DocumentTabUIContext, IDisposable, IZoomable {
-		public override IInputElement FocusedElement => hexViewHost.HexView.VisualElement;
-		public override FrameworkElement ZoomElement => null;
-		public override object UIObject => hexViewHost.HostControl;
+		public override IInputElement? FocusedElement => hexViewHost.HexView.VisualElement;
+		public override FrameworkElement? ZoomElement => null;
+		public override object? UIObject => hexViewHost.HostControl;
 		public WpfHexView HexView => hexViewHost.HexView;
 		double IZoomable.ZoomValue => hexViewHost.HexView.ZoomLevel / 100;
 
@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public HexViewDocumentTabUIContext(HexEditorGroupFactoryService hexEditorGroupFactoryService, HexBuffer buffer) => hexViewHost = hexEditorGroupFactoryService.Create(buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDefault, new Guid(MenuConstants.GUIDOBJ_ASMEDITOR_HEXVIEW_GUID));
 
-		public override object CreateUIState() {
+		public override object? CreateUIState() {
 			if (cachedHexViewUIState != null)
 				return cachedHexViewUIState;
 			var state = new HexViewUIState(HexView);
@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return state;
 		}
 
-		public override void RestoreUIState(object obj) {
+		public override void RestoreUIState(object? obj) {
 			var state = obj as HexViewUIState;
 			if (state == null)
 				return;
@@ -157,7 +157,7 @@ namespace dnSpy.AsmEditor.Hex {
 			else
 				InitializeState(state);
 		}
-		HexViewUIState cachedHexViewUIState;
+		HexViewUIState? cachedHexViewUIState;
 
 		void InitializeState(HexViewUIState state) {
 			if (IsValid(state)) {
@@ -253,9 +253,9 @@ namespace dnSpy.AsmEditor.Hex {
 			cachedHexViewUIState = null;
 		}
 
-		public override object DeserializeUIState(ISettingsSection section) => HexViewUIStateSerializer.Read(section, new HexViewUIState());
+		public override object? DeserializeUIState(ISettingsSection section) => HexViewUIStateSerializer.Read(section, new HexViewUIState());
 
-		public override void SerializeUIState(ISettingsSection section, object obj) {
+		public override void SerializeUIState(ISettingsSection section, object? obj) {
 			var state = obj as HexViewUIState;
 			if (state == null)
 				return;

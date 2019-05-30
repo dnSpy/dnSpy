@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		readonly ThreadMirror monoThread;
 		readonly DbgThread thread;
 		readonly uint continueCounter;
-		MDS.StackFrame[] frames;
+		MDS.StackFrame[]? frames;
 		int frameIndex;
 
 		public DbgEngineStackWalkerImpl(Lazy<DbgDotNetCodeLocationFactory> dbgDotNetCodeLocationFactory, DbgEngineImpl engine, ThreadMirror monoThread, DbgThread thread) {

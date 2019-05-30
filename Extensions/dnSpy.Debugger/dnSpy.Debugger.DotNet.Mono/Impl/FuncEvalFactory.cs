@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	abstract class FuncEval : IDisposable {
 		public abstract bool EvalTimedOut { get; }
 		public abstract InvokeResult CreateInstance(MethodMirror method, IList<Value> arguments, FuncEvalOptions options);
-		public abstract InvokeResult CallMethod(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options);
+		public abstract InvokeResult CallMethod(MethodMirror method, Value? obj, IList<Value> arguments, FuncEvalOptions options);
 		public abstract void Dispose();
 	}
 
@@ -99,14 +99,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override InvokeResult CreateInstance(MethodMirror method, IList<Value> arguments, FuncEvalOptions options) =>
 			CallCore(method, null, arguments, options, isNewobj: true);
 
-		public override InvokeResult CallMethod(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options) =>
+		public override InvokeResult CallMethod(MethodMirror method, Value? obj, IList<Value> arguments, FuncEvalOptions options) =>
 			CallCore(method, obj, arguments, options, isNewobj: false);
 
-		InvokeResult CallCore(MethodMirror method, Value obj, IList<Value> arguments, FuncEvalOptions options, bool isNewobj) {
+		InvokeResult CallCore(MethodMirror method, Value? obj, IList<Value> arguments, FuncEvalOptions options, bool isNewobj) {
 			if (evalTimedOut)
 				throw new TimeoutException();
 
-			IInvokeAsyncResult asyncRes = null;
+			IInvokeAsyncResult? asyncRes = null;
 			bool done = false;
 			try {
 				funcEvalState.isEvaluatingCounter++;
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						InvokeResult resTmp;
 						try {
 							if (isInvokeInstanceMethod)
-								resTmp = obj.EndInvokeMethodWithResult(asyncRes2);
+								resTmp = obj!.EndInvokeMethodWithResult(asyncRes2);
 							else
 								resTmp = method.DeclaringType.EndInvokeMethodWithResult(asyncRes2);
 							debugMessageDispatcher.CancelDispatchQueue(resTmp);
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					};
 
 					if (isInvokeInstanceMethod)
-						asyncRes = obj.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), asyncCallback, null);
+						asyncRes = obj!.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), asyncCallback, null);
 					else
 						asyncRes = method.DeclaringType.BeginInvokeMethod(thread, method, arguments, GetInvokeOptions(options), asyncCallback, null);
 

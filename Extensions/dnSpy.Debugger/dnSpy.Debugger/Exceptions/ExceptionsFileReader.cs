@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Exceptions {
 						foreach (var exDefElem in exDefCollElem.Elements("Exception")) {
 							var name = (string)exDefElem.Attribute("Name");
 							var code = (string)exDefElem.Attribute("Code");
-							var description = (string)exDefElem.Attribute("Description");
+							string? description = (string)exDefElem.Attribute("Description");
 							if (string.IsNullOrWhiteSpace(description))
 								description = null;
 							var flagsAttr = (string)exDefElem.Attribute("Flags");

@@ -94,7 +94,7 @@ namespace dnSpy.Bookmarks.Impl {
 			if (bookmarks == null)
 				throw new ArgumentNullException(nameof(bookmarks));
 			var bmImpls = new List<BookmarkImpl>(bookmarks.Length);
-			List<BMObject> objsToClose = null;
+			List<BMObject>? objsToClose = null;
 			lock (lockObj) {
 				for (int i = 0; i < bookmarks.Length; i++) {
 					var location = bookmarks[i].Location;
@@ -113,7 +113,7 @@ namespace dnSpy.Bookmarks.Impl {
 			return bmImpls.ToArray();
 		}
 
-		void AddCore(List<BookmarkImpl> bookmarks, List<BMObject> objsToClose) {
+		void AddCore(List<BookmarkImpl> bookmarks, List<BMObject>? objsToClose) {
 			uiDispatcher.VerifyAccess();
 			var added = new List<Bookmark>(bookmarks.Count);
 			lock (lockObj) {

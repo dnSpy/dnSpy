@@ -244,7 +244,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef!.Modules.SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.NameOnly.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
@@ -285,7 +285,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDef.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
+						if (friendAssemblies.Contains(assembly.AssemblyDef!.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
 							foreach (var m in assembly.AssemblyDef.Modules)
 								yield return m;
 						}

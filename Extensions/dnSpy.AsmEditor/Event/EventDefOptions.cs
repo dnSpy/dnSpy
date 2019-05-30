@@ -23,11 +23,11 @@ using dnlib.DotNet;
 namespace dnSpy.AsmEditor.Event {
 	sealed class EventDefOptions {
 		public EventAttributes Attributes;
-		public UTF8String Name;
-		public ITypeDefOrRef EventType;
-		public MethodDef AddMethod;
-		public MethodDef InvokeMethod;
-		public MethodDef RemoveMethod;
+		public UTF8String? Name;
+		public ITypeDefOrRef? EventType;
+		public MethodDef? AddMethod;
+		public MethodDef? InvokeMethod;
+		public MethodDef? RemoveMethod;
 		public List<MethodDef> OtherMethods = new List<MethodDef>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 

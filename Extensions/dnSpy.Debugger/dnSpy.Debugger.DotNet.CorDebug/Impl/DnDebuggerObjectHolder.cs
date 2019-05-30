@@ -69,8 +69,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public override void Dispose() {
-			obj = null;
-			engine = null;
+			obj = null!;
+			engine = null!;
 		}
 	}
 }

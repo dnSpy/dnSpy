@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 			this.textFormatterProvider = textFormatterProvider;
 		}
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) {
 			if (wpfTextViewHost.TextView.Roles.Contains(PredefinedDsTextViewRoles.CustomLineNumberMargin))
 				return null;
 			return new LineNumberMargin(wpfTextViewHost, classificationFormatMapService, themeClassificationTypeService, textFormatterProvider);
@@ -56,12 +56,12 @@ namespace dnSpy.Text.Editor {
 
 	sealed class LineNumberMargin : LineNumberMarginBase {
 		readonly IClassificationType lineNumberClassificationType;
-		TextFormattingRunProperties lineNumberTextFormattingRunProperties;
+		TextFormattingRunProperties? lineNumberTextFormattingRunProperties;
 
 		public LineNumberMargin(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, ITextFormatterProvider textFormatterProvider)
 			: base(PredefinedMarginNames.LineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => lineNumberClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.LineNumber);
 
-		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state) {
+		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState? state) {
 			if (!viewLine.IsFirstTextViewLineForSnapshotLine)
 				return null;
 			if (state == null)
@@ -74,8 +74,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected override TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, LineNumberState state, int lineNumber) =>
-			lineNumberTextFormattingRunProperties;
-		protected override TextFormattingRunProperties GetDefaultTextFormattingRunProperties() => lineNumberTextFormattingRunProperties;
+			lineNumberTextFormattingRunProperties!;
+		protected override TextFormattingRunProperties? GetDefaultTextFormattingRunProperties() => lineNumberTextFormattingRunProperties;
 		protected override void OnTextPropertiesChangedCore() =>
 			lineNumberTextFormattingRunProperties = classificationFormatMap.GetTextProperties(lineNumberClassificationType);
 		protected override void UnregisterEventsCore() => lineNumberTextFormattingRunProperties = null;

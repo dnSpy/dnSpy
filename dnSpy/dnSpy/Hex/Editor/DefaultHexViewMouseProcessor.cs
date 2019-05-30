@@ -223,7 +223,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 		bool mouseCaptured;
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 		double dispatcherTimerXCoord;
 
 		void StopScrolling() {

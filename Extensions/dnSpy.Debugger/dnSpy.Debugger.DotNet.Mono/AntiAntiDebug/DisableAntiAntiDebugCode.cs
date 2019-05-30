@@ -19,6 +19,7 @@
 
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
@@ -26,7 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Mono;
 namespace dnSpy.Debugger.DotNet.Mono.AntiAntiDebug {
 	// The native API funcs won't return true so disable the fixes
 	abstract class DisableAntiAntiDebugCode : IDbgNativeFunctionHook {
-		static bool TryGetInternalRuntime(DbgProcess process, out DbgMonoDebugInternalRuntime runtime) {
+		static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhenTrue] out DbgMonoDebugInternalRuntime? runtime) {
 			runtime = null;
 			var dbgRuntime = process.Runtimes.FirstOrDefault();
 			Debug.Assert(dbgRuntime != null);
@@ -38,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Mono.AntiAntiDebug {
 		}
 
 		public bool IsEnabled(DbgNativeFunctionHookContext context) => TryGetInternalRuntime(context.Process, out _);
-		public void Hook(DbgNativeFunctionHookContext context, out string errorMessage) => errorMessage = null;
+		public void Hook(DbgNativeFunctionHookContext context, out string? errorMessage) => errorMessage = null;
 	}
 
 	[ExportDbgNativeFunctionHook("kernel32.dll", "CheckRemoteDebuggerPresent", new DbgArchitecture[0], new[] { DbgOperatingSystem.Windows }, 0)]

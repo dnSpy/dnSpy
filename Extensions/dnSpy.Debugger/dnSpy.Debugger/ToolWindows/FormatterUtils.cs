@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.ToolWindows {
 			return sb.ToString();
 		}
 
-		public static T Write<T>(this T output, DbgAppDomain appDomain) where T : IDbgTextWriter {
+		public static T Write<T>(this T output, DbgAppDomain? appDomain) where T : IDbgTextWriter {
 			if (appDomain == null)
 				output.Write(DbgTextColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
 			else {

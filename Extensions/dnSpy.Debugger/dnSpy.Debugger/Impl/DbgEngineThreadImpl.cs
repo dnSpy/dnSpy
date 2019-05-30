@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove(DbgEngineMessageFlags messageFlags) => thread.Remove(messageFlags);
 
-		DbgAppDomainImpl VerifyOptionalAppDomain(DbgAppDomain appDomain) {
+		DbgAppDomainImpl? VerifyOptionalAppDomain(DbgAppDomain? appDomain) {
 			if (appDomain == null)
 				return null;
 			var appDomainImpl = appDomain as DbgAppDomainImpl;
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Impl {
 			return appDomainImpl;
 		}
 
-		public override void Update(UpdateOptions options, DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, ReadOnlyCollection<DbgStateInfo> state) {
+		public override void Update(UpdateOptions options, DbgAppDomain? appDomain, string? kind, ulong id, ulong? managedId, string? name, int suspendedCount, ReadOnlyCollection<DbgStateInfo>? state) {
 			var appDomainImpl = VerifyOptionalAppDomain(appDomain);
 			thread.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 				if (thread.IsClosed)

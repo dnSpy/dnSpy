@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 	[ExportTextViewOptionsGroupNameProvider]
 	sealed class TextViewOptionsGroupNameProvider : ITextViewOptionsGroupNameProvider {
-		public string TryGetGroupName(IWpfTextView textView) {
+		public string? TryGetGroupName(IWpfTextView textView) {
 			if (textView.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer))
 				return PredefinedTextViewGroupNames.DocumentViewer;
 			return null;

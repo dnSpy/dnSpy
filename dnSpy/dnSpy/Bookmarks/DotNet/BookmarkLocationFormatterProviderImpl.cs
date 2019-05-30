@@ -30,7 +30,7 @@ namespace dnSpy.Bookmarks.DotNet {
 		BookmarkLocationFormatterProviderImpl(Lazy<BookmarkFormatterService> bookmarkFormatterService) =>
 			this.bookmarkFormatterService = bookmarkFormatterService;
 
-		public override BookmarkLocationFormatter Create(BookmarkLocation location) {
+		public override BookmarkLocationFormatter? Create(BookmarkLocation location) {
 			switch (location) {
 			case DotNetMethodBodyBookmarkLocationImpl loc:
 				var formatter = loc.Formatter;

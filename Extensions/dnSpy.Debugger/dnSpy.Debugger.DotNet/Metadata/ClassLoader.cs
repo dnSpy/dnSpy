@@ -118,7 +118,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			var states = new List<ModuleState>(visibleDocs.Count);
 			foreach (var info in visibleDocs) {
-				oldLoadedClasses.TryGetValue(info.document.DbgModule, out var hash);
+				HashSet<uint>? hash;
+				oldLoadedClasses.TryGetValue(info.document.DbgModule, out hash);
 				states.Add(new ModuleState(info.document, info.documentNode, hash));
 			}
 
@@ -176,10 +177,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		sealed class ModuleState {
 			public DynamicModuleDefDocument Document { get; }
 			public ModuleDocumentNode ModuleNode { get; }
-			public HashSet<uint> LoadClassHash { get; }
+			public HashSet<uint>? LoadClassHash { get; }
 			public HashSet<uint> ModifiedTypes { get; }
 
-			public ModuleState(DynamicModuleDefDocument document, ModuleDocumentNode moduleNode, HashSet<uint> loadClassHash) {
+			public ModuleState(DynamicModuleDefDocument document, ModuleDocumentNode moduleNode, HashSet<uint>? loadClassHash) {
 				Document = document ?? throw new ArgumentNullException(nameof(document));
 				ModuleNode = moduleNode ?? throw new ArgumentNullException(nameof(moduleNode));
 				LoadClassHash = loadClassHash;

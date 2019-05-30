@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="s">String</param>
 		/// <returns></returns>
-		public static MemoryStream StringToStream(string s) {
+		public static MemoryStream StringToStream(string? s) {
 			var outStream = new MemoryStream();
 			var writer = new StreamWriter(outStream, Encoding.UTF8);
 			writer.Write(s);
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (fo == 0)
 				return;
 
-			var mod = (node as DocumentTreeNodeData).GetModule();
+			var mod = (node as DocumentTreeNodeData)?.GetModule();
 			var filename = mod == null ? null : mod.Location;
 			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 			output.Write(": ", BoxedTextColor.Comment);
@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="stream">Stream</param>
 		/// <returns></returns>
-		public static string TryGetString(Stream stream) {
+		public static string? TryGetString(Stream stream) {
 			if (stream == null)
 				return null;
 

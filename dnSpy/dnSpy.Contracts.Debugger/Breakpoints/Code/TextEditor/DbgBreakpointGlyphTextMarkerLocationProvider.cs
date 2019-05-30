@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor {
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint</param>
 		/// <returns></returns>
-		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
+		public abstract GlyphTextMarkerLocationInfo? GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
 	/// <summary>Metadata</summary>

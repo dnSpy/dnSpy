@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		SaveAllToolbarCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.SaveAllToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftS);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.SaveAllToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftS);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = DsImagesAttribute.SaveAll, InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 				if (fileNode.Document.ModuleDef != null) {
 					var file = fileNode.Document;
-					var uo = undoCommandService.Value.GetUndoObject(file);
+					var uo = undoCommandService.Value.GetUndoObject(file)!;
 					if (undoCommandService.Value.IsModified(uo)) {
 						hash.Add(file);
 						added = true;
@@ -113,7 +113,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 				var doc = hexBufferService.Value.TryGet(fileNode.Document.Filename);
 				if (doc != null) {
-					var uo = undoCommandService.Value.GetUndoObject(doc);
+					var uo = undoCommandService.Value.GetUndoObject(doc)!;
 					if (undoCommandService.Value.IsModified(uo)) {
 						hash.Add(doc);
 						added = true;
@@ -135,6 +135,6 @@ namespace dnSpy.AsmEditor.SaveModule {
 			documentSaver.Value.Save(asmNodes);
 		}
 
-		public override string GetHeader(AsmEditorContext context) => GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
+		public override string? GetHeader(AsmEditorContext context) => GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
 	}
 }

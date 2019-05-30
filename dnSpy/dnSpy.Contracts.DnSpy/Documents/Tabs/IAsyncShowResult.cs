@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// The caught exception or null if none
 		/// </summary>
-		Exception Exception { get; }
+		Exception? Exception { get; }
 
 		/// <summary>
 		/// true if it was canceled (the cancellation token threw an exception)

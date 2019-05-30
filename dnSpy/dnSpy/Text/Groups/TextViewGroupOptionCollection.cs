@@ -42,7 +42,7 @@ namespace dnSpy.Text.Groups {
 			return false;
 		}
 
-		public object GetOptionValue(string optionId) {
+		public object? GetOptionValue(string optionId) {
 			foreach (var option in Options) {
 				if (option.OptionId == optionId)
 					return option.Value;
@@ -50,7 +50,7 @@ namespace dnSpy.Text.Groups {
 			throw new ArgumentException($"Invalid optionId: {optionId}", nameof(optionId));
 		}
 
-		public void SetOptionValue(string optionId, object value) {
+		public void SetOptionValue(string optionId, object? value) {
 			foreach (var option in Options) {
 				if (option.OptionId == optionId) {
 					option.Value = value;

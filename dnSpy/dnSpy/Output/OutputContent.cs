@@ -36,9 +36,9 @@ namespace dnSpy.Output {
 
 	[Export(typeof(IOutputContent))]
 	sealed class OutputContent : IOutputContent {
-		public object UIObject => OutputControl;
-		public IInputElement FocusedElement => OutputService.FocusedElement;
-		public FrameworkElement ZoomElement => OutputControl;
+		public object? UIObject => OutputControl;
+		public IInputElement? FocusedElement => OutputService.FocusedElement;
+		public FrameworkElement? ZoomElement => OutputControl;
 		public double ZoomLevel => OutputService.ZoomLevel;
 		IOutputServiceInternal OutputService => vmOutput.Value;
 

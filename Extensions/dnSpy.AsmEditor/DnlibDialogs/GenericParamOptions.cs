@@ -24,8 +24,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class GenericParamOptions {
 		public ushort Number;
 		public GenericParamAttributes Flags;
-		public UTF8String Name;
-		public ITypeDefOrRef Kind;
+		public UTF8String? Name;
+		public ITypeDefOrRef? Kind;
 		public List<GenericParamConstraint> GenericParamConstraints = new List<GenericParamConstraint>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 

@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		GoToCommandTargetFilterProvider(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView == null)
 				return null;
@@ -57,12 +57,12 @@ namespace dnSpy.Text.Editor {
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) =>
 			group == CommandConstants.TextEditorGroup && (TextEditorIds)cmdId == TextEditorIds.GOTOLINE ? CommandTargetStatus.Handled : CommandTargetStatus.NotHandled;
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == CommandConstants.TextEditorGroup && (TextEditorIds)cmdId == TextEditorIds.GOTOLINE) {
 				int lineNumber;
 				int? columnNumber;
@@ -108,7 +108,7 @@ namespace dnSpy.Text.Editor {
 
 			var res = messageBoxService.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out var line, out var column);
-				return Tuple.Create<int, int?>(line.Value, column);
+				return Tuple.Create<int, int?>(line!.Value, column);
 			}, s => {
 				return TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out var line, out var column);
 			}, ownerWindow);

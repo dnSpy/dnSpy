@@ -28,7 +28,7 @@ using dnSpy.Contracts.Hex.Files;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class BufferToDocumentNodeService {
-		public abstract PENode FindPENode(HexBufferFile file);
+		public abstract PENode? FindPENode(HexBufferFile file);
 	}
 
 	[Export(typeof(BufferToDocumentNodeService))]
@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		[ImportingConstructor]
 		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-		DsDocumentNode Find(HexBufferFile file) {
+		DsDocumentNode? Find(HexBufferFile file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			if (file.Filename == string.Empty)
@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			return documentTabService.DocumentTreeView.FindNode(doc);
 		}
 
-		public override PENode FindPENode(HexBufferFile file) {
+		public override PENode? FindPENode(HexBufferFile file) {
 			if (file == null)
 				throw new ArgumentNullException(nameof(file));
 			var docNode = Find(file);

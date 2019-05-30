@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -28,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Namespace or null
 		/// </summary>
-		public readonly string Namespace;
+		public readonly string? Namespace;
 
 		/// <summary>
 		/// Name
@@ -38,14 +40,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Nested type names, separated with '+'
 		/// </summary>
-		public readonly string Extra;
+		public readonly string? Extra;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="namespace">Namespace or null</param>
 		/// <param name="name">Name</param>
-		public DmdTypeName(string @namespace, string name) {
+		public DmdTypeName(string? @namespace, string name) {
 			Namespace = @namespace;
 			Name = name;
 			Extra = null;
@@ -57,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="namespace">Namespace or null</param>
 		/// <param name="name">Name</param>
 		/// <param name="extra">Nested type names, separated with '+'</param>
-		public DmdTypeName(string @namespace, string name, string extra) {
+		public DmdTypeName(string? @namespace, string name, string extra) {
 			Namespace = @namespace;
 			Name = name;
 			Extra = extra;
@@ -70,21 +72,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public static DmdTypeName Create(DmdType type) {
 			if (type.TypeSignatureKind == DmdTypeSignatureKind.Type) {
+				Debug.Assert(type.MetadataName != null);
 				var declType = type.DeclaringType;
-				if ((object)declType == null)
+				if (declType is null)
 					return new DmdTypeName(type.MetadataNamespace, type.MetadataName);
+				Debug.Assert(declType.MetadataName != null);
 
-				if ((object)declType.DeclaringType == null)
+				if (declType.DeclaringType is null)
 					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.MetadataName);
 
-				var list = ListCache<DmdType>.AllocList();
+				List<DmdType>? list = ListCache<DmdType>.AllocList();
 				for (;;) {
-					if ((object)type.DeclaringType == null)
+					if (type.DeclaringType is null)
 						break;
 					list.Add(type);
 					type = type.DeclaringType;
 				}
-				var sb = ObjectCache.AllocStringBuilder();
+				Debug.Assert(type.MetadataName != null);
+				StringBuilder? sb = ObjectCache.AllocStringBuilder();
 				for (int i = list.Count - 1; i >= 0; i--) {
 					if (i != list.Count - 1)
 						sb.Append('+');

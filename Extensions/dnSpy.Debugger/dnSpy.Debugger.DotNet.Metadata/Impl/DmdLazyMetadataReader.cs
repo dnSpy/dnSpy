@@ -23,11 +23,11 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdLazyMetadataReader : DmdMetadataReader {
 		readonly object lockObj;
-		Func<DmdLazyMetadataBytes> getMetadata;
-		Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory;
+		Func<DmdLazyMetadataBytes>? getMetadata;
+		Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader>? metadataReaderFactory;
 		DmdMetadataReader MetadataReader => __metadataReader_DONT_USE ?? InitializeMetadataReader();
-		volatile DmdMetadataReader __metadataReader_DONT_USE;
-		volatile DmdModuleImpl module;
+		volatile DmdMetadataReader? __metadataReader_DONT_USE;
+		volatile DmdModuleImpl? module;
 
 		public DmdLazyMetadataReader(Func<DmdLazyMetadataBytes> getMetadata, Func<DmdModuleImpl, DmdLazyMetadataBytes, DmdMetadataReader> metadataReaderFactory) {
 			lockObj = new object();
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return reader;
 				if (module == null)
 					throw new InvalidOperationException();
-				reader = metadataReaderFactory(module, getMetadata());
+				reader = metadataReaderFactory!(module, getMetadata!());
 				module = null;
 				getMetadata = null;
 				metadataReaderFactory = null;
@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			add => typesUpdated += value;
 			remove => typesUpdated -= value;
 		}
-		EventHandler<DmdTypesUpdatedEventArgs> typesUpdated;
+		EventHandler<DmdTypesUpdatedEventArgs>? typesUpdated;
 
 		internal void SetModule(DmdModuleImpl module) {
 			lock (lockObj)
@@ -68,15 +68,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override int MDStreamVersion => MetadataReader.MDStreamVersion;
 		public override string ModuleScopeName => MetadataReader.ModuleScopeName;
 		public override string ImageRuntimeVersion => MetadataReader.ImageRuntimeVersion;
-		public override DmdMethodInfo EntryPoint => MetadataReader.EntryPoint;
+		public override DmdMethodInfo? EntryPoint => MetadataReader.EntryPoint;
 		public override DmdTypeDef[] GetTypes() => MetadataReader.GetTypes();
 		public override DmdTypeRef[] GetExportedTypes() => MetadataReader.GetExportedTypes();
-		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override byte[] ResolveSignature(int metadataToken) => MetadataReader.ResolveSignature(metadataToken);
+		public override DmdMethodBase? ResolveMethod(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdFieldInfo? ResolveField(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdType? ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdMemberInfo? ResolveMember(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdMethodSignature? ResolveMethodSignature(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => MetadataReader.ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override byte[]? ResolveSignature(int metadataToken) => MetadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => MetadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => MetadataReader.GetPEKind(out peKind, out machine);
 		public override DmdReadOnlyAssemblyName GetName() => MetadataReader.GetName();

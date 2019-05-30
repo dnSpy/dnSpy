@@ -25,7 +25,7 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetHeapsReader {
-		public DotNetHeap[] Streams { get; private set; }
+		public DotNetHeap[]? Streams { get; private set; }
 
 		readonly HexBufferFile file;
 		readonly DotNetMetadataHeaderData mdHeader;
@@ -53,12 +53,12 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		DotNetHeap[] CreateCompressedHeaps() {
 			var list = new List<DotNetHeap>();
-			StringsHeap stringsHeap = null;
-			USHeap usHeap = null;
-			BlobHeap blobHeap = null;
-			GUIDHeap guidHeap = null;
-			TablesHeap tablesHeap = null;
-			PdbHeap pdbHeap = null;
+			StringsHeap? stringsHeap = null;
+			USHeap? usHeap = null;
+			BlobHeap? blobHeap = null;
+			GUIDHeap? guidHeap = null;
+			TablesHeap? tablesHeap = null;
+			PdbHeap? pdbHeap = null;
 			for (int i = storageStreamHeaders.Length - 1; i >= 0; i--) {
 				var ssh = storageStreamHeaders[i];
 				var span = new HexBufferSpan(file.Buffer, ssh.DataSpan);
@@ -125,11 +125,11 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		DotNetHeap[] CreateENCHeaps() {
 			var list = new List<DotNetHeap>();
-			StringsHeap stringsHeap = null;
-			USHeap usHeap = null;
-			BlobHeap blobHeap = null;
-			GUIDHeap guidHeap = null;
-			TablesHeap tablesHeap = null;
+			StringsHeap? stringsHeap = null;
+			USHeap? usHeap = null;
+			BlobHeap? blobHeap = null;
+			GUIDHeap? guidHeap = null;
+			TablesHeap? tablesHeap = null;
 			foreach (var ssh in storageStreamHeaders) {
 				var span = new HexBufferSpan(file.Buffer, ssh.DataSpan);
 

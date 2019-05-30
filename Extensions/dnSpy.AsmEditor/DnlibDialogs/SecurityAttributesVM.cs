@@ -23,7 +23,7 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute> {
-		public SecurityAttributesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+		public SecurityAttributesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod)
 			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 

@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 	readonly struct MethodDebugInfoResult {
 		public int MethodVersion { get; }
 		public DbgMethodDebugInfo DebugInfoOrNull { get; }
-		public DbgMethodDebugInfo StateMachineDebugInfoOrNull { get; }
-		public MethodDebugInfoResult(int methodVersion, DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull) {
+		public DbgMethodDebugInfo? StateMachineDebugInfoOrNull { get; }
+		public MethodDebugInfoResult(int methodVersion, DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo? stateMachineDebugInfoOrNull) {
 			if (methodVersion < 1)
 				throw new ArgumentOutOfRangeException(nameof(methodVersion));
 			MethodVersion = methodVersion;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		public override MethodDebugInfoResult GetMethodDebugInfo(DbgRuntime runtime, IDecompiler decompiler, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
-			ModuleDef mdModule;
+			ModuleDef? mdModule;
 			MethodDebugInfoResultKey key;
 			if (location.DbgModule is DbgModule dbgModule) {
 				key = new MethodDebugInfoResultKey(dbgModule, location.Token);
@@ -73,7 +73,6 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 			else {
 				key = new MethodDebugInfoResultKey(location.Module, location.Token);
-				dbgModule = null;
 				mdModule = dbgMetadataService.TryGetMetadata(location.Module, loadModuleOptions);
 			}
 			return GetMethodDebugInfo(runtime, key, decompiler, mdModule, location.Token, cancellationToken);
@@ -81,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		readonly struct MethodDebugInfoResultKey {
 			readonly uint token;
-			readonly DbgModule module;
+			readonly DbgModule? module;
 			readonly ModuleId moduleId;
 			readonly int refreshedVersion;
 
@@ -111,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			public readonly List<(MethodDebugInfoResultKey key, MethodDebugInfoResult result)> DebugInfos = new List<(MethodDebugInfoResultKey key, MethodDebugInfoResult result)>(MAX_CACHED_DEBUG_INFOS);
 		}
 
-		MethodDebugInfoResult GetMethodDebugInfo(DbgRuntime runtime, in MethodDebugInfoResultKey key, IDecompiler decompiler, ModuleDef mdModule, uint token, CancellationToken cancellationToken) {
+		MethodDebugInfoResult GetMethodDebugInfo(DbgRuntime runtime, in MethodDebugInfoResultKey key, IDecompiler decompiler, ModuleDef? mdModule, uint token, CancellationToken cancellationToken) {
 			Debug.Assert(mdModule != null);
 			if (mdModule == null)
 				return default;
@@ -184,18 +183,18 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		static class DecompilerOutputImplCache {
-			static DecompilerOutputImpl instance;
+			static DecompilerOutputImpl? instance;
 			public static DecompilerOutputImpl Alloc() => Interlocked.Exchange(ref instance, null) ?? new DecompilerOutputImpl();
-			public static void Free(ref DecompilerOutputImpl inst) {
-				var tmp = inst;
+			public static void Free(ref DecompilerOutputImpl? inst) {
+				var tmp = inst!;
 				inst = null;
 				tmp.Clear();
 				instance = tmp;
 			}
 		}
 
-		(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo stateMachineDebugInfoOrNull) TryDecompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
-			var output = DecompilerOutputImplCache.Alloc();
+		(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo? stateMachineDebugInfoOrNull) TryDecompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
+			DecompilerOutputImpl? output = DecompilerOutputImplCache.Alloc();
 			output.Initialize(methodToken);
 			decompiler.Decompile(method, output, decContext);
 			var info = output.TryGetMethodDebugInfo();

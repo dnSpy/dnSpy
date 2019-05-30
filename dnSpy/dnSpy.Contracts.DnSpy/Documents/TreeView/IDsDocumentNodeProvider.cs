@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="owner">Owner node or null if owner is the root node</param>
 		/// <param name="document">New document</param>
 		/// <returns></returns>
-		DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document);
+		DsDocumentNode? Create(IDocumentTreeView documentTreeView, DsDocumentNode? owner, IDsDocument document);
 	}
 
 	/// <summary>Metadata</summary>

@@ -87,8 +87,8 @@ namespace dnSpy.Hex.Editor {
 		public override event EventHandler ViewportWidthChanged;
 		public override event EventHandler<HexViewLayoutChangedEventArgs> LayoutChanged;
 		public override event EventHandler<VSTE.ZoomLevelChangedEventArgs> ZoomLevelChanged;
-		public override HexFormattedLineSource FormattedLineSource => formattedLineSource;
-		HexFormattedLineSource formattedLineSource;
+		public override HexFormattedLineSource FormattedLineSource => formattedLineSource!;
+		HexFormattedLineSource? formattedLineSource;
 		public override bool InLayout => inLayout;
 		bool inLayout;
 		public override HexViewLineCollection HexViewLines => WpfHexViewLines;
@@ -339,7 +339,7 @@ namespace dnSpy.Hex.Editor {
 			else
 				RefreshScreen();
 		}
-		DispatcherTimer screenRefreshTimer;
+		DispatcherTimer? screenRefreshTimer;
 
 		void RefreshScreen() => DelayLayoutLines(true);
 		void RefreshScreenHandler(object sender, EventArgs e) {
@@ -534,7 +534,7 @@ namespace dnSpy.Hex.Editor {
 			}));
 		}
 
-		public override Brush Background {
+		public override Brush? Background {
 			get => canvas.Background;
 			set {
 				if (canvas.Background != value) {
@@ -574,10 +574,10 @@ namespace dnSpy.Hex.Editor {
 					throw new InvalidOperationException();
 				if (wpfHexViewLineCollection == null)
 					DoDelayDisplayLines();
-				return wpfHexViewLineCollection;
+				return wpfHexViewLineCollection!;
 			}
 		}
-		WpfHexViewLineCollectionImpl wpfHexViewLineCollection;
+		WpfHexViewLineCollectionImpl? wpfHexViewLineCollection;
 
 		public override double LineHeight => FormattedLineSource.LineHeight;
 		public override double ViewportTop => viewportTop;
@@ -848,6 +848,9 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
+			Debug.Assert(layoutHelper.AllVisibleLines != null);
+			Debug.Assert(layoutHelper.NewOrReformattedLines != null);
+			Debug.Assert(layoutHelper.TranslatedLines != null);
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
 			wpfHexViewLineCollection = new WpfHexViewLineCollectionImpl(this, layoutHelper.AllVisibleLines);
@@ -898,7 +901,7 @@ namespace dnSpy.Hex.Editor {
 			RaiseLayoutChanged(viewportWidthOverride, viewportHeightOverride, newOrReformattedLines, translatedLines);
 		}
 
-		void RaiseBufferLinesChanged(HexBufferLineFormatter oldBufferLines) {
+		void RaiseBufferLinesChanged(HexBufferLineFormatter? oldBufferLines) {
 			// Always access the property so it's recreated if the backing field is null
 			var newBufferLines = BufferLines;
 			BufferLinesChanged?.Invoke(this, new BufferLinesChangedEventArgs(oldBufferLines, newBufferLines));
@@ -1004,7 +1007,7 @@ namespace dnSpy.Hex.Editor {
 
 			canvas.Loaded += WpfHexView_Loaded;
 		}
-		MetroWindow metroWindow;
+		MetroWindow? metroWindow;
 
 		void WpfHexView_Loaded(object sender, RoutedEventArgs e) {
 			canvas.Loaded -= WpfHexView_Loaded;
@@ -1030,10 +1033,11 @@ namespace dnSpy.Hex.Editor {
 					__lineTransformProvider = lineTransformProviderService.Create(this, removeExtraTextLineVerticalPixels);
 					recreateLineTransformProvider = false;
 				}
+				Debug.Assert(__lineTransformProvider != null);
 				return __lineTransformProvider;
 			}
 		}
-		HexLineTransformProvider __lineTransformProvider;
+		HexLineTransformProvider? __lineTransformProvider;
 		bool recreateLineTransformProvider;
 		bool removeExtraTextLineVerticalPixels;
 
@@ -1090,8 +1094,8 @@ namespace dnSpy.Hex.Editor {
 				return hexBufferLineFormatter;
 			}
 		}
-		HexBufferLineFormatterOptions hexBufferLineFormatterOptions;
-		HexBufferLineFormatter hexBufferLineFormatter;
+		HexBufferLineFormatterOptions? hexBufferLineFormatterOptions;
+		HexBufferLineFormatter? hexBufferLineFormatter;
 		bool recreateHexBufferLineFormatter;
 
 		void InvalidateHexBufferLineFormatter() {

@@ -26,11 +26,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public BreakpointKind Kind { get; }
 		public ImageReference? ImageReference { get; }
 		public string MarkerTypeName { get; }
-		public string SelectedMarkerTypeName { get; }
-		public IClassificationType ClassificationType { get; }
+		public string? SelectedMarkerTypeName { get; }
+		public IClassificationType? ClassificationType { get; }
 		public int ZIndex { get; }
 
-		public BreakpointInfo(BreakpointKind kind, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex) {
+		public BreakpointInfo(BreakpointKind kind, string markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex) {
 			Kind = kind;
 			ImageReference = BreakpointImageUtilities.GetImage(kind);
 			MarkerTypeName = markerTypeName ?? throw new ArgumentNullException(nameof(markerTypeName));

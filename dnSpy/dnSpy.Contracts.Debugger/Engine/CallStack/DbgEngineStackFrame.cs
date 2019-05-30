@@ -33,12 +33,12 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		/// <summary>
 		/// Gets the module or null if it's unknown
 		/// </summary>
-		public abstract DbgModule Module { get; }
+		public abstract DbgModule? Module { get; }
 
 		/// <summary>
 		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
 		/// </summary>
-		public abstract DbgCodeLocation Location { get; }
+		public abstract DbgCodeLocation? Location { get; }
 
 		/// <summary>
 		/// Gets the offset of the IP relative to the start of the function
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Debugger.Engine.CallStack {
 		/// <param name="valueOptions">Value option</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public virtual bool TryFormat(DbgEvaluationContext context, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, CancellationToken cancellationToken) => false;
+		public virtual bool TryFormat(DbgEvaluationContext context, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo, CancellationToken cancellationToken) => false;
 
 		/// <summary>
 		/// Called after the <see cref="DbgStackFrame"/> has been created

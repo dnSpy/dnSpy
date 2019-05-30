@@ -61,7 +61,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 		protected BookmarksCtxMenuCommand(Lazy<IBookmarksContent> bookmarksContent) => this.bookmarksContent = bookmarksContent;
 
-		protected sealed override BookmarksCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override BookmarksCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != bookmarksContent.Value.ListView)
@@ -125,7 +125,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 		public override void Execute(BookmarksCtxMenuContext context) => context.Operations.EditLabels();
 		public override bool IsEnabled(BookmarksCtxMenuContext context) => context.Operations.CanEditLabels;
-		public override string GetInputGestureText(BookmarksCtxMenuContext context) => string.Format(dnSpy_Resources.ShortCutKeyCtrl_DIGIT, "2");
+		public override string? GetInputGestureText(BookmarksCtxMenuContext context) => string.Format(dnSpy_Resources.ShortCutKeyCtrl_DIGIT, "2");
 	}
 
 	[ExportMenuItem(Header = "res:RemoveBookmarkCommand", InputGestureText = "res:ShortCutKeyDelete", Icon = DsImagesAttribute.Cancel, Group = MenuConstants.GROUP_CTX_BOOKMARKS_CMDS1, Order = 0)]

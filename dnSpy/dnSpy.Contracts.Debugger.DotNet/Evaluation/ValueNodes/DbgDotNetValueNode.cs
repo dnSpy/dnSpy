@@ -33,22 +33,22 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <summary>
 		/// Gets the expected type or null
 		/// </summary>
-		public abstract DmdType ExpectedType { get; }
+		public abstract DmdType? ExpectedType { get; }
 
 		/// <summary>
 		/// Gets the actual type or null
 		/// </summary>
-		public abstract DmdType ActualType { get; }
+		public abstract DmdType? ActualType { get; }
 
 		/// <summary>
 		/// Gets the error message or null
 		/// </summary>
-		public abstract string ErrorMessage { get; }
+		public abstract string? ErrorMessage { get; }
 
 		/// <summary>
 		/// Gets the value or null
 		/// </summary>
-		public abstract DbgDotNetValue Value { get; }
+		public abstract DbgDotNetValue? Value { get; }
 
 		/// <summary>
 		/// Gets the name
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <summary>
 		/// Gets the format specifiers or null
 		/// </summary>
-		public abstract ReadOnlyCollection<string> FormatSpecifiers { get; }
+		public abstract ReadOnlyCollection<string>? FormatSpecifiers { get; }
 
 		/// <summary>
 		/// Returns true if it has children, false if it has no children and null if it's unknown (eg. it's too expensive to calculate it now).
@@ -113,7 +113,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) => false;
+		public virtual bool FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo? cultureInfo) => false;
 
 		/// <summary>
 		/// Formats the value column. Returns false if nothing was written to <paramref name="output"/>
@@ -124,7 +124,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo cultureInfo) => false;
+		public virtual bool FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo? cultureInfo) => false;
 
 		/// <summary>
 		/// Formats the expected type. Returns false if nothing was written to <paramref name="output"/>
@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) => false;
+		public virtual bool FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) => false;
 
 		/// <summary>
 		/// Formats the actual type. Returns false if nothing was written to <paramref name="output"/>
@@ -148,6 +148,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
 		/// <returns></returns>
-		public virtual bool FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) => false;
+		public virtual bool FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) => false;
 	}
 }

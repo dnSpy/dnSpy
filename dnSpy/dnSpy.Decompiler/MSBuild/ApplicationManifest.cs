@@ -36,7 +36,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.reader = reader;
 		}
 
-		public static ApplicationManifest TryCreate(Win32Resources resources, FilenameCreator filenameCreator) {
+		public static ApplicationManifest? TryCreate(Win32Resources resources, FilenameCreator filenameCreator) {
 			if (resources == null)
 				return null;
 

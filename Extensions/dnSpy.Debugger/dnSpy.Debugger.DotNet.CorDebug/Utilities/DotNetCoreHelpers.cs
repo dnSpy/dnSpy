@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Debugger.Shared;
@@ -30,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
 		public static readonly string DotNetExeName = FileUtilities.GetNativeExeFilename("dotnet");
 
-		public static string GetPathToDotNetExeHost(int bitness) {
+		public static string? GetPathToDotNetExeHost(int bitness) {
 			if (bitness != 32 && bitness != 64)
 				throw new ArgumentOutOfRangeException(nameof(bitness));
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
@@ -86,13 +87,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 					yield return installLocation;
 			}
 
-			bool TryGetInstallLocationFromRegistry(string regPath, out string installLocation) {
-				using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
-					installLocation = key?.GetValue("InstallLocation") as string;
-					return installLocation != null;
-				}
-			}
-
 			// Check default locations
 			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -103,6 +97,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 				yield return Path.Combine(progDir, dotnetDirName);
 			if (!string.IsNullOrEmpty(progDirX86))
 				yield return Path.Combine(progDirX86, dotnetDirName);
+		}
+
+		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
+			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
+				installLocation = key?.GetValue("InstallLocation") as string;
+				return installLocation != null;
+			}
 		}
 
 		public static string GetDebugShimFilename(int bitness) {

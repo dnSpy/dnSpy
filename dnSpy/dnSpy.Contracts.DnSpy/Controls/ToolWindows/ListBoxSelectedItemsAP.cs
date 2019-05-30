@@ -54,9 +54,9 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			inst.Initialize(lb, vmColl, ncc);
 		}
 
-		ListBox listBox;
-		IList vmColl;
-		INotifyCollectionChanged vmCollNcc;
+		ListBox? listBox;
+		IList? vmColl;
+		INotifyCollectionChanged? vmCollNcc;
 
 		void Initialize(ListBox listBox, IList vmColl, INotifyCollectionChanged vmCollNcc) {
 			UnregisterEvents();
@@ -77,11 +77,15 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		}
 
 		void RegisterEvents() {
+			Debug.Assert(listBox != null);
+			Debug.Assert(vmCollNcc != null);
 			listBox.SelectionChanged += ListBox_SelectionChanged;
 			vmCollNcc.CollectionChanged += VmCollNcc_CollectionChanged;
 		}
 
 		void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+			Debug.Assert(listBox != null);
+			Debug.Assert(vmColl != null);
 			if (ListBox_SelectionChanged_ignoreCalls)
 				return;
 			try {
@@ -103,6 +107,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		bool VmCollNcc_CollectionChanged_ignoreCalls;
 
 		void VmCollNcc_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+			Debug.Assert(listBox != null);
 			if (VmCollNcc_CollectionChanged_ignoreCalls)
 				return;
 			try {

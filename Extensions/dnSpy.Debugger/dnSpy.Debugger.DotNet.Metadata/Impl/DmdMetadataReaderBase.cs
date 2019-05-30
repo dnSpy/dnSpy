@@ -29,18 +29,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static DmdFieldInfo TryResolve(DmdFieldInfo member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveNoThrow() ?? member;
 		static DmdMethodBase TryResolve(DmdMethodBase member, DmdResolveOptions options) => (options & DmdResolveOptions.NoTryResolveRefs) != 0 ? member : member.ResolveMethodBaseNoThrow() ?? member;
 
-		public sealed override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdMethodBase? ResolveMethod(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
 				var method = ResolveMethodDef(rid);
-				if ((object)method != null)
+				if (!(method is null))
 					return method;
 				break;
 
 			case 0x0A:
 				var mr = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)mr != null) {
+				if (!(mr is null)) {
 					if (mr is DmdMethodBase methodRef)
 						return TryResolve(methodRef, options);
 					if ((options & DmdResolveOptions.ThrowOnError) != 0)
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)methodSpec != null)
+				if (!(methodSpec is null))
 					return TryResolve(methodSpec, options);
 				break;
 			}
@@ -60,18 +60,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdFieldInfo? ResolveField(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
 				var field = ResolveFieldDef(rid);
-				if ((object)field != null)
+				if (!(field is null))
 					return field;
 				break;
 
 			case 0x0A:
 				var memberRef = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)memberRef != null) {
+				if (!(memberRef is null)) {
 					if (memberRef is DmdFieldInfo fieldRef)
 						return TryResolve(fieldRef, options);
 					if ((options & DmdResolveOptions.ThrowOnError) != 0)
@@ -85,30 +85,30 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdType? ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
-				if ((object)typeRef != null)
+				if (!(typeRef is null))
 					return TryResolve(typeRef, options);
 				break;
 
 			case 0x02:
 				var typeDef = ResolveTypeDef(rid);
-				if ((object)typeDef != null)
+				if (!(typeDef is null))
 					return typeDef;
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)typeSpec != null)
+				if (!(typeSpec is null))
 					return TryResolve(typeSpec, options);
 				break;
 
 			case 0x27:
 				var exportedType = ResolveExportedType(rid);
-				if ((object)exportedType != null)
+				if (!(exportedType is null))
 					return exportedType;// Don't try to resolve it, callers want the actual reference
 				break;
 			}
@@ -118,54 +118,54 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdMemberInfo? ResolveMember(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
-				if ((object)typeRef != null)
+				if (!(typeRef is null))
 					return TryResolve(typeRef, options);
 				break;
 
 			case 0x02:
 				var typeDef = ResolveTypeDef(rid);
-				if ((object)typeDef != null)
+				if (!(typeDef is null))
 					return typeDef;
 				break;
 
 			case 0x04:
 				var field = ResolveFieldDef(rid);
-				if ((object)field != null)
+				if (!(field is null))
 					return field;
 				break;
 
 			case 0x06:
 				var method = ResolveMethodDef(rid);
-				if ((object)method != null)
+				if (!(method is null))
 					return method;
 				break;
 
 			case 0x0A:
 				var memberRef = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)memberRef != null)
+				if (!(memberRef is null))
 					return TryResolve(memberRef, options);
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)typeSpec != null)
+				if (!(typeSpec is null))
 					return TryResolve(typeSpec, options);
 				break;
 
 			case 0x27:
 				var exportedType = ResolveExportedType(rid);
-				if ((object)exportedType != null)
+				if (!(exportedType is null))
 					return exportedType;// Don't try to resolve it, callers want the actual reference
 				break;
 
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)methodSpec != null)
+				if (!(methodSpec is null))
 					return TryResolve(methodSpec, options);
 				break;
 			}
@@ -175,12 +175,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) {
+		public sealed override DmdMethodSignature? ResolveMethodSignature(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) {
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x11:
 				var methodSig = ResolveMethodSignature(rid, genericTypeArguments, genericMethodArguments);
-				if ((object)methodSig != null)
+				if (!(methodSig is null))
 					return methodSig;
 				break;
 			}
@@ -190,20 +190,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		protected abstract DmdTypeRef ResolveTypeRef(uint rid);
-		protected abstract DmdTypeDef ResolveTypeDef(uint rid);
-		protected abstract DmdFieldDef ResolveFieldDef(uint rid);
-		protected abstract DmdMethodBase ResolveMethodDef(uint rid);
-		protected abstract DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
-		protected abstract DmdEventDef ResolveEventDef(uint rid);
-		protected abstract DmdPropertyDef ResolvePropertyDef(uint rid);
-		protected abstract DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
-		protected abstract DmdTypeRef ResolveExportedType(uint rid);
-		protected abstract DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
-		protected abstract DmdMethodSignature ResolveMethodSignature(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
+		protected abstract DmdTypeRef? ResolveTypeRef(uint rid);
+		protected abstract DmdTypeDef? ResolveTypeDef(uint rid);
+		protected abstract DmdFieldDef? ResolveFieldDef(uint rid);
+		protected abstract DmdMethodBase? ResolveMethodDef(uint rid);
+		protected abstract DmdMemberInfo? ResolveMemberRef(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments);
+		protected abstract DmdEventDef? ResolveEventDef(uint rid);
+		protected abstract DmdPropertyDef? ResolvePropertyDef(uint rid);
+		protected abstract DmdType? ResolveTypeSpec(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments);
+		protected abstract DmdTypeRef? ResolveExportedType(uint rid);
+		protected abstract DmdMethodBase? ResolveMethodSpec(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments);
+		protected abstract DmdMethodSignature? ResolveMethodSignature(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments);
 
-		public sealed override byte[] ResolveSignature(int metadataToken) {
-			byte[] res;
+		public sealed override byte[]? ResolveSignature(int metadataToken) {
+			byte[]? res;
 			uint rid = (uint)(metadataToken & 0x00FFFFFF);
 			switch ((uint)metadataToken >> 24) {
 			case 0x04: res = ResolveFieldSignature(rid); break;
@@ -217,12 +217,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res ?? throw new ArgumentOutOfRangeException(nameof(metadataToken));
 		}
 
-		protected abstract byte[] ResolveFieldSignature(uint rid);
-		protected abstract byte[] ResolveMethodSignature(uint rid);
-		protected abstract byte[] ResolveMemberRefSignature(uint rid);
-		protected abstract byte[] ResolveStandAloneSigSignature(uint rid);
-		protected abstract byte[] ResolveTypeSpecSignature(uint rid);
-		protected abstract byte[] ResolveMethodSpecSignature(uint rid);
+		protected abstract byte[]? ResolveFieldSignature(uint rid);
+		protected abstract byte[]? ResolveMethodSignature(uint rid);
+		protected abstract byte[]? ResolveMemberRefSignature(uint rid);
+		protected abstract byte[]? ResolveStandAloneSigSignature(uint rid);
+		protected abstract byte[]? ResolveTypeSpecSignature(uint rid);
+		protected abstract byte[]? ResolveMethodSpecSignature(uint rid);
 
 		public sealed override string ResolveString(int metadataToken) {
 			if (((uint)metadataToken >> 24) != 0x70)

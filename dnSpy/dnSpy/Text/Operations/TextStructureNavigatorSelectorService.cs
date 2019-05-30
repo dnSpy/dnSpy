@@ -31,7 +31,7 @@ namespace dnSpy.Text.Operations {
 	sealed class TextStructureNavigatorSelectorService : ITextStructureNavigatorSelectorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ITextStructureNavigatorProvider, IContentTypeMetadata>[] textStructureNavigatorProviders;
-		ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata> providerSelector;
+		ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextStructureNavigatorProvider, IContentTypeMetadata>> textStructureNavigatorProviders) {

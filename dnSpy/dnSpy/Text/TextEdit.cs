@@ -43,9 +43,9 @@ namespace dnSpy.Text {
 		readonly List<ITextChange> changes;
 		readonly EditOptions options;
 		readonly int? reiteratedVersionNumber;
-		readonly object editTag;
+		readonly object? editTag;
 
-		public TextEdit(TextBuffer textBuffer, EditOptions options, int? reiteratedVersionNumber, object editTag) {
+		public TextEdit(TextBuffer textBuffer, EditOptions options, int? reiteratedVersionNumber, object? editTag) {
 			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			TextSnapshot = textBuffer.CurrentSnapshot;
 			changes = new List<ITextChange>();

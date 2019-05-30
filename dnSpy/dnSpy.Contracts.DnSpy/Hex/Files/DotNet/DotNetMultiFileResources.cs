@@ -50,6 +50,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ComplexData GetStructure(HexPosition position);
+		public abstract ComplexData? GetStructure(HexPosition position);
 	}
 }

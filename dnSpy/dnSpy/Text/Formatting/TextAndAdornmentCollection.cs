@@ -23,7 +23,9 @@ using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
+#pragma warning disable CS8644 // Type does not implement interface member. Nullability of reference types in interface implemented by the base type doesn't match.
 	sealed class TextAndAdornmentCollection : ReadOnlyCollection<ISequenceElement>, ITextAndAdornmentCollection {
+#pragma warning restore CS8644 // Type does not implement interface member. Nullability of reference types in interface implemented by the base type doesn't match.
 		public ITextAndAdornmentSequencer Sequencer { get; }
 
 		public TextAndAdornmentCollection(ITextAndAdornmentSequencer textAndAdornmentSequencer, IList<ISequenceElement> list)

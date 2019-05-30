@@ -34,12 +34,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			get {
 				if (__wpfDebugMessageDispatcher == null)
 					Interlocked.CompareExchange(ref __wpfDebugMessageDispatcher, new WpfDebugMessageDispatcher(Dispatcher), null);
-				return __wpfDebugMessageDispatcher;
+				return __wpfDebugMessageDispatcher!;
 			}
 		}
-		volatile WpfDebugMessageDispatcher __wpfDebugMessageDispatcher;
+		volatile WpfDebugMessageDispatcher? __wpfDebugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
+			Dispatcher = null!;
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -64,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			callDispatcherRunEvent.WaitOne();
 			callDispatcherRunEvent.Close();
-			callDispatcherRunEvent = null;
+			callDispatcherRunEvent = null!;
 
 			if (!terminate)
 				Dispatcher.Run();

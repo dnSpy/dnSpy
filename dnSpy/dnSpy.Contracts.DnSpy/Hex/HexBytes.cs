@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Hex {
 
 		readonly byte[] bytes;
 		readonly bool allValid;// Only used if the bit array is null
-		readonly BitArray validBytes;
+		readonly BitArray? validBytes;
 
 		/// <summary>
 		/// Constructor

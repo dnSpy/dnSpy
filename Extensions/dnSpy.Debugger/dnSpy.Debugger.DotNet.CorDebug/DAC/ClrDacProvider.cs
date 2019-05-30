@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			return clrDac ?? NullClrDac.Instance;
 		}
 
-		ClrDac CreateCore(int pid, string clrPath, IClrDacDebugger clrDacDebugger) {
-			DataTarget dataTarget = null;
+		ClrDac? CreateCore(int pid, string clrPath, IClrDacDebugger clrDacDebugger) {
+			DataTarget? dataTarget = null;
 			bool failed = true;
 			try {
 				// The timeout isn't used if Passive is used
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			}
 		}
 
-		static ClrInfo GetClrInfo(DataTarget dt, string clrPath) {
+		static ClrInfo? GetClrInfo(DataTarget dt, string clrPath) {
 			foreach (var clrInfo in dt.ClrVersions) {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(clrInfo.ModuleInfo.FileName, clrPath))
 					continue;

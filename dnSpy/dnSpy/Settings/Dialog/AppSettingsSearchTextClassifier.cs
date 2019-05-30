@@ -34,7 +34,7 @@ namespace dnSpy.Settings.Dialog {
 		[ImportingConstructor]
 		AppSettingsSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => appSettingsTextMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTextMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new AppSettingsSearchTextClassifier(appSettingsTextMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new AppSettingsSearchTextClassifier(appSettingsTextMatchHighlightClassificationType);
 	}
 
 	sealed class AppSettingsSearchTextClassifier : ITextClassifier {

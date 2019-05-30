@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="resourceDataType">Type of data to get</param>
 		/// <returns></returns>
-		public static ResourceData[] GetResourceData(IResourceDataProvider[] nodes, ResourceDataType resourceDataType) {
+		public static ResourceData[] GetResourceData(IResourceDataProvider[]? nodes, ResourceDataType resourceDataType) {
 			if (nodes == null)
 				return Array.Empty<ResourceData>();
 			return nodes.SelectMany(a => a.GetResourceData(resourceDataType)).ToArray();
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="useSubDirs">true to create sub directories, false to dump everything in the same folder</param>
 		/// <param name="resourceDataType">Type of data to save</param>
 		/// <param name="ownerWindow">Owner window</param>
-		public static void Save(IResourceDataProvider[] nodes, bool useSubDirs, ResourceDataType resourceDataType, Window ownerWindow = null) {
+		public static void Save(IResourceDataProvider[]? nodes, bool useSubDirs, ResourceDataType resourceDataType, Window? ownerWindow = null) {
 			if (nodes == null)
 				return;
 

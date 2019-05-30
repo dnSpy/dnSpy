@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.ToolBars {
 	/// </summary>
 	public abstract class ToolBarObjectBase : IToolBarObject {
 		/// <inheritdoc/>
-		public abstract object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
+		public abstract object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget);
 		/// <inheritdoc/>
 		public bool IsVisible(IToolBarItemContext context) => true;
 	}

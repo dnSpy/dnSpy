@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		/// <param name="location">Bookmark location</param>
 		/// <returns></returns>
-		public abstract BookmarkLocationFormatter Create(BookmarkLocation location);
+		public abstract BookmarkLocationFormatter? Create(BookmarkLocation location);
 	}
 
 	/// <summary>Metadata</summary>

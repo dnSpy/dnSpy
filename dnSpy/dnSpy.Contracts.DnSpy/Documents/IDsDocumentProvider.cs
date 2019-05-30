@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="documentService">Document manager</param>
 		/// <param name="documentInfo">Document to create</param>
 		/// <returns></returns>
-		IDsDocument Create(IDsDocumentService documentService, DsDocumentInfo documentInfo);
+		IDsDocument? Create(IDsDocumentService documentService, DsDocumentInfo documentInfo);
 
 		/// <summary>
 		/// Creates a <see cref="IDsDocumentNameKey"/> instance
@@ -42,6 +42,6 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="documentService">Document manager</param>
 		/// <param name="documentInfo">Document to create</param>
 		/// <returns></returns>
-		IDsDocumentNameKey CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo);
+		IDsDocumentNameKey? CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo);
 	}
 }

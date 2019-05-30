@@ -33,7 +33,7 @@ namespace dnSpy.Decompiler.ILSpy {
 			Copyright = "Copyright 2011-2014 AlphaSierraPapa for the SharpDevelop Team",
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 		}
 	}
 }

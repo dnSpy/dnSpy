@@ -24,6 +24,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// </summary>
 		/// <param name="filter">Filename filter</param>
 		/// <returns></returns>
-		byte[] Open(string filter = null);
+		byte[]? Open(string? filter = null);
 	}
 }

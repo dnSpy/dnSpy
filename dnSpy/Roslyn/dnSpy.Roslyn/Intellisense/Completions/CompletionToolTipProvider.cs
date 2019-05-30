@@ -40,7 +40,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 	sealed class CompletionToolTipProvider : IUIElementProvider<Completion, ICompletionSession> {
 		readonly IContentType contentType;
 		readonly ITaggedTextElementProviderService taggedTextElementProviderService;
-		WeakReference lastAsyncToolTipContentWeakReference;
+		WeakReference? lastAsyncToolTipContentWeakReference;
 
 		[ImportingConstructor]
 		CompletionToolTipProvider(IContentTypeRegistryService contentTypeRegistryService, ITaggedTextElementProviderService taggedTextElementProviderService) {
@@ -48,13 +48,13 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			this.taggedTextElementProviderService = taggedTextElementProviderService;
 		}
 
-		public UIElement GetUIElement(Completion itemToRender, ICompletionSession context, UIElementType elementType) {
+		public UIElement? GetUIElement(Completion itemToRender, ICompletionSession context, UIElementType elementType) {
 			if (elementType != UIElementType.Tooltip)
 				return null;
 
 			var lastAsyncToolTipContent = lastAsyncToolTipContentWeakReference?.Target as AsyncToolTipContent;
 			if (lastAsyncToolTipContent?.Session == context) {
-				lastAsyncToolTipContent.Cancel();
+				lastAsyncToolTipContent!.Cancel();
 				lastAsyncToolTipContentWeakReference = null;
 			}
 

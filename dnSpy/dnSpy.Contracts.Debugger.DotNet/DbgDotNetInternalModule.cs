@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		/// <summary>
 		/// Gets the reflection module or null if this isn't a managed module
 		/// </summary>
-		public abstract DmdModule ReflectionModule { get; }
+		public abstract DmdModule? ReflectionModule { get; }
 	}
 }

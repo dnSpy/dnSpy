@@ -41,7 +41,7 @@ namespace dnSpy.Settings {
 		public void RemoveSection(string name) => settingsSectionProvider.RemoveSection(name);
 		public void RemoveSection(ISettingsSection section) => settingsSectionProvider.RemoveSection(section);
 		public ISettingsSection[] SectionsWithName(string name) => Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
-		public ISettingsSection TryGetSection(string name) => Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
+		public ISettingsSection? TryGetSection(string name) => Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
 		public T Attribute<T>(string name) => sectionAttributes.Attribute<T>(name);
 		public void Attribute<T>(string name, T value) => sectionAttributes.Attribute(name, value);
 		public void RemoveAttribute(string name) => sectionAttributes.RemoveAttribute(name);

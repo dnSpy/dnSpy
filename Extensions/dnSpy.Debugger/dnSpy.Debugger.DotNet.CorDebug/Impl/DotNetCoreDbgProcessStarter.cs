@@ -20,13 +20,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	[ExportDbgProcessStarter(PredefinedDbgProcessStarterOrders.DotNetCore)]
 	sealed class DotNetCoreDbgProcessStarter : DbgProcessStarter {
-		string GetPathToDotNetExeHost() => DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
+		string? GetPathToDotNetExeHost() => DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
 
 		public override bool IsSupported(string filename, out ProcessStarterResult result) {
 			result = ProcessStarterResult.None;
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return true;
 		}
 
-		public override bool TryStart(string filename, out string error) {
+		public override bool TryStart(string filename, [NotNullWhenFalse] out string? error) {
 			var dotnetExeFilename = GetPathToDotNetExeHost();
 			Debug.Assert(dotnetExeFilename != null);
 			var startInfo = new ProcessStartInfo(dotnetExeFilename);

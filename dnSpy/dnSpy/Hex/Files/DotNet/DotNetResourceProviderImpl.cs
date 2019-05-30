@@ -53,7 +53,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders metadataHeaders, HexSpan? resourcesSpan)
+		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders? metadataHeaders, HexSpan? resourcesSpan)
 			: base(file) {
 			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
 			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
@@ -79,7 +79,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 		static readonly string[] defaultTags = new string[] { PredefinedBufferFileTags.DotNetResources };
 
-		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap stringsHeap) {
+		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap? stringsHeap) {
 			if (resourceTable == null)
 				return Array.Empty<ResourceInfo>();
 			var list = new List<ResourceInfo>((int)resourceTable.Rows);
@@ -126,7 +126,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override bool IsResourcePosition(HexPosition position) => ResourcesSpan.Contains(position);
 
-		public override DotNetEmbeddedResource GetResource(HexPosition position) {
+		public override DotNetEmbeddedResource? GetResource(HexPosition position) {
 			if (!IsResourcePosition(position))
 				return null;
 			int index = GetIndex(position);

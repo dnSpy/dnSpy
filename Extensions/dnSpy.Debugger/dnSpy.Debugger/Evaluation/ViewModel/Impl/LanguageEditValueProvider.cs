@@ -47,12 +47,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	abstract class LanguageEditValueProvider : IEditValueProvider {
-		public abstract DbgLanguage Language { get; set; }
+		public abstract DbgLanguage? Language { get; set; }
 		public abstract IEditValue Create(string text, EditValueFlags flags);
 	}
 
 	sealed class LanguageEditValueProviderImpl : LanguageEditValueProvider {
-		public override DbgLanguage Language {
+		public override DbgLanguage? Language {
 			get => language;
 			set {
 				if (language == value)
@@ -65,8 +65,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly UIDispatcher uiDispatcher;
 		readonly EditValueProviderService editValueProviderService;
 		readonly string defaultContentType;
-		IEditValueProvider editValueProvider;
-		DbgLanguage language;
+		IEditValueProvider? editValueProvider;
+		DbgLanguage? language;
 
 		public LanguageEditValueProviderImpl(UIDispatcher uiDispatcher, EditValueProviderService editValueProviderService, string defaultContentType) {
 			this.uiDispatcher = uiDispatcher ?? throw new ArgumentNullException(nameof(uiDispatcher));

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 <!-- Target dir is the same as dnSpy.exe so we'll overwrite some files when creating
 a self-contained .NET Core app (System.Security.Permissions (wrong lower version), WindowsBase
 (wrong file (15KB, should be 1.1MB))).
@@ -15,6 +15,7 @@ The workaround is to add WindowsDesktop above.
 
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <NullableContextOptions>enable</NullableContextOptions>
     <!-- If it's .NET Core, we can only use 32-bit only or 64-bit only exes. dnSpy-x86 isn't needed. -->
     <OutputPath Condition=" '$(IsDotNetCore)' != 'true' ">..\dnSpy\bin\$(Configuration)\</OutputPath>
 

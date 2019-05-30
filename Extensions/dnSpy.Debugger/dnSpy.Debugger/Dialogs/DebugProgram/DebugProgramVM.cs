@@ -29,17 +29,17 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		public object OptionsPages => optionsPages;
 		readonly ObservableCollection<OptionsPageVM> optionsPages;
 
-		public object OptionsPages_SelectedItem {
+		public object? OptionsPages_SelectedItem {
 			get => optionsPages_selectedItem;
 			set {
 				if (optionsPages_selectedItem == value)
 					return;
-				optionsPages_selectedItem = (OptionsPageVM)value;
+				optionsPages_selectedItem = (OptionsPageVM?)value;
 				OnPropertyChanged(nameof(OptionsPages_SelectedItem));
 				HasErrorUpdated();
 			}
 		}
-		OptionsPageVM optionsPages_selectedItem;
+		OptionsPageVM? optionsPages_selectedItem;
 
 		public StartDebuggingOptionsInfo StartDebuggingOptions {
 			get {

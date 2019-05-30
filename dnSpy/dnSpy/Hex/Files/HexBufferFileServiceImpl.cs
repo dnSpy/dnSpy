@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Files {
 			BufferFilesRemoved?.Invoke(this, new BufferFilesRemovedEventArgs(files.Select(a => a.Data).ToArray()));
 		}
 
-		public override HexBufferFile GetFile(HexPosition position, bool checkNestedFiles) {
+		public override HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles) {
 			var file = files.FindData(position);
 			if (file == null || !checkNestedFiles)
 				return file;

@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && GetModuleNode(nodes[0]) != null;
 
-		static ModuleDocumentNode GetModuleNode(DocumentTreeNodeData node) {
+		static ModuleDocumentNode? GetModuleNode(DocumentTreeNodeData node) {
 			if (node is AssemblyDocumentNode asmNode) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				return asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
@@ -157,17 +157,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		readonly struct ModuleResult {
-			public IAssembly Assembly { get; }
+			public IAssembly? Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
-			public ModuleResult(IAssembly assembly, byte[] bytes, DebugFileResult debugFile) {
+			public ModuleResult(IAssembly? assembly, byte[] bytes, DebugFileResult debugFile) {
 				Assembly = assembly;
 				RawBytes = bytes;
 				DebugFile = debugFile;
 			}
 		}
 
-		static ModuleResult? GetModuleBytes(string filename) {
+		static ModuleResult? GetModuleBytes(string? filename) {
 			if (!File.Exists(filename))
 				return null;
 			try {

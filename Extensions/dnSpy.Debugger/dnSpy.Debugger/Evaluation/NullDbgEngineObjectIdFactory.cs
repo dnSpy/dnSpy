@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public static readonly DbgEngineObjectIdFactory Instance = new NullDbgEngineObjectIdFactory();
 		NullDbgEngineObjectIdFactory() { }
 		public override bool CanCreateObjectId(DbgEngineValue value) => false;
-		public override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) => null;
+		public override DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id) => null;
 		public override bool Equals(DbgEngineObjectId objectId, DbgEngineValue value) => false;
 		public override int GetHashCode(DbgEngineObjectId objectId) => 0;
 		public override int GetHashCode(DbgEngineValue value) => 0;

@@ -29,7 +29,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 	readonly struct VisualBasicPrimitiveValueFormatter {
 		readonly IDbgTextWriter output;
 		readonly ValueFormatterOptions options;
-		readonly CultureInfo cultureInfo;
+		readonly CultureInfo? cultureInfo;
 
 		const string Keyword_true = "True";
 		const string Keyword_false = "False";
@@ -49,7 +49,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		bool ShowTokens => (options & ValueFormatterOptions.Tokens) != 0;
 		bool FullString => (options & ValueFormatterOptions.FullString) != 0;
 
-		public VisualBasicPrimitiveValueFormatter(IDbgTextWriter output, ValueFormatterOptions options, CultureInfo cultureInfo) {
+		public VisualBasicPrimitiveValueFormatter(IDbgTextWriter output, ValueFormatterOptions options, CultureInfo? cultureInfo) {
 			this.output = output;
 			this.options = options;
 			this.cultureInfo = cultureInfo;
@@ -228,7 +228,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 
 		void WriteEnumField(DmdFieldInfo field) {
 			if (Edit) {
-				FormatType(field.ReflectedType);
+				FormatType(field.ReflectedType!);
 				OutputWrite(".", DbgTextColor.Operator);
 			}
 			OutputWrite(VisualBasicTypeFormatter.GetFormattedIdentifier(field.Name), DbgTextColor.EnumField);

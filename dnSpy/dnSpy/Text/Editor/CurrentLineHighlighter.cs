@@ -69,7 +69,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextView wpfTextView;
 		readonly IEditorFormatMap editorFormatMap;
 		readonly CurrentLineHighlighterElement currentLineHighlighterElement;
-		IAdornmentLayer adornmentLayer;
+		IAdornmentLayer? adornmentLayer;
 		bool isActive;
 		bool selectionIsEmpty;
 		bool enabled;
@@ -137,6 +137,7 @@ namespace dnSpy.Text.Editor {
 				adornmentLayer?.RemoveAllAdornments();
 				return;
 			}
+			Debug.Assert(adornmentLayer != null);
 
 			var line = wpfTextView.Caret.ContainingTextViewLine;
 			if (line.IsVisible()) {
@@ -196,7 +197,7 @@ namespace dnSpy.Text.Editor {
 	sealed class CurrentLineHighlighterElement : UIElement {
 		const int PEN_THICKNESS = 2;
 
-		public Brush BackgroundBrush {
+		public Brush? BackgroundBrush {
 			get => backgroundBrush;
 			set {
 				if (!BrushComparer.Equals(backgroundBrush, value)) {
@@ -205,9 +206,9 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		Brush backgroundBrush;
+		Brush? backgroundBrush;
 
-		public Brush ForegroundBrush {
+		public Brush? ForegroundBrush {
 			get => foregroundBrush;
 			set {
 				if (!BrushComparer.Equals(foregroundBrush, value)) {
@@ -224,11 +225,11 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		Brush foregroundBrush;
-		Pen pen;
+		Brush? foregroundBrush;
+		Pen? pen;
 
 		Rect geometryRect;
-		Geometry geometry;
+		Geometry? geometry;
 
 		public void SetLine(ITextViewLine line, double width) {
 			if (line == null)

@@ -66,8 +66,8 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			if (reflectionModule == null)
 				return false;
 			var method = reflectionModule.ResolveMethod((int)token, DmdResolveOptions.None);
-			Debug.Assert((object)method != null);
-			if ((object)method == null)
+			Debug.Assert(!(method is null));
+			if (method is null)
 				return false;
 
 			if (!method.IsPrivate || method.IsStatic || method.IsAbstract || method.IsVirtual)

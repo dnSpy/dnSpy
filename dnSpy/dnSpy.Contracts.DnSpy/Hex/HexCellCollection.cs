@@ -99,7 +99,7 @@ done:;
 		/// </summary>
 		/// <param name="point">Point</param>
 		/// <returns></returns>
-		public HexCell GetCell(HexBufferPoint point) {
+		public HexCell? GetCell(HexBufferPoint point) {
 			int index = GetStartIndex(point);
 			if (validStart <= index && index < validEnd)
 				return cells[index];

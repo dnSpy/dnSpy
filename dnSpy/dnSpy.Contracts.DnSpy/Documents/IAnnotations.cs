@@ -30,14 +30,14 @@ namespace dnSpy.Contracts.Documents {
 		/// <typeparam name="T">Type</typeparam>
 		/// <param name="annotation">Value to add</param>
 		/// <returns></returns>
-		T AddAnnotation<T>(T annotation) where T : class;
+		T? AddAnnotation<T>(T? annotation) where T : class;
 
 		/// <summary>
 		/// Gets the first annotation of a certain type or null if none was found
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
 		/// <returns></returns>
-		T Annotation<T>() where T : class;
+		T? Annotation<T>() where T : class;
 
 		/// <summary>
 		/// Gets all annotations of a certain type

@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected string MainCodeName => "main" + languageCompiler.FileExtension;
 		protected string MainGeneratedCodeName => "main.g" + languageCompiler.FileExtension;
 
-		public ModuleImporter Result { get; set; }
+		public ModuleImporter? Result { get; set; }
 		public event EventHandler CodeCompiled;
 		public bool HasDecompiled { get; private set; }
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
@@ -118,7 +118,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public ObservableCollection<CodeDocument> Documents { get; } = new ObservableCollection<CodeDocument>();
-		public CodeDocument SelectedDocument {
+		public CodeDocument? SelectedDocument {
 			get => selectedDocument;
 			set {
 				if (selectedDocument != value) {
@@ -127,11 +127,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 		}
-		CodeDocument selectedDocument;
+		CodeDocument? selectedDocument;
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
-		public CompilerDiagnosticVM SelectedCompilerDiagnosticVM {
+		public CompilerDiagnosticVM? SelectedCompilerDiagnosticVM {
 			get => selectedCompilerDiagnosticVM;
 			set {
 				if (selectedCompilerDiagnosticVM != value) {
@@ -140,13 +140,14 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 		}
-		CompilerDiagnosticVM selectedCompilerDiagnosticVM;
+		CompilerDiagnosticVM? selectedCompilerDiagnosticVM;
 
 		protected readonly ModuleDef sourceModule;
 		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(EditCodeVMOptions options, TypeDef typeToEditOrNull) {
+		protected EditCodeVM(EditCodeVMOptions options, TypeDef? typeToEditOrNull) {
 			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
+			OwnerWindow = null!;
 			openFromGAC = options.OpenFromGAC;
 			openAssembly = options.OpenAssembly;
 			pickFilename = options.PickFilename;
@@ -226,10 +227,10 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.methodSourceStatement = methodSourceStatement;
 			}
 
-			public override void Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+			public override void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) =>
 				Write(text, 0, text.Length, reference, flags, color);
 
-			public override void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
+			public override void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) {
 				if (reference == this.reference && (flags & DecompilerReferenceFlags.Definition) != 0 && referenceSpan == null) {
 					int start = NextPosition;
 					base.Write(text, index, length, reference, flags, color);
@@ -244,7 +245,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					AddDebugInfo(data as MethodDebugInfo);
 			}
 
-			void AddDebugInfo(MethodDebugInfo info) {
+			void AddDebugInfo(MethodDebugInfo? info) {
 				if (info == null)
 					return;
 				if (methodSourceStatement == null)
@@ -265,11 +266,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				AsyncMethodBodyDecompilation = false,
 			};
 		}
-		protected DecompileCodeState decompileCodeState;
+		protected DecompileCodeState? decompileCodeState;
 
 		sealed class CompileCodeState : AsyncStateBase {
 		}
-		CompileCodeState compileCodeState;
+		CompileCodeState? compileCodeState;
 
 		protected void StartDecompile() => StartDecompileAsync().ContinueWith(t => {
 			var ex = t.Exception;
@@ -369,7 +370,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		async Task<(DecompileAsyncResult result, CompilerMetadataReference[] assemblyReferences)> DecompileAndGetRefsAsync() {
 			var result = await DecompileAsync().ConfigureAwait(false);
-			decompileCodeState.CancellationToken.ThrowIfCancellationRequested();
+			decompileCodeState!.CancellationToken.ThrowIfCancellationRequested();
 			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.GetRequiredAssemblyReferences(sourceModule), decompileCodeState.CancellationToken).ConfigureAwait(false);
 			return (result, refs);
 		}
@@ -424,7 +425,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			SetDiagnostics(Array.Empty<CompilerDiagnostic>());
 
 			bool canceled = false;
-			Exception caughtException = null;
+			Exception? caughtException = null;
 			CompilationResult? result = null;
 			try {
 				result = await CompileAsync();
@@ -436,7 +437,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				caughtException = ex;
 			}
 
-			ModuleImporter importer = null;
+			ModuleImporter? importer = null;
 			var compilerDiagnostics = result?.Diagnostics ?? Array.Empty<CompilerDiagnostic>();
 			if (canceled) {
 				// It gets canceled when the dialog box gets closed, or when Roslyn cancels the task
@@ -449,7 +450,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(caughtException) };
 			}
 			else if (result?.Success == true) {
-				ModuleImporterAssemblyResolver asmResolver = null;
+				ModuleImporterAssemblyResolver? asmResolver = null;
 				try {
 					asmResolver = new ModuleImporterAssemblyResolver(assemblyReferenceResolver.GetReferences());
 					importer = new ModuleImporter(sourceModule, asmResolver);
@@ -459,7 +460,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						importer = null;
 				}
 				catch (ModuleImporterAbortedException) {
-					compilerDiagnostics = importer.Diagnostics;
+					compilerDiagnostics = importer!.Diagnostics;
 					Debug.Assert(compilerDiagnostics.Length != 0);
 					importer = null;
 				}
@@ -528,7 +529,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void AddAssemblyReference() {
 			if (!CanAddAssemblyReference)
 				return;
-			var modules = openAssembly.OpenMany().Select(a => a.ModuleDef).Where(a => a != null).ToArray();
+			var modules = openAssembly.OpenMany().Select(a => a.ModuleDef).OfType<ModuleDef>().ToArray();
 			if (modules.Length != 0)
 				AddReferences(modules);
 		}

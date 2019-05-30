@@ -30,13 +30,13 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>Metadata</summary>
 	public interface IMenuMetadata {
 		/// <summary>See <see cref="ExportMenuAttribute.OwnerGuid"/></summary>
-		string OwnerGuid { get; }
+		string? OwnerGuid { get; }
 		/// <summary>See <see cref="ExportMenuAttribute.Guid"/></summary>
-		string Guid { get; }
+		string? Guid { get; }
 		/// <summary>See <see cref="ExportMenuAttribute.Order"/></summary>
 		double Order { get; }
 		/// <summary>See <see cref="ExportMenuAttribute.Header"/></summary>
-		string Header { get; }
+		string? Header { get; }
 	}
 
 	/// <summary>
@@ -52,12 +52,12 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>
 		/// Guid of menu or null to use <see cref="MenuConstants.APP_MENU_GUID"/>
 		/// </summary>
-		public string OwnerGuid { get; set; }
+		public string? OwnerGuid { get; set; }
 
 		/// <summary>
 		/// Guid of this item
 		/// </summary>
-		public string Guid { get; set; }
+		public string? Guid { get; set; }
 
 		/// <summary>
 		/// Order within the menu, eg. <see cref="MenuConstants.ORDER_APP_MENU_FILE"/>
@@ -67,6 +67,6 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>
 		/// Menu header, eg. "_File"
 		/// </summary>
-		public string Header { get; set; }
+		public string? Header { get; set; }
 	}
 }

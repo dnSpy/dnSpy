@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Creates <see cref="GuidObject"/>s, can be null
 		/// </summary>
-		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
+		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? CreateGuidObjects { get; set; }
 
 		/// <summary>
 		/// true to enable undo/redo history. Default value is true

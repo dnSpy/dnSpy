@@ -38,7 +38,7 @@ namespace dnSpy.Text.Formatting {
 	sealed class LineTransformProviderService : ILineTransformProviderService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>[] lineTransformSourceProviders;
-		ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata> providerSelector;
+		ProviderSelector<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		LineTransformProviderService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ILineTransformSourceProvider, IContentTypeAndTextViewRoleMetadata>> lineTransformSourceProviders) {

@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.ASSEMBLYREF_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReferenceAssemblyRef();
 		public override NodePathName NodePathName => new NodePathName(Guid, AssemblyRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly WeakReference asmRefOwnerModule;
 
