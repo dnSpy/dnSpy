@@ -107,11 +107,11 @@ namespace dndbg.Engine {
 		public void SetTimeout(TimeSpan timeout) => initialTimeOut = timeout;
 
 		public void SetThread(DnThread thread) {
-			if (thread == null)
+			if (thread is null)
 				throw new InvalidOperationException();
 
 			int hr = thread.CorThread.RawObject.CreateEval(out var ce);
-			if (hr < 0 || ce == null)
+			if (hr < 0 || ce is null)
 				throw new EvalException(hr, $"Could not create an evaluator, HR=0x{hr:X8}");
 			this.thread = thread;
 			eval = new CorEval(ce);
@@ -131,7 +131,7 @@ namespace dndbg.Engine {
 			if (valueType is null)
 				return null;
 			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, valueType.TypeParameters.ToArray()));
-			if (res == null || !res.Value.NormalResult) {
+			if (res is null || !res.Value.NormalResult) {
 				res?.ResultOrException?.DisposeHandle();
 				return null;
 			}
@@ -170,7 +170,7 @@ namespace dndbg.Engine {
 		}
 
 		void InitializeStartTime() {
-			if (startTime != null)
+			if (!(startTime is null))
 				return;
 
 			startTime = DateTime.UtcNow;
@@ -233,7 +233,7 @@ namespace dndbg.Engine {
 		}
 
 		EvalResult SyncWait() {
-			Debug.Assert(startTime != null);
+			Debug.Assert(!(startTime is null));
 
 			var now = DateTime.UtcNow;
 			if (now >= endTime)
@@ -254,7 +254,7 @@ namespace dndbg.Engine {
 					AbortEval(timedOut);
 					throw new TimeoutException();
 				}
-				Debug.Assert(res != null);
+				Debug.Assert(!(res is null));
 				dispResult = (EvalResultKind)res;
 				if (dispResult == EvalResultKind.CustomNotification) {
 					if (!AbortEval(false))

@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 					OnPropertyChanged(nameof(Filename));
 					UpdateIsValid();
 					var path = GetPath(filename);
-					if (path != null)
+					if (!(path is null))
 						WorkingDirectory = path;
 				}
 			}
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			Filename = newFilename;
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		void PickNewWorkingDirectory() {
 			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir == null)
+			if (newDir is null)
 				return;
 
 			WorkingDirectory = newDir;

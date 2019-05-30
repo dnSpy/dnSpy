@@ -103,7 +103,7 @@ namespace dnSpy.Hex.Editor {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_HEXVIEW_GUID, wpfHexView);
 				yield return new GuidObject(MenuConstants.GUIDOBJ_HEXEDITORPOSITION_GUID, wpfHexView.Caret.Position);
 
-				if (createGuidObjects != null) {
+				if (!(createGuidObjects is null)) {
 					foreach (var guidObject in createGuidObjects(args))
 						yield return guidObject;
 				}
@@ -141,16 +141,16 @@ namespace dnSpy.Hex.Editor {
 			Create(buffer, roles, hexEditorOptionsFactoryService.GlobalOptions, options);
 
 		public override WpfHexView Create(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexViewCreatorOptions? options) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (roles == null)
+			if (roles is null)
 				throw new ArgumentNullException(nameof(roles));
-			if (parentOptions == null)
+			if (parentOptions is null)
 				throw new ArgumentNullException(nameof(parentOptions));
 
 			var wpfHexView = new WpfHexViewImpl(buffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService, hexAndAdornmentSequencerFactoryService, hexBufferLineFormatterFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfHexViewCreationListeners, hexViewCreationListeners, classificationTypeRegistryService, hexCursorProviderFactories);
 
-			if (options?.MenuGuid != null) {
+			if (!(options?.MenuGuid is null)) {
 				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options.CreateGuidObjects);
 				menuService.InitializeContextMenu(wpfHexView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new HexContextMenuInitializer(wpfHexView));
 			}
@@ -163,7 +163,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override WpfHexViewHost CreateHost(WpfHexView wpfHexView, bool setFocus) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			return new WpfHexViewHostImpl(wpfHexViewMarginProviderCollectionProvider, wpfHexView, editorOperationsFactoryService, themeService, setFocus);
 		}

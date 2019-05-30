@@ -79,7 +79,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public ResourceDictionary GetProperties(string key) {
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			if (resourceDicts.TryGetValue(key, out var resDict))
 				return resDict;
@@ -91,7 +91,7 @@ namespace dnSpy.Text.Classification {
 		public void AddProperties(string key, ResourceDictionary properties) =>
 			SetProperties(key, properties);
 		public void SetProperties(string key, ResourceDictionary properties) {
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			resourceDicts[key] = properties;
 			if (IsInBatchUpdate)

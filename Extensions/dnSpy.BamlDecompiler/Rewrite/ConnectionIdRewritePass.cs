@@ -46,11 +46,11 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		public void Run(XamlContext ctx, XDocument document) {
 			var xClass = document.Root.Elements().First().Attribute(ctx.GetXamlNsName("Class"));
-			if (xClass == null)
+			if (xClass is null)
 				return;
 
 			var type = ctx.Module.Find(xClass.Value, true);
-			if (type == null)
+			if (type is null)
 				return;
 
 			var wbAsm = ctx.Module.CorLibTypes.AssemblyRef.Version == new Version(2, 0, 0, 0) ?
@@ -68,7 +68,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					break;
 				}
 			}
-			if (iface != null)
+			if (!(iface is null))
 				return;
 
 			Dictionary<int, Action<XamlContext, XElement>> connIds = null;
@@ -78,7 +78,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			catch {
 			}
 
-			if (connIds == null) {
+			if (connIds is null) {
 				var msg = dnSpy_BamlDecompiler_Resources.Error_IComponentConnectorConnetCannotBeParsed;
 				document.Root.AddBeforeSelf(new XComment(string.Format(msg, type.ReflectionFullName)));
 				return;
@@ -98,7 +98,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		void CheckConnectionId(XamlContext ctx, XElement elem, Dictionary<int, Action<XamlContext, XElement>> connIds) {
 			var connId = elem.Annotation<BamlConnectionId>();
-			if (connId == null)
+			if (connId is null)
 				return;
 
 			if (!connIds.TryGetValue((int)connId.Id, out var cb)) {
@@ -114,7 +114,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			public void Callback(XamlContext ctx, XElement elem) {
 				var xName = ctx.GetXamlNsName("Name");
-				if (elem.Attribute("Name") == null && elem.Attribute(xName) == null)
+				if (elem.Attribute("Name") is null && elem.Attribute(xName) is null)
 					elem.Add(new XAttribute(xName, FieldName));
 			}
 		}
@@ -126,7 +126,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			public void Callback(XamlContext ctx, XElement elem) {
 				XName name;
-				if (AttachedType != null) {
+				if (!(AttachedType is null)) {
 					var clrNs = AttachedType.ReflectionNamespace;
 					var xmlNs = ctx.XmlNs.LookupXmlns(AttachedType.DefinitionAssembly, clrNs);
 					name = ctx.GetXmlNamespace(xmlNs)?.GetName(EventName) ?? AttachedType.Name + "." + EventName;
@@ -155,13 +155,13 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			var connIds = new Dictionary<int, Action<XamlContext, XElement>>();
 			var infos = GetCaseBlocks(body);
-			if (infos == null)
+			if (infos is null)
 				return null;
 			foreach (var info in infos) {
 				Action<XamlContext, XElement> cb = null;
 				foreach (var node in info.nodes) {
 					var expr = node as ILExpression;
-					if (expr == null)
+					if (expr is null)
 						continue;
 
 					switch (expr.Code) {
@@ -200,7 +200,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 								var ev = add.DeclaringType.Events.FirstOrDefault(e => e.AddMethod == add);
 
 								var ctor = expr.Arguments[1];
-								if (ev == null || ctor.Code != ILCode.Newobj ||
+								if (ev is null || ctor.Code != ILCode.Newobj ||
 								    ctor.Arguments.Count != 2 || ctor.Arguments[1].Code != ILCode.Ldftn) {
 									cb += new Error { Msg = string.Format(dnSpy_BamlDecompiler_Resources.Error_AttachedEvent, add.Name) }.Callback;
 									break;
@@ -216,7 +216,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					}
 				}
 
-				if (cb != null) {
+				if (!(cb is null)) {
 					foreach (var id in info.connIds)
 						connIds[id] = cb;
 				}
@@ -232,9 +232,9 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				return list;
 
 			var sw = method.GetSelfAndChildrenRecursive<ILSwitch>().FirstOrDefault();
-			if (sw != null) {
+			if (!(sw is null)) {
 				foreach (var lbl in sw.CaseBlocks) {
-					if (lbl.Values == null)
+					if (lbl.Values is null)
 						continue;
 					list.Add((lbl.Values, lbl.Body));
 				}
@@ -246,13 +246,13 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					if (pos >= body.Count)
 						return null;
 					var cond = body[pos] as ILCondition;
-					if (cond == null) {
+					if (cond is null) {
 						if (!body[pos].Match(ILCode.Stfld, out IField field, out var ldthis, out var ldci4) || !ldthis.MatchThis() || !ldci4.MatchLdcI4(1))
 							return null;
 						return list;
 					}
 					pos++;
-					if (cond.TrueBlock == null || cond.FalseBlock == null)
+					if (cond.TrueBlock is null || cond.FalseBlock is null)
 						return null;
 
 					bool isEq = true;

@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public List<MethodDebugScopeBuilder> Scopes {
 			get {
-				if (scopes == null)
+				if (scopes is null)
 					scopes = new List<MethodDebugScopeBuilder>();
 				return scopes;
 			}
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public List<SourceLocal> Locals {
 			get {
-				if (locals == null)
+				if (locals is null)
 					locals = new List<SourceLocal>();
 				return locals;
 			}
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public List<ImportInfo> Imports {
 			get {
-				if (imports == null)
+				if (imports is null)
 					imports = new List<ImportInfo>();
 				return imports;
 			}
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public List<MethodDebugConstant> Constants {
 			get {
-				if (constants == null)
+				if (constants is null)
 					constants = new List<MethodDebugConstant>();
 				return constants;
 			}
@@ -91,10 +91,10 @@ namespace dnSpy.Contracts.Decompiler {
 		public MethodDebugScope ToScope() =>
 			new MethodDebugScope(
 				Span,
-				scopes == null ? Array.Empty<MethodDebugScope>() : ToScopes(scopes),
-				locals == null || locals.Count == 0 ? Array.Empty<SourceLocal>() : locals.ToArray(),
-				imports == null || imports.Count == 0 ? Array.Empty<ImportInfo>() : imports.ToArray(),
-				constants == null || constants.Count == 0 ? Array.Empty<MethodDebugConstant>() : constants.ToArray());
+				scopes is null ? Array.Empty<MethodDebugScope>() : ToScopes(scopes),
+				locals is null || locals.Count == 0 ? Array.Empty<SourceLocal>() : locals.ToArray(),
+				imports is null || imports.Count == 0 ? Array.Empty<ImportInfo>() : imports.ToArray(),
+				constants is null || constants.Count == 0 ? Array.Empty<MethodDebugConstant>() : constants.ToArray());
 
 		static MethodDebugScope[] ToScopes(List<MethodDebugScopeBuilder> scopes) {
 			var res = new MethodDebugScope[scopes.Count];

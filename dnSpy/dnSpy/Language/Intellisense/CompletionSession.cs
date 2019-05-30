@@ -45,7 +45,7 @@ namespace dnSpy.Language.Intellisense {
 		public CompletionSet? SelectedCompletionSet {
 			get => selectedCompletionSet;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (!CompletionSets.Contains(value))
 					throw new ArgumentException();
@@ -92,7 +92,7 @@ namespace dnSpy.Language.Intellisense {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var source = provider.Value.TryCreateCompletionSource(textBuffer);
-				if (source != null)
+				if (!(source is null))
 					list.Add(source);
 			}
 			return list.ToArray();
@@ -117,7 +117,7 @@ namespace dnSpy.Language.Intellisense {
 			else {
 				SelectedCompletionSet = completionSets[0];
 				completionPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
-				if (completionPresenter == null) {
+				if (completionPresenter is null) {
 					Dismiss();
 					return;
 				}
@@ -160,7 +160,7 @@ namespace dnSpy.Language.Intellisense {
 					customCommit.Commit();
 				else {
 					var insertionText = completion.InsertionText;
-					if (insertionText != null) {
+					if (!(insertionText is null)) {
 						var replaceSpan = completionSet.ApplicableTo;
 						var buffer = replaceSpan.TextBuffer;
 						var span = replaceSpan.GetSpan(buffer.CurrentSnapshot);
@@ -180,7 +180,7 @@ namespace dnSpy.Language.Intellisense {
 			completionSessionCommandTargetFilter?.Close();
 			completionSessionCommandTargetFilter = null;
 			Dismissed?.Invoke(this, EventArgs.Empty);
-			if (completionSources != null) {
+			if (!(completionSources is null)) {
 				foreach (var source in completionSources)
 					source.Dispose();
 				completionSources = null;
@@ -207,7 +207,7 @@ namespace dnSpy.Language.Intellisense {
 			if (selectedCompletionSet is null)
 				throw new InvalidOperationException();
 			selectedCompletionSet.SelectBestMatch();
-			return selectedCompletionSet.SelectionStatus.Completion != null;
+			return !(selectedCompletionSet.SelectionStatus.Completion is null);
 		}
 
 		public ITrackingPoint? GetTriggerPoint(ITextBuffer textBuffer) {

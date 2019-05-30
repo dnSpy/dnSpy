@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected abstract DmdType[]? CreateGenericParameters();
 		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() {
 			var f = ExtraFields;
-			if (f.__genericParameters_DONT_USE != null)
+			if (!(f.__genericParameters_DONT_USE is null))
 				return f.__genericParameters_DONT_USE;
 			var res = CreateGenericParameters();
 			Interlocked.CompareExchange(ref f.__genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
 			var f = ExtraFields;
-			if (f.__parameters_DONT_USE != null)
+			if (!(f.__parameters_DONT_USE is null))
 				return f.__parameters_DONT_USE;
 			var info = CreateParameters();
 			Debug.Assert(info.Length == GetMethodSignature().GetParameterTypes().Count);
@@ -66,20 +66,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE == null)
+			if (f.__customAttributes_DONT_USE is null)
 				InitializeCustomAttributes();
 			return f.__customAttributes_DONT_USE!;
 		}
 
 		void InitializeCustomAttributes() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE != null)
+			if (!(f.__customAttributes_DONT_USE is null))
 				return;
 			var info = CreateCustomAttributes();
 			var newSAs = ReadOnlyCollectionHelpers.Create(info.sas);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, newSAs);
 			lock (LockObject) {
-				if (f.__customAttributes_DONT_USE == null) {
+				if (f.__customAttributes_DONT_USE is null) {
 					f.__securityAttributes_DONT_USE = newSAs;
 					f.__customAttributes_DONT_USE = newCAs;
 				}
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE == null)
+			if (f.__customAttributes_DONT_USE is null)
 				InitializeCustomAttributes();
 			return f.__securityAttributes_DONT_USE!;
 		}

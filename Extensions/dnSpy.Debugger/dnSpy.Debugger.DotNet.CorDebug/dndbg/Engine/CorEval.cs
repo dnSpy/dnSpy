@@ -28,7 +28,7 @@ namespace dndbg.Engine {
 		public CorThread? Thread {
 			get {
 				int hr = obj.GetThread(out var thread);
-				return hr < 0 || thread == null ? null : new CorThread(thread);
+				return hr < 0 || thread is null ? null : new CorThread(thread);
 			}
 		}
 
@@ -42,7 +42,7 @@ namespace dndbg.Engine {
 		public CorValue? Result {
 			get {
 				int hr = obj.GetResult(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+				return hr < 0 || value is null ? null : new CorValue(value);
 			}
 		}
 
@@ -52,21 +52,21 @@ namespace dndbg.Engine {
 		public int Abort() => obj.Abort();
 
 		public int RudeAbort() {
-			if (eval2 == null)
+			if (eval2 is null)
 				return -1;
 			return eval2.RudeAbort();
 		}
 
 		public CorValue? CreateValue(CorElementType et, CorClass? cls = null) {
 			int hr = obj.CreateValue(et, cls?.RawObject, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
 		public CorValue? CreateValueForType(CorType type) {
 			if (eval2 is null)
 				return null;
 			int hr = eval2.CreateValueForType(type.RawObject, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
 		public int NewObject(CorFunction ctor, CorValue[] args) =>
@@ -75,11 +75,11 @@ namespace dndbg.Engine {
 
 		public int NewParameterizedObject(CorFunction ctor, CorType[] typeArgs, CorValue[] args) {
 			if (eval2 is null) {
-				if (typeArgs == null || typeArgs.Length == 0)
+				if (typeArgs is null || typeArgs.Length == 0)
 					return NewObject(ctor, args);
 				return -1;
 			}
-			return eval2.NewParameterizedObject(ctor.RawObject, typeArgs == null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), args.Length, args.ToCorDebugArray());
+			return eval2.NewParameterizedObject(ctor.RawObject, typeArgs is null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), args.Length, args.ToCorDebugArray());
 		}
 
 		public int NewObjectNoConstructor(CorClass cls) =>
@@ -88,27 +88,27 @@ namespace dndbg.Engine {
 
 		public int NewParameterizedObjectNoConstructor(CorClass cls, CorType[] typeArgs) {
 			if (eval2 is null) {
-				if (typeArgs == null || typeArgs.Length == 0)
+				if (typeArgs is null || typeArgs.Length == 0)
 					return NewObjectNoConstructor(cls);
 				return -1;
 			}
-			return eval2.NewParameterizedObjectNoConstructor(cls.RawObject, typeArgs == null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray());
+			return eval2.NewParameterizedObjectNoConstructor(cls.RawObject, typeArgs is null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray());
 		}
 
 		public int NewArray(CorElementType et, CorClass cls, uint[] dims, int[]? lowBounds = null) {
-			Debug.Assert(dims != null && (lowBounds == null || lowBounds.Length == dims.Length));
+			Debug.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
 			return obj.NewArray(et, cls?.RawObject, dims.Length, dims, lowBounds);
 		}
 
 		public int NewParameterizedArray(CorType type, uint[] dims, int[]? lowBounds = null) {
-			if (eval2 == null)
+			if (eval2 is null)
 				return -1;
-			Debug.Assert(dims != null && (lowBounds == null || lowBounds.Length == dims.Length));
+			Debug.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
 			return eval2.NewParameterizedArray(type.RawObject, dims.Length, dims, lowBounds);
 		}
 
 		public int NewString(string s) {
-			if (eval2 != null)
+			if (!(eval2 is null))
 				return eval2.NewStringWithLength(s, s.Length);
 			return obj.NewString(s);
 		}
@@ -118,12 +118,12 @@ namespace dndbg.Engine {
 			obj.CallFunction(func.RawObject, args.Length, args.ToCorDebugArray());
 
 		public int CallParameterizedFunction(CorFunction func, CorType[] typeArgs, CorValue[] args) {
-			if (eval2 == null) {
-				if (typeArgs == null || typeArgs.Length == 0)
+			if (eval2 is null) {
+				if (typeArgs is null || typeArgs.Length == 0)
 					return CallFunction(func, args);
 				return -1;
 			}
-			return eval2.CallParameterizedFunction(func.RawObject, typeArgs == null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), args.Length, args.ToCorDebugArray());
+			return eval2.CallParameterizedFunction(func.RawObject, typeArgs is null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), args.Length, args.ToCorDebugArray());
 		}
 
 		public bool Equals(CorEval? other) => !(other is null) &&

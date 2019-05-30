@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Action = ds.Action;
 			CustomAttributes.AddRange(ds.CustomAttributes);
 			V1XMLString = ds.GetNet1xXmlString();
-			if (V1XMLString == null)
+			if (V1XMLString is null)
 				SecurityAttributes.AddRange(ds.SecurityAttributes);
 		}
 
@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			ds.CustomAttributes.Clear();
 			ds.CustomAttributes.AddRange(CustomAttributes);
 			ds.SecurityAttributes.Clear();
-			if (V1XMLString == null)
+			if (V1XMLString is null)
 				ds.SecurityAttributes.AddRange(SecurityAttributes);
 			else
 				ds.SecurityAttributes.Add(SecurityAttribute.CreateFromXml(module, V1XMLString));

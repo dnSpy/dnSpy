@@ -45,12 +45,12 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override void Save(Bookmark[] bookmarks) {
-			if (bookmarks == null)
+			if (bookmarks is null)
 				throw new ArgumentNullException(nameof(bookmarks));
 			if (bookmarks.Length == 0)
 				return;
 			var filename = pickSaveFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
-			if (filename == null)
+			if (filename is null)
 				return;
 			var settingsService = settingsServiceFactory.Value.Create();
 			new BookmarksSerializer(settingsService, bookmarkLocationSerializerService.Value).Save(bookmarks);

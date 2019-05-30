@@ -45,22 +45,22 @@ namespace dnSpy.Text.Adornments {
 		}
 
 		public void ClearToolTip() {
-			if (toolTipAgent != null)
+			if (!(toolTipAgent is null))
 				spaceReservationManager.RemoveAgent(toolTipAgent);
 		}
 
 		public void ShowToolTip(ITrackingSpan span, object toolTipContent) {
-			if (span == null)
+			if (span is null)
 				throw new ArgumentNullException(nameof(span));
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				throw new ArgumentNullException(nameof(toolTipContent));
 			ShowToolTip(span, toolTipContent, PopupStyles.None);
 		}
 
 		public void ShowToolTip(ITrackingSpan span, object toolTipContent, PopupStyles style) {
-			if (span == null)
+			if (span is null)
 				throw new ArgumentNullException(nameof(span));
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				throw new ArgumentNullException(nameof(toolTipContent));
 			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
@@ -68,7 +68,7 @@ namespace dnSpy.Text.Adornments {
 			ClearToolTip();
 
 			var uiElement = GetUIElement(toolTipContent);
-			if (uiElement == null)
+			if (uiElement is null)
 				throw new ArgumentException();
 
 			spaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;

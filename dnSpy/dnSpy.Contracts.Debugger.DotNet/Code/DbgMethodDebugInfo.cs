@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="scope">Root scope</param>
 		/// <param name="asyncMethodDebugInfo">Async info or null</param>
 		public DbgMethodDebugInfo(DbgCompilerKind compiler, int debugInfoVersion, MethodDef method, DbgParameter[]? parameters, DbgSourceStatement[] statements, DbgMethodDebugScope scope, DbgAsyncMethodDebugInfo? asyncMethodDebugInfo) {
-			if (statements == null)
+			if (statements is null)
 				throw new ArgumentNullException(nameof(statements));
 			Compiler = compiler;
 			Method = method ?? throw new ArgumentNullException(nameof(method));
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		public DbgILSpan[] GetUnusedRanges() => GetUnusedILSpans();
 
 		DbgILSpan[] GetUnusedILSpans() {
-			if (cachedUnusedILSpans != null)
+			if (!(cachedUnusedILSpans is null))
 				return cachedUnusedILSpans;
 			var list = new List<DbgILSpan>(Statements.Length);
 			foreach (var s in Statements)
@@ -142,7 +142,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		}
 
 		static int GetCodeSize(CilBody? body) {
-			if (body == null || body.Instructions.Count == 0)
+			if (body is null || body.Instructions.Count == 0)
 				return 0;
 			var instr = body.Instructions[body.Instructions.Count - 1];
 			return (int)instr.Offset + instr.GetSize();
@@ -167,9 +167,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <param name="statementSpan">Statement span</param>
 		/// <returns></returns>
 		public DbgILSpan[] GetILSpansOfStatement(DbgTextSpan statementSpan) {
-			if (statementsDict == null)
+			if (statementsDict is null)
 				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
-			Debug.Assert(statementsDict != null);
+			Debug.Assert(!(statementsDict is null));
 			if (statementsDict.TryGetValue(statementSpan, out var list)) {
 				var spans = list.ToArray();
 #if DEBUG
@@ -204,14 +204,14 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 				hasFirstValue = true;
 			}
 			else {
-				if (list == null)
+				if (list is null)
 					list = new List<T>(2) { firstValue };
 				list.Add(value);
 			}
 		}
 
 		public T[] ToArray() {
-			if (list != null)
+			if (!(list is null))
 				return list.ToArray();
 			if (hasFirstValue)
 				return new[] { firstValue };

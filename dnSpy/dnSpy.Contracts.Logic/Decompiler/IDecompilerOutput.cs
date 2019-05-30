@@ -113,7 +113,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="methodDebugInfo">Debug info</param>
 		public static void AddDebugInfo(this IDecompilerOutput output, MethodDebugInfo methodDebugInfo) {
-			if (methodDebugInfo == null)
+			if (methodDebugInfo is null)
 				throw new ArgumentNullException(nameof(methodDebugInfo));
 			output.AddCustomData(PredefinedCustomDataIds.DebugInfo, methodDebugInfo);
 		}

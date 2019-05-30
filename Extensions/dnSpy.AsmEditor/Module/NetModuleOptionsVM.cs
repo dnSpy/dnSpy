@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		static Module.ClrVersion GetClrVersion(ModuleDef? module) {
-			if (module == null)
+			if (module is null)
 				return Module.ClrVersion.DefaultVersion;
 
 			if (module.IsClr10) return Module.ClrVersion.CLR10;

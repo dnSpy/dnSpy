@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 				if (rawValue.HasRawValue)
 					value = rawValue.RawValue;
 			}
-			if (value != null) {
+			if (!(value is null)) {
 				if (value is bool) {
 					result = (bool)value ? 1U : 0;
 					return true;
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 		}
 
 		unsafe char[]? ICorDebugValueConverter.ToCharArray(object? value) {
-			if (value == null)
+			if (value is null)
 				return null;
 
 			if (value is char[] result)
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 				var type = dnValue.Type;
 				if (type.IsArray && type.GetElementType() == type.AppDomain.System_Char) {
 					var addr = dnValue.GetRawAddressValue(onlyDataAddress: true);
-					if (addr != null) {
+					if (!(addr is null)) {
 						ulong chars = addr.Value.Length / 2;
 						if (chars <= int.MaxValue / 2) {
 							if (chars == 0)

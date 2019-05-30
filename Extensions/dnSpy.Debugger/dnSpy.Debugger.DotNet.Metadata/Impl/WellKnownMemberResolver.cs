@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				DmdAssembly[] assemblies;
 				if (onlyCorLib) {
 					var corlib = appDomain.CorLib;
-					if (corlib == null)
+					if (corlib is null)
 						return null;
 					assemblies = new[] { corlib };
 				}

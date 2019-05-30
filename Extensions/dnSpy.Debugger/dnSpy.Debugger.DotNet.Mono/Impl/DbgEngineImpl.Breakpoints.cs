@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool SendCodeBreakpointHitMessage_MonoDebug(BreakpointEventRequest breakpoint, DbgThread? thread) {
 			debuggerThread.VerifyAccess();
 			if (breakpoint.Tag is BoundBreakpointData bpData) {
-				if (bpData != null)
+				if (!(bpData is null))
 					SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint!.BoundCodeBreakpoint, thread, GetMessageFlags()));
 				else
 					SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		void RemoveBreakpoint(BoundBreakpointData bpData) {
-			if (bpData.Breakpoint == null)
+			if (bpData.Breakpoint is null)
 				return;
 			lock (lockObj) {
 				pendingBreakpointsToRemove.Add(bpData.Breakpoint);
@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					continue;
 				}
 				bpData.EngineBoundCodeBreakpoint = ebp;
-				if (bpData.Breakpoint != null)
+				if (!(bpData.Breakpoint is null))
 					bpData.Breakpoint.Tag = bpData;
 			}
 
@@ -194,9 +194,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
 					return;
 				}
-				Debug.Assert(bpData.Breakpoint == null);
+				Debug.Assert(bpData.Breakpoint is null);
 				bpData.Breakpoint = info.bp;
-				if (bpData.Breakpoint != null)
+				if (!(bpData.Breakpoint is null))
 					bpData.Breakpoint.Tag = bpData;
 				ebp.UpdateMessage(info.error);
 			}
@@ -253,11 +253,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void InitializeBreakpoints(TypeMirror monoType) {
 			debuggerThread.VerifyAccess();
-			Debug.Assert(monoType != null);
-			if (monoType == null)
+			Debug.Assert(!(monoType is null));
+			if (monoType is null)
 				return;
 			var module = TryGetModuleCore_NoCreate(monoType.Module);
-			if (module == null)
+			if (module is null)
 				return;
 
 			var state = module.GetOrCreateData<TypeLoadBreakpointState>();
@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!TryGetModuleData(module, out var data))
 				throw new InvalidOperationException();
 			var info = CreateBreakpoint(reflectionModule, data.ModuleId, token, offset);
-			if (info.bp == null)
+			if (info.bp is null)
 				throw new InvalidOperationException();
 			info.bp.Tag = callback;
 			return info.bp;

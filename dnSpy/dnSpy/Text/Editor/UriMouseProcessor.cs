@@ -92,7 +92,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateCursor(MouseEventArgs e) {
 			var tagSpan = GetUriSpan(e);
-			if (tagSpan == null) {
+			if (tagSpan is null) {
 				if (hasWrittenCursor) {
 					wpfTextView.VisualElement.Cursor = origCursor;
 					hasWrittenCursor = false;
@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 			if (e.Handled)
 				return;
 			var tagSpan = GetUriSpan(e);
-			if (tagSpan == null)
+			if (tagSpan is null)
 				return;
 			e.Handled = true;
 			StartBrowser(tagSpan.Tag.Url);

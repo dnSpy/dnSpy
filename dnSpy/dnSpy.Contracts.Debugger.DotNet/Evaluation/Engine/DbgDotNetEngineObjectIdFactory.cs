@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="runtimeGuid">Runtime guid, see <see cref="PredefinedDbgRuntimeGuids"/></param>
 		/// <param name="dbgDotNetLanguageService">.NET language service instance</param>
 		protected DbgDotNetEngineObjectIdFactory(Guid runtimeGuid, DbgDotNetLanguageService dbgDotNetLanguageService) {
-			if (dbgDotNetLanguageService == null)
+			if (dbgDotNetLanguageService is null)
 				throw new ArgumentNullException(nameof(dbgDotNetLanguageService));
 			dbgEngineObjectIdFactory = dbgDotNetLanguageService.GetEngineObjectIdFactory(runtimeGuid);
 		}

@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			try {
 				var info = dbgAliasProvider.GetAliases(evalInfo);
 				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame, info.typeReferences);
-				if (refsResult.ErrorMessage != null)
+				if (!(refsResult.ErrorMessage is null))
 					return new DbgEngineEEAssignmentResult(resultFlags, refsResult.ErrorMessage);
 
 				var compRes = expressionCompiler.CompileAssignment(evalInfo, refsResult.ModuleReferences!, info.aliases, expression, valueExpression, options);
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var state = dnILInterpreter.CreateState(compRes.Assembly!);
 				Debug.Assert(compRes.CompiledExpressions!.Length == 1);
 				ref var exprInfo = ref compRes.CompiledExpressions[0];
-				if (exprInfo.ErrorMessage != null)
+				if (!(exprInfo.ErrorMessage is null))
 					return new DbgEngineEEAssignmentResult(resultFlags | DbgEEAssignmentResultFlags.CompilerError, exprInfo.ErrorMessage);
 				resultFlags |= DbgEEAssignmentResultFlags.ExecutedCode;
 				var res = dnILInterpreter.Execute(evalInfo, state, exprInfo.TypeName, exprInfo.MethodName, options, out _);
@@ -116,9 +116,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		DbgEngineEvaluationResult EvaluateCore(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? state) {
 			var res = EvaluateImpl(evalInfo, expression, options | DbgEvaluationOptions.NoName, state);
-			if (res.Error != null)
+			if (!(res.Error is null))
 				return new DbgEngineEvaluationResult(res.Error, res.Flags);
-			Debug.Assert(res.Value != null);
+			Debug.Assert(!(res.Value is null));
 			try {
 				return new DbgEngineEvaluationResult(new DbgEngineValueImpl(res.Value), res.FormatSpecifiers, res.Flags);
 			}
@@ -186,7 +186,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				static bool Equals(ReadOnlyCollection<byte>? a, ReadOnlyCollection<byte>? b) {
 					if (a == b)
 						return true;
-					if (a == null || b == null)
+					if (a is null || b is null)
 						return false;
 					if (a.Count != b.Count)
 						return false;
@@ -206,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		EvaluateImplResult? GetMethodInterpreterState(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? stateObj, out EvaluateImplExpressionState? evalExprState) {
 			var languageDebugInfo = evalInfo.Context.TryGetLanguageDebugInfo();
-			if (languageDebugInfo == null) {
+			if (languageDebugInfo is null) {
 				evalExprState = null;
 				return new EvaluateImplResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			}
@@ -234,31 +234,31 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		EvaluateImplResult? GetInterpreterStateCommon(DbgEvaluationInfo evalInfo, DmdModule? reflectionModuleOrNull, int debugInfoVersion, object memberModule, int memberToken, int memberVersion, DbgMethodDebugScope? scope, DbgDotNetAlias[] aliases, DmdType[] typeReferences, DbgEvaluationOptions options, string expression, object? stateObj, DmdType? type, out EvaluateImplExpressionState? evalExprState) {
 			evalExprState = null;
 			EvaluateImplExpressionState? evalState;
-			if (stateObj != null) {
+			if (!(stateObj is null)) {
 				evalState = stateObj as EvaluateImplExpressionState;
-				Debug.Assert(evalState != null);
-				if (evalState == null)
+				Debug.Assert(!(evalState is null));
+				if (evalState is null)
 					throw new ArgumentException("Invalid expression evaluator state. It must be null or created by " + nameof(DbgExpressionEvaluator) + "." + nameof(DbgExpressionEvaluator.CreateExpressionEvaluatorState) + "()");
 			}
 			else
 				evalState = evalInfo.Context.GetOrCreateData<EvaluateImplExpressionState>();
 
-			var refsResult = reflectionModuleOrNull != null ?
+			var refsResult = !(reflectionModuleOrNull is null) ?
 				dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, reflectionModuleOrNull, typeReferences) :
 				dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame, typeReferences);
-			if (refsResult.ErrorMessage != null)
+			if (!(refsResult.ErrorMessage is null))
 				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
-			Debug.Assert(refsResult.ModuleReferences != null);
+			Debug.Assert(!(refsResult.ModuleReferences is null));
 			var key = new EvaluateImplExpressionState.Key(this, debugInfoVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, keyOptions, expression);
 			if (!evalState.CachedKey.Equals(key)) {
-				evalState.CompilationResult = (object?)type != null ?
+				evalState.CompilationResult = !(type is null) ?
 					expressionCompiler.CompileTypeExpression(evalInfo, type, refsResult.ModuleReferences, aliases, expression, keyOptions) :
 					expressionCompiler.CompileExpression(evalInfo, refsResult.ModuleReferences, aliases, expression, keyOptions);
 				evalState.CachedKey = key;
 				evalState.EvaluateImplResult = GetEvaluateImplResult(evalState.CompilationResult, expression);
-				if (evalState.EvaluateImplResult == null)
+				if (evalState.EvaluateImplResult is null)
 					evalState.ILInterpreterState = dnILInterpreter.CreateState(evalState.CompilationResult.Assembly!);
 				else
 					evalState.ILInterpreterState = null;
@@ -275,7 +275,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if (compRes.CompiledExpressions.Length != 1)
 				return new EvaluateImplResult(PredefinedEvaluationErrorMessages.InternalDebuggerError, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 			var exprInfo = compRes.CompiledExpressions[0];
-			if (exprInfo.ErrorMessage != null)
+			if (!(exprInfo.ErrorMessage is null))
 				return new EvaluateImplResult(exprInfo.ErrorMessage, exprInfo.Name, null, exprInfo.FormatSpecifiers, exprInfo.Flags & ~DbgEvaluationResultFlags.SideEffects, exprInfo.ImageName, null);
 
 			return null;
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		internal EvaluateImplResult EvaluateImpl(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? stateObj) {
 			try {
 				var errorRes = GetMethodInterpreterState(evalInfo, expression, options, stateObj, out var state);
-				if (errorRes != null)
+				if (!(errorRes is null))
 					return errorRes.Value;
 
 				Debug.Assert(state!.CompilationResult.CompiledExpressions!.Length == 1);
@@ -325,7 +325,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		DbgDotNetEvalResult EvaluateCore(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, string expression, DbgEvaluationOptions options, object? state) {
 			var res = EvaluateImpl(evalInfo, obj, expression, options, state);
-			if (res.Error != null)
+			if (!(res.Error is null))
 				return new DbgDotNetEvalResult(predefinedEvaluationErrorMessagesHelper.GetErrorMessage(res.Error), res.FormatSpecifiers, res.Flags);
 			return new DbgDotNetEvalResult(res.Value!, res.FormatSpecifiers, res.Flags);
 		}
@@ -336,7 +336,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if (type.IsGenericType)
 					type = type.GetGenericTypeDefinition();
 				var errorRes = GetTypeInterpreterState(evalInfo, type, expression, options | DbgEvaluationOptions.NoName, stateObj, out var state);
-				if (errorRes != null)
+				if (!(errorRes is null))
 					return errorRes.Value;
 
 				var genericTypeArguments = obj.Type.GetGenericArguments();

@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			uiDispatcher.VerifyAccess();
 			if (enable) {
 				valueNodesProvider.Initialize_UI(enable);
-				if (valueNodesVM == null) {
+				if (valueNodesVM is null) {
 					var options = new ValueNodesVMOptions() {
 						NodesProvider = valueNodesProvider,
 						ShowMessageBox = ShowMessageBox,

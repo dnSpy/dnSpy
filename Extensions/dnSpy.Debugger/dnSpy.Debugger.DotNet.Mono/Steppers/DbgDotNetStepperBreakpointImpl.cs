@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 		}
 
 		bool OnBreakpointHit(DbgThread? thread) {
-			if (this.thread == null || thread == this.thread) {
+			if (this.thread is null || thread == this.thread) {
 				if (thread is null)
 					throw new InvalidOperationException();
 				var e = new DbgDotNetStepperBreakpointEventArgs(thread);

@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var hb = content as HexViewDocumentTabContent;
-			if (hb == null)
+			if (hb is null)
 				return null;
 
 			section.Attribute("filename", hb.Filename);
@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public HexViewDocumentTabContent? TryCreate(string filename) {
 			var buffer = hexBufferService.Value.GetOrCreate(filename);
-			if (buffer == null)
+			if (buffer is null)
 				return null;
 
 			return new HexViewDocumentTabContent(hexEditorGroupFactoryService, buffer);
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Hex {
 		public HexViewDocumentTabUIContext(HexEditorGroupFactoryService hexEditorGroupFactoryService, HexBuffer buffer) => hexViewHost = hexEditorGroupFactoryService.Create(buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDefault, new Guid(MenuConstants.GUIDOBJ_ASMEDITOR_HEXVIEW_GUID));
 
 		public override object? CreateUIState() {
-			if (cachedHexViewUIState != null)
+			if (!(cachedHexViewUIState is null))
 				return cachedHexViewUIState;
 			var state = new HexViewUIState(HexView);
 			state.ShowOffsetColumn = HexView.Options.ShowOffsetColumn();
@@ -145,11 +145,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public override void RestoreUIState(object? obj) {
 			var state = obj as HexViewUIState;
-			if (state == null)
+			if (state is null)
 				return;
 
 			if (!HexView.VisualElement.IsLoaded) {
-				bool start = cachedHexViewUIState == null;
+				bool start = cachedHexViewUIState is null;
 				cachedHexViewUIState = state;
 				if (start)
 					HexView.VisualElement.Loaded += VisualElement_Loaded;
@@ -247,7 +247,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
 			HexView.VisualElement.Loaded -= VisualElement_Loaded;
-			if (cachedHexViewUIState == null)
+			if (cachedHexViewUIState is null)
 				return;
 			InitializeState(cachedHexViewUIState);
 			cachedHexViewUIState = null;
@@ -257,7 +257,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public override void SerializeUIState(ISettingsSection section, object? obj) {
 			var state = obj as HexViewUIState;
-			if (state == null)
+			if (state is null)
 				return;
 			HexViewUIStateSerializer.Write(section, state);
 		}

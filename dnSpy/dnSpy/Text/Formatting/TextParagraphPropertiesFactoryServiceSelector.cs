@@ -38,7 +38,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public ITextParagraphPropertiesFactoryService? Select(IContentType contentType) {
-			if (providerSelector == null)
+			if (providerSelector is null)
 				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices);
 			return providerSelector.GetProviders(contentType).FirstOrDefault()?.Value;
 		}

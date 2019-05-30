@@ -32,7 +32,7 @@ namespace dnSpy.Text {
 
 		public void ChangeContentType(IContentType newContentType, object? editTag) {
 			VerifyAccess();
-			if (newContentType == null)
+			if (newContentType is null)
 				throw new ArgumentNullException(nameof(newContentType));
 			if (contentType != newContentType) {
 				var oldContentType = contentType;
@@ -47,7 +47,7 @@ namespace dnSpy.Text {
 
 		void CreateNewCurrentSnapshot(IList<ITextChange>? changes, int? reiteratedVersionNumber = null, ITextSource? afterTextSource = null) {
 			// It's null the first time it's called from the ctor
-			if (changes != null)
+			if (!(changes is null))
 				currentTextVersion = currentTextVersion.SetChanges(changes, reiteratedVersionNumber);
 			var textSource = afterTextSource ?? Document.CreateSnapshot();
 			var textImage = new TextImage(this, textSource, currentTextVersion.ImageVersion);
@@ -75,7 +75,7 @@ namespace dnSpy.Text {
 		internal TextDocument Document {
 			get => document;
 			private set {
-				if (document != null)
+				if (!(document is null))
 					throw new InvalidOperationException();
 				document = value;
 				CreateNewCurrentSnapshot(null);
@@ -95,7 +95,7 @@ namespace dnSpy.Text {
 			Document.SetOwnerThread(null);
 		}
 
-		public bool EditInProgress => textEditInProgress != null;
+		public bool EditInProgress => !(textEditInProgress is null);
 		public bool CheckEditAccess() => CheckAccess();
 		TextEdit? textEditInProgress;
 
@@ -138,7 +138,7 @@ namespace dnSpy.Text {
 
 		bool RaiseChangingGetIsCanceled(object? editTag) {
 			var c = Changing;
-			if (c == null)
+			if (c is null)
 				return false;
 
 			Action<TextContentChangingEventArgs>? cancelAction = null;
@@ -199,14 +199,14 @@ namespace dnSpy.Text {
 		}
 
 		public void TakeThreadOwnership() {
-			if (ownerThread != null && ownerThread != Thread.CurrentThread)
+			if (!(ownerThread is null) && ownerThread != Thread.CurrentThread)
 				throw new InvalidOperationException();
 			ownerThread = Thread.CurrentThread;
 			Document.SetOwnerThread(ownerThread);
 		}
 
 		Thread? ownerThread;
-		bool CheckAccess() => ownerThread == null || ownerThread == Thread.CurrentThread;
+		bool CheckAccess() => ownerThread is null || ownerThread == Thread.CurrentThread;
 		void VerifyAccess() {
 			if (!CheckAccess())
 				throw new InvalidOperationException();

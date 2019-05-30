@@ -43,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public IQuickInfoSession? TriggerQuickInfo(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var pos = textView.Caret.Position.BufferPosition;
 			var triggerPoint = pos.Snapshot.CreateTrackingPoint(pos.Position, PointTrackingMode.Negative, TrackingFidelityMode.Forward);
@@ -51,9 +51,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public IQuickInfoSession? TriggerQuickInfo(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var session = CreateQuickInfoSession(textView, triggerPoint, trackMouse);
 			session.Start();
@@ -61,9 +61,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public IQuickInfoSession CreateQuickInfoSession(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			var session = new QuickInfoSession(textView, triggerPoint, trackMouse, intellisensePresenterFactoryService.Value, quickInfoSourceProviders);
@@ -72,13 +72,13 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public bool IsQuickInfoActive(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return GetSessions(textView).Count != 0;
 		}
 
 		public ReadOnlyCollection<IQuickInfoSession> GetSessions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			return new ReadOnlyCollection<IQuickInfoSession>(stack.Sessions.OfType<IQuickInfoSession>().ToArray());

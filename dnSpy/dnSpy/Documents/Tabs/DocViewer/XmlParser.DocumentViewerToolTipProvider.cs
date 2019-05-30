@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (name.StartsWith(prefix)) {
 					name = name.Substring(prefix.Length);
 					ParseClrNamespace(name, out var assemblyName, out var @namespace);
-					if (assemblyName == null && @namespace == null)
+					if (assemblyName is null && @namespace is null)
 						provider.Output.Write(origName);
 					else {
 						if (!string.IsNullOrEmpty(@namespace))

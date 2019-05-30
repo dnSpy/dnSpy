@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			// ImageListStreamer loops over every item looking for "Data" (case insensitive)
 			foreach (var v in dict.Values) {
 				var d = v.Value as byte[];
-				if (d == null)
+				if (d is null)
 					continue;
 				if ("Data".Equals(v.Name, StringComparison.OrdinalIgnoreCase)) {
 					imageData = d;
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 			foreach (var imageSource in opts.ImageSources) {
 				var bitmapSource = imageSource as BitmapSource;
-				if (bitmapSource == null)
+				if (bitmapSource is null)
 					throw new InvalidOperationException("Only BitmapSources can be used");
 				var encoder = new BmpBitmapEncoder();
 				encoder.Frames.Add(BitmapFrame.Create(bitmapSource));

@@ -42,8 +42,8 @@ namespace dnSpy.Text.Editor {
 
 		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView == null)
+			Debug.Assert(!(wpfTextView is null));
+			if (wpfTextView is null)
 				return null;
 			if (textView.TextBuffer != buffer)
 				return null;
@@ -63,13 +63,13 @@ namespace dnSpy.Text.Editor {
 			service.GetClassificationTags(spans);
 
 		public static GlyphTextViewMarkerClassificationTagger GetOrCreate(GlyphTextViewMarkerService service) {
-			if (service == null)
+			if (service is null)
 				throw new ArgumentNullException(nameof(service));
 			return service.TextView.TextBuffer.Properties.GetOrCreateSingletonProperty(typeof(GlyphTextViewMarkerClassificationTagger), () => new GlyphTextViewMarkerClassificationTagger(service));
 		}
 
 		public void RaiseTagsChanged(SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(span));
 		}

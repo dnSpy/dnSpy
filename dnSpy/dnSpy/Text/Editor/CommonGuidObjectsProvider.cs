@@ -37,12 +37,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
-			if (createGuidObjects != null) {
+			if (!(createGuidObjects is null)) {
 				foreach (var guidObject in createGuidObjects(args))
 					yield return guidObject;
 			}
 
-			if (guidObjectsProvider != null) {
+			if (!(guidObjectsProvider is null)) {
 				foreach (var guidObject in guidObjectsProvider.GetGuidObjects(args))
 					yield return guidObject;
 			}

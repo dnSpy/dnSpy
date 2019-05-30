@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Buffer == null;
+		public bool IsDefault => Buffer is null;
 
 		/// <summary>
 		/// Gets the buffer
@@ -138,7 +138,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (Buffer == null)
+			if (Buffer is null)
 				return "uninit";
 			var b = TryGetByte();
 			var bs = b < 0 ? "??" : b.ToString("X2");

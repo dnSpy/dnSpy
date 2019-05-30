@@ -62,14 +62,14 @@ namespace dnSpy.Documents {
 			if (f.Info.Type == DocumentConstants.DOCUMENTTYPE_FILE && string.IsNullOrEmpty(f.Info.Name))
 				return;
 			var document = documentService.TryGetOrCreate(f.Info, f.IsAutoLoaded);
-			if (document != null && !hash.Contains(document)) {
+			if (!(document is null) && !hash.Contains(document)) {
 				loadedDocuments.Add(document);
 				hash.Add(document);
 			}
 		}
 
 		public void Execute(IProgress progress) {
-			Debug.Assert(documentsToLoad != null);
+			Debug.Assert(!(documentsToLoad is null));
 			for (int i = 0; i < documentsToLoad.Length; i++) {
 				progress.ThrowIfCancellationRequested();
 				var f = documentsToLoad[i];

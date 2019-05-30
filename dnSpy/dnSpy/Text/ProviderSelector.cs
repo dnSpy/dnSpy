@@ -36,7 +36,7 @@ namespace dnSpy.Text {
 		}
 
 		public IEnumerable<Lazy<TProvider, TProviderMetadata>> GetProviders(IContentType contentType) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 
 			if (!dict.TryGetValue(contentType, out var result))
@@ -55,19 +55,19 @@ namespace dnSpy.Text {
 			foreach (var provider in providers) {
 				foreach (var ctString in provider.Metadata.ContentTypes) {
 					var ct = contentTypeRegistryService.GetContentType(ctString);
-					Debug.Assert(ct != null);
-					if (ct == null)
+					Debug.Assert(!(ct is null));
+					if (ct is null)
 						continue;
 					int dist = GetDistance(ct, contentType);
 					if (dist < 0)
 						continue;
-					if (list == null)
+					if (list is null)
 						list = new List<(Lazy<TProvider, TProviderMetadata>, int)>();
 					list.Add((provider, dist));
 				}
 			}
 
-			if (list == null)
+			if (list is null)
 				return Array.Empty<Lazy<TProvider, TProviderMetadata>>();
 			list.Sort((a, b) => a.dist - b.dist);
 			return list.Select(a => a.lz).ToArray();

@@ -82,8 +82,8 @@ namespace dnSpy.Text.Operations {
 		}
 
 		bool IsWholeWord(ITextStructureNavigator? textStructureNavigator, ITextSnapshot snapshot, FindResult result) {
-			Debug.Assert(textStructureNavigator != null);
-			if (textStructureNavigator == null)
+			Debug.Assert(!(textStructureNavigator is null));
+			if (textStructureNavigator is null)
 				return false;
 			if (result.Length == 0)
 				return false;
@@ -95,7 +95,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public SnapshotSpan? FindNext(int startIndex, bool wraparound, FindData findData) {
-			if (findData.TextSnapshotToSearch == null)
+			if (findData.TextSnapshotToSearch is null)
 				throw new ArgumentException();
 			if ((uint)startIndex > (uint)findData.TextSnapshotToSearch.Length)
 				throw new ArgumentOutOfRangeException(nameof(startIndex));
@@ -121,7 +121,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public Collection<SnapshotSpan> FindAll(FindData findData) {
-			if (findData.TextSnapshotToSearch == null)
+			if (findData.TextSnapshotToSearch is null)
 				throw new ArgumentException();
 
 			var searchRange = new SnapshotSpan(findData.TextSnapshotToSearch, 0, findData.TextSnapshotToSearch.Length);
@@ -144,9 +144,9 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public SnapshotSpan? Find(SnapshotPoint startingPosition, string searchPattern, FindOptions options) {
-			if (startingPosition.Snapshot == null)
+			if (startingPosition.Snapshot is null)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
@@ -154,13 +154,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public SnapshotSpan? Find(SnapshotSpan searchRange, SnapshotPoint startingPosition, string searchPattern, FindOptions options) {
-			if (searchRange.Snapshot == null)
+			if (searchRange.Snapshot is null)
 				throw new ArgumentException();
-			if (startingPosition.Snapshot == null)
+			if (startingPosition.Snapshot is null)
 				throw new ArgumentException();
 			if (searchRange.Snapshot != startingPosition.Snapshot)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
@@ -170,9 +170,9 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public IEnumerable<SnapshotSpan> FindAll(SnapshotSpan searchRange, string searchPattern, FindOptions options) {
-			if (searchRange.Snapshot == null)
+			if (searchRange.Snapshot is null)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
@@ -180,13 +180,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public IEnumerable<SnapshotSpan> FindAll(SnapshotSpan searchRange, SnapshotPoint startingPosition, string searchPattern, FindOptions options) {
-			if (searchRange.Snapshot == null)
+			if (searchRange.Snapshot is null)
 				throw new ArgumentException();
-			if (startingPosition.Snapshot == null)
+			if (startingPosition.Snapshot is null)
 				throw new ArgumentException();
 			if (searchRange.Snapshot != startingPosition.Snapshot)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
@@ -197,13 +197,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public SnapshotSpan? FindForReplace(SnapshotSpan searchRange, string searchPattern, string replacePattern, FindOptions options, out string? expandedReplacePattern) {
-			if (searchRange.Snapshot == null)
+			if (searchRange.Snapshot is null)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
-			if (replacePattern == null)
+			if (replacePattern is null)
 				throw new ArgumentNullException(nameof(replacePattern));
 			var startingPosition = (options & FindOptions.SearchReverse) != 0 ? searchRange.End : searchRange.Start;
 			foreach (var t in FindAllForReplace(searchRange, startingPosition, searchPattern, replacePattern, options)) {
@@ -215,13 +215,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public SnapshotSpan? FindForReplace(SnapshotPoint startingPosition, string searchPattern, string replacePattern, FindOptions options, out string? expandedReplacePattern) {
-			if (startingPosition.Snapshot == null)
+			if (startingPosition.Snapshot is null)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
-			if (replacePattern == null)
+			if (replacePattern is null)
 				throw new ArgumentNullException(nameof(replacePattern));
 			var searchRange = new SnapshotSpan(startingPosition.Snapshot, 0, startingPosition.Snapshot.Length);
 			foreach (var t in FindAllForReplace(searchRange, startingPosition, searchPattern, replacePattern, options)) {
@@ -233,13 +233,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public IEnumerable<Tuple<SnapshotSpan, string?>> FindAllForReplace(SnapshotSpan searchRange, string searchPattern, string replacePattern, FindOptions options) {
-			if (searchRange.Snapshot == null)
+			if (searchRange.Snapshot is null)
 				throw new ArgumentException();
-			if (searchPattern == null)
+			if (searchPattern is null)
 				throw new ArgumentNullException(nameof(searchPattern));
 			if (searchPattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(searchPattern));
-			if (replacePattern == null)
+			if (replacePattern is null)
 				throw new ArgumentNullException(nameof(replacePattern));
 			return FindAllForReplace(searchRange, searchRange.Start, searchPattern, replacePattern, options);
 		}
@@ -322,11 +322,11 @@ namespace dnSpy.Text.Operations {
 			for (int lineNumber = startLine.LineNumber; lineNumber <= endLineNumber; lineNumber++) {
 				var line = snapshot.GetLineFromLineNumber(lineNumber);
 				var range = searchRange.Intersection(line.ExtentIncludingLineBreak);
-				if (range == null || range.Value.Length == 0)
+				if (range is null || range.Value.Length == 0)
 					continue;
 				var text = range.Value.GetText();
 				int index = 0;
-				if (regex != null) {
+				if (!(regex is null)) {
 					foreach (var res in GetRegexResults(regex, range.Value.Start, text, index, searchPattern, options, replacePattern))
 						yield return res;
 				}
@@ -352,11 +352,11 @@ namespace dnSpy.Text.Operations {
 			for (int lineNumber = endLine.LineNumber; lineNumber >= startLineNumber; lineNumber--) {
 				var line = snapshot.GetLineFromLineNumber(lineNumber);
 				var range = searchRange.Intersection(line.ExtentIncludingLineBreak);
-				if (range == null || range.Value.Length == 0)
+				if (range is null || range.Value.Length == 0)
 					continue;
 				var text = range.Value.GetText();
 				int index = text.Length;
-				if (regex != null) {
+				if (!(regex is null)) {
 					foreach (var res in GetRegexResults(regex, range.Value.Start, text, index, searchPattern, options, replacePattern))
 						yield return res;
 				}
@@ -435,7 +435,7 @@ namespace dnSpy.Text.Operations {
 			foreach (Match match in regex.Matches(searchText, index)) {
 				int position = searchTextPosition.Position + match.Index;
 				if (!onlyWords || IsWord(searchTextPosition.Snapshot, position, searchPattern.Length))
-					yield return new FindResult(position, match.Length, replacePattern == null ? null : match.Result(replacePattern));
+					yield return new FindResult(position, match.Length, replacePattern is null ? null : match.Result(replacePattern));
 			}
 		}
 

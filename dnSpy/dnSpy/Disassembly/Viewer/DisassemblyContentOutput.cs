@@ -30,7 +30,7 @@ namespace dnSpy.Disassembly.Viewer {
 		public DisassemblyContentOutput() => textList = new List<DisassemblyText>();
 
 		void AddText(string text, object color, object? reference, DisassemblyReferenceFlags flags) {
-			if (reference == null && textList.Count != 0 && textList[textList.Count - 1].Color == color) {
+			if (reference is null && textList.Count != 0 && textList[textList.Count - 1].Color == color) {
 				var last = textList[textList.Count - 1];
 				textList[textList.Count - 1] = new DisassemblyText(color, last.Text + text, reference, flags);
 			}

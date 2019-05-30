@@ -35,7 +35,7 @@ namespace dnSpy.Text.Formatting {
 		/// <summary>
 		/// Length in column characters. This is never zero.
 		/// </summary>
-		public int ColumnLength => AdornmentElement != null ? 1 : Span.Length;
+		public int ColumnLength => !(AdornmentElement is null) ? 1 : Span.Length;
 
 		/// <summary>
 		/// Span relative to the start of the physical line (<see cref="LinePartsCollection.Span"/>)
@@ -58,8 +58,8 @@ namespace dnSpy.Text.Formatting {
 		public readonly int Index;
 
 		public LinePart(int index, int column, Span span, IAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
-			Debug.Assert(adornmentElement != null);
-			Debug.Assert(textRunProperties != null);
+			Debug.Assert(!(adornmentElement is null));
+			Debug.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -69,7 +69,7 @@ namespace dnSpy.Text.Formatting {
 
 		public LinePart(int index, int column, Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
-			Debug.Assert(textRunProperties != null);
+			Debug.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -78,7 +78,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public bool BelongsTo(int lineIndex) {
-			if (AdornmentElement == null || Span.Length != 0)
+			if (AdornmentElement is null || Span.Length != 0)
 				return Span.Start <= lineIndex && lineIndex < Span.End;
 
 			switch (AdornmentElement.Affinity) {
@@ -95,7 +95,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public override string ToString() {
-			if (AdornmentElement != null)
+			if (!(AdornmentElement is null))
 				return $"{Span.ToString()} {AdornmentElement.ToString()}";
 			return Span.ToString();
 		}

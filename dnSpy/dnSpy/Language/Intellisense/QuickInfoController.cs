@@ -38,7 +38,7 @@ namespace dnSpy.Language.Intellisense {
 
 		void TextView_MouseHover(object sender, MouseHoverEventArgs e) {
 			var pos = e.TextPosition.GetPoint(textView.TextBuffer, PositionAffinity.Successor);
-			if (pos == null)
+			if (pos is null)
 				return;
 			var sessions = quickInfoBroker.GetSessions(textView);
 			foreach (var session in sessions) {
@@ -47,7 +47,7 @@ namespace dnSpy.Language.Intellisense {
 				if ((session as IQuickInfoSession2)?.HasInteractiveContent == true) {
 					foreach (var o in session.QuickInfoContent) {
 						var io = o as IInteractiveQuickInfoContent;
-						if (io == null)
+						if (io is null)
 							continue;
 						if (io.KeepQuickInfoOpen || io.IsMouseOverAggregated)
 							return;
@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		bool Intersects(ITrackingSpan span, SnapshotPoint point) {
-			if (span == null)
+			if (span is null)
 				return false;
 			if (point.Snapshot.TextBuffer != span.TextBuffer)
 				return false;

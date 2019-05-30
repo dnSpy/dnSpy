@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(StartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.BreakKind = BreakKind;
 		}

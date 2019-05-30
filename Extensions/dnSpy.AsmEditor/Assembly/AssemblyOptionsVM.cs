@@ -240,10 +240,10 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		void OnOpenPublicKeyFile() {
-			if (openPublicKeyFile == null)
+			if (openPublicKeyFile is null)
 				throw new InvalidOperationException();
 			var newPublicKey = openPublicKeyFile.Open();
-			if (newPublicKey == null)
+			if (newPublicKey is null)
 				return;
 			PublicKey.Value = newPublicKey.Data;
 		}

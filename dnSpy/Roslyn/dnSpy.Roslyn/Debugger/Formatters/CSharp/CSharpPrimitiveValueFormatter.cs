@@ -78,7 +78,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (!rawValue.HasRawValue)
 				return false;
 
-			if (rawValue.RawValue == null) {
+			if (rawValue.RawValue is null) {
 				OutputWrite(Keyword_null, DbgTextColor.Keyword);
 				return true;
 			}

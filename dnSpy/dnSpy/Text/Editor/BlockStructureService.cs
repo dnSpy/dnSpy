@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor {
 		BlockStructureServiceProvider(IEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public IBlockStructureService GetService(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(BlockStructureService), () => new BlockStructureService(wpfTextView, editorFormatMapService));
 		}
@@ -153,7 +153,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateColorInfos() {
-			Debug.Assert(editorFormatMap != null);
+			Debug.Assert(!(editorFormatMap is null));
 			var lineKind = wpfTextView.Options.GetBlockStructureLineKind();
 			foreach (var info in lineColorInfos) {
 				var props = editorFormatMap.GetProperties(info.Type);
@@ -176,7 +176,7 @@ namespace dnSpy.Text.Editor {
 				newPen = InitializePen(new Pen(scBrush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -235,9 +235,9 @@ namespace dnSpy.Text.Editor {
 				return;
 			enabled = newValue;
 			if (enabled) {
-				if (layer == null)
+				if (layer is null)
 					layer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.BlockStructure);
-				if (editorFormatMap == null)
+				if (editorFormatMap is null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				RegisterEvents();
 				RefreshLinesAndColorInfos();
@@ -279,7 +279,7 @@ namespace dnSpy.Text.Editor {
 		void AddLineElements(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return;
-			Debug.Assert(layer != null);
+			Debug.Assert(!(layer is null));
 			var list = new List<BlockStructureData>();
 			var updated = new HashSet<BlockStructureData>(BlockStructureDataComparer.Instance);
 			foreach (var span in spans) {
@@ -292,11 +292,11 @@ namespace dnSpy.Text.Editor {
 					updated.Add(info);
 
 					var lineElement = FindLineElement(info);
-					if (lineElement != null) {
+					if (!(lineElement is null)) {
 						layer.RemoveAdornment(lineElement);
 						Debug.Assert(!lineElements.Contains(lineElement));
 					}
-					if (lineElement == null)
+					if (lineElement is null)
 						lineElement = new LineElement(info);
 
 					var lines = wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(lineElement.Span);
@@ -546,7 +546,7 @@ done:
 
 		void UnregisterEvents() {
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (editorFormatMap != null)
+			if (!(editorFormatMap is null))
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 		}
 

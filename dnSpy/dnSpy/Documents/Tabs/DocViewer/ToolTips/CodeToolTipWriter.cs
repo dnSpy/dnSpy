@@ -71,7 +71,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (!syntaxHighlight)
 				color = BoxedTextColor.Text;
 			var classificationType = ColorUtils.GetClassificationType(classificationTypeRegistryService, themeClassificationTypeService, color);
-			if (classificationType == null) {
+			if (classificationType is null) {
 				var textColor = color as TextColor? ?? TextColor.Text;
 				classificationType = themeClassificationTypeService.GetClassificationType(textColor);
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		void Add(object color, string? text) {
-			if (text == null)
+			if (text is null)
 				return;
 			result.Add(new ColorAndText(color, text));
 			sb.Append(text);
@@ -129,7 +129,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		static bool WriteXmlDoc(IXmlDocOutput output, string? xmlDoc, string? name, string xmlElemName) {
-			if (xmlDoc == null || name == null)
+			if (xmlDoc is null || name is null)
 				return false;
 			try {
 				var xml = XDocument.Load(new StringReader("<docroot>" + xmlDoc + "</docroot>"), LoadOptions.None);
@@ -153,15 +153,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
-						if (cref != null)
+						if (!(cref is null))
 							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.Text);
 						var langword = xelem.Attribute("langword");
-						if (langword != null)
+						if (!(langword is null))
 							output.Write(((string)langword).Trim(), BoxedTextColor.Keyword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
-						if (nameAttr != null)
+						if (!(nameAttr is null))
 							output.Write(((string)nameAttr).Trim(), BoxedTextColor.Parameter);
 						break;
 					case "BR":

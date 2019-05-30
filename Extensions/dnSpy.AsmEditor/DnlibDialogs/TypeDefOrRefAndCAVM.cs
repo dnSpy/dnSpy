@@ -43,9 +43,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
+			if (!(ownerMethod is null) && ownerMethod.GenericParameters.Count > 0)
 				typeSigCreatorOptions.CanAddGenericMethodVar = true;
 
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);

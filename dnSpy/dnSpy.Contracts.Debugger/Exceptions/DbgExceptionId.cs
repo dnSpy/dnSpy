@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (category == null)
+			if (category is null)
 				return "<not-initialized>";
 			switch (Kind) {
 			case DbgExceptionIdKind.DefaultId:	return category + " - <<default>>";

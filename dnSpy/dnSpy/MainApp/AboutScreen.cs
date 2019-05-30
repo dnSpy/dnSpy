@@ -219,7 +219,7 @@ namespace dnSpy.MainApp {
 			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
 				for (;;) {
 					var line = streamReader.ReadLine();
-					if (line == null)
+					if (line is null)
 						break;
 					output.WriteLine(line, BoxedTextColor.Text);
 				}

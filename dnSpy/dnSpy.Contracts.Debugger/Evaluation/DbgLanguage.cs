@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public DbgEvaluationContext CreateContext(DbgStackFrame frame, DbgEvaluationContextOptions options = DbgEvaluationContextOptions.None, TimeSpan funcEvalTimeout = default, CancellationToken cancellationToken = default) {
-			if (frame == null)
+			if (frame is null)
 				throw new ArgumentNullException(nameof(frame));
 			return CreateContext(frame.Runtime, frame.Location, options, funcEvalTimeout, cancellationToken);
 		}

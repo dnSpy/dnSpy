@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="data">Data to send to listeners</param>
 		/// <returns></returns>
 		public static NotifyDocumentCollectionChangedEventArgs CreateAdd(IDsDocument document, object? data) {
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 			var e = new NotifyDocumentCollectionChangedEventArgs(new IDsDocument[] { document });
 			e.Type = NotifyDocumentCollectionType.Add;
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="data">Data to send to listeners</param>
 		/// <returns></returns>
 		public static NotifyDocumentCollectionChangedEventArgs CreateRemove(IDsDocument document, object? data) {
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 			return CreateRemove(new[] { document }, data);
 		}

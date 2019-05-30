@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool useMixedMode;
 
-		public bool CanWritePdb => Module.PdbState != null;
+		public bool CanWritePdb => !(Module.PdbState is null);
 
 		public bool WritePdb {
 			get => writePdb;
@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			else {
 				var options = new ModuleWriterOptions(Module);
 				CopyTo(options);
-				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
+				if (!(Module.ManagedEntryPoint is null) || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
 				return AddOtherOptions(options);
 			}
@@ -426,10 +426,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set => SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value);
 		}
 
-		bool? GetFlagValue(Characteristics flag) => Characteristics == null ? (bool?)null : (Characteristics.Value & flag) != 0;
+		bool? GetFlagValue(Characteristics flag) => Characteristics is null ? (bool?)null : (Characteristics.Value & flag) != 0;
 
 		void SetFlagValue(Characteristics flag, bool? value) {
-			if (Characteristics == null)
+			if (Characteristics is null)
 				Characteristics = 0;
 			if (value ?? false)
 				Characteristics |= flag;
@@ -560,10 +560,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set => SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value);
 		}
 
-		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics == null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
+		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics is null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
 
 		void SetFlagValue(DllCharacteristics flag, bool? value) {
-			if (DllCharacteristics == null)
+			if (DllCharacteristics is null)
 				DllCharacteristics = 0;
 			if (value ?? false)
 				DllCharacteristics |= flag;
@@ -718,10 +718,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set => SetFlagValue(ComImageFlags.Bit32Preferred, value);
 		}
 
-		bool? GetFlagValue(ComImageFlags flag) => Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
+		bool? GetFlagValue(ComImageFlags flag) => Flags is null ? (bool?)null : (Flags.Value & flag) != 0;
 
 		void SetFlagValue(ComImageFlags flag, bool? value) {
-			if (Flags == null)
+			if (Flags is null)
 				Flags = 0;
 			if (value ?? false)
 				Flags |= flag;
@@ -845,7 +845,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return null;
 			}
 			set {
-				if (value != null && value != PreserveRids) {
+				if (!(value is null) && value != PreserveRids) {
 					if (value.Value)
 						Flags |= MetadataFlags.PreserveRids;
 					else
@@ -945,7 +945,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Flags &= ~flag;
 
 			OnPropertyChanged(prop1);
-			if (prop2 != null)
+			if (!(prop2 is null))
 				OnPropertyChanged(prop2);
 		}
 

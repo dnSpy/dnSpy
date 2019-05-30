@@ -51,25 +51,25 @@ namespace dnSpy.Text.Editor {
 			}
 
 			void InitializeHandlers() {
-				if (handlers != null)
+				if (!(handlers is null))
 					return;
 				var list = new List<IMarginContextMenuHandler>(marginContextMenuHandlerProviders.Length);
 				foreach (var lazy in marginContextMenuHandlerProviders) {
 					if (!StringComparer.OrdinalIgnoreCase.Equals(lazy.Metadata.MarginName, marginName))
 						continue;
-					if (lazy.Metadata.TextViewRoles != null && !wpfTextViewHost.TextView.Roles.ContainsAny(lazy.Metadata.TextViewRoles))
+					if (!(lazy.Metadata.TextViewRoles is null) && !wpfTextViewHost.TextView.Roles.ContainsAny(lazy.Metadata.TextViewRoles))
 						continue;
 					var handler = lazy.Value.Create(wpfTextViewHost, margin);
-					if (handler != null)
+					if (!(handler is null))
 						list.Add(handler);
 				}
 				handlers = list.ToArray();
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
-				if (handlers == null)
+				if (handlers is null)
 					InitializeHandlers();
-				Debug.Assert(handlers != null);
+				Debug.Assert(!(handlers is null));
 
 				var point = Mouse.PrimaryDevice.GetPosition(margin.VisualElement);
 
@@ -86,11 +86,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IGuidObjectsProvider Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin, string marginName) {
-			if (wpfTextViewHost == null)
+			if (wpfTextViewHost is null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (margin == null)
+			if (margin is null)
 				throw new ArgumentNullException(nameof(margin));
-			if (marginName == null)
+			if (marginName is null)
 				throw new ArgumentNullException(nameof(marginName));
 			if (margin.GetTextViewMargin(marginName) != margin)
 				throw new ArgumentException();

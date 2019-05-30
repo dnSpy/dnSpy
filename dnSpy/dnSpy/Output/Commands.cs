@@ -42,11 +42,11 @@ namespace dnSpy.Output {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID))
 				return null;
 			var textPane = context.Find<IOutputTextPane>();
-			if (textPane == null)
+			if (textPane is null)
 				return null;
 
 			var outputService = context.Find<IOutputServiceInternal>();
-			if (outputService == null)
+			if (outputService is null)
 				return null;
 
 			return new LogEditorCtxMenuContext(textPane, outputService);

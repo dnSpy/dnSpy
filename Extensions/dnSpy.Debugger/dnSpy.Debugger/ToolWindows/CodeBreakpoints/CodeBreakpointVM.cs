@@ -160,9 +160,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;

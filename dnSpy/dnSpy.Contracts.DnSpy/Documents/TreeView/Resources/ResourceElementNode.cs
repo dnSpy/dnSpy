@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public uint RVA {
 			get {
 				var module = GetModuleOffset(out var fo);
-				if (module == null)
+				if (module is null)
 					return 0;
 
 				return (uint)module.Metadata.PEImage.ToRVA(fo);
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			fileOffset = 0;
 
 			var module = this.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
-			if (module == null)
+			if (module is null)
 				return null;
 
 			fileOffset = resourceElement.ResourceData.StartOffset;
@@ -199,7 +199,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 				default:
 					var binData = resourceElement.ResourceData as BinaryResourceData;
-					if (binData != null)
+					if (!(binData is null))
 						return string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytesAndType, binData.Data.Length, binData.TypeName);
 					return resourceElement.ResourceData.ToString();
 				}

@@ -56,7 +56,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 		bool RewriteElement(XamlContext ctx, XElement parent, XElement elem) {
 			var type = parent.Annotation<XamlType>();
 			var property = elem.Annotation<XamlProperty>();
-			if ((property == null || type == null) && elem.Name != key)
+			if ((property is null || type is null) && elem.Name != key)
 				return false;
 
 			if (elem.Elements().Count() != 1 || elem.Attributes().Any(t => t.Name.Namespace != XNamespace.Xmlns))
@@ -68,7 +68,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				return false;
 
 			var ext = InlineExtension(ctx, value);
-			if (ext == null)
+			if (ext is null)
 				return false;
 
 			ctx.CancellationToken.ThrowIfCancellationRequested();
@@ -87,10 +87,10 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		bool CanInlineExt(XamlContext ctx, XElement ctxElement) {
 			var type = ctxElement.Annotation<XamlType>();
-			if (type != null && type.ResolvedType != null) {
+			if (!(type is null) && !(type.ResolvedType is null)) {
 				var typeDef = type.ResolvedType.GetBaseType();
 				bool isExt = false;
-				while (typeDef != null) {
+				while (!(typeDef is null)) {
 					if (typeDef.FullName == "System.Windows.Markup.MarkupExtension") {
 						isExt = true;
 						break;
@@ -100,7 +100,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				if (!isExt)
 					return false;
 			}
-			else if (ctxElement.Annotation<XamlProperty>() == null &&
+			else if (ctxElement.Annotation<XamlProperty>() is null &&
 			         ctxElement.Name != ctor)
 				return false;
 
@@ -126,7 +126,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			var args = new List<object>();
 			foreach (var child in ctor.Nodes()) {
 				var arg = InlineObject(ctx, child);
-				if (arg == null)
+				if (arg is null)
 					return null;
 				args.Add(arg);
 			}
@@ -135,7 +135,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		XamlExtension InlineExtension(XamlContext ctx, XElement ctxElement) {
 			var type = ctxElement.Annotation<XamlType>();
-			if (type == null)
+			if (type is null)
 				return null;
 
 			var ext = new XamlExtension(type);
@@ -145,15 +145,15 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			foreach (var child in ctxElement.Nodes()) {
 				var elem = child as XElement;
-				if (elem == null)
+				if (elem is null)
 					return null;
 
 				if (elem.Name == ctor) {
-					if (ext.Initializer != null)
+					if (!(ext.Initializer is null))
 						return null;
 
 					var args = InlineCtor(ctx, elem);
-					if (args == null)
+					if (args is null)
 						return null;
 
 					ext.Initializer = args;
@@ -161,7 +161,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				}
 
 				var property = elem.Annotation<XamlProperty>();
-				if (property == null || elem.Nodes().Count() != 1 ||
+				if (property is null || elem.Nodes().Count() != 1 ||
 				    elem.Attributes().Any(attr => attr.Name.Namespace != XNamespace.Xmlns))
 					return null;
 

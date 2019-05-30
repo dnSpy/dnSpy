@@ -74,7 +74,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
 			var rspFile = GetResponseFile("VisualBasicInteractive.rsp");
-			if (rspFile == null)
+			if (rspFile is null)
 				return;
 			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 

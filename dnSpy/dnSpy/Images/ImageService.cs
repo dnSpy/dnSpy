@@ -94,7 +94,7 @@ namespace dnSpy.Images {
 		}
 
 		Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata> CreateDefaultProvider(Assembly assembly) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			var attr = new ExportImageSourceInfoProviderAttribute(typeof(void), double.MaxValue);
 			var lz = new Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>(() => new DefaultImageSourceInfoProvider(assembly), attr, isThreadSafe: false);
@@ -103,7 +103,7 @@ namespace dnSpy.Images {
 		}
 
 		List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> GetProviders(Assembly assembly) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			if (imageSourceInfoProvidersDict.TryGetValue(assembly, out var list))
 				return list;
@@ -132,7 +132,7 @@ namespace dnSpy.Images {
 		}
 
 		Size GetDpi(DependencyObject? dpiObject, Size dpi) {
-			if (dpiObject != null) {
+			if (!(dpiObject is null)) {
 				if (Window.GetWindow(dpiObject) is MetroWindow window)
 					return window.WindowDpi;
 			}
@@ -146,9 +146,9 @@ namespace dnSpy.Images {
 		static Size Round(Size size) => new Size(Math.Round(size.Width), Math.Round(size.Height));
 
 		public BitmapSource? GetImage(ImageReference imageReference, ImageOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			if (imageReference.Name == null)
+			if (imageReference.Name is null)
 				return null;
 
 			var internalOptions = new InternalImageOptions();
@@ -167,11 +167,11 @@ namespace dnSpy.Images {
 			if (internalOptions.PhysicalSize.Width == 0 || internalOptions.PhysicalSize.Height == 0)
 				return null;
 
-			if (imageReference.Assembly != null) {
+			if (!(imageReference.Assembly is null)) {
 				var name = imageReference.Name;
 				foreach (var provider in GetProviders(imageReference.Assembly)) {
 					var infos = provider.Value.GetImageSourceInfos(name);
-					if (infos == null)
+					if (infos is null)
 						continue;
 
 					var infoList = new List<ImageSourceInfo>(infos);
@@ -202,7 +202,7 @@ namespace dnSpy.Images {
 
 					foreach (var info in infoList) {
 						var bitmapSource = TryGetImage(info.Uri, internalOptions);
-						if (bitmapSource != null)
+						if (!(bitmapSource is null))
 							return bitmapSource;
 					}
 
@@ -215,22 +215,22 @@ namespace dnSpy.Images {
 		}
 
 		BitmapSource? TryGetImage(string uriString, InternalImageOptions options) {
-			if (uriString == null)
+			if (uriString is null)
 				return null;
 
 			var key = new ImageKey(uriString, options);
 			BitmapSource? image;
 			if (imageCache.TryGetValue(key, out var weakImage)) {
 				image = weakImage.Target as BitmapSource;
-				if (image != null)
+				if (!(image is null))
 					return image;
 			}
 
 			image = TryLoadImage(uriString, options.PhysicalSize);
-			if (image == null)
+			if (image is null)
 				return null;
 
-			if (options.BackgroundColor != null)
+			if (!(options.BackgroundColor is null))
 				image = ThemedImageCreator.CreateThemedBitmapSource(image, options.BackgroundColor.Value, isHighContrast);
 			imageCache[key] = new WeakReference(image);
 			return image;

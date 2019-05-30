@@ -55,7 +55,7 @@ namespace dnSpy.Search {
 		public void SearchTypes(IEnumerable<SearchTypeInfo> types) {
 			foreach (var info in types) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				if (info.Type.DeclaringType == null)
+				if (info.Type.DeclaringType is null)
 					Search(info.Document, info.Type.Namespace, info.Type);
 				else
 					Search(info.Document, info.Type);
@@ -126,11 +126,11 @@ namespace dnSpy.Search {
 		}
 
 		void SearchAssemblyInternal(AssemblyDocumentNode asmNode) {
-			if (asmNode == null)
+			if (asmNode is null)
 				return;
 			var asm = asmNode.Document.AssemblyDef;
-			Debug.Assert(asm != null);
-			if (asm == null)
+			Debug.Assert(!(asm is null));
+			if (asm is null)
 				return;
 			var res = options.Filter.GetResult(asm);
 			if (res.FilterType == FilterType.Hide)
@@ -164,10 +164,10 @@ namespace dnSpy.Search {
 		}
 
 		void SearchModule(IDsDocument module) {
-			if (module == null)
+			if (module is null)
 				return;
 			var mod = module.ModuleDef;
-			if (mod == null) {
+			if (mod is null) {
 				SearchNonNetFile(module);
 				return;
 			}
@@ -184,7 +184,7 @@ namespace dnSpy.Search {
 					NameObject = mod,
 					ObjectImageReference = options.DotNetImageService.GetImageReference(mod),
 					LocationObject = mod.Assembly,
-					LocationImageReference = mod.Assembly != null ? options.DotNetImageService.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
+					LocationImageReference = !(mod.Assembly is null) ? options.DotNetImageService.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
 					Document = module,
 				});
 			}
@@ -254,11 +254,11 @@ namespace dnSpy.Search {
 			var resNodes = new List<ResourceNode>();
 			options.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
 				var modNode = options.DocumentTreeView.FindNode(module.ModuleDef);
-				if (modNode == null)
+				if (modNode is null)
 					return;
 				modNode.TreeNode.EnsureChildrenLoaded();
 				var resFolder = modNode.TreeNode.Children.FirstOrDefault(a => a.Data is ResourcesFolderNode);
-				if (resFolder != null) {
+				if (!(resFolder is null)) {
 					resFolder.EnsureChildrenLoaded();
 					resNodes.AddRange(resFolder.DataChildren.OfType<ResourceNode>());
 				}
@@ -359,7 +359,7 @@ namespace dnSpy.Search {
 		}
 
 		void SearchNonNetFile(IDsDocument nonNetFile) {
-			if (nonNetFile == null)
+			if (nonNetFile is null)
 				return;
 			var res = options.Filter.GetResult(nonNetFile);
 			if (res.FilterType == FilterType.Hide)
@@ -532,7 +532,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResultLocals(method);
 			if (res.FilterType != FilterType.Hide) {
 				body = method.Body;
-				if (body == null)
+				if (body is null)
 					return; // Return immediately. All code here depends on a non-null body
 
 				foreach (var local in body.Variables) {
@@ -562,7 +562,7 @@ namespace dnSpy.Search {
 				return;
 
 			body = method.Body;
-			if (body == null)
+			if (body is null)
 				return;
 			int counter = 0;
 			foreach (var instr in body.Instructions) {
@@ -590,7 +590,7 @@ namespace dnSpy.Search {
 				case Code.Ldstr: operand = instr.Operand; break;
 				default: operand = null; break;
 				}
-				if (operand != null && IsMatch(null, operand)) {
+				if (!(operand is null) && IsMatch(null, operand)) {
 					options.OnMatch(new SearchResult {
 						Context = options.Context,
 						Object = method,

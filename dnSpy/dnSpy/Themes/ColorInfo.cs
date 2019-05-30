@@ -61,12 +61,12 @@ namespace dnSpy.Themes {
 			: base(colorType, description) => ForegroundResourceKey = null;
 
 		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
-			if (ForegroundResourceKey != null) {
-				Debug.Assert(hlColor.Foreground != null);
+			if (!(ForegroundResourceKey is null)) {
+				Debug.Assert(!(hlColor.Foreground is null));
 				yield return new Tuple<object?, object>(ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground).Color);
 			}
-			if (BackgroundResourceKey != null) {
-				Debug.Assert(hlColor.Background != null);
+			if (!(BackgroundResourceKey is null)) {
+				Debug.Assert(!(hlColor.Background is null));
 				yield return new Tuple<object?, object>(BackgroundResourceKey, ((SolidColorBrush)hlColor.Background).Color);
 			}
 		}
@@ -81,12 +81,12 @@ namespace dnSpy.Themes {
 		}
 
 		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
-			if (ForegroundResourceKey != null) {
-				Debug.Assert(hlColor.Foreground != null);
+			if (!(ForegroundResourceKey is null)) {
+				Debug.Assert(!(hlColor.Foreground is null));
 				yield return new Tuple<object?, object>(ForegroundResourceKey, hlColor.Foreground);
 			}
-			if (BackgroundResourceKey != null) {
-				Debug.Assert(hlColor.Background != null);
+			if (!(BackgroundResourceKey is null)) {
+				Debug.Assert(!(hlColor.Background is null));
 				yield return new Tuple<object?, object>(BackgroundResourceKey, hlColor.Background);
 			}
 		}
@@ -101,13 +101,13 @@ namespace dnSpy.Themes {
 			: base(colorType, description) => ForegroundResourceKey = null;
 
 		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
-			if (ForegroundResourceKey != null) {
-				Debug.Assert(hlColor.Foreground != null);
+			if (!(ForegroundResourceKey is null)) {
+				Debug.Assert(!(hlColor.Foreground is null));
 				var brush = hlColor.Foreground;
 				yield return new Tuple<object?, object>(ForegroundResourceKey, CreateDrawingBrush(brush));
 			}
-			if (BackgroundResourceKey != null) {
-				Debug.Assert(hlColor.Background != null);
+			if (!(BackgroundResourceKey is null)) {
+				Debug.Assert(!(hlColor.Background is null));
 				var brush = hlColor.Background;
 				yield return new Tuple<object?, object>(BackgroundResourceKey, CreateDrawingBrush(brush));
 			}

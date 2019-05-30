@@ -61,7 +61,7 @@ namespace dnSpy.Hex.Editor {
 		ColumnLineSeparatorServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override void InstallLineSeparatorService(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(ColumnLineSeparatorService), () => new ColumnLineSeparatorService(wpfHexView, editorFormatMapService));
 		}
@@ -121,7 +121,7 @@ namespace dnSpy.Hex.Editor {
 #pragma warning restore CS0169
 
 		public ColumnLineSeparatorService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
-			if (editorFormatMapService == null)
+			if (editorFormatMapService is null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			lineElements = new List<LineElement>();
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
@@ -138,7 +138,7 @@ namespace dnSpy.Hex.Editor {
 			enabled = newEnabled;
 
 			if (enabled) {
-				if (adornmentLayer == null)
+				if (adornmentLayer is null)
 					adornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.ColumnLineSeparator);
 				HookEnabledEvents();
 			}
@@ -232,7 +232,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllLines();
 			if (!enabled)
 				return;
-			Debug.Assert(adornmentLayer != null);
+			Debug.Assert(!(adornmentLayer is null));
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;
@@ -282,7 +282,7 @@ namespace dnSpy.Hex.Editor {
 				newPen = InitializePen(new Pen(scBrush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}

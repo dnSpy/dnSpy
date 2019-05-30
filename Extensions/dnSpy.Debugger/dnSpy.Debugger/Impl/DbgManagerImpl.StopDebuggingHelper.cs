@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Impl {
 			// Random thread
 			void StopTimer() {
 				lock (lockObj) {
-					if (timer != null) {
+					if (!(timer is null)) {
 						timer.Tick -= Timer_Tick_DbgThread;
 						timer.Stop();
 						timer = null;

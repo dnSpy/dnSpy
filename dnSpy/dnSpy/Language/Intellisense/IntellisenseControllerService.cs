@@ -57,7 +57,7 @@ namespace dnSpy.Language.Intellisense {
 					info.FilterBuffers(subjectBuffers, filteredBuffers);
 					if (filteredBuffers.Count == 0)
 						continue;
-					if (info.Controller == null)
+					if (info.Controller is null)
 						info.Controller = info.Lazy.Value.TryCreateIntellisenseController(textView, filteredBuffers);
 					else {
 						foreach (var buffer in filteredBuffers)
@@ -69,7 +69,7 @@ namespace dnSpy.Language.Intellisense {
 			public void SubjectBuffersDisconnected(ConnectionReason reason, IReadOnlyCollection<ITextBuffer> subjectBuffers) {
 				var filteredBuffers = new List<ITextBuffer>(subjectBuffers.Count);
 				foreach (var info in controllerInfos) {
-					if (info.Controller == null)
+					if (info.Controller is null)
 						continue;
 					info.FilterBuffers(subjectBuffers, filteredBuffers);
 					if (filteredBuffers.Count == 0)

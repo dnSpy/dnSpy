@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.MVVM {
 			this.canExec = canExec;
 		}
 
-		bool ICommand.CanExecute(object parameter) => canExec == null ? true : canExec(parameter);
+		bool ICommand.CanExecute(object parameter) => canExec is null ? true : canExec(parameter);
 
 		event EventHandler ICommand.CanExecuteChanged {
 			add => CommandManager.RequerySuggested += value;

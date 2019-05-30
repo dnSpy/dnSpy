@@ -28,11 +28,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public void Run(AstNode compilationUnit) {
 			foreach (var attrSect in compilationUnit.Descendants.OfType<AttributeSection>()) {
 				var attr = attrSect.Descendants.OfType<Attribute>().FirstOrDefault();
-				Debug.Assert(attr != null);
-				if (attr == null)
+				Debug.Assert(!(attr is null));
+				if (attr is null)
 					continue;
 				var ca = attr.Annotation<CustomAttribute>();
-				if (ca == null)
+				if (ca is null)
 					continue;
 				if (!Compare(ca.AttributeType, systemRuntimeVersioningString, targetFrameworkAttributeString) &&
 					!Compare(ca.AttributeType, systemSecurityString, unverifiableCodeAttributeString))
@@ -46,7 +46,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		static readonly UTF8String unverifiableCodeAttributeString = new UTF8String("UnverifiableCodeAttribute");
 
 		static bool Compare(ITypeDefOrRef type, UTF8String expNs, UTF8String expName) {
-			if (type == null)
+			if (type is null)
 				return false;
 
 			if (type is TypeRef tr)

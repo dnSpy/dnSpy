@@ -48,7 +48,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal DocumentLine(TextDocument document) {
 #if DEBUG
-			Debug.Assert(document != null);
+			Debug.Assert(!(document is null));
 			this.document = document;
 #endif
 		}
@@ -159,7 +159,7 @@ namespace dnSpy.Text.AvalonEdit {
 			get {
 				DebugVerifyAccess();
 
-				if (right != null) {
+				if (!(right is null)) {
 					return right.LeftMost;
 				}
 				else {
@@ -169,7 +169,7 @@ namespace dnSpy.Text.AvalonEdit {
 						oldNode = node;
 						node = node.parent;
 						// we are on the way up from the right part, don't output node again
-					} while (node != null && node.right == oldNode);
+					} while (!(node is null) && node.right == oldNode);
 					return node;
 				}
 			}
@@ -183,7 +183,7 @@ namespace dnSpy.Text.AvalonEdit {
 			get {
 				DebugVerifyAccess();
 
-				if (left != null) {
+				if (!(left is null)) {
 					return left.RightMost;
 				}
 				else {
@@ -193,7 +193,7 @@ namespace dnSpy.Text.AvalonEdit {
 						oldNode = node;
 						node = node.parent;
 						// we are on the way up from the left part, don't output node again
-					} while (node != null && node.left == oldNode);
+					} while (!(node is null) && node.left == oldNode);
 					return node;
 				}
 			}

@@ -98,7 +98,7 @@ namespace dnSpy.MainApp.Settings {
 		readonly FontCollection monospacedFonts;
 
 		public FontAppSettingsPage(FontAndColorOptions[] options, FontAppSettingsPageOptions fontAppSettingsPageOptions) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			this.fontAppSettingsPageOptions = fontAppSettingsPageOptions;
 			allFonts = new FontCollection();
@@ -169,7 +169,7 @@ namespace dnSpy.MainApp.Settings {
 		public FontFamily FontFamily {
 			get => options.FontOption.FontFamily;
 			set {
-				if (options.FontOption.FontFamily == null || options.FontOption.FontFamily.Source != value.Source) {
+				if (options.FontOption.FontFamily is null || options.FontOption.FontFamily.Source != value.Source) {
 					options.FontOption.FontFamily = value;
 					OnPropertyChanged(nameof(FontFamily));
 				}
@@ -211,7 +211,7 @@ namespace dnSpy.MainApp.Settings {
 
 		public override bool Equals(object? obj) {
 			var other = obj as FontFamilyVM;
-			return other != null &&
+			return !(other is null) &&
 				FontFamily.Equals(other.FontFamily);
 		}
 

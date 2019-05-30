@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string? fullyQualifiedName = null, string? assemblyLocation = null) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			return CreateAssembly(() => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename, assemblyLocation ?? filename);
 		}
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(byte[] assemblyBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
-			if (assemblyBytes == null)
+			if (assemblyBytes is null)
 				throw new ArgumentNullException(nameof(assemblyBytes));
 			return CreateAssembly(() => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
 		}
@@ -146,11 +146,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string? assemblyLocation = null) {
-			if (comMetadata == null)
+			if (comMetadata is null)
 				throw new ArgumentNullException(nameof(comMetadata));
-			if (dynamicModuleHelper == null)
+			if (dynamicModuleHelper is null)
 				throw new ArgumentNullException(nameof(dynamicModuleHelper));
-			if (dispatcher == null)
+			if (dispatcher is null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
 			return CreateAssembly(() => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string? fullyQualifiedName = null) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			return CreateModule(assembly, () => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename);
 		}
@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, byte[] moduleBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
-			if (moduleBytes == null)
+			if (moduleBytes is null)
 				throw new ArgumentNullException(nameof(moduleBytes));
 			return CreateModule(assembly, () => new DmdLazyMetadataBytesArray(moduleBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
 		}
@@ -225,11 +225,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
-			if (comMetadata == null)
+			if (comMetadata is null)
 				throw new ArgumentNullException(nameof(comMetadata));
-			if (dynamicModuleHelper == null)
+			if (dynamicModuleHelper is null)
 				throw new ArgumentNullException(nameof(dynamicModuleHelper));
-			if (dispatcher == null)
+			if (dispatcher is null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
 			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
@@ -339,7 +339,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="wellKnownType">Well known type</param>
 		/// <returns></returns>
-		public bool HasWellKnownType(DmdWellKnownType wellKnownType) => (object?)GetWellKnownType(wellKnownType, isOptional: true) != null;
+		public bool HasWellKnownType(DmdWellKnownType wellKnownType) => !(GetWellKnownType(wellKnownType, isOptional: true) is null);
 
 		/// <summary>
 		/// Gets a well known type

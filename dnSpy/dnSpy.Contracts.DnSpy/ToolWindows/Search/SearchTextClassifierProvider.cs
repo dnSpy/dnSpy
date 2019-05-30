@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var searchContext = context as SearchTextClassifierContext;
-			if (searchContext == null)
+			if (searchContext is null)
 				yield break;
 			foreach (var span in searchContext.SearchMatcher.GetMatchSpans(searchContext.Tag, searchContext.Text))
 				yield return new TextClassificationTag(span, listFindMatchHighlightClassificationType);

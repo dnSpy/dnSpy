@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var reference in references) {
 				if (comparer.Equals(reference.Assembly, assemblyReference)) {
 					assembly = GetModule(reference)?.Assembly;
-					if (assembly != null)
+					if (!(assembly is null))
 						return true;
 				}
 			}
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		unsafe ModuleDef GetModule(ReferenceInfo reference) {
-			if (reference.Module == null) {
+			if (reference.Module is null) {
 				var options = new ModuleCreationOptions(moduleContext);
 				options.TryToLoadPdbFromDisk = false;
 				reference.Module = ModuleDefMD.Load((IntPtr)reference.RawData.Pointer, options, reference.RawData.IsFileLayout ? ImageLayout.File : ImageLayout.Memory);

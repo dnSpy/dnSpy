@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void SwitchOperandControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var data = DataContext as SwitchOperandVM;
-			if (data == null)
+			if (data is null)
 				return;
 
 			switchOperandsListHelper = new SwitchOperandsListHelper(listBox);

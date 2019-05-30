@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override ImageReference GetImageReference(string imageName) {
-			if (imageName == null)
+			if (imageName is null)
 				return ImageReference.None;
 			if (toImageReference.TryGetValue(imageName, out var imgRef))
 				return imgRef;

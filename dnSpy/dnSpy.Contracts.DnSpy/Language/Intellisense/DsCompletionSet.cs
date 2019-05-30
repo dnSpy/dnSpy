@@ -81,9 +81,9 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		string SearchText {
 			get {
 				var atSpan = ApplicableTo;
-				if (atSpan == null)
+				if (atSpan is null)
 					return string.Empty;
-				if (searchText == null || atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber != searchTextVersion) {
+				if (searchText is null || atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber != searchTextVersion) {
 					searchTextVersion = atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber;
 					searchText = atSpan.GetText(atSpan.TextBuffer.CurrentSnapshot);
 				}
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Filters the list. <see cref="SelectBestMatch"/> should be called after this method
 		/// </summary>
 		public override void Filter() {
-			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var filteredList = new List<Completion>(allCompletions.Length);
 			Filter(filteredList, allCompletions);
@@ -159,7 +159,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <returns></returns>
 		protected virtual CompletionSelectionStatus GetBestMatch() {
-			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
@@ -175,12 +175,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 
 					if (completion.DisplayText.StartsWith(searchText, StringComparison.Ordinal)) {
 						int currentMruIndex = GetMruIndex(completion);
-						if (mruSelectionCase.Completion == null || currentMruIndex < mruSelectionCase.Index)
+						if (mruSelectionCase.Completion is null || currentMruIndex < mruSelectionCase.Index)
 							mruSelectionCase = new MruSelection(completion, currentMruIndex);
 					}
 					else if (completion.DisplayText.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) {
 						int currentMruIndex = GetMruIndex(completion);
-						if (mruSelection.Completion == null || currentMruIndex < mruSelection.Index)
+						if (mruSelection.Completion is null || currentMruIndex < mruSelection.Index)
 							mruSelection = new MruSelection(completion, currentMruIndex);
 					}
 				}
@@ -190,10 +190,10 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			// local 'i' exists, and we previously typed 'int', and we've just typed 'i',
 			// then select 'i' and not 'int'
 			var selectedCompletion = mruSelectionCase.Completion ?? mruSelection.Completion ?? selector.Result;
-			if (selector.Result != null && inputText.Equals(selector.Result!.TryGetFilterText(), StringComparison.OrdinalIgnoreCase))
+			if (!(selector.Result is null) && inputText.Equals(selector.Result!.TryGetFilterText(), StringComparison.OrdinalIgnoreCase))
 				selectedCompletion = selector.Result;
 
-			bool isSelected = selectedCompletion != null;
+			bool isSelected = !(selectedCompletion is null);
 			bool isUnique = matches == 1;
 			return new CompletionSelectionStatus(selectedCompletion, isSelected, isUnique);
 		}

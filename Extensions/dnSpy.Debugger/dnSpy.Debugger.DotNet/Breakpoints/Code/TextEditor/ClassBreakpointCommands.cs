@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			DbgCodeBreakpointSettings settings;
 			if (tracepoint) {
 				var newSettings = showCodeBreakpointSettingsService.Value.Show(new DbgCodeBreakpointSettings { IsEnabled = true, Trace = new DbgCodeBreakpointTrace(string.Empty, true) });
-				if (newSettings == null)
+				if (newSettings is null)
 					return;
 				settings = newSettings.Value;
 			}
@@ -65,12 +65,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			var existing = new HashSet<DbgDotNetCodeLocation>(dbgCodeBreakpointsService.Value.Breakpoints.Select(a => a.Location).OfType<DbgDotNetCodeLocation>());
 			List<DbgObject>? objsToClose = null;
 			foreach (var method in methods) {
-				if (method.IsAbstract || method.Body == null)
+				if (method.IsAbstract || method.Body is null)
 					continue;
 				var moduleId = moduleIdProvider.Value.Create(method.Module);
 				var location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, method.MDToken.Raw, 0);
 				if (existing.Contains(location)) {
-					if (objsToClose == null)
+					if (objsToClose is null)
 						objsToClose = new List<DbgObject>();
 					objsToClose.Add(location);
 					continue;
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				existing.Add(location);
 				list.Add(new DbgCodeBreakpointInfo(location, settings));
 			}
-			if (objsToClose != null)
+			if (!(objsToClose is null))
 				dbgManager.Value.Close(objsToClose);
 			dbgCodeBreakpointsService.Value.Add(list.ToArray());
 		}
@@ -102,12 +102,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				this.guid = Guid.Parse(guid);
 			}
 
-			public override bool IsVisible(IMenuItemContext context) => GetTypeRef(context, guid) != null;
-			public override bool IsEnabled(IMenuItemContext context) => GetTypeRef(context, guid) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetTypeRef(context, guid) is null);
+			public override bool IsEnabled(IMenuItemContext context) => !(GetTypeRef(context, guid) is null);
 
 			public override void Execute(IMenuItemContext context) {
 				var type = GetTypeRef(context, guid)?.ResolveTypeDef();
-				if (type == null)
+				if (type is null)
 					return;
 				methodBreakpointsService.Value.Add(type.Methods.ToArray(), tracepoint);
 			}
@@ -168,7 +168,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				return null;
 
 			var @ref = context.Find<TextReference>();
-			if (@ref != null) {
+			if (!(@ref is null)) {
 				var realRef = @ref.Reference;
 				if (realRef is Parameter)
 					realRef = ((Parameter)realRef).ParamDef;
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			}
 
 			var nodes = context.Find<TreeNodeData[]>();
-			if (nodes != null && nodes.Length != 0) {
+			if (!(nodes is null) && nodes.Length != 0) {
 				if (nodes[0] is IMDTokenNode node)
 					return node.Reference;
 			}
@@ -201,11 +201,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 
 			if (@ref is EventDef evt) {
 				var list = new List<IMethod>();
-				if (evt.AddMethod != null)
+				if (!(evt.AddMethod is null))
 					list.Add(evt.AddMethod);
-				if (evt.RemoveMethod != null)
+				if (!(evt.RemoveMethod is null))
 					list.Add(evt.RemoveMethod);
-				if (evt.InvokeMethod != null)
+				if (!(evt.InvokeMethod is null))
 					list.Add(evt.InvokeMethod);
 				list.AddRange(evt.OtherMethods);
 				return list.Count == 0 ? null : list.ToArray();
@@ -225,14 +225,14 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				this.guid = Guid.Parse(guid);
 			}
 
-			public override bool IsVisible(IMenuItemContext context) => GetMethodReferences(context, guid) != null;
-			public override bool IsEnabled(IMenuItemContext context) => GetMethodReferences(context, guid) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetMethodReferences(context, guid) is null);
+			public override bool IsEnabled(IMenuItemContext context) => !(GetMethodReferences(context, guid) is null);
 
 			public override void Execute(IMenuItemContext context) {
 				var methodRefs = GetMethodReferences(context, guid);
-				if (methodRefs == null)
+				if (methodRefs is null)
 					return;
-				methodBreakpointsService.Value.Add(methodRefs.Select(a => a.ResolveMethodDef()).Where(a => a != null).ToArray(), tracepoint);
+				methodBreakpointsService.Value.Add(methodRefs.Select(a => a.ResolveMethodDef()).Where(a => !(a is null)).ToArray(), tracepoint);
 			}
 		}
 

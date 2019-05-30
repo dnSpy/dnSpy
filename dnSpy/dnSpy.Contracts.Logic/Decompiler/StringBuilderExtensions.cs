@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="s">String</param>
 		/// <returns></returns>
 		public static bool CheckEquals(this StringBuilder sb, string? s) {
-			if (s == null || sb.Length != s.Length)
+			if (s is null || sb.Length != s.Length)
 				return false;
 			for (int i = 0; i < s.Length; i++) {
 				if (sb[i] != s[i])

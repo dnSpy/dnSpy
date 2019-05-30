@@ -51,15 +51,15 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
 
-		public bool CanCreate(CompilationKind kind) => GetLanguageCompilerProvider(kind) != null;
+		public bool CanCreate(CompilationKind kind) => !(GetLanguageCompilerProvider(kind) is null);
 
 		(IDecompiler decompiler, ILanguageCompilerProvider languageCompilerProvider)? GetLanguageCompilerProvider(CompilationKind kind) {
 			var language = TryGetUsedLanguage(kind);
-			if (language == null)
+			if (language is null)
 				return null;
 
 			var serviceCreator = languageCompilerProviders.FirstOrDefault(a => a.Language == language.GenericGuid);
-			if (serviceCreator == null)
+			if (serviceCreator is null)
 				return null;
 			if (!serviceCreator.CanCompile(kind))
 				return null;
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public string? GetHeader(CompilationKind kind) {
 			var info = GetLanguageCompilerProvider(kind);
-			if (info == null)
+			if (info is null)
 				return null;
 			switch (kind) {
 			case CompilationKind.EditAssembly:	return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		bool IsSupportedLanguage(IDecompiler decompiler, CompilationKind kind) {
-			if (decompiler == null)
+			if (decompiler is null)
 				return false;
 
 			switch (kind) {
@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeVM CreateEditMethodCode(MethodDef method, IList<MethodSourceStatement> statements) {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditMethod);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
 			var options = new EditCodeVMOptions(
 				rawModuleBytesProvider,
@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeVM CreateEditAssembly(ModuleDef module) {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditAssembly);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
 			var options = new EditCodeVMOptions(
 				rawModuleBytesProvider,
@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeVM CreateAddClass(ModuleDef module) {
 			var info = GetLanguageCompilerProvider(CompilationKind.AddClass);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
 			var options = new EditCodeVMOptions(
 				rawModuleBytesProvider,
@@ -177,7 +177,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeVM CreateEditClass(IMemberDef def, IList<MethodSourceStatement> statements) {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditClass);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
 			var options = new EditCodeVMOptions(
 				rawModuleBytesProvider,
@@ -194,7 +194,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeVM CreateAddMembers(IMemberDef def) {
 			var info = GetLanguageCompilerProvider(CompilationKind.AddMembers);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
 			var options = new EditCodeVMOptions(
 				rawModuleBytesProvider,

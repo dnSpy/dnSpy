@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 	static class SyntheticValueFactory {
 		static DmdType? TryGetType(DmdAppDomain appDomain, object value) {
-			if (value == null)
+			if (value is null)
 				return null;
 
 			var type = value.GetType();
@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				break;
 
 			case TypeCode.String:
-				if (constant is string || constant == null)
+				if (constant is string || constant is null)
 					return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, constant));
 				break;
 
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, constant));
 					}
 				}
-				else if (constant == null && !type.IsValueType)
+				else if (constant is null && !type.IsValueType)
 					return new SyntheticNullValue(type);
 				break;
 			}

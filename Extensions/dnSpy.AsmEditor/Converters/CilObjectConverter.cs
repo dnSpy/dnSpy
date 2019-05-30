@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Converters {
 		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			try {
 				var flags = WriteObjectFlags.None;
-				if (parameter != null) {
+				if (!(parameter is null)) {
 					foreach (var c in (string)parameter) {
 						if (c == 's')
 							flags |= WriteObjectFlags.ShortInstruction;
@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.Converters {
 				Debug.Fail(ex.ToString());
 			}
 
-			if (value == null)
+			if (value is null)
 				return string.Empty;
 			return value.ToString();
 		}

@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 					state.MethodAsString = GetMethodAsString(loc.Module, loc.Token);
 					state.Initialized = true;
 				}
-				if (state.MethodAsString != null)
+				if (!(state.MethodAsString is null))
 					section.Attribute("Method", state.MethodAsString);
 			}
 		}
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			var isDynamic = section.Attribute<bool?>("IsDynamic") ?? false;
 			var isInMemory = section.Attribute<bool?>("IsInMemory") ?? false;
 			var moduleNameOnly = section.Attribute<bool?>("ModuleNameOnly") ?? false;
-			if (token == null || offset == null || assemblyFullName == null || moduleName == null)
+			if (token is null || offset is null || assemblyFullName is null || moduleName is null)
 				return null;
 			var moduleId = new ModuleId(assemblyFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 

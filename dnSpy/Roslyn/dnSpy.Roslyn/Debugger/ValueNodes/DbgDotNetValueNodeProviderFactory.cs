@@ -153,7 +153,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				// until the type is found, forcing all lazy-loaded metadata to be loaded. Most of the time it would
 				// fail, and thus load all metadata. It's a problem when debugging programs with 100+ loaded assemblies.
 				foreach (var iface in type.GetInterfaces()) {
-					if ((object?)iface.DeclaringType == null && iface.MetadataNamespace == "System.Dynamic" && iface.MetadataName == "IDynamicMetaObjectProvider")
+					if (iface.DeclaringType is null && iface.MetadataNamespace == "System.Dynamic" && iface.MetadataName == "IDynamicMetaObjectProvider")
 						return true;
 				}
 
@@ -208,7 +208,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public DbgDotNetValueNodeProviderResult CreateDynamicView(DbgEvaluationInfo evalInfo, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options) {
 			var state = GetTypeState(nodeInfo);
 			var provider = TryCreateDynamicView(state, nodeInfo.Expression, nodeInfo.Value, slotType, options);
-			if (provider != null)
+			if (!(provider is null))
 				return new DbgDotNetValueNodeProviderResult(provider);
 			return new DbgDotNetValueNodeProviderResult(dnSpy_Roslyn_Resources.DynamicView_MustBeDynamicOrComType);
 		}
@@ -216,7 +216,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public DbgDotNetValueNodeProviderResult CreateResultsView(DbgEvaluationInfo evalInfo, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo nodeInfo, DbgValueNodeEvaluationOptions options) {
 			var state = GetTypeState(nodeInfo);
 			var provider = TryCreateResultsView(state, nodeInfo.Expression, nodeInfo.Value, slotType, options);
-			if (provider != null)
+			if (!(provider is null))
 				return new DbgDotNetValueNodeProviderResult(provider);
 			return new DbgDotNetValueNodeProviderResult(dnSpy_Roslyn_Resources.ResultsView_MustBeEnumerableType);
 		}
@@ -233,7 +233,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		TypeState GetOrCreateTypeState(DmdType type) {
 			var state = StateWithKey<TypeState>.TryGet(type, this);
-			if (state != null)
+			if (!(state is null))
 				return state;
 			return CreateTypeState(type);
 
@@ -410,7 +410,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var memberInfosTmp = memberInfos;
 			foreach (var kv in dict) {
 				var list = kv.Value as List<int>;
-				if (list == null)
+				if (list is null)
 					continue;
 				list.Sort((a, b) => {
 					ref var ai = ref memberInfosTmp[a];
@@ -459,7 +459,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				return false;
 
 			var fields = Formatters.NullableTypeUtils.TryGetNullableFields(state.Type);
-			Debug.Assert((object?)fields.hasValueField != null);
+			Debug.Assert(!(fields.hasValueField is null));
 			if (fields.hasValueField is null)
 				return false;
 
@@ -522,7 +522,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 			if (!forceRawView && (creationOptions & CreationOptions.NoProxy) == 0 && funcEval && !nodeInfo.Value.IsNull) {
 				var proxyCtor = DebuggerTypeProxyFinder.GetDebuggerTypeProxyConstructor(state.Type);
-				if ((object?)proxyCtor != null) {
+				if (!(proxyCtor is null)) {
 					var runtime = evalInfo.Runtime.GetDotNetRuntime();
 					var proxyTypeResult = runtime.CreateInstance(evalInfo, proxyCtor, new[] { nodeInfo.Value }, DbgDotNetInvokeOptions.None);
 					// Use the result even if the constructor threw an exception
@@ -557,7 +557,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		DbgDotNetValueNodeProvider? TryCreateResultsView(TypeState state, string expression, DbgDotNetValue value, DmdType expectedType, DbgValueNodeEvaluationOptions evalOptions) {
-			if ((object?)state.EnumerableType != null && !value.IsNull)
+			if (!(state.EnumerableType is null) && !value.IsNull)
 				return new ResultsViewMembersValueNodeProvider(this, valueNodeFactory, state.EnumerableType, value, expectedType, expression, evalOptions);
 			return null;
 		}
@@ -577,7 +577,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		void GetMemberCollections(TypeState state, DbgValueNodeEvaluationOptions evalOptions, out MemberValueNodeInfoCollection instanceMembersInfos, out MemberValueNodeInfoCollection staticMembersInfos) {
 			lock (state) {
 				if ((evalOptions & DbgValueNodeEvaluationOptions.RawView) == 0) {
-					if (state.CachedEvalOptions != evalOptions || state.CachedInstanceMembers.Members == null) {
+					if (state.CachedEvalOptions != evalOptions || state.CachedInstanceMembers.Members is null) {
 						state.CachedEvalOptions = evalOptions;
 						state.CachedInstanceMembers = Filter(state.InstanceMembers, evalOptions);
 						state.CachedStaticMembers = Filter(state.StaticMembers, evalOptions);
@@ -586,7 +586,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					staticMembersInfos = state.CachedStaticMembers;
 				}
 				else {
-					if (state.CachedRawViewEvalOptions != evalOptions || state.CachedRawViewInstanceMembers.Members == null) {
+					if (state.CachedRawViewEvalOptions != evalOptions || state.CachedRawViewInstanceMembers.Members is null) {
 						state.CachedRawViewEvalOptions = evalOptions;
 						state.CachedRawViewInstanceMembers = Filter(state.InstanceMembers, evalOptions);
 						state.CachedRawViewStaticMembers = Filter(state.StaticMembers, evalOptions);
@@ -617,10 +617,10 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				providers.Add(new StaticMembersValueNodeProvider(this, valueNodeFactory, StaticMembersName, state.TypeExpression, staticMembersInfos, membersEvalOptions));
 
 			var provider = TryCreateResultsView(state, expression, value, slotType, evalOptions);
-			if (provider != null)
+			if (!(provider is null))
 				providers.Add(provider);
 			provider = TryCreateDynamicView(state, expression, value, slotType, evalOptions);
-			if (provider != null)
+			if (!(provider is null))
 				providers.Add(provider);
 		}
 		static readonly DbgDotNetText rawViewName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Text, dnSpy_Roslyn_Resources.DebuggerVarsWindow_RawView));

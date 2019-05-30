@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 		public static bool operator ==(TextBlockContentInfo? left, TextBlockContentInfo? right) {
 			if ((object?)left == right)
 				return true;
-			if ((object?)left == null)
+			if (left is null)
 				return false;
 			return left.Equals(right);
 		}
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 		static bool CompareTags(TextClassificationTag[] a, TextClassificationTag[] b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;

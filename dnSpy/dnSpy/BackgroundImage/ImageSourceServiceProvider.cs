@@ -47,13 +47,13 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public IImageSourceService Create(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return Create(backgroundImageOptionDefinitionService.GetOptionDefinition(wpfTextView));
 		}
 
 		public IImageSourceService Create(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			return Create(backgroundImageOptionDefinitionService.GetOptionDefinition(wpfHexView));
 		}

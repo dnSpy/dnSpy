@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void OnLayoutChanged(ITextSnapshot textSnapshot) {
-			if (VisualSpan == null)
+			if (VisualSpan is null)
 				return;
 			VisualSpan = VisualSpan.Value.TranslateTo(textSnapshot, SpanTrackingMode.EdgeInclusive);
 		}

@@ -93,13 +93,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		public void InvalidateAll() => Invalidate(HexSpan.FromBounds(HexPosition.Zero, HexPosition.MaxEndPosition));
 
 		void RegisterEvents() {
-			if (stream == null)
+			if (stream is null)
 				return;
 			stream.BufferStreamSpanInvalidated += Stream_BufferStreamSpanInvalidated;
 		}
 
 		void UnregisterEvents() {
-			if (stream == null)
+			if (stream is null)
 				return;
 			stream.BufferStreamSpanInvalidated -= Stream_BufferStreamSpanInvalidated;
 		}
@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		public override byte[] ReadBytes(HexPosition position, long length) {
 			CheckDisposed();
 			var streamLocal = stream;
-			if (streamLocal != null)
+			if (!(streamLocal is null))
 				return streamLocal.ReadBytes(position, length);
 			return new byte[length];
 		}

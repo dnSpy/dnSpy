@@ -45,15 +45,15 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 				switch (value >> 8) {
 				case 0:
 					opCode = OpCodes.OneByteOpCodes[value & 0xFF];
-					Debug.Assert(opCode != null);
-					if (opCode != null)
+					Debug.Assert(!(opCode is null));
+					if (!(opCode is null))
 						toReflectionOpCode[opCode] = sreOpCode;
 					break;
 
 				case 0xFE:
 					opCode = OpCodes.TwoByteOpCodes[value & 0xFF];
-					Debug.Assert(opCode != null);
-					if (opCode != null)
+					Debug.Assert(!(opCode is null));
+					if (!(opCode is null))
 						toReflectionOpCode[opCode] = sreOpCode;
 					break;
 
@@ -74,9 +74,9 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(int), typeof(string), typeof(ulong), typeof(string) };
 		public EvalDelegate? CreateDelegate() {
 			var type = module.Find(evalClassName, isReflectionName: true);
-			Debug.Assert(type != null);
+			Debug.Assert(!(type is null));
 			var method = type?.FindMethod(evalMethodName);
-			Debug.Assert(method?.Body != null);
+			Debug.Assert(!(method?.Body is null));
 			if (!(method?.Body is CilBody body))
 				return null;
 			if (method.ReturnType.ElementType != ElementType.Boolean)
@@ -199,7 +199,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 					case Code.Ldloc_S:
 					case Code.Ldloca_S:
 					case Code.Stloc_S:
-						if (localsDict == null)
+						if (localsDict is null)
 							return null;
 						ilg.Emit(sreOpCode, localsDict[(Local)instr.Operand]);
 						break;
@@ -268,7 +268,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 				return false;
 			if (sig.GenParamCount != 0)
 				return false;
-			if (sig.ParamsAfterSentinel != null)
+			if (!(sig.ParamsAfterSentinel is null))
 				return false;
 			if (sig.Params.Count != 2)
 				return false;

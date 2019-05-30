@@ -38,13 +38,13 @@ namespace dnSpy.Bookmarks.Impl {
 			this.bookmarkLocationFormatterProviders = bookmarkLocationFormatterProviders.ToArray();
 
 		public override BookmarkLocationFormatter GetFormatter(BookmarkLocation location) {
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 			var type = location.Type;
 			foreach (var lz in bookmarkLocationFormatterProviders) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0) {
 					var formatter = lz.Value.Create(location);
-					if (formatter != null)
+					if (!(formatter is null))
 						return formatter;
 				}
 			}

@@ -32,10 +32,10 @@ namespace dnSpy.Debugger.Impl {
 		public override void Remove(DbgEngineMessageFlags messageFlags) => thread.Remove(messageFlags);
 
 		DbgAppDomainImpl? VerifyOptionalAppDomain(DbgAppDomain? appDomain) {
-			if (appDomain == null)
+			if (appDomain is null)
 				return null;
 			var appDomainImpl = appDomain as DbgAppDomainImpl;
-			if (appDomainImpl == null)
+			if (appDomainImpl is null)
 				throw new ArgumentOutOfRangeException(nameof(appDomain));
 			if (appDomainImpl.Runtime != thread.Runtime)
 				throw new ArgumentException();

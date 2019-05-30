@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			stream.Position += 8;// Metadata data directory, updated later
 			var flags = cor20.Flags;
 			flags &= ~ComImageFlags.NativeEntryPoint;
-			if (snData == null)
+			if (snData is null)
 				flags &= ~ComImageFlags.StrongNameSigned;
 			else
 				flags |= ComImageFlags.StrongNameSigned;
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			stream.Write(mdData.RVA);
 			stream.Write(mdData.Size);
 
-			if (snData != null) {
+			if (!(snData is null)) {
 				stream.Position = cor20HeaderStrongnameDataDirPosition;
 				Debug.Assert(snData.RVA != 0);
 				Debug.Assert(snData.Size != 0);

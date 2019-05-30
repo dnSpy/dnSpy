@@ -27,7 +27,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.BackgroundImage {
 	sealed class RawSettings : IEquatable<RawSettings?> {
-		public bool IsValid => Id != null;
+		public bool IsValid => !(Id is null);
 		public string? Id { get; private set; }
 		public Stretch Stretch { get; set; }
 		public StretchDirection StretchDirection { get; set; }
@@ -139,7 +139,7 @@ namespace dnSpy.BackgroundImage {
 		const string SEP_STRING = "<{[]}>";
 		static string SerializeImages(string[] s) => string.Join(SEP_STRING, s);
 		static string[] DeserializeImages(string s) {
-			if (s == null)
+			if (s is null)
 				return Array.Empty<string>();
 			return s.Split(new string[] { SEP_STRING }, StringSplitOptions.None).Where(a => !string.IsNullOrEmpty(a)).Select(a => a.Trim()).ToArray();
 		}
@@ -190,7 +190,7 @@ namespace dnSpy.BackgroundImage {
 		public bool EqualsImages(RawSettings? other) => EqualsImagesInternal(Images, other?.Images);
 
 		public bool EqualsSettingsNoImages(RawSettings? other) {
-			if (other == null)
+			if (other is null)
 				return false;
 			if (!StringComparer.Ordinal.Equals(Id, other.Id))
 				return false;
@@ -235,7 +235,7 @@ namespace dnSpy.BackgroundImage {
 		bool EqualsImagesInternal(string[]? a, string[]? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;

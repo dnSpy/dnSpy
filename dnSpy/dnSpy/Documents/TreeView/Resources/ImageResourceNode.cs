@@ -38,7 +38,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 	sealed class ImageResourceNodeProvider : IResourceNodeProvider {
 		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
-			if (er == null)
+			if (er is null)
 				return null;
 
 			var reader = er.CreateReader();
@@ -134,7 +134,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (!(documentViewerOutput is null)) {
 				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
@@ -143,7 +143,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			}
 
 			base.WriteShort(output, decompiler, showOffset);
-			if (documentViewerOutput != null) {
+			if (!(documentViewerOutput is null)) {
 				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, () => Save());
 				documentViewerOutput.WriteLine();
 				documentViewerOutput.WriteLine();

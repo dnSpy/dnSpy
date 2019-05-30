@@ -78,23 +78,23 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override IValueNodesVM Create(ValueNodesVMOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			if (options.NodesProvider == null)
+			if (options.NodesProvider is null)
 				throw new ArgumentException();
-			if (options.WindowContentType == null)
+			if (options.WindowContentType is null)
 				throw new ArgumentException();
-			if (options.NameColumnName == null)
+			if (options.NameColumnName is null)
 				throw new ArgumentException();
-			if (options.ValueColumnName == null)
+			if (options.ValueColumnName is null)
 				throw new ArgumentException();
-			if (options.TypeColumnName == null)
+			if (options.TypeColumnName is null)
 				throw new ArgumentException();
 			if (options.VariablesWindowKind == VariablesWindowKind.None)
 				throw new ArgumentException();
 			if (options.VariablesWindowGuid == Guid.Empty)
 				throw new ArgumentException();
-			if (options.ShowMessageBox == null)
+			if (options.ShowMessageBox is null)
 				throw new ArgumentException();
 			var vm = new ValueNodesVM(uiDispatcher, options, treeViewService, languageEditValueProviderFactory, dbgValueNodeImageReferenceService, debuggerSettings, dbgEvalFormatterSettings, dbgObjectIdService, classificationFormatMapService, textBlockContentInfoFactory, menuService, wpfCommandService);
 			allValueNodesVMs.Add(vm);

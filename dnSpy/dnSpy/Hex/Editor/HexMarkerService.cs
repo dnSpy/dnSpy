@@ -118,7 +118,7 @@ namespace dnSpy.Hex.Editor {
 			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!TWPF.BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -202,13 +202,13 @@ namespace dnSpy.Hex.Editor {
 			List<HexBufferSpan>? intersectionSpans = null;
 			foreach (var span in e.Spans) {
 				var intersection = wpfHexView.HexViewLines.FormattedSpan.Intersection(span);
-				if (intersection != null) {
-					if (intersectionSpans == null)
+				if (!(intersection is null)) {
+					if (intersectionSpans is null)
 						intersectionSpans = new List<HexBufferSpan>();
 					intersectionSpans.Add(intersection.Value);
 				}
 			}
-			if (intersectionSpans != null)
+			if (!(intersectionSpans is null))
 				UpdateRange(new NormalizedHexBufferSpanCollection(intersectionSpans));
 		}
 
@@ -226,12 +226,12 @@ namespace dnSpy.Hex.Editor {
 
 		void AddMarkerElements(NormalizedHexBufferSpanCollection spans) {
 			foreach (var tag in tagAggregator.GetTags(spans)) {
-				if (tag.Tag?.Type == null)
+				if (tag.Tag?.Type is null)
 					continue;
 				if (!tag.Span.IntersectsWith(wpfHexView.HexViewLines.FormattedSpan))
 					continue;
 				var markerElement = TryCreateMarkerElement(tag.Span, tag.Flags, tag.Tag);
-				if (markerElement == null)
+				if (markerElement is null)
 					continue;
 				var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 				bool added = layer.AddAdornment(VSTE.AdornmentPositioningBehavior.TextRelative, markerElement.Span, null, markerElement, onRemovedDelegate);
@@ -241,19 +241,19 @@ namespace dnSpy.Hex.Editor {
 			var formattedEnd = wpfHexView.HexViewLines.FormattedSpan.End;
 			foreach (var span in spans) {
 				var overlap = wpfHexView.HexViewLines.FormattedSpan.Overlap(span);
-				if (overlap == null)
+				if (overlap is null)
 					continue;
 				var pos = overlap.Value.Start;
 				for (;;) {
 					var line = wpfHexView.WpfHexViewLines.GetWpfHexViewLineContainingBufferPosition(pos);
-					Debug.Assert(line != null);
-					if (line != null) {
+					Debug.Assert(!(line is null));
+					if (!(line is null)) {
 						var taggerContext = new HexTaggerContext(line.BufferLine, line.BufferLine.TextSpan);
 						foreach (var tag in tagAggregator.GetLineTags(taggerContext)) {
-							if (tag.Tag?.Type == null)
+							if (tag.Tag?.Type is null)
 								continue;
 							var markerElement = TryCreateMarkerElement(line, tag.Span, tag.Tag);
-							if (markerElement == null)
+							if (markerElement is null)
 								continue;
 							var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 							bool added = layer.AddAdornment(VSTE.AdornmentPositioningBehavior.TextRelative, markerElement.Span, null, markerElement, onRemovedDelegate);
@@ -261,7 +261,7 @@ namespace dnSpy.Hex.Editor {
 								markerElements.Add(markerElement);
 						}
 					}
-					Debug.Assert(line != null);
+					Debug.Assert(!(line is null));
 
 					pos = line.BufferEnd;
 					if (pos > overlap.Value.End || pos >= formattedEnd)
@@ -340,7 +340,7 @@ namespace dnSpy.Hex.Editor {
 				newPen = new Pen(scBrush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -349,20 +349,20 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
-			Debug.Assert(tag.Type != null);
+			Debug.Assert(!(tag.Type is null));
 			var overlap = wpfHexView.WpfHexViewLines.FormattedSpan.Overlap(span);
-			if (overlap == null)
+			if (overlap is null)
 				return null;
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetMarkerGeometry(overlap.Value, flags), overlap.Value, tag);
 		}
 
 		MarkerElement? TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
-			Debug.Assert(tag.Type != null);
+			Debug.Assert(!(tag.Type is null));
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetLineMarkerGeometry(line, span), line.BufferSpan, tag);
 		}
 
 		MarkerElement? TryCreateMarkerElementCore(Geometry? geo, HexBufferSpan span, HexMarkerTag tag) {
-			if (geo == null)
+			if (geo is null)
 				return null;
 
 			var type = tag.Type ?? string.Empty;

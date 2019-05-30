@@ -35,12 +35,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		abstract class CommandBase : MenuItemBase<Context> {
 			protected sealed override Context? CreateContext(IMenuItemContext context) {
 				var doc = GetDocument(context);
-				return doc == null ? null : new Context(doc);
+				return doc is null ? null : new Context(doc);
 			}
 
 			MemoryModuleDefDocument? GetDocument(IMenuItemContext context) {
 				var doc = GetTreeNode(context).GetModuleNode()?.Document as MemoryModuleDefDocument;
-				if (doc == null)
+				if (doc is null)
 					return null;
 				if (doc.Process.State == DbgProcessState.Terminated)
 					return null;
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes != null && nodes.Length != 0)
+				if (!(nodes is null) && nodes.Length != 0)
 					return nodes[0] as DocumentTreeNodeData;
 				return null;
 			}

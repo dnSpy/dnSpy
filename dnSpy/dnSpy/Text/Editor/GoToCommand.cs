@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 
 		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
-			if (textView == null)
+			if (textView is null)
 				return null;
 
 			return new GoToCommandTargetFilter(textView, messageBoxService);
@@ -78,7 +78,7 @@ namespace dnSpy.Text.Editor {
 					lineNumber = textView.TextSnapshot.LineCount - 1;
 				var line = textView.TextSnapshot.GetLineFromLineNumber(lineNumber);
 				int col;
-				if (columnNumber == null) {
+				if (columnNumber is null) {
 					col = 0;
 					var snapshot = line.Snapshot;
 					for (; col < line.Length; col++) {
@@ -102,8 +102,8 @@ namespace dnSpy.Text.Editor {
 			var viewLine = textView.Caret.ContainingTextViewLine;
 			var snapshotLine = viewLine.Start.GetContainingLine();
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			var ownerWindow = wpfTextView == null ? null : Window.GetWindow(wpfTextView.VisualElement);
+			Debug.Assert(!(wpfTextView is null));
+			var ownerWindow = wpfTextView is null ? null : Window.GetWindow(wpfTextView.VisualElement);
 			int maxLines = snapshotLine.Snapshot.LineCount;
 
 			var res = messageBoxService.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 			}, s => {
 				return TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out var line, out var column);
 			}, ownerWindow);
-			if (res == null) {
+			if (res is null) {
 				chosenLine = 0;
 				chosenColumn = null;
 				return false;
@@ -128,18 +128,18 @@ namespace dnSpy.Text.Editor {
 			column = null;
 			bool columnError = false;
 			Match match;
-			if ((match = goToLineRegex1.Match(s)) != null && match.Groups.Count == 4) {
+			if (!((match = goToLineRegex1.Match(s)) is null) && match.Groups.Count == 4) {
 				TryParseOneBasedToZeroBased(match.Groups[1].Value, out line);
-				if (line != null && line.Value >= maxLines)
+				if (!(line is null) && line.Value >= maxLines)
 					line = null;
 				if (match.Groups[3].Value != string.Empty)
 					columnError = !TryParseOneBasedToZeroBased(match.Groups[3].Value, out column);
 			}
-			else if ((match = goToLineRegex2.Match(s)) != null && match.Groups.Count == 2) {
+			else if (!((match = goToLineRegex2.Match(s)) is null) && match.Groups.Count == 2) {
 				line = currentLine;
 				columnError = !TryParseOneBasedToZeroBased(match.Groups[1].Value, out column);
 			}
-			if (line == null || columnError) {
+			if (line is null || columnError) {
 				if (string.IsNullOrWhiteSpace(s))
 					return dnSpy_Resources.GoToLine_EnterLineNum;
 				return string.Format(dnSpy_Resources.GoToLine_InvalidLine, s);

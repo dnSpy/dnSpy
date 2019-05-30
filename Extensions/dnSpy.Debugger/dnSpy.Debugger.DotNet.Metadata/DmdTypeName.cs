@@ -72,11 +72,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public static DmdTypeName Create(DmdType type) {
 			if (type.TypeSignatureKind == DmdTypeSignatureKind.Type) {
-				Debug.Assert(type.MetadataName != null);
+				Debug.Assert(!(type.MetadataName is null));
 				var declType = type.DeclaringType;
 				if (declType is null)
 					return new DmdTypeName(type.MetadataNamespace, type.MetadataName);
-				Debug.Assert(declType.MetadataName != null);
+				Debug.Assert(!(declType.MetadataName is null));
 
 				if (declType.DeclaringType is null)
 					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.MetadataName);
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					list.Add(type);
 					type = type.DeclaringType;
 				}
-				Debug.Assert(type.MetadataName != null);
+				Debug.Assert(!(type.MetadataName is null));
 				StringBuilder? sb = ObjectCache.AllocStringBuilder();
 				for (int i = list.Count - 1; i >= 0; i--) {
 					if (i != list.Count - 1)
@@ -107,12 +107,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (Namespace == null) {
-				if (Extra == null)
+			if (Namespace is null) {
+				if (Extra is null)
 					return Name;
 				return Name + "+" + Extra;
 			}
-			if (Extra == null)
+			if (Extra is null)
 				return Namespace + "." + Name;
 			return Namespace + "." + Name + "+" + Extra;
 		}

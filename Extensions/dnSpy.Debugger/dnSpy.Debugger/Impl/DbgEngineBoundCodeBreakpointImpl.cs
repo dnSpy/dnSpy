@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Impl {
 		public override void Remove() => Remove(new[] { this });
 
 		public override void Remove(DbgEngineBoundCodeBreakpoint[] breakpoints) {
-			if (breakpoints == null)
+			if (breakpoints is null)
 				throw new ArgumentNullException(nameof(breakpoints));
 			var bpImpls = new DbgEngineBoundCodeBreakpointImpl[breakpoints.Length];
 			for (int i = 0; i < breakpoints.Length; i++) {

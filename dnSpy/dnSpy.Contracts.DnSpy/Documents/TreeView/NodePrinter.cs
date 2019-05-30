@@ -29,8 +29,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// Node printer
 	/// </summary>
 	public readonly struct NodePrinter {
-		static bool IsExe(ModuleDef? mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
-		static bool IsExe(IPEImage? peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(ModuleDef? mod) => !(mod is null) && (mod.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(IPEImage? peImage) => !(peImage is null) && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		static string GetFilename(IDsDocument document) {
 			string? filename = null;
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public void Write(ITextColorWriter output, IDecompiler decompiler, IDsDocument document) {
 			var filename = GetFilename(document);
 			var peImage = document.PEImage;
-			if (peImage != null)
+			if (!(peImage is null))
 				output.Write(IsExe(peImage) ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, NameUtilities.CleanName(filename));
 			else
 				output.Write(BoxedTextColor.Text, NameUtilities.CleanName(filename));

@@ -97,11 +97,11 @@ namespace dnSpy.Text.Editor {
 				// just like in VS' IWpfTextViewLine collection.
 				var firstInfo = infos[0];
 				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, ViewRelativePosition.Bottom);
-				if (prevLine != null)
+				if (!(prevLine is null))
 					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
 				var lastInfo = infos[infos.Count - 1];
 				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, ViewRelativePosition.Top);
-				if (nextLine != null)
+				if (!(nextLine is null))
 					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
 
 				var keptLines = new HashSet<PhysicalLine>();
@@ -165,7 +165,7 @@ namespace dnSpy.Text.Editor {
 			List<LineInfo> CreateLineInfos(SnapshotPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
-				Debug.Assert(startLine != null);
+				Debug.Assert(!(startLine is null));
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
@@ -188,7 +188,7 @@ namespace dnSpy.Text.Editor {
 						if (y <= NewViewportTop)
 							break;
 						currentLine = AddLineTransform(GetLineBefore(currentLine), y, ViewRelativePosition.Bottom);
-						if (currentLine == null)
+						if (currentLine is null)
 							break;
 						y -= currentLine.Height;
 					}
@@ -198,7 +198,7 @@ namespace dnSpy.Text.Editor {
 				currentLine = startLine;
 				for (y = lineStartY + currentLine.Height; y < newViewportBottom;) {
 					currentLine = AddLineTransform(GetLineAfter(currentLine), y, ViewRelativePosition.Top);
-					if (currentLine == null)
+					if (currentLine is null)
 						break;
 					lineInfos.Add(new LineInfo(currentLine, y));
 					y += currentLine.Height;
@@ -221,7 +221,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			IFormattedLine? AddLineTransform(IFormattedLine? line, double yPosition, ViewRelativePosition placement) {
-				if (line != null) {
+				if (!(line is null)) {
 					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
 						line.SetLineTransform(lineTransform);

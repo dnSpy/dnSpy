@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		public static bool TryUpdateAcronymIndexes(int[]? acronymMatchIndexes, string searchText, string completionText) {
-			if (acronymMatchIndexes == null)
+			if (acronymMatchIndexes is null)
 				return false;
 			for (int acronymIndex = 0, textIndex = 0; acronymIndex < searchText.Length; acronymIndex++) {
 				textIndex = completionText.IndexOf(searchText[acronymIndex], textIndex);

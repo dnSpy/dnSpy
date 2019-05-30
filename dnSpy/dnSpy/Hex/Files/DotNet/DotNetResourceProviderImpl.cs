@@ -56,7 +56,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders? metadataHeaders, HexSpan? resourcesSpan)
 			: base(file) {
 			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
-			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
+			if (!(metadataHeaders?.TablesStream is null) && !(resourcesSpan is null)) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
 				ResourcesSpan = resourcesSpan.Value;
 				resourceInfos = CreateResourceInfos(file, metadataHeaders.TablesStream.MDTables[(int)Table.ManifestResource], metadataHeaders.StringsStream);
@@ -80,7 +80,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		static readonly string[] defaultTags = new string[] { PredefinedBufferFileTags.DotNetResources };
 
 		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap? stringsHeap) {
-			if (resourceTable == null)
+			if (resourceTable is null)
 				return Array.Empty<ResourceInfo>();
 			var list = new List<ResourceInfo>((int)resourceTable.Rows);
 
@@ -101,7 +101,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					continue;
 
 				var resourceSpan = GetResourceSpan(file.Buffer, offset);
-				if (resourceSpan == null)
+				if (resourceSpan is null)
 					continue;
 
 				var token = new MDToken(Table.ManifestResource, rid);

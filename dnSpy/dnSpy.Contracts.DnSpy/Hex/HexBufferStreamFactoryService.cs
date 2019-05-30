@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
 		public HexBufferStream Create(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			return Create(File.ReadAllBytes(filename), filename);
 		}

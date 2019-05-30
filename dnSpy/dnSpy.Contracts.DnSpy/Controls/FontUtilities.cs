@@ -210,14 +210,14 @@ namespace dnSpy.Contracts.Controls {
 					return false;
 				if (!gtf.AdvanceWidths.TryGetValue(glyphIndex, out double w))
 					return false;
-				if (width == null)
+				if (width is null)
 					width = w;
 				else if (width.Value != w)
 					return false;
 
 				if (!gtf.AdvanceHeights.TryGetValue(glyphIndex, out double h))
 					return false;
-				if (height == null)
+				if (height is null)
 					height = h;
 				else if (height.Value != h)
 					return false;

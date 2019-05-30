@@ -43,9 +43,9 @@ namespace dnSpy.Documents {
 		void GoToCore(object? reference, object[]? options) {
 			uiDispatcher.VerifyAccess();
 			reference = Convert(reference);
-			if (reference == null)
+			if (reference is null)
 				return;
-			var roOptions = options == null || options.Length == 0 ? emptyOptions : new ReadOnlyCollection<object>(options);
+			var roOptions = options is null || options.Length == 0 ? emptyOptions : new ReadOnlyCollection<object>(options);
 			foreach (var lz in referenceNavigators) {
 				if (lz.Value.GoTo(reference, roOptions))
 					break;
@@ -56,7 +56,7 @@ namespace dnSpy.Documents {
 		object? Convert(object? reference) {
 			uiDispatcher.VerifyAccess();
 			foreach (var lz in referenceConverters) {
-				if (reference == null)
+				if (reference is null)
 					break;
 				lz.Value.Convert(ref reference);
 			}

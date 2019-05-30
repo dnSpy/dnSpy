@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Attach {
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(MonoAttachToProgramOptionsBase other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.Address = Address;

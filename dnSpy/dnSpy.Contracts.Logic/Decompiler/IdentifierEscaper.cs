@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="maxLength">Max length</param>
 		/// <returns></returns>
 		public static string? Truncate(string? s, int maxLength) {
-			if (s == null || s.Length <= maxLength)
+			if (s is null || s.Length <= maxLength)
 				return s;
 
 			return s.Substring(0, maxLength) + "…";

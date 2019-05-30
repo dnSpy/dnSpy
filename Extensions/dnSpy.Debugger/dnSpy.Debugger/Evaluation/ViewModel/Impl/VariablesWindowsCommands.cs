@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		protected sealed override VariablesWindowCtxMenuContext? CreateContext(IMenuItemContext context) {
 			var vm = context.Find<IValueNodesVM>();
-			if (vm == null)
+			if (vm is null)
 				return null;
 			return new VariablesWindowCtxMenuContext(operations.Value, vm);
 		}
@@ -190,8 +190,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			for (int i = 0; i < subCmds.Length; i++) {
@@ -228,8 +228,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			var languages = ctx.Operations.GetLanguages(ctx.VM);

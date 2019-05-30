@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override DmdModule Module => DeclaringType!.Module;
 
 		public sealed override DmdMethodSignature GetMethodSignature(IList<DmdType> genericMethodArguments) {
-			if (genericMethodArguments == null)
+			if (genericMethodArguments is null)
 				throw new ArgumentNullException(nameof(genericMethodArguments));
 			if (genericMethodArguments.Count != 0)
 				throw new ArgumentException();

@@ -209,8 +209,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			else {
 				foreach (var p in processes) {
 					var info = TryGetProcessInfo_UI(p.Id);
-					Debug.Assert(info != null);
-					if (info == null)
+					Debug.Assert(!(info is null));
+					if (info is null)
 						continue;
 					ClearProcessStream_UI(info);
 					processInfos.Remove(info);
@@ -232,10 +232,10 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		// UI thread
 		void InitializeNonInitializedBuffers_UI(ProcessInfo info) {
 			uiDispatcher.VerifyAccess();
-			if (info == null)
+			if (info is null)
 				return;
 			foreach (var bufferState in bufferStates) {
-				if (bufferState.Process == null)
+				if (bufferState.Process is null)
 					bufferState.SetUnderlyingStream(info.Stream, info.Process);
 			}
 		}
@@ -289,7 +289,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			foreach (var bufferState in bufferStates) {
 				if (bufferState == callerState)
 					continue;
-				if (bufferState.Process == null)
+				if (bufferState.Process is null)
 					continue;
 				if (bufferState.Process != callerState?.Process)
 					continue;
@@ -311,30 +311,30 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		// UI thread
 		public override bool IsValidBuffer(HexBuffer buffer) {
 			uiDispatcher.VerifyAccess();
-			return TryGetBufferState_UI(buffer) != null;
+			return !(TryGetBufferState_UI(buffer) is null);
 		}
 
 		// UI thread
 		public override void SetProcessStream(HexBuffer buffer, int pid) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 			uiDispatcher.VerifyAccess();
 			var bufferState = TryGetBufferState_UI(buffer);
-			if (bufferState == null)
+			if (bufferState is null)
 				throw new ArgumentOutOfRangeException(nameof(buffer));
 			var info = TryGetProcessInfo_UI(pid);
-			if (info == null)
+			if (info is null)
 				info = processInfos.FirstOrDefault();
 			bufferState.SetUnderlyingStream(info?.Stream, info?.Process);
 		}
 
 		// UI thread
 		public override int? GetProcessId(HexBuffer buffer) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 			uiDispatcher.VerifyAccess();
 			var bufferState = TryGetBufferState_UI(buffer);
-			if (bufferState == null)
+			if (bufferState is null)
 				throw new ArgumentOutOfRangeException(nameof(buffer));
 			return bufferState.Process?.Id;
 		}

@@ -53,7 +53,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public void Remove(ITabGroupService mgr) {
-			if (mgr == null)
+			if (mgr is null)
 				throw new ArgumentNullException(nameof(mgr));
 			int index = tabGroupServices.IndexOf((TabGroupService)mgr);
 			Debug.Assert(index >= 0);

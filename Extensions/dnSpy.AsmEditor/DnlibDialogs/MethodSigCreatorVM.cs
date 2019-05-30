@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
 				OnPropertyChanged(nameof(SignatureFullName));
-				if (GenericParameterCount != null && !GenericParameterCount.HasError)
+				if (!(GenericParameterCount is null) && !GenericParameterCount.HasError)
 					IsGeneric = GenericParameterCount.Value != 0;
 			}) {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void WriteSignature(MethodBaseSig? sig) {
-			if (sig == null) {
+			if (sig is null) {
 				CallingConvention = 0;
 				ReturnType = null;
 				ParametersCreateTypeSigArray.TypeSigCollection.Clear();
@@ -204,27 +204,27 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ParametersCreateTypeSigArray.TypeSigCollection.AddRange(sig.Params);
 				GenericParameterCount.Value = sig.GenParamCount;
 				SentinelCreateTypeSigArray.TypeSigCollection.Clear();
-				if (sig.ParamsAfterSentinel != null)
+				if (!(sig.ParamsAfterSentinel is null))
 					SentinelCreateTypeSigArray.TypeSigCollection.AddRange(sig.ParamsAfterSentinel);
 			}
 		}
 
 		void AddReturnType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 
 			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out bool canceled);
-			if (newTypeSig != null)
+			if (!(newTypeSig is null))
 				ReturnType = newTypeSig;
 		}
 
 		protected override string? Verify(string columnName) {
 			if (columnName == nameof(ReturnType))
-				return ReturnType != null ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
+				return !(ReturnType is null) ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
 			return string.Empty;
 		}
 
-		public override bool HasError => GenericParameterCount.HasError || ReturnType == null;
+		public override bool HasError => GenericParameterCount.HasError || ReturnType is null;
 
 		public string ErrorText {
 			get {

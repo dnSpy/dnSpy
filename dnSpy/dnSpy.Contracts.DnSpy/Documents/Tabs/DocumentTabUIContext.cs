@@ -90,9 +90,9 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		public IDocumentTab? DocumentTab {
 			get => documentTab;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
+				if (documentTab is null)
 					documentTab = value;
 				else if (documentTab != value)
 					throw new InvalidOperationException();

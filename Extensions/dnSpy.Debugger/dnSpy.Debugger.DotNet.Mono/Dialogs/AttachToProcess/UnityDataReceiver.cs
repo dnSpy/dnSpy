@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					return null;
 
 				foreach (var s in connections) {
-					if (s.AsyncResult == null)
+					if (s.AsyncResult is null)
 						s.AsyncResult = s.Start();
 				}
 
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 				catch (ObjectDisposedException) {
 				}
 
-				if (data != null)
+				if (!(data is null))
 					return data;
 
 				conn.Dispose();

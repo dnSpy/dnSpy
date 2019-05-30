@@ -40,16 +40,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public override string ToString() {
 			var td = EnumType.ResolveTypeDef();
-			if (td != null) {
+			if (!(td is null)) {
 				var s = ModelUtils.GetEnumFieldName(td, Value);
-				if (s != null)
+				if (!(s is null))
 					return $"{EnumType}.{s}";
 			}
 			if (!IsArray)
 				return $"({(EnumType ?? (object)dnSpy_AsmEditor_Resources.UnknownEnum)}){Value}";
 
 			var list = Value as System.Collections.IList;
-			if (list == null)
+			if (list is null)
 				return $"({(EnumType ?? (object)dnSpy_AsmEditor_Resources.UnknownEnum)}[])null";
 
 			var sb = new StringBuilder();
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					sb.Append(',');
 				sb.Append(' ');
 				var s = ModelUtils.GetEnumFieldName(td, list[i]);
-				sb.Append(s ?? (Value == null ? "null" : Value.ToString()));
+				sb.Append(s ?? (Value is null ? "null" : Value.ToString()));
 			}
 			sb.Append(" }");
 			return sb.ToString();
@@ -82,11 +82,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			set {
 				enumInfo.EnumType = value;
 				var td = value.ResolveTypeDef();
-				if (td == null || !td.IsEnum)
+				if (td is null || !td.IsEnum)
 					enumUnderlyingTypeField = null;
 				else {
 					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
-					if (enumUnderlyingTypeField != null) {
+					if (!(enumUnderlyingTypeField is null)) {
 						enumUnderlyingTypeField.StringValue = StringValue;
 						ForceWriteStringValue(enumUnderlyingTypeField.StringValue);
 					}
@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string PickEnumToolTip {
 			get {
-				if (enumInfo.EnumType == null)
+				if (enumInfo.EnumType is null)
 					return dnSpy_AsmEditor_Resources.Pick_EnumType;
 				return string.Format(dnSpy_AsmEditor_Resources.EnumType, enumInfo.EnumType.FullName);
 			}
@@ -114,14 +114,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override void OnStringValueChanged() {
-			if (enumUnderlyingTypeField != null)
+			if (!(enumUnderlyingTypeField is null))
 				enumUnderlyingTypeField.StringValue = StringValue;
 		}
 
 		protected override string OnNewValue(EnumInfo value) {
 			InitializeEnumUnderlyingTypeField(value);
 
-			if (enumUnderlyingTypeField == null)
+			if (enumUnderlyingTypeField is null)
 				return string.Empty;
 			else {
 				enumUnderlyingTypeField.ObjectValue = value.Value;
@@ -132,7 +132,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected override string? ConvertToValue(out EnumInfo value) {
 			string? error = null;
 			value = enumInfo;
-			if (enumUnderlyingTypeField != null)
+			if (!(enumUnderlyingTypeField is null))
 				error = enumUnderlyingTypeField.ConvertToObjectValue(out value.Value);
 
 			return error;
@@ -142,20 +142,20 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.enumInfo = enumInfo;
 			enumUnderlyingTypeField = null;
 
-			if (enumInfo.Value != null)
+			if (!(enumInfo.Value is null))
 				enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);
 			else {
 				var td = enumInfo.EnumType.ResolveTypeDef();
-				if (td != null && td.IsEnum)
+				if (!(td is null) && td.IsEnum)
 					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
 			}
 		}
 
 		void PickEnumType() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
-			if (type != null)
+			if (!(type is null))
 				EnumType = type;
 		}
 

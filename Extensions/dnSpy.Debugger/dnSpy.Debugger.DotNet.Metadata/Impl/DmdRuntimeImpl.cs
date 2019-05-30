@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		internal void Add(DmdAppDomainImpl appDomain) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			lock (appDomainsLockObj) {
 				Debug.Assert(!appDomains.Contains(appDomain));
@@ -68,10 +68,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override void Remove(DmdAppDomain appDomain) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			var appDomainImpl = appDomain as DmdAppDomainImpl;
-			if (appDomainImpl == null)
+			if (appDomainImpl is null)
 				throw new ArgumentException();
 			if (appDomainImpl.Runtime != this)
 				throw new ArgumentException();

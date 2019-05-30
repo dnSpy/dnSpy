@@ -39,33 +39,33 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ImplementedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			if (analyzedMethod == null)
+			if (analyzedMethod is null)
 				return new List<AnalyzerTreeNodeData>();
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (analyzedMethod == null)
+			if (analyzedMethod is null)
 				yield break;
 			if (!type.HasInterfaces)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
 			var implementedInterfaceRef = iff?.Interface;
-			if (implementedInterfaceRef == null)
+			if (implementedInterfaceRef is null)
 				yield break;
 
 			//TODO: Can we compare property sigs too?
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+				if (!(accessor is null) && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new PropertyNode(property) { Context = Context };
 				}
 			}
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+				if (!(accessor is null) && accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new PropertyNode(property) { Context = Context };
 				}
 			}

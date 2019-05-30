@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="document">Document</param>
 		/// <returns></returns>
 		public static IEnumerable<IDsDocument> NonLoadedDescendantsAndSelf(this IDsDocument document) {
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 			yield return document;
 			if (document.ChildrenLoaded) {
@@ -158,16 +158,16 @@ namespace dnSpy.Contracts.Documents {
 		static IEnumerable<T> GetModules<T>(HashSet<T> hash, IEnumerable<IDsDocument> documents) where T : ModuleDef {
 			foreach (var f in documents.SelectMany(f => f.NonLoadedDescendantsAndSelf())) {
 				var mod = f.ModuleDef as T;
-				if (mod != null && !hash.Contains(mod)) {
+				if (!(mod is null) && !hash.Contains(mod)) {
 					hash.Add(mod);
 					yield return mod;
 				}
 				var asm = mod?.Assembly;
-				if (asm == null)
+				if (asm is null)
 					continue;
 				foreach (var m in asm.Modules) {
 					mod = m as T;
-					if (mod != null && !hash.Contains(mod)) {
+					if (!(mod is null) && !hash.Contains(mod)) {
 						hash.Add(mod);
 						yield return mod;
 					}

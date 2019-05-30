@@ -84,10 +84,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				DmdModuleImpl? targetModule = module;
 				DmdAssemblyImpl? targetAssembly = targetModule.assembly;
-				if (assemblyName != null && !module.assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
+				if (!(assemblyName is null) && !module.assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
 					targetAssembly = (DmdAssemblyImpl?)targetAssembly.AppDomain.GetAssembly(assemblyName);
 					targetModule = (DmdModuleImpl?)targetAssembly?.ManifestModule;
-					if (targetModule == null)
+					if (targetModule is null)
 						return null;
 				}
 
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType? GetType(string typeName, DmdGetTypeOptions options) {
-			if (typeName == null)
+			if (typeName is null)
 				throw new ArgumentNullException(nameof(typeName));
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdTypeDef? GetType(DmdTypeRef typeRef, bool ignoreCase) => assembly.AppDomainImpl.TryLookup(this, typeRef, ignoreCase);
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
-			if (customAttributes != null)
+			if (!(customAttributes is null))
 				return customAttributes;
 			var cas = metadataReader.ReadCustomAttributes(0x00000001);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);

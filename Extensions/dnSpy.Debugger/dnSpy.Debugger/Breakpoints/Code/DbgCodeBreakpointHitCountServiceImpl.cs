@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override int? GetHitCount(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint == null)
+			if (breakpoint is null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			lock (lockObj)
 				return GetHitCount_NoLock_DbgThread(breakpoint);
@@ -113,8 +113,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		public override int Hit_DbgThread(DbgCodeBreakpoint breakpoint) {
 			dbgDispatcherProvider.VerifyAccess();
-			Debug.Assert(dbgManager != null);
-			if (breakpoint == null)
+			Debug.Assert(!(dbgManager is null));
+			if (breakpoint is null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			int hitCount;
 			bool start;
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override void Reset(DbgCodeBreakpoint[] breakpoints) {
-			if (breakpoints == null)
+			if (breakpoints is null)
 				throw new ArgumentNullException(nameof(breakpoints));
 			Dbg(() => Reset_DbgThread(breakpoints));
 		}
@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				var defaultHitCount = dbgManager?.IsDebugging == true ? 0 : (int?)null;
 				foreach (var bp in breakpoints) {
 					if (bpToHitCount.Remove(bp)) {
-						if (updated == null)
+						if (updated is null)
 							updated = new List<DbgCodeBreakpointAndHitCount>();
 						updated.Add(new DbgCodeBreakpointAndHitCount(bp, defaultHitCount));
 					}
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 			if (raisePendingEvent)
 				FlushPendingHitCountChanged_DbgThread();
-			if (updated != null)
+			if (!(updated is null))
 				HitCountChanged?.Invoke(this, new DbgHitCountChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndHitCount>(updated)));
 		}
 	}

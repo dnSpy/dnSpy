@@ -43,10 +43,10 @@ namespace dnSpy.Debugger.Impl {
 						return currentProcess.Current;
 				}
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					var process = value as DbgProcessImpl;
-					if (process == null)
+					if (process is null)
 						throw new ArgumentOutOfRangeException(nameof(value));
 					owner.DbgThread(() => owner.SetCurrentProcess_DbgThread(process));
 				}
@@ -69,10 +69,10 @@ namespace dnSpy.Debugger.Impl {
 						return currentRuntime.Current;
 				}
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					var runtime = value as DbgRuntimeImpl;
-					if (runtime == null)
+					if (runtime is null)
 						throw new ArgumentOutOfRangeException(nameof(value));
 					owner.DbgThread(() => owner.SetCurrentRuntime_DbgThread(runtime));
 				}
@@ -95,10 +95,10 @@ namespace dnSpy.Debugger.Impl {
 						return currentThread.Current;
 				}
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					var thread = value as DbgThreadImpl;
-					if (thread == null)
+					if (thread is null)
 						throw new ArgumentOutOfRangeException(nameof(value));
 					owner.DbgThread(() => owner.SetCurrentThread_DbgThread(thread));
 				}
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void SetCurrentProcess_DbgThread(DbgProcessImpl newProcess) {
 			Dispatcher.VerifyAccess();
-			if (newProcess == null || newProcess.State != DbgProcessState.Paused)
+			if (newProcess is null || newProcess.State != DbgProcessState.Paused)
 				return;
 
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
@@ -201,7 +201,7 @@ namespace dnSpy.Debugger.Impl {
 			DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs;
 			lock (lockObj) {
-				if (!forceSet && dbgCurrentProcess.currentProcess.Current != null)
+				if (!forceSet && !(dbgCurrentProcess.currentProcess.Current is null))
 					return false;
 				var info = GetEngineInfo_NoLock(engine);
 				var process = info.Process;
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		DbgProcessImpl GetProcess_NoLock(DbgProcessImpl? current, DbgProcessImpl @default) {
-			if (current == null)
+			if (current is null)
 				return @default;
 			switch (current.State) {
 			case DbgProcessState.Running:

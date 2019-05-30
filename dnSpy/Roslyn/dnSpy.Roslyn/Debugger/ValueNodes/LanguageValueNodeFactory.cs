@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var specialViewOptions = (options & ~(DbgValueNodeEvaluationOptions.ResultsView | DbgValueNodeEvaluationOptions.DynamicView));
 			if ((options & DbgValueNodeEvaluationOptions.ResultsView) != 0) {
 				info = valueNodeProviderFactory.CreateResultsView(evalInfo, addParens, expectedType, nodeInfo, specialViewOptions);
-				useProvider = info.ErrorMessage != null;
+				useProvider = !(info.ErrorMessage is null);
 			}
 			else if ((options & DbgValueNodeEvaluationOptions.DynamicView) != 0) {
 				info = valueNodeProviderFactory.CreateDynamicView(evalInfo, addParens, expectedType, nodeInfo, specialViewOptions);
@@ -90,9 +90,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			else
 				info = valueNodeProviderFactory.Create(evalInfo, addParens, expectedType, nodeInfo, options);
 			if (useProvider) {
-				if (info.ErrorMessage != null)
+				if (!(info.ErrorMessage is null))
 					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, info.ErrorMessage)), formatSpecifiers, columnFormatter);
-				Debug.Assert(info.Provider != null);
+				Debug.Assert(!(info.Provider is null));
 				return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, info.Provider?.ImageName ?? imageName, true, false, null, null, info.ErrorMessage, info.Provider?.ValueText ?? default, formatSpecifiers, columnFormatter);
 			}
 			return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, info.ErrorMessage, default, formatSpecifiers, columnFormatter);
@@ -134,7 +134,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			var property = PropertyState.TryGetProperty(method);
-			var imageName = (object?)property != null ? ImageNameUtils.GetImageName(property) : ImageNameUtils.GetImageName(method, SupportsModuleTypes);
+			var imageName = !(property is null) ? ImageNameUtils.GetImageName(property) : ImageNameUtils.GetImageName(method, SupportsModuleTypes);
 			return CreateValue(evalInfo, default, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, columnFormatter);
 		}
 
@@ -177,7 +177,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 			public static DmdPropertyInfo? TryGetProperty(DmdMethodBase method) {
 				var m = method as DmdMethodInfo;
-				if ((object?)m == null)
+				if (m is null)
 					return null;
 				var state = GetState(m.DeclaringType!);
 				if (state.toProperty.TryGetValue(method, out var property))

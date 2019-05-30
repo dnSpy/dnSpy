@@ -48,12 +48,12 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		}
 
 		public override IEditValueProvider Create(string contentType, string[] extraTextViewRoles) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
-			if (extraTextViewRoles == null)
+			if (extraTextViewRoles is null)
 				throw new ArgumentNullException(nameof(extraTextViewRoles));
 			var ct = contentTypeRegistryService.GetContentType(contentType);
-			if (ct == null)
+			if (ct is null)
 				throw new ArgumentOutOfRangeException(nameof(contentType));
 			return new EditValueProviderImpl(ct, textBufferFactoryService, textEditorFactoryService, extraTextViewRoles);
 		}
@@ -206,7 +206,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		public EditValueCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (TryGetInstance() == null)
+			if (TryGetInstance() is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var editValueImpl = TryGetInstance();
-			if (editValueImpl == null)
+			if (editValueImpl is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {

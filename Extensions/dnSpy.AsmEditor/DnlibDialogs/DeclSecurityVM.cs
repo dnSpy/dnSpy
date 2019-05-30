@@ -122,7 +122,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			SecurityAttributesVM.Collection.Clear();
 			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, ownerModule, decompilerService, ownerType, ownerMethod)));
 			V1XMLString = options.V1XMLString;
-			DeclSecVerEnumList.SelectedItem = options.V1XMLString == null ? DeclSecVer.V2 : DeclSecVer.V1;
+			DeclSecVerEnumList.SelectedItem = options.V1XMLString is null ? DeclSecVer.V2 : DeclSecVer.V1;
 		}
 
 		DeclSecurityOptions CopyTo(DeclSecurityOptions options) {

@@ -25,7 +25,7 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 namespace dnSpy.AsmEditor.Compiler {
 	static class PlatformHelper {
 		public static TargetPlatform GetPlatform(ModuleDef module) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 
 			if (module.Machine.IsI386()) {

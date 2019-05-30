@@ -351,8 +351,8 @@ namespace dnSpy.Text.Classification {
 				classificationTypeRegistryService.GetClassificationType(ThemeClassificationTypeNames.AsmHexBytes),
 			};
 			foreach (var ct in classificationTypes) {
-				Debug.Assert(ct != null);
-				if (ct == null)
+				Debug.Assert(!(ct is null));
+				if (ct is null)
 					throw new InvalidOperationException();
 			}
 		}

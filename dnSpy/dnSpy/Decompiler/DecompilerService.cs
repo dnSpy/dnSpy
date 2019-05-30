@@ -46,7 +46,7 @@ namespace dnSpy.Decompiler {
 		public IDecompiler Decompiler {
 			get => decompiler;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (Array.IndexOf(decompilers, value) < 0)
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");

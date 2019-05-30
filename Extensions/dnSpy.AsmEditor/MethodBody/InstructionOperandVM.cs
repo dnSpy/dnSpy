@@ -280,7 +280,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.Type:
 			case InstructionOperandType.MethodSig:
 			case InstructionOperandType.SwitchTargets:
-				if (editOperand == null)
+				if (editOperand is null)
 					throw new InvalidOperationException();
 				editOperand.Edit(parameter, this);
 				break;
@@ -311,7 +311,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			switch (InstructionOperandType) {
 			case MethodBody.InstructionOperandType.BranchTarget:
 				var instr = item as InstructionVM;
-				if (instr == null || instr == InstructionVM.Null)
+				if (instr is null || instr == InstructionVM.Null)
 					return dnSpy_AsmEditor_Resources.Error_OpMustBeInstr;
 				if (instr.Index == -1)
 					return dnSpy_AsmEditor_Resources.Error_InstrTargetHasBeenRemoved;
@@ -319,7 +319,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case MethodBody.InstructionOperandType.Local:
 				var local = item as LocalVM;
-				if (local == null || local == LocalVM.Null)
+				if (local is null || local == LocalVM.Null)
 					return dnSpy_AsmEditor_Resources.Error_OpMustBeLocal;
 				if (local.Index == -1)
 					return dnSpy_AsmEditor_Resources.Error_LocalHasBeenRemoved;
@@ -327,7 +327,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case MethodBody.InstructionOperandType.Parameter:
 				var p = item as Parameter;
-				if (p == null || p == BodyUtils.NullParameter)
+				if (p is null || p == BodyUtils.NullParameter)
 					return dnSpy_AsmEditor_Resources.Error_OpMustBeParam;
 				break;
 
@@ -398,7 +398,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (o is MethodSig msig)
 				return importer.Import(msig);
 
-			Debug.Assert(o == null);
+			Debug.Assert(o is null);
 			return null;
 		}
 
@@ -419,41 +419,41 @@ namespace dnSpy.AsmEditor.MethodBody {
 					break;
 
 				case MethodBody.InstructionOperandType.Field:
-					if (Other != null) {
+					if (!(Other is null)) {
 						if (!(Other is IField))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
-						if (Other is IMethod method && method.MethodSig != null)
+						if (Other is IMethod method && !(method.MethodSig is null))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
 					}
 					break;
 
 				case MethodBody.InstructionOperandType.Method:
-					if (Other != null) {
+					if (!(Other is null)) {
 						if (!(Other is IMethod))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
-						if (Other is IField field && field.FieldSig != null)
+						if (Other is IField field && !(field.FieldSig is null))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
 					}
 					break;
 
 				case MethodBody.InstructionOperandType.Token:
-					if (Other != null && !(Other is ITokenOperand)) return dnSpy_AsmEditor_Resources.Error_OpMustBeTypeMethodField;
+					if (!(Other is null) && !(Other is ITokenOperand)) return dnSpy_AsmEditor_Resources.Error_OpMustBeTypeMethodField;
 					break;
 
 				case MethodBody.InstructionOperandType.Type:
-					if (Other != null && !(Other is ITypeDefOrRef)) return dnSpy_AsmEditor_Resources.Error_OpMustBeType;
+					if (!(Other is null) && !(Other is ITypeDefOrRef)) return dnSpy_AsmEditor_Resources.Error_OpMustBeType;
 					break;
 
 				case MethodBody.InstructionOperandType.MethodSig:
-					if (Other != null && !(Other is MethodSig)) return dnSpy_AsmEditor_Resources.Error_OpMustBeMethodSig;
+					if (!(Other is null) && !(Other is MethodSig)) return dnSpy_AsmEditor_Resources.Error_OpMustBeMethodSig;
 					break;
 
 				case MethodBody.InstructionOperandType.SwitchTargets:
 					var list = Other as IList<InstructionVM>;
-					if (list == null)
+					if (list is null)
 						return dnSpy_AsmEditor_Resources.Error_OpMustBeListInstrs;
 					foreach (var i in list) {
-						if (i != null && i.Index == -1)
+						if (!(i is null) && i.Index == -1)
 							return dnSpy_AsmEditor_Resources.Error_SwitchInstrTargetHasBeenRemoved;
 					}
 					break;

@@ -28,12 +28,12 @@ namespace dnSpy.Text.Operations {
 		static readonly object textUndoHistoryKey = typeof(ITextUndoHistory);
 
 		public void AttachHistory(object context, ITextUndoHistory history) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
-			if (history == null)
+			if (history is null)
 				throw new ArgumentNullException(nameof(history));
 			var propertyOwner = context as IPropertyOwner;
-			if (propertyOwner == null)
+			if (propertyOwner is null)
 				throw new ArgumentException();
 			if (!(history is TextUndoHistory))
 				throw new ArgumentException();
@@ -42,10 +42,10 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public ITextUndoHistory GetHistory(object context) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			var propertyOwner = context as IPropertyOwner;
-			if (propertyOwner == null)
+			if (propertyOwner is null)
 				throw new ArgumentException();
 			if (propertyOwner.Properties.TryGetProperty(textUndoHistoryKey, out TextUndoHistory history))
 				return history;
@@ -53,29 +53,29 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public ITextUndoHistory RegisterHistory(object context) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			var propertyOwner = context as IPropertyOwner;
-			if (propertyOwner == null)
+			if (propertyOwner is null)
 				throw new ArgumentException();
 			return propertyOwner.Properties.GetOrCreateSingletonProperty(textUndoHistoryKey, () => new TextUndoHistory(propertyOwner));
 		}
 
 		public void RemoveHistory(ITextUndoHistory history) {
-			if (history == null)
+			if (history is null)
 				throw new ArgumentException();
 			var historyImpl = history as TextUndoHistory;
-			if (historyImpl == null)
+			if (historyImpl is null)
 				throw new ArgumentException();
 			historyImpl.PropertyOwner.Properties.RemoveProperty(textUndoHistoryKey);
 			historyImpl.Dispose();
 		}
 
 		public bool TryGetHistory(object context, out ITextUndoHistory history) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			var propertyOwner = context as IPropertyOwner;
-			if (propertyOwner == null)
+			if (propertyOwner is null)
 				throw new ArgumentException();
 			return propertyOwner.Properties.TryGetProperty(textUndoHistoryKey, out history);
 		}

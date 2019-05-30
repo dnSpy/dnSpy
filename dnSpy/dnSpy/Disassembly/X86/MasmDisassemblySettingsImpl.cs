@@ -67,7 +67,7 @@ namespace dnSpy.Disassembly.X86 {
 		public MasmDisassemblySettings Clone() => CopyTo(new MasmDisassemblySettings());
 
 		public MasmDisassemblySettings CopyTo(MasmDisassemblySettings other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.AddDsPrefix32 = AddDsPrefix32;

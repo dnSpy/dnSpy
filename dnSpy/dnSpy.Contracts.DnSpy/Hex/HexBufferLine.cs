@@ -212,7 +212,7 @@ namespace dnSpy.Contracts.Hex {
 				throw new ArgumentException();
 
 			var overlapSpan = BufferSpan.Overlap(span);
-			if (overlapSpan == null)
+			if (overlapSpan is null)
 				yield break;
 
 			foreach (var column in ColumnOrder) {
@@ -282,7 +282,7 @@ namespace dnSpy.Contracts.Hex {
 				yield break;
 
 			var overlapSpan = BufferSpan.Overlap(span);
-			if (overlapSpan == null)
+			if (overlapSpan is null)
 				yield break;
 
 			if ((flags & (HexSpanSelectionFlags.Group0 | HexSpanSelectionFlags.Group1)) != 0) {
@@ -305,7 +305,7 @@ namespace dnSpy.Contracts.Hex {
 				foreach (var cell in cells) {
 					if (!((cell.GroupIndex == 0 && group0) || (cell.GroupIndex == 1 && group1)))
 						continue;
-					if (firstCell == null) {
+					if (firstCell is null) {
 						firstCell = cell;
 						lastCell = cell;
 					}
@@ -316,7 +316,7 @@ namespace dnSpy.Contracts.Hex {
 						firstCell = lastCell = cell;
 					}
 				}
-				if (firstCell != null)
+				if (!(firstCell is null))
 					yield return Create(collection, firstCell, lastCell!, overlapSpan.Value);
 				yield break;
 			}
@@ -378,7 +378,7 @@ namespace dnSpy.Contracts.Hex {
 			}
 
 			var cell = collection.GetCell(position.BufferPosition);
-			if (cell == null)
+			if (cell is null)
 				return null;
 			if (position.CellPosition >= cell.CellSpan.Length)
 				return null;
@@ -453,7 +453,7 @@ namespace dnSpy.Contracts.Hex {
 				break;
 
 			case HexLinePositionInfoType.ValueCellSeparator:
-				Debug.Assert(position.Cell != null);
+				Debug.Assert(!(position.Cell is null));
 				Debug.Assert(position.Cell.CellSpan.End == position.Position);
 				position = HexLinePositionInfo.CreateValue(position.Cell.CellSpan.End - 1, position.Cell);
 				break;
@@ -462,7 +462,7 @@ namespace dnSpy.Contracts.Hex {
 			case HexLinePositionInfoType.ColumnSeparator:
 			case HexLinePositionInfoType.VirtualSpace:
 				var closestPos = GetClosestCellPosition(position.Position);
-				if (closestPos == null)
+				if (closestPos is null)
 					return null;
 				Debug.Assert(closestPos.Value.IsAsciiCell || closestPos.Value.IsValueCell);
 				position = closestPos.Value;
@@ -478,10 +478,10 @@ namespace dnSpy.Contracts.Hex {
 			case HexLinePositionInfoType.AsciiCell:
 				if (!IsAsciiColumnPresent)
 					return null;
-				Debug.Assert(cell != null);
+				Debug.Assert(!(cell is null));
 				if (onlyVisibleCells && !cell.HasData) {
 					var visible = GetVisible(AsciiCells, cell);
-					if (visible == null)
+					if (visible is null)
 						return null;
 					cell = visible.Value.cell;
 					cellPosition = visible.Value.cellPosition;
@@ -489,12 +489,12 @@ namespace dnSpy.Contracts.Hex {
 				return new HexCellPosition(HexColumnType.Ascii, cell.BufferStart, cellPosition);
 
 			case HexLinePositionInfoType.ValueCell:
-				Debug.Assert(cell != null);
+				Debug.Assert(!(cell is null));
 				if (!IsValuesColumnPresent)
 					return null;
 				if (onlyVisibleCells && !cell.HasData) {
 					var visible = GetVisible(ValueCells, cell);
-					if (visible == null)
+					if (visible is null)
 						return null;
 					cell = visible.Value.cell;
 					cellPosition = visible.Value.cellPosition;
@@ -533,7 +533,7 @@ namespace dnSpy.Contracts.Hex {
 			int cellPosition = -1;
 			foreach (var info in GetCells()) {
 				var cell = info.cell;
-				if (closest == null || Compare(linePosition, cell, closest.Value.cell) < 0) {
+				if (closest is null || Compare(linePosition, cell, closest.Value.cell) < 0) {
 					closest = info;
 					cellPosition = linePosition - info.cell.CellSpan.Start;
 					if (cellPosition < 0)
@@ -542,7 +542,7 @@ namespace dnSpy.Contracts.Hex {
 						cellPosition = info.cell.CellSpan.Length - 1;
 				}
 			}
-			if (closest == null)
+			if (closest is null)
 				return null;
 			if (cellPosition < 0 || cellPosition >= closest.Value.cell.CellSpan.Length)
 				throw new InvalidOperationException();

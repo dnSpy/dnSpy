@@ -33,11 +33,11 @@ namespace dnSpy.Hex.Formatting {
 		FormattedHexSourceFactoryServiceImpl(TF.ITextFormatterProvider textFormatterProvider) => this.textFormatterProvider = textFormatterProvider;
 
 		public override HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
-			if (aggregateClassifier == null)
+			if (aggregateClassifier is null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
-			if (sequencer == null)
+			if (sequencer is null)
 				throw new ArgumentNullException(nameof(sequencer));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			return new HexFormattedLineSourceImpl(textFormatterProvider, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
 		}

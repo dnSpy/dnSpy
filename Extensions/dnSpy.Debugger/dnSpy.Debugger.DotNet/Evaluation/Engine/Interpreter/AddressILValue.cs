@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override bool CopyObject(DmdType type, ILValue source) {
 			var sourceAddr = source as AddressILValue;
-			if (sourceAddr == null)
+			if (sourceAddr is null)
 				return false;
 			WriteValue(sourceAddr.ReadValueImpl());
 			return true;

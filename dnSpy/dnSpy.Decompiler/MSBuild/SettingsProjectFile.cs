@@ -89,7 +89,7 @@ namespace dnSpy.Decompiler.MSBuild {
 						writer.WriteAttributeString("GenerateDefaultValueInCode", "false");
 					writer.WriteAttributeString("Type", setting.Type);
 					writer.WriteAttributeString("Scope", setting.Scope);
-					if (setting.DesignTimeValue != null) {
+					if (!(setting.DesignTimeValue is null)) {
 						writer.WriteStartElement("DesignTimeValue");
 						writer.WriteAttributeString("Profile", setting.DesignTimeValue.Profile);
 						writer.WriteString(setting.DesignTimeValue.Text);
@@ -111,18 +111,18 @@ namespace dnSpy.Decompiler.MSBuild {
 		IEnumerable<Setting> FindSettings() {
 			foreach (var prop in type.Properties) {
 				var propType = prop.PropertySig.GetRetType().RemovePinnedAndModifiers();
-				if (propType == null)
+				if (propType is null)
 					continue;
 				string settingsType = propType.ReflectionFullName;
 
 				var ca = prop.CustomAttributes.Find("System.Configuration.DefaultSettingValueAttribute");
-				if (ca == null || ca.ConstructorArguments.Count != 1)
+				if (ca is null || ca.ConstructorArguments.Count != 1)
 					continue;
 				var arg = ca.ConstructorArguments[0];
 				if (arg.Type.RemovePinnedAndModifiers().GetElementType() != ElementType.String)
 					continue;
 				string defaultValue = arg.Value as UTF8String;
-				if (defaultValue == null)
+				if (defaultValue is null)
 					continue;
 				bool generateDefaultValueInCode = true;
 
@@ -133,12 +133,12 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				bool roaming = false;
 				ca = prop.CustomAttributes.Find("System.Configuration.SettingsManageabilityAttribute");
-				if (ca != null && ca.ConstructorArguments.Count == 1) {
+				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
-					if (argType != null && argType.ReflectionFullName == "System.Configuration.SettingsManageability") {
+					if (!(argType is null) && argType.ReflectionFullName == "System.Configuration.SettingsManageability") {
 						var v = arg.Value as int?;
-						if (v != null) {
+						if (!(v is null)) {
 							switch ((SettingsManageability)v.Value) {
 							case SettingsManageability.Roaming:
 								roaming = true;
@@ -151,17 +151,17 @@ namespace dnSpy.Decompiler.MSBuild {
 				var setting = new Setting();
 
 				ca = prop.CustomAttributes.Find("System.Configuration.SpecialSettingAttribute");
-				if (ca != null && ca.ConstructorArguments.Count == 1) {
+				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
-					if (argType != null && argType.ReflectionFullName == "System.Configuration.SpecialSetting") {
+					if (!(argType is null) && argType.ReflectionFullName == "System.Configuration.SpecialSetting") {
 						var v = arg.Value as int?;
-						if (v != null) {
+						if (!(v is null)) {
 							switch ((SpecialSetting)v.Value) {
 							case SpecialSetting.ConnectionString:
 								settingsType = "(Connection string)";
 								var designTimeValue = GetConnectionStringDesignTimeValue(prop);
-								if (designTimeValue != null) {
+								if (!(designTimeValue is null)) {
 									setting.DesignTimeValue = new Value {
 										Profile = DEFAULT_PROFILE,
 										Text = designTimeValue,
@@ -178,20 +178,20 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				string? provider = null;
 				ca = prop.CustomAttributes.Find("System.Configuration.SettingsProviderAttribute");
-				if (ca != null && ca.ConstructorArguments.Count == 1) {
+				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
 					if (argType.GetElementType() == ElementType.String)
 						provider = arg.Value as UTF8String;
-					else if (argType != null && argType.FullName == "System.Type") {
-						if (arg.Value is TypeDefOrRefSig t && t.TypeDefOrRef != null)
+					else if (!(argType is null) && argType.FullName == "System.Type") {
+						if (arg.Value is TypeDefOrRefSig t && !(t.TypeDefOrRef is null))
 							provider = t.TypeDefOrRef.ReflectionFullName;
 					}
 				}
 
 				string? description = null;
 				ca = prop.CustomAttributes.Find("System.Configuration.SettingsDescriptionAttribute");
-				if (ca != null && ca.ConstructorArguments.Count == 1) {
+				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
 					if (argType.GetElementType() == ElementType.String)
@@ -215,9 +215,9 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string? GetConnectionStringDesignTimeValue(PropertyDef prop) {
-			if (toConnectionStringInfo == null)
+			if (toConnectionStringInfo is null)
 				InitializeConnectionStringDesignTimeValues();
-			Debug.Assert(toConnectionStringInfo != null);
+			Debug.Assert(!(toConnectionStringInfo is null));
 			if (!toConnectionStringInfo.TryGetValue(prop.Name, out var info))
 				return null;
 
@@ -238,8 +238,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		void InitializeConnectionStringDesignTimeValues() {
-			Debug.Assert(toConnectionStringInfo == null);
-			if (toConnectionStringInfo != null)
+			Debug.Assert(toConnectionStringInfo is null);
+			if (!(toConnectionStringInfo is null))
 				return;
 			toConnectionStringInfo = new Dictionary<string, ConnectionStringInfo>(StringComparer.Ordinal);
 
@@ -252,12 +252,12 @@ namespace dnSpy.Decompiler.MSBuild {
 				var prefix = type.ReflectionFullName + ".";
 				foreach (var e in doc.XPathSelectElements("/configuration/connectionStrings/add")) {
 					var name = (string)e.Attribute("name");
-					if (name == null || !name.StartsWith(prefix, StringComparison.Ordinal))
+					if (name is null || !name.StartsWith(prefix, StringComparison.Ordinal))
 						continue;
 
 					var connectionString = (string)e.Attribute("connectionString");
 					var providerName = (string)e.Attribute("providerName");
-					if (connectionString == null || providerName == null)
+					if (connectionString is null || providerName is null)
 						continue;
 
 					var info = new ConnectionStringInfo {

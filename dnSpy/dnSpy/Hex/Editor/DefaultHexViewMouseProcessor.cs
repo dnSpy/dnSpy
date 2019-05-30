@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Editor {
 			if (wpfHexView.Selection.IsEmpty)
 				return false;
 			var position = mouseLoc.HexViewLine.BufferLine.GetClosestCellPosition(mouseLoc.Position, onlyVisibleCells: true);
-			if (position == null)
+			if (position is null)
 				return false;
 			var point = position.Value.BufferPosition;
 			foreach (var span in wpfHexView.Selection.SelectedSpans) {
@@ -160,11 +160,11 @@ namespace dnSpy.Hex.Editor {
 
 		public override void OnMouseMove(object sender, MouseEventArgs e) {
 			if (e.LeftButton == MouseButtonState.Pressed) {
-				if (mouseLeftDownInfo != null && !mouseLeftDownInfo.Value.TryUpdateBufferLines(wpfHexView.BufferLines)) {
+				if (!(mouseLeftDownInfo is null) && !mouseLeftDownInfo.Value.TryUpdateBufferLines(wpfHexView.BufferLines)) {
 					CancelMouseLeftButtonSelection();
 					return;
 				}
-				if (!mouseCaptured && mouseLeftDownInfo != null) {
+				if (!mouseCaptured && !(mouseLeftDownInfo is null)) {
 					var mouseLoc = GetLocation(e);
 					var dist = mouseLeftDownInfo.Value.Point - mouseLoc.Point;
 					bool movedEnough = Math.Abs(dist.X) >= SystemParameters.MinimumHorizontalDragDistance ||
@@ -177,11 +177,11 @@ namespace dnSpy.Hex.Editor {
 				}
 				else if (mouseCaptured) {
 					e.Handled = true;
-					Debug.Assert(mouseLeftDownInfo != null);
-					if (mouseLeftDownInfo == null)
+					Debug.Assert(!(mouseLeftDownInfo is null));
+					if (mouseLeftDownInfo is null)
 						StopScrolling();
 					else if (mouseLeftDownInfo.Value.Clicks == 2 || mouseLeftDownInfo.Value.Clicks == 3) {
-						Debug.Assert(dispatcherTimer == null);
+						Debug.Assert(dispatcherTimer is null);
 						StopScrolling();
 
 						var mouseLoc = GetLocation(e);
@@ -235,13 +235,13 @@ namespace dnSpy.Hex.Editor {
 			var mouseLoc = GetLocation(e);
 			dispatcherTimerXCoord = mouseLoc.Point.X;
 			var scrollDir = GetScrollDirection(mouseLoc, out var interval);
-			if (scrollDir == null) {
+			if (scrollDir is null) {
 				StopScrolling();
 				wpfHexView.Caret.EnsureVisible();
 				return;
 			}
 
-			if (dispatcherTimer != null) {
+			if (!(dispatcherTimer is null)) {
 				// It resets the timer if we write a new value, even if it's identical to the original value
 				if (dispatcherTimer.Interval != interval)
 					dispatcherTimer.Interval = interval;

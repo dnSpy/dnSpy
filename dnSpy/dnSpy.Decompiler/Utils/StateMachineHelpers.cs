@@ -48,10 +48,10 @@ namespace dnSpy.Decompiler.Utils {
 
 		public static TypeDef? GetStateMachineType(MethodDef method) {
 			var stateMachineType = GetStateMachineTypeCore(method);
-			if (stateMachineType == null)
+			if (stateMachineType is null)
 				return null;
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return null;
 
 			foreach (var instr in body.Instructions) {
@@ -75,13 +75,13 @@ namespace dnSpy.Decompiler.Utils {
 				if (ca.Constructor?.MethodSig?.Params.Count != 1)
 					continue;
 				var typeType = (ca.Constructor.MethodSig.Params[0] as ClassOrValueTypeSig)?.TypeDefOrRef;
-				if (typeType == null || !EqualsName(typeType, stringSystem, stringType))
+				if (typeType is null || !EqualsName(typeType, stringSystem, stringType))
 					continue;
 				if (!IsStateMachineTypeAttribute(ca.AttributeType))
 					continue;
 				var caArg = ca.ConstructorArguments[0];
 				var tdr = (caArg.Value as ClassOrValueTypeSig)?.TypeDefOrRef;
-				if (tdr == null)
+				if (tdr is null)
 					continue;
 				var td = tdr.Module.Find(tdr);
 				if (td?.DeclaringType == method.DeclaringType)
@@ -96,14 +96,14 @@ namespace dnSpy.Decompiler.Utils {
 
 		static TypeDef? GetAsyncStateMachineTypeFromInstructionsCore(MethodDef method) {
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return null;
 			foreach (var local in body.Variables) {
 				var type = local.Type.RemovePinnedAndModifiers() as ClassOrValueTypeSig;
-				if (type == null)
+				if (type is null)
 					continue;
 				var nested = type.TypeDef;
-				if (nested == null || nested.DeclaringType != method.DeclaringType)
+				if (nested is null || nested.DeclaringType != method.DeclaringType)
 					continue;
 				if (!ImplementsInterface(nested, System_Runtime_CompilerServices, IAsyncStateMachine))
 					continue;
@@ -116,19 +116,19 @@ namespace dnSpy.Decompiler.Utils {
 			if (!IsIteratorReturnType(method.MethodSig.GetRetType().RemovePinnedAndModifiers()))
 				return null;
 			var instrs = method.Body?.Instructions;
-			if (instrs == null)
+			if (instrs is null)
 				return null;
 			for (int i = 0; i < instrs.Count; i++) {
 				var instr = instrs[i];
 				if (instr.OpCode.Code != Code.Newobj)
 					continue;
 				var ctor = instr.Operand as MethodDef;
-				if (ctor == null || ctor.DeclaringType.DeclaringType != method.DeclaringType)
+				if (ctor is null || ctor.DeclaringType.DeclaringType != method.DeclaringType)
 					continue;
 				if (!ImplementsInterface(ctor.DeclaringType, stringSystem, stringIDisposable))
 					continue;
 				var disposeMethod = FindDispose(ctor.DeclaringType);
-				if (disposeMethod == null)
+				if (disposeMethod is null)
 					continue;
 				if (!disposeMethod.CustomAttributes.IsDefined("System.Diagnostics.DebuggerHiddenAttribute")) {
 					// This attribute isn't always present. Make sure the type has a compiler generated name
@@ -145,9 +145,9 @@ namespace dnSpy.Decompiler.Utils {
 
 		static bool IsIteratorReturnType(TypeSig typeSig) {
 			var tdr = (typeSig as ClassSig)?.TypeDefOrRef;
-			if (tdr == null)
+			if (tdr is null)
 				tdr = (typeSig as GenericInstSig)?.GenericType.TypeDefOrRef;
-			if (tdr == null)
+			if (tdr is null)
 				return false;
 			return EqualsName(tdr, System_Collections, IEnumerable) ||
 				EqualsName(tdr, System_Collections, IEnumerator) ||
@@ -159,7 +159,7 @@ namespace dnSpy.Decompiler.Utils {
 			var ifaces = type.Interfaces;
 			for (int i = 0; i < ifaces.Count; i++) {
 				var iface = ifaces[i].Interface;
-				if (iface != null && EqualsName(iface, @namespace, name))
+				if (!(iface is null) && EqualsName(iface, @namespace, name))
 					return true;
 			}
 			return false;
@@ -189,7 +189,7 @@ namespace dnSpy.Decompiler.Utils {
 		static bool IsDisposeSig(MethodSig sig) {
 			if (sig.GenParamCount != 0)
 				return false;
-			if (sig.ParamsAfterSentinel != null)
+			if (!(sig.ParamsAfterSentinel is null))
 				return false;
 			if (sig.Params.Count != 0)
 				return false;

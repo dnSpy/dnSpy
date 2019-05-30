@@ -126,7 +126,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool Load(DocumentList documentList, IDsDocumentLoader? documentLoader) {
 			const bool isReload = false;
-			if (documentLoader == null)
+			if (documentLoader is null)
 				documentLoader = new DefaultDsDocumentLoader(documentTabService.DocumentTreeView.DocumentService);
 			if (!CanLoad)
 				return false;
@@ -154,7 +154,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool Reload(IDsDocumentLoader? documentLoader) {
 			const bool isReload = true;
-			if (documentLoader == null)
+			if (documentLoader is null)
 				documentLoader = new DefaultDsDocumentLoader(documentTabService.DocumentTreeView.DocumentService);
 			if (!CanReload)
 				return false;

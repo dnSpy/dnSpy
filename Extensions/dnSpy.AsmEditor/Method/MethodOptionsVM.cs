@@ -293,11 +293,11 @@ namespace dnSpy.AsmEditor.Method {
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
-				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
+				CanAddGenericMethodVar = ownerMethod is null || ownerMethod.GenericParameters.Count > 0,
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);

@@ -52,9 +52,9 @@ namespace dnSpy.Hex.Formatting {
 		const int MAX_LINE_LENGTH = 5000;
 
 		public HexFormattedLineSourceImpl(TF.ITextFormatterProvider textFormatterProvider, double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
-			if (textFormatterProvider == null)
+			if (textFormatterProvider is null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 
 			textFormatter = textFormatterProvider.Create(useDisplayMode);
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override HexFormattedLine FormatLineInVisualBuffer(HexBufferLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 
 			var seqColl = HexAndAdornmentSequencer.CreateHexAndAdornmentCollection(line);
@@ -170,8 +170,8 @@ namespace dnSpy.Hex.Formatting {
 			var props = classificationFormatMap.GetTextProperties(cspan.ClassificationType);
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
-				if (last.AdornmentElement == null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
-					Debug.Assert(last.TextRunProperties != null);
+				if (last.AdornmentElement is null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
+					Debug.Assert(!(last.TextRunProperties is null));
 					list[list.Count - 1] = new HexLinePart(list.Count - 1, last.Column, VST.Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
 					return;
 				}

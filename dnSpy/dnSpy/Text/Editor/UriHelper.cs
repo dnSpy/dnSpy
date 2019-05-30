@@ -25,9 +25,9 @@ using Microsoft.VisualStudio.Text.Tagging;
 namespace dnSpy.Text.Editor {
 	static class UriHelper {
 		public static IMappingTagSpan<IUrlTag>? GetUri(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, ITextView textView, SnapshotPoint point) {
-			if (viewTagAggregatorFactoryService == null)
+			if (viewTagAggregatorFactoryService is null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
 			using (var tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IUrlTag>(textView)) {
 				foreach (var tagSpan in tagAggregator.GetTags(new SnapshotSpan(point.Snapshot, point.Position, 0))) {

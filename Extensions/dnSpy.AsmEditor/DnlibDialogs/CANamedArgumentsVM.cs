@@ -31,6 +31,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected override CANamedArgumentVM Create(CANamedArgument model) => new CANamedArgumentVM(OwnerModule, model, new TypeSigCreatorOptions(OwnerModule, decompilerService));
 		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) => new CANamedArgumentVM(OwnerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(OwnerModule, decompilerService));
 		protected override CANamedArgumentVM Create() => new CANamedArgumentVM(OwnerModule, new CANamedArgument(false, OwnerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(OwnerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(OwnerModule, decompilerService));
-		protected override bool AddItemCanExecute() => canAdd == null || canAdd(this);
+		protected override bool AddItemCanExecute() => canAdd is null || canAdd(this);
 	}
 }

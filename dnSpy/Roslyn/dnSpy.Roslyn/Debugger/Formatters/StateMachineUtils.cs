@@ -42,13 +42,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						attrName = "System.Runtime.CompilerServices.IteratorStateMachineAttribute";
 					else
 						attrName = null;
-					if (attrName != null) {
+					if (!(attrName is null)) {
 						var declTypeDef = method.DeclaringType;
 						if (declTypeDef.IsConstructedGenericType)
 							declTypeDef = declTypeDef.GetGenericTypeDefinition();
 						foreach (var m in type.DeclaredMethods) {
 							var ca = m.FindCustomAttribute(attrName, false);
-							if (ca == null || ca.ConstructorArguments.Count != 1)
+							if (ca is null || ca.ConstructorArguments.Count != 1)
 								continue;
 							var smType = ca.ConstructorArguments[0].Value as DmdType;
 							if (smType == declTypeDef) {
@@ -58,9 +58,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						}
 					}
 				}
-				var kickoffMethodName = (object?)type == null ? null : GetKickoffMethodName(method.DeclaringType);
+				var kickoffMethodName = type is null ? null : GetKickoffMethodName(method.DeclaringType);
 				if (!string.IsNullOrEmpty(kickoffMethodName)) {
-					Debug.Assert((object?)type != null);
+					Debug.Assert(!(type is null));
 					DmdMethodBase? possibleKickoffMethod = null;
 					int methodGenArgs = method.ReflectedType!.GetGenericArguments().Count - type.GetGenericArguments().Count;
 					foreach (var m in method.DeclaringType!.DeclaringType!.DeclaredMethods) {
@@ -70,14 +70,14 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						if (sig.GenericParameterCount != methodGenArgs)
 							continue;
 
-						if ((object?)possibleKickoffMethod != null) {
+						if (!(possibleKickoffMethod is null)) {
 							// More than one method with the same name and partial signature
 							possibleKickoffMethod = null;
 							break;
 						}
 						possibleKickoffMethod = m;
 					}
-					if ((object?)possibleKickoffMethod != null) {
+					if (!(possibleKickoffMethod is null)) {
 						CreateMethod(method, possibleKickoffMethod, out kickoffMethod);
 						return true;
 					}

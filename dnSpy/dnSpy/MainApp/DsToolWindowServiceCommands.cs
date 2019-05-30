@@ -53,7 +53,7 @@ namespace dnSpy.MainApp {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID))
 				return null;
 			var twg = context.Find<IToolWindowGroup>();
-			if (twg == null || !toolWindowService.Owns(twg))
+			if (twg is null || !toolWindowService.Owns(twg))
 				return null;
 			return new ToolWindowGroupContext(toolWindowService, twg);
 		}

@@ -47,9 +47,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// Allow 0, it's allowed in the MD
 			if (rank < 0)
 				throw new ArgumentOutOfRangeException(nameof(rank));
-			if (sizes == null)
+			if (sizes is null)
 				throw new ArgumentNullException(nameof(sizes));
-			if (lowerBounds == null)
+			if (lowerBounds is null)
 				throw new ArgumentNullException(nameof(lowerBounds));
 			this.rank = rank;
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));

@@ -94,7 +94,7 @@ namespace dnSpy.Output {
 
 		public object? TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
 		public IInputElement? FocusedElement => SelectedOutputBufferVM?.FocusedElement;
-		public bool HasOutputWindows => SelectedOutputBufferVM != null;
+		public bool HasOutputWindows => !(SelectedOutputBufferVM is null);
 		public double ZoomLevel => SelectedOutputBufferVM?.ZoomLevel ?? 100;
 
 		public OutputBufferVM? SelectedOutputBufferVM {
@@ -150,10 +150,10 @@ namespace dnSpy.Output {
 		}
 
 		void OutputBuffers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (SelectedOutputBufferVM == null)
+			if (SelectedOutputBufferVM is null)
 				SelectedOutputBufferVM = OutputBuffers.FirstOrDefault();
 
-			if (e.NewItems != null) {
+			if (!(e.NewItems is null)) {
 				foreach (OutputBufferVM vm in e.NewItems) {
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {
 						SelectedOutputBufferVM = vm;
@@ -171,12 +171,12 @@ namespace dnSpy.Output {
 			Create(guid, name, (object?)contentType);
 
 		IOutputTextPane Create(Guid guid, string name, object? contentTypeObj) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug.Assert(vm == null || vm.Name == name);
-			if (vm != null)
+			Debug.Assert(vm is null || vm.Name == name);
+			if (!(vm is null))
 				return vm;
 
 			var logEditorOptions = new LogEditorOptions {
@@ -221,15 +221,15 @@ namespace dnSpy.Output {
 
 		public void Select(Guid guid) {
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug.Assert(vm != null);
-			if (vm != null)
+			Debug.Assert(!(vm is null));
+			if (!(vm is null))
 				SelectedOutputBufferVM = vm;
 		}
 
 		public bool CanCopy => SelectedOutputBufferVM?.CanCopy == true;
 		public void Copy() => SelectedOutputBufferVM?.Copy();
 
-		public bool CanClearAll => SelectedOutputBufferVM != null;
+		public bool CanClearAll => !(SelectedOutputBufferVM is null);
 
 		public void ClearAll() {
 			if (!CanClearAll)
@@ -237,15 +237,15 @@ namespace dnSpy.Output {
 			SelectedOutputBufferVM?.Clear();
 		}
 
-		public bool CanSaveText => SelectedOutputBufferVM != null;
+		public bool CanSaveText => !(SelectedOutputBufferVM is null);
 
 		public void SaveText() {
 			if (!CanSaveText)
 				return;
-			Debug.Assert(SelectedOutputBufferVM != null);
+			Debug.Assert(!(SelectedOutputBufferVM is null));
 			var vm = SelectedOutputBufferVM;
 			var filename = pickSaveFilename.GetFilename(GetFilename(vm), "txt", TEXTFILES_FILTER);
-			if (filename == null)
+			if (filename is null)
 				return;
 			try {
 				File.WriteAllText(filename, vm.GetText(), Encoding.UTF8);

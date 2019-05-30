@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		public static EvalArgumentResult Create(InvokeResult result) {
-			if (result.Result == null)
+			if (result.Result is null)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			return new EvalArgumentResult(result.Result);
 		}
@@ -61,11 +61,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		public EvalArgumentResult Convert(object? value, DmdType defaultType, out DmdType type) {
 			var vm = engine.MonoVirtualMachine;
-			if (value == null)
+			if (value is null)
 				return new EvalArgumentResult(CreateNullValue(defaultType, out type));
 			if (value is DbgValue dbgValue) {
 				value = dbgValue.InternalValue;
-				if (value == null)
+				if (value is null)
 					return new EvalArgumentResult(CreateNullValue(defaultType, out type));
 			}
 			if (value is DbgDotNetValueImpl dnValueImpl) {
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue) {
 					value = rawValue.RawValue;
-					if (value == null)
+					if (value is null)
 						return new EvalArgumentResult(CreateNullValue(defaultType, out type));
 				}
 				origType = dnValue.Type;
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new EvalArgumentResult(appDomain.CreateString(s));
 			}
 			var res = ConvertCore(value, origType, out type);
-			if (res.ErrorMessage != null)
+			if (!(res.ErrorMessage is null))
 				return res;
 			if (origType.IsEnum) {
 				type = origType;
@@ -271,7 +271,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var type = reflectionAppDomain.System_Decimal;
 			var monoType = GetType(type);
 			var fields = GetFields(monoType, 4);
-			if (fields == null)
+			if (fields is null)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			if (fields[0].Name != "flags" || fields[1].Name != "hi" || fields[2].Name != "lo" || fields[3].Name != "mid")
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		static bool IsInitialized<T>(T[] array) where T : class {
 			for (int i = 0; i < array.Length; i++) {
-				if (array[i] != null)
+				if (!(array[i] is null))
 					return true;
 			}
 			return false;
@@ -383,7 +383,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var elementType = reflectionAppDomain.System_String;
 			type = elementType.MakeArrayType();
 			var res = CreateSZArray(elementType, array.Length);
-			if (res.ErrorMessage != null)
+			if (!(res.ErrorMessage is null))
 				return res;
 			if (!IsInitialized(array))
 				return res;
@@ -392,11 +392,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var arrayValue = (ArrayMirror)res.Value!;
 			for (int i = 0; i < array.Length; i++) {
 				var s = array[i];
-				if (s == null)
+				if (s is null)
 					continue;
 
 				var stringValueRes = Convert(s, elementType, out var type2);
-				if (stringValueRes.ErrorMessage != null)
+				if (!(stringValueRes.ErrorMessage is null))
 					return stringValueRes;
 
 				arrayValue[i] = stringValueRes.Value;
@@ -408,7 +408,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		unsafe EvalArgumentResult ConvertSZArray(void* array, int length, int elementSize, DmdType elementType, out DmdType type) {
 			type = elementType.MakeArrayType();
 			var res = CreateSZArray(elementType, length);
-			if (res.ErrorMessage != null)
+			if (!(res.ErrorMessage is null))
 				return res;
 			if (!IsInitialized(array, length * elementSize))
 				return res;
@@ -416,7 +416,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(length > 0);
 			var arrayValue = (ArrayMirror)res.Value!;
 			var addr = DbgDotNetValueImpl.GetArrayAddress(arrayValue, elementType, engine);
-			if (addr == null)
+			if (addr is null)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			engine.DbgRuntime.Process.WriteMemory(addr.Value.Address, array, length * elementSize);

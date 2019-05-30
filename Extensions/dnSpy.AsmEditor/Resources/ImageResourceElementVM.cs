@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		byte[]? data;
 
-		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length);
+		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data is null ? 0 : Data.Length);
 
 		public ImageResourceElementVM(ResourceElementOptions options) {
 			origOptions = options;
@@ -71,10 +71,10 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void FillData() {
-			if (openFile == null)
+			if (openFile is null)
 				throw new InvalidOperationException();
 			var newBytes = openFile.Open(PickFilenameConstants.ImagesFilter);
-			if (newBytes != null)
+			if (!(newBytes is null))
 				Data = newBytes;
 		}
 

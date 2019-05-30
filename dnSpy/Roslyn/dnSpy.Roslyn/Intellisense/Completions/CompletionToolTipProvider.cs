@@ -59,11 +59,11 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			}
 
 			var roslynCompletion = itemToRender as RoslynCompletion;
-			if (roslynCompletion == null)
+			if (roslynCompletion is null)
 				return null;
 			var roslynCollection = context.SelectedCompletionSet as RoslynCompletionSet;
-			Debug.Assert(roslynCollection != null);
-			if (roslynCollection == null)
+			Debug.Assert(!(roslynCollection is null));
+			if (roslynCollection is null)
 				return null;
 
 			const bool colorize = true;
@@ -97,7 +97,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 
 			async Task GetDescriptionAsync(RoslynCompletionSet completionSet, RoslynCompletion completion, CancellationToken cancellationToken) {
 				var description = await completionSet.GetDescriptionAsync(completion, cancellationToken);
-				if (description == null || description.TaggedParts.IsDefault || description.TaggedParts.Length == 0)
+				if (description is null || description.TaggedParts.IsDefault || description.TaggedParts.Length == 0)
 					InitializeDefaultDocumentation();
 				else
 					Content = CreateContent(description);

@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		internal static bool AskDeleteDef(string msg) {
 			var res = MsgBox.Instance.ShowIgnorableMessage(new Guid("DA7D935C-F5ED-44A4-BFA8-CC794AD0F105"), msg, MsgBoxButton.Yes | MsgBoxButton.No);
-			return res == null || res == MsgBoxButton.Yes;
+			return res is null || res == MsgBoxButton.Yes;
 		}
 
 		struct DeleteModelNodes {
@@ -160,8 +160,8 @@ namespace dnSpy.AsmEditor.Method {
 			}
 
 			public void Delete(MethodNode[] nodes) {
-				Debug.Assert(infos == null);
-				if (infos != null)
+				Debug.Assert(infos is null);
+				if (!(infos is null))
 					throw new InvalidOperationException();
 
 				infos = new ModelInfo[nodes.Length];
@@ -199,8 +199,8 @@ namespace dnSpy.AsmEditor.Method {
 			}
 
 			public void Restore(MethodNode[] nodes) {
-				Debug.Assert(infos != null);
-				if (infos == null)
+				Debug.Assert(!(infos is null));
+				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
 				if (infos.Length != nodes.Length)
@@ -230,24 +230,24 @@ namespace dnSpy.AsmEditor.Method {
 
 						case ModelInfo.PropEventType.EventAdd:
 							evt = (EventDef)pinfo.PropOrEvent;
-							Debug.Assert(evt.AddMethod == null);
-							if (evt.AddMethod != null)
+							Debug.Assert(evt.AddMethod is null);
+							if (!(evt.AddMethod is null))
 								throw new InvalidOperationException();
 							evt.AddMethod = node.MethodDef;
 							break;
 
 						case ModelInfo.PropEventType.EventInvoke:
 							evt = (EventDef)pinfo.PropOrEvent;
-							Debug.Assert(evt.InvokeMethod == null);
-							if (evt.InvokeMethod != null)
+							Debug.Assert(evt.InvokeMethod is null);
+							if (!(evt.InvokeMethod is null))
 								throw new InvalidOperationException();
 							evt.InvokeMethod = node.MethodDef;
 							break;
 
 						case ModelInfo.PropEventType.EventRemove:
 							evt = (EventDef)pinfo.PropOrEvent;
-							Debug.Assert(evt.RemoveMethod == null);
-							if (evt.RemoveMethod != null)
+							Debug.Assert(evt.RemoveMethod is null);
+							if (!(evt.RemoveMethod is null))
 								throw new InvalidOperationException();
 							evt.RemoveMethod = node.MethodDef;
 							break;
@@ -341,7 +341,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent!.Data is TypeNode));
+			(nodes[0] is TypeNode || (!(nodes[0].TreeNode.Parent is null) && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -351,13 +351,13 @@ namespace dnSpy.AsmEditor.Method {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug.Assert(typeNode != null);
-			if (typeNode == null)
+			Debug.Assert(!(typeNode is null));
+			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			bool isInstance = !(typeNode.TypeDef.IsAbstract && typeNode.TypeDef.IsSealed);
@@ -466,8 +466,8 @@ namespace dnSpy.AsmEditor.Method {
 			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDef), module, appService.DecompilerService, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
@@ -520,7 +520,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 			else
 				newOptions.CopyTo(methodNode.MethodDef);
-			if (memberRefInfos != null) {
+			if (!(memberRefInfos is null)) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = methodNode.MethodDef.Name;
 			}
@@ -540,7 +540,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 			else
 				origOptions.CopyTo(methodNode.MethodDef);
-			if (memberRefInfos != null) {
+			if (!(memberRefInfos is null)) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = info.OrigName;
 			}

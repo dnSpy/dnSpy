@@ -50,20 +50,20 @@ namespace dnSpy.Text.AvalonEdit {
 		[Conditional("DATACONSISTENCYTEST")]
 		internal void CheckInvariants() {
 			if (height == 0) {
-				Debug.Assert(left == null && right == null);
-				if (contents == null) {
+				Debug.Assert(left is null && right is null);
+				if (contents is null) {
 					Debug.Assert(this is FunctionNode<T>);
 					Debug.Assert(length > 0);
 					Debug.Assert(isShared);
 				}
 				else {
-					Debug.Assert(contents != null && contents.Length == NodeSize);
+					Debug.Assert(!(contents is null) && contents.Length == NodeSize);
 					Debug.Assert(length >= 0 && length <= NodeSize);
 				}
 			}
 			else {
-				Debug.Assert(left != null && right != null);
-				Debug.Assert(contents == null);
+				Debug.Assert(!(left is null) && !(right is null));
+				Debug.Assert(contents is null);
 				Debug.Assert(length == left.length + right.length);
 				Debug.Assert(height == 1 + Math.Max(left.height, right.height));
 				Debug.Assert(Math.Abs(Balance) <= 1);
@@ -82,7 +82,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal RopeNode<T> Clone() {
 			if (height == 0) {
 				// If a function node needs cloning, we'll evaluate it.
-				if (contents == null)
+				if (contents is null)
 					return GetContentNode().Clone();
 				T[] newContents = new T[NodeSize];
 				contents.CopyTo(newContents, 0);
@@ -110,9 +110,9 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal void Publish() {
 			if (!isShared) {
-				if (left != null)
+				if (!(left is null))
 					left.Publish();
-				if (right != null)
+				if (!(right is null))
 					right.Publish();
 				// it's important that isShared=true is set at the end:
 				// Publish() must not return until the whole subtree is marked as shared, even when
@@ -162,7 +162,7 @@ namespace dnSpy.Text.AvalonEdit {
 			Debug.Assert(!isShared);
 			// leaf nodes are always balanced (we don't use 'height' to detect leaf nodes here
 			// because Balance is supposed to recompute the height).
-			if (left == null)
+			if (left is null)
 				return;
 
 			// ensure we didn't miss a MergeIfPossible step
@@ -263,7 +263,7 @@ namespace dnSpy.Text.AvalonEdit {
 				}
 				else {
 					// must be a leaf node: function nodes are always marked shared
-					Debug.Assert(left.contents != null);
+					Debug.Assert(!(left.contents is null));
 					// steal buffer from left side
 					contents = left.contents;
 #if DEBUG
@@ -311,7 +311,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// </summary>
 		internal void CopyTo(int index, T[] array, int arrayIndex, int count) {
 			if (height == 0) {
-				if (contents == null) {
+				if (contents is null) {
 					// function node
 					GetContentNode().CopyTo(index, array, arrayIndex, count);
 				}
@@ -383,7 +383,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Splits this leaf node at offset and returns a new node with the part of the text after offset.
 		/// </summary>
 		RopeNode<T> SplitAfter(int offset) {
-			Debug.Assert(!isShared && height == 0 && contents != null);
+			Debug.Assert(!isShared && height == 0 && !(contents is null));
 			RopeNode<T> newPart = new RopeNode<T>();
 			newPart.contents = new T[NodeSize];
 			newPart.length = length - offset;
@@ -505,12 +505,12 @@ namespace dnSpy.Text.AvalonEdit {
 		internal virtual void AppendTreeToString(StringBuilder b, int indent) {
 			b.AppendLine(ToString());
 			indent += 2;
-			if (left != null) {
+			if (!(left is null)) {
 				b.Append(' ', indent);
 				b.Append("L: ");
 				left.AppendTreeToString(b, indent);
 			}
-			if (right != null) {
+			if (!(right is null)) {
 				b.Append(' ', indent);
 				b.Append("R: ");
 				right.AppendTreeToString(b, indent);
@@ -518,9 +518,9 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		public override string ToString() {
-			if (contents != null) {
+			if (!(contents is null)) {
 				char[] charContents = contents as char[];
-				if (charContents != null)
+				if (!(charContents is null))
 					return "[Leaf length=" + length + ", isShared=" + isShared + ", text=\"" + new string(charContents, 0, length) + "\"]";
 				else
 					return "[Leaf length=" + length + ", isShared=" + isShared + "\"]";
@@ -552,7 +552,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		public FunctionNode(int length, Func<Rope<T>> initializer) {
 			Debug.Assert(length > 0);
-			Debug.Assert(initializer != null);
+			Debug.Assert(!(initializer is null));
 
 			this.length = length;
 			this.initializer = initializer;
@@ -563,19 +563,19 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal override RopeNode<T> GetContentNode() {
 			lock (this) {
-				if (cachedResults == null) {
-					if (initializer == null)
+				if (cachedResults is null) {
+					if (initializer is null)
 						throw new InvalidOperationException("Trying to load this node recursively; or: a previous call to a rope initializer failed.");
 					Func<Rope<T>> initializerCopy = initializer;
 					initializer = null;
 					Rope<T> resultRope = initializerCopy();
-					if (resultRope == null)
+					if (resultRope is null)
 						throw new InvalidOperationException("Rope initializer returned null.");
 					RopeNode<T> resultNode = resultRope.root;
 					resultNode.Publish(); // result is shared between returned rope and the rope containing this function node
 					if (resultNode.length != length)
 						throw new InvalidOperationException("Rope initializer returned rope with incorrect length.");
-					if (resultNode.height == 0 && resultNode.contents == null) {
+					if (resultNode.height == 0 && resultNode.contents is null) {
 						// ResultNode is another function node.
 						// We want to guarantee that GetContentNode() never returns function nodes, so we have to
 						// go down further in the tree.
@@ -597,14 +597,14 @@ namespace dnSpy.Text.AvalonEdit {
 				resultNode = cachedResults;
 			}
 			indent += 2;
-			if (resultNode != null) {
+			if (!(resultNode is null)) {
 				b.Append(' ', indent);
 				b.Append("C: ");
 				resultNode.AppendTreeToString(b, indent);
 			}
 		}
 
-		public override string ToString() => "[FunctionNode length=" + length + " initializerRan=" + (initializer == null) + "]";
+		public override string ToString() => "[FunctionNode length=" + length + " initializerRan=" + (initializer is null) + "]";
 #endif
 	}
 }

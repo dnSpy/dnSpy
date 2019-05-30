@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Controls {
 			BackgroundProperty = TextElement.BackgroundProperty.AddOwner(typeof(FastTextBlock));
 		}
 
-		static int H(object obj) => obj == null ? 0 : obj.GetHashCode();
+		static int H(object obj) => obj is null ? 0 : obj.GetHashCode();
 
 		int CacheHash() {
 			int hash = 17;
@@ -127,8 +127,8 @@ namespace dnSpy.Contracts.Controls {
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
-				Debug.Assert(text != null);
-				Debug.Assert(props != null);
+				Debug.Assert(!(text is null));
+				Debug.Assert(!(props is null));
 				if (textSourceCharacterIndex >= text.Length) {
 					return new TextEndOfParagraph(1);
 				}
@@ -182,10 +182,10 @@ namespace dnSpy.Contracts.Controls {
 		IFastTextSource src;
 
 		void MakeNewText() {
-			if (fmt == null)
+			if (fmt is null)
 				fmt = TextFormatterFactory.GetTextFormatter(this, useNewFormatter);
 
-			if (line != null)
+			if (!(line is null))
 				line.Dispose();
 
 			src.UpdateParent(this);
@@ -194,7 +194,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void EnsureText() {
 			var hash = CacheHash();
-			if (cache != hash || line == null) {
+			if (cache != hash || line is null) {
 				cache = hash;
 				MakeNewText();
 			}
@@ -203,13 +203,13 @@ namespace dnSpy.Contracts.Controls {
 
 		protected override Size MeasureOverride(Size availableSize) {
 			EnsureText();
-			Debug.Assert(line != null);
+			Debug.Assert(!(line is null));
 			return new Size(line.Width, line.Height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			EnsureText();
-			Debug.Assert(line != null);
+			Debug.Assert(!(line is null));
 			line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
 		}
 	}

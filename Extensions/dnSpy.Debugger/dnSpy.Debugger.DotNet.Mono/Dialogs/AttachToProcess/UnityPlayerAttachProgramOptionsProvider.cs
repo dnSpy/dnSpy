@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 				for (;;) {
 					context.CancellationToken.ThrowIfCancellationRequested();
 					var data = receiver.GetNextData();
-					if (data == null)
+					if (data is null)
 						break;
 					var s = Encoding.UTF8.GetString(data);
 					if (!TryParseUnityPlayerData(s, out var ipAddress, out var port, out var id))
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					if (!foundIds.Add(playerId))
 						continue;
 					var pid = NetUtils.GetProcessIdOfListenerLocalAddress(IPAddress.Any.MapToIPv4().GetAddressBytes(), port);
-					if (pid == null) {
+					if (pid is null) {
 						foundIds.Remove(playerId);
 						continue;
 					}

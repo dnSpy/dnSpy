@@ -80,12 +80,12 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public static bool CanExecute(IDocumentViewer? documentViewer) =>
-			documentViewer != null && FindInstructions(documentViewer).Any();
+			!(documentViewer is null) && FindInstructions(documentViewer).Any();
 
 		public static void Execute(IDocumentViewer? documentViewer, Lazy<IMethodAnnotations> methodAnnotations) {
 			if (!CanExecute(documentViewer))
 				return;
-			Debug.Assert(documentViewer != null);
+			Debug.Assert(!(documentViewer is null));
 
 			var copier = new InstructionILBytesCopier();
 			var text = copier.Copy(FindInstructions(documentViewer), methodAnnotations);

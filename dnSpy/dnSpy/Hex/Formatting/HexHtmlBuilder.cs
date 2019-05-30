@@ -46,11 +46,11 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public void Add(HexBufferLineFormatter bufferLines, HexClassifier classifier, NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
-			if (bufferLines == null)
+			if (bufferLines is null)
 				throw new ArgumentNullException(nameof(bufferLines));
-			if (classifier == null)
+			if (classifier is null)
 				throw new ArgumentNullException(nameof(classifier));
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count != 0 && spans[0].Buffer != bufferLines.Buffer)
 				throw new ArgumentException();

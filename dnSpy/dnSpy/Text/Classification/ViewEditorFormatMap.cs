@@ -57,7 +57,7 @@ namespace dnSpy.Text.Classification {
 			if (categoryMap == newMap)
 				return;
 
-			if (categoryMap != null)
+			if (!(categoryMap is null))
 				categoryMap.FormatMappingChanged -= CategoryMap_FormatMappingChanged;
 			categoryMap = newMap;
 			categoryMap.FormatMappingChanged += CategoryMap_FormatMappingChanged;
@@ -86,7 +86,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public void Dispose() {
-			if (categoryMap != null)
+			if (!(categoryMap is null))
 				categoryMap.FormatMappingChanged -= CategoryMap_FormatMappingChanged;
 			DisposeCore();
 		}

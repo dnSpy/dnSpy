@@ -49,7 +49,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorFrame? ILFrame {
 			get {
-				if (Thread == null)
+				if (Thread is null)
 					return null;
 				// Never cache the result since set-ip could be called which will invalidate all frames
 				foreach (var chain in Thread.Chains) {
@@ -65,11 +65,11 @@ namespace dndbg.Engine {
 		internal ICorDebugController? Controller {
 			get {
 				ICorDebugController? controller = null;
-				if (controller == null && EventArgs != null)
+				if (controller is null && !(EventArgs is null))
 					controller = EventArgs.CorDebugController;
-				if (controller == null && AppDomain != null)
+				if (controller is null && !(AppDomain is null))
 					controller = AppDomain.CorAppDomain.RawObject;
-				if (controller == null && Process != null)
+				if (controller is null && !(Process is null))
 					controller = Process.CorProcess.RawObject;
 				return controller;
 			}

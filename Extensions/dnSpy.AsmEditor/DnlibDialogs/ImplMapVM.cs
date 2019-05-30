@@ -140,12 +140,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				if (!IsEnabled)
 					return null;
-				var modRef = ModuleName == null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
+				var modRef = ModuleName is null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
 				return ownerModule.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
 			}
 			set {
-				IsEnabled = value != null;
-				if (value == null)
+				IsEnabled = !(value is null);
+				if (value is null)
 					return;
 
 				Name = value.Name;

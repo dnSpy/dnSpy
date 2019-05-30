@@ -31,9 +31,9 @@ namespace dnSpy.BamlDecompiler {
 		public XamlOutputCreator(XamlOutputOptions options) => this.options = options ?? throw new ArgumentNullException(nameof(options));
 
 		public string CreateText(XDocument document) {
-			if (options == null)
+			if (options is null)
 				throw new InvalidOperationException();
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 
 			var settings = new XmlWriterSettings {

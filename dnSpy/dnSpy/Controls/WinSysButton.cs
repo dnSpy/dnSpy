@@ -63,7 +63,7 @@ namespace dnSpy.Controls {
 		void WinSysButton_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= WinSysButton_Loaded;
 			window = Window.GetWindow(this);
-			if (window != null) // null if in design mode
+			if (!(window is null)) // null if in design mode
 				window.StateChanged += window_StateChanged;
 		}
 
@@ -72,9 +72,9 @@ namespace dnSpy.Controls {
 			((WinSysButton)d).OnWinSysTypeChanged((WinSysType)e.NewValue);
 
 		void OnWinSysTypeChanged(WinSysType newValue) {
-			if (window == null)
+			if (window is null)
 				window = Window.GetWindow(this);
-			if (window == null || DesignerProperties.GetIsInDesignMode(this))
+			if (window is null || DesignerProperties.GetIsInDesignMode(this))
 				return;
 
 			switch (newValue) {
@@ -99,7 +99,7 @@ namespace dnSpy.Controls {
 		}
 
 		protected override void OnClick() {
-			if (window == null)
+			if (window is null)
 				return;
 
 			switch (CurrentWinSysType) {

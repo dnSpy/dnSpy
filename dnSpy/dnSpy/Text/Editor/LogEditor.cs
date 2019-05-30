@@ -129,7 +129,7 @@ namespace dnSpy.Text.Editor {
 
 		public void Write(IEnumerable<ColorAndText> text) {
 			var list = text as IList<ColorAndText>;
-			if (list == null)
+			if (list is null)
 				list = text.ToArray();
 			if (list.Count == 0)
 				return;

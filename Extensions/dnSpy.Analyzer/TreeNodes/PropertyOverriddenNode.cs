@@ -37,11 +37,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var type = analyzedProperty.DeclaringType.BaseType.ResolveTypeDef();
-			while (type != null) {
+			while (!(type is null)) {
 				foreach (var property in type.Properties) {
 					if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
 						var anyAccessor = property.GetMethod ?? property.SetMethod;
-						if (anyAccessor == null)
+						if (anyAccessor is null)
 							continue;
 						yield return new PropertyNode(property) { Context = Context };
 						yield break;
@@ -53,7 +53,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public static bool CanShow(PropertyDef property) {
 			var accessor = property.GetMethod ?? property.SetMethod;
-			return accessor != null && accessor.IsVirtual && accessor.DeclaringType.BaseType != null;
+			return !(accessor is null) && accessor.IsVirtual && !(accessor.DeclaringType.BaseType is null);
 		}
 	}
 }

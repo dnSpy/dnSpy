@@ -201,7 +201,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool WasError => ErrorMessage != null;
+		public bool WasError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// Gets the error message or null if no error

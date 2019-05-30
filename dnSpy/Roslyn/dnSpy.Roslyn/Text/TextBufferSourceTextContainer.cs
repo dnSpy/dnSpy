@@ -31,7 +31,7 @@ namespace dnSpy.Roslyn.Text {
 		public override event EventHandler<TextChangeEventArgs> TextChanged {
 			add {
 				lock (lockObj) {
-					if (realTextChangedEvent == null)
+					if (realTextChangedEvent is null)
 						TextBuffer.Changed += TextBuffer_Changed;
 					realTextChangedEvent += value;
 				}
@@ -39,7 +39,7 @@ namespace dnSpy.Roslyn.Text {
 			remove {
 				lock (lockObj) {
 					realTextChangedEvent -= value;
-					if (realTextChangedEvent == null)
+					if (realTextChangedEvent is null)
 						TextBuffer.Changed -= TextBuffer_Changed;
 				}
 			}

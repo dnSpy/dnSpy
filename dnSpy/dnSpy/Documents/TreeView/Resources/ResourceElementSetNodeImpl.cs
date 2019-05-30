@@ -36,7 +36,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 	sealed class ResourceElementSetNodeProvider : IResourceNodeProvider {
 		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
-			if (er == null)
+			if (er is null)
 				return null;
 			if (!ResourceReader.CouldBeResourcesFile(er.CreateReader()))
 				return null;
@@ -86,8 +86,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public override void RegenerateEmbeddedResource() {
 			var module = this.GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 			RegenerateEmbeddedResource(module);
 		}

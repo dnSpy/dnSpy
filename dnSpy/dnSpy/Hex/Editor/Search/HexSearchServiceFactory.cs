@@ -56,7 +56,7 @@ namespace dnSpy.Hex.Editor.Search {
 			case HexDataKind.UInt64:
 			case HexDataKind.Single:
 			case HexDataKind.Double:
-				return DataParser.TryParseData(searchString, dataKind, isBigEndian) != null;
+				return !(DataParser.TryParseData(searchString, dataKind, isBigEndian) is null);
 
 			default:
 				throw new InvalidOperationException();
@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Editor.Search {
 			case HexDataKind.Single:
 			case HexDataKind.Double:
 				data = DataParser.TryParseData(searchString, dataKind, isBigEndian);
-				if (data == null)
+				if (data is null)
 					return null;
 				return hexSearchServiceProvider.CreateByteSearchService(data);
 

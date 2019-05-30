@@ -371,7 +371,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdType? ReadType(bool canReturnNull) {
 			var name = ReadUTF8String();
-			if (canReturnNull && name == null)
+			if (canReturnNull && name is null)
 				return null;
 			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, genericTypeArguments);
 			if (type is null)

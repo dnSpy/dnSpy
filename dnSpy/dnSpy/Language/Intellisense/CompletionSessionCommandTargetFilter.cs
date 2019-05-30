@@ -33,14 +33,14 @@ namespace dnSpy.Language.Intellisense {
 		public CompletionSessionCommandTargetFilter(ICompletionSession completionSession) {
 			this.completionSession = completionSession ?? throw new ArgumentNullException(nameof(completionSession));
 			dsWpfTextView = completionSession.TextView as IDsWpfTextView;
-			Debug.Assert(dsWpfTextView != null);
+			Debug.Assert(!(dsWpfTextView is null));
 
 			dsWpfTextView?.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseDefaultStatmentCompletion);
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
 			var span = completionSession.SelectedCompletionSet?.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
-			minimumCaretPosition = span == null ? 0 : span.Value.Start.Position;
+			minimumCaretPosition = span is null ? 0 : span.Value.Start.Position;
 		}
 
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
@@ -49,7 +49,7 @@ namespace dnSpy.Language.Intellisense {
 			else {
 				var pos = e.NewPosition.BufferPosition;
 				var span = completionSession.SelectedCompletionSet?.ApplicableTo.GetSpan(pos.Snapshot);
-				if (span == null || pos < minimumCaretPosition || pos < span.Value.Start || pos > span.Value.End)
+				if (span is null || pos < minimumCaretPosition || pos < span.Value.Start || pos > span.Value.End)
 					completionSession.Dismiss();
 				else if (pos == span.Value.Start.Position) {
 					// This matches what VS does. It prevents you from accidentally committing

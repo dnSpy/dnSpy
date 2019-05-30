@@ -50,14 +50,14 @@ namespace dnSpy.Debugger.Disassembly {
 
 		public override bool CanShowDisassembly_CurrentFrame =>
 			dbgManager.Value.CurrentThread.Current?.Process.State == DbgProcessState.Paused &&
-			dbgCallStackService.Value.ActiveFrame != null;
+			!(dbgCallStackService.Value.ActiveFrame is null);
 
 		public override void ShowDisassembly_CurrentFrame() {
 			if (!CanShowDisassembly_CurrentFrame)
 				return;
 
 			var frame = dbgCallStackService.Value.ActiveFrame;
-			if (frame != null) {
+			if (!(frame is null)) {
 				if (!dbgShowNativeCodeService.Value.ShowNativeCode(frame))
 					messageBoxService.Value.Show(dnSpy_Debugger_Resources.Error_CouldNotShowDisassembly);
 			}

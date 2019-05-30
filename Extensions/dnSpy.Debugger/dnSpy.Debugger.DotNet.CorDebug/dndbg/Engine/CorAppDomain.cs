@@ -26,7 +26,7 @@ namespace dndbg.Engine {
 		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
+				return hr < 0 || process is null ? null : new CorProcess(process);
 			}
 		}
 
@@ -55,42 +55,42 @@ namespace dndbg.Engine {
 
 		public CorType? GetPtr(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.Ptr, 0, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
 		public CorType? GetByRef(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.ByRef, 0, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
 		public CorType? GetSZArray(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.SZArray, 1, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
 		public CorType? GetArray(CorType type, uint rank) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.Array, rank, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
 		public CorType? GetFnPtr(CorType[] args) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetFunctionPointerType(args.Length, args.ToCorDebugArray(), out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
 		public bool Equals(CorAppDomain? other) => !(other is null) && RawObject == other.RawObject;

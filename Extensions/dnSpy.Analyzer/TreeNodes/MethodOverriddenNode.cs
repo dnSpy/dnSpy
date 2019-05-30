@@ -40,7 +40,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var type = analyzedMethod.DeclaringType.BaseType.ResolveTypeDef();
-			while (type != null) {
+			while (!(type is null)) {
 				foreach (var method in type.Methods) {
 					if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
 						yield return new MethodNode(method) { Context = Context };
@@ -52,7 +52,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public static bool CanShow(MethodDef method) =>
-			method.DeclaringType.BaseType != null &&
+			!(method.DeclaringType.BaseType is null) &&
 			method.IsVirtual &&
 			!method.DeclaringType.IsInterface;
 	}

@@ -47,7 +47,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID))
 				return null;
 			var ui = context.Find<IReplEditor>();
-			if (ui == null)
+			if (ui is null)
 				return null;
 
 			return new ReplEditorCtxMenuContext(ui);
@@ -64,7 +64,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID))
 				return null;
 			var ui = context.Find<IReplEditor>();
-			if (ui == null)
+			if (ui is null)
 				return null;
 
 			return new ReplEditorCtxMenuContext(ui);

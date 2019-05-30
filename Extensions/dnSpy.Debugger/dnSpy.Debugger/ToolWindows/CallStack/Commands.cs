@@ -173,8 +173,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			var languages = ctx.Operations.GetLanguages();

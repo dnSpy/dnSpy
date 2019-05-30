@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public void ExecuteAsync(Action callback) {
 			var disp = Dispatcher;
-			if (disp == null)
+			if (disp is null)
 				return;
 			queue.Enqueue(callback);
 			dispatchQueueEvent.Set();
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void EmptyQueue() {
 			var disp = Dispatcher;
-			if (disp == null)
+			if (disp is null)
 				return;
 			disp.VerifyAccess();
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public object? DispatchQueue(TimeSpan waitTime, out bool timedOut) {
 			var disp = Dispatcher;
-			if (disp == null) {
+			if (disp is null) {
 				timedOut = true;
 				return null;
 			}

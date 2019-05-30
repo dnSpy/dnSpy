@@ -62,12 +62,12 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			void DoneStep1_NoLock(out bool canNotify) {
-				if (timer != null) {
+				if (!(timer is null)) {
 					timer.Tick -= Timer_Tick_DbgThread;
 					timer.Stop();
 					timer = null;
 				}
-				canNotify = owner.breakAllHelper != null;
+				canNotify = !(owner.breakAllHelper is null);
 				owner.breakAllHelper = null;
 			}
 

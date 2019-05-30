@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		static DbgEngineImpl() => ThreadMirror.NativeTransitions = true;
 
 		public DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, MonoDebugRuntimeKind monoDebugRuntimeKind) {
-			if (deps == null)
+			if (deps is null)
 				throw new ArgumentNullException(nameof(deps));
 			lockObj = new object();
 			suspendCount = 0;
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool HasConnected_MonoDebugThread {
 			get {
 				debuggerThread.VerifyAccess();
-				return vm != null;
+				return !(vm is null);
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				funcRaiseMessage = raiseMessage;
 			}
 			public override bool RaiseMessage() {
-				if (funcRaiseMessage != null)
+				if (!(funcRaiseMessage is null))
 					return funcRaiseMessage();
 				actionRaiseMessage!();
 				return true;
@@ -408,7 +408,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				if (!IPAddress.TryParse(connectionAddress, out var ipAddr)) {
 					ipAddr = Dns.GetHostEntry(connectionAddress).AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
-					if (ipAddr == null)
+					if (ipAddr is null)
 						throw new StartException("Invalid IP address" + ": " + connectionAddress);
 				}
 				var endPoint = new IPEndPoint(ipAddr, connectionPort);
@@ -435,7 +435,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				var ep = (IPEndPoint)vm.EndPoint;
 				var pid = NetUtils.GetProcessIdOfListener(ep.Address.MapToIPv4().GetAddressBytes(), (ushort)ep.Port);
 				Debug.Assert(expectedPid == -1 || expectedPid == pid);
-				if (pid == null)
+				if (pid is null)
 					throw new StartException(dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotFindDebuggedProcess);
 				vmPid = pid.Value;
 
@@ -484,7 +484,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 
 			public Task<int> Read() {
-				if (task == null)
+				if (task is null)
 					task = streamReader.ReadAsync(buffer, 0, buffer.Length);
 				return task;
 			}
@@ -529,7 +529,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				else
 					throw new InvalidOperationException();
 				var text = pipe.TryGetString();
-				if (text == null)
+				if (text is null)
 					return;
 
 				var source = task == outputTask ? AsyncProgramMessageSource.StandardOutput : AsyncProgramMessageSource.StandardError;
@@ -539,8 +539,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void MonoEventThread() {
 			var vm = this.vm;
-			Debug.Assert(vm != null);
-			if (vm == null)
+			Debug.Assert(!(vm is null));
+			if (vm is null)
 				throw new InvalidOperationException();
 			for (;;) {
 				try {
@@ -670,7 +670,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						eventSets = pendingEventSets.ToArray();
 					pendingEventSets.Clear();
 				}
-				if (eventSet != null)
+				if (!(eventSet is null))
 					OnDebuggerEvents(eventSet);
 				else {
 					foreach (var e in eventSets!)
@@ -767,7 +767,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.VMDeath:
 					expectedSuspendPolicy = SuspendPolicy.None;
 					var vmde = (VMDeathEvent)evt;
-					if (vmDeathExitCode != null)
+					if (!(vmDeathExitCode is null))
 						break;
 					if (vm!.Version.AtLeast(2, 27))
 						vmDeathExitCode = vmde.ExitCode;
@@ -805,7 +805,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.MethodEntry:
 					expectedSuspendPolicy = SuspendPolicy.None;
 					Debug.Assert(evt.TryGetRequest() == methodEntryEventRequest);
-					if (methodEntryEventRequest != null && evt.TryGetRequest() == methodEntryEventRequest) {
+					if (!(methodEntryEventRequest is null) && evt.TryGetRequest() == methodEntryEventRequest) {
 						methodEntryEventRequest.Disable();
 						methodEntryEventRequest = null;
 						// Func-eval doesn't work at first assembly load event for some reason. Should work now though.
@@ -826,7 +826,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var aue = (AssemblyUnloadEvent)evt;
 					var monoModule = TryGetModuleCore_NoCreate(aue.Assembly.ManifestModule);
-					if (monoModule == null)
+					if (monoModule is null)
 						expectedSuspendPolicy = SuspendPolicy.None;
 					else {
 						foreach (var module in GetAssemblyModules(monoModule)) {
@@ -842,7 +842,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var be = (BreakpointEvent)evt;
 					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
-					if (bpReq != null) {
+					if (!(bpReq is null)) {
 						if (breakOnEntryPointData?.Breakpoint == bpReq) {
 							bpReq.Disable();
 							breakOnEntryPointData = null;
@@ -873,7 +873,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 					// Add it to the cache
 					var reflectionAppDomain = TryGetEngineAppDomain(tle.Type.Assembly.Domain)?.AppDomain.GetReflectionAppDomain();
-					if (reflectionAppDomain != null) {
+					if (!(reflectionAppDomain is null)) {
 						try {
 							GetReflectionType(reflectionAppDomain, tle.Type, null);
 						}
@@ -926,9 +926,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 				case EventType.VMDisconnect:
 					expectedSuspendPolicy = SuspendPolicy.None;
-					if (vmDeathExitCode == null && TryGetProcessExitCode(out exitCode))
+					if (vmDeathExitCode is null && TryGetProcessExitCode(out exitCode))
 						vmDeathExitCode = exitCode;
-					if (vmDeathExitCode == null) {
+					if (vmDeathExitCode is null) {
 						vmDeathExitCode = -1;
 						dbgManager.ShowError(dnSpy_Debugger_DotNet_Mono_Resources.Error_ConnectionWasUnexpectedlyClosed);
 					}
@@ -1013,7 +1013,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		string? TryGetExceptionName(ObjectMirror exObj) {
 			var reflectionAppDomain = TryGetEngineAppDomain(exObj.Domain)?.AppDomain.GetReflectionAppDomain();
-			if (reflectionAppDomain == null)
+			if (reflectionAppDomain is null)
 				return exObj.Type.FullName;
 			var type = GetReflectionType(reflectionAppDomain, exObj.Type, null);
 			if (type.IsConstructedGenericType)
@@ -1022,7 +1022,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		DbgEngineAppDomain? TryGetEngineAppDomain(AppDomainMirror monoAppDomain) {
-			if (monoAppDomain == null)
+			if (monoAppDomain is null)
 				return null;
 			DbgEngineAppDomain? engineAppDomain;
 			bool b;
@@ -1096,7 +1096,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 				}
 			}
-			if (engineAppDomain != null)
+			if (!(engineAppDomain is null))
 				engineAppDomain.Remove(GetMessageFlags());
 		}
 
@@ -1133,11 +1133,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool CreateModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
 
-			if (TryGetModuleCore_NoCreate(monoModule) != null)
+			if (!(TryGetModuleCore_NoCreate(monoModule) is null))
 				return false;
 
 			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain)?.AppDomain;
-			if (appDomain == null)
+			if (appDomain is null)
 				return false;
 
 			var moduleData = new DbgModuleData(this, monoModule);
@@ -1150,7 +1150,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				toEngineModule.Add(monoModule, engineModule);
 			}
 
-			if (breakOnEntryPointData != null && breakOnEntryPointData.Breakpoint == null &&
+			if (!(breakOnEntryPointData is null) && breakOnEntryPointData.Breakpoint is null &&
 				StringComparer.OrdinalIgnoreCase.Equals(breakOnEntryPointData.Filename, engineModule.Module.Filename)) {
 				try {
 					CreateEntryPointBreakpoint(monoModule.Assembly.EntryPoint);
@@ -1164,7 +1164,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		void CreateEntryPointBreakpoint(MethodMirror monoMethod) {
-			if (monoMethod == null)
+			if (monoMethod is null)
 				return;
 			breakOnEntryPointData!.Breakpoint = vm!.CreateBreakpointRequest(monoMethod, 0);
 			breakOnEntryPointData.Breakpoint.Enable();
@@ -1184,24 +1184,24 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					((DbgMonoDebugInternalModuleImpl)engineModule.Module.InternalModule).Remove();
 				}
 			}
-			if (engineModule != null)
+			if (!(engineModule is null))
 				engineModule.Remove(GetMessageFlags());
 		}
 
 		internal DbgModule? TryGetModule(ModuleMirror? monoModule) {
-			if (monoModule == null)
+			if (monoModule is null)
 				return null;
 			var res = TryGetModuleCore_NoCreate(monoModule);
-			if (res != null)
+			if (!(res is null))
 				return res;
 			DiscoverNewModules(monoModule);
 			res = TryGetModuleCore_NoCreate(monoModule);
-			Debug.Assert(res != null);
+			Debug.Assert(!(res is null));
 			return res;
 		}
 
 		DbgModule? TryGetModuleCore_NoCreate(ModuleMirror monoModule) {
-			if (monoModule == null)
+			if (monoModule is null)
 				return null;
 			lock (lockObj) {
 				if (toEngineModule.TryGetValue(monoModule, out var engineModule))
@@ -1215,7 +1215,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		// when we've found a new module.
 		void DiscoverNewModules(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
-			if (monoModule != null) {
+			if (!(monoModule is null)) {
 				Debug.Assert(monoModule.Assembly.ManifestModule == monoModule);
 				AddNewModule(monoModule);
 			}
@@ -1230,7 +1230,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void AddNewModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
-			if (TryGetModuleCore_NoCreate(monoModule) != null)
+			if (!(TryGetModuleCore_NoCreate(monoModule) is null))
 				return;
 
 			if (suspendCount == 0) {
@@ -1261,7 +1261,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			lock (lockObj) {
 				foreach (var kv in toEngineThread) {
 					var thread = TryGetThread(kv.Key);
-					if (firstThread == null)
+					if (firstThread is null)
 						firstThread = thread;
 					if (thread?.IsMain == true)
 						return thread;
@@ -1271,7 +1271,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		internal DbgThread? TryGetThread(ThreadMirror thread) {
-			if (thread == null)
+			if (thread is null)
 				return null;
 			DbgEngineThread? engineThread;
 			lock (lockObj)
@@ -1287,14 +1287,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		static string GetCouldNotConnectErrorMessage(string address, ushort port, string? filenameOpt) {
-			string extra = filenameOpt == null ? $" ({address}:{port})" : $" ({address}:{port} = {filenameOpt})";
+			string extra = filenameOpt is null ? $" ({address}:{port})" : $" ({address}:{port} = {filenameOpt})";
 			return dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotConnectToProcess + extra;
 		}
 
 		internal IDbgDotNetRuntime DotNetRuntime => internalRuntime!;
 		DbgMonoDebugInternalRuntimeImpl? internalRuntime;
 		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) {
-			if (internalRuntime != null)
+			if (!(internalRuntime is null))
 				throw new InvalidOperationException();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), runtime.Process.PointerSize == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			return internalRuntime = new DbgMonoDebugInternalRuntimeImpl(this, runtime, dmdRuntime, monoDebugRuntimeKind);
@@ -1316,7 +1316,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return Array.Empty<DbgModule>();
 			lock (lockObj) {
 				toAssemblyModules.TryGetValue(data.MonoModule.Assembly, out var modules);
-				if (modules == null || modules.Count == 0)
+				if (modules is null || modules.Count == 0)
 					return Array.Empty<DbgModule>();
 				var res = new List<DbgModule>(modules.Count);
 				foreach (var monoModule in modules) {
@@ -1341,10 +1341,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				if (gotVMDisconnect)
 					return;
-				if (consoleStdOut != null)
+				if (!(consoleStdOut is null))
 					ReadConsoleOutputAsync();
-				Debug.Assert(vm != null);
-				if (vm != null) {
+				Debug.Assert(!(vm is null));
+				if (!(vm is null)) {
 					InitializeVirtualMachine();
 					// Create the root AppDomain now since we want it to get id=1, which isn't guaranteed
 					// if it's an attach and we wait for AppDomainCreate events.
@@ -1460,10 +1460,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal DbgDotNetValue? TryGetExceptionValue() {
 			debuggerThread.VerifyAccess();
 			var exValue = thrownException;
-			if (exValue == null)
+			if (exValue is null)
 				return null;
 			var reflectionAppDomain = TryGetEngineAppDomain(exValue.Domain)?.AppDomain.GetReflectionAppDomain();
-			if (reflectionAppDomain == null)
+			if (reflectionAppDomain is null)
 				return null;
 			var exceptionType = GetReflectionType(reflectionAppDomain, exValue.Type, null);
 			var valueLocation = new NoValueLocation(exceptionType, exValue);

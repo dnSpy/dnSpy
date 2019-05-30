@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				// Bitmap loops over every item looking for "Data" (case insensitive)
 				foreach (var v in dict.Values) {
 					var d = v.Value as byte[];
-					if (d == null)
+					if (d is null)
 						continue;
 					if ("Data".Equals(v.Name, StringComparison.OrdinalIgnoreCase)) {
 						imageData = d;
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				if (!dict.TryGetValue("IconData", out var info))
 					return false;
 				imageData = info.Value as byte[];
-				return imageData != null;
+				return !(imageData is null);
 			}
 
 			return false;
@@ -75,10 +75,10 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="expectedType">Expected type</param>
 		/// <returns></returns>
 		public static bool CheckType(ModuleDef? module, string name, TypeRef expectedType) {
-			if (module == null)
+			if (module is null)
 				module = new ModuleDefUser();
 			var tr = TypeNameParser.ParseReflection(module, name, null);
-			if (tr == null)
+			if (tr is null)
 				return false;
 
 			var flags = AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version;

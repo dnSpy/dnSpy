@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				return;
 
 			var mod = (node as DocumentTreeNodeData)?.GetModule();
-			var filename = mod == null ? null : mod.Location;
+			var filename = mod is null ? null : mod.Location;
 			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 			output.Write(": ", BoxedTextColor.Comment);
 		}
@@ -115,7 +115,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="stream">Stream</param>
 		/// <returns></returns>
 		public static string? TryGetString(Stream stream) {
-			if (stream == null)
+			if (stream is null)
 				return null;
 
 			stream.Position = 0;
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="name">Name</param>
 		/// <returns></returns>
 		public static bool Decompile(IDecompileNodeContext context, Stream stream, string name) {
-			if (stream == null || stream.Length > 500 * 1024)
+			if (stream is null || stream.Length > 500 * 1024)
 				return false;
 
 			stream.Position = 0;

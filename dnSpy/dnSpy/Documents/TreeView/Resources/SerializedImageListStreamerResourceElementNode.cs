@@ -38,7 +38,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
-			if (serializedData == null)
+			if (serializedData is null)
 				return null;
 
 			if (SerializedImageListStreamerUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out var imageData))
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
-			Debug.Assert(imageListOptions != null);
+			Debug.Assert(!(imageListOptions is null));
 			if (output is IDocumentViewerOutput documentViewerOutput) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
@@ -99,7 +99,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			SerializedImageListStreamerUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData);
-			Debug.Assert(imageData != null);
+			Debug.Assert(!(imageData is null));
 			InitializeImageData(imageData);
 		}
 	}

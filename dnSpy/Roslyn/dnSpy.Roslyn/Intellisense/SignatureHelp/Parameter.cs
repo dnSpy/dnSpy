@@ -36,9 +36,9 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public TaggedText[] DocumentationTaggedText {
 			get {
-				if (documentationTaggedText == null)
+				if (documentationTaggedText is null)
 					InitializeDocumentation();
-				Debug.Assert(documentationTaggedText != null);
+				Debug.Assert(!(documentationTaggedText is null));
 				return documentationTaggedText;
 			}
 		}
@@ -46,9 +46,9 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public string Documentation {
 			get {
-				if (documentation == null)
+				if (documentation is null)
 					InitializeDocumentation();
-				Debug.Assert(documentation != null);
+				Debug.Assert(!(documentation is null));
 				return documentation;
 			}
 		}

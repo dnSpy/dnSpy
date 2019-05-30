@@ -43,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly IClassificationType completionSuffixClassificationType;
 
 		public CompletionSuffixTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
+			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			completionSuffixClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionSuffix);
 		}

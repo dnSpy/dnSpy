@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Tagging {
 		HexViewTagAggregatorFactoryServiceImpl(HexTaggerFactory hexTaggerFactory) => this.hexTaggerFactory = hexTaggerFactory;
 
 		public override HexTagAggregator<T> CreateTagAggregator<T>(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return new HexViewTagAggregator<T>(hexTaggerFactory, hexView).HexTagAggregator;
 		}

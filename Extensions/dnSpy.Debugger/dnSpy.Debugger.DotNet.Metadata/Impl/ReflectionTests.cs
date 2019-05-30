@@ -437,9 +437,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Verify(n1.FullName == n2.FullName);
 		}
 		static bool Equals(byte[] a, byte[] b) {
-			if (a == null && b == null)
+			if (a is null && b is null)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -545,8 +545,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				ex2 = ex;
 				t2 = default(T2);
 			}
-			if (Verify((ex1 != null) == (ex2 != null))) {
-				if (ex1 != null)
+			if (Verify((!(ex1 is null)) == (!(ex2 is null)))) {
+				if (!(ex1 is null))
 					Verify(ex1.GetType() == ex2.GetType());
 				else
 					Verify(compare(t1, t2));
@@ -715,9 +715,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 		static void Test(StructLayoutAttribute a, StructLayoutAttribute b) {
-			if (!Verify((a == null) == (b == null)))
+			if (!Verify((a is null) == (b is null)))
 				return;
-			if (a == null)
+			if (a is null)
 				return;
 			Verify(a.Pack == b.Pack);
 			Verify(a.Size == b.Size);
@@ -867,9 +867,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 		static void Test(DmdMethodBase m1, MethodBase m2, DmdMethodBody b1, MethodBody b2, Type declaringType2) {
-			if (!Verify((b1 == null) == (b2 == null)))
+			if (!Verify((b1 is null) == (b2 is null)))
 				return;
-			if (b1 == null)
+			if (b1 is null)
 				return;
 			Verify((b1.ToString() == b1.GetType().ToString()) == (b2.ToString() == b2.GetType().ToString()));
 			Verify(b1.LocalSignatureMetadataToken == b2.LocalSignatureMetadataToken);
@@ -1320,8 +1320,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Test(p1.ParameterType, p2.ParameterType, p2.Member.DeclaringType);
 			Verify(p1.Name == p2.Name);
 			Verify(p1.HasDefaultValue == p2.HasDefaultValue);
-			Verify((p1.RawDefaultValue == null && p2.RawDefaultValue == DBNull.Value) ||
-				(p1.RawDefaultValue == null && p2.RawDefaultValue == Missing.Value && p1.IsOptional) ||
+			Verify((p1.RawDefaultValue is null && p2.RawDefaultValue == DBNull.Value) ||
+				(p1.RawDefaultValue is null && p2.RawDefaultValue == Missing.Value && p1.IsOptional) ||
 				Equals(p1.RawDefaultValue, p2.RawDefaultValue));
 			Verify(p1.Position == p2.Position);
 			Verify((int)p1.Attributes == (int)p2.Attributes);

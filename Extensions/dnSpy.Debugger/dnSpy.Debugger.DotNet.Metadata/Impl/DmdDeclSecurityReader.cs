@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				reader.ReadCompressedUInt32();// int blobLength
 				int numNamedArgs = (int)reader.ReadCompressedUInt32();
 				var namedArgs = DmdCustomAttributeReader.ReadNamedArguments(module, reader, type, numNamedArgs, genericTypeArguments);
-				if (namedArgs == null)
+				if (namedArgs is null)
 					throw new IOException();
 				var (ctor, ctorArguments) = GetConstructor(type, action);
 				Debug.Assert(!(ctor is null));

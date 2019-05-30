@@ -196,8 +196,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = ExceptionsContextMenuEntry.CreateContext(exceptionsCommandContext, context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			var currentCategory = exceptionsCommandContext.VM.Value.SelectedCategory;

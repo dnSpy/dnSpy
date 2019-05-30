@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		public MethodOverrideVM? Edit(string? title, MethodOverrideVM mo) {
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);
 			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration, mo.OwnerModule);
-			if (method == null)
+			if (method is null)
 				return null;
 
 			mo.MethodDeclaration = method;

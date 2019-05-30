@@ -144,7 +144,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (runtime.Dispatcher.CheckAccess())
 				return false;
 			var sig = runtime.GetFrameMethod(evalInfo)?.GetMethodSignature();
-			return sig != null && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
+			return !(sig is null) && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
 		}
 
 		public void Format() {
@@ -171,7 +171,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var method = runtime.GetFrameMethod(evalInfo);
-			if ((object?)method == null)
+			if (method is null)
 				OutputWrite("???", DbgTextColor.Error);
 			else {
 				var propInfo = TypeFormatterUtils.TryGetProperty(method);
@@ -252,7 +252,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		}
 
 		void WriteRefIfByRef(DmdParameterInfo? param) {
-			if ((object?)param == null)
+			if (param is null)
 				return;
 			var type = param.ParameterType;
 			if (!type.IsByRef)
@@ -289,7 +289,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 					var value = parameterValue.Value;
 					if (value?.Type.IsByRef == true)
 						value = dereferencedValue = value.LoadIndirect().Value;
-					if (value == null)
+					if (value is null)
 						OutputWrite("???", DbgTextColor.Error);
 					else
 						valueFormatter.Format(value);
@@ -350,7 +350,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				break;
 			}
 
-			if (loc != null) {
+			if (!(loc is null)) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
@@ -450,7 +450,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				operatorInfo = null;
 			else
 				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
-			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
+			bool isExplicitOrImplicit = !(operatorInfo is null) && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit) {
 				if (ReturnTypes && !(method is DmdConstructorInfo)) {
@@ -491,7 +491,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? DbgTextColor.Keyword : DbgTextColor.Operator);
 
 		void WriteMethodName(DmdMethodBase method, string name, string[]? operatorInfo) {
-			if (operatorInfo != null) {
+			if (!(operatorInfo is null)) {
 				for (int i = 0; i < operatorInfo.Length; i++) {
 					if (i > 0)
 						WriteSpace();

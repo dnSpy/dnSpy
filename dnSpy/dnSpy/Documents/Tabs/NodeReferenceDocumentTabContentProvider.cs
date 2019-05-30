@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs {
 				return Create(mod);
 			if (@ref is IAssembly asmRef) {
 				var doc = documentTreeView.DocumentService.Resolve(asmRef, null);
-				if (doc != null)
+				if (!(doc is null))
 					return Create(doc);
 			}
 			return null;
@@ -64,42 +64,42 @@ namespace dnSpy.Documents.Tabs {
 
 		DocumentTabReferenceResult? Create(DocumentTreeNodeData node) {
 			var content = documentTabContentFactoryService.CreateTabContent(new[] { node });
-			if (content == null)
+			if (content is null)
 				return null;
 			return new DocumentTabReferenceResult(content);
 		}
 
 		DocumentTabReferenceResult? Create(NamespaceRef nsRef) {
 			var node = documentTreeView.FindNamespaceNode(nsRef.Module, nsRef.Namespace);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
 		DocumentTabReferenceResult? Create(NamespaceReference nsRef) {
-			if (nsRef.Assembly == null)
+			if (nsRef.Assembly is null)
 				return null;
 			var asm = documentTreeView.DocumentService.Resolve(nsRef.Assembly, null) as IDsDotNetDocument;
-			if (asm == null)
+			if (asm is null)
 				return null;
 			var mod = asm.Children.FirstOrDefault() as IDsDotNetDocument;
-			if (mod == null)
+			if (mod is null)
 				return null;
 			var node = documentTreeView.FindNamespaceNode(mod, nsRef.Namespace);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
 		DocumentTabReferenceResult? Create(IDsDocument document) {
 			var node = documentTreeView.FindNode(document);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
 		DocumentTabReferenceResult? Create(AssemblyDef asm) {
 			var node = documentTreeView.FindNode(asm);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
 		DocumentTabReferenceResult? Create(ModuleDef mod) {
 			var node = documentTreeView.FindNode(mod);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 	}
 }

@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				break;
 
 			case TypeCode.String:
-				if (constant is string || constant == null)
+				if (constant is string || constant is null)
 					return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, constant));
 				break;
 
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, ((UIntPtr)constant).ToUInt64()));
 					}
 				}
-				else if (constant == null && !type.IsValueType)
+				else if (constant is null && !type.IsValueType)
 					return new SyntheticNullValue(type);
 				break;
 			}

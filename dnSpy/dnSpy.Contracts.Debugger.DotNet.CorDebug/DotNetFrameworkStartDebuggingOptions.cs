@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public DotNetFrameworkStartDebuggingOptions CopyTo(DotNetFrameworkStartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			return other;

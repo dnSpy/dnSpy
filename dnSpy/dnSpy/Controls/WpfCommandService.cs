@@ -31,13 +31,13 @@ namespace dnSpy.Controls {
 		WpfCommandService() => toWpfCommands = new Dictionary<Guid, WpfCommands>();
 
 		public void Add(Guid guid, UIElement elem) {
-			if (elem == null)
+			if (elem is null)
 				throw new ArgumentNullException(nameof(elem));
 			GetCommands(guid).Add(elem);
 		}
 
 		public void Remove(Guid guid, UIElement elem) {
-			if (elem == null)
+			if (elem is null)
 				throw new ArgumentNullException(nameof(elem));
 			GetCommands(guid).Remove(elem);
 		}

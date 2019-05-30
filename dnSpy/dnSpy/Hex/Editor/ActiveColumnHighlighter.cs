@@ -62,7 +62,7 @@ namespace dnSpy.Hex.Editor {
 		ActiveColumnHighlighterServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override void InstallService(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(ActiveColumnHighlighterService), () => new ActiveColumnHighlighterService(wpfHexView, editorFormatMapService));
 		}
@@ -104,7 +104,7 @@ namespace dnSpy.Hex.Editor {
 #pragma warning restore CS0169
 
 		public ActiveColumnHighlighterService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
-			if (editorFormatMapService == null)
+			if (editorFormatMapService is null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			rectangleElements = new List<RectangleElement>();
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
@@ -121,7 +121,7 @@ namespace dnSpy.Hex.Editor {
 			enabled = newEnabled;
 
 			if (enabled) {
-				if (adornmentLayer == null)
+				if (adornmentLayer is null)
 					adornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.ActiveColumnHighlighter);
 				HookEnabledEvents();
 			}
@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllRectangles();
 			if (!enabled)
 				return;
-			Debug.Assert(adornmentLayer != null);
+			Debug.Assert(!(adornmentLayer is null));
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;
@@ -212,7 +212,7 @@ namespace dnSpy.Hex.Editor {
 			foreach (var info in GetRectanglePositions(line)) {
 				var props = editorFormatMap.GetProperties(GetClassificationTypeName(info.type));
 				var bgBrush = GetBackgroundBrush(props);
-				if (bgBrush == null || TWPF.BrushComparer.Equals(bgBrush, Brushes.Transparent))
+				if (bgBrush is null || TWPF.BrushComparer.Equals(bgBrush, Brushes.Transparent))
 					continue;
 				var lineElem = new RectangleElement(info.type, info.rect, bgBrush, null);
 				bool added = adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, lineElem, null);
@@ -283,7 +283,7 @@ namespace dnSpy.Hex.Editor {
 				yield break;
 			var span = line.BufferLine.GetSpan(column, onlyVisibleCells: false);
 			var rect = GetBounds(line.GetNormalizedTextBounds(span));
-			if (rect == null || rect.Value.Width <= 0)
+			if (rect is null || rect.Value.Width <= 0)
 				yield break;
 			yield return (column, new Rect(rect.Value.X, wpfHexView.ViewportTop, rect.Value.Width, wpfHexView.ViewportHeight));
 		}

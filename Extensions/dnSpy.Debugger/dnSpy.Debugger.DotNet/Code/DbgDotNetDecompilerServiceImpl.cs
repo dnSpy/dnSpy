@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		Guid GetDecompilerGuid(DbgLanguage language) {
 			foreach (var lz in dbgDotNetDecompilerGuidProviders) {
 				var guid = lz.Value.GetDecompilerGuid(language);
-				if (guid != null)
+				if (!(guid is null))
 					return guid.Value;
 			}
 			return DecompilerConstants.LANGUAGE_CSHARP;
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		void SetDecompiler(DbgLanguage language) => SetDecompiler(decompilerService.FindOrDefault(GetDecompilerGuid(language)));
 
 		void SetDecompiler(IDecompiler newDecompiler) {
-			if (newDecompiler == null)
+			if (newDecompiler is null)
 				throw new ArgumentNullException(nameof(newDecompiler));
 			if (decompiler == newDecompiler)
 				return;

@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					var evalRes = expressionEvaluator.EvaluateImpl(evalInfo, info.Expression, info.Options, info.ExpressionEvaluatorState);
 					bool causesSideEffects = (evalRes.Flags & DbgEvaluationResultFlags.SideEffects) != 0;
 					DbgEngineValueNode newNode;
-					if (evalRes.Error != null)
+					if (!(evalRes.Error is null))
 						newNode = valueNodeFactory.CreateError(evalInfo, evalRes.Name, evalRes.Error, info.Expression, causesSideEffects);
 					else {
 						bool isReadOnly = (evalRes.Flags & DbgEvaluationResultFlags.ReadOnly) != 0;
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 			}
 			catch (Exception ex) {
-				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
 				return valueNodeFactory.CreateInternalErrorResult(evalInfo);
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					var name = output.CreateAndReset();
 					var expression = name.ToString();
 
-					if (objectIdValue == null)
+					if (objectIdValue is null)
 						res[i] = valueNodeFactory.CreateError(evalInfo, name, "Could not get Object ID value", expression, false);
 					else
 						res[i] = valueNodeFactory.Create(evalInfo, name, objectIdValue, null, options, expression, PredefinedDbgValueNodeImageNames.ObjectId, true, false, objectIdValue.Type);
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return res;
 			}
 			catch (Exception ex) {
-				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				objectIdValue?.Dispose();
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;

@@ -130,12 +130,12 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var methodNode = (MethodNode)nodes[0];
 			var modNode = methodNode.GetModuleNode();
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				throw new InvalidOperationException();
 			var module = modNode.Document.ModuleDef;
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			using (var vm = editCodeVMCreator.CreateEditMethodCode(methodNode.MethodDef, statements ?? Array.Empty<MethodSourceStatement>())) {
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 				if (win.ShowDialog() != true)
 					return;
-				Debug.Assert(vm.Result != null);
+				Debug.Assert(!(vm.Result is null));
 
 				undoCommandService.Value.Add(new EditMethodBodyCodeCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			}
@@ -181,22 +181,22 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext? context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement>? list) =>
 			editCodeVMCreator.CanCreate(CompilationKind.EditMethod) &&
-			list != null &&
+			!(list is null) &&
 			list.Count != 0 &&
-			list[0].Method.Body != null &&
+			!(list[0].Method.Body is null) &&
 			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 
 		void Execute(IList<MethodSourceStatement>? list) {
-			if (list == null)
+			if (list is null)
 				return;
 
 			var method = list[0].Method;
 			if (StateMachineHelpers.TryGetKickoffMethod(method, out var containingMethod))
 				method = containingMethod;
 			var methodNode = appService.DocumentTreeView.FindNode(method);
-			if (methodNode == null) {
+			if (methodNode is null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
 				return;
 			}
@@ -211,7 +211,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		IList<MethodSourceStatement>? GetStatements() {
 			var documentViewer = appService.DocumentTabService.ActiveTab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;

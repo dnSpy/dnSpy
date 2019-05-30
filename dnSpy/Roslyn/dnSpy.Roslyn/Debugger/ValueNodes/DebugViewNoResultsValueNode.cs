@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var appDomain = valueResult.Value!.Type.AppDomain;
 				var emptyProperty = valueResult.Value.Type.GetProperty(EmptyPropertyName, DmdSignatureCallingConvention.HasThis | DmdSignatureCallingConvention.Property, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false);
 				var emptyGetter = emptyProperty?.GetGetMethod(DmdGetAccessorOptions.All);
-				if ((object?)emptyGetter == null)
+				if (emptyGetter is null)
 					return null;
 
 				var runtime = evalInfo.Runtime.GetDotNetRuntime();

@@ -38,11 +38,11 @@ namespace dnSpy.Hex.Editor {
 		WpfHexViewMarginProviderCollectionProviderImpl([ImportMany] IEnumerable<Lazy<WpfHexViewMarginProvider, IWpfHexViewMarginMetadata>> wpfHexViewMarginProviders) => this.wpfHexViewMarginProviders = VSUTIL.Orderer.Order(wpfHexViewMarginProviders).ToArray();
 
 		public override WpfHexViewMarginProviderCollection Create(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer, string marginContainerName) {
-			if (wpfHexViewHost == null)
+			if (wpfHexViewHost is null)
 				throw new ArgumentNullException(nameof(wpfHexViewHost));
-			if (marginContainer == null)
+			if (marginContainer is null)
 				throw new ArgumentNullException(nameof(marginContainer));
-			if (marginContainerName == null)
+			if (marginContainerName is null)
 				throw new ArgumentNullException(nameof(marginContainerName));
 			return new WpfHexViewMarginProviderCollectionImpl(wpfHexViewMarginProviders, wpfHexViewHost, marginContainer, marginContainerName);
 		}

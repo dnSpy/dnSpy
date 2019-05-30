@@ -44,7 +44,7 @@ namespace dnSpy.Settings.Dialog {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var optionsContext = context as AppSettingsTextClassifierContext;
-			if (optionsContext == null)
+			if (optionsContext is null)
 				yield break;
 			foreach (var span in optionsContext.SearchMatcher.GetMatchSpans(optionsContext.Text))
 				yield return new TextClassificationTag(span, appSettingsTextMatchHighlightClassificationType);

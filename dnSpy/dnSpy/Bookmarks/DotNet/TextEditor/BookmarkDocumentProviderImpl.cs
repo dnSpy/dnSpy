@@ -62,14 +62,14 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		BookmarkDocument? GetDocument(DotNetMethodBodyBookmarkLocation bodyLoc) {
 			var tab = documentTabService.Value.ActiveTab;
 			var documentViewer = tab?.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
-			Debug.Assert(tab != null);
+			Debug.Assert(!(tab is null));
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var info = methodDebugService.TryGetMethodDebugInfo(new ModuleTokenId(bodyLoc.Module, bodyLoc.Token));
-			if (info == null)
+			if (info is null)
 				return null;
-			if (info.GetSourceStatementByCodeOffset(bodyLoc.Offset) == null)
+			if (info.GetSourceStatementByCodeOffset(bodyLoc.Offset) is null)
 				return null;
 			return new BookmarkDocumentImpl(tab);
 		}
@@ -77,15 +77,15 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		BookmarkDocument? GetDocument(DotNetTokenBookmarkLocation tokenLoc) {
 			var tab = documentTabService.Value.ActiveTab;
 			var documentViewer = tab?.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
-			Debug.Assert(tab != null);
+			Debug.Assert(!(tab is null));
 
 			foreach (var info in documentViewer.ReferenceCollection) {
 				if (!info.Data.IsDefinition)
 					continue;
 				var def = info.Data.Reference as IMemberDef;
-				if (def == null || def.MDToken.Raw != tokenLoc.Token)
+				if (def is null || def.MDToken.Raw != tokenLoc.Token)
 					continue;
 				if (moduleIdProvider.Value.Create(def.Module) != tokenLoc.Module)
 					continue;

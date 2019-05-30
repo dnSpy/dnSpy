@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	}
 
 	abstract class DnDebuggerObjectHolder<T> : DnDebuggerObjectHolder where T : class {
-		public bool IsClosed => Object == null;
+		public bool IsClosed => Object is null;
 		public abstract T Object { get; }
 		public abstract int HashCode { get; }
 		public abstract DnDebuggerObjectHolder<T> AddRef();

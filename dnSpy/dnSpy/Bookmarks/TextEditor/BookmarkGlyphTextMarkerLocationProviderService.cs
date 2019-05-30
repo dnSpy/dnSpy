@@ -39,11 +39,11 @@ namespace dnSpy.Bookmarks.TextEditor {
 			this.bookmarkGlyphTextMarkerLocationProviders = bookmarkGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public override GlyphTextMarkerLocationInfo? GetLocation(Bookmark bookmark) {
-			if (bookmark == null)
+			if (bookmark is null)
 				throw new ArgumentNullException(nameof(bookmark));
 			foreach (var lz in bookmarkGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(bookmark);
-				if (loc != null)
+				if (!(loc is null))
 					return loc;
 			}
 			return null;

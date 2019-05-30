@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(CorDebugAttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.ProcessId = ProcessId;

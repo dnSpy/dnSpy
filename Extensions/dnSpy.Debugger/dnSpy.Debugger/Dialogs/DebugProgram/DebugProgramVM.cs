@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 			get {
 				Debug.Assert(optionsPages_selectedItem?.IsValid == true);
 				var info = optionsPages_selectedItem.StartDebuggingOptionsPage.GetOptions();
-				if (info.Options == null)
+				if (info.Options is null)
 					throw new InvalidOperationException();
 				return info;
 			}
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		public Guid SelectedPageGuid => optionsPages_selectedItem?.PageGuid ?? Guid.Empty;
 
 		public DebugProgramVM(StartDebuggingOptionsPage[] pages, Guid selectedPageGuid) {
-			if (pages == null)
+			if (pages is null)
 				throw new ArgumentNullException(nameof(pages));
 			Debug.Assert(pages.Length != 0);
 			optionsPages = new ObservableCollection<OptionsPageVM>(pages.Select(a => new OptionsPageVM(a)));

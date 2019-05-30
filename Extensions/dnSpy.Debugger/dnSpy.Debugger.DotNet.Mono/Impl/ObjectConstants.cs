@@ -38,9 +38,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public bool TryCreate([NotNullWhenTrue] out ObjectConstants? objectConstants) {
 			try {
 				var offsetToStringData = GetOffsetToStringData();
-				if (offsetToStringData != null) {
+				if (!(offsetToStringData is null)) {
 					var offsetToArrayData = GetOffsetToArrayData();
-					if (offsetToArrayData != null) {
+					if (!(offsetToArrayData is null)) {
 						objectConstants = new ObjectConstants(offsetToStringData, offsetToArrayData);
 						return true;
 					}
@@ -63,10 +63,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		int? GetOffsetToStringData() {
 			var type = thread.Domain.Corlib.GetType("System.Runtime.CompilerServices.RuntimeHelpers");
-			if (type == null)
+			if (type is null)
 				return null;
 			var method = type.GetMethod("get_" + nameof(System.Runtime.CompilerServices.RuntimeHelpers.OffsetToStringData));
-			if (method == null)
+			if (method is null)
 				return null;
 			var res = Call(method, Array.Empty<Value>());
 			return (res as PrimitiveValue)?.Value as int?;
@@ -76,17 +76,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var byteType = thread.Domain.Corlib.GetType("System.Byte");
 			var arrayType = thread.Domain.Corlib.GetType("System.Array");
 			var typeType = thread.Domain.Corlib.GetType("System.Type");
-			if (byteType == null || arrayType == null || typeType == null)
+			if (byteType is null || arrayType is null || typeType is null)
 				return null;
 			var createInstanceMethod = GetCreateInstance(arrayType);
-			if (createInstanceMethod == null)
+			if (createInstanceMethod is null)
 				return null;
 			var args = new Value[2] {
 				byteType.GetTypeObject(),
 				new PrimitiveValue(thread.VirtualMachine, ElementType.I4, randomData.Length),
 			};
 			var arrayMirror = Call(createInstanceMethod, args) as ArrayMirror;
-			if (arrayMirror == null)
+			if (arrayMirror is null)
 				return null;
 
 			var threadTmp = thread;

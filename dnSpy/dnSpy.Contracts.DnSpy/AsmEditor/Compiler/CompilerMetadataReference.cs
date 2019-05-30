@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public bool IsAssemblyReference { get; }
 
 		CompilerMetadataReference(void* data, int size, IAssembly? assembly, string? filename, bool isAssemblyReference) {
-			if (data == null)
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
 			if (size <= 0)
 				throw new ArgumentOutOfRangeException(nameof(size));

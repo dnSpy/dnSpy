@@ -22,7 +22,7 @@ using dnlib.DotNet;
 namespace dndbg.DotNet {
 	static class Utils {
 		public static void SplitNameAndNamespace(UTF8String? utf8Name, string? fullName, out UTF8String ns, out UTF8String name) {
-			if (fullName == null)
+			if (fullName is null)
 				fullName = string.Empty;
 
 			if (!UTF8String.IsNull(utf8Name)) {

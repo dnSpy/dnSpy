@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="change">Change</param>
 		/// <returns></returns>
 		public static NormalizedHexChangeCollection Create(HexChange change) {
-			if (change == null)
+			if (change is null)
 				throw new ArgumentNullException(nameof(change));
 			return new NormalizedHexChangeCollection(new[] { change });
 		}
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="changes">Changes</param>
 		/// <returns></returns>
 		public static NormalizedHexChangeCollection Create(IList<HexChange> changes) {
-			if (changes == null)
+			if (changes is null)
 				throw new ArgumentNullException(nameof(changes));
 			if (changes.Count == 0)
 				return new NormalizedHexChangeCollection(Array.Empty<HexChange>());

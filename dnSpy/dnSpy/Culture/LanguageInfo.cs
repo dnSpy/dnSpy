@@ -37,7 +37,7 @@ namespace dnSpy.Culture {
 		public static LanguageInfo CreateSystemLanguage() => new LanguageInfo(LanguageType.SystemLanguage);
 
 		public static LanguageInfo Create(CultureInfo cultureInfo) {
-			if (cultureInfo == null)
+			if (cultureInfo is null)
 				throw new ArgumentNullException(nameof(cultureInfo));
 			return new LanguageInfo(cultureInfo);
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Culture {
 		}
 
 		public bool Equals(LanguageInfo? other) {
-			if (other == null)
+			if (other is null)
 				return false;
 			if (Type != other.Type)
 				return false;

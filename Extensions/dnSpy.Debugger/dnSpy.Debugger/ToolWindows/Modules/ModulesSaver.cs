@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		public void Save(ModuleVM[] modules) {
-			if (modules == null)
+			if (modules is null)
 				throw new ArgumentNullException(nameof(modules));
 			var list = new(DbgModule module, string filename)[modules.Length];
 			if (modules.Length == 1) {

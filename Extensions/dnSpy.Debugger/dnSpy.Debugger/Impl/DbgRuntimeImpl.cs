@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Impl {
 				else
 					newCurrent = newBreak;
 			}
-			Debug.Assert((newBreak != null) == (newCurrent != null));
+			Debug.Assert((!(newBreak is null)) == (!(newCurrent is null)));
 			currentThread = new CurrentObject<DbgThreadImpl>(newCurrent, newBreak);
 			return newCurrent;
 		}
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.Impl {
 				for (int i = threads.Count - 1; i >= 0; i--) {
 					var thread = threads[i];
 					if (thread.AppDomain == appDomain) {
-						if (threadsToRemove == null)
+						if (threadsToRemove is null)
 							threadsToRemove = new List<DbgThread>();
 						threadsToRemove.Add(thread);
 						threads.RemoveAt(i);
@@ -168,24 +168,24 @@ namespace dnSpy.Debugger.Impl {
 				for (int i = modules.Count - 1; i >= 0; i--) {
 					var module = modules[i];
 					if (module.AppDomain == appDomain) {
-						if (modulesToRemove == null)
+						if (modulesToRemove is null)
 							modulesToRemove = new List<DbgModule>();
 						modulesToRemove.Add(module);
 						modules.RemoveAt(i);
 					}
 				}
 			}
-			if (threadsToRemove != null && threadsToRemove.Count != 0)
+			if (!(threadsToRemove is null) && threadsToRemove.Count != 0)
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(threadsToRemove, added: false));
-			if (modulesToRemove != null && modulesToRemove.Count != 0)
+			if (!(modulesToRemove is null) && modulesToRemove.Count != 0)
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(modulesToRemove, added: false));
 			owner.RemoveAppDomain_DbgThread(this, appDomain, messageFlags);
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false));
-			if (threadsToRemove != null) {
+			if (!(threadsToRemove is null)) {
 				foreach (var thread in threadsToRemove)
 					thread.Close(Dispatcher);
 			}
-			if (modulesToRemove != null) {
+			if (!(modulesToRemove is null)) {
 				foreach (var module in modulesToRemove)
 					module.Close(Dispatcher);
 			}
@@ -265,7 +265,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnContinue(DbgObject obj) {
-			if (obj == null)
+			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			lock (lockObj) {
 				if (IsClosed)
@@ -276,7 +276,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnContinue(IEnumerable<DbgObject> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			lock (lockObj) {
 				if (IsClosed)
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnExit(IEnumerable<DbgObject> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			lock (lockObj) {
 				if (IsClosed)
@@ -298,7 +298,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnExit(IEnumerable<IDisposable> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			lock (lockObj) {
 				if (!IsClosed) {

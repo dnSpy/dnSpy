@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		bool CanExecCommands(IValueNodesVM vm) {
-			if (vm == null)
+			if (vm is null)
 				return false;
 			if (!vm.IsOpen)
 				return false;
@@ -207,23 +207,23 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return null;
 		}
 
-		public override bool SupportsPaste(IValueNodesVM vm) => vm != null && vm.CanAddRemoveExpressions;
+		public override bool SupportsPaste(IValueNodesVM vm) => !(vm is null) && vm.CanAddRemoveExpressions;
 		public override bool CanPaste(IValueNodesVM vm) => CanExecCommands(vm) && SupportsPaste(vm) && HasClipboardExpressions();
 		public override void Paste(IValueNodesVM vm) {
 			if (!CanPaste(vm))
 				return;
 
 			var expressions = GetClipboardExpressions();
-			if (expressions == null) {
+			if (expressions is null) {
 				var text = GetClipboardText();
-				if (text == null)
+				if (text is null)
 					return;
 
 				var list = new List<string>();
 				using (var reader = new StringReader(text)) {
 					for (;;) {
 						var line = reader.ReadLine();
-						if (line == null)
+						if (line is null)
 							break;
 						var expr = GetExpression(line);
 						if (expr.Length != 0)
@@ -244,7 +244,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return s;
 		}
 
-		public override bool SupportsDeleteWatch(IValueNodesVM vm) => vm != null && vm.CanAddRemoveExpressions;
+		public override bool SupportsDeleteWatch(IValueNodesVM vm) => !(vm is null) && vm.CanAddRemoveExpressions;
 		public override bool CanDeleteWatch(IValueNodesVM vm) => CanExecCommands(vm) && SupportsDeleteWatch(vm) && HasSelectedNodes(vm);
 		public override void DeleteWatch(IValueNodesVM vm) {
 			if (!CanDeleteWatch(vm))
@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			vm.DeleteExpressions(SelectedNodes(vm).Select(a => a.RootId).OfType<string>().ToArray());
 		}
 
-		public override bool SupportsClearAll(IValueNodesVM vm) => vm != null && vm.CanAddRemoveExpressions;
+		public override bool SupportsClearAll(IValueNodesVM vm) => !(vm is null) && vm.CanAddRemoveExpressions;
 		public override bool CanClearAll(IValueNodesVM vm) => CanExecCommands(vm) && SupportsClearAll(vm) && !IsEmpty(vm);
 		public override void ClearAll(IValueNodesVM vm) {
 			if (!CanClearAll(vm))
@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				EditValue(vm, text);
 		}
 
-		public override bool SupportsEditExpression(IValueNodesVM vm) => vm != null && vm.CanAddRemoveExpressions;
+		public override bool SupportsEditExpression(IValueNodesVM vm) => !(vm is null) && vm.CanAddRemoveExpressions;
 		public override bool CanEditExpression(IValueNodesVM vm) => CanExecCommands(vm) && SupportsEditExpression(vm) && SelectedNode(vm)?.CanEditNameExpression() == true;
 		public override void EditExpression(IValueNodesVM vm) {
 			if (!CanEditExpression(vm))
@@ -296,7 +296,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override void EditExpression(IValueNodesVM vm, string text) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (!CanEditExpression(vm))
 				return;
@@ -313,19 +313,19 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanEditValue(vm))
 				return;
 			var node = SelectedNode(vm);
-			if (node == null || node.RawNode.IsReadOnly)
+			if (node is null || node.RawNode.IsReadOnly)
 				return;
 			node.ClearEditingValueProperties();
 			node.ValueEditableValue.IsEditingValue = true;
 		}
 
 		public override void EditValue(IValueNodesVM vm, string text) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (!CanEditValue(vm))
 				return;
 			var node = SelectedNode(vm);
-			if (node == null || node.RawNode.IsReadOnly)
+			if (node is null || node.RawNode.IsReadOnly)
 				return;
 			node.ClearEditingValueProperties();
 			node.Context.ExpressionToEdit = text;
@@ -341,14 +341,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override bool IsMakeObjectIdVisible(IValueNodesVM vm) {
-			if (vm == null)
+			if (vm is null)
 				return false;
 			int removeCount = 0;
 			foreach (var node in SelectedNodes(vm)) {
 				if (node.RawNode is DebuggerValueRawNode rawNode && rawNode.DebuggerValueNode.Value is DbgValue value) {
 					if (dbgObjectIdService.Value.CanCreateObjectId(value))
 						return true;
-					if (dbgObjectIdService.Value.GetObjectId(value) != null)
+					if (!(dbgObjectIdService.Value.GetObjectId(value) is null))
 						removeCount++;
 				}
 			}
@@ -363,7 +363,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			dbgObjectIdService.Value.CreateObjectIds(values);
 		}
 
-		public override bool CanDeleteObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => a.DebuggerValueNode.Value is DbgValue value && dbgObjectIdService.Value.GetObjectId(value) != null);
+		public override bool CanDeleteObjectId(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNodes(vm).Select(a => a.RawNode).OfType<DebuggerValueRawNode>().Any(a => a.DebuggerValueNode.Value is DbgValue value && !(dbgObjectIdService.Value.GetObjectId(value) is null));
 		public override void DeleteObjectId(IValueNodesVM vm) {
 			if (!CanDeleteObjectId(vm))
 				return;
@@ -387,12 +387,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		static void Save(DbgValueNode? valueNode, Lazy<IPickSaveFilename> pickSaveFilename, Lazy<IMessageBoxService> messageBoxService) {
 			var value = valueNode?.Value;
-			if (value == null || value.IsClosed)
+			if (value is null || value.IsClosed)
 				return;
 			if (value.Runtime.IsClosed)
 				return;
 			var addr = value.GetRawAddressValue(onlyDataAddress: true);
-			if (addr == null)
+			if (addr is null)
 				return;
 
 			var filename = pickSaveFilename.Value.GetFilename(string.Empty, "bin", null);
@@ -426,14 +426,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
-		public override bool CanShowInMemoryWindow(IValueNodesVM vm) => CanExecCommands(vm) && GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true) != null;
+		public override bool CanShowInMemoryWindow(IValueNodesVM vm) => CanExecCommands(vm) && !(GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true) is null);
 		public override void ShowInMemoryWindow(IValueNodesVM vm) {
 			if (!CanShowInMemoryWindow(vm))
 				return;
 			ShowInMemoryWindowCore(vm, null);
 		}
 
-		public override bool CanShowInMemoryWindow(IValueNodesVM vm, int windowIndex) => CanExecCommands(vm) && GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true) != null;
+		public override bool CanShowInMemoryWindow(IValueNodesVM vm, int windowIndex) => CanExecCommands(vm) && !(GetValue(SelectedNode(vm)?.RawNode)?.GetRawAddressValue(onlyDataAddress: true) is null);
 		public override void ShowInMemoryWindow(IValueNodesVM vm, int windowIndex) {
 			if (!CanShowInMemoryWindow(vm, windowIndex))
 				return;
@@ -446,53 +446,53 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanExecCommands(vm))
 				return;
 			var node = SelectedNode(vm);
-			if (node == null)
+			if (node is null)
 				return;
 			var valueNode = GetValueNode(node.RawNode);
 			var addr = valueNode?.Value?.GetRawAddressValue(onlyDataAddress: true);
-			if (addr == null)
+			if (addr is null)
 				return;
-			Debug.Assert(valueNode != null);
+			Debug.Assert(!(valueNode is null));
 			var process = valueNode.Process;
 			var start = new HexPosition(addr.Value.Address);
 			var end = start + addr.Value.Length;
 			Debug.Assert(end <= HexPosition.MaxEndPosition);
 			if (end <= HexPosition.MaxEndPosition) {
-				if (windowIndex != null)
+				if (!(windowIndex is null))
 					memoryWindowService.Value.Show(process.Id, HexSpan.FromBounds(start, end), windowIndex.Value);
 				else
 					memoryWindowService.Value.Show(process.Id, HexSpan.FromBounds(start, end));
 			}
 		}
 
-		public override bool CanToggleExpanded(IValueNodesVM vm) => CanExecCommands(vm) && SelectedNode(vm) != null;
+		public override bool CanToggleExpanded(IValueNodesVM vm) => CanExecCommands(vm) && !(SelectedNode(vm) is null);
 		public override void ToggleExpanded(IValueNodesVM vm) {
 			if (!CanToggleExpanded(vm))
 				return;
 			var node = SelectedNode(vm);
-			if (node == null)
+			if (node is null)
 				return;
 			if (node.TreeNode.LazyLoading || node.TreeNode.Children.Count > 0)
 				node.TreeNode.IsExpanded = !node.TreeNode.IsExpanded;
 		}
 
 		static ValueNode? GetParent(ValueNode? node) => node?.TreeNode.Parent?.Data as ValueNode;
-		public override bool CanCollapseParent(IValueNodesVM vm) => CanExecCommands(vm) && GetParent(SelectedNode(vm)) != null;
+		public override bool CanCollapseParent(IValueNodesVM vm) => CanExecCommands(vm) && !(GetParent(SelectedNode(vm)) is null);
 		public override void CollapseParent(IValueNodesVM vm) {
 			if (!CanCollapseParent(vm))
 				return;
 			var parent = GetParent(SelectedNode(vm));
-			if (parent == null)
+			if (parent is null)
 				return;
 			parent.TreeNode.IsExpanded = false;
 		}
 
-		static bool CanExpand(ValueNodeImpl? node) => node != null && !node.TreeNode.IsExpanded && (node.TreeNode.LazyLoading || node.TreeNode.Children.Count > 0);
+		static bool CanExpand(ValueNodeImpl? node) => !(node is null) && !node.TreeNode.IsExpanded && (node.TreeNode.LazyLoading || node.TreeNode.Children.Count > 0);
 		ValueNodeImpl? GetExpandChildrenNode(IValueNodesVM vm) {
 			if (!CanExecCommands(vm))
 				return null;
 			var node = SelectedNode(vm);
-			if (node == null)
+			if (node is null)
 				return null;
 			if (node.TreeNode.LazyLoading)
 				return node;
@@ -500,7 +500,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 		public override bool CanExpandChildren(IValueNodesVM vm) {
 			var node = GetExpandChildrenNode(vm);
-			if (node == null)
+			if (node is null)
 				return false;
 			if (!node.TreeNode.IsExpanded)
 				return true;
@@ -508,7 +508,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 		public override void ExpandChildren(IValueNodesVM vm) {
 			var node = GetExpandChildrenNode(vm);
-			if (node == null)
+			if (node is null)
 				return;
 			node.TreeNode.IsExpanded = true;
 			foreach (var child in node.TreeNode.Children) {
@@ -521,13 +521,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanExecCommands(vm))
 				return null;
 			var node = SelectedNode(vm);
-			if (node == null)
+			if (node is null)
 				return null;
 			return node.TreeNode.Children.Count == 0 ? null : node;
 		}
 		public override bool CanCollapseChildren(IValueNodesVM vm) {
 			var node = GetCollapseChildrenNode(vm);
-			if (node == null)
+			if (node is null)
 				return false;
 			if (!node.TreeNode.IsExpanded)
 				return false;
@@ -535,7 +535,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 		public override void CollapseChildren(IValueNodesVM vm) {
 			var node = GetCollapseChildrenNode(vm);
-			if (node == null)
+			if (node is null)
 				return;
 			foreach (var child in node.TreeNode.Children)
 				child.IsExpanded = false;
@@ -545,7 +545,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanExecCommands(vm))
 				return Array.Empty<DbgLanguage>();
 			var runtimeKindGuid = vm.RuntimeKindGuid;
-			if (runtimeKindGuid == null)
+			if (runtimeKindGuid is null)
 				return Array.Empty<DbgLanguage>();
 			return dbgLanguageService.Value.GetLanguages(runtimeKindGuid.Value);
 		}
@@ -554,7 +554,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanExecCommands(vm))
 				return null;
 			var runtimeKindGuid = vm.RuntimeKindGuid;
-			if (runtimeKindGuid == null)
+			if (runtimeKindGuid is null)
 				return null;
 			return dbgLanguageService.Value.GetCurrentLanguage(runtimeKindGuid.Value);
 		}
@@ -563,7 +563,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (!CanExecCommands(vm))
 				return;
 			var runtimeKindGuid = vm.RuntimeKindGuid;
-			if (runtimeKindGuid == null)
+			if (runtimeKindGuid is null)
 				return;
 			dbgLanguageService.Value.SetCurrentLanguage(runtimeKindGuid.Value, language);
 		}

@@ -44,7 +44,7 @@ namespace dnSpy.Disassembly.Viewer {
 		}
 
 		public override void Show(DisassemblyContentProvider contentProvider, bool newTab, string? title) {
-			if (contentProvider == null)
+			if (contentProvider is null)
 				throw new ArgumentNullException(nameof(contentProvider));
 
 			IDocumentTab tab;

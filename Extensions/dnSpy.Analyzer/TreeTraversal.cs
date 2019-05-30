@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer {
 						T element = stack.Peek().Current;
 						yield return element;
 						IEnumerable<T> children = recursion(element);
-						if (children != null) {
+						if (!(children is null)) {
 							stack.Push(children.GetEnumerator());
 						}
 					}
@@ -83,7 +83,7 @@ namespace dnSpy.Analyzer {
 					while (stack.Peek().MoveNext()) {
 						T element = stack.Peek().Current;
 						IEnumerable<T> children = recursion(element);
-						if (children != null) {
+						if (!(children is null)) {
 							stack.Push(children.GetEnumerator());
 						}
 						else {

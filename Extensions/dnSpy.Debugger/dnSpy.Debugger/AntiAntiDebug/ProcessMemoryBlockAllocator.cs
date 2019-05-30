@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		public ProcessMemoryBlock Allocate(ulong moduleAddress, ulong moduleEndAddress) {
 			var mem = GetCloseBlock(moduleAddress, moduleEndAddress);
-			if (mem != null)
+			if (!(mem is null))
 				return mem;
 
 			IntPtr memPtr;

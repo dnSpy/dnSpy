@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.MVVM {
 		public string StringValue {
 			get => stringValue;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (stringValue != value)
 					ForceWriteStringValue(value);
@@ -238,7 +238,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <returns></returns>
 		public override string? ConvertToObjectValue(out object value) {
 			var error = ConvertToValue(out var v);
-			Debug.Assert(v != null);
+			Debug.Assert(!(v is null));
 			value = v;
 			return error;
 		}
@@ -343,7 +343,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(Guid? value) => value == null ? string.Empty : value.Value.ToString();
+		protected override string OnNewValue(Guid? value) => value is null ? string.Empty : value.Value.ToString();
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out Guid? value) {
@@ -428,7 +428,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(bool? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value);
+		protected override string OnNewValue(bool? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out bool? value) {
@@ -464,7 +464,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(sbyte? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(sbyte? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out sbyte? value) {
@@ -500,7 +500,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(byte? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(byte? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out byte? value) {
@@ -536,7 +536,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(short? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(short? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out short? value) {
@@ -572,7 +572,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(ushort? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(ushort? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out ushort? value) {
@@ -608,7 +608,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(int? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(int? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out int? value) {
@@ -644,7 +644,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(uint? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(uint? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out uint? value) {
@@ -680,7 +680,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(long? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(long? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out long? value) {
@@ -716,7 +716,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) => SetValueFromConstructor(value);
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(ulong? value) => value == null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
+		protected override string OnNewValue(ulong? value) => value is null ? string.Empty : SimpleTypeConverter.ToString(value.Value, Min, Max, UseDecimal);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out ulong? value) {

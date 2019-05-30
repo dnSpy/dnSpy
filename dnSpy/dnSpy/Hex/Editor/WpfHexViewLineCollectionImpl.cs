@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Editor {
 		readonly ReadOnlyCollection<WpfHexViewLine> lines;
 
 		public WpfHexViewLineCollectionImpl(WpfHexView hexView, IList<WpfHexViewLine> lines) {
-			if (lines == null)
+			if (lines is null)
 				throw new ArgumentNullException(nameof(lines));
 			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			this.lines = new ReadOnlyCollection<WpfHexViewLine>(lines);
@@ -131,7 +131,7 @@ namespace dnSpy.Hex.Editor {
 			GetMarkerGeometry(line, span, clipToViewport, padding, false);
 
 		Geometry? GetMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding, bool isLineGeometry) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (!lines.Contains(line))
 				throw new ArgumentException();
@@ -142,7 +142,7 @@ namespace dnSpy.Hex.Editor {
 			HexMarkerHelper.AddGeometries(hexView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
 				geo = geo!.GetOutlinedPathGeometry();
-			if (geo != null && geo.CanFreeze)
+			if (!(geo is null) && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
@@ -167,7 +167,7 @@ namespace dnSpy.Hex.Editor {
 			HexMarkerHelper.AddGeometries(hexView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
 				geo = geo!.GetOutlinedPathGeometry();
-			if (geo != null && geo.CanFreeze)
+			if (!(geo is null) && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
@@ -195,7 +195,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentException();
 			var span = FormattedSpan.Overlap(bufferSpan);
 			var list = new List<VSTF.TextBounds>();
-			if (span == null)
+			if (span is null)
 				return new Collection<VSTF.TextBounds>(list);
 
 			bool found = false;

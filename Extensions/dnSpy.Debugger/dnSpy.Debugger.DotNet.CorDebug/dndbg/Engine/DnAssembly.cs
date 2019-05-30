@@ -57,7 +57,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string FullName {
 			get {
-				if (fullName == null) {
+				if (fullName is null) {
 					Debug.Assert(modules.Count != 0);
 					if (modules.Count == 0)
 						return Name;
@@ -115,12 +115,12 @@ namespace dndbg.Engine {
 			var modules = this.modules.GetAll();
 			for (int i = 0; i < modules.Length; i++) {
 				var module = modules[i];
-				if (module.CorModuleDef != null) {
-					Debug.Assert(corAssemblyDef != null);
+				if (!(module.CorModuleDef is null)) {
+					Debug.Assert(!(corAssemblyDef is null));
 					continue;
 				}
 				module.CorModuleDef = new CorModuleDef(module.CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(module));
-				if (corAssemblyDef == null)
+				if (corAssemblyDef is null)
 					corAssemblyDef = new CorAssemblyDef(module.CorModuleDef, 1);
 				corAssemblyDef.Modules.Add(module.CorModuleDef);
 				module.CorModuleDef.Initialize();

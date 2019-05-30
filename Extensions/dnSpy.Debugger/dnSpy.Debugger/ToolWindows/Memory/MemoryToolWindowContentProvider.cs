@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 			public MemoryToolWindowContent Content {
 				get {
-					if (content == null)
+					if (content is null)
 						content = createContent();
 					return content;
 				}

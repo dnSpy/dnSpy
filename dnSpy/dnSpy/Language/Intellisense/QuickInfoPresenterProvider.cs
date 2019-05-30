@@ -30,7 +30,7 @@ namespace dnSpy.Language.Intellisense {
 	sealed class QuickInfoPresenterProvider : IIntellisensePresenterProvider {
 		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var quickInfoSession = session as IQuickInfoSession;
-			if (quickInfoSession == null)
+			if (quickInfoSession is null)
 				return null;
 			if (quickInfoSession.TrackMouse)
 				return new QuickInfoPresenter(quickInfoSession);

@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 				if (!arrayValue.Type.IsArray)
 					break;
 				var addr = arrayValue.GetRawAddressValue(onlyDataAddress: true);
-				if (addr == null)
+				if (addr is null)
 					break;
 				if (!TryGetSize(field.FieldType, out int fieldTypeSize))
 					break;
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 				if (!field.HasFieldRVA || field.FieldRVA == 0)
 					break;
 				var data = field.Module.ReadMemory(field.FieldRVA, fieldTypeSize);
-				if (data == null)
+				if (data is null)
 					break;
 				var process = field.AppDomain.Runtime.GetDebuggerRuntime().Process;
 				process.WriteMemory(addr.Value.Address, data, 0, data.Length);
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 		static bool TryGetSize(DmdType type, out int size) {
 			if (type.IsValueType) {
 				var attr = type.StructLayoutAttribute;
-				if (attr != null && attr.Size >= 0) {
+				if (!(attr is null) && attr.Size >= 0) {
 					size = attr.Size;
 					return true;
 				}

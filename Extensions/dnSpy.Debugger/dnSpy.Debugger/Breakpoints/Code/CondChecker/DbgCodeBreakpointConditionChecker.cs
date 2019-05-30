@@ -86,13 +86,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			public static SavedValue? TryCreateValue(DbgObjectIdService dbgObjectIdService, DbgValue value, string valueType) {
 				switch (value.ValueType) {
 				case DbgSimpleValueType.Other:
-					if (value.HasRawValue && value.RawValue == null)
+					if (value.HasRawValue && value.RawValue is null)
 						return new SimpleSavedValue(value.ValueType, value.RawValue, valueType);
 					var objectId = dbgObjectIdService.CreateObjectId(value, CreateObjectIdOptions.Hidden);
-					if (objectId != null)
+					if (!(objectId is null))
 						return new ObjectIdSavedValue(dbgObjectIdService, objectId);
 					var addr = value.GetRawAddressValue(onlyDataAddress: false);
-					if (addr != null)
+					if (!(addr is null))
 						return new AddressSavedValue(addr.Value, valueType);
 					return null;
 
@@ -137,10 +137,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
 					var obj = other as SimpleSavedValue;
-					return obj != null &&
+					return !(obj is null) &&
 						obj.type == type &&
 						Equals(obj.value, value) &&
-						(value == null || obj.valueType == valueType);
+						(value is null || obj.valueType == valueType);
 				}
 
 				public override void Dispose() { }
@@ -175,7 +175,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
 					var obj = other as ObjectIdSavedValue;
-					if (obj == null)
+					if (obj is null)
 						return false;
 					var value = obj.objectId.GetValue(evalInfo);
 					try {
@@ -192,15 +192,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition) {
 			var expression = condition.Condition;
-			Debug.Assert(expression != null);
-			if (expression == null)
+			Debug.Assert(!(expression is null));
+			if (expression is null)
 				return new DbgCodeBreakpointCheckResult("Missing expression");
 
 			DbgStackFrame? frame = null;
 			DbgValue? value = null;
 			try {
 				frame = thread.GetTopStackFrame();
-				if (frame == null)
+				if (frame is null)
 					return new DbgCodeBreakpointCheckResult("Couldn't get the current stack frame");
 
 				var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				var state = GetState(boundBreakpoint, language, frame, condition, cancellationToken);
 				var evalInfo = new DbgEvaluationInfo(state.Context!, frame, cancellationToken);
 				var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState!);
-				if (evalRes.Error != null)
+				if (!(evalRes.Error is null))
 					return new DbgCodeBreakpointCheckResult(evalRes.Error);
 				value = evalRes.Value!;
 
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case DbgCodeBreakpointConditionKind.WhenChanged:
 					var newValue = SavedValue.TryCreateValue(dbgObjectIdService, value, GetType(evalInfo, language, value));
-					if (newValue == null)
+					if (newValue is null)
 						return new DbgCodeBreakpointCheckResult(true);
 					bool shouldBreak = !(state.SavedValue?.Equals(evalInfo, newValue) ?? true);
 					state.SavedValue = newValue;
@@ -254,9 +254,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				}
 			}
 			finally {
-				if (frame != null)
+				if (!(frame is null))
 					thread.Process.DbgManager.Close(frame);
-				if (value != null)
+				if (!(value is null))
 					thread.Process.DbgManager.Close(value);
 			}
 		}

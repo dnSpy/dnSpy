@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor {
 		IEnumerable<SpaceReservationManager> SpaceReservationManagers {
 			get {
 				foreach (var mgr in spaceReservationManagers) {
-					if (mgr != null)
+					if (!(mgr is null))
 						yield return mgr;
 				}
 			}
@@ -69,13 +69,13 @@ namespace dnSpy.Text.Editor {
 		public ISpaceReservationManager GetSpaceReservationManager(string name) {
 			if (wpfTextView.IsClosed)
 				throw new InvalidOperationException();
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			int index = GetNameIndex(name);
 			if (index < 0)
 				throw new ArgumentException();
 			var mgr = spaceReservationManagers[index];
-			if (mgr == null) {
+			if (mgr is null) {
 				mgr = new SpaceReservationManager(wpfTextView);
 				mgr.GotAggregateFocus += SpaceReservationManager_GotAggregateFocus;
 				mgr.LostAggregateFocus += SpaceReservationManager_LostAggregateFocus;
@@ -113,7 +113,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			GeometryGroup? geometry = null;
 			foreach (var mgr in SpaceReservationManagers) {
-				if (geometry == null)
+				if (geometry is null)
 					geometry = new GeometryGroup();
 				mgr.PositionAndDisplay(geometry);
 			}
@@ -123,7 +123,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			for (int i = 0; i < spaceReservationManagers.Length; i++) {
 				var mgr = spaceReservationManagers[i];
-				if (mgr != null) {
+				if (!(mgr is null)) {
 					spaceReservationManagers[i] = null;
 					mgr.GotAggregateFocus -= SpaceReservationManager_GotAggregateFocus;
 					mgr.LostAggregateFocus -= SpaceReservationManager_LostAggregateFocus;

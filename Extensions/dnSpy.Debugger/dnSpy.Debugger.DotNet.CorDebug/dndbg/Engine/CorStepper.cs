@@ -70,7 +70,7 @@ namespace dndbg.Engine {
 
 		public bool SetJMC(bool jmc) {
 			var s2 = obj as ICorDebugStepper2;
-			if (s2 == null)
+			if (s2 is null)
 				return true;
 			int hr = s2.SetJMC(jmc ? 1 : 0);
 			return hr >= 0;

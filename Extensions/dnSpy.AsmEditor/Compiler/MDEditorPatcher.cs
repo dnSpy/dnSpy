@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void DeleteTypeDef(MetadataEditor mdEditor, TypeDef nonNestedTypeDef) {
-			Debug.Assert(nonNestedTypeDef.DeclaringType == null);
+			Debug.Assert(nonNestedTypeDef.DeclaringType is null);
 
 			var dict = new Dictionary<TypeDef, (TypeDef Type, uint TypeRefRid, RawTypeRefRow TypeRefRow)>();
 			foreach (var type in MDPatcherUtils.GetMetadataTypes(nonNestedTypeDef)) {
@@ -101,7 +101,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var kv in dict) {
 				var deletedType = kv.Value;
 				uint resolutionScope;
-				if (deletedType.Type.DeclaringType != null) {
+				if (!(deletedType.Type.DeclaringType is null)) {
 					var declType = dict[deletedType.Type.DeclaringType];
 					resolutionScope = CodedToken.ResolutionScope.Encode(new MDToken(Table.TypeRef, declType.TypeRefRid));
 				}
@@ -117,7 +117,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// reference it in the temporary edit-assembly.
 		/// </summary>
 		void PatchTypeRefsToEditedType(TypeDef nonNestedEditedType) {
-			Debug.Assert(nonNestedEditedType.DeclaringType == null);
+			Debug.Assert(nonNestedEditedType.DeclaringType is null);
 			if (remappedTypeTokens.Count == 0)
 				return;
 
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			case Table.AssemblyRef:
 				var asm = module.Assembly;
-				if (asm == null)
+				if (asm is null)
 					return false;
 				if (!mdEditor.RealMetadata.TablesStream.TryReadAssemblyRefRow(resolutionScope.Rid, out var assemblyRefRow))
 					return false;
@@ -215,7 +215,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool DataEquals(ref DataReader a, byte[] b) {
-			if (b == null)
+			if (b is null)
 				return false;
 			if (a.Length != (uint)b.Length)
 				return false;
@@ -486,7 +486,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return newSig;
 
 			var data = MDSigPatcher.PatchTypeSignature(sigBuilder, remappedTypeTokens, moduleData, (uint)mdEditor.RealMetadata.BlobStream.StartOffset, sig);
-			if (data != null)
+			if (!(data is null))
 				newSig = mdEditor.BlobHeap.Create(data);
 			else
 				newSig = sig;
@@ -504,7 +504,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return newSig;
 
 			var data = MDSigPatcher.PatchCallingConventionSignature(sigBuilder, remappedTypeTokens, moduleData, (uint)mdEditor.RealMetadata.BlobStream.StartOffset, sig);
-			if (data != null)
+			if (!(data is null))
 				newSig = mdEditor.BlobHeap.Create(data);
 			else
 				newSig = sig;

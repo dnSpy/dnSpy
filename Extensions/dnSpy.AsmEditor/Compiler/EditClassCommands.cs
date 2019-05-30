@@ -116,28 +116,28 @@ namespace dnSpy.AsmEditor.Compiler {
 			var node = nodes[0];
 			var tokNode = node as IMDTokenNode;
 			var defToEdit = tokNode?.Reference as IMemberDef;
-			if (defToEdit == null)
+			if (defToEdit is null)
 				return;
 
 			TypeNode? typeNode = null;
-			for (TreeNodeData? n = node; n != null;) {
+			for (TreeNodeData? n = node; !(n is null);) {
 				if (n is TypeNode t)
 					typeNode = t;
 				n = n.TreeNode.Parent?.Data;
 			}
-			if (typeNode == null)
+			if (typeNode is null)
 				return;
 
 			var asmNode = nodes[0] as AssemblyDocumentNode;
 			ModuleDocumentNode? modNode;
-			if (asmNode != null) {
+			if (!(asmNode is null)) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 			}
 			else
 				modNode = nodes[0].GetModuleNode();
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				return;
 
 			var vm = editCodeVMCreator.CreateEditClass(defToEdit, statements ?? Array.Empty<MethodSourceStatement>());
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug.Assert(vm.Result != null);
+			Debug.Assert(!(vm.Result is null));
 
 			undoCommandService.Value.Add(new EditClassCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();
@@ -185,20 +185,20 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext? context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement>? list) =>
 			editCodeVMCreator.CanCreate(CompilationKind.EditClass) &&
-			list != null &&
+			!(list is null) &&
 			list.Count != 0 &&
-			list[0].Method.Body != null &&
+			!(list[0].Method.Body is null) &&
 			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 
 		void Execute(IList<MethodSourceStatement>? list) {
-			if (list == null)
+			if (list is null)
 				return;
 
 			var method = list[0].Method;
 			var methodNode = appService.DocumentTreeView.FindNode(method);
-			if (methodNode == null) {
+			if (methodNode is null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
 				return;
 			}
@@ -208,7 +208,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		IList<MethodSourceStatement>? GetStatements() {
 			var documentViewer = appService.DocumentTabService.ActiveTab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;

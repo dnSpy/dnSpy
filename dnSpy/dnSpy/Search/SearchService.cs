@@ -100,7 +100,7 @@ namespace dnSpy.Search {
 				if (listBox.SelectedItem is ISearchResult searchResult) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);
 					var @ref = searchResult.Reference;
-					if (@ref != null)
+					if (!(@ref is null))
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new TextReference(@ref));
 				}
 			}
@@ -252,11 +252,11 @@ namespace dnSpy.Search {
 
 		bool GoTo(IDocumentTab tab, MethodDef? method, uint ilOffset) {
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null || method == null)
+			if (documentViewer is null || method is null)
 				return false;
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var methodStatement = methodDebugService.FindByCodeOffset(method, ilOffset);
-			if (methodStatement == null)
+			if (methodStatement is null)
 				return false;
 
 			documentViewer.MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);

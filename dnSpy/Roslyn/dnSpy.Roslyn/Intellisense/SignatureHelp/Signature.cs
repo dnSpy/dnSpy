@@ -42,10 +42,10 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		public IParameter? CurrentParameter {
 			get => currentParameter;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				var newParam = value as Parameter;
-				if (newParam == null)
+				if (newParam is null)
 					throw new ArgumentException();
 				if (currentParameter == newParam)
 					return;
@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 					Parameters.Add(new Parameter(signature, parameter, locus, prettyPrintedLocus));
 				}
 				Add(item.SuffixDisplayParts);
-				if (selectedParameter != null && (uint)selectedParameter.Value < (uint)item.Parameters.Length) {
+				if (!(selectedParameter is null) && (uint)selectedParameter.Value < (uint)item.Parameters.Length) {
 					var parameter = item.Parameters[selectedParameter.Value];
 					Add(parameter.SelectedDisplayParts);
 				}
@@ -152,7 +152,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			PrettyPrintedContentTaggedText = builder.PrettyPrintedContentTaggedText;
 			Parameters = new ReadOnlyCollection<IParameter>(builder.Parameters);
 
-			if (selectedParameter != null) {
+			if (!(selectedParameter is null)) {
 				if ((uint)selectedParameter.Value < (uint)Parameters.Count)
 					CurrentParameter = Parameters[selectedParameter.Value];
 				else if (item.IsVariadic && Parameters.Count > 0)

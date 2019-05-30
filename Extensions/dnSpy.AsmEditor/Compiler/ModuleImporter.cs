@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		Dictionary<TypeDef, TypeDef> OriginalTypes {
 			get {
-				if (originalTypes == null) {
+				if (originalTypes is null) {
 					originalTypes = new Dictionary<TypeDef, TypeDef>(new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope));
 					foreach (var t in targetModule.GetTypes())
 						originalTypes[t] = t;
@@ -191,7 +191,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			var module = ModuleDefMD.Load(rawGeneratedModule, opts);
-			if (module.Assembly == null && targetModule.Assembly is AssemblyDef targetAsm) {
+			if (module.Assembly is null && targetModule.Assembly is AssemblyDef targetAsm) {
 				var asm = new AssemblyDefUser(targetAsm.Name, targetAsm.Version, targetAsm.PublicKey, targetAsm.Culture);
 				asm.Attributes = targetAsm.Attributes;
 				asm.HashAlgorithm = targetAsm.HashAlgorithm;
@@ -273,7 +273,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			var newResources = new List<Resource>(sourceModule.Resources.Count);
 			foreach (var resource in sourceModule.Resources) {
 				var newResource = Import(resource);
-				if (newResource == null)
+				if (newResource is null)
 					continue;
 				newResources.Add(newResource);
 			}
@@ -315,7 +315,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void AddNewOrMergedNonNestedType(TypeDef sourceType) {
 			Debug.Assert(!sourceType.IsGlobalModuleType);
-			Debug.Assert(sourceType.DeclaringType == null);
+			Debug.Assert(sourceType.DeclaringType is null);
 
 			TypeDef? targetType;
 			bool merge = false;
@@ -376,7 +376,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				RemoveDuplicates(attributes, "System.Security.UnverifiableCodeAttribute");
 				NewModuleCustomAttributes = attributes.ToArray();
 				var asm = sourceModule.Assembly;
-				if (asm != null) {
+				if (!(asm is null)) {
 					NewAssemblyVersion = asm.Version;
 					attributes.Clear();
 					ImportCustomAttributes(attributes, asm);
@@ -386,7 +386,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			if ((options & ModuleImporterOptions.ReplaceAssemblyDeclSecurities) != 0) {
 				var asm = sourceModule.Assembly;
-				if (asm != null) {
+				if (!(asm is null)) {
 					var declSecs = new List<DeclSecurity>();
 					ImportDeclSecurities(declSecs, asm);
 					// The C# compiler always adds this security attribute:
@@ -416,12 +416,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		public void Import(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
-			if (targetType.DeclaringType != null)
+			if (!(targetType.DeclaringType is null))
 				throw new ArgumentException("Type must not be nested");
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			var newType = FindSourceType(targetType);
-			if (newType.DeclaringType != null)
+			if (!(newType.DeclaringType is null))
 				throw new ArgumentException("Type must not be nested");
 			RenamePropEventAccessors(newType, targetType);
 
@@ -443,7 +443,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		TypeDef FindSourceType(TypeDef targetType) {
 			var newType = sourceModule.Find(targetType.Module.Import(targetType));
-			if (newType != null)
+			if (!(newType is null))
 				return newType;
 
 			AddErrorThrow(IM0010, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindEditedType, targetType));
@@ -459,12 +459,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		public void ImportNewMembers(byte[] rawGeneratedModule, DebugFileResult debugFile, TypeDef targetType) {
 			if (targetType.Module != targetModule)
 				throw new InvalidOperationException();
-			if (targetType.DeclaringType != null)
+			if (!(targetType.DeclaringType is null))
 				throw new ArgumentException("Type must not be nested");
 			SetSourceModule(LoadModule(rawGeneratedModule, debugFile));
 
 			var newType = FindSourceType(targetType);
-			if (newType.DeclaringType != null)
+			if (!(newType.DeclaringType is null))
 				throw new ArgumentException("Type must not be nested");
 			RenamePropEventAccessors(newType, targetType);
 
@@ -563,7 +563,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			InitializeNewStateMachineTypes(newType);
 
-			Debug.Assert(importSigComparerOptions != null);
+			Debug.Assert(!(importSigComparerOptions is null));
 			var fieldDiff = new FieldMemberDiff(importSigComparerOptions, targetModule);
 			fieldDiff.Initialize(newType, targetType, mergedImportedType);
 			var methodDiff = new MethodMemberDiff(importSigComparerOptions, targetModule);
@@ -641,7 +641,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void InitializeNewStateMachineTypes(TypeDef compiledType) {
 			foreach (var method in compiledType.Methods) {
 				var smType = StateMachineHelpers.GetStateMachineType(method);
-				if (smType != null) {
+				if (!(smType is null)) {
 					Debug.Assert(!newStateMachineTypes.Contains(smType), "Two or more methods share the same state machine type");
 					newStateMachineTypes.Add(smType);
 				}
@@ -666,7 +666,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var newMethod = FindSourceMethod(targetMethod);
 			var newMethodNonNestedDeclType = newMethod.DeclaringType;
-			while (newMethodNonNestedDeclType.DeclaringType != null)
+			while (!(newMethodNonNestedDeclType.DeclaringType is null))
 				newMethodNonNestedDeclType = newMethodNonNestedDeclType.DeclaringType;
 			RenamePropEventAccessors(newMethod.DeclaringType, targetMethod.DeclaringType);
 
@@ -690,7 +690,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		// The C# compiler will call get_Prop, so rename get_Prop to the original name ('random_name')
 		void RenamePropEventAccessors(TypeDef newType, TypeDef targetType) {
 			for (;;) {
-				if (newType.DeclaringType == null && targetType.DeclaringType == null)
+				if (newType.DeclaringType is null && targetType.DeclaringType is null)
 					break;
 				newType = newType.DeclaringType ?? throw new InvalidOperationException();
 				targetType = targetType.DeclaringType ?? throw new InvalidOperationException();
@@ -725,7 +725,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static void Rename(MethodDef newMethod, MethodDef targetMethod) {
-			if (newMethod == null || targetMethod == null)
+			if (newMethod is null || targetMethod is null)
 				return;
 			newMethod.Name = targetMethod.Name;
 		}
@@ -756,14 +756,14 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		MethodDef FindSourceMethod(MethodDef targetMethod) {
 			var newType = sourceModule.Find(targetMethod.Module.Import(targetMethod.DeclaringType));
-			if (newType == null)
+			if (newType is null)
 				AddErrorThrow(IM0001, string.Format(dnSpy_AsmEditor_Resources.ERR_IM_CouldNotFindMethodType, targetMethod.DeclaringType));
 
 			// Don't check type scopes or we won't be able to find methods with edited nested types.
 			const SigComparerOptions comparerFlags = SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareTypeScope;
 
 			var newMethod = newType!.FindMethod(GetMethodName(targetMethod), targetMethod.MethodSig, comparerFlags, targetMethod.Module);
-			if (newMethod != null)
+			if (!(newMethod is null))
 				return newMethod;
 
 			if (targetMethod.Overrides.Count != 0) {
@@ -786,7 +786,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void SetSourceModule(ModuleDef? newSourceModule) {
 			sourceModule = newSourceModule!;
-			importSigComparerOptions = newSourceModule == null ? null : new ImportSigComparerOptions(newSourceModule, targetModule);
+			importSigComparerOptions = newSourceModule is null ? null : new ImportSigComparerOptions(newSourceModule, targetModule);
 		}
 
 		FieldDefOptions CreateFieldDefOptions(FieldDef newField, FieldDef targetField) =>
@@ -808,7 +808,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		ParamDef? Clone(ParamDef paramDef) {
-			if (paramDef == null)
+			if (paramDef is null)
 				return null;
 			var importedParamDef = new ParamDefUser(paramDef.Name, paramDef.Sequence, paramDef.Attributes);
 			importedParamDef.Rid = paramDef.Rid;
@@ -819,7 +819,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		GenericParam? Clone(GenericParam gp) {
-			if (gp == null)
+			if (gp is null)
 				return null;
 			var importedGenericParam = new GenericParamUser(gp.Number, gp.Flags, gp.Name);
 			importedGenericParam.Rid = gp.Rid;
@@ -831,7 +831,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		GenericParamConstraint? Clone(GenericParamConstraint gpc) {
-			if (gpc == null)
+			if (gpc is null)
 				return null;
 			var importedGenericParamConstraint = new GenericParamConstraintUser(gpc.Constraint);
 			importedGenericParamConstraint.Rid = gpc.Rid;
@@ -855,17 +855,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		void AddEditedMethod(MethodDef newMethod, MethodDef targetMethod) {
 			var newBaseType = newMethod.DeclaringType;
 			var targetBaseType = targetMethod.DeclaringType;
-			while (newBaseType.DeclaringType != null) {
-				if (targetBaseType == null)
+			while (!(newBaseType.DeclaringType is null)) {
+				if (targetBaseType is null)
 					throw new InvalidOperationException();
 				newBaseType = newBaseType.DeclaringType;
 				targetBaseType = targetBaseType.DeclaringType;
 			}
-			if (targetBaseType == null || targetBaseType.DeclaringType != null)
+			if (targetBaseType is null || !(targetBaseType.DeclaringType is null))
 				throw new InvalidOperationException();
 
 			var newStateMachineType = StateMachineHelpers.GetStateMachineType(newMethod);
-			if (newStateMachineType != null)
+			if (!(newStateMachineType is null))
 				newStateMachineTypes.Add(newStateMachineType);
 			nonNestedMergedImportedTypes.Add(AddMergedType(newBaseType, targetBaseType));
 			editedMethodsToFix.Add(newMethod, targetMethod);
@@ -949,7 +949,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void RenameMergedMembers(MergedImportedType mergedType) {
 			if (mergedType.MergeKind != MergeKind.Rename)
 				throw new InvalidOperationException();
-			Debug.Assert(importSigComparerOptions != null);
+			Debug.Assert(!(importSigComparerOptions is null));
 			var existingProps = new HashSet<PropertyDef>(new ImportPropertyEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareReturnType, targetModule)));
 			var existingMethods = new HashSet<MethodDef>(new ImportMethodEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareReturnType, targetModule)));
 			var existingEventsFields = new HashSet<string>(StringComparer.Ordinal);
@@ -978,9 +978,9 @@ namespace dnSpy.AsmEditor.Compiler {
 				while (existingProps.Contains(newProp))
 					newProp.Name = origName + "_" + (counter++).ToString();
 				existingProps.Add(newProp);
-				if (newProp.GetMethod != null)
+				if (!(newProp.GetMethod is null))
 					suggestedNames[newProp.GetMethod] = "get_" + newProp.Name;
-				if (newProp.SetMethod != null)
+				if (!(newProp.SetMethod is null))
 					suggestedNames[newProp.SetMethod] = "set_" + newProp.Name;
 			}
 
@@ -997,11 +997,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				while (existingEventsFields.Contains(newEvent.Name))
 					newEvent.Name = origName + "_" + (counter++).ToString();
 				existingEventsFields.Add(newEvent.Name);
-				if (newEvent.AddMethod != null)
+				if (!(newEvent.AddMethod is null))
 					suggestedNames[newEvent.AddMethod] = "add_" + newEvent.Name;
-				if (newEvent.RemoveMethod != null)
+				if (!(newEvent.RemoveMethod is null))
 					suggestedNames[newEvent.RemoveMethod] = "remove_" + newEvent.Name;
-				if (newEvent.InvokeMethod != null)
+				if (!(newEvent.InvokeMethod is null))
 					suggestedNames[newEvent.InvokeMethod] = "raise_" + newEvent.Name;
 			}
 
@@ -1011,7 +1011,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				string? suggestedName;
 				suggestedNames.TryGetValue(newMethod, out suggestedName);
 
-				if (suggestedName == null && !existingMethods.Contains(newMethod))
+				if (suggestedName is null && !existingMethods.Contains(newMethod))
 					continue;
 
 				if (compiledMethod.IsVirtual)
@@ -1215,11 +1215,11 @@ namespace dnSpy.AsmEditor.Compiler {
 					usedMethods.Add(m);
 			}
 			foreach (var p in importedType.TargetType.Events) {
-				if (p.AddMethod != null)
+				if (!(p.AddMethod is null))
 					usedMethods.Add(p.AddMethod);
-				if (p.InvokeMethod != null)
+				if (!(p.InvokeMethod is null))
 					usedMethods.Add(p.InvokeMethod);
-				if (p.RemoveMethod != null)
+				if (!(p.RemoveMethod is null))
 					usedMethods.Add(p.RemoveMethod);
 				foreach (var m in p.OtherMethods)
 					usedMethods.Add(m);
@@ -1227,7 +1227,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep1(IEnumerable<MergedImportedType> importedTypes) {
-			Debug.Assert(importSigComparerOptions != null);
+			Debug.Assert(!(importSigComparerOptions is null));
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
@@ -1253,7 +1253,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 					foreach (var compiledField in compiledType.Fields) {
 						FieldDef? targetField;
-						if ((targetField = memberDict.FindField(compiledField)) != null) {
+						if (!((targetField = memberDict.FindField(compiledField)) is null)) {
 							memberDict.Remove(targetField);
 							isStub.Add(compiledField);
 							isStub.Add(targetField);
@@ -1265,7 +1265,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var compiledMethod in compiledType.Methods) {
 						MethodDef? targetMethod;
-						if ((targetMethod = memberDict.FindMethod(compiledMethod)) != null || editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod)) {
+						if (!((targetMethod = memberDict.FindMethod(compiledMethod)) is null) || editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod)) {
 							memberDict.Remove(targetMethod);
 							isStub.Add(compiledMethod);
 							isStub.Add(targetMethod);
@@ -1277,7 +1277,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var compiledProperty in compiledType.Properties) {
 						PropertyDef? targetProperty;
-						if ((targetProperty = memberDict.FindProperty(compiledProperty)) != null) {
+						if (!((targetProperty = memberDict.FindProperty(compiledProperty)) is null)) {
 							memberDict.Remove(targetProperty);
 							isStub.Add(compiledProperty);
 							isStub.Add(targetProperty);
@@ -1289,7 +1289,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var compiledEvent in compiledType.Events) {
 						EventDef? targetEvent;
-						if ((targetEvent = memberDict.FindEvent(compiledEvent)) != null) {
+						if (!((targetEvent = memberDict.FindEvent(compiledEvent)) is null)) {
 							memberDict.Remove(targetEvent);
 							isStub.Add(compiledEvent);
 							isStub.Add(targetEvent);
@@ -1359,7 +1359,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep2(IEnumerable<MergedImportedType> importedTypes) {
-			Debug.Assert(importSigComparerOptions != null);
+			Debug.Assert(!(importSigComparerOptions is null));
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
@@ -1388,7 +1388,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 					foreach (var compiledField in compiledType.Fields) {
 						FieldDef? targetField;
-						if ((targetField = memberDict.FindField(compiledField)) != null) {
+						if (!((targetField = memberDict.FindField(compiledField)) is null)) {
 							Initialize(compiledField);
 							memberDict.Remove(targetField);
 						}
@@ -1397,7 +1397,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var compiledMethod in compiledType.Methods) {
 						MethodDef? targetMethod;
-						if ((targetMethod = memberDict.FindMethod(compiledMethod)!) != null || editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod)) {
+						if (!((targetMethod = memberDict.FindMethod(compiledMethod)!) is null) || editedMethodsToFix.TryGetValue(compiledMethod, out targetMethod)) {
 							Initialize(compiledMethod);
 							memberDict.Remove(targetMethod);
 						}
@@ -1406,7 +1406,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var compiledProperty in compiledType.Properties) {
 						PropertyDef? targetProperty;
-						if ((targetProperty = memberDict.FindProperty(compiledProperty)) != null) {
+						if (!((targetProperty = memberDict.FindProperty(compiledProperty)) is null)) {
 							Initialize(compiledProperty);
 							memberDict.Remove(targetProperty);
 						}
@@ -1415,7 +1415,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					foreach (var compiledEvent in compiledType.Events) {
 						EventDef? targetEvent;
-						if ((targetEvent = memberDict.FindEvent(compiledEvent)) != null) {
+						if (!((targetEvent = memberDict.FindEvent(compiledEvent)) is null)) {
 							Initialize(compiledEvent);
 							memberDict.Remove(targetEvent);
 						}
@@ -1483,11 +1483,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		IMethodDefOrRef? Import(IMethodDefOrRef method) => (IMethodDefOrRef?)Import((IMethod)method);
 
 		ITypeDefOrRef? Import(ITypeDefOrRef type) {
-			if (type == null)
+			if (type is null)
 				return null;
 
 			var res = TryGetTypeInTargetModule(type, out var importedType);
-			if (res != null)
+			if (!(res is null))
 				return res;
 
 			if (type is TypeRef tr)
@@ -1529,7 +1529,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		AssemblyRef? Import(AssemblyRef asmRef) {
-			if (asmRef == null)
+			if (asmRef is null)
 				return null;
 			var importedAssemblyRef = targetModule.UpdateRowId(new AssemblyRefUser(asmRef.Name, asmRef.Version, asmRef.PublicKeyOrToken, asmRef.Culture));
 			ImportCustomAttributes(importedAssemblyRef, asmRef);
@@ -1539,7 +1539,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		TypeSpec? ImportTypeSpec(TypeSpec ts) {
-			if (ts == null)
+			if (ts is null)
 				return null;
 			var importedTypeSpec = targetModule.UpdateRowId(new TypeSpecUser(Import(ts.TypeSig)));
 			ImportCustomAttributes(importedTypeSpec, ts);
@@ -1548,7 +1548,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		TypeDef? TryGetTypeInTargetModule(ITypeDefOrRef? tdr, out ImportedType? importedType) {
-			if (tdr == null) {
+			if (tdr is null) {
 				importedType = null;
 				return null;
 			}
@@ -1563,7 +1563,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				var tr2 = (TypeRef)tr.GetNonNestedTypeRefScope();
 				if (IsTarget(tr2.ResolutionScope)) {
 					td = targetModule.Find(tr);
-					if (td != null) {
+					if (!(td is null)) {
 						importedType = null;
 						return td;
 					}
@@ -1607,11 +1607,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool IsSource(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, sourceModule.Name);
 		bool IsTarget(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, targetModule.Name);
 
-		TypeDef? TryImportTypeDef(TypeDef? type) => type != null && oldTypeToNewType.TryGetValue(type, out var importedType) ? importedType.TargetType : type;
-		MethodDef? TryImportMethodDef(MethodDef? method) => method != null && oldMethodToNewMethod.TryGetValue(method, out var importedMethod) ? importedMethod.TargetMember : method;
+		TypeDef? TryImportTypeDef(TypeDef? type) => !(type is null) && oldTypeToNewType.TryGetValue(type, out var importedType) ? importedType.TargetType : type;
+		MethodDef? TryImportMethodDef(MethodDef? method) => !(method is null) && oldMethodToNewMethod.TryGetValue(method, out var importedMethod) ? importedMethod.TargetMember : method;
 
 		TypeSig? Import(TypeSig type) {
-			if (type == null)
+			if (type is null)
 				return null;
 
 			TypeSig? result;
@@ -1677,7 +1677,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		TypeSig CreateClassOrValueType(ITypeDefOrRef type, bool isValueType) {
 			var corLibType = targetModule.CorLibTypes.GetCorLibTypeSig(type);
-			if (corLibType != null)
+			if (!(corLibType is null))
 				return corLibType;
 
 			if (isValueType)
@@ -1706,7 +1706,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		CustomAttribute? Import(CustomAttribute ca) {
-			if (ca == null)
+			if (ca is null)
 				return null;
 			if (ca.IsRawBlob)
 				return new CustomAttribute(Import(ca.Constructor), ca.RawData);
@@ -1748,7 +1748,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		DeclSecurity? Import(DeclSecurity ds) {
-			if (ds == null)
+			if (ds is null)
 				return null;
 
 			var importedDeclSecurity = targetModule.UpdateRowId(new DeclSecurityUser());
@@ -1761,7 +1761,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		SecurityAttribute? Import(SecurityAttribute sa) {
-			if (sa == null)
+			if (sa is null)
 				return null;
 
 			var importedSecurityAttribute = new SecurityAttribute(Import(sa.AttributeType));
@@ -1772,13 +1772,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		Constant? Import(Constant constant) {
-			if (constant == null)
+			if (constant is null)
 				return null;
 			return targetModule.UpdateRowId(new ConstantUser(constant.Value, constant.Type));
 		}
 
 		MarshalType? Import(MarshalType marshalType) {
-			if (marshalType == null)
+			if (marshalType is null)
 				return null;
 
 			if (marshalType is RawMarshalType) {
@@ -1821,7 +1821,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		ImplMap? Import(ImplMap implMap) {
-			if (implMap == null)
+			if (implMap is null)
 				return null;
 			return targetModule.UpdateRowId(new ImplMapUser(Import(implMap.Module, false), implMap.Name, implMap.Attributes));
 		}
@@ -1834,13 +1834,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		ClassLayout? Import(ClassLayout classLayout) {
-			if (classLayout == null)
+			if (classLayout is null)
 				return null;
 			return targetModule.UpdateRowId(new ClassLayoutUser(classLayout.PackingSize, classLayout.ClassSize));
 		}
 
 		CallingConventionSig? Import(CallingConventionSig signature) {
-			if (signature == null)
+			if (signature is null)
 				return null;
 
 			if (signature is MethodSig)
@@ -1857,13 +1857,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		MethodSig? Import(MethodSig sig) {
-			if (sig == null)
+			if (sig is null)
 				return null;
 			return Import(new MethodSig(sig.GetCallingConvention()), sig);
 		}
 
 		PropertySig? Import(PropertySig sig) {
-			if (sig == null)
+			if (sig is null)
 				return null;
 			return Import(new PropertySig(sig.HasThis), sig);
 		}
@@ -1874,7 +1874,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				sig.Params.Add(Import(p));
 			sig.GenParamCount = old.GenParamCount;
 			var paramsAfterSentinel = sig.ParamsAfterSentinel;
-			if (paramsAfterSentinel != null) {
+			if (!(paramsAfterSentinel is null)) {
 				foreach (var p in old.ParamsAfterSentinel)
 					paramsAfterSentinel.Add(Import(p));
 			}
@@ -1882,13 +1882,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		FieldSig? Import(FieldSig sig) {
-			if (sig == null)
+			if (sig is null)
 				return null;
 			return new FieldSig(Import(sig.Type));
 		}
 
 		GenericInstMethodSig? Import(GenericInstMethodSig sig) {
-			if (sig == null)
+			if (sig is null)
 				return null;
 
 			var result = new GenericInstMethodSig();
@@ -1899,7 +1899,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		LocalSig? Import(LocalSig sig) {
-			if (sig == null)
+			if (sig is null)
 				return null;
 
 			var result = new LocalSig();
@@ -1933,7 +1933,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		FieldDef? Initialize(FieldDef field) {
-			if (field == null)
+			if (field is null)
 				return null;
 			var importedField = oldFieldToNewField[field].EditedMember;
 			ImportCustomAttributes(importedField, field);
@@ -1949,7 +1949,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		MethodDef? Initialize(MethodDef method) {
-			if (method == null)
+			if (method is null)
 				return null;
 			var importedMethodDef = oldMethodToNewMethod[method].EditedMember;
 			ImportCustomAttributes(importedMethodDef, method);
@@ -1971,7 +1971,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		GenericParam? Import(GenericParam gp) {
-			if (gp == null)
+			if (gp is null)
 				return null;
 			var importedGenericParam = targetModule.UpdateRowId(new GenericParamUser(gp.Number, gp.Flags, gp.Name));
 			ImportCustomAttributes(importedGenericParam, gp);
@@ -1982,7 +1982,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		GenericParamConstraint? Import(GenericParamConstraint gpc) {
-			if (gpc == null)
+			if (gpc is null)
 				return null;
 			var importedGenericParamConstraint = targetModule.UpdateRowId(new GenericParamConstraintUser(Import(gpc.Constraint)));
 			ImportCustomAttributes(importedGenericParamConstraint, gpc);
@@ -1990,7 +1990,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		InterfaceImpl? Import(InterfaceImpl ifaceImpl) {
-			if (ifaceImpl == null)
+			if (ifaceImpl is null)
 				return null;
 			var importedInterfaceImpl = targetModule.UpdateRowId(new InterfaceImplUser(Import(ifaceImpl.Interface)));
 			ImportCustomAttributes(importedInterfaceImpl, ifaceImpl);
@@ -1998,7 +1998,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		ParamDef? Import(ParamDef paramDef) {
-			if (paramDef == null)
+			if (paramDef is null)
 				return null;
 			var importedParamDef = targetModule.UpdateRowId(new ParamDefUser(paramDef.Name, paramDef.Sequence, paramDef.Attributes));
 			ImportCustomAttributes(importedParamDef, paramDef);
@@ -2008,7 +2008,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		PropertyDef? Initialize(PropertyDef propDef) {
-			if (propDef == null)
+			if (propDef is null)
 				return null;
 			var importedPropertyDef = oldPropertyToNewProperty[propDef].EditedMember;
 			ImportCustomAttributes(importedPropertyDef, propDef);
@@ -2017,24 +2017,24 @@ namespace dnSpy.AsmEditor.Compiler {
 			importedPropertyDef.Constant = Import(propDef.Constant);
 			foreach (var m in propDef.GetMethods) {
 				var newMethod = TryGetMethod(m);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedPropertyDef.GetMethods.Add(newMethod);
 			}
 			foreach (var m in propDef.SetMethods) {
 				var newMethod = TryGetMethod(m);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedPropertyDef.SetMethods.Add(newMethod);
 			}
 			foreach (var m in propDef.OtherMethods) {
 				var newMethod = TryGetMethod(m);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedPropertyDef.OtherMethods.Add(newMethod);
 			}
 			return importedPropertyDef;
 		}
 
 		MethodDef? TryGetMethod(MethodDef method) {
-			if (method == null)
+			if (method is null)
 				return null;
 			var m = oldMethodToNewMethod[method].TargetMember;
 			if (usedMethods.Contains(m))
@@ -2044,30 +2044,30 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		EventDef? Initialize(EventDef eventDef) {
-			if (eventDef == null)
+			if (eventDef is null)
 				return null;
 			var importedEventDef = oldEventToNewEvent[eventDef].EditedMember;
 			importedEventDef.EventType = Import(eventDef.EventType);
 			importedEventDef.Attributes = eventDef.Attributes;
 			ImportCustomAttributes(importedEventDef, eventDef);
-			if (eventDef.AddMethod != null) {
+			if (!(eventDef.AddMethod is null)) {
 				var newMethod = TryGetMethod(eventDef.AddMethod);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedEventDef.AddMethod = newMethod;
 			}
-			if (eventDef.InvokeMethod != null) {
+			if (!(eventDef.InvokeMethod is null)) {
 				var newMethod = TryGetMethod(eventDef.InvokeMethod);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedEventDef.InvokeMethod = newMethod;
 			}
-			if (eventDef.RemoveMethod != null) {
+			if (!(eventDef.RemoveMethod is null)) {
 				var newMethod = TryGetMethod(eventDef.RemoveMethod);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedEventDef.RemoveMethod = newMethod;
 			}
 			foreach (var m in eventDef.OtherMethods) {
 				var newMethod = TryGetMethod(m);
-				if (newMethod != null)
+				if (!(newMethod is null))
 					importedEventDef.OtherMethods.Add(newMethod);
 			}
 			return importedEventDef;
@@ -2077,7 +2077,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			// NOTE: Both methods can be identical: targetMethod == sourceMethod
 
 			var sourceBody = sourceMethod.Body;
-			if (sourceBody == null)
+			if (sourceBody is null)
 				return null;
 
 			var targetBody = new CilBody();
@@ -2123,7 +2123,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			foreach (var newInstr in targetBody.Instructions) {
 				var op = newInstr.Operand;
-				if (op == null)
+				if (op is null)
 					continue;
 
 				if (bodyDict.TryGetValue(op, out object obj)) {
@@ -2166,13 +2166,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static Instruction? GetInstruction(Dictionary<object, object> dict, Instruction instr) {
-			if (instr == null || !dict.TryGetValue(instr, out object obj))
+			if (instr is null || !dict.TryGetValue(instr, out object obj))
 				return null;
 			return (Instruction)obj;
 		}
 
 		IMethod? Import(IMethod method) {
-			if (method == null)
+			if (method is null)
 				return null;
 
 			if (method is MethodDef md)
@@ -2186,13 +2186,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var mr = (MemberRef)method;
 			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out var importedType);
-			if (td != null) {
+			if (!(td is null)) {
 				var targetMethod = FindMethod(td, mr);
-				if (targetMethod != null)
+				if (!(targetMethod is null))
 					return targetMethod;
-				if (importedType != null) {
+				if (!(importedType is null)) {
 					var compiledMethod = FindMethod(toExtraData[importedType].CompiledType, mr);
-					if (compiledMethod != null)
+					if (!(compiledMethod is null))
 						return oldMethodToNewMethod[compiledMethod].TargetMember;
 				}
 
@@ -2204,7 +2204,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		MethodDef? FindMethod(TypeDef targetType, MemberRef mr) {
-			Debug.Assert(importSigComparerOptions != null);
+			Debug.Assert(!(importSigComparerOptions is null));
 			var comparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule);
 			foreach (var method in targetType.Methods) {
 				if (!UTF8String.Equals(method.Name, mr.Name))
@@ -2216,7 +2216,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		IField? Import(IField field) {
-			if (field == null)
+			if (field is null)
 				return null;
 
 			if (field is FieldDef fd)
@@ -2224,13 +2224,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var mr = (MemberRef)field;
 			var td = TryGetTypeInTargetModule(mr.Class as ITypeDefOrRef, out var importedType);
-			if (td != null) {
+			if (!(td is null)) {
 				var targetField = FindField(td, mr);
-				if (targetField != null)
+				if (!(targetField is null))
 					return targetField;
-				if (importedType != null) {
+				if (!(importedType is null)) {
 					var compiledField = FindField(toExtraData[importedType].CompiledType, mr);
-					if (compiledField != null)
+					if (!(compiledField is null))
 						return oldFieldToNewField[compiledField].TargetMember;
 				}
 
@@ -2242,7 +2242,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		FieldDef? FindField(TypeDef targetType, MemberRef mr) {
-			Debug.Assert(importSigComparerOptions != null);
+			Debug.Assert(!(importSigComparerOptions is null));
 			var comparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule);
 			foreach (var field in targetType.Fields) {
 				if (!UTF8String.Equals(field.Name, mr.Name))
@@ -2262,7 +2262,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		IMemberRefParent? Import(IMemberRefParent cls) {
-			if (cls == null)
+			if (cls is null)
 				return null;
 
 			if (cls is ITypeDefOrRef tdr)
@@ -2290,7 +2290,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				var et = kv.Key;
 				var newEt = kv.Value;
 				var origImpl = et.Implementation;
-				if (origImpl == null)
+				if (origImpl is null)
 					continue;
 				if (!toNewImpl.TryGetValue(origImpl, out var newImpl)) {
 					switch (origImpl) {

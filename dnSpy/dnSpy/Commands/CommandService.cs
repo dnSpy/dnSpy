@@ -37,9 +37,9 @@ namespace dnSpy.Commands {
 		}
 
 		public IRegisteredCommandElement Register(UIElement sourceElement, object target) {
-			if (sourceElement == null)
+			if (sourceElement is null)
 				throw new ArgumentNullException(nameof(sourceElement));
-			if (target == null)
+			if (target is null)
 				throw new ArgumentNullException(nameof(target));
 
 			var coll = new KeyShortcutCollection();
@@ -49,7 +49,7 @@ namespace dnSpy.Commands {
 			var cmdElem = new RegisteredCommandElement(this, sourceElement, coll, target);
 			foreach (var c in commandTargetFilterProviders) {
 				var filter = c.Value.Create(target);
-				if (filter == null)
+				if (filter is null)
 					continue;
 				cmdElem.AddFilter(filter, c.Metadata.Order);
 			}
@@ -59,10 +59,10 @@ namespace dnSpy.Commands {
 		public CommandInfo? CreateCommandInfo(object target, string text) {
 			foreach (var c in commandInfoProviders) {
 				var c2 = c.Value as ICommandInfoProvider2;
-				if (c2 == null)
+				if (c2 is null)
 					continue;
 				var cmd = c2.CreateFromTextInput(target, text);
-				if (cmd != null)
+				if (!(cmd is null))
 					return cmd;
 			}
 			return null;

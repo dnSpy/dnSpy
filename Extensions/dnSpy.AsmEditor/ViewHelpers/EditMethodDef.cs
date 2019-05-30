@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public MethodDefVM? Edit(string? title, MethodDefVM vm) {
 			var method = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleDocumentTreeNodeFilter(ownerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), vm.Method, ownerModule);
-			if (method == null)
+			if (method is null)
 				return null;
 
 			vm.Method = method;

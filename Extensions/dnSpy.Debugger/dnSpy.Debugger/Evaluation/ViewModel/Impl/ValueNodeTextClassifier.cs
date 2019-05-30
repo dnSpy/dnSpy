@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var classifierContext = context as ValueNodeTextClassifierContext;
-			if (classifierContext == null)
+			if (classifierContext is null)
 				yield break;
 			if (classifierContext.TextChanged)
 				yield return new TextClassificationTag(classifierContext.TextChangedSpan, debuggerValueChangedHighlightClassificationType);

@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (type.IsEnum)
 				return value;
 			var sm = value as StructMirror;
-			if (sm == null)
+			if (sm is null)
 				return value;
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:

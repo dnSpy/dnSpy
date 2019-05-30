@@ -202,34 +202,34 @@ namespace dnSpy.Decompiler.CSharp {
 		void WriteToken(IMDTokenProvider tok) {
 			if (!ShowTokens)
 				return;
-			Debug.Assert(tok != null);
-			if (tok == null)
+			Debug.Assert(!(tok is null));
+			if (tok is null)
 				return;
 			OutputWrite(CommentBegin + ToFormattedUInt32(tok.MDToken.Raw) + CommentEnd, BoxedTextColor.Comment);
 		}
 
 		public void WriteToolTip(IMemberRef? member) {
-			if (member == null) {
+			if (member is null) {
 				WriteError();
 				return;
 			}
 
-			if (member is IMethod method && method.MethodSig != null) {
+			if (member is IMethod method && !(method.MethodSig is null)) {
 				WriteToolTip(method);
 				return;
 			}
 
-			if (member is IField field && field.FieldSig != null) {
+			if (member is IField field && !(field.FieldSig is null)) {
 				WriteToolTip(field);
 				return;
 			}
 
-			if (member is PropertyDef prop && prop.PropertySig != null) {
+			if (member is PropertyDef prop && !(prop.PropertySig is null)) {
 				WriteToolTip(prop);
 				return;
 			}
 
-			if (member is EventDef evt && evt.EventType != null) {
+			if (member is EventDef evt && !(evt.EventType is null)) {
 				WriteToolTip(evt);
 				return;
 			}
@@ -248,27 +248,27 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		public void Write(IMemberRef? member) {
-			if (member == null) {
+			if (member is null) {
 				WriteError();
 				return;
 			}
 
-			if (member is IMethod method && method.MethodSig != null) {
+			if (member is IMethod method && !(method.MethodSig is null)) {
 				Write(method);
 				return;
 			}
 
-			if (member is IField field && field.FieldSig != null) {
+			if (member is IField field && !(field.FieldSig is null)) {
 				Write(field);
 				return;
 			}
 
-			if (member is PropertyDef prop && prop.PropertySig != null) {
+			if (member is PropertyDef prop && !(prop.PropertySig is null)) {
 				Write(prop);
 				return;
 			}
 
-			if (member is EventDef evt && evt.EventType != null) {
+			if (member is EventDef evt && !(evt.EventType is null)) {
 				Write(evt);
 				return;
 			}
@@ -314,7 +314,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteToolTip(IMethod? method) {
-			if (method == null) {
+			if (method is null) {
 				WriteError();
 				return;
 			}
@@ -324,20 +324,20 @@ namespace dnSpy.Decompiler.CSharp {
 			Write(method);
 
 			var td = method.DeclaringType.ResolveTypeDef();
-			if (td != null) {
+			if (!(td is null)) {
 				var s = TypeFormatterUtils.GetNumberOfOverloadsString(td, method.Name);
-				if (s != null)
+				if (!(s is null))
 					OutputWrite(s, BoxedTextColor.Text);
 			}
 		}
 
 		void WriteType(ITypeDefOrRef type, bool useNamespaces, bool useTypeKeywords) {
 			var td = type as TypeDef;
-			if (td == null && type is TypeRef)
+			if (td is null && type is TypeRef)
 				td = ((TypeRef)type).Resolve();
-			if (td == null ||
+			if (td is null ||
 				td.GenericParameters.Count == 0 ||
-				(td.DeclaringType != null && td.DeclaringType.GenericParameters.Count >= td.GenericParameters.Count)) {
+				(!(td.DeclaringType is null) && td.DeclaringType.GenericParameters.Count >= td.GenericParameters.Count)) {
 				var oldFlags = options;
 				options &= ~(FormatterOptions.ShowNamespaces | FormatterOptions.ShowIntrinsicTypeKeywords);
 				if (useNamespaces)
@@ -350,7 +350,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 
 			int numGenParams = td.GenericParameters.Count;
-			if (type.DeclaringType != null) {
+			if (!(type.DeclaringType is null)) {
 				var oldFlags = options;
 				options &= ~(FormatterOptions.ShowNamespaces | FormatterOptions.ShowIntrinsicTypeKeywords);
 				if (useNamespaces)
@@ -377,11 +377,11 @@ namespace dnSpy.Decompiler.CSharp {
 
 		bool WriteRefIfByRef(TypeSig typeSig, ParamDef? pd, bool forceReadOnly) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
-				if (pd != null && (!pd.IsIn && pd.IsOut)) {
+				if (!(pd is null) && (!pd.IsIn && pd.IsOut)) {
 					OutputWrite(Keyword_out, BoxedTextColor.Keyword);
 					WriteSpace();
 				}
-				else if (pd != null && (!pd.IsIn && !pd.IsOut && TypeFormatterUtils.IsReadOnlyParameter(pd))) {
+				else if (!(pd is null) && (!pd.IsIn && !pd.IsOut && TypeFormatterUtils.IsReadOnlyParameter(pd))) {
 					OutputWrite(Keyword_in, BoxedTextColor.Keyword);
 					WriteSpace();
 				}
@@ -422,7 +422,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void Write(IMethod? method) {
-			if (method == null) {
+			if (method is null) {
 				WriteError();
 				return;
 			}
@@ -445,15 +445,15 @@ namespace dnSpy.Decompiler.CSharp {
 			WriteModuleName(info);
 
 			string[]? operatorInfo;
-			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
+			if (!(info.MethodDef is null) && info.MethodDef.IsConstructor && !(method.DeclaringType is null))
 				operatorInfo = null;
-			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
+			else if (!(info.MethodDef is null) && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				operatorInfo = TryGetOperatorInfo(ovrMeth.Name);
 			}
 			else
 				operatorInfo = TryGetOperatorInfo(method.Name);
-			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
+			bool isExplicitOrImplicit = !(operatorInfo is null) && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit)
 				WriteReturnType(info, writeSpace: true, isReadOnly: TypeFormatterUtils.IsReadOnlyMethod(info.MethodDef));
@@ -462,9 +462,9 @@ namespace dnSpy.Decompiler.CSharp {
 				Write(method.DeclaringType);
 				WritePeriod();
 			}
-			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
+			if (!(info.MethodDef is null) && info.MethodDef.IsConstructor && !(method.DeclaringType is null))
 				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType.Name), CSharpMetadataTextColorProvider.Instance.GetColor(method));
-			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
+			else if (!(info.MethodDef is null) && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteMethodName(method, ovrMeth.Name, operatorInfo);
 			}
@@ -490,7 +490,7 @@ namespace dnSpy.Decompiler.CSharp {
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
 
 		void WriteMethodName(IMethod method, string name, string[]? operatorInfo) {
-			if (operatorInfo != null) {
+			if (!(operatorInfo is null)) {
 				for (int i = 0; i < operatorInfo.Length; i++) {
 					if (i > 0)
 						WriteSpace();
@@ -510,19 +510,19 @@ namespace dnSpy.Decompiler.CSharp {
 		void Write(IField field) => Write(field, false);
 
 		void Write(IField? field, bool isToolTip) {
-			if (field == null) {
+			if (field is null) {
 				WriteError();
 				return;
 			}
 
 			var sig = field.FieldSig;
 			var td = field.DeclaringType.ResolveTypeDef();
-			bool isEnumOwner = td != null && td.IsEnum;
+			bool isEnumOwner = !(td is null) && td.IsEnum;
 
 			var fd = field.ResolveFieldDef();
 			object? constant = null;
-			bool isConstant = fd != null && (fd.IsLiteral || (fd.IsStatic && fd.IsInitOnly)) && TypeFormatterUtils.HasConstant(fd, out var constantAttribute) && TypeFormatterUtils.TryGetConstant(fd, constantAttribute, out constant);
-			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
+			bool isConstant = !(fd is null) && (fd.IsLiteral || (fd.IsStatic && fd.IsInitOnly)) && TypeFormatterUtils.HasConstant(fd, out var constantAttribute) && TypeFormatterUtils.TryGetConstant(fd, constantAttribute, out constant);
+			if (!isEnumOwner || (!(fd is null) && !fd.IsLiteral)) {
 				if (isToolTip) {
 					OutputWrite(DescriptionParenOpen, BoxedTextColor.Punctuation);
 					OutputWrite(isConstant ? dnSpy_Decompiler_Resources.ToolTip_Constant : dnSpy_Decompiler_Resources.ToolTip_Field, BoxedTextColor.Text);
@@ -550,7 +550,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteConstant(object? obj) {
-			if (obj == null) {
+			if (obj is null) {
 				OutputWrite(Keyword_null, BoxedTextColor.Keyword);
 				return;
 			}
@@ -626,7 +626,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 		void Write(PropertyDef? prop) => Write(prop, writeAccessors: true);
 		void Write(PropertyDef? prop, bool writeAccessors) {
-			if (prop == null) {
+			if (prop is null) {
 				WriteError();
 				return;
 			}
@@ -634,7 +634,7 @@ namespace dnSpy.Decompiler.CSharp {
 			var getMethod = prop.GetMethods.FirstOrDefault();
 			var setMethod = prop.SetMethods.FirstOrDefault();
 			var md = getMethod ?? setMethod;
-			if (md == null) {
+			if (md is null) {
 				WriteError();
 				return;
 			}
@@ -646,13 +646,13 @@ namespace dnSpy.Decompiler.CSharp {
 				Write(prop.DeclaringType);
 				WritePeriod();
 			}
-			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
+			var ovrMeth = md is null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
 			if (prop.IsIndexer()) {
 				OutputWrite(Keyword_this, BoxedTextColor.Keyword);
 				WriteGenericArguments(info);
 				WriteMethodParameterList(info, IndexerParenOpen, IndexerParenClose);
 			}
-			else if (ovrMeth != null && TypeFormatterUtils.GetPropertyName(ovrMeth) is string ovrMethPropName)
+			else if (!(ovrMeth is null) && TypeFormatterUtils.GetPropertyName(ovrMeth) is string ovrMethPropName)
 				WriteIdentifier(ovrMethPropName, CSharpMetadataTextColorProvider.Instance.GetColor(prop));
 			else
 				WriteIdentifier(prop.Name, CSharpMetadataTextColorProvider.Instance.GetColor(prop));
@@ -683,7 +683,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 		void Write(EventDef? evt) => Write(evt, writeAccessors: true);
 		void Write(EventDef? evt, bool writeAccessors) {
-			if (evt == null) {
+			if (evt is null) {
 				WriteError();
 				return;
 			}
@@ -700,7 +700,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteToolTip(GenericParam? gp) {
-			if (gp == null) {
+			if (gp is null) {
 				WriteError();
 				return;
 			}
@@ -717,7 +717,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void Write(GenericParam? gp) {
-			if (gp == null) {
+			if (gp is null) {
 				WriteError();
 				return;
 			}
@@ -733,7 +733,7 @@ namespace dnSpy.Decompiler.CSharp {
 			Write(TypeFormatterUtils.GetMemberSpecialFlags(type));
 
 			MethodDef invoke;
-			if (TypeFormatterUtils.IsDelegate(td) && (invoke = td.FindMethod("Invoke")) != null && invoke.MethodSig != null) {
+			if (TypeFormatterUtils.IsDelegate(td) && !((invoke = td.FindMethod("Invoke")) is null) && !(invoke.MethodSig is null)) {
 				OutputWrite(Keyword_delegate, BoxedTextColor.Keyword);
 				WriteSpace();
 
@@ -751,7 +751,7 @@ namespace dnSpy.Decompiler.CSharp {
 			else
 				WriteModuleName(td?.Module);
 
-			if (td == null) {
+			if (td is null) {
 				Write(type);
 				return;
 			}
@@ -782,7 +782,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void Write(ITypeDefOrRef? type, bool showModuleNames = false) {
-			if (type == null) {
+			if (type is null) {
 				WriteError();
 				return;
 			}
@@ -796,13 +796,13 @@ namespace dnSpy.Decompiler.CSharp {
 					return;
 				}
 
-				if (type.DeclaringType != null) {
+				if (!(type.DeclaringType is null)) {
 					Write(type.DeclaringType);
 					WritePeriod();
 				}
 
 				string? keyword = GetTypeKeyword(type);
-				if (keyword != null)
+				if (!(keyword is null))
 					OutputWrite(keyword, BoxedTextColor.Keyword);
 				else {
 					if (showModuleNames)
@@ -831,7 +831,7 @@ namespace dnSpy.Decompiler.CSharp {
 		string? GetTypeKeyword(ITypeDefOrRef? type) {
 			if (!ShowIntrinsicTypeKeywords)
 				return null;
-			if (type == null || type.DeclaringType != null || type.Namespace != "System" || !type.DefinitionAssembly.IsCorLib())
+			if (type is null || !(type.DeclaringType is null) || type.Namespace != "System" || !type.DefinitionAssembly.IsCorLib())
 				return null;
 			switch (type.TypeName) {
 			case "Void":	return "void";
@@ -862,7 +862,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void Write(TypeSig? type, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methGenArgs) {
-			if (type == null) {
+			if (type is null) {
 				WriteError();
 				return;
 			}
@@ -871,19 +871,19 @@ namespace dnSpy.Decompiler.CSharp {
 				return;
 			recursionCounter++;
 			try {
-				if (typeGenArgs == null)
+				if (typeGenArgs is null)
 					typeGenArgs = Array.Empty<TypeSig>();
-				if (methGenArgs == null)
+				if (methGenArgs is null)
 					methGenArgs = Array.Empty<TypeSig>();
 
 				List<ArraySigBase>? list = null;
-				while (type != null && (type.ElementType == ElementType.SZArray || type.ElementType == ElementType.Array)) {
-					if (list == null)
+				while (!(type is null) && (type.ElementType == ElementType.SZArray || type.ElementType == ElementType.Array)) {
+					if (list is null)
 						list = new List<ArraySigBase>();
 					list.Add((ArraySigBase)type);
 					type = type.Next;
 				}
-				if (list != null) {
+				if (!(list is null)) {
 					Write(list[list.Count - 1].Next, typeGenArgs, Array.Empty<TypeSig>());
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
@@ -925,7 +925,7 @@ namespace dnSpy.Decompiler.CSharp {
 					return;
 				}
 
-				if (type == null)
+				if (type is null)
 					return;
 				switch (type.ElementType) {
 				case ElementType.Void:			WriteSystemTypeKeyword("Void", "void", true); break;
@@ -967,7 +967,7 @@ namespace dnSpy.Decompiler.CSharp {
 				case ElementType.Var:
 				case ElementType.MVar:
 					var gsType = Read(type.ElementType == ElementType.Var ? typeGenArgs : methGenArgs, (int)((GenericSig)type).Number);
-					if (gsType != null)
+					if (!(gsType is null))
 						Write(gsType, typeGenArgs, methGenArgs);
 					else {
 						var gp = ((GenericSig)type).GenericParam;
@@ -977,7 +977,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 				case ElementType.GenericInst:
 					var gis = (GenericInstSig?)type;
-					Debug.Assert(gis != null);
+					Debug.Assert(!(gis is null));
 					if (TypeFormatterUtils.IsSystemNullable(gis)) {
 						Write(GenericArgumentResolver.Resolve(gis.GenericArguments[0], typeGenArgs, methGenArgs), null, null);
 						OutputWrite("?", BoxedTextColor.Operator);
@@ -995,7 +995,7 @@ namespace dnSpy.Decompiler.CSharp {
 							if (gis.GenericArguments.Count != 8)
 								break;
 							gis = gis.GenericArguments[gis.GenericArguments.Count - 1] as GenericInstSig;
-							if (gis == null) {
+							if (gis is null) {
 								WriteError();
 								break;
 							}
@@ -1024,7 +1024,7 @@ namespace dnSpy.Decompiler.CSharp {
 							WriteCommaSpace();
 						Write(sig.Params[i], typeGenArgs, methGenArgs);
 					}
-					if (sig.ParamsAfterSentinel != null) {
+					if (!(sig.ParamsAfterSentinel is null)) {
 						if (sig.Params.Count > 0)
 							WriteCommaSpace();
 						OutputWrite("...", BoxedTextColor.Punctuation);
@@ -1066,7 +1066,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		public void WriteToolTip(ISourceVariable? variable) {
-			if (variable == null) {
+			if (variable is null) {
 				WriteError();
 				return;
 			}
@@ -1080,12 +1080,12 @@ namespace dnSpy.Decompiler.CSharp {
 			Write(variable.Type, !isLocal ? ((Parameter)variable.Variable!).ParamDef : null, null, null, forceReadOnly: (variable.Flags & SourceVariableFlags.ReadOnlyReference) != 0);
 			WriteSpace();
 			WriteIdentifier(TypeFormatterUtils.GetName(variable), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
-			if (pd != null)
+			if (!(pd is null))
 				WriteToken(pd);
 		}
 
 		public void WriteNamespaceToolTip(string? @namespace) {
-			if (@namespace == null) {
+			if (@namespace is null) {
 				WriteError();
 				return;
 			}
@@ -1105,7 +1105,7 @@ namespace dnSpy.Decompiler.CSharp {
 			try {
 				if (recursionCounter++ >= TypeFormatterUtils.MAX_RECURSION)
 					return;
-				if (module == null) {
+				if (module is null) {
 					OutputWrite("null module", BoxedTextColor.Error);
 					return;
 				}
@@ -1128,7 +1128,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteModuleName(ModuleDef? module) {
-			if (module == null)
+			if (module is null)
 				return;
 			if (!ShowModuleNames)
 				return;
@@ -1147,21 +1147,21 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void ForceWriteReturnType(in FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
-			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
+			if (!(!(info.MethodDef is null) && info.MethodDef.IsConstructor)) {
 				TypeSig retType;
 				ParamDef? retParamDef;
 				if (info.RetTypeIsLastArgType) {
 					retType = info.MethodSig.Params.LastOrDefault();
-					if (info.MethodDef == null)
+					if (info.MethodDef is null)
 						retParamDef = null;
 					else {
 						var l = info.MethodDef.Parameters.LastOrDefault();
-						retParamDef = l == null ? null : l.ParamDef;
+						retParamDef = l is null ? null : l.ParamDef;
 					}
 				}
 				else {
 					retType = info.MethodSig.RetType;
-					retParamDef = info.MethodDef == null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef;
+					retParamDef = info.MethodDef is null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef;
 				}
 				if (retType.RemovePinnedAndModifiers() is ByRefSig && isReadOnly) {
 					retType = retType.RemovePinnedAndModifiers().Next;
@@ -1178,9 +1178,9 @@ namespace dnSpy.Decompiler.CSharp {
 
 		void WriteGenericArguments(in FormatterMethodInfo info) {
 			if (info.MethodSig.GenParamCount > 0) {
-				if (info.MethodGenericParams != null)
+				if (!(info.MethodGenericParams is null))
 					WriteGenerics(info.MethodGenericParams, BoxedTextColor.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
-				else if (info.MethodDef != null)
+				else if (!(info.MethodDef is null))
 					WriteGenerics(info.MethodDef.GenericParameters, BoxedTextColor.MethodGenericParameter);
 			}
 		}
@@ -1198,7 +1198,7 @@ namespace dnSpy.Decompiler.CSharp {
 				if (i > 0)
 					WriteCommaSpace();
 				ParamDef? pd;
-				if (info.MethodDef != null && baseIndex + i < info.MethodDef.Parameters.Count)
+				if (!(info.MethodDef is null) && baseIndex + i < info.MethodDef.Parameters.Count)
 					pd = info.MethodDef.Parameters[baseIndex + i].ParamDef;
 				else
 					pd = null;
@@ -1211,7 +1211,7 @@ namespace dnSpy.Decompiler.CSharp {
 				if (ShowParameterTypes) {
 					needSpace = true;
 
-					if (pd != null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
+					if (!(pd is null) && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
 						OutputWrite(Keyword_params, BoxedTextColor.Keyword);
 						WriteSpace();
 					}
@@ -1223,7 +1223,7 @@ namespace dnSpy.Decompiler.CSharp {
 						WriteSpace();
 					needSpace = true;
 
-					if (pd != null) {
+					if (!(pd is null)) {
 						WriteIdentifier(pd.Name, BoxedTextColor.Parameter);
 						WriteToken(pd);
 					}
@@ -1242,7 +1242,7 @@ namespace dnSpy.Decompiler.CSharp {
 					var t = info.MethodSig.Params[i].RemovePinnedAndModifiers();
 					if (t.GetElementType() == ElementType.ByRef)
 						t = t.Next;
-					if (constant == null && t != null && t.IsValueType)
+					if (constant is null && !(t is null) && t.IsValueType)
 						OutputWrite(Keyword_default, BoxedTextColor.Keyword);
 					else
 						WriteConstant(constant);
@@ -1255,7 +1255,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteGenerics(IList<GenericParam>? gps, object gpTokenType) {
-			if (gps == null || gps.Count == 0)
+			if (gps is null || gps.Count == 0)
 				return;
 			OutputWrite(GenericParenOpen, BoxedTextColor.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {
@@ -1277,7 +1277,7 @@ namespace dnSpy.Decompiler.CSharp {
 		}
 
 		void WriteGenerics(IList<TypeSig>? gps, object gpTokenType, GenericParamContext gpContext) {
-			if (gps == null || gps.Count == 0)
+			if (gps is null || gps.Count == 0)
 				return;
 			OutputWrite(GenericParenOpen, BoxedTextColor.Punctuation);
 			for (int i = 0; i < gps.Count; i++) {

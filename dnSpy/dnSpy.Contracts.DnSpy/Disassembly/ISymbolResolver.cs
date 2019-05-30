@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <summary>
 		/// Checks if this is the default instance
 		/// </summary>
-		public bool IsDefault => Symbol == null;
+		public bool IsDefault => Symbol is null;
 
 		/// <summary>
 		/// Symbol kind

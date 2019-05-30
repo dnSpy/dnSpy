@@ -60,7 +60,7 @@ namespace dndbg.Engine {
 			Debug.Assert(debugger.ProcessState == DebuggerProcessState.Starting);
 			DnDebugEventBreakpoint? bp = null;
 			bp = debugger.CreateBreakpoint(evt, ctx => {
-				if (cond == null || cond(ctx)) {
+				if (cond is null || cond(ctx)) {
 					debugger.RemoveBreakpoint(bp!);
 					return true;
 				}
@@ -72,7 +72,7 @@ namespace dndbg.Engine {
 			Debug.Assert(debugger.ProcessState == DebuggerProcessState.Starting);
 			DnAnyDebugEventBreakpoint? bp = null;
 			bp = debugger.CreateAnyDebugEventBreakpoint(ctx => {
-				if (cond == null || cond(ctx)) {
+				if (cond is null || cond(ctx)) {
 					debugger.RemoveBreakpoint(bp!);
 					return true;
 				}
@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 		static bool IsModule(CorModule? module, string? filename) => !(module is null) && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
 		void SetILBreakpoint(DnModuleId moduleId, uint token) {
-			Debug.Assert(token != 0 && breakpoint == null);
+			Debug.Assert(token != 0 && breakpoint is null);
 			DnBreakpoint? bp = null;
 			bp = debugger.CreateBreakpoint(moduleId, token, 0, ctx2 => {
 				debugger.RemoveBreakpoint(bp!);
@@ -124,10 +124,10 @@ namespace dndbg.Engine {
 					return false;
 				}
 
-				if (otherModuleName != null) {
+				if (!(otherModuleName is null)) {
 					Debug.Assert((Table)(epToken >> 24) == Table.File);
 					otherModuleFullName = GetOtherModuleFullName(otherModuleName);
-					if (otherModuleFullName != null) {
+					if (!(otherModuleFullName is null)) {
 						thisAssembly = mod.Assembly;
 						breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointKind.LoadModule, OnLoadOtherModule);
 						return false;
@@ -188,7 +188,7 @@ namespace dndbg.Engine {
 
 					using (var mod = ModuleDefMD.Load(peImage)) {
 						var file = mod.ResolveFile(token & 0x00FFFFFF);
-						if (file == null || !file.ContainsMetadata)
+						if (file is null || !file.ContainsMetadata)
 							return 0;
 
 						otherModuleName = file.Name;

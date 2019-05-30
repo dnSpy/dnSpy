@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (e.NewItems != null)
+			if (!(e.NewItems is null))
 				InitializeLocals(e.NewItems);
 		}
 

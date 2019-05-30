@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
 		public bool Equals(HexBufferLineFormatterOptions? other) =>
-			other != null &&
+			!(other is null) &&
 			CharsPerLine == other.CharsPerLine &&
 			BytesPerLine == other.BytesPerLine &&
 			GroupSizeInBytes == other.GroupSizeInBytes &&
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Hex {
 		static bool HexColumnTypeArraysEquals(HexColumnType[]? a, HexColumnType[]? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -214,7 +214,7 @@ namespace dnSpy.Contracts.Hex {
 			GetHexColumnTypeArrayHashCode(ColumnOrder);
 
 		int GetHexColumnTypeArrayHashCode(HexColumnType[]? a) {
-			if (a == null)
+			if (a is null)
 				return 0;
 			int hc = 0;
 			foreach (var t in a)

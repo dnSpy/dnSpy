@@ -186,8 +186,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			for (int i = 0; i < subCmds.Length; i++) {

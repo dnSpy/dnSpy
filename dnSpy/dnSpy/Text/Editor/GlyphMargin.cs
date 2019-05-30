@@ -133,7 +133,7 @@ namespace dnSpy.Text.Editor {
 		const double MARGIN_WIDTH = 17;
 
 		public GlyphMargin(IMenuService menuService, IWpfTextViewHost wpfTextViewHost, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] glyphMouseProcessorProviders, Lazy<IGlyphFactoryProvider, IGlyphMetadata>[] glyphFactoryProviders, IMarginContextMenuService marginContextMenuHandlerProviderService) {
-			if (menuService == null)
+			if (menuService is null)
 				throw new ArgumentNullException(nameof(menuService));
 			glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
 			childCanvases = Array.Empty<Canvas>();
@@ -178,13 +178,13 @@ namespace dnSpy.Text.Editor {
 			foreach (var lazy in lazyGlyphMouseProcessorProviders) {
 				if (!contentType.IsOfAnyType(lazy.Metadata.ContentTypes))
 					continue;
-				if (lazy.Metadata.GlyphMargins == null || !lazy.Metadata.GlyphMargins.Any()) {
+				if (lazy.Metadata.GlyphMargins is null || !lazy.Metadata.GlyphMargins.Any()) {
 					// Nothing
 				}
 				else if (!lazy.Metadata.GlyphMargins.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a, ThemeClassificationTypeNameKeys.GlyphMargin)))
 					continue;
 				var mouseProcessor = lazy.Value.GetAssociatedMouseProcessor(wpfTextViewHost, this);
-				if (mouseProcessor == null)
+				if (mouseProcessor is null)
 					continue;
 				list.Add(mouseProcessor);
 			}
@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void InitializeGlyphFactories(IContentType? beforeContentType, IContentType afterContentType) {
-			Debug.Assert(iconCanvas != null);
+			Debug.Assert(!(iconCanvas is null));
 			var oldFactories = new Dictionary<IGlyphFactoryProvider, IGlyphFactory>();
 			foreach (var info in glyphFactories.Values)
 				oldFactories[info.FactoryProvider] = info.Factory;
@@ -205,8 +205,8 @@ namespace dnSpy.Text.Editor {
 					continue;
 				IGlyphFactory? glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
-					Debug.Assert(type != null);
-					if (type == null)
+					Debug.Assert(!(type is null));
+					if (type is null)
 						break;
 					Debug.Assert(!glyphFactories.ContainsKey(type));
 					if (glyphFactories.ContainsKey(type))
@@ -215,12 +215,12 @@ namespace dnSpy.Text.Editor {
 					if (!typeof(IGlyphTag).IsAssignableFrom(type))
 						continue;
 
-					if (glyphFactory == null) {
+					if (glyphFactory is null) {
 						if (oldFactories.TryGetValue(lazy.Value, out glyphFactory))
 							oldFactories.Remove(lazy.Value);
 						else {
 							glyphFactory = lazy.Value.GetGlyphFactory(wpfTextViewHost.TextView, this);
-							if (glyphFactory == null)
+							if (glyphFactory is null)
 								break;
 							newFactory = true;
 						}
@@ -238,13 +238,13 @@ namespace dnSpy.Text.Editor {
 				foreach (var c in childCanvases)
 					iconCanvas.Children.Add(c);
 
-				if (beforeContentType != null)
+				if (!(beforeContentType is null))
 					RefreshEverything();
 			}
 		}
 
 		void Initialize() {
-			if (mouseProcessorCollection != null)
+			if (!(mouseProcessorCollection is null))
 				return;
 			iconCanvas = new Canvas { Background = Brushes.Transparent };
 			Children.Add(iconCanvas);
@@ -289,7 +289,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void OnNewLayout(IList<ITextViewLine> newOrReformattedLines, IList<ITextViewLine> translatedLines) {
-			Debug.Assert(lineInfos != null);
+			Debug.Assert(!(lineInfos is null));
 			var newInfos = new Dictionary<object, LineInfo>();
 
 			foreach (var line in newOrReformattedLines)
@@ -324,8 +324,8 @@ namespace dnSpy.Text.Editor {
 
 		void AddLine(Dictionary<object, LineInfo> newInfos, ITextViewLine line) {
 			var wpfLine = line as IWpfTextViewLine;
-			Debug.Assert(wpfLine != null);
-			if (wpfLine == null)
+			Debug.Assert(!(wpfLine is null));
+			if (wpfLine is null)
 				return;
 			var info = new LineInfo(line, CreateIconInfos(wpfLine));
 			newInfos.Add(line.IdentityTag, info);
@@ -334,12 +334,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		List<IconInfo> CreateIconInfos(IWpfTextViewLine line) {
-			Debug.Assert(tagAggregator != null);
+			Debug.Assert(!(tagAggregator is null));
 			var icons = new List<IconInfo>();
 			foreach (var mappingSpan in tagAggregator.GetTags(line.ExtentAsMappingSpan)) {
 				var tag = mappingSpan.Tag;
-				Debug.Assert(tag != null);
-				if (tag == null)
+				Debug.Assert(!(tag is null));
+				if (tag is null)
 					continue;
 				// Fails if someone forgot to Export(typeof(IGlyphFactoryProvider)) with the correct tag types
 				bool b = glyphFactories.TryGetValue(tag.GetType(), out var factoryInfo);
@@ -350,7 +350,7 @@ namespace dnSpy.Text.Editor {
 					if (!line.IntersectsBufferSpan(span))
 						continue;
 					var elem = factoryInfo.Factory.GenerateGlyph(line, tag);
-					if (elem == null)
+					if (elem is null)
 						continue;
 					elem.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 					var iconInfo = new IconInfo(factoryInfo.Order, elem);
@@ -375,14 +375,14 @@ namespace dnSpy.Text.Editor {
 		void Update(SnapshotSpan span, ref HashSet<ITextViewLine>? checkedLines) {
 			Debug.Assert(span.Snapshot == wpfTextViewHost.TextView.TextSnapshot);
 			var intersection = span.Intersection(wpfTextViewHost.TextView.TextViewLines.FormattedSpan);
-			if (intersection == null)
+			if (intersection is null)
 				return;
 			var point = intersection.Value.Start;
 			while (point <= intersection.Value.End) {
 				var line = wpfTextViewHost.TextView.TextViewLines.GetTextViewLineContainingBufferPosition(point);
-				if (line == null)
+				if (line is null)
 					break;
-				if (checkedLines == null)
+				if (checkedLines is null)
 					checkedLines = new HashSet<ITextViewLine>();
 				if (!checkedLines.Contains(line)) {
 					checkedLines.Add(line);
@@ -395,7 +395,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Update(IWpfTextViewLine line) {
-			Debug.Assert(lineInfos != null);
+			Debug.Assert(!(lineInfos is null));
 			Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
 			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
@@ -411,7 +411,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateBackground() {
-			if (editorFormatMap == null)
+			if (editorFormatMap is null)
 				return;
 			var props = editorFormatMap.GetProperties(ThemeClassificationTypeNameKeys.GlyphMargin);
 			var newBackground = ResourceDictionaryUtilities.GetBackgroundBrush(props, Brushes.Transparent);
@@ -437,9 +437,9 @@ namespace dnSpy.Text.Editor {
 
 		void UnregisterEvents() {
 			hasRegisteredEvents = false;
-			if (editorFormatMap != null)
+			if (!(editorFormatMap is null))
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
-			if (tagAggregator != null)
+			if (!(tagAggregator is null))
 				tagAggregator.BatchedTagsChanged -= TagAggregator_BatchedTagsChanged;
 			wpfTextViewHost.TextView.LayoutChanged -= TextView_LayoutChanged;
 		}

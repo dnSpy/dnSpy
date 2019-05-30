@@ -54,7 +54,7 @@ namespace dnSpy.Text.Editor {
 		double lineNumberTextRight;
 
 		protected LineNumberMarginBase(string marginName, IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider) {
-			if (classificationFormatMapService == null)
+			if (classificationFormatMapService is null)
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
 			identityTagToLine = new Dictionary<object, Line>();
 			this.marginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
@@ -157,7 +157,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextViewHost.IsClosed)
 				return;
 			var textViewLines = wpfTextViewHost.TextView.TextViewLines;
-			if (textViewLines == null)
+			if (textViewLines is null)
 				return;
 
 			foreach (var viewLine in newOrReformattedLines) {
@@ -176,9 +176,9 @@ namespace dnSpy.Text.Editor {
 			LineNumberState? lineNumberState = null;
 			foreach (var viewLine in textViewLines) {
 				var lineNumber = GetLineNumber(viewLine, ref lineNumberState);
-				if (lineNumber == null)
+				if (lineNumber is null)
 					continue;
-				Debug.Assert(lineNumberState != null);
+				Debug.Assert(!(lineNumberState is null));
 
 				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line) || line.Number != lineNumber)
 					line = CreateLine(viewLine, lineNumberState, lineNumber.Value);
@@ -217,7 +217,7 @@ namespace dnSpy.Text.Editor {
 			useDisplayMode = wpfTextViewHost.TextView.FormattedLineSource.UseDisplayMode;
 			var textFormattingMode = useDisplayMode ? TextFormattingMode.Display : TextFormattingMode.Ideal;
 			var defaultProps = GetDefaultTextFormattingRunProperties();
-			if (defaultProps == null)
+			if (defaultProps is null)
 				return;
 			var brush = defaultProps.BackgroundBrush ?? Brushes.Transparent;
 			if (brush.CanFreeze)
@@ -308,7 +308,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			public Visual GetOrCreateVisual() {
-				if (drawingVisual == null) {
+				if (drawingVisual is null) {
 					drawingVisual = new DrawingVisual();
 					var dc = drawingVisual.RenderOpen();
 					textLine.Draw(dc, new Point(right - textLine.Width, top), InvertAxes.None);

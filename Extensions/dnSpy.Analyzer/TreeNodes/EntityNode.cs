@@ -41,10 +41,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override bool HandleModelUpdated(IDsDocument[] documents) {
-			if (Member?.Module == null)
+			if (Member?.Module is null)
 				return false; // remove this node
 			if ((Member is IField || Member is IMethod || Member is PropertyDef || Member is EventDef) &&
-				Member.DeclaringType == null)
+				Member.DeclaringType is null)
 				return false;
 			HandleModelUpdated(TreeNode, documents);
 			return true;

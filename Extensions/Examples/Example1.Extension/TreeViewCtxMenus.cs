@@ -35,7 +35,7 @@ namespace Example1.Extension {
 
 			// Extract the data needed by the context
 			var nodes = context.Find<TreeNodeData[]>();
-			if (nodes == null)
+			if (nodes is null)
 				return null;
 			var newNodes = nodes.OfType<DocumentTreeNodeData>();
 
@@ -84,7 +84,7 @@ namespace Example1.Extension {
 	sealed class TVCommand5 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var node = GetTokenNode(context);
-			if (node != null) {
+			if (!(node is null)) {
 				try {
 					Clipboard.SetText($"{node.Reference!.MDToken.Raw:X8}");
 				}
@@ -100,19 +100,19 @@ namespace Example1.Extension {
 
 		public override string? GetHeader(TVContext context) {
 			var node = GetTokenNode(context);
-			if (node == null)
+			if (node is null)
 				return string.Empty;
 			return $"Copy token {node.Reference!.MDToken.Raw:X8}";
 		}
 
-		public override bool IsVisible(TVContext context) => GetTokenNode(context) != null;
+		public override bool IsVisible(TVContext context) => !(GetTokenNode(context) is null);
 	}
 
 	[ExportMenuItem(Header = "Copy Second Instruction", Group = Constants.GROUP_TREEVIEW, Order = 50)]
 	sealed class TVCommand6 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var instr = GetSecondInstruction(context);
-			if (instr != null) {
+			if (!(instr is null)) {
 				try {
 					Clipboard.SetText($"Second instruction: {instr}");
 				}
@@ -124,14 +124,14 @@ namespace Example1.Extension {
 			if (context.Nodes.Length == 0)
 				return null;
 			var methNode = context.Nodes[0] as MethodNode;
-			if (methNode == null)
+			if (methNode is null)
 				return null;
 			var body = methNode.MethodDef.Body;
-			if (body == null || body.Instructions.Count < 2)
+			if (body is null || body.Instructions.Count < 2)
 				return null;
 			return body.Instructions[1];
 		}
 
-		public override bool IsEnabled(TVContext context) => GetSecondInstruction(context) != null;
+		public override bool IsEnabled(TVContext context) => !(GetSecondInstruction(context) is null);
 	}
 }

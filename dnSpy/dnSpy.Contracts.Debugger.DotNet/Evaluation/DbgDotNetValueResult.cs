@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// true if there was an error, see <see cref="ErrorMessage"/>
 		/// </summary>
-		public bool HasError => ErrorMessage != null;
+		public bool HasError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// true if there's no error and no exception was thrown

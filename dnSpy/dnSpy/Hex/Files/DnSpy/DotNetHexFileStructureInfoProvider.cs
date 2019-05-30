@@ -114,12 +114,12 @@ namespace dnSpy.Hex.Files.DnSpy {
 
 		object? GetToolTip(DotNetEmbeddedResource resource, HexPosition position) {
 			var mdHeaders = resource.ResourceProvider.File.GetHeaders<DotNetMetadataHeaders>();
-			Debug.Assert(mdHeaders != null);
-			if (mdHeaders == null)
+			Debug.Assert(!(mdHeaders is null));
+			if (mdHeaders is null)
 				return null;
 			var rec = mdHeaders.TablesStream?.GetRecord(resource.Token);
-			Debug.Assert(rec != null);
-			if (rec == null)
+			Debug.Assert(!(rec is null));
+			if (rec is null)
 				return null;
 			const int NameColumn = 2;
 			var filteredName = NameUtils.FilterName(mdHeaders.StringsStream?.Read(rec.ReadColumn(NameColumn)) ?? string.Empty);
@@ -266,8 +266,8 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var mdTable = tablesHeap.MDTables[(int)tableRecord.Token.Table];
 			int offset = (int)(position - tableRecord.Span.Span.Start).ToUInt64();
 			var column = mdTable.Columns.FirstOrDefault(a => a.Offset <= offset && offset < a.Offset + a.Size);
-			Debug.Assert(column != null);
-			if (column == null)
+			Debug.Assert(!(column is null));
+			if (column is null)
 				return null;
 			var mdHeaders = tablesHeap.Metadata;
 
@@ -281,7 +281,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			switch (column.ColumnSize) {
 			case ColumnSize.Strings:
 				var s = GetString(mdHeaders.StringsStream, column, pos);
-				if (s == null)
+				if (s is null)
 					break;
 				contentCreator.Writer.WriteSpace();
 				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
@@ -291,7 +291,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 
 			case ColumnSize.GUID:
 				var g = GetGuid(mdHeaders.GUIDStream, column, pos);
-				if (g == null)
+				if (g is null)
 					break;
 				contentCreator.Writer.WriteSpace();
 				contentCreator.Writer.Write("(", PredefinedClassifiedTextTags.Punctuation);
@@ -304,7 +304,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		}
 
 		static string? GetString(StringsHeap? heap, ColumnInfo column, HexPosition position) {
-			if (heap == null)
+			if (heap is null)
 				return null;
 			uint value = column.Size == 2 ? heap.Span.Buffer.ReadUInt16(position) : heap.Span.Buffer.ReadUInt32(position);
 			if (value == 0)
@@ -314,7 +314,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		}
 
 		static Guid? GetGuid(GUIDHeap? heap, ColumnInfo column, HexPosition position) {
-			if (heap == null)
+			if (heap is null)
 				return null;
 			uint index = column.Size == 2 ? heap.Span.Buffer.ReadUInt16(position) : heap.Span.Buffer.ReadUInt32(position);
 			return heap.Read(index);

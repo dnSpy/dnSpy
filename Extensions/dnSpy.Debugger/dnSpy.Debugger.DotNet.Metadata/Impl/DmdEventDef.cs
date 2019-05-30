@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdMethodInfo[] GetOtherMethods(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializeEventMethods();
 			var otherMethods = f.__otherMethods_DONT_USE!;
 			if (otherMethods.Count == 0)
@@ -61,32 +61,32 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdMethodInfo? GetAddMethod(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializeEventMethods();
 			return AccessorUtils.FilterAccessor(options, f.__addMethod_DONT_USE!);
 		}
 
 		public sealed override DmdMethodInfo? GetRemoveMethod(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializeEventMethods();
 			return AccessorUtils.FilterAccessor(options, f.__removeMethod_DONT_USE!);
 		}
 
 		public sealed override DmdMethodInfo? GetRaiseMethod(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializeEventMethods();
 			return AccessorUtils.FilterAccessor(options, f.__raiseMethod_DONT_USE!);
 		}
 
 		void InitializeEventMethods() {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE != null)
+			if (!(f.__otherMethods_DONT_USE is null))
 				return;
 			GetMethods(out var addMethod, out var removeMethod, out var raiseMethod, out var otherMethods);
 			lock (LockObject) {
-				if (f.__otherMethods_DONT_USE == null) {
+				if (f.__otherMethods_DONT_USE is null) {
 					f.__addMethod_DONT_USE = addMethod;
 					f.__removeMethod_DONT_USE = removeMethod;
 					f.__raiseMethod_DONT_USE = raiseMethod;
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE != null)
+			if (!(f.__customAttributes_DONT_USE is null))
 				return f.__customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);

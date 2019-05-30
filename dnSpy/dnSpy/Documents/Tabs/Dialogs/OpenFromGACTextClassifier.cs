@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var gacContext = context as OpenFromGACTextClassifierContext;
-			if (gacContext == null)
+			if (gacContext is null)
 				yield break;
 			if (gacContext.Tag != PredefinedTextClassifierTags.GacDialogName && gacContext.Tag != PredefinedTextClassifierTags.GacDialogVersion)
 				yield break;

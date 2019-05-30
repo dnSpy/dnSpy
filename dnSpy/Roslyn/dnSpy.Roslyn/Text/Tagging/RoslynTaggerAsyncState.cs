@@ -25,7 +25,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 	sealed class RoslynTaggerAsyncState {
 		public RoslynTaggerAsyncState() { }
 
-		public bool IsValid => SyntaxRoot != null && SemanticModel != null && Workspace != null;
+		public bool IsValid => !(SyntaxRoot is null) && !(SemanticModel is null) && !(Workspace is null);
 		public bool IsInitialized { get; private set; }
 		public SyntaxNode? SyntaxRoot { get; private set; }
 		public SemanticModel? SemanticModel { get; private set; }

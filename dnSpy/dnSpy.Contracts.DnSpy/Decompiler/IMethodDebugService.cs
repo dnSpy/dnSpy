@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="self">This</param>
 		/// <returns></returns>
 		public static IMethodDebugService? TryGetMethodDebugService(this IDocumentViewer? self) {
-			if (self == null)
+			if (self is null)
 				return null;
 			return (IMethodDebugService?)self.GetContentData(MethodDebugServiceConstants.MethodDebugServiceKey);
 		}

@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		void WriteSpace() => OutputWrite(" ", DbgTextColor.Text);
 
 		public void Format(DbgDotNetValue value) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			try {
@@ -118,10 +118,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					DbgDotNetValue? objValue = value;
 					DbgDotNetValueResult valueResult = default;
 					try {
-						Debug.Assert(info.fields != null);
+						Debug.Assert(!(info.fields is null));
 						foreach (var field in info.fields) {
 							valueResult = runtime.LoadField(evalInfo, objValue, field);
-							if (valueResult.Value != null)
+							if (!(valueResult.Value is null))
 								values.Add(valueResult.Value);
 							if (valueResult.HasError || valueResult.ValueIsException) {
 								objValue = null;
@@ -130,7 +130,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 							objValue = valueResult.Value;
 						}
 						valueResult = default;
-						if (objValue == null) {
+						if (objValue is null) {
 							OutputWrite("???", DbgTextColor.Error);
 							break;
 						}
@@ -151,16 +151,16 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		}
 
 		bool TryFormatKeyValuePair(DbgDotNetValue value, (DmdFieldInfo? keyField, DmdFieldInfo? valueField) info) {
-			if ((object?)info.keyField == null)
+			if (info.keyField is null)
 				return false;
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult keyResult = default, valueResult = default;
 			try {
 				keyResult = runtime.LoadField(evalInfo, value, info.keyField);
-				if (keyResult.ErrorMessage != null || keyResult.ValueIsException)
+				if (!(keyResult.ErrorMessage is null) || keyResult.ValueIsException)
 					return false;
 				valueResult = runtime.LoadField(evalInfo, value, info.valueField!);
-				if (valueResult.ErrorMessage != null || valueResult.ValueIsException)
+				if (!(valueResult.ErrorMessage is null) || valueResult.ValueIsException)
 					return false;
 
 				OutputWrite(KeyValuePairTypeOpenParen, DbgTextColor.Punctuation);
@@ -187,7 +187,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			if (!FuncEval || !UseToString)
 				return false;
 			var s = new ToStringFormatter(evalInfo).GetToStringValue(value);
-			if (s == null)
+			if (s is null)
 				return false;
 			OutputWrite(TypeNameOpenParen + s + TypeNameCloseParen, DbgTextColor.ToStringEval);
 			return true;

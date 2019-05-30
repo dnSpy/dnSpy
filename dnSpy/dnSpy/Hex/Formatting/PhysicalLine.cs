@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Formatting {
 		public HexBufferLineFormatter BufferLines => Lines[0].BufferLine.LineProvider;
 
 		public PhysicalLine(HexFormattedLine[] lines) {
-			if (lines == null)
+			if (lines is null)
 				throw new ArgumentNullException(nameof(lines));
 			if (lines.Length == 0)
 				throw new ArgumentException();

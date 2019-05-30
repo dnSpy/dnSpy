@@ -61,7 +61,7 @@ namespace dnSpy.BackgroundImage {
 			public SettingsInfo(Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> lazy) {
 				Lazy = lazy;
 				var defaultSettings = lazy.Value.GetDefaultImageSettings();
-				RawSettings = defaultSettings == null ? new RawSettings(lazy.Value.Id) : new RawSettings(lazy.Value.Id, defaultSettings);
+				RawSettings = defaultSettings is null ? new RawSettings(lazy.Value.Id) : new RawSettings(lazy.Value.Id, defaultSettings);
 				BackgroundImageSettings = new BackgroundImageSettings(RawSettings);
 			}
 		}
@@ -83,7 +83,7 @@ namespace dnSpy.BackgroundImage {
 				var rawSettings = new RawSettings(section);
 				if (!rawSettings.IsValid)
 					continue;
-				Debug.Assert(rawSettings.Id != null);
+				Debug.Assert(!(rawSettings.Id is null));
 				if (!settingsInfos.TryGetValue(rawSettings.Id, out var info))
 					continue;
 				if (!allSettingsIds.Contains(rawSettings.Id))
@@ -109,10 +109,10 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void SetRawSettings(RawSettings[] settings) {
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			foreach (var rs in settings) {
-				if (rs.Id == null)
+				if (rs.Id is null)
 					continue;
 				if (!settingsInfos.TryGetValue(rs.Id, out var info))
 					continue;
@@ -122,7 +122,7 @@ namespace dnSpy.BackgroundImage {
 				info.BackgroundImageSettings.RaiseSettingsChanged();
 				if (info.Lazy.Value.UserVisible) {
 					var rootSection = settingsService.GetOrCreateSection(SETTINGS_GUID);
-					if (info.SettingsSection != null)
+					if (!(info.SettingsSection is null))
 						rootSection.RemoveSection(info.SettingsSection);
 					info.SettingsSection = rootSection.CreateSection(SettingsName);
 					info.RawSettings.SaveSettings(info.SettingsSection);

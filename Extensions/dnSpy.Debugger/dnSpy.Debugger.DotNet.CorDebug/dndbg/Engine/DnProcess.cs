@@ -98,7 +98,7 @@ namespace dndbg.Engine {
 		public DnAppDomain? TryGetValidAppDomain(ICorDebugAppDomain comAppDomain) {
 			Debugger.DebugVerifyThread();
 			var appDomain = appDomains.TryGet(comAppDomain);
-			if (appDomain == null)
+			if (appDomain is null)
 				return null;
 			if (!appDomain.CheckValid())
 				return null;
@@ -139,7 +139,7 @@ namespace dndbg.Engine {
 		internal DnThread? ThreadExited(ICorDebugThread? comThread) {
 			var thread = threads.TryGet(comThread);
 			// Sometimes we don't get a CreateThread message
-			if (thread != null) {
+			if (!(thread is null)) {
 				thread.SetHasExited();
 				threads.Remove(comThread);
 			}

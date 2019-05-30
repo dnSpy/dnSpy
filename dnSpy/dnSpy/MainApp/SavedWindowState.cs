@@ -35,8 +35,8 @@ namespace dnSpy.MainApp {
 		public SavedWindowState(MetroWindow window) {
 			Bounds = window.RestoreBounds;
 			var source = PresentationSource.FromVisual(window);
-			Debug.Assert(source != null);
-			if (source != null) {
+			Debug.Assert(!(source is null));
+			if (!(source is null)) {
 				var t = Bounds;
 				t = Rect.Transform(Bounds, source.CompositionTarget.TransformToDevice);
 				Bounds = new Rect(t.TopLeft, Bounds.Size);

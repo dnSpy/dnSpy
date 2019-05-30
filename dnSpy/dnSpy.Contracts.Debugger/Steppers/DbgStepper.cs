@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Debugger.Steppers {
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool HasError => Error != null;
+		public bool HasError => !(Error is null);
 
 		/// <summary>
 		/// Constructor

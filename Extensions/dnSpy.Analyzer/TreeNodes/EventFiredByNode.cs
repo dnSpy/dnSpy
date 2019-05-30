@@ -40,7 +40,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			eventBackingField = GetBackingField(analyzedEvent);
 			var eventType = analyzedEvent.EventType.ResolveTypeDef();
-			if (eventType != null)
+			if (!(eventType is null))
 				eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
@@ -76,14 +76,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 						}
 					}
 					if (readBackingField && (code == Code.Callvirt || code == Code.Call)) {
-						if (instr.Operand is IMethod mr && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && mr.ResolveMethodDef() == eventFiringMethod) {
+						if (instr.Operand is IMethod mr && !(eventFiringMethod is null) && mr.Name == eventFiringMethod.Name && mr.ResolveMethodDef() == eventFiringMethod) {
 							foundInstr = instr;
 							break;
 						}
 					}
 				}
 
-				if (foundInstr != null) {
+				if (!(foundInstr is null)) {
 					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
@@ -101,7 +101,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var fieldName = ev.Name;
 			var vbStyleFieldName = fieldName + "Event";
 			var fieldType = ev.EventType;
-			if (fieldType == null)
+			if (fieldType is null)
 				return null;
 
 			foreach (var fd in ev.DeclaringType.Fields) {
@@ -114,6 +114,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 
-		public static bool CanShow(EventDef ev) => GetBackingField(ev) != null;
+		public static bool CanShow(EventDef ev) => !(GetBackingField(ev) is null);
 	}
 }

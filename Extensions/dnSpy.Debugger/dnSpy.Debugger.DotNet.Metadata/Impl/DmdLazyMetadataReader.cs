@@ -38,9 +38,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdMetadataReader InitializeMetadataReader() {
 			lock (lockObj) {
 				var reader = __metadataReader_DONT_USE;
-				if (reader != null)
+				if (!(reader is null))
 					return reader;
-				if (module == null)
+				if (module is null)
 					throw new InvalidOperationException();
 				reader = metadataReaderFactory!(module, getMetadata!());
 				module = null;

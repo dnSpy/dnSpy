@@ -48,14 +48,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			nodeStack.Push(node);
 
 			MethodDebugInfoBuilder mapping = node.Annotation<MethodDebugInfoBuilder>();
-			if (mapping != null) {
+			if (!(mapping is null)) {
 				parentMethodDebugInfoBuilder.Push(currentMethodDebugInfoBuilder);
 				currentMethodDebugInfoBuilder = mapping;
 			}
 			// For ctor/cctor field initializers
 			var mms = node.Annotation<List<Tuple<MethodDebugInfoBuilder, List<ILSpan>>>>();
-			if (mms != null) {
-				Debug.Assert(multiMappings == null);
+			if (!(mms is null)) {
+				Debug.Assert(multiMappings is null);
 				multiMappings = mms;
 			}
 		}
@@ -64,8 +64,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			if (nodeStack.Pop() != node)
 				throw new InvalidOperationException();
 
-			if (node.Annotation<MethodDebugInfoBuilder>() != null) {
-				Debug.Assert(currentMethodDebugInfoBuilder != null);
+			if (!(node.Annotation<MethodDebugInfoBuilder>() is null)) {
+				Debug.Assert(!(currentMethodDebugInfoBuilder is null));
 				if (context.CalculateILSpans) {
 					foreach (var ns in context.UsingNamespaces)
 						currentMethodDebugInfoBuilder.Scope.Imports.Add(ImportInfo.CreateNamespace(ns));
@@ -74,7 +74,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				currentMethodDebugInfoBuilder = parentMethodDebugInfoBuilder.Pop();
 			}
 			var mms = node.Annotation<List<Tuple<MethodDebugInfoBuilder, List<ILSpan>>>>();
-			if (mms != null) {
+			if (!(mms is null)) {
 				Debug.Assert(mms == multiMappings);
 				if (mms == multiMappings) {
 					foreach (var mm in mms)
@@ -86,25 +86,25 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		public void WriteIdentifier(string identifier, object data, object extraData) {
 			var definition = GetCurrentDefinition();
-			if (definition != null) {
+			if (!(definition is null)) {
 				output.Write(IdentifierEscaper.Escape(identifier), definition, DecompilerReferenceFlags.Definition, data);
 				return;
 			}
 
 			var memberRef = GetCurrentMemberReference() ?? (object?)(extraData as NamespaceReference);
-			if (memberRef != null) {
+			if (!(memberRef is null)) {
 				output.Write(IdentifierEscaper.Escape(identifier), memberRef, DecompilerReferenceFlags.None, data);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
-			if (definition != null) {
+			if (!(definition is null)) {
 				output.Write(IdentifierEscaper.Escape(identifier), definition, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, data);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
-			if (memberRef != null) {
+			if (!(memberRef is null)) {
 				output.Write(IdentifierEscaper.Escape(identifier), memberRef, DecompilerReferenceFlags.Local, data);
 				return;
 			}
@@ -114,16 +114,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		IMemberRef? GetCurrentMemberReference() {
 			AstNode node = nodeStack.Peek();
-			if (node.Annotation<ILVariable>() != null)
+			if (!(node.Annotation<ILVariable>() is null))
 				return null;
 			if (node.Role == AstNode.Roles.Type && node.Parent is ObjectCreationExpression)
 				node = node.Parent;
 			var memberRef = node.Annotation<IMemberRef>();
-			if (memberRef == null && node is Identifier) {
+			if (memberRef is null && node is Identifier) {
 				node = node.Parent ?? node;
 				memberRef = node.Annotation<IMemberRef>();
 			}
-			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreationExpression)) {
+			if (memberRef is null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreationExpression)) {
 				memberRef = node.Parent.Annotation<IMemberRef>();
 			}
 			return memberRef;
@@ -132,14 +132,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		object? GetCurrentLocalReference() {
 			AstNode node = nodeStack.Peek();
 			ILVariable variable = node.Annotation<ILVariable>();
-			if (variable == null && node.Parent is IdentifierExpression)
+			if (variable is null && node.Parent is IdentifierExpression)
 				variable = node.Parent.Annotation<ILVariable>();
-			if (variable != null)
+			if (!(variable is null))
 				return variable.GetTextReferenceObject();
 			var lbl = (node.Parent?.Parent as GoToStatement)?.Label ?? (node.Parent?.Parent as LabelDeclarationStatement)?.Label;
-			if (lbl != null) {
-				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
-				if (method != null)
+			if (!(lbl is null)) {
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => !(mr is null) && mr.IsMethod);
+				if (!(method is null))
 					return method.ToString() + lbl;
 			}
 			return null;
@@ -150,30 +150,30 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			if (node is Identifier && node.Parent is CatchBlock)
 				node = node.Parent;
 			var parameterDef = node.Annotation<Parameter>();
-			if (parameterDef != null)
+			if (!(parameterDef is null))
 				return parameterDef;
 			if (node is ParameterDeclaration) {
 				node = ((ParameterDeclaration)node).Name;
 				parameterDef = node.Annotation<Parameter>();
-				if (parameterDef != null)
+				if (!(parameterDef is null))
 					return parameterDef;
 			}
 
 			if (node is VariableIdentifier) {
 				var variable = ((VariableIdentifier)node).Name.Annotation<ILVariable>();
-				if (variable != null)
+				if (!(variable is null))
 					return variable.GetTextReferenceObject();
 				node = node.Parent ?? node;
 			}
 			if (node is VariableDeclaratorWithTypeAndInitializer || node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
 				var variable = node.Annotation<ILVariable>();
-				if (variable != null)
+				if (!(variable is null))
 					return variable.GetTextReferenceObject();
 			}
 
 			if (node is LabelDeclarationStatement label) {
-				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
-				if (method != null)
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => !(mr is null) && mr.IsMethod);
+				if (!(method is null))
 					return method.ToString() + label.Label;
 			}
 
@@ -182,7 +182,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		object? GetCurrentDefinition() {
-			if (nodeStack == null || nodeStack.Count == 0)
+			if (nodeStack is null || nodeStack.Count == 0)
 				return null;
 
 			var node = nodeStack.Peek();
@@ -205,18 +205,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		public void WriteKeyword(string keyword) {
 			var memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
-			if (memberRef != null && (node is PrimitiveType || node is InstanceExpression))
+			if (!(memberRef is null) && (node is PrimitiveType || node is InstanceExpression))
 				output.Write(keyword, memberRef, DecompilerReferenceFlags.None, BoxedTextColor.Keyword);
-			else if (memberRef != null && (node is ConstructorDeclaration && keyword == "New"))
+			else if (!(memberRef is null) && (node is ConstructorDeclaration && keyword == "New"))
 				output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
-			else if (memberRef != null && (node is Accessor && (keyword == "Get" || keyword == "Set" || keyword == "AddHandler" || keyword == "RemoveHandler" || keyword == "RaiseEvent"))) {
+			else if (!(memberRef is null) && (node is Accessor && (keyword == "Get" || keyword == "Set" || keyword == "AddHandler" || keyword == "RemoveHandler" || keyword == "RaiseEvent"))) {
 				if (canPrintAccessor)
 					output.Write(keyword, memberRef, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 				else
 					output.Write(keyword, BoxedTextColor.Keyword);
 				canPrintAccessor = !canPrintAccessor;
 			}
-			else if (memberRef != null && node is OperatorDeclaration && keyword == "Operator")
+			else if (!(memberRef is null) && node is OperatorDeclaration && keyword == "Operator")
 				output.Write(keyword, memberRef, DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 			else
 				output.Write(keyword, BoxedTextColor.Keyword);
@@ -227,7 +227,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			var memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 
-			bool addRef = memberRef != null &&
+			bool addRef = !(memberRef is null) &&
 					(node is BinaryOperatorExpression ||
 					node is UnaryOperatorExpression ||
 					node is AssignmentExpression);
@@ -235,7 +235,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			// Add a ref to the method if it's a delegate call
 			if (!addRef && node is InvocationExpression && memberRef is IMethod) {
 				var md = Resolve(memberRef as IMethod);
-				if (md != null && md.DeclaringType != null && md.DeclaringType.IsDelegate)
+				if (!(md is null) && !(md.DeclaringType is null) && md.DeclaringType.IsDelegate)
 					addRef = true;
 			}
 
@@ -261,7 +261,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		public void WriteComment(bool isDocumentation, string content, CSharp2.CommentReference[] refs) {
 			if (isDocumentation) {
-				Debug.Assert(refs == null);
+				Debug.Assert(refs is null);
 				output.Write("'''", BoxedTextColor.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
@@ -275,7 +275,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		void Write(string content, CSharp2.CommentReference[] refs)
 		{
-			if (refs == null) {
+			if (refs is null) {
 				output.Write(content, BoxedTextColor.Comment);
 				return;
 			}
@@ -285,7 +285,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				var @ref = refs[i];
 				var s = content.Substring(offs, @ref.Length);
 				offs += @ref.Length;
-				if (@ref.Reference == null)
+				if (@ref.Reference is null)
 					output.Write(s, BoxedTextColor.Comment);
 				else
 					output.Write(s, @ref.Reference, @ref.IsLocal ? DecompilerReferenceFlags.Local : DecompilerReferenceFlags.None, BoxedTextColor.Comment);
@@ -327,11 +327,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		public void DebugEnd(AstNode node) {
 			var state = debugStack.Pop();
-			if (currentMethodDebugInfoBuilder != null) {
+			if (!(currentMethodDebugInfoBuilder is null)) {
 				foreach (var ilSpan in ILSpan.OrderAndCompact(GetILSpans(state)))
 					currentMethodDebugInfoBuilder.Add(new SourceStatement(ilSpan, new TextSpan(state.StartLocation, output.NextPosition - state.StartLocation)));
 			}
-			else if (multiMappings != null) {
+			else if (!(multiMappings is null)) {
 				foreach (var mm in multiMappings) {
 					foreach (var ilSpan in ILSpan.OrderAndCompact(mm.Item2))
 						mm.Item1.Add(new SourceStatement(ilSpan, new TextSpan(state.StartLocation, output.NextPosition - state.StartLocation)));
@@ -343,7 +343,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			foreach (var node in state.Nodes) {
 				foreach (var ann in node.Annotations) {
 					var list = ann as IList<ILSpan>;
-					if (list == null)
+					if (list is null)
 						continue;
 					foreach (var ilSpan in list)
 						yield return ilSpan;
@@ -354,8 +354,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		public void AddHighlightedKeywordReference(object reference, int start, int end) {
-			Debug.Assert(reference != null);
-			if (reference != null)
+			Debug.Assert(!(reference is null));
+			if (!(reference is null))
 				output.AddSpanReference(reference, start, end, PredefinedSpanReferenceIds.HighlightRelatedKeywords);
 		}
 

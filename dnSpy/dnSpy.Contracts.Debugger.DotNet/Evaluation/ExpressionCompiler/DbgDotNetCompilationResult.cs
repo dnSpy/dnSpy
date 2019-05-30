@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <summary>
 		/// true if it has an error message (<see cref="ErrorMessage"/>)
 		/// </summary>
-		public bool IsError => ErrorMessage != null;
+		public bool IsError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// Gets the error message or null if there was no error
@@ -161,7 +161,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="index">Parameter/local index or -1 if unknown</param>
 		/// <returns></returns>
 		public static DbgDotNetCompiledExpressionResult Create(string typeName, string methodName, string expression, DbgDotNetText name, DbgEvaluationResultFlags flags, string imageName, DbgDotNetCustomTypeInfo? customTypeInfo = null, ReadOnlyCollection<string>? formatSpecifiers = null, DbgDotNetCompiledExpressionResultFlags resultFlags = DbgDotNetCompiledExpressionResultFlags.None, int index = -1) {
-			if (name.Parts == null)
+			if (name.Parts is null)
 				throw new ArgumentException();
 			return new DbgDotNetCompiledExpressionResult {
 				TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName)),
@@ -185,7 +185,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <param name="errorMessage">Error message, see also <see cref="PredefinedEvaluationErrorMessages"/></param>
 		/// <returns></returns>
 		public static DbgDotNetCompiledExpressionResult CreateError(string expression, DbgDotNetText name, string errorMessage) {
-			if (name.Parts == null)
+			if (name.Parts is null)
 				throw new ArgumentException();
 			return new DbgDotNetCompiledExpressionResult {
 				ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage)),

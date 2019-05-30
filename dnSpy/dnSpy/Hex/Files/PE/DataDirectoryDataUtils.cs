@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Files.PE {
 			if (size == 0)
 				return null;
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			var pos = peHeaders.RvaToBufferPosition(rva);
 			if (pos + size > file.Span.End)

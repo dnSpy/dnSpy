@@ -140,10 +140,10 @@ namespace dnSpy.Contracts.Hex.Files {
 			ComplexData? structure = this;
 			for (;;) {
 				var field = structure.GetFieldByPosition(position);
-				if (field == null)
+				if (field is null)
 					return null;
 				structure = field.Data as ComplexData;
-				if (structure == null) {
+				if (structure is null) {
 					Debug.Assert(field.Data is SimpleData);
 					return field.Data is SimpleData ? field : null;
 				}
@@ -200,7 +200,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="name">Name of field</param>
 		/// <returns></returns>
 		public override BufferField? GetFieldByName(string name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			foreach (var field in Fields) {
 				if (field.Name == name)
@@ -423,7 +423,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="name">Name of field</param>
 		/// <returns></returns>
 		public override BufferField? GetFieldByName(string name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			if (!int.TryParse(name, out int index))
 				return null;
@@ -467,7 +467,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="fields">Array elements</param>
 		public ArrayData(string name, HexBufferSpan span, ArrayField<TData>[] fields)
 			: base(name, span) {
-			if (fields == null)
+			if (fields is null)
 				throw new ArgumentNullException(nameof(fields));
 #if DEBUG
 			for (int i = 1; i < fields.Length; i++) {

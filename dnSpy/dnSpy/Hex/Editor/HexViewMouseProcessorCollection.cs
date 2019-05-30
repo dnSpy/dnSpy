@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		bool AllowMouseEvent(MouseEventArgs e) {
-			if (wpfHexViewImpl != null && wpfHexViewImpl.IsMouseOverOverlayLayerElement(e)) {
+			if (!(wpfHexViewImpl is null) && wpfHexViewImpl.IsMouseOverOverlayLayerElement(e)) {
 				e.Handled = true;
 				return false;
 			}
@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Editor {
 				if (!wpfHexView.Roles.ContainsAny(provider.Metadata.TextViewRoles))
 					continue;
 				var mouseProcessor = provider.Value.GetAssociatedProcessor(wpfHexView);
-				if (mouseProcessor != null)
+				if (!(mouseProcessor is null))
 					list.Add(mouseProcessor);
 			}
 			UIElement? manipulationElem = null;//TODO:

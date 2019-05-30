@@ -38,11 +38,11 @@ namespace dnSpy.Text.Editor {
 		WpfTextViewMarginProviderCollectionProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewMarginProvider, IWpfTextViewMarginMetadata>> wpfTextViewMarginProviders) => this.wpfTextViewMarginProviders = Orderer.Order(wpfTextViewMarginProviders).ToArray();
 
 		public IWpfTextViewMarginProviderCollection Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer, string marginContainerName) {
-			if (wpfTextViewHost == null)
+			if (wpfTextViewHost is null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (marginContainer == null)
+			if (marginContainer is null)
 				throw new ArgumentNullException(nameof(marginContainer));
-			if (marginContainerName == null)
+			if (marginContainerName is null)
 				throw new ArgumentNullException(nameof(marginContainerName));
 			return new WpfTextViewMarginProviderCollection(wpfTextViewMarginProviders, wpfTextViewHost, marginContainer, marginContainerName);
 		}

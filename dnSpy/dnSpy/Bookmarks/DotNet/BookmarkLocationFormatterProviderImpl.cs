@@ -34,7 +34,7 @@ namespace dnSpy.Bookmarks.DotNet {
 			switch (location) {
 			case DotNetMethodBodyBookmarkLocationImpl loc:
 				var formatter = loc.Formatter;
-				if (formatter != null)
+				if (!(formatter is null))
 					return formatter;
 				formatter = bookmarkFormatterService.Value.Create(loc);
 				loc.Formatter = formatter;
@@ -42,7 +42,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 			case DotNetTokenBookmarkLocationImpl loc:
 				formatter = loc.Formatter;
-				if (formatter != null)
+				if (!(formatter is null))
 					return formatter;
 				formatter = bookmarkFormatterService.Value.Create(loc);
 				loc.Formatter = formatter;

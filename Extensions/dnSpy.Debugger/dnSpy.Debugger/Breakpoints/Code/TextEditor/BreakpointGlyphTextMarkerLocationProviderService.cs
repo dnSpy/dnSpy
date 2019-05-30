@@ -39,11 +39,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			this.dbgBreakpointGlyphTextMarkerLocationProviders = dbgBreakpointGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public override GlyphTextMarkerLocationInfo? GetLocation(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint == null)
+			if (breakpoint is null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			foreach (var lz in dbgBreakpointGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(breakpoint);
-				if (loc != null)
+				if (!(loc is null))
 					return loc;
 			}
 			return null;

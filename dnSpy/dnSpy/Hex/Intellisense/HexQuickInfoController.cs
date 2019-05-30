@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Intellisense {
 				if (session.HasInteractiveContent) {
 					foreach (var o in session.QuickInfoContent) {
 						var io = o as IHexInteractiveQuickInfoContent;
-						if (io == null)
+						if (io is null)
 							continue;
 						if (io.KeepQuickInfoOpen || io.IsMouseOverAggregated)
 							return;

@@ -189,7 +189,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public AppSettingsPageImpl(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory, ImageSettingsInfo[] settings) {
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			if (settings.Length == 0)
 				throw new ArgumentException();

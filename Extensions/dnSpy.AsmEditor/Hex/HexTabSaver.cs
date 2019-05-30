@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public static ITabSaver? TryCreate(Lazy<IDocumentSaver> documentSaver, IDocumentTab tab) {
 			var uiContext = tab.UIContext as HexViewDocumentTabUIContext;
-			if (uiContext == null)
+			if (uiContext is null)
 				return null;
 			var buffer = uiContext.HexView.Buffer;
 			return new HexTabSaver(documentSaver, buffer);

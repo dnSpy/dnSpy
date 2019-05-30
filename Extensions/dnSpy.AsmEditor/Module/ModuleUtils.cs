@@ -37,10 +37,10 @@ namespace dnSpy.AsmEditor.Module {
 
 		static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion, ModuleDef? existingModule) {
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
-			if (clrValues == null)
+			if (clrValues is null)
 				throw new ArgumentNullException(nameof(clrVersion));
 			ModuleDef module;
-			if (existingModule == null)
+			if (existingModule is null)
 				module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
 			else {
 				module = existingModule;

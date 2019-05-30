@@ -71,7 +71,7 @@ namespace dndbg.DotNet {
 					return;
 				}
 
-				if (parameterList == null)
+				if (parameterList is null)
 					parameterList = new ParameterList(this, ownerType);
 
 				declaringType2 = ownerType;
@@ -189,12 +189,12 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			var name = MDAPI.GetPinvokeMapName(mdi, token);
-			if (name == null)
+			if (name is null)
 				return null;
 			if (!MDAPI.GetPinvokeMapProps(mdi, token, out var attrs, out uint moduleToken))
 				return null;
 			var mr = readerModule.ResolveToken(moduleToken) as ModuleRef;
-			if (mr == null)
+			if (mr is null)
 				return null;
 
 			return readerModule.UpdateRowId(new ImplMapUser(mr, name, attrs));

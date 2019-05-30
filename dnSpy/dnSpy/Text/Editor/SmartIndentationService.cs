@@ -40,9 +40,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public int? GetDesiredIndentation(ITextView textView, ITextSnapshotLine line) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 
 			var smartIndent = textView.Properties.GetOrCreateSingletonProperty(typeof(SmartIndentationService), () => new Helper(this, textView).SmartIndent);
@@ -50,12 +50,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		ISmartIndent CreateSmartIndent(ITextView textView) {
-			if (providerSelector == null)
+			if (providerSelector is null)
 				providerSelector = new ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>(contentTypeRegistryService, smartIndentProviders);
 			var contentType = textView.TextDataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var smartIndent = p.Value.CreateSmartIndent(textView);
-				if (smartIndent != null)
+				if (!(smartIndent is null))
 					return smartIndent;
 			}
 

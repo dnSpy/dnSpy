@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="tablesHeap">Owner heap</param>
 		public TableRecordData(string tableName, MDToken token, HexBufferSpan span, BufferField[] fields, TablesHeap tablesHeap)
 			: base(tableName, span) {
-			if (fields == null)
+			if (fields is null)
 				throw new ArgumentNullException(nameof(fields));
 			if (fields.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(fields));

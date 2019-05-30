@@ -316,7 +316,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		void WriteIdentifier(string? id) {
-			if (id == null)
+			if (id is null)
 				id = string.Empty;
 			if (id.IndexOfAny(escapeChars) < 0)
 				writer.Append(id);
@@ -490,7 +490,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			FormatTypeName(sig.ReturnType, flags);
 			writer.Append(' ');
 			writer.Append(name);
-			if (genericArguments != null)
+			if (!(genericArguments is null))
 				WriteMethodGenericArguments(genericArguments, flags);
 			if (isMethod || sig.GetParameterTypes().Count != 0 || sig.GetVarArgsParameterTypes().Count != 0) {
 				if (!isMethod)

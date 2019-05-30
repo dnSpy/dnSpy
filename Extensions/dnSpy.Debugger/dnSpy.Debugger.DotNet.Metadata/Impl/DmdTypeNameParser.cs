@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return modAsm.GetName();
 
 			var corLibAsm = (DmdAssemblyImpl?)ownerModule.AppDomain.CorLib;
-			if (corLibAsm != null) {
+			if (!(corLibAsm is null)) {
 				type = corLibAsm.GetType(nonNestedTypeRef, ignoreCase: false);
 				if (!(type is null))
 					return corLibAsm.GetName();
@@ -337,8 +337,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var tspecs = ReadTSpecs();
 
 				IDmdAssemblyName? asmRef;
-				if (typeDefResolver == null) {
-					Debug.Assert(ownerModule != null);
+				if (typeDefResolver is null) {
+					Debug.Assert(!(ownerModule is null));
 					var typeRef = CreateTypeRef(typeNames);
 					var nonNestedTypeRef = (DmdParsedTypeRef)DmdTypeUtilities.GetNonNestedType(typeRef)!;
 					if (readAssemblyReference)
@@ -493,7 +493,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public static void ParseAssemblyName(string asmFullName, out string? name, out Version? version, out string? cultureName, out DmdAssemblyNameFlags flags, out byte[]? publicKey, out byte[]? publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
-			if (asmFullName == null)
+			if (asmFullName is null)
 				throw new ArgumentNullException(nameof(asmFullName));
 			try {
 				using (var parser = new DmdTypeNameParser((DmdModule?)null, asmFullName, null))

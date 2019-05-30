@@ -174,7 +174,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			if (rid == 0)
 				return null;
 			var tblVM = mdVM.TablesStream.TryGetMetadataTable(table);
-			if (tblVM == null)
+			if (tblVM is null)
 				return null;
 			if (rid - 1 >= (uint)tblVM.Collection.Count)
 				return null;
@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		string GetGuidDescription(HexField field) {
 			var g = ReadGuidHeap(field);
-			if (g != null)
+			if (!(g is null))
 				return $"{g.Value.ToString()} (#GUID Heap Index)";
 			return "#GUID Heap Index";
 		}
@@ -348,7 +348,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					InvalidateDescription(i);
 			}
 			var infoCols = InfoColumnIndexes;
-			if (infoCols != null) {
+			if (!(infoCols is null)) {
 				foreach (var index in infoCols) {
 					var field = hexFields[index];
 					if (changes.OverlapsWith(field.Span)) {

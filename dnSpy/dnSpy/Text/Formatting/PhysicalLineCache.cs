@@ -41,7 +41,7 @@ namespace dnSpy.Text.Formatting {
 			for (int i = 0; i < cache.Count; i++) {
 				var physLine = cache[i];
 				var line = physLine.FindFormattedLineByBufferPosition(point);
-				if (line != null)
+				if (!(line is null))
 					return line;
 			}
 			return null;
@@ -50,7 +50,7 @@ namespace dnSpy.Text.Formatting {
 		public void Add(PhysicalLine line) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(PhysicalLineCache));
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (cache.Count == maxCacheSize) {
 				const int oldestIndex = 0;

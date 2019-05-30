@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DocumentViewerContentFactory : IDocumentViewerContentFactory {
 		public IDocumentViewerOutput Output {
 			get {
-				if (documentViewerOutput == null)
+				if (documentViewerOutput is null)
 					throw new InvalidOperationException();
 				return documentViewerOutput;
 			}
@@ -101,10 +101,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			internal Dictionary<string, object>? GetResultDictionary() => resultDict;
 
 			public void AddCustomData(string id, object data) {
-				if (customDataDict == null)
+				if (customDataDict is null)
 					throw new ObjectDisposedException(nameof(IDocumentViewerCustomDataContext));
-				Debug.Assert(resultDict != null);
-				if (id == null)
+				Debug.Assert(!(resultDict is null));
+				if (id is null)
 					throw new ArgumentNullException(nameof(id));
 				if (resultDict.ContainsKey(id))
 					throw new InvalidOperationException(nameof(AddCustomData) + "() can only be called once with the same " + nameof(id));
@@ -112,9 +112,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			public TData[] GetData<TData>(string id) {
-				if (customDataDict == null)
+				if (customDataDict is null)
 					throw new ObjectDisposedException(nameof(IDocumentViewerCustomDataContext));
-				if (id == null)
+				if (id is null)
 					throw new ArgumentNullException(nameof(id));
 
 				if (!customDataDict.TryGetValue(id, out object listObj))
@@ -155,11 +155,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public DocumentViewerContent CreateContent(IDocumentViewer documentViewer, IContentType contentType) {
-			if (documentViewerOutput == null)
+			if (documentViewerOutput is null)
 				throw new InvalidOperationException();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				throw new ArgumentNullException(nameof(documentViewer));
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 
 			documentViewerOutput.SetStatePostProcessing();

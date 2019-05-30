@@ -37,7 +37,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			var td = TryGetTypeDef();
-			if (td != null)
+			if (!(td is null))
 				return dnImgMgr.GetImageReference(td);
 			return DsImages.ClassPublic;
 		}
@@ -54,19 +54,19 @@ namespace dnSpy.Documents.TreeView {
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!createChildren)
 				yield break;
-			if (derivedTypesFinder != null) {
+			if (!(derivedTypesFinder is null)) {
 				derivedTypesFinder.Cancel();
 				derivedTypesFinder = null;
 			}
 			var td = TryGetTypeDef();
-			if (td != null)
+			if (!(td is null))
 				derivedTypesFinder = new DerivedTypesFinder(this, td);
 		}
 		DerivedTypesFinder? derivedTypesFinder;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var td = TryGetTypeDef();
-			if (td == null)
+			if (td is null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
 				new NodePrinter().Write(output, decompiler, td, GetShowToken(options));

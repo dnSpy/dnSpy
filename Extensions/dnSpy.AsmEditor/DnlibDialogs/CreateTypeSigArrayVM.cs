@@ -77,9 +77,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		int? requiredCount;
 
-		public bool IsFiniteCount => RequiredCount != null;
-		public bool IsUnlimitedCount => RequiredCount == null;
-		public int NumberOfTypesLeft => RequiredCount == null ? -1 : RequiredCount.Value - TypeSigCollection.Count;
+		public bool IsFiniteCount => !(RequiredCount is null);
+		public bool IsUnlimitedCount => RequiredCount is null;
+		public int NumberOfTypesLeft => RequiredCount is null ? -1 : RequiredCount.Value - TypeSigCollection.Count;
 		public bool CanNotAddMore => !CanAddMore;
 		public bool CanAddMore => IsEnabled && (IsUnlimitedCount || NumberOfTypesLeft > 0);
 
@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool AddCurrentCanExecute() =>
 			IsEnabled &&
 			(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
-			TypeSigCreator.TypeSig != null;
+			!(TypeSigCreator.TypeSig is null);
 
 		public override bool HasError => !IsUnlimitedCount && NumberOfTypesLeft > 0;
 	}

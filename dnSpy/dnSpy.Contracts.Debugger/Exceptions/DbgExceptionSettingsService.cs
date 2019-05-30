@@ -136,9 +136,9 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="definition">Exception definition</param>
 		/// <param name="settings">Exception settings</param>
 		public DbgExceptionSettingsInfo(DbgExceptionDefinition definition, DbgExceptionSettings settings) {
-			if (definition.Id.Category == null)
+			if (definition.Id.Category is null)
 				throw new ArgumentException();
-			if (settings.Conditions == null)
+			if (settings.Conditions is null)
 				throw new ArgumentException();
 			Definition = definition;
 			Settings = settings;
@@ -165,9 +165,9 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Exception id</param>
 		/// <param name="settings">Settings</param>
 		public DbgExceptionIdAndSettings(DbgExceptionId id, DbgExceptionSettings settings) {
-			if (id.Category == null)
+			if (id.Category is null)
 				throw new ArgumentException();
-			if (settings.Conditions == null)
+			if (settings.Conditions is null)
 				throw new ArgumentException();
 			Id = id;
 			Settings = settings;

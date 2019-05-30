@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = moduleEnum.Next(1, out var module, out uint count);
-					if (hr != 0 || module == null)
+					if (hr != 0 || module is null)
 						break;
 					yield return new CorModule(module);
 				}

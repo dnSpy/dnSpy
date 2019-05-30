@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public TypeSig[]? Create(TypeSigCreatorOptions options, int? count, TypeSig[]? typeSigs) {
 			var data = new CreateTypeSigArrayVM(options, count);
-			if (typeSigs != null)
+			if (!(typeSigs is null))
 				data.TypeSigCollection.AddRange(typeSigs);
 			var win = new CreateTypeSigArrayDlg();
 			win.DataContext = data;

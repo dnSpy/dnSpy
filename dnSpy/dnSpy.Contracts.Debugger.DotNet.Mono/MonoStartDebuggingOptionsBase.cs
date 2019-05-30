@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		protected MonoStartDebuggingOptionsBase CopyTo(MonoStartDebuggingOptionsBase other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.Filename = Filename;

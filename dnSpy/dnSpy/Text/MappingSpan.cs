@@ -34,7 +34,7 @@ namespace dnSpy.Text {
 		PointTrackingMode PointTrackingMode => spanTrackingMode == SpanTrackingMode.EdgeExclusive || spanTrackingMode == SpanTrackingMode.EdgeNegative ? PointTrackingMode.Negative : PointTrackingMode.Positive;
 
 		public MappingSpan(IBufferGraph bufferGraph, SnapshotSpan snapshotSpan, SpanTrackingMode trackingMode) {
-			if (snapshotSpan.Snapshot == null)
+			if (snapshotSpan.Snapshot is null)
 				throw new ArgumentException();
 			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
 			this.snapshotSpan = snapshotSpan;
@@ -42,7 +42,7 @@ namespace dnSpy.Text {
 		}
 
 		public NormalizedSnapshotSpanCollection GetSpans(Predicate<ITextBuffer> match) {
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 			if (match(AnchorBuffer))
 				return GetSpans(AnchorBuffer.CurrentSnapshot);
@@ -50,14 +50,14 @@ namespace dnSpy.Text {
 		}
 
 		public NormalizedSnapshotSpanCollection GetSpans(ITextSnapshot targetSnapshot) {
-			if (targetSnapshot == null)
+			if (targetSnapshot is null)
 				throw new ArgumentNullException(nameof(targetSnapshot));
 			var newSpan = snapshotSpan.TranslateTo(targetSnapshot, spanTrackingMode);
 			return new NormalizedSnapshotSpanCollection(newSpan);
 		}
 
 		public NormalizedSnapshotSpanCollection GetSpans(ITextBuffer targetBuffer) {
-			if (targetBuffer == null)
+			if (targetBuffer is null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 			return GetSpans(targetBuffer.CurrentSnapshot);
 		}

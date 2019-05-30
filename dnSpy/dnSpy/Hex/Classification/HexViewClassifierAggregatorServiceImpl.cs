@@ -37,7 +37,7 @@ namespace dnSpy.Hex.Classification {
 		}
 
 		public override HexClassifier GetClassifier(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return new HexViewClassifierAggregator(hexViewTagAggregatorFactoryService, classificationTypeRegistryService, hexView);
 		}

@@ -48,15 +48,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResultOther(this).FilterType;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(TreeNode.Children.Count == 0 && weakDocListener == null);
-			if (weakDocListener != null)
+			Debug.Assert(TreeNode.Children.Count == 0 && weakDocListener is null);
+			if (!(weakDocListener is null))
 				yield break;
 
 			var file = createBufferFile();
-			if (file == null)
+			if (file is null)
 				yield break;
 			var peStructureProvider = peStructureProviderFactory.TryGetProvider(file);
-			if (peStructureProvider == null)
+			if (peStructureProvider is null)
 				yield break;
 
 			weakDocListener = new WeakDocumentListener(this, file.Buffer);
@@ -70,9 +70,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			for (int i = 0; i < peStructureProvider.Sections.Length; i++)
 				yield return new ImageSectionHeaderNode(peStructureProvider.Sections[i], i);
 			var cor20Hdr = ImageCor20HeaderNode.Create(peStructureProvider.ImageCor20Header);
-			if (cor20Hdr != null)
+			if (!(cor20Hdr is null))
 				yield return cor20Hdr;
-			if (cor20Hdr != null && peStructureProvider.StorageSignature != null) {
+			if (!(cor20Hdr is null) && !(peStructureProvider.StorageSignature is null)) {
 				yield return new StorageSignatureNode(peStructureProvider.StorageSignature);
 				yield return new StorageHeaderNode(peStructureProvider.StorageHeader!);
 				foreach (var storageStream in peStructureProvider.StorageStreams) {
@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			void Buffer_Changed(object sender, HexContentChangedEventArgs e) {
 				var node = (PENode)nodeWeakRef.Target;
-				if (node != null)
+				if (!(node is null))
 					node.Buffer_Changed(sender, e);
 				else {
 					var buffer = (HexBuffer)sender;
@@ -142,7 +142,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			TreeNode.EnsureChildrenLoaded();
 			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
 				var node = child.FindNode(structure, field);
-				if (node != null)
+				if (!(node is null))
 					return node;
 			}
 			return null;
@@ -166,8 +166,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (x == y) return 0;
 			var a = x as PENode;
 			var b = y as PENode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return 0;
 		}
 	}

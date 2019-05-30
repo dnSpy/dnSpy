@@ -46,8 +46,8 @@ namespace dnSpy.Text.Editor {
 			if (textView.TextBuffer != buffer)
 				return null;
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView == null)
+			Debug.Assert(!(wpfTextView is null));
+			if (wpfTextView is null)
 				return null;
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(
 				typeof(IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger),
@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 		IntraTextAdornmentServiceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public IIntraTextAdornmentService Get(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(IntraTextAdornmentService), () => new IntraTextAdornmentService(wpfTextView, viewTagAggregatorFactoryService));
 		}
@@ -116,7 +116,7 @@ namespace dnSpy.Text.Editor {
 		static readonly object providerTag = new object();
 
 		public IntraTextAdornmentService(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) {
-			if (viewTagAggregatorFactoryService == null)
+			if (viewTagAggregatorFactoryService is null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 			adornmentTagInfos = new List<AdornmentTagInfo>();
 			currentLineIdentityTags = new HashSet<object>();
@@ -143,10 +143,10 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateIsSelected(AdornmentTagInfo adornmentInfo, ITextViewLine? line) {
-			if (line == null)
+			if (line is null)
 				line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(adornmentInfo.Span.Start);
-			var selSpan = line == null ? null : wpfTextView.Selection.GetSelectionOnTextViewLine(line);
-			bool selected = selSpan != null && selSpan.Value.Contains(new VirtualSnapshotSpan(adornmentInfo.Span));
+			var selSpan = line is null ? null : wpfTextView.Selection.GetSelectionOnTextViewLine(line);
+			bool selected = !(selSpan is null) && selSpan.Value.Contains(new VirtualSnapshotSpan(adornmentInfo.Span));
 			IntraTextAdornment.SetIsSelected(adornmentInfo.UserUIElement, selected);
 		}
 
@@ -165,7 +165,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			public void Initialize() {
-				if (TopUIElement == null)
+				if (TopUIElement is null)
 					TopUIElement = new ZoomingUIElement(UserUIElement);
 				TopUIElement.Initialize();
 				TopUIElement.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -174,7 +174,7 @@ namespace dnSpy.Text.Editor {
 
 		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
 			if (adornmentTagInfos.Count > 0) {
-				Debug.Assert(layer != null);
+				Debug.Assert(!(layer is null));
 				currentLineIdentityTags.Clear();
 				foreach (var line in wpfTextView.TextViewLines)
 					currentLineIdentityTags.Add(line.IdentityTag);
@@ -194,12 +194,12 @@ namespace dnSpy.Text.Editor {
 
 					foreach (var identityTag in tags) {
 						var adornmentInfo = identityTag as AdornmentTagInfo;
-						Debug.Assert(adornmentInfo != null);
-						if (adornmentInfo == null)
+						Debug.Assert(!(adornmentInfo is null));
+						if (adornmentInfo is null)
 							continue;
 						var bounds = line.GetAdornmentBounds(identityTag);
-						Debug.Assert(bounds != null);
-						if (bounds == null)
+						Debug.Assert(!(bounds is null));
+						if (bounds is null)
 							continue;
 
 						adornmentInfo.Initialize();
@@ -215,14 +215,14 @@ namespace dnSpy.Text.Editor {
 
 				foreach (var identityTag in tags) {
 					var adornmentInfo = identityTag as AdornmentTagInfo;
-					Debug.Assert(adornmentInfo != null);
-					if (adornmentInfo == null)
+					Debug.Assert(!(adornmentInfo is null));
+					if (adornmentInfo is null)
 						continue;
 					var bounds = line.GetAdornmentBounds(identityTag);
-					if (bounds == null)
+					if (bounds is null)
 						continue;
 
-					if (layer == null) {
+					if (layer is null) {
 						layer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.IntraTextAdornment);
 						// Can't do this in the ctor since Selection hasn't been initialized yet
 						wpfTextView.Selection.SelectionChanged += Selection_SelectionChanged;
@@ -240,7 +240,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateAdornmentUIState(ITextViewLine line, AdornmentTagInfo adornmentInfo, TextBounds bounds) {
-			Debug.Assert(adornmentInfo.TopUIElement != null);
+			Debug.Assert(!(adornmentInfo.TopUIElement is null));
 			double verticalScale = line.LineTransform.VerticalScale;
 			adornmentInfo.TopUIElement.SetScale(verticalScale);
 			Canvas.SetTop(adornmentInfo.TopUIElement, bounds.TextTop + line.Baseline - verticalScale * adornmentInfo.Tag!.Baseline);
@@ -248,11 +248,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool AddAdornment(AdornmentTagInfo adornmentInfo, ITextViewLine line) {
-			Debug.Assert(adornmentInfo.TopUIElement != null);
-			Debug.Assert(layer != null);
+			Debug.Assert(!(adornmentInfo.TopUIElement is null));
+			Debug.Assert(!(layer is null));
 			SizeChangedEventHandler sizeChanged = (a, e) => {
 				var bounds = line.GetAdornmentBounds(adornmentInfo);
-				if (bounds == null)
+				if (bounds is null)
 					return;
 				// Sometimes the size just gets changed very little, eg. from 400 to 399.95.....
 				const double d = 0.5;
@@ -290,7 +290,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void RegisterTagger(IIntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger tagger) {
-			if (this.tagger != null)
+			if (!(this.tagger is null))
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}

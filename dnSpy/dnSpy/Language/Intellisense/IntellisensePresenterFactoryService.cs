@@ -39,15 +39,15 @@ namespace dnSpy.Language.Intellisense {
 		IntellisensePresenterFactoryService([ImportMany] IEnumerable<Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>> intellisensePresenterProviders) => this.intellisensePresenterProviders = Orderer.Order(intellisensePresenterProviders).ToArray();
 
 		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
-			if (session == null)
+			if (session is null)
 				throw new ArgumentNullException(nameof(session));
-			var contentTypes = session.TextView.BufferGraph.GetTextBuffers(a => session.GetTriggerPoint(a) != null).Select(a => a.ContentType).ToArray();
+			var contentTypes = session.TextView.BufferGraph.GetTextBuffers(a => !(session.GetTriggerPoint(a) is null)).Select(a => a.ContentType).ToArray();
 			foreach (var lz in intellisensePresenterProviders) {
 				foreach (var contentType in contentTypes) {
 					if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 						continue;
 					var presenter = lz.Value.TryCreateIntellisensePresenter(session);
-					if (presenter != null)
+					if (!(presenter is null))
 						return presenter;
 				}
 			}

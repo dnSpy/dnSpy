@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				byte[] data = buf;
 				int dataSize = (int)info.Size;
 				if (info.ImageLayout == DbgImageLayout.Memory) {
-					if (buf2 == null)
+					if (buf2 is null)
 						buf2 = new byte[buf.Length];
 					data = buf2;
 					progress.ThrowIfCancellationRequested();

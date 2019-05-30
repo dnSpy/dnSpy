@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public static string? GetErrorMessageOrNull(string? error) {
-			if (error == null)
+			if (error is null)
 				return null;
 			return GetErrorMessage(error);
 		}
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Evaluation {
 	[Export(typeof(IPredefinedEvaluationErrorMessagesHelper))]
 	sealed class PredefinedEvaluationErrorMessagesHelperImpl : IPredefinedEvaluationErrorMessagesHelper {
 		public string GetErrorMessage(string error) {
-			if (error == null)
+			if (error is null)
 				throw new ArgumentNullException(nameof(error));
 			return PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(error);
 		}

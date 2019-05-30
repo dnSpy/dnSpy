@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public DotNetCoreAttachToProgramOptions CopyTo(DotNetCoreAttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.ClrModuleVersion = ClrModuleVersion;

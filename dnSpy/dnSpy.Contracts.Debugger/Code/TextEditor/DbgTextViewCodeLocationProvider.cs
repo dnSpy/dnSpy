@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.Code.TextEditor {
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
 		public DbgTextViewBreakpointLocationResult(DbgCodeLocation location, VirtualSnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Locations = new[] { location ?? throw new ArgumentNullException(nameof(location)) };
 			Span = span;
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Debugger.Code.TextEditor {
 		/// <param name="locations">Locations</param>
 		/// <param name="span">Text view span</param>
 		public DbgTextViewBreakpointLocationResult(DbgCodeLocation[] locations, VirtualSnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Locations = locations ?? throw new ArgumentNullException(nameof(locations));
 			Span = span;

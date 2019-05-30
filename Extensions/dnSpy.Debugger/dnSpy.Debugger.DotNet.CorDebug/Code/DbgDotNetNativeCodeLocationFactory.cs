@@ -39,9 +39,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		DbgDotNetNativeCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
 
 		public override DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, ulong nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (corCode == null)
+			if (corCode is null)
 				throw new ArgumentNullException(nameof(corCode));
 			return new DbgDotNetNativeCodeLocationImpl(this, module, moduleId, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
 		}

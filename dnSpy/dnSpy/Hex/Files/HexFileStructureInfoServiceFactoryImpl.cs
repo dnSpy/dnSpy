@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override HexFileStructureInfoService Create(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexFileStructureInfoServiceImpl),
 				() => new HexFileStructureInfoServiceImpl(hexView, hexBufferFileServiceFactory, hexFileStructureInfoProviderFactories));

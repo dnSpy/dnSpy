@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="resourceDataType">Type of data to get</param>
 		/// <returns></returns>
 		public static ResourceData[] GetResourceData(IResourceDataProvider[]? nodes, ResourceDataType resourceDataType) {
-			if (nodes == null)
+			if (nodes is null)
 				return Array.Empty<ResourceData>();
 			return nodes.SelectMany(a => a.GetResourceData(resourceDataType)).ToArray();
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="resourceDataType">Type of data to save</param>
 		/// <param name="ownerWindow">Owner window</param>
 		public static void Save(IResourceDataProvider[]? nodes, bool useSubDirs, ResourceDataType resourceDataType, Window? ownerWindow = null) {
-			if (nodes == null)
+			if (nodes is null)
 				return;
 
 			(ResourceData data, string filename)[] files;

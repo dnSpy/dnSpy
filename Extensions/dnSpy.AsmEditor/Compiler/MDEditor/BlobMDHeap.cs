@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				newData.Add(new byte[1]);
 				currentOffset++;
 			}
-			if (data == null || data.Length == 0)
+			if (data is null || data.Length == 0)
 				return 0;
 			var lengthBytes = GetLengthBytes((uint)data.Length);
 			newData.Add(lengthBytes);
@@ -79,6 +79,6 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		}
 
 		public override bool MustRewriteHeap() => newData.Count > 0;
-		public override bool ExistsInMetadata => blobStream.StreamHeader != null;
+		public override bool ExistsInMetadata => !(blobStream.StreamHeader is null);
 	}
 }

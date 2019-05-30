@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		TVM? EditClone(TVM obj) {
 			if (InlineEditing)
 				return obj;
-			if (editObject == null)
+			if (editObject is null)
 				throw new InvalidOperationException();
 			return editObject.Edit(editString, obj);
 		}
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		TVM? AddNew(TVM obj) {
 			if (InlineEditing)
 				return obj;
-			if (editObject == null)
+			if (editObject is null)
 				throw new InvalidOperationException();
 			return editObject.Edit(createString, obj);
 		}
@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return;
 			int index = Collection.SelectedIndex;
 			var vm = EditClone(Clone(Collection[index]));
-			if (vm != null) {
+			if (!(vm is null)) {
 				Collection[index] = vm;
 				Collection.SelectedIndex = index;
 			}
@@ -125,7 +125,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return;
 
 			var vm = AddNew(Create());
-			if (vm != null) {
+			if (!(vm is null)) {
 				var index = GetAddIndex(vm);
 				Collection.Insert(index, vm);
 				Collection.SelectedIndex = index;

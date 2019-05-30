@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (returnType is null)
 						returnType = Create(t);
 					else {
-						if (types == null)
+						if (types is null)
 							types = GetTypesList();
 						types.Add(Create(t));
 					}

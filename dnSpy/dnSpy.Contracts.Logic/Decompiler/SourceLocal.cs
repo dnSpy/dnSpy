@@ -73,8 +73,8 @@ namespace dnSpy.Contracts.Decompiler {
 			Local = local;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
-			// It's decompiler generated if Local == null && HoistedField == null
-			if (local == null)
+			// It's decompiler generated if Local is null && HoistedField is null
+			if (local is null)
 				flags |= SourceVariableFlags.DecompilerGenerated;
 			else
 				flags &= ~SourceVariableFlags.DecompilerGenerated;
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Decompiler {
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			HoistedField = hoistedField ?? throw new ArgumentNullException(nameof(hoistedField));
 			Type = hoistedField.FieldType;
-			// It's decompiler generated if Local == null && HoistedField == null
+			// It's decompiler generated if Local is null && HoistedField is null
 			Flags = flags & ~SourceVariableFlags.DecompilerGenerated;
 		}
 	}

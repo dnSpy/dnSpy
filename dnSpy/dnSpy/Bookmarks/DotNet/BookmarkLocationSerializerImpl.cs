@@ -53,7 +53,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 			if (!iloc.Module.IsInMemory && !iloc.Module.IsDynamic) {
 				var s = GetTokenAsString(iloc.Module, iloc.Token);
-				if (s != null)
+				if (!(s is null))
 					section.Attribute("TokenString", s);
 			}
 		}
@@ -67,7 +67,7 @@ namespace dnSpy.Bookmarks.DotNet {
 			var isDynamic = section.Attribute<bool?>("IsDynamic") ?? false;
 			var isInMemory = section.Attribute<bool?>("IsInMemory") ?? false;
 			var moduleNameOnly = section.Attribute<bool?>("ModuleNameOnly") ?? false;
-			if (token == null || assemblyFullName == null || moduleName == null)
+			if (token is null || assemblyFullName is null || moduleName is null)
 				return null;
 			var moduleId = new ModuleId(assemblyFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
@@ -102,7 +102,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		protected override BookmarkLocation? DeserializeCore(ISettingsSection section, ModuleId module, uint token) {
 			var offset = section.Attribute<uint?>("Offset");
-			if (offset == null)
+			if (offset is null)
 				return null;
 			return dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(module, token, offset.Value);
 		}

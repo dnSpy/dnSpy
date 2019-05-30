@@ -96,15 +96,15 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 
 			IDecompiler? decompiler = decompilerService.Decompiler;
-			if (decompiler != null && decompiler.GenericGuid == DecompilerConstants.LANGUAGE_IL)
+			if (!(decompiler is null) && decompiler.GenericGuid == DecompilerConstants.LANGUAGE_IL)
 				decompiler = null;
-			bool canShowILCode = (options & DbgNativeCodeOptions.ShowILCode) != 0 && ilDecompiler != null;
-			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && decompiler != null;
+			bool canShowILCode = (options & DbgNativeCodeOptions.ShowILCode) != 0 && !(ilDecompiler is null);
+			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && !(decompiler is null);
 			NativeVariableInfo[]? nativeVariableInfo = null;
-			if (methodModule != null && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
+			if (!(methodModule is null) && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
 				var module = dbgMetadataService.Value.TryGetMetadata(methodModule, DbgLoadModuleOptions.AutoLoaded);
 				var method = module?.ResolveToken(methodToken) as MethodDef;
-				if (method != null) {
+				if (!(method is null)) {
 					var cancellationToken = CancellationToken.None;
 
 					ILSourceStatementProvider ilCodeProvider = default;
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 						var info = codeProvider.GetStatement(ilOffset);
 						AddStatement(commentBuilder, info.line, info.span, showStmt: true);
 						if (!ilCodeProvider.IsDefault) {
-							if (ilOffsets == null)
+							if (ilOffsets is null)
 								ilOffsets = GetILOffsets(nativeBlocks);
 							int endILOffset = GetNextILOffset(ilOffsets, ilOffset);
 							if (endILOffset < 0)
@@ -184,7 +184,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		}
 
 		void AddStatement(StringBuilder sb, string lines, TextSpan span, bool showStmt) {
-			if (lines == null)
+			if (lines is null)
 				return;
 
 			Debug.Assert(span.End <= lines.Length);
@@ -283,10 +283,10 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				return false;
 
 			var module = loc.DbgModule ?? dbgModuleIdProviderService.Value.GetModule(loc.Module);
-			if (module == null)
+			if (module is null)
 				return false;
 			var reflectionModule = module.GetReflectionModule();
-			if (reflectionModule == null)
+			if (reflectionModule is null)
 				return false;
 
 			var reflectionMethod = reflectionModule.ResolveMethod((int)loc.Token);

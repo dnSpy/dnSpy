@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public DmdGenericInstanceType(DmdTypeDef genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
 			if (genericTypeDefinition is null)
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
-			if (typeArguments == null)
+			if (typeArguments is null)
 				throw new ArgumentNullException(nameof(typeArguments));
 			if (genericTypeDefinition.GetGenericArguments().Count != typeArguments.Count)
 				throw new ArgumentException();
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (IsFullyResolved)
 				return this;
 			var newTypeArguments = DmdTypeUtilities.FullResolve(typeArguments);
-			if (newTypeArguments != null)
+			if (!(newTypeArguments is null))
 				return (DmdTypeBase)AppDomain.MakeGenericType(genericTypeDefinition, newTypeArguments, GetCustomModifiers());
 			return null;
 		}

@@ -39,13 +39,13 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 		protected override bool IsIdentifierPartCharacter(char c) => SyntaxFacts.IsIdentifierPartCharacter(c);
 
 		void AddCastBegin(StringBuilder sb, DmdType? castType) {
-			if ((object?)castType == null)
+			if (castType is null)
 				return;
 			sb.Append("CType(");
 		}
 
 		void AddCastEnd(StringBuilder sb, DmdType? castType) {
-			if ((object?)castType == null)
+			if (castType is null)
 				return;
 			sb.Append(", ");
 			new Formatters.VisualBasic.VisualBasicTypeFormatter(new DbgStringBuilderTextWriter(sb), TypeFormatterOptions, null).Format(castType, null);
@@ -109,7 +109,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			typeFormatter.Format(method.DeclaringType!, null);
 			var valueFormatter = new Formatters.VisualBasic.VisualBasicPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(DbgTextColor.Operator, ".");
-			if ((object?)property != null) {
+			if (!(property is null)) {
 				output.Write(MemberUtils.GetColor(property), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(property.Name));
 				valueFormatter.WriteTokenComment(property.MetadataToken);
 				output.Write(DbgTextColor.Operator, ".");
@@ -118,7 +118,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			}
 			else {
 				var operatorInfo = Formatters.VisualBasic.Operators.TryGetOperatorInfo(method.Name);
-				if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
+				if (!(operatorInfo is null) && method is DmdMethodInfo methodInfo) {
 					for (int i = 0; i < operatorInfo.Length; i++) {
 						if (i > 0)
 							output.Write(DbgTextColor.Text, " ");

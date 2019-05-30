@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				//TODO: This can sometimes crash Unity's old mono fork
 				//TODO: It's possible to resolve types, but it's an internal method and it requires a method in the module
 				result = (monoModule.Assembly.GetType(type.FullName, false, false), false);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (result.type.MetadataToken != type.MetadataToken)
 					throw new InvalidOperationException();
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			case DmdTypeSignatureKind.Pointer:
 				tmp = Create(type.GetElementType()!);
 				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (!result.type.IsPointer)
 					throw new InvalidOperationException();
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			case DmdTypeSignatureKind.ByRef:
 				tmp = Create(type.GetElementType()!);
 				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				// This currently always fails
 				//TODO: We could func-eval MakeByRefType()
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			case DmdTypeSignatureKind.SZArray:
 				tmp = Create(type.GetElementType()!);
 				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (!result.type.IsArray || result.type.GetArrayRank() != 1 || !result.type.FullName.EndsWith("[]", StringComparison.Ordinal))
 					throw new InvalidOperationException();
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			case DmdTypeSignatureKind.MDArray:
 				tmp = Create(type.GetElementType()!);
 				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (!result.type.IsArray || (result.type.GetArrayRank() == 1 && result.type.FullName.EndsWith("[]", StringComparison.Ordinal)))
 					throw new InvalidOperationException();
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			case DmdTypeSignatureKind.GenericInstance:
 				tmp = Create(type.GetGenericTypeDefinition());
 				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				// This fails on Unity (version < 2.12), since it doesn't have that info available
 				//if (!result.type.IsGenericType)
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			// This fails if fullName is a generic instantiated type and at least one generic argument
 			// is a type in another assembly, eg. List<MyType>.
 			var result = monoType.Module.Assembly.GetType(fullName);
-			if (result != null)
+			if (!(result is null))
 				return result;
 			return monoTypeLoader?.Load(monoType.Assembly, fullName);
 		}

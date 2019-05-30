@@ -34,7 +34,7 @@ namespace dnSpy.ToolWindows {
 		public ToolWindowContent? ActiveTabContent {
 			get => ((TabContentImpl?)TabGroup.ActiveTabContent)?.Content;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				var impl = GetTabContentImpl(value);
 				TabGroup.ActiveTabContent = impl ?? throw new ArgumentException();
@@ -50,8 +50,8 @@ namespace dnSpy.ToolWindows {
 
 		void TabGroup_TabContentAttached(object sender, TabContentAttachedEventArgs e) {
 			var impl = e.TabContent as TabContentImpl;
-			Debug.Assert(impl != null);
-			if (impl == null)
+			Debug.Assert(!(impl is null));
+			if (impl is null)
 				return;
 			if (e.Attached)
 				impl.Owner = this;
@@ -64,11 +64,11 @@ namespace dnSpy.ToolWindows {
 		public void Add(ToolWindowContent content) => TabGroup.Add(new TabContentImpl(this, content));
 
 		public void Close(ToolWindowContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
-			Debug.Assert(impl != null);
-			if (impl == null)
+			Debug.Assert(!(impl is null));
+			if (impl is null)
 				return;
 			TabGroup.Close(impl);
 		}
@@ -76,18 +76,18 @@ namespace dnSpy.ToolWindows {
 		public void Close(TabContentImpl impl) => TabGroup.Close(impl);
 
 		public void MoveTo(IToolWindowGroup destGroup, ToolWindowContent content) {
-			if (destGroup == null)
+			if (destGroup is null)
 				throw new ArgumentNullException(nameof(destGroup));
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
-			Debug.Assert(impl != null);
-			if (impl == null)
+			Debug.Assert(!(impl is null));
+			if (impl is null)
 				throw new InvalidOperationException();
 			if (destGroup == this)
 				return;
 			var destGroupImpl = destGroup as ToolWindowGroup;
-			if (destGroupImpl == null)
+			if (destGroupImpl is null)
 				throw new InvalidOperationException();
 
 			impl.PrepareMove();
@@ -101,11 +101,11 @@ namespace dnSpy.ToolWindows {
 		public void SetFocus(TabContentImpl impl) => TabGroup.SetFocus(impl);
 
 		public void SetFocus(ToolWindowContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabContentImpl(content);
-			Debug.Assert(impl != null);
-			if (impl == null)
+			Debug.Assert(!(impl is null));
+			if (impl is null)
 				return;
 			TabGroup.SetFocus(impl);
 		}

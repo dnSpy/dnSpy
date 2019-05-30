@@ -176,7 +176,7 @@ namespace dnSpy.AsmEditor.Field {
 				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -240,7 +240,7 @@ namespace dnSpy.AsmEditor.Field {
 			RVA.Value = (uint)options.RVA;
 			InitialValue.Value = options.InitialValue!;
 			ImplMap = options.ImplMap;
-			if (options.Constant != null) {
+			if (!(options.Constant is null)) {
 				HasDefault = true;
 				ConstantVM.Value = options.Constant.Value;
 			}
@@ -256,7 +256,7 @@ namespace dnSpy.AsmEditor.Field {
 			options.Attributes = Attributes;
 			options.Name = Name;
 			var typeSig = FieldTypeSig;
-			options.FieldSig = typeSig == null ? null : new FieldSig(typeSig);
+			options.FieldSig = typeSig is null ? null : new FieldSig(typeSig);
 			options.FieldOffset = FieldOffset.Value;
 			options.MarshalType = HasFieldMarshal ? MarshalTypeVM.Type : null;
 			options.RVA = (dnlib.PE.RVA)RVA.Value;

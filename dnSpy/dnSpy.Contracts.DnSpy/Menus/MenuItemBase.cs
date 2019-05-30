@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <returns></returns>
 		protected TContext? GetCachedContext(IMenuItemContext context) {
 			var key = CachedContextKey;
-			if (key == null)
+			if (key is null)
 				return CreateContext(context);
 
 			return context.GetOrCreateState<TContext>(key, () => CreateContext(context)!);
@@ -72,38 +72,38 @@ namespace dnSpy.Contracts.Menus {
 
 		void IMenuItem.Execute(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			if (ctx != null)
+			if (!(ctx is null))
 				Execute(ctx);
 		}
 
 		bool IMenuItem.IsEnabled(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			return ctx != null && IsEnabled(ctx);
+			return !(ctx is null) && IsEnabled(ctx);
 		}
 
 		bool IMenuItem.IsVisible(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			return ctx != null && IsVisible(ctx);
+			return !(ctx is null) && IsVisible(ctx);
 		}
 
 		string? IMenuItem.GetHeader(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			return ctx != null ? GetHeader(ctx) : null;
+			return !(ctx is null) ? GetHeader(ctx) : null;
 		}
 
 		ImageReference? IMenuItem.GetIcon(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			return ctx != null ? GetIcon(ctx) : null;
+			return !(ctx is null) ? GetIcon(ctx) : null;
 		}
 
 		string? IMenuItem.GetInputGestureText(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			return ctx != null ? GetInputGestureText(ctx) : null;
+			return !(ctx is null) ? GetInputGestureText(ctx) : null;
 		}
 
 		bool IMenuItem.IsChecked(IMenuItemContext context) {
 			var ctx = GetCachedContext(context);
-			return ctx != null ? IsChecked(ctx) : false;
+			return !(ctx is null) ? IsChecked(ctx) : false;
 		}
 
 		/// <summary>

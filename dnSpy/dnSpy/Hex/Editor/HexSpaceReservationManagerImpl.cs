@@ -58,7 +58,7 @@ namespace dnSpy.Hex.Editor {
 		public override void AddAgent(HexSpaceReservationAgent agent) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
-			if (agent == null)
+			if (agent is null)
 				throw new ArgumentNullException(nameof(agent));
 			if (spaceReservationAgents.Contains(agent))
 				throw new InvalidOperationException();
@@ -71,7 +71,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override bool RemoveAgent(HexSpaceReservationAgent agent) {
-			if (agent == null)
+			if (agent is null)
 				throw new ArgumentNullException(nameof(agent));
 			if (!spaceReservationAgents.Remove(agent))
 				return false;
@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Editor {
 				throw new InvalidOperationException();
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
@@ -99,7 +99,7 @@ namespace dnSpy.Hex.Editor {
 		public override void UpdatePopupAgent(HexSpaceReservationAgent agent, HexLineSpan lineSpan, VSTA.PopupStyles styles) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
-			if (agent == null)
+			if (agent is null)
 				throw new ArgumentNullException(nameof(agent));
 			if (lineSpan.IsDefault)
 				throw new ArgumentException();
@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Editor {
 			if (!spaceReservationAgents.Contains(agent))
 				throw new ArgumentOutOfRangeException(nameof(agent));
 			var popupAgent = agent as HexPopupSpaceReservationAgent;
-			if (popupAgent == null)
+			if (popupAgent is null)
 				throw new ArgumentException();
 			popupAgent.Update(lineSpan, styles);
 			UpdateAggregateFocus();
@@ -145,7 +145,7 @@ namespace dnSpy.Hex.Editor {
 			for (int i = spaceReservationAgents.Count - 1; i >= 0; i--) {
 				var agent = spaceReservationAgents[i];
 				var geometry = isVisible ? agent.PositionAndDisplay(reservedSpace) : null;
-				if (geometry == null)
+				if (geometry is null)
 					RemoveAgent(agent);
 				else if (!geometry.IsEmpty())
 					reservedSpace.Children.Add(geometry);

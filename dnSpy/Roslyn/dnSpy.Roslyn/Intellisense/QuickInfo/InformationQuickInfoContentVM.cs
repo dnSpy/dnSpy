@@ -41,29 +41,29 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		public bool HasWarningImageReference => !WarningImageReference.IsDefault;
 		public object? MainDescriptionObject { get; }
 		public object? DocumentationObject { get; }
-		public bool HasDocumentationObject => DocumentationObject != null;
+		public bool HasDocumentationObject => !(DocumentationObject is null);
 		public object? UsageObject { get; }
-		public bool HasUsageObject => UsageObject != null;
+		public bool HasUsageObject => !(UsageObject is null);
 		public object? TypeParameterMapObject { get; }
-		public bool HasTypeParameterMapObject => TypeParameterMapObject != null;
+		public bool HasTypeParameterMapObject => !(TypeParameterMapObject is null);
 		public object? AnonymousTypesObject { get; }
-		public bool HasAnonymousTypesObject => AnonymousTypesObject != null;
+		public bool HasAnonymousTypesObject => !(AnonymousTypesObject is null);
 		public object? ExceptionObject { get; }
-		public bool HasExceptionObject => ExceptionObject != null;
+		public bool HasExceptionObject => !(ExceptionObject is null);
 
 		public InformationQuickInfoContentVM(ITextView textView, InformationQuickInfoContent content, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
+			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			var sb = new StringBuilder();
-			if (content.SymbolGlyph != null)
+			if (!(content.SymbolGlyph is null))
 				SymbolImageReference = content.SymbolGlyph.Value.GetImageReference() ?? default;
-			if (content.WarningGlyph != null)
+			if (!(content.WarningGlyph is null))
 				WarningImageReference = content.WarningGlyph.Value.GetImageReference() ?? default;
 			MainDescriptionObject = TryCreateObject(sb, content.MainDescription, classificationFormatMap, themeClassificationTypeService);
 			DocumentationObject = TryCreateObject(sb, content.Documentation, classificationFormatMap, themeClassificationTypeService);

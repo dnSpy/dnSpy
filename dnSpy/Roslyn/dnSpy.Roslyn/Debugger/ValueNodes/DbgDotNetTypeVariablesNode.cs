@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					res[i] = new TypeVariableValueNode(valueNodeFactory, typeVariableInfos[j]);
 			}
 			catch {
-				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				throw;
 			}
 			return res;

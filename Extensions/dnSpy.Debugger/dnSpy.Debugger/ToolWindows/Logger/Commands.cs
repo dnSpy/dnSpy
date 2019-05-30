@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID))
 				return null;
 			var textPane = context.Find<IOutputTextPane>();
-			if (textPane == null)
+			if (textPane is null)
 				return null;
 			if (textPane.Guid != OutputLogger.GUID_OUTPUT_LOGGER_DEBUG)
 				return null;

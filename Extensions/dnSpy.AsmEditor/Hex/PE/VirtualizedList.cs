@@ -47,13 +47,13 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			get {
 				T obj;
 				var weakRef = list[index];
-				if (weakRef == null) {
+				if (weakRef is null) {
 					list[index] = new WeakReference(obj = createItem(index));
 					return obj;
 				}
 
 				obj = (T)weakRef.Target;
-				if (obj == null)
+				if (obj is null)
 					weakRef.Target = obj = createItem(index);
 				return obj;
 			}

@@ -76,7 +76,7 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 		}
 
 		void TriggerQuickInfo() {
-			if (quickInfoSession != null) {
+			if (!(quickInfoSession is null)) {
 				quickInfoSession.Dismissed -= QuickInfoSession_Dismissed;
 				quickInfoSession.Dismiss();
 				quickInfoSession = null;

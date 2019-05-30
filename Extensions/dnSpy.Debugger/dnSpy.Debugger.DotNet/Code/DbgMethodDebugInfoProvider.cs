@@ -111,8 +111,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		MethodDebugInfoResult GetMethodDebugInfo(DbgRuntime runtime, in MethodDebugInfoResultKey key, IDecompiler decompiler, ModuleDef? mdModule, uint token, CancellationToken cancellationToken) {
-			Debug.Assert(mdModule != null);
-			if (mdModule == null)
+			Debug.Assert(!(mdModule is null));
+			if (mdModule is null)
 				return default;
 
 			var state = runtime.GetOrCreateData<RuntimeState>();
@@ -122,8 +122,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
 					if (info.key.Equals(key)) {
-						if ((info.result.DebugInfoOrNull != null && info.result.DebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version) ||
-							(info.result.StateMachineDebugInfoOrNull != null && info.result.StateMachineDebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version)) {
+						if ((!(info.result.DebugInfoOrNull is null) && info.result.DebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version) ||
+							(!(info.result.StateMachineDebugInfoOrNull is null) && info.result.StateMachineDebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version)) {
 							debugInfos.RemoveAt(i);
 							continue;
 						}
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 
 			var result = GetMethodDebugInfoNonCached(decompiler, mdModule, token, cancellationToken);
-			if (result.DebugInfoOrNull == null)
+			if (result.DebugInfoOrNull is null)
 				return default;
 			lock (state.LockObj) {
 				if (debugInfos.Count == MAX_CACHED_DEBUG_INFOS)
@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 			var method = mdModule.ResolveToken(token) as MethodDef;
 			// Could be null if it's a dynamic assembly. It will get refreshed later and we'll get called again.
-			if (method == null)
+			if (method is null)
 				return default;
 
 			if (!StateMachineHelpers.TryGetKickoffMethod(method, out var containingMethod))
@@ -165,16 +165,16 @@ namespace dnSpy.Debugger.DotNet.Code {
 				AsyncMethodBodyDecompilation = false,
 			};
 			var info = TryDecompileAndGetDebugInfo(decompiler, containingMethod, token, decContext, cancellationToken);
-			if (info.debugInfo == null && containingMethod != method) {
+			if (info.debugInfo is null && containingMethod != method) {
 				// The decompiler can't decompile the iterator / async method, try again,
 				// but only decompile the MoveNext method
 				info = TryDecompileAndGetDebugInfo(decompiler, method, token, decContext, cancellationToken);
 			}
-			if (info.debugInfo == null && method.Body == null) {
+			if (info.debugInfo is null && method.Body is null) {
 				var scope = new DbgMethodDebugScope(new DbgILSpan(0, 0), Array.Empty<DbgMethodDebugScope>(), Array.Empty<DbgLocal>(), Array.Empty<DbgImportInfo>());
 				info = (new DbgMethodDebugInfo(DbgCompilerKind.Unknown, -1, method, null, Array.Empty<DbgSourceStatement>(), scope, null), null);
 			}
-			if (info.debugInfo == null)
+			if (info.debugInfo is null)
 				return default;
 
 			// We don't support EnC so the version is always 1

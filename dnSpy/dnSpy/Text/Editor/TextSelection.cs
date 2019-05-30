@@ -105,9 +105,9 @@ namespace dnSpy.Text.Editor {
 		VirtualSnapshotPoint anchorPoint, activePoint;
 
 		public TextSelection(IWpfTextView textView, IAdornmentLayer selectionLayer, IEditorFormatMap editorFormatMap) {
-			if (selectionLayer == null)
+			if (selectionLayer is null)
 				throw new ArgumentNullException(nameof(selectionLayer));
-			if (editorFormatMap == null)
+			if (editorFormatMap is null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Mode = TextSelectionMode.Stream;
@@ -158,7 +158,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public VirtualSnapshotSpan? GetSelectionOnTextViewLine(ITextViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (line.Snapshot != TextView.TextSnapshot)
 				throw new ArgumentException();
@@ -169,7 +169,7 @@ namespace dnSpy.Text.Editor {
 			}
 			if (Mode == TextSelectionMode.Stream) {
 				var spanTmp = line.ExtentIncludingLineBreak.Intersection(StreamSelectionSpan.SnapshotSpan);
-				if (spanTmp == null)
+				if (spanTmp is null)
 					return null;
 				var span = spanTmp.Value;
 				if (End > new VirtualSnapshotPoint(line.End))

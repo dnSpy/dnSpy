@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			rawValue = new DbgDotNetRawValueFactory(engine).Create(value, Type);
 
 			var flags = ValueFlags.None;
-			if (value is PrimitiveValue pv && (pv.Value == null || ((Type.IsPointer || Type.IsFunctionPointer) && boxed0L.Equals(pv.Value)))) {
+			if (value is PrimitiveValue pv && (pv.Value is null || ((Type.IsPointer || Type.IsFunctionPointer) && boxed0L.Equals(pv.Value)))) {
 				if (Type.IsByRef)
 					flags |= ValueFlags.IsNullByRef;
 				else
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (!Type.IsByRef)
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, Type.GetElementType()!);
-			if (res.ErrorMessage != null)
+			if (!(res.ErrorMessage is null))
 				return res.ErrorMessage;
 			return valueLocation.Store(res.Value!);
 		}
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
-			if (arrayMirror == null)
+			if (arrayMirror is null)
 				return 0;
 			return (uint)arrayMirror.Length;
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
-			if (arrayMirror == null) {
+			if (arrayMirror is null) {
 				elementCount = 0;
 				dimensionInfos = null;
 				return false;
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
-			if (info.errorMessage != null)
+			if (!(info.errorMessage is null))
 				return DbgDotNetValueResult.CreateError(info.errorMessage);
 			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation!));
 		}
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;
-			if (arrayMirror == null)
+			if (arrayMirror is null)
 				return (null, PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			return (new ArrayElementValueLocation(Type.GetElementType()!, arrayMirror, index), null);
 		}
@@ -202,10 +202,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			engine.VerifyMonoDebugThread();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
-			if (info.errorMessage != null)
+			if (!(info.errorMessage is null))
 				return info.errorMessage;
 			var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, info.valueLocation!.Type);
-			if (res.ErrorMessage != null)
+			if (!(res.ErrorMessage is null))
 				return res.ErrorMessage;
 			return info.valueLocation.Store(res.Value!);
 		}
@@ -248,10 +248,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (addr == 0)
 					return null;
 				var dataAddr = GetArrayAddress(am, Type.GetElementType()!, engine);
-				if (onlyDataAddress || dataAddr == null)
+				if (onlyDataAddress || dataAddr is null)
 					return dataAddr ?? new DbgRawAddressValue(addr, 0);
 				var offsetToArrayData = engine.OffsetToArrayData;
-				if (offsetToArrayData == null)
+				if (offsetToArrayData is null)
 					return new DbgRawAddressValue(addr, 0);
 				return new DbgRawAddressValue(addr, dataAddr.Value.Length + (uint)offsetToArrayData.Value);
 
@@ -260,10 +260,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (addr == 0)
 					return null;
 				var s = rawValue.RawValue as string;
-				if (s == null)
+				if (s is null)
 					return null;
 				var offsetToStringData = engine.OffsetToStringData;
-				if (offsetToStringData == null)
+				if (offsetToStringData is null)
 					return new DbgRawAddressValue(addr, 0);
 				if (onlyDataAddress)
 					return new DbgRawAddressValue(addr + (uint)offsetToStringData.Value, (uint)s.Length * 2);
@@ -282,7 +282,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		internal static DbgRawAddressValue? GetArrayAddress(ArrayMirror v, DmdType elementType, DbgEngineImpl engine) {
 			var offsetToArrayData = engine.OffsetToArrayData;
-			if (offsetToArrayData == null)
+			if (offsetToArrayData is null)
 				return null;
 			var addr = (ulong)v.Address;
 			if (addr == 0)

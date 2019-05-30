@@ -50,7 +50,7 @@ namespace ConvertToNetstandardReferences {
 		}
 
 		static bool IsPublic(TypeDef type) {
-			while (type != null) {
+			while (!(type is null)) {
 				if (!type.IsPublic && !type.IsNestedPublic)
 					return false;
 				type = type.DeclaringType;
@@ -59,7 +59,7 @@ namespace ConvertToNetstandardReferences {
 		}
 
 		static bool IsPublic(ExportedType type) {
-			while (type != null) {
+			while (!(type is null)) {
 				if (!type.IsPublic && !type.IsNestedPublic)
 					return false;
 				type = type.DeclaringType;
@@ -106,15 +106,15 @@ namespace ConvertToNetstandardReferences {
 
 					if (!File.Exists(patchedFilename)) {
 						var asm = assemblyFactory.Resolve(asmSimpleName);
-						if (asm == null)
+						if (asm is null)
 							throw new Exception($"Couldn't resolve assembly {filename}");
 						var mod = (ModuleDefMD)asm.ManifestModule;
 						if (!ShouldPatchAssembly(mod))
 							continue;
 
-						if (netstandardAsm == null) {
+						if (netstandardAsm is null) {
 							netstandardAsm = assemblyFactory.Resolve("netstandard");
-							if (netstandardAsm == null)
+							if (netstandardAsm is null)
 								throw new Exception("Couldn't find a netstandard file");
 							netstandardAsmRef = netstandardAsm.ToAssemblyRef();
 							foreach (var type in netstandardAsm.ManifestModule.GetTypes()) {
@@ -129,7 +129,7 @@ namespace ConvertToNetstandardReferences {
 
 						for (uint rid = 1; ; rid++) {
 							var tr = mod.ResolveTypeRef(rid);
-							if (tr == null)
+							if (tr is null)
 								break;
 							if (!netstandardTypes.Contains(tr))
 								continue;

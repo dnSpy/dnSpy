@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var pos = Span.Span.Start;
 			var value = Utils.Read7BitEncodedInt32(Span.Buffer, ref pos);
-			if (value == null)
+			if (value is null)
 				formatter.WriteUnknownValue();
 			else
 				formatter.WriteInt32(value.Value);

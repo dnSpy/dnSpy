@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			int lines = 0;
 			for (int i = 0; i < ehs.Length; i++) {
 				uint? token = GetCatchTypeToken(ehs[i].CatchType);
-				if (token == null)
+				if (token is null)
 					continue;
 
 				if (lines++ > 0)
@@ -89,11 +89,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs) => ehs.Any(a => GetCatchTypeToken(a.CatchType) != null);
-		static uint? GetCatchTypeToken(ITypeDefOrRef? type) => type == null ? (uint?)null : type.MDToken.Raw;
+		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs) => ehs.Any(a => !(GetCatchTypeToken(a.CatchType) is null));
+		static uint? GetCatchTypeToken(ITypeDefOrRef? type) => type is null ? (uint?)null : type.MDToken.Raw;
 
 		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (e.NewItems != null)
+			if (!(e.NewItems is null))
 				InitializeExceptionHandlers(e.NewItems);
 		}
 

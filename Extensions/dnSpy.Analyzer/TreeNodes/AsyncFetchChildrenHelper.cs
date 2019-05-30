@@ -45,8 +45,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return 0;
 				var a = x as MessageNode;
 				var b = y as MessageNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				return 0;
 			}
 		}

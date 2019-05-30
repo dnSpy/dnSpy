@@ -81,7 +81,7 @@ namespace dnSpy.Decompiler {
 			output.WriteLine();
 			PrintEntryPoint(asm.ManifestModule, output);
 			var peImage = TryGetPEImage(asm.ManifestModule);
-			if (peImage != null)
+			if (!(peImage is null))
 				WriteTimestampComment(output, peImage);
 			output.WriteLine();
 		}
@@ -119,11 +119,11 @@ namespace dnSpy.Decompiler {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
 			}
 			string? runtimeName = GetRuntimeDisplayName(mod);
-			if (runtimeName != null) {
+			if (!(runtimeName is null)) {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Runtime + " " + runtimeName);
 			}
 			var peImage = TryGetPEImage(mod);
-			if (peImage != null)
+			if (!(peImage is null))
 				WriteTimestampComment(output, peImage);
 			output.WriteLine();
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.Decompiler {
 			else if (ep is MethodDef epMethod) {
 				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Decompiler_Resources.Decompile_EntryPoint + " ", BoxedTextColor.Comment);
-				if (epMethod.DeclaringType != null) {
+				if (!(epMethod.DeclaringType is null)) {
 					output.Write(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 					output.Write(".", BoxedTextColor.Comment);
 				}
@@ -163,7 +163,7 @@ namespace dnSpy.Decompiler {
 
 		object? GetEntryPoint(ModuleDef module) {
 			int maxIters = 1;
-			for (int i = 0; module != null && i < maxIters; i++) {
+			for (int i = 0; !(module is null) && i < maxIters; i++) {
 				var rva = module.NativeEntryPoint;
 				if (rva != 0)
 					return (uint)rva;
@@ -173,11 +173,11 @@ namespace dnSpy.Decompiler {
 					return ep;
 
 				var file = manEp as FileDef;
-				if (file == null)
+				if (file is null)
 					return null;
 
 				var asm = module.Assembly;
-				if (asm == null)
+				if (asm is null)
 					return null;
 				maxIters = asm.Modules.Count;
 
@@ -210,7 +210,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		protected virtual void TypeToString(IDecompilerOutput output, ITypeDefOrRef? type, bool includeNamespace, IHasCustomAttribute? typeAttributes = null) {
-			if (type == null)
+			if (type is null)
 				return;
 			if (includeNamespace)
 				output.Write(IdentifierEscaper.Escape(type.FullName), MetadataTextColorProvider.GetColor(type));
@@ -229,13 +229,13 @@ namespace dnSpy.Decompiler {
 			new CSharpFormatter(output, flags, null).Write(member);
 
 		protected virtual void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer = null) {
-			if (property == null)
+			if (property is null)
 				throw new ArgumentNullException(nameof(property));
 			output.Write(IdentifierEscaper.Escape(property.Name), MetadataTextColorProvider.GetColor(property));
 		}
 
 		protected virtual void FormatTypeName(IDecompilerOutput output, TypeDef type) {
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			output.Write(IdentifierEscaper.Escape(type.Name), MetadataTextColorProvider.GetColor(type));
 		}

@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Shared {
 		static readonly string AltDirectorySeparatorChar = Path.AltDirectorySeparatorChar.ToString();
 
 		static bool CheckBaseName(string baseName) {
-			if (baseName == null)
+			if (baseName is null)
 				return false;
 			if (baseName.Contains(DirectorySeparatorChar) || baseName.Contains(AltDirectorySeparatorChar))
 				return false;
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.Shared {
 		/// <param name="baseName">Base name, eg. "dotnet" or "mono" without a ".exe" extension</param>
 		/// <returns></returns>
 		public static string GetNativeExeFilename(string baseName) {
-			if (baseName == null)
+			if (baseName is null)
 				throw new ArgumentNullException(nameof(baseName));
 			if (!CheckBaseName(baseName))
 				throw new ArgumentException("Invalid base name");
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Shared {
 		/// <param name="baseName">Base name, eg. "coreclr" or "dbgshim" without a ".dll" extension</param>
 		/// <returns></returns>
 		public static string GetNativeDllFilename(string baseName) {
-			if (baseName == null)
+			if (baseName is null)
 				throw new ArgumentNullException(nameof(baseName));
 			if (!CheckBaseName(baseName))
 				throw new ArgumentException("Invalid base name");

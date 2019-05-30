@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static void FreeNoToString(ref StringBuilder? sb) {
 			var tmp = sb!;
 			sb = null;
-			if (tmp.Capacity <= 1024 && stringBuilder == null) {
+			if (tmp.Capacity <= 1024 && stringBuilder is null) {
 				tmp.Clear();
 				stringBuilder = tmp;
 			}
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static void Free(ref HashSet<DmdType>? hash) {
 			var tmp = hash!;
 			hash = null;
-			if (tmp.Count <= 1024 && typeHashSet == null) {
+			if (tmp.Count <= 1024 && typeHashSet is null) {
 				tmp.Clear();
 				typeHashSet = tmp;
 			}
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static void Free(ref Stack<DmdType>? stack) {
 			var tmp = stack!;
 			stack = null;
-			if (typeStack == null) {
+			if (typeStack is null) {
 				tmp.Clear();
 				typeStack = tmp;
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static void Free(ref Stack<IEnumerator<DmdType>>? stack) {
 			var tmp = stack!;
 			stack = null;
-			if (enumeratorTypeStack == null) {
+			if (enumeratorTypeStack is null) {
 				tmp.Clear();
 				enumeratorTypeStack = tmp;
 			}
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public static void Free(ref List<DmdType>? list) {
 			var tmp = list!;
 			list = null;
-			if (tmp.Capacity <= 1024 && typeList == null) {
+			if (tmp.Capacity <= 1024 && typeList is null) {
 				tmp.Clear();
 				typeList = tmp;
 			}

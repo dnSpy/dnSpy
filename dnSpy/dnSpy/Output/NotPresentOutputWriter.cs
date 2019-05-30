@@ -31,7 +31,7 @@ namespace dnSpy.Output {
 
 		IOutputTextPane TextPane {
 			get {
-				if (textPane != null)
+				if (!(textPane is null))
 					return textPane;
 				return (textPane = outputService.Find(guid)) ?? NullOutputTextPane.Instance;
 			}

@@ -46,7 +46,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var signatureHelpSession = session as ISignatureHelpSession;
-			if (signatureHelpSession == null)
+			if (signatureHelpSession is null)
 				return null;
 			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc));
 		}

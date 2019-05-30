@@ -102,8 +102,8 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				codeDocument.TextView.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 
-				Debug.Assert(initialPosition.Snapshot != null);
-				if (initialPosition.Snapshot == null)
+				Debug.Assert(!(initialPosition.Snapshot is null));
+				if (initialPosition.Snapshot is null)
 					return;
 				codeDocument.TextView.Caret.MoveTo(initialPosition.TranslateTo(codeDocument.TextView.TextSnapshot, PointTrackingMode.Negative));
 				codeDocument.TextView.EnsureCaretVisible(true);
@@ -156,9 +156,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			sourceModule = options.SourceModule;
 			AddDocumentsImage = options.AddDocumentsImage;
 			currentReferences = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			if (typeToEditOrNull != null) {
+			if (!(typeToEditOrNull is null)) {
 				Debug.Assert(typeToEditOrNull.Module == sourceModule);
-				while (typeToEditOrNull.DeclaringType != null)
+				while (!(typeToEditOrNull.DeclaringType is null))
 					typeToEditOrNull = typeToEditOrNull.DeclaringType;
 			}
 			tempAssembly = new AssemblyNameInfo {
@@ -231,7 +231,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				Write(text, 0, text.Length, reference, flags, color);
 
 			public override void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) {
-				if (reference == this.reference && (flags & DecompilerReferenceFlags.Definition) != 0 && referenceSpan == null) {
+				if (reference == this.reference && (flags & DecompilerReferenceFlags.Definition) != 0 && referenceSpan is null) {
 					int start = NextPosition;
 					base.Write(text, index, length, reference, flags, color);
 					referenceSpan = new Span(start, Length - start);
@@ -246,14 +246,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			void AddDebugInfo(MethodDebugInfo? info) {
-				if (info == null)
+				if (info is null)
 					return;
-				if (methodSourceStatement == null)
+				if (methodSourceStatement is null)
 					return;
 				if (methodSourceStatement.Value.Method != info.Method)
 					return;
 				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.ILSpan.Start);
-				if (stmt == null)
+				if (stmt is null)
 					return;
 				statementSpan = new Span(stmt.Value.TextSpan.Start, stmt.Value.TextSpan.Length);
 			}
@@ -274,7 +274,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected void StartDecompile() => StartDecompileAsync().ContinueWith(t => {
 			var ex = t.Exception;
-			Debug.Assert(ex == null);
+			Debug.Assert(ex is null);
 		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		protected readonly struct SimpleDocument {
@@ -339,7 +339,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			for (int i = 0; i < Documents.Count; i++) {
 				var doc = Documents[i];
 				var caretSpan = simpleDocuments[i].CaretSpan;
-				if (caretSpan != null && caretSpan.Value.End <= doc.TextView.TextSnapshot.Length)
+				if (!(caretSpan is null) && caretSpan.Value.End <= doc.TextView.TextSnapshot.Length)
 					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, caretSpan.Value.Start));
 				else
 					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
@@ -393,7 +393,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			StartCompileAsync().ContinueWith(t => {
 				DnSpyEventSource.Log.CompileStop();
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -411,7 +411,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					cmr = assemblyReferenceResolver.Create(module.Assembly);
 				else
 					cmr = assemblyReferenceResolver.Create(module);
-				if (cmr == null)
+				if (cmr is null)
 					continue;
 
 				mdRefs.Add(cmr.Value);
@@ -446,7 +446,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null, null),
 				};
 			}
-			else if (caughtException != null) {
+			else if (!(caughtException is null)) {
 				compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(caughtException) };
 			}
 			else if (result?.Success == true) {
@@ -479,7 +479,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			compileCodeState = null;
 			CanCompile = true;
 
-			if (importer != null) {
+			if (!(importer is null)) {
 				Result = importer;
 				CodeCompiled?.Invoke(this, EventArgs.Empty);
 			}
@@ -494,8 +494,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null, null);
 
 		Task<CompilationResult> CompileAsync() {
-			Debug.Assert(compileCodeState == null);
-			if (compileCodeState != null)
+			Debug.Assert(compileCodeState is null);
+			if (!(compileCodeState is null))
 				throw new InvalidOperationException();
 			var state = new CompileCodeState();
 			compileCodeState = state;
@@ -551,7 +551,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					cmr = assemblyReferenceResolver.Create(module.Assembly);
 				else
 					cmr = assemblyReferenceResolver.Create(module);
-				if (cmr == null)
+				if (cmr is null)
 					continue;
 
 				mdRefs.Add(cmr.Value);
@@ -589,12 +589,12 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var doc = Documents.FirstOrDefault(a => a.Name == diag.FullPath);
-			Debug.Assert(doc != null);
-			if (doc == null)
+			Debug.Assert(!(doc is null));
+			if (doc is null)
 				return;
 			SelectedDocument = doc;
 
-			if (diag.LineLocationSpan != null) {
+			if (!(diag.LineLocationSpan is null)) {
 				UIUtilities.Focus(doc.TextView.VisualElement, () => {
 					// The caret isn't always moved unless we wait a little
 					doc.TextView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
@@ -634,7 +634,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void GoToDiagnostic(int offset) {
 			var item = SelectedCompilerDiagnosticVM ?? Diagnostics.FirstOrDefault();
-			if (item == null)
+			if (item is null)
 				return;
 			int index = Diagnostics.IndexOf(item);
 			Debug.Assert(index >= 0);

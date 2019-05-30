@@ -99,7 +99,7 @@ namespace dnSpy.MainApp {
 
 		public void Show(Exception exception, string? msg, Window? ownerWindow) {
 			string msgToShow;
-			if (exception != null) {
+			if (!(exception is null)) {
 				msgToShow = $"{msg ?? dnSpy_Resources.ExceptionMessage}\n\n{exception.ToString()}";
 				const int MAX_LEN = 2048;
 				if (msgToShow.Length > MAX_LEN)
@@ -134,9 +134,9 @@ namespace dnSpy.MainApp {
 
 		public T Ask<T>(string labelMessage, string? defaultText, string? title, Func<string, T>? converter, Func<string, string?>? verifier, Window? ownerWindow) {
 			var win = new AskDlg();
-			if (converter == null)
+			if (converter is null)
 				converter = CreateDefaultConverter<T>();
-			if (verifier == null)
+			if (verifier is null)
 				verifier = CreateDefaultVerifier<T>();
 
 			var vm = new AskVM(labelMessage, s => converter(s), verifier);

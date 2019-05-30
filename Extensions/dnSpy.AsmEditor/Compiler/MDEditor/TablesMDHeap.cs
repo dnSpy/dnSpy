@@ -295,6 +295,6 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			return false;
 		}
 
-		public override bool ExistsInMetadata => tablesStream.StreamHeader != null;
+		public override bool ExistsInMetadata => !(tablesStream.StreamHeader is null);
 	}
 }

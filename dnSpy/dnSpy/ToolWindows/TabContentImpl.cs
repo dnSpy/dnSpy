@@ -36,14 +36,14 @@ namespace dnSpy.ToolWindows {
 		bool IFocusable.CanFocus {
 			get {
 				var focusable = Content as IFocusable;
-				return focusable != null && focusable.CanFocus;
+				return !(focusable is null) && focusable.CanFocus;
 			}
 		}
 
 		void IFocusable.Focus() {
 			var focusable = Content as IFocusable;
-			Debug.Assert(focusable != null);
-			if (focusable != null)
+			Debug.Assert(!(focusable is null));
+			if (!(focusable is null))
 				focusable.Focus();
 		}
 
@@ -66,10 +66,10 @@ namespace dnSpy.ToolWindows {
 
 		public object? UIObject {
 			get {
-				if (contentPresenter == null) {
+				if (contentPresenter is null) {
 					contentPresenter = new ContentPresenter { Content = this };
 					contentPresenter.MouseDown += (s, e) => {
-						if (!e.Handled && Owner != null) {
+						if (!e.Handled && !(Owner is null)) {
 							Owner.SetFocus(this);
 							e.Handled = true;
 						}
@@ -99,7 +99,7 @@ namespace dnSpy.ToolWindows {
 				if (contentPresenter?.IsKeyboardFocusWithin == true)
 					return true;
 				var f = ContentUIObject as IInputElement;
-				return f != null && f.IsKeyboardFocusWithin;
+				return !(f is null) && f.IsKeyboardFocusWithin;
 			}
 		}
 
@@ -127,7 +127,7 @@ namespace dnSpy.ToolWindows {
 
 		public ToolWindowGroup? Owner {
 			get {
-				Debug.Assert(owner != null);
+				Debug.Assert(!(owner is null));
 				return owner;
 			}
 			set => owner = value;
@@ -148,7 +148,7 @@ namespace dnSpy.ToolWindows {
 
 		public void OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
 			var ev = Convert(visEvent);
-			if (ev != null) {
+			if (!(ev is null)) {
 #if DEBUG
 				switch (ev) {
 				case ToolWindowContentVisibilityEvent.Added:
@@ -196,7 +196,7 @@ namespace dnSpy.ToolWindows {
 			case TabContentVisibilityEvent.Removed:
 				elementZoomer.Dispose();
 				RemoveEvents();
-				if (contentPresenter != null)
+				if (!(contentPresenter is null))
 					contentPresenter.Content = null;
 				contentPresenter = null;
 				OnPropertyChanged(nameof(UIObject));
@@ -259,7 +259,7 @@ namespace dnSpy.ToolWindows {
 		void Close() {
 			if (!CanClose)
 				return;
-			if (Owner != null)
+			if (!(Owner is null))
 				Owner.Close(this);
 		}
 
@@ -267,8 +267,8 @@ namespace dnSpy.ToolWindows {
 
 		void ShowWindowPositionMenu(object uiObj) {
 			var fe = uiObj as FrameworkElement;
-			Debug.Assert(fe != null);
-			if (fe == null)
+			Debug.Assert(!(fe is null));
+			if (fe is null)
 				return;
 
 			Owner!.SetFocus(this);

@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		static string AddCast(string s, bool addCast, string cast) => addCast ? $"({cast}){s}" : s;
 
 		public static string ValueToString(object? value, bool addCast) {
-			if (value == null)
+			if (value is null)
 				return "null";
 
 			switch (ModelUtils.GetElementType(value.GetType())) {
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		static string ArrayToString(object value, Type type) {
 			var list = value as System.Collections.IList;
-			if (list == null)
+			if (list is null)
 				return $"({type.FullName}[])null";
 
 			var sb = new StringBuilder();

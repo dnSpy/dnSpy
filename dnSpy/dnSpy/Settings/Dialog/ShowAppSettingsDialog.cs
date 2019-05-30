@@ -88,7 +88,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		object? IPageUIObjectLoader.GetUIObject(AppSettingsPage page) {
-			Debug.Assert(appSettingsDlg != null);
+			Debug.Assert(!(appSettingsDlg is null));
 			var oldCursor = appSettingsDlg.Cursor;
 			try {
 				appSettingsDlg.Cursor = Cursors.Wait;
@@ -101,7 +101,7 @@ namespace dnSpy.Settings.Dialog {
 
 		public void Select(Guid value) {
 			var page = allPages.FirstOrDefault(a => a.Page.Guid == value);
-			if (page?.Parent == null)
+			if (page?.Parent is null)
 				return;
 			pageContext.TreeView.SelectItems(new[] { page });
 		}
@@ -126,13 +126,13 @@ namespace dnSpy.Settings.Dialog {
 			appSettingsDlg.Owner = ownerWindow ?? throw new ArgumentNullException(nameof(ownerWindow));
 
 			AppSettingsPageVM? selectedItem = null;
-			if (guid != null)
+			if (!(guid is null))
 				selectedItem = allPages.FirstOrDefault(a => a.Page.Guid == guid.Value);
-			if (selectedItem == null)
+			if (selectedItem is null)
 				selectedItem = rootVM.Children.FirstOrDefault();
-			if (guid == null && selectedItem != null)
+			if (guid is null && !(selectedItem is null))
 				selectedItem = selectedItem.VisiblePage;
-			if (selectedItem != null)
+			if (!(selectedItem is null))
 				pageContext.TreeView.SelectItems(new[] { selectedItem });
 
 			bool saveSettings = appSettingsDlg.ShowDialog() == true;
@@ -162,7 +162,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void InitializeKeyboardBindings() {
-			Debug.Assert(appSettingsDlg != null);
+			Debug.Assert(!(appSettingsDlg is null));
 			var cmd = new RelayCommand(a => {
 				appSettingsDlg.searchTextBox.Focus();
 				appSettingsDlg.searchTextBox.SelectAll();
@@ -172,9 +172,9 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void FilterTreeView(string searchText) {
-			Debug.Assert(allPages != null);
-			Debug.Assert(rootVM != null);
-			Debug.Assert(appSettingsDlg != null);
+			Debug.Assert(!(allPages is null));
+			Debug.Assert(!(rootVM is null));
+			Debug.Assert(!(appSettingsDlg is null));
 			if (string.IsNullOrWhiteSpace(searchText))
 				searchText = string.Empty;
 			if (searchText == string.Empty) {
@@ -197,9 +197,9 @@ namespace dnSpy.Settings.Dialog {
 				isFiltering = true;
 			}
 			RefreshAllNodes();
-			if (pageContext.TreeView.SelectedItem == null) {
+			if (pageContext.TreeView.SelectedItem is null) {
 				var first = rootVM.Children.FirstOrDefault(a => !a.TreeNode.IsHidden);
-				if (first != null) {
+				if (!(first is null)) {
 					pageContext.TreeView.SelectItems(new[] { first });
 					// The treeview steals the focus. It uses prio Loaded.
 					appSettingsDlg.searchTextBox.Focus();
@@ -212,8 +212,8 @@ namespace dnSpy.Settings.Dialog {
 		bool isFiltering;
 
 		void RefreshAllNodes() {
-			Debug.Assert(allPages != null);
-			Debug.Assert(appSettingsDlg != null);
+			Debug.Assert(!(allPages is null));
+			Debug.Assert(!(appSettingsDlg is null));
 			foreach (var page in allPages)
 				page.ClearUICache();
 			foreach (var page in allPages)
@@ -234,12 +234,12 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		bool IsVisible(AppSettingsPageVM page, SearchMatcher matcher) {
-			Debug.Assert(appSettingsDlg != null);
+			Debug.Assert(!(appSettingsDlg is null));
 			pageStringsList.Clear();
 			pageTitlesList.Clear();
 			var p = page;
 			// Don't include the root
-			while (p.Parent != null) {
+			while (!(p.Parent is null)) {
 				pageTitlesList.Add(p.Page.Title);
 				p = p.Parent;
 			}
@@ -255,7 +255,7 @@ namespace dnSpy.Settings.Dialog {
 
 		object IContentConverter.Convert(object content, object ownerControl) {
 			var result = TryConvert(content, ownerControl);
-			if (result != null)
+			if (!(result is null))
 				return result;
 
 			if (ownerControl is TextControl textControl) {
@@ -273,7 +273,7 @@ namespace dnSpy.Settings.Dialog {
 			if (!isFiltering)
 				return null;
 			var textContent = content as string;
-			if (textContent == null)
+			if (textContent is null)
 				return null;
 
 			textContent = UIHelpers.RemoveAccessKeys(textContent);
@@ -387,7 +387,7 @@ namespace dnSpy.Settings.Dialog {
 
 			foreach (var lz in appSettingsPageContainers) {
 				var page = TryCreate(lz.Value, lz.Metadata, pageContext);
-				if (page == null)
+				if (page is null)
 					continue;
 				Debug.Assert(!dict.ContainsKey(page.Page.Guid));
 				if (!dict.ContainsKey(page.Page.Guid))
@@ -396,8 +396,8 @@ namespace dnSpy.Settings.Dialog {
 
 			foreach (var lz in appSettingsPageProviders) {
 				foreach (var page in lz.Value.Create()) {
-					Debug.Assert(page != null);
-					if (page == null)
+					Debug.Assert(!(page is null));
+					if (page is null)
 						continue;
 					var vm = new AppSettingsPageVM(page, pageContext);
 					Debug.Assert(!dict.ContainsKey(vm.Page.Guid));
@@ -434,14 +434,14 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		static AppSettingsPageVM? TryCreate(object obj, IAppSettingsPageContainerMetadata md, PageContext context) {
-			Guid? guid = md.Guid == null ? null : TryParseGuid(md.Guid);
-			Debug.Assert(guid != null, "Invalid GUID");
-			if (guid == null)
+			Guid? guid = md.Guid is null ? null : TryParseGuid(md.Guid);
+			Debug.Assert(!(guid is null), "Invalid GUID");
+			if (guid is null)
 				return null;
 
-			Guid? parentGuid = md.ParentGuid == null ? rootGuid : TryParseGuid(md.ParentGuid);
-			Debug.Assert(parentGuid != null, "Invalid Parent GUID");
-			if (parentGuid == null)
+			Guid? parentGuid = md.ParentGuid is null ? rootGuid : TryParseGuid(md.ParentGuid);
+			Debug.Assert(!(parentGuid is null), "Invalid Parent GUID");
+			if (parentGuid is null)
 				return null;
 
 			if (string.IsNullOrEmpty(md.Title))

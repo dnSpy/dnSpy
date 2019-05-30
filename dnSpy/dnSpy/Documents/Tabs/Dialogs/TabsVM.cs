@@ -113,7 +113,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public void Activate(TabVM? vm) {
-			if (vm == null)
+			if (vm is null)
 				return;
 			LastActivated = vm;
 			documentTabService.SetFocus(vm.Tab);

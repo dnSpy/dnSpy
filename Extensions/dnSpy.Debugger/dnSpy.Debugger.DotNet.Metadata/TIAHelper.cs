@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			string? scope = null, identifier = null;
 			var tia = td.FindCustomAttribute("System.Runtime.InteropServices.TypeIdentifierAttribute", inherit: false);
-			if (tia != null) {
+			if (!(tia is null)) {
 				if (tia.ConstructorArguments.Count >= 2) {
 					if (tia.ConstructorArguments[0].ArgumentType != td.AppDomain.System_String)
 						return null;
@@ -64,13 +64,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return null;
 			}
 
-			if (identifier == null) {
+			if (identifier is null) {
 				DmdCustomAttributeData? gca;
 				if (td.IsInterface && td.IsImport)
 					gca = td.FindCustomAttribute("System.Runtime.InteropServices.GuidAttribute", inherit: false);
 				else
 					gca = td.Module.Assembly.FindCustomAttribute("System.Runtime.InteropServices.GuidAttribute", inherit: false);
-				if (gca == null)
+				if (gca is null)
 					return null;
 				if (gca.ConstructorArguments.Count < 1)
 					return null;
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			for (int i = 0; !(td is null) && i < 1000; i++) {
 				if (i != 0) {
 					var info = GetInfo(td);
-					if (info == null)
+					if (info is null)
 						return false;
 				}
 
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static bool IsTypeDefEquivalent(DmdType td) {
 			Debug.Assert(!(td is null));
-			if (GetInfo(td) == null)
+			if (GetInfo(td) is null)
 				return false;
 			return CheckEquivalent(td);
 		}
@@ -130,11 +130,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static bool Equivalent(DmdType? td1, DmdType? td2) {
 			var info1 = GetInfo(td1);
-			if (info1 == null)
+			if (info1 is null)
 				return false;
 			Debug.Assert(!(td1 is null));
 			var info2 = GetInfo(td2);
-			if (info2 == null)
+			if (info2 is null)
 				return false;
 			Debug.Assert(!(td2 is null));
 			if (!CheckEquivalent(td1) || !CheckEquivalent(td2))

@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 						return info.assembly;
 				}
 				var reflectionAppDomain = appDomain.GetReflectionAppDomain();
-				if (reflectionAppDomain == null)
+				if (reflectionAppDomain is null)
 					throw new InvalidOperationException();
 
 				const bool isInMemory = true;
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		public override DbgDotNetILInterpreterState CreateState(byte[] assembly) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			return new DbgDotNetILInterpreterStateImpl(assembly);
 		}
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			debuggerRuntime.Runtime.Dispatcher.VerifyAccess();
 
 			var appDomain = evalInfo.Frame.AppDomain;
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentException("No AppDomain available");
 
 			var reflectionAssembly = stateImpl.GetOrCreateReflectionAssembly(appDomain);
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			DbgDotNetValueResult result = default;
 			using (reflectionAssembly.AppDomain.AddTemporaryAssembly(reflectionAssembly)) {
 				var ilvmState = methodState.ILVMExecuteState;
-				if (ilvmState == null) {
+				if (ilvmState is null) {
 					// This could fail so get it first
 					var realMethod = evalInfo.Runtime.GetDotNetRuntime().GetFrameMethod(evalInfo) ?? throw new InvalidOperationException();
 

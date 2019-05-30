@@ -115,12 +115,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (obj is null || appDomain is null)
 				return null;
 			var reflectionAppDomain = appDomain.GetReflectionAppDomain();
-			if (reflectionAppDomain == null)
+			if (reflectionAppDomain is null)
 				return null;
 			DbgDotNetValueImpl? objImp = null;
 			try {
 				objImp = CreateDotNetValue_CorDebug(obj, reflectionAppDomain, tryCreateStrongHandle: false) as DbgDotNetValueImpl;
-				if (objImp == null)
+				if (objImp is null)
 					return null;
 				return ReadField_CorDebug(objImp, fieldName);
 			}
@@ -179,7 +179,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo);
-			if (tmp != null)
+			if (!(tmp is null))
 				return tmp.Value;
 			Debug.Assert(!newObj || method.IsConstructor);
 
@@ -229,14 +229,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						if (method is DmdMethodInfo m)
 							declType = m.GetBaseDefinition().DeclaringType!;
 						var val = converter.Convert(obj, declType, out origType);
-						if (val.ErrorMessage != null)
+						if (!(val.ErrorMessage is null))
 							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue!, declType, origType);
 					}
 					for (int i = 0; i < arguments.Length; i++) {
 						var paramType = paramTypes[i];
 						var val = converter.Convert(arguments[i], paramType, out origType);
-						if (val.ErrorMessage != null)
+						if (!(val.ErrorMessage is null))
 							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						var valType = origType ?? new ReflectionTypeCreator(this, method.AppDomain).Create(val.CorValue!.ExactType);
 						args[w++] = BoxIfNeeded(dnEval, appDomain, createdValues, val.CorValue!, paramType, valType);
@@ -274,7 +274,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var res = newObj ?
 						dnEval.CallConstructor(func, typeArgs, args, out hr) :
 						dnEval.Call(func, typeArgs, args, out hr);
-					if (res == null)
+					if (res is null)
 						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 					if (res.Value.WasCustomNotification)
 						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
@@ -324,7 +324,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo);
-			if (tmp != null)
+			if (!(tmp is null))
 				return tmp.Value;
 
 			var dnThread = GetThread(evalInfo.Frame.Thread);
@@ -360,7 +360,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo);
-			if (tmp != null)
+			if (!(tmp is null))
 				return tmp.Value;
 
 			var dnThread = GetThread(evalInfo.Frame.Thread);
@@ -372,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 					var corType = GetType(appDomain, typeToCreate);
 					var res = dnEval.CreateDontCallConstructor(corType, out int hr);
-					if (res == null)
+					if (res is null)
 						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 					if (res.Value.WasCustomNotification)
 						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.FuncEvalRequiresAllThreadsToRun);
@@ -403,7 +403,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (value is DbgDotNetValueImpl)
 				return DbgDotNetValueResult.Create((DbgDotNetValueImpl)value);
 			var tmp = CheckFuncEval(evalInfo);
-			if (tmp != null)
+			if (!(tmp is null))
 				return tmp.Value;
 
 			var dnThread = GetThread(evalInfo.Frame.Thread);
@@ -419,7 +419,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
-					if (evalRes.ErrorMessage != null)
+					if (!(evalRes.ErrorMessage is null))
 						return DbgDotNetValueResult.CreateError(evalRes.ErrorMessage);
 
 					var resultValue = CreateDotNetValue_CorDebug(evalRes.CorValue!, reflectionAppDomain, tryCreateStrongHandle: true);
@@ -465,7 +465,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo);
-			if (tmp != null)
+			if (!(tmp is null))
 				return tmp.Value.ErrorMessage ?? throw new InvalidOperationException();
 
 			var dnThread = GetThread(evalInfo.Frame.Thread);
@@ -482,7 +482,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					var converter = new EvalArgumentConverter(this, dnEval, appDomain, reflectionAppDomain, createdValues);
 
 					var evalRes = converter.Convert(sourceValue, targetType, out var newValueType);
-					if (evalRes.ErrorMessage != null)
+					if (!(evalRes.ErrorMessage is null))
 						return evalRes.ErrorMessage;
 
 					var sourceCorValue = evalRes.CorValue!;
@@ -591,7 +591,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		static bool IsNoFuncEvalValue(object? value) {
-			if (value == null)
+			if (value is null)
 				return true;
 
 			var type = value.GetType();
@@ -606,7 +606,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		static bool RequiresNoFuncEvalToStoreValue(DmdType targetType, object? sourceValue) {
 			// Boxing requires func-eval
-			if (!(targetType.IsValueType || targetType.IsPointer || targetType.IsFunctionPointer) && sourceValue != null)
+			if (!(targetType.IsValueType || targetType.IsPointer || targetType.IsFunctionPointer) && !(sourceValue is null))
 				return false;
 
 			// Only primitive value types are supported
@@ -622,8 +622,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			int hr;
 			if (targetType.IsPointer || targetType.IsFunctionPointer) {
 				var sourceValueBytes = TryGetValueBytes(sourceValue);
-				Debug.Assert(sourceValueBytes != null);
-				if (sourceValueBytes == null || targetValue.Size != (uint)sourceValueBytes.Length)
+				Debug.Assert(!(sourceValueBytes is null));
+				if (sourceValueBytes is null || targetValue.Size != (uint)sourceValueBytes.Length)
 					return CordbgErrorHelper.InternalError;
 				ulong address = targetValue.Address;
 				if (address == 0)
@@ -634,7 +634,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return null;
 			}
 			else if (!targetType.IsValueType) {
-				if (sourceValue != null)
+				if (!(sourceValue is null))
 					return CordbgErrorHelper.InternalError;
 				hr = targetValue.SetReferenceAddress(0);
 				if (hr != 0)
@@ -650,11 +650,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (targetValue.IsBox)
 					return CordbgErrorHelper.InternalError;
 
-				if (!targetValue.IsGeneric || sourceValue == null)
+				if (!targetValue.IsGeneric || sourceValue is null)
 					return CordbgErrorHelper.InternalError;
 				var sourceValueBytes = TryGetValueBytes(sourceValue);
-				Debug.Assert(sourceValueBytes != null);
-				if (sourceValueBytes == null || targetValue.Size != (uint)sourceValueBytes.Length)
+				Debug.Assert(!(sourceValueBytes is null));
+				if (sourceValueBytes is null || targetValue.Size != (uint)sourceValueBytes.Length)
 					return CordbgErrorHelper.InternalError;
 				hr = targetValue.WriteGenericValue(sourceValueBytes, dnThread.Process.CorProcess);
 				if (hr < 0)
@@ -700,7 +700,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo);
-			if (tmp != null)
+			if (!(tmp is null))
 				return tmp.Value;
 
 			var dnThread = GetThread(evalInfo.Frame.Thread);
@@ -712,7 +712,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 					var corType = GetType(appDomain, elementType);
 					var res = dnEval.CreateSZArray(corType, length, out int hr);
-					if (res == null)
+					if (res is null)
 						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.GetErrorMessage(hr));
 					Debug.Assert(!res.Value.WasException, "Shouldn't throw " + nameof(ArgumentOutOfRangeException));
 					if (res.Value.WasCustomNotification)

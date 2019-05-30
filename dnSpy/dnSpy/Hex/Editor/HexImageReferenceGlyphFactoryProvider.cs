@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class HexImageReferenceGlyphFactory : HexGlyphFactory {
 		public override UIElement? GenerateGlyph(WpfHexViewLine line, HexGlyphTag tag) {
 			var glyphTag = tag as HexImageReferenceTag;
-			if (glyphTag == null)
+			if (glyphTag is null)
 				return null;
 
 			const double DEFAULT_IMAGE_LENGTH = 16;

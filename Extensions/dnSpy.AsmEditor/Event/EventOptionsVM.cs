@@ -42,9 +42,9 @@ namespace dnSpy.AsmEditor.Event {
 		public ICommand PickAddMethodCommand => new RelayCommand(a => PickAddMethod());
 		public ICommand PickInvokeMethodCommand => new RelayCommand(a => PickInvokeMethod());
 		public ICommand PickRemoveMethodCommand => new RelayCommand(a => PickRemoveMethod());
-		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => AddMethod != null);
-		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => InvokeMethod != null);
-		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => RemoveMethod != null);
+		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => !(AddMethod is null));
+		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => !(InvokeMethod is null));
+		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => !(RemoveMethod is null));
 
 		public EventAttributes Attributes {
 			get => attributes;
@@ -99,7 +99,7 @@ namespace dnSpy.AsmEditor.Event {
 		public string AddMethodFullName => GetFullName(AddMethod);
 		public string InvokeMethodFullName => GetFullName(InvokeMethod);
 		public string RemoveMethodFullName => GetFullName(RemoveMethod);
-		static string GetFullName(MethodDef? md) => md == null ? "null" : md.FullName;
+		static string GetFullName(MethodDef? md) => md is null ? "null" : md.FullName;
 
 		public MethodDef? AddMethod {
 			get => addMethod;
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Event {
 				CanAddGenericMethodVar = true,
 				OwnerType = ownerType,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -173,26 +173,26 @@ namespace dnSpy.AsmEditor.Event {
 		void Reinitialize() => InitializeFrom(origOptions);
 
 		MethodDef? PickMethod(MethodDef? origMethod) {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			return dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleDocumentTreeNodeFilter(ownerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
 		}
 
 		void PickAddMethod() {
 			var method = PickMethod(AddMethod);
-			if (method != null)
+			if (!(method is null))
 				AddMethod = method;
 		}
 
 		void PickInvokeMethod() {
 			var method = PickMethod(InvokeMethod);
-			if (method != null)
+			if (!(method is null))
 				InvokeMethod = method;
 		}
 
 		void PickRemoveMethod() {
 			var method = PickMethod(RemoveMethod);
-			if (method != null)
+			if (!(method is null))
 				RemoveMethod = method;
 		}
 

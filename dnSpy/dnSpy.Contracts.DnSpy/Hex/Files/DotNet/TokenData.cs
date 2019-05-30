@@ -54,10 +54,10 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var mdHeaders = file.GetHeaders<DotNetMetadataHeaders>();
-			if (mdHeaders == null)
+			if (mdHeaders is null)
 				return null;
 			var tablesStream = mdHeaders.TablesStream;
-			if (tablesStream == null)
+			if (tablesStream is null)
 				return null;
 			var token = new MDToken(ReadValue());
 			if ((uint)token.Table >= (uint)tablesStream.MDTables.Count)
@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="formatter">Formatter</param>
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var token = ReadToken();
-			if (token != null)
+			if (!(token is null))
 				formatter.WriteToken(token.Value.Raw);
 			else
 				WriteValueError(formatter);
@@ -120,10 +120,10 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var tablesStream = file.GetHeaders<DotNetMetadataHeaders>()?.TablesStream;
-			if (tablesStream == null)
+			if (tablesStream is null)
 				return null;
 			var token = ReadToken();
-			if (token == null)
+			if (token is null)
 				return null;
 			if ((uint)token.Value.Table >= (uint)tablesStream.MDTables.Count)
 				return null;
@@ -245,7 +245,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var tablesStream = file.GetHeaders<DotNetMetadataHeaders>()?.TablesStream;
-			if (tablesStream == null)
+			if (tablesStream is null)
 				return null;
 			var token = ReadToken();
 			if ((uint)token.Table >= (uint)tablesStream.MDTables.Count)

@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		DocumentTreeNodeData? ConvertFieldReference(HexFieldReference fieldRef) {
 			var peNode = bufferToDocumentNodeService.FindPENode(fieldRef.File);
-			if (peNode == null)
+			if (peNode is null)
 				return null;
 
 			return peNode.FindNode(fieldRef.Structure, fieldRef.Field);

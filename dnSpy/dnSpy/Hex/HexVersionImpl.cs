@@ -41,7 +41,7 @@ namespace dnSpy.Hex {
 
 		public HexVersionImpl SetChanges(IList<HexChange> changes, int? reiteratedVersionNumber = null) {
 			var normalizedChanges = NormalizedHexChangeCollection.Create(changes);
-			if (reiteratedVersionNumber == null)
+			if (reiteratedVersionNumber is null)
 				reiteratedVersionNumber = changes.Count == 0 ? ReiteratedVersionNumber : VersionNumber + 1;
 			var newVersion = new HexVersionImpl(Buffer, VersionNumber + 1, reiteratedVersionNumber.Value);
 			this.changes = normalizedChanges;

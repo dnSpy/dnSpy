@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// true if the compilation succeeded
 		/// </summary>
-		public bool Success => RawFile != null;
+		public bool Success => !(RawFile is null);
 
 		/// <summary>
 		/// Result of compilation or null if compilation failed
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// </summary>
 		/// <param name="diagnostics">Diagnostics</param>
 		public CompilationResult(CompilerDiagnostic[] diagnostics) {
-			if (diagnostics == null)
+			if (diagnostics is null)
 				throw new ArgumentNullException(nameof(diagnostics));
 			Debug.Assert(diagnostics.Length != 0);
 			RawFile = null;

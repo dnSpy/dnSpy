@@ -70,17 +70,17 @@ namespace dnSpy.Text.Editor {
 				int pos = span.Start;
 
 				// We check full lines so make sure we don't re-check the same line again
-				if (line != null && line.ExtentIncludingLineBreak.End.Position > pos)
+				if (!(line is null) && line.ExtentIncludingLineBreak.End.Position > pos)
 					continue;
 
 				for (;;) {
-					if (line != null && line.ExtentIncludingLineBreak.End.Position == pos) {
+					if (!(line is null) && line.ExtentIncludingLineBreak.End.Position == pos) {
 						if (line.Snapshot.LineCount == line.LineNumber + 1)
 							break;
 						line = line.Snapshot.GetLineFromLineNumber(line.LineNumber + 1);
 					}
 					else {
-						Debug.Assert(line == null || pos > line.ExtentIncludingLineBreak.End.Position);
+						Debug.Assert(line is null || pos > line.ExtentIncludingLineBreak.End.Position);
 						line = span.Snapshot.GetLineFromPosition(pos);
 					}
 
@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 						var uriFinder = new UriFinder(lineText);
 						for (;;) {
 							var res = uriFinder.GetNext();
-							if (res == null)
+							if (res is null)
 								break;
 							Debug.Assert(res.Value.Length != 0);
 							if (res.Value.Length == 0)
@@ -101,7 +101,7 @@ namespace dnSpy.Text.Editor {
 								break;
 							var uriSpan = new SnapshotSpan(line.Snapshot, start, res.Value.Length);
 							var uri = TryCreateUri(uriSpan.GetText());
-							if (uri == null)
+							if (uri is null)
 								continue;
 							yield return new TagSpan<IUrlTag>(uriSpan, new UrlTag(uri));
 						}

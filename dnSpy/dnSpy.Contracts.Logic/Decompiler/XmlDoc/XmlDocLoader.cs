@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static XmlDocumentationProvider? LoadMscorlibDocumentation() {
 			string? xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
 				?? FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_20);
-			if (xmlDocFile != null)
+			if (!(xmlDocFile is null))
 				return XmlDocumentationProvider.Create(xmlDocFile);
 			else
 				return null;
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="module">Module</param>
 		/// <returns></returns>
 		public static XmlDocumentationProvider? LoadDocumentation(ModuleDef module) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			return LoadDocumentation(module, module.Location, module.RuntimeVersion);
 		}
@@ -67,17 +67,17 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="runtimeVersion">Optional runtime version, eg. <see cref="ModuleDef.RuntimeVersion"/></param>
 		/// <returns></returns>
 		public static XmlDocumentationProvider? LoadDocumentation(object key, string assemblyFilename, string? runtimeVersion = null) {
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			if (assemblyFilename == null)
+			if (assemblyFilename is null)
 				throw new ArgumentNullException(nameof(assemblyFilename));
 			lock (cache) {
 				if (!cache.TryGetValue(key, out var xmlDoc)) {
 					string? xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
-					if (xmlDocFile == null) {
+					if (xmlDocFile is null) {
 						xmlDocFile = FindXmlDocumentation(Path.GetFileName(assemblyFilename), runtimeVersion);
 					}
-					xmlDoc = xmlDocFile == null ? null : XmlDocumentationProvider.Create(xmlDocFile);
+					xmlDoc = xmlDocFile is null ? null : XmlDocumentationProvider.Create(xmlDocFile);
 					cache.Add(key, xmlDoc);
 				}
 				return xmlDoc;
@@ -126,7 +126,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static string? FindXmlDocumentation(string assemblyFileName, string? runtime) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
-			if (runtime == null)
+			if (runtime is null)
 				runtime = MDHeaderRuntimeVersion.MS_CLR_40;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX_X86RETAIL) ||
 				runtime == MDHeaderRuntimeVersion.MS_CLR_10_RETAIL ||
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				fileName = null;
 				foreach (var path in refAsmPathsV4) {
 					fileName = LookupLocalizedXmlDoc(Path.Combine(path, assemblyFileName));
-					if (fileName != null)
+					if (!(fileName is null))
 						break;
 				}
 				fileName = fileName

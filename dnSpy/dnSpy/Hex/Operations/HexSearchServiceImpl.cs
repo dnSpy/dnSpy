@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Operations {
 			bool fullSpan = true;
 			while (pos < HexPosition.MaxEndPosition) {
 				var span = buffer.GetNextValidSpan(pos, upperBounds, fullSpan);
-				if (span == null)
+				if (span is null)
 					break;
 
 				var newStart = HexPosition.Max(pos, span.Value.Start);
@@ -49,7 +49,7 @@ namespace dnSpy.Hex.Operations {
 			bool fullSpan = true;
 			for (;;) {
 				var span = buffer.GetPreviousValidSpan(pos, lowerBounds, fullSpan);
-				if (span == null)
+				if (span is null)
 					break;
 
 				var newStart = HexPosition.Max(lowerBounds, span.Value.Start);
@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Operations {
 				public static byte[] GetBuffer() => Interlocked.Exchange(ref weakBuffer, null)?.Target as byte[] ?? new byte[BUFFER_LENGTH];
 				public static void ReturnBuffer(ref byte[]? buffer) {
 					var tmp = buffer;
-					if (tmp != null) {
+					if (!(tmp is null)) {
 						buffer = null;
 						weakBuffer = new WeakReference(tmp);
 					}

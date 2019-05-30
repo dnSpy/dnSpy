@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Settings {
 
 		public object Runtimes {
 			get {
-				if (runtimesVM == null)
+				if (runtimesVM is null)
 					runtimesVM = new RuntimesVM(dbgLanguageService.Value.GetLanguageInfos());
 				return runtimesVM;
 			}
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Settings {
 
 		public override void OnApply() {
 			Settings.CopyTo(_global_settings);
-			if (runtimesVM != null) {
+			if (!(runtimesVM is null)) {
 				foreach (var info in runtimesVM.GetSettings()) {
 					var language = dbgLanguageService.Value.GetLanguages(info.runtimeKindGuid).First(a => a.Name == info.languageName);
 					dbgLanguageService.Value.SetCurrentLanguage(info.runtimeKindGuid, language);

@@ -33,11 +33,11 @@ namespace dnSpy.Hex.Editor.HexGroups {
 		HexEditorGroupFactoryServiceImpl(HexEditorFactoryService hexEditorFactoryService) => this.hexEditorFactoryService = hexEditorFactoryService;
 
 		public override WpfHexViewHost Create(HexBuffer buffer, string group, string subGroup, Guid? menuGuid) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (group == null)
+			if (group is null)
 				throw new ArgumentNullException(nameof(group));
-			if (subGroup == null)
+			if (subGroup is null)
 				throw new ArgumentNullException(nameof(subGroup));
 
 			var roles = hexEditorFactoryService.CreateTextViewRoleSet(hexEditorFactoryService.DefaultRoles.Concat(new[] { group, subGroup }));
@@ -50,7 +50,7 @@ namespace dnSpy.Hex.Editor.HexGroups {
 		}
 
 		public override LocalGroupOptions GetDefaultLocalOptions(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			var options = new LocalGroupOptions();
 			options.ShowOffsetColumn = true;

@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 				return;
 
 			var ispan = span.Intersection(new VirtualSnapshotSpan(textView.TextViewLines.FormattedSpan));
-			if (ispan == null)
+			if (ispan is null)
 				return;
 			span = ispan.Value;
 
@@ -65,7 +65,7 @@ namespace dnSpy.Text.Editor {
 			for (int i = 0; i < lines.Count; i++) {
 				var line = lines[i];
 				var lineSpan = line.ExtentIncludingLineBreak.Intersection(span.SnapshotSpan);
-				if (lineSpan == null)
+				if (lineSpan is null)
 					continue;
 
 				var startPoint = new VirtualSnapshotPoint(lineSpan.Value.Start);
@@ -162,12 +162,12 @@ namespace dnSpy.Text.Editor {
 
 				if (showStart) {
 					var line = textView.TextViewLines.GetTextViewLineContainingBufferPosition(firstSpan.Start);
-					if (line == null || line.VisibilityState != VisibilityState.FullyVisible)
+					if (line is null || line.VisibilityState != VisibilityState.FullyVisible)
 						ShowSpan(bufferSpan, options);
 				}
 				else {
 					var line = textView.TextViewLines.GetTextViewLineContainingBufferPosition(lastSpan.Start);
-					if (line == null || line.VisibilityState != VisibilityState.FullyVisible)
+					if (line is null || line.VisibilityState != VisibilityState.FullyVisible)
 						ShowSpan(bufferSpan, options);
 				}
 			}
@@ -191,7 +191,7 @@ namespace dnSpy.Text.Editor {
 
 		public void ScrollViewportVerticallyByPixels(double distanceToScroll) {
 			var lines = textView.TextViewLines;
-			if (lines == null)
+			if (lines is null)
 				return;
 			var line = distanceToScroll >= 0 ? lines.FirstVisibleLine : lines.LastVisibleLine;
 			textView.DisplayTextLineContainingBufferPosition(line.Start, line.Top - textView.ViewportTop + distanceToScroll, ViewRelativePosition.Top);

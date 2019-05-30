@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions) {
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();

@@ -70,10 +70,10 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void PickType() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
-			if (newType != null)
+			if (!(newType is null))
 				TypeFullName = newType.AssemblyQualifiedName;
 		}
 
@@ -89,7 +89,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (!canDeserialize)
 				return string.Empty;
 
-			if (data == null)
+			if (data is null)
 				return string.Empty;
 
 			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out var obj)))
@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			try {
 				type = Type.GetType(TypeFullName);
-				if (type == null)
+				if (type is null)
 					return dnSpy_AsmEditor_Resources.Error_CouldNotFindTypeOrItsAssembly;
 				return string.Empty;
 			}

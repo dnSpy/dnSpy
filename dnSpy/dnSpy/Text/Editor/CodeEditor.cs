@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = options.TextBuffer;
-			if (textBuffer == null)
+			if (textBuffer is null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);

@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		internal string Title {
 			get {
-				if (title == null)
+				if (title is null)
 					title = GetProcessTitle() ?? string.Empty;
 				return title;
 			}
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		sealed class ProcessState : IDisposable {
 			public string Title {
 				get {
-					if (process == null)
+					if (process is null)
 						return string.Empty;
 					try {
 						process.Refresh();

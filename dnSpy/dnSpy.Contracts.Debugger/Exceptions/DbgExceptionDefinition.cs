@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="flags">Flags</param>
 		/// <param name="description">Description shown in the UI or null</param>
 		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string? description) {
-			if (id.Category == null)
+			if (id.Category is null)
 				throw new ArgumentException();
 			Id = id;
 			Flags = flags;
@@ -66,6 +66,6 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => Description == null ? $"{Id} - {Flags}" : $"{Id} ({Description}) - {Flags}";
+		public override string ToString() => Description is null ? $"{Id} - {Flags}" : $"{Id} ({Description}) - {Flags}";
 	}
 }

@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public TextLayer(HexAdornmentLayer adornmentLayer) {
-			if (adornmentLayer == null)
+			if (adornmentLayer is null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
 			lines = new List<LineInfo>();
 			adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, this, null);

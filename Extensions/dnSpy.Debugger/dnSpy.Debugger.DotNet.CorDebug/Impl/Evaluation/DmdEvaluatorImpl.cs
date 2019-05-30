@@ -32,27 +32,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		DbgEvaluationInfo GetEvaluationInfo(object? context) {
 			const string errorMessage = nameof(context) + " must not be null and must be a " + nameof(DbgEvaluationInfo);
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context), errorMessage);
 			var evalInfo = context as DbgEvaluationInfo;
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentException(errorMessage, nameof(context));
 			return evalInfo;
 		}
 
 		DbgDotNetValue? GetDotNetValue(object? obj) {
-			if (obj == null)
+			if (obj is null)
 				return null;
 			var dnValue = obj as DbgDotNetValue;
-			if (dnValue == null)
+			if (dnValue is null)
 				throw new ArgumentException("Value must be a " + nameof(DbgDotNetValue));
 			return dnValue;
 		}
 
 		object GetValueThrow(DbgDotNetValueResult result) {
-			if (result.ErrorMessage != null)
+			if (!(result.ErrorMessage is null))
 				throw new DmdEvaluatorException(result.ErrorMessage);
-			Debug.Assert(result.Value != null);
+			Debug.Assert(!(result.Value is null));
 			if (result.ValueIsException) {
 				var msg = "An exception was thrown: " + result.Value.Type.FullName;
 				result.Value.Dispose();
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) {
 			var evalInfo = GetEvaluationInfo(context);
 			var errorMessage = engine.DotNetRuntime.StoreField(evalInfo, GetDotNetValue(obj), field, value);
-			if (errorMessage != null)
+			if (!(errorMessage is null))
 				throw new DmdEvaluatorException(errorMessage);
 		}
 	}

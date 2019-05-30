@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public GenericParamVM? Edit(string? title, GenericParamVM pd) {
 			var win = new GenericParamDlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = pd;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

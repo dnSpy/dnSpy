@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public uint Length {
 			get {
 				var er = Resource as EmbeddedResource;
-				return er == null ? 0 : er.Length;
+				return er is null ? 0 : er.Length;
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public uint RVA {
 			get {
 				var module = GetModuleOffset(out var fo);
-				if (module == null)
+				if (module is null)
 					return 0;
 
 				return (uint)module.Metadata.PEImage.ToRVA(fo);
@@ -105,11 +105,11 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			fileOffset = 0;
 
 			var er = Resource as EmbeddedResource;
-			if (er == null)
+			if (er is null)
 				return null;
 
 			var module = this.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
-			if (module == null)
+			if (module is null)
 				return null;
 
 			fileOffset = (FileOffset)er.CreateReader().StartOffset;
@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Length);
 				break;
 			}
-			output.Write($" ({(extra == null ? string.Empty : $"{extra}, ")}{Resource.ResourceType}, {Resource.Attributes})", BoxedTextColor.Comment);
+			output.Write($" ({(extra is null ? string.Empty : $"{extra}, ")}{Resource.ResourceType}, {Resource.Attributes})", BoxedTextColor.Comment);
 			decompiler.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

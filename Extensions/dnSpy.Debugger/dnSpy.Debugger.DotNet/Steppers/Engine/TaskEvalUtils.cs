@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				}
 
 				DmdFieldInfo? builderField = null;
-				if (builderFieldModule != null && builderFieldToken != 0)
+				if (!(builderFieldModule is null) && builderFieldToken != 0)
 					builderField = thisArg.Value.Type.GetField(builderFieldModule, (int)builderFieldToken);
 				if (builderField is null)
 					builderField = TryGetBuilderField(thisArg.Value.Type);
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					if (fieldType.MetadataNamespace == info.@namespace && fieldType.MetadataName == info.name)
 						return field;
 				}
-				if (builderField is null && fieldType.MetadataName != null &&
+				if (builderField is null && !(fieldType.MetadataName is null) &&
 					(fieldType.MetadataName.EndsWith("MethodBuilder", StringComparison.Ordinal) ||
 					fieldType.MetadataName.EndsWith("MethodBuilder`1", StringComparison.Ordinal))) {
 					builderField = field;
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				TryGetTaskObjectId_FrameworkBuilder(evalInfo, builderValue) ??
 				TryGetTaskObjectId_ObjectIdForDebugger(evalInfo, builderValue) ??
 				TryGetTaskObjectId_TaskProperty(evalInfo, builderValue);
-			Debug.Assert(result == null || !result.IsNull);
+			Debug.Assert(result is null || !result.IsNull);
 			return result;
 		}
 
@@ -260,7 +260,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			!(GetNotifyDebuggerOfWaitCompletionMethod(appDomain) is null);
 
 		public static DmdMethodInfo? GetNotifyDebuggerOfWaitCompletionMethod(DmdAppDomain? appDomain) =>
-			appDomain == null ? null : GetAsyncStepOutState(appDomain).NotifyDebuggerOfWaitCompletionMethod;
+			appDomain is null ? null : GetAsyncStepOutState(appDomain).NotifyDebuggerOfWaitCompletionMethod;
 
 		const string SetNotificationForWaitCompletion_Name = "SetNotificationForWaitCompletion";
 
@@ -270,11 +270,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			bool success = false;
 			try {
 				builderValue = TryGetBuilder(evalInfo, builderFieldModule.GetReflectionModule(), builderFieldToken);
-				if (builderValue == null)
+				if (builderValue is null)
 					return (false, null);
 				bool calledMethod = TryCallSetNotificationForWaitCompletion(evalInfo, builderValue, value);
 				taskValue = TryGetTaskValue(evalInfo, builderValue);
-				if (!calledMethod && taskValue != null)
+				if (!calledMethod && !(taskValue is null))
 					calledMethod = TryCallSetNotificationForWaitCompletion(evalInfo, taskValue, value);
 				if (!calledMethod)
 					return (false, null);
@@ -304,7 +304,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		static DbgDotNetValue? TryGetTaskValue(DbgEvaluationInfo evalInfo, DbgDotNetValue value) {
 			var result = TryGetTaskObjectId_TaskProperty(evalInfo, value);
-			Debug.Assert(result == null || !result.IsNull);
+			Debug.Assert(result is null || !result.IsNull);
 			return result;
 		}
 	}

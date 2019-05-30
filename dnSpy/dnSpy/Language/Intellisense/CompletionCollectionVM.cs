@@ -46,7 +46,7 @@ namespace dnSpy.Language.Intellisense {
 		public CompletionCollectionVM(IList<Completion> completionList) {
 			this.completionList = completionList ?? throw new ArgumentNullException(nameof(completionList));
 			completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
-			if (completionListNotifyCollectionChanged != null)
+			if (!(completionListNotifyCollectionChanged is null))
 				completionListNotifyCollectionChanged.CollectionChanged += CompletionList_CollectionChanged;
 			list = new List<CompletionVM>(completionList.Count);
 			ReinitializeList();
@@ -56,7 +56,7 @@ namespace dnSpy.Language.Intellisense {
 			int i;
 			switch (e.Action) {
 			case NotifyCollectionChangedAction.Add:
-				Debug.Assert(e.NewItems != null);
+				Debug.Assert(!(e.NewItems is null));
 				i = e.NewStartingIndex;
 				var newList = new List<CompletionVM>();
 				foreach (Completion c in e.NewItems) {
@@ -68,11 +68,11 @@ namespace dnSpy.Language.Intellisense {
 				break;
 
 			case NotifyCollectionChangedAction.Remove:
-				Debug.Assert(e.OldItems != null);
+				Debug.Assert(!(e.OldItems is null));
 				var oldList = new List<CompletionVM>();
 				foreach (Completion c in e.OldItems) {
 					var vm = CompletionVM.TryGet(c);
-					if (vm != null)
+					if (!(vm is null))
 						oldList.Add(vm);
 					Debug.Assert(list[e.OldStartingIndex].Completion == vm?.Completion);
 					list.RemoveAt(e.OldStartingIndex);
@@ -116,7 +116,7 @@ namespace dnSpy.Language.Intellisense {
 		public void Remove(object value) => throw new NotSupportedException();
 		public void RemoveAt(int index) => throw new NotSupportedException();
 		public void Dispose() {
-			if (completionListNotifyCollectionChanged != null)
+			if (!(completionListNotifyCollectionChanged is null))
 				completionListNotifyCollectionChanged.CollectionChanged -= CompletionList_CollectionChanged;
 			list.Clear();
 		}

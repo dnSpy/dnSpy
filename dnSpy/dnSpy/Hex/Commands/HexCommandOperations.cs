@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Commands {
 		Dispatcher CurrentDispatcher {
 			get {
 				var wpfHexView = HexView as WpfHexView;
-				Debug.Assert(wpfHexView != null);
+				Debug.Assert(!(wpfHexView is null));
 				return wpfHexView?.VisualElement.Dispatcher ?? Dispatcher.CurrentDispatcher;
 			}
 		}
@@ -99,10 +99,10 @@ namespace dnSpy.Hex.Commands {
 		Window OwnerWindow {
 			get {
 				var wpfHexView = HexView as WpfHexView;
-				Debug.Assert(wpfHexView != null);
-				if (wpfHexView != null) {
+				Debug.Assert(!(wpfHexView is null));
+				if (!(wpfHexView is null)) {
 					var window = Window.GetWindow(wpfHexView.VisualElement);
-					if (window != null)
+					if (!(window is null))
 						return window;
 				}
 				return Application.Current.MainWindow;
@@ -166,10 +166,10 @@ namespace dnSpy.Hex.Commands {
 		public override void GoToMetadata(GoToMetadataKind mdKind) {
 			var origPos = HexView.Caret.Position.Position.ActivePosition.BufferPosition;
 			var mdHeaders = TryGetMetadataHeaders(origPos);
-			if (mdHeaders == null)
+			if (mdHeaders is null)
 				return;
 			var peHeaders = TryGetPeHeaders(origPos);
-			if (peHeaders == null && mdKind == GoToMetadataKind.MemberRva)
+			if (peHeaders is null && mdKind == GoToMetadataKind.MemberRva)
 				mdKind = GoToMetadataKind.Table;
 			var data = new GoToMetadataVM(HexView.Buffer, mdHeaders, peHeaders, HexView.Buffer.ReadUInt32(origPos));
 			data.GoToMetadataKind = mdKind;
@@ -180,8 +180,8 @@ namespace dnSpy.Hex.Commands {
 				return;
 
 			var span = GetGoToMetadataSpan(mdHeaders, peHeaders, data.OffsetTokenValue, data.GoToMetadataKind);
-			Debug.Assert(span != null);
-			if (span == null)
+			Debug.Assert(!(span is null));
+			if (span is null)
 				return;
 			var info = UserValueToSelection(span.Value.End, span.Value.Start);
 			MoveTo(new HexBufferPoint(HexView.Buffer, info.Anchor), new HexBufferPoint(HexView.Buffer, info.Active), new HexBufferPoint(HexView.Buffer, info.Caret), select: false);
@@ -191,36 +191,36 @@ namespace dnSpy.Hex.Commands {
 			MDTable? mdTable;
 			switch (mdKind) {
 			case GoToMetadataKind.Blob:
-				if (mdHeaders.BlobStream == null)
+				if (mdHeaders.BlobStream is null)
 					return null;
 				return new HexSpan(mdHeaders.BlobStream.Span.Span.Start + offsetTokenValue, 0);
 
 			case GoToMetadataKind.Strings:
-				if (mdHeaders.StringsStream == null)
+				if (mdHeaders.StringsStream is null)
 					return null;
 				return new HexSpan(mdHeaders.StringsStream.Span.Span.Start + offsetTokenValue, 0);
 
 			case GoToMetadataKind.US:
-				if (mdHeaders.USStream == null)
+				if (mdHeaders.USStream is null)
 					return null;
 				return new HexSpan(mdHeaders.USStream.Span.Span.Start + (offsetTokenValue & 0x00FFFFFF), 0);
 
 			case GoToMetadataKind.GUID:
-				if (mdHeaders.GUIDStream == null)
+				if (mdHeaders.GUIDStream is null)
 					return null;
 				return new HexSpan(mdHeaders.GUIDStream.Span.Span.Start + (offsetTokenValue - 1) * 16, 16);
 
 			case GoToMetadataKind.Table:
 				mdTable = GetMDTable(mdHeaders, offsetTokenValue);
-				if (mdTable == null)
+				if (mdTable is null)
 					return null;
 				return new HexSpan(mdTable.Span.Start + ((offsetTokenValue & 0x00FFFFFF) - 1) * mdTable.RowSize, mdTable.RowSize);
 
 			case GoToMetadataKind.MemberRva:
-				if (peHeaders == null)
+				if (peHeaders is null)
 					return null;
 				mdTable = GetMDTable(mdHeaders, offsetTokenValue);
-				if (mdTable == null)
+				if (mdTable is null)
 					return null;
 				if (mdTable.Table != Table.Method && mdTable.Table != Table.FieldRVA)
 					return null;
@@ -235,7 +235,7 @@ namespace dnSpy.Hex.Commands {
 
 		static MDTable? GetMDTable(DotNetMetadataHeaders mdHeaders, uint token) {
 			var tablesStream = mdHeaders.TablesStream;
-			if (tablesStream == null)
+			if (tablesStream is null)
 				return null;
 			var table = token >> 24;
 			if (table >= (uint)tablesStream.MDTables.Count)
@@ -375,7 +375,7 @@ namespace dnSpy.Hex.Commands {
 				byte b = SimpleTypeConverter.ParseByte(s, byte.MinValue, byte.MaxValue, out var error);
 				return error;
 			});
-			if (res == null)
+			if (res is null)
 				return;
 
 			try {

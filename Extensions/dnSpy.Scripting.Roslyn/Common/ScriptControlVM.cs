@@ -78,7 +78,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
 		public ICommand HistoryPreviousCommand => new RelayCommand(a => ReplEditor.SelectPreviousCommand(), a => ReplEditor.CanSelectPreviousCommand);
 		public ICommand HistoryNextCommand => new RelayCommand(a => ReplEditor.SelectNextCommand(), a => ReplEditor.CanSelectNextCommand);
-		public bool CanReset => hasInitialized && (execState == null || !execState.IsInitializing);
+		public bool CanReset => hasInitialized && (execState is null || !execState.IsInitializing);
 
 		public bool CanSaveText => ReplEditor.CanSaveText;
 		public void SaveText() => ReplEditor.SaveText(TextFilenameNoExtension, "txt", TEXTFILES_FILTER);
@@ -88,7 +88,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public void Reset(bool loadConfig = true) {
 			if (!CanReset)
 				return;
-			if (execState != null) {
+			if (!(execState is null)) {
 				execState.CancellationTokenSource.Cancel();
 				try {
 					execState.Globals.RaiseScriptResetting();
@@ -212,7 +212,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public bool IsCommand(string text) {
-			if (ParseScriptCommand(text) != null)
+			if (!(ParseScriptCommand(text) is null))
 				return true;
 			return IsCompleteSubmission(text);
 		}
@@ -254,8 +254,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		IEnumerable<string> GetDefaultLoadPaths() => GetDefaultScriptFilePaths();
 
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
-			Debug.Assert(execState == null);
-			if (execState != null)
+			Debug.Assert(execState is null);
+			if (!(execState is null))
 				throw new InvalidOperationException();
 
 			execState = new ExecState(this, dispatcher, new CancellationTokenSource());
@@ -315,8 +315,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public Task OnCommandUpdatedAsync(IReplCommandInput command, CancellationToken cancellationToken) {
 			if (isResetting)
 				return Task.CompletedTask;
-			Debug.Assert(execState != null);
-			if (execState == null)
+			Debug.Assert(!(execState is null));
+			if (execState is null)
 				throw new InvalidOperationException();
 
 			string code = command.Input;
@@ -350,20 +350,20 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected abstract Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree, IEnumerable<MetadataReference>? references, CompilationOptions options, Compilation previousScriptCompilation, Type returnType, Type globalsType);
 
 		bool ExecuteCommandInternal(string input) {
-			Debug.Assert(execState != null && !execState.IsInitializing);
-			if (execState == null || execState.IsInitializing)
+			Debug.Assert(!(execState is null) && !execState.IsInitializing);
+			if (execState is null || execState.IsInitializing)
 				return true;
 			lock (lockObj) {
-				Debug.Assert(execState.ExecTask == null && !execState.Executing);
-				if (execState.ExecTask != null || execState.Executing)
+				Debug.Assert(execState.ExecTask is null && !execState.Executing);
+				if (!(execState.ExecTask is null) || execState.Executing)
 					return true;
 				execState.Executing = true;
 			}
 
 			try {
 				var scState = ParseScriptCommand(input);
-				if (scState != null) {
-					if (execState != null) {
+				if (!(scState is null)) {
+					if (!(execState is null)) {
 						lock (lockObj)
 							execState.Executing = false;
 					}
@@ -397,13 +397,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						}
 						if (isActive) {
 							try {
-								if (ex != null)
+								if (!(ex is null))
 									ReplEditor.OutputPrint(Format(ex.InnerException), BoxedTextColor.Error, true);
 
 								if (!t.IsCanceled && !t.IsFaulted) {
 									oldState.ScriptState = t.Result;
 									var val = t.Result.ReturnValue;
-									if (val != null)
+									if (!(val is null))
 										ObjectOutputLine(BoxedTextColor.ReplOutputText, oldState.Globals.PrintOptionsImpl, val, true);
 								}
 							}
@@ -414,7 +414,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					}, CancellationToken.None, TaskContinuationOptions.None, taskSched);
 				})
 				.ContinueWith(t => {
-					if (execState != null) {
+					if (!(execState is null)) {
 						lock (lockObj)
 							execState.Executing = false;
 					}
@@ -427,7 +427,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						CommandExecuted();
 					else {
 						var ex = t.Exception;
-						if (ex != null) {
+						if (!(ex is null)) {
 							ReplEditor.OutputPrint(ex.ToString(), BoxedTextColor.Error, true);
 							CommandExecuted();
 						}
@@ -437,7 +437,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				return true;
 			}
 			catch (Exception ex) {
-				if (execState != null) {
+				if (!(execState is null)) {
 					lock (lockObj)
 						execState.Executing = false;
 				}
@@ -609,7 +609,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		void ObjectOutput(CachedWriter writer, object? color, PrintOptionsImpl printOptions, object? value) {
 			var writable = GetOutputWritable(printOptions, value);
-			if (writable != null)
+			if (!(writable is null))
 				writable.WriteTo(writer);
 			else
 				writer.Write(Format(value, printOptions.RoslynPrintOptions), color);
@@ -619,7 +619,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (color is null)
 				return;
 			var writable = GetOutputWritable(printOptions, value);
-			if (writable != null)
+			if (!(writable is null))
 				writable.WriteTo(OutputWriter.Create(this, startOnNewLine));
 			else
 				ReplEditor.OutputPrint(Format(value, printOptions.RoslynPrintOptions), color, startOnNewLine);

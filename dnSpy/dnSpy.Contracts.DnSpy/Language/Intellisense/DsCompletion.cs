@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="suffix">Text shown after the normal completion text</param>
 		public DsCompletion(string displayText, string? filterText = null, string? insertionText = null, string? description = null, ImageReference imageReference = default, string? iconAutomationText = null, IEnumerable<DsCompletionIcon>? attributeIcons = null, string? suffix = null)
 			: base(displayText, insertionText, description, default, iconAutomationText, attributeIcons) {
-			if (displayText == null)
+			if (displayText is null)
 				throw new ArgumentNullException(nameof(displayText));
 			FilterText = filterText ?? displayText;
 			InsertionText = insertionText ?? displayText;

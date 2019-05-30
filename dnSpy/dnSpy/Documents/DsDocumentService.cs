@@ -101,7 +101,7 @@ namespace dnSpy.Documents {
 		}
 
 		void CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs eventArgs, bool delayLoad = true) {
-			if (delayLoad && dispatcher != null)
+			if (delayLoad && !(dispatcher is null))
 				dispatcher(() => CallCollectionChanged2(eventArgs));
 			else
 				CallCollectionChanged2(eventArgs);
@@ -182,10 +182,10 @@ namespace dnSpy.Documents {
 
 		public IDsDocument? Resolve(IAssembly asm, ModuleDef? sourceModule) {
 			var document = FindAssembly(asm);
-			if (document != null)
+			if (!(document is null))
 				return document;
 			var asmDef = AssemblyResolver.Resolve(asm, sourceModule);
-			if (asmDef != null)
+			if (!(asmDef is null))
 				return FindAssembly(asm);
 			return null;
 		}
@@ -201,7 +201,7 @@ namespace dnSpy.Documents {
 			finally {
 				rwLock.ExitReadLock();
 			}
-			if (doc != null)
+			if (!(doc is null))
 				return doc;
 
 			if (checkTempCache) {
@@ -217,8 +217,8 @@ namespace dnSpy.Documents {
 		}
 
 		DocumentInfo Find_NoLock(IDsDocumentNameKey key) {
-			Debug.Assert(key != null);
-			if (key == null)
+			Debug.Assert(!(key is null));
+			if (key is null)
 				return default;
 			foreach (var info in documents) {
 				if (key.Equals(info.Document.Key))
@@ -228,14 +228,14 @@ namespace dnSpy.Documents {
 		}
 
 		public IDsDocument GetOrAdd(IDsDocument document) {
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 
 			IDsDocument result;
 			rwLock.EnterUpgradeableReadLock();
 			try {
 				var existing = Find_NoLock(document.Key).Document;
-				if (existing != null)
+				if (!(existing is null))
 					result = existing;
 				else {
 					rwLock.EnterWriteLock();
@@ -263,7 +263,7 @@ namespace dnSpy.Documents {
 		}
 
 		public IDsDocument ForceAdd(IDsDocument document, bool delayLoad, object? data) {
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 
 			rwLock.EnterWriteLock();
@@ -290,12 +290,12 @@ namespace dnSpy.Documents {
 			finally {
 				rwLock.ExitReadLock();
 			}
-			if (result == null) {
+			if (result is null) {
 				if (!AssemblyLoadEnabled)
 					return AddTempCachedDocument(document);
 				result = GetOrAdd(document);
 			}
-			if (info.Document != null && origAssemblyRef != null && document.AssemblyDef is AssemblyDef asm) {
+			if (!(info.Document is null) && !(origAssemblyRef is null) && document.AssemblyDef is AssemblyDef asm) {
 				if (!AssemblyNameComparer.CompareAll.Equals(origAssemblyRef, asm)) {
 					rwLock.EnterWriteLock();
 					try {
@@ -356,14 +356,14 @@ namespace dnSpy.Documents {
 
 		internal IDsDocument? TryGetOrCreateInternal(DsDocumentInfo info, bool isAutoLoaded, bool isResolve) {
 			var key = TryCreateKey(info);
-			if (key == null)
+			if (key is null)
 				return null;
 			var existing = Find(key);
-			if (existing != null)
+			if (!(existing is null))
 				return existing;
 
 			var newDocument = TryCreateDocument(info);
-			if (newDocument == null)
+			if (newDocument is null)
 				return null;
 			newDocument.IsAutoLoaded = isAutoLoaded;
 			if (isResolve && !AssemblyLoadEnabled)
@@ -382,7 +382,7 @@ namespace dnSpy.Documents {
 			foreach (var provider in documentProviders) {
 				try {
 					var key = provider.CreateKey(this, info);
-					if (key != null)
+					if (!(key is null))
 						return key;
 				}
 				catch (Exception ex) {
@@ -397,7 +397,7 @@ namespace dnSpy.Documents {
 			foreach (var provider in documentProviders) {
 				try {
 					var document = provider.Create(this, info);
-					if (document != null)
+					if (!(document is null))
 						return document;
 				}
 				catch (Exception ex) {
@@ -447,8 +447,8 @@ namespace dnSpy.Documents {
 		}
 
 		public void Remove(IDsDocumentNameKey key) {
-			Debug.Assert(key != null);
-			if (key == null)
+			Debug.Assert(!(key is null));
+			if (key is null)
 				return;
 
 			IDsDocument? removedDocument;
@@ -459,14 +459,14 @@ namespace dnSpy.Documents {
 			finally {
 				rwLock.ExitWriteLock();
 			}
-			Debug.Assert(removedDocument != null);
+			Debug.Assert(!(removedDocument is null));
 
-			if (removedDocument != null)
+			if (!(removedDocument is null))
 				CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateRemove(removedDocument, null));
 		}
 
 		IDsDocument? Remove_NoLock(IDsDocumentNameKey key) {
-			if (key == null)
+			if (key is null)
 				return null;
 
 			for (int i = 0; i < documents.Count; i++) {
@@ -511,7 +511,7 @@ namespace dnSpy.Documents {
 		}
 
 		public void SetDispatcher(Action<Action> action) {
-			if (dispatcher != null)
+			if (!(dispatcher is null))
 				throw new InvalidOperationException("SetDispatcher() can only be called once");
 			dispatcher = action ?? throw new ArgumentNullException(nameof(action));
 		}

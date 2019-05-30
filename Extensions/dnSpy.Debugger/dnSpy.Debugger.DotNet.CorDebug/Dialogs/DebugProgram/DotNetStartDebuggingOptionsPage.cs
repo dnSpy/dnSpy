@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 					OnPropertyChanged(nameof(Filename));
 					UpdateIsValid();
 					var path = GetPath(filename);
-					if (path != null)
+					if (!(path is null))
 						WorkingDirectory = path;
 				}
 			}
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		void PickNewWorkingDirectory() {
 			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir == null)
+			if (newDir is null)
 				return;
 
 			WorkingDirectory = newDir;

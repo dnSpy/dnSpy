@@ -104,7 +104,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		AssemblyRef? assembly;
 
-		public string AssemblyFullName => Assembly == null ? "null" : Assembly.FullName;
+		public string AssemblyFullName => Assembly is null ? "null" : Assembly.FullName;
 		public HexStringVM FileHashValue { get; }
 
 		public string? FileName {
@@ -141,10 +141,10 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void PickAssembly() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newAsm = dnlibTypePicker.GetDnlibType<IDsDocument>(dnSpy_AsmEditor_Resources.Pick_Assembly, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
-			if (newAsm != null && newAsm.AssemblyDef != null)
+			if (!(newAsm is null) && !(newAsm.AssemblyDef is null))
 				Assembly = newAsm.AssemblyDef.ToAssemblyRef();
 		}
 
@@ -157,7 +157,7 @@ namespace dnSpy.AsmEditor.Resources {
 			Attributes = options.Attributes;
 			Name = options.Name;
 			Assembly = options.Assembly;
-			if (options.File != null) {
+			if (!(options.File is null)) {
 				FileHashValue.Value = options.File.HashValue;
 				FileName = options.File.Name ?? UTF8String.Empty;
 				FileContainsNoMetadata = options.File.ContainsNoMetadata;
@@ -182,7 +182,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		protected override string? Verify(string columnName) {
 			if (columnName == nameof(AssemblyFullName)) {
-				if (Assembly == null)
+				if (Assembly is null)
 					return dnSpy_AsmEditor_Resources.Error_AssemblyFieldMustNotBeEmpty;
 				return string.Empty;
 			}
@@ -192,7 +192,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public override bool HasError {
 			get {
 				return
-					(IsAssemblyLinked && Assembly == null) ||
+					(IsAssemblyLinked && Assembly is null) ||
 					(IsLinked && FileHashValue.HasError);
 			}
 		}

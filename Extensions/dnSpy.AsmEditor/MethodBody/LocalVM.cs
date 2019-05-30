@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			get => Type is PinnedSig;
 			set {
 				var t = Type;
-				if (t == null)
+				if (t is null)
 					return;
 				if (value) {
 					if (!(t is PinnedSig))
@@ -131,7 +131,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void EditType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 
 			var newType = typeSigCreator.Create(typeSigCreatorOptions, Type, out bool canceled);

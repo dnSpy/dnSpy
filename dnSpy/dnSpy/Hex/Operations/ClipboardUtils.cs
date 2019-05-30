@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Operations {
 				s = Clipboard.GetText();
 			}
 			catch (ExternalException) { return null; }
-			if (s == null)
+			if (s is null)
 				return null;
 			if (!canBeEmpty && s.Length == 0)
 				return null;
@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		static byte[]? HexStringToByteArray(string s) {
-			if (s == null)
+			if (s is null)
 				return null;
 			if (s.Length % 2 != 0)
 				return null;

@@ -40,7 +40,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		static string Filter(string s) {
-			if (s == null)
+			if (s is null)
 				return string.Empty;
 			const int MAX = 512;
 			if (s.Length > MAX)

@@ -64,9 +64,9 @@ namespace dnSpy.Text.Editor {
 		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState? state) {
 			if (!viewLine.IsFirstTextViewLineForSnapshotLine)
 				return null;
-			if (state == null)
+			if (state is null)
 				state = new LineNumberState();
-			if (state.SnapshotLine == null || state.SnapshotLine.EndIncludingLineBreak != viewLine.Start)
+			if (state.SnapshotLine is null || state.SnapshotLine.EndIncludingLineBreak != viewLine.Start)
 				state.SnapshotLine = viewLine.Start.GetContainingLine();
 			else
 				state.SnapshotLine = state.SnapshotLine.Snapshot.GetLineFromLineNumber(state.SnapshotLine.LineNumber + 1);

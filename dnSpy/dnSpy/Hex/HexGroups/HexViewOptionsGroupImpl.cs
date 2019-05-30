@@ -36,9 +36,9 @@ namespace dnSpy.Hex.HexGroups {
 		readonly string groupName;
 
 		public HexViewOptionsGroupImpl(HexViewOptionsGroupServiceImpl owner, string groupName, TagOptionDefinition[] defaultOptions, OptionsStorage optionsStorage) {
-			if (defaultOptions == null)
+			if (defaultOptions is null)
 				throw new ArgumentNullException(nameof(defaultOptions));
-			if (optionsStorage == null)
+			if (optionsStorage is null)
 				throw new ArgumentNullException(nameof(optionsStorage));
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			hexViews = new List<WpfHexView>();
@@ -46,13 +46,13 @@ namespace dnSpy.Hex.HexGroups {
 			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
-				Debug.Assert(option.Name != null);
-				if (option.Name == null)
+				Debug.Assert(!(option.Name is null));
+				if (option.Name is null)
 					continue;
 
 				var subGroup = option.SubGroup;
-				Debug.Assert(subGroup != null);
-				if (subGroup == null)
+				Debug.Assert(!(subGroup is null));
+				if (subGroup is null)
 					continue;
 
 				if (!toOptions.TryGetValue(subGroup, out var coll))
@@ -66,7 +66,7 @@ namespace dnSpy.Hex.HexGroups {
 		}
 
 		HexViewGroupOptionCollection GetCollection(string? tag) {
-			if (tag == null)
+			if (tag is null)
 				tag = string.Empty;
 
 			if (toOptions.TryGetValue(tag, out var coll))
@@ -82,33 +82,33 @@ namespace dnSpy.Hex.HexGroups {
 
 		public override bool HasOption<T>(string tag, VSTE.EditorOptionKey<T> option) => HasOption(tag, option.Name);
 		public override bool HasOption(string tag, string optionId) {
-			if (tag == null)
+			if (tag is null)
 				throw new ArgumentNullException(nameof(tag));
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			return GetCollection(tag).HasOption(optionId);
 		}
 
 		public override T GetOptionValue<T>(string tag, VSTE.EditorOptionKey<T> option) => (T)GetOptionValue(tag, option.Name)!;
 		public override object? GetOptionValue(string tag, string optionId) {
-			if (tag == null)
+			if (tag is null)
 				throw new ArgumentNullException(nameof(tag));
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			return GetCollection(tag).GetOptionValue(optionId);
 		}
 
 		public override void SetOptionValue<T>(string tag, VSTE.EditorOptionKey<T> option, T value) => SetOptionValue(tag, option.Name, value);
 		public override void SetOptionValue(string tag, string optionId, object? value) {
-			if (tag == null)
+			if (tag is null)
 				throw new ArgumentNullException(nameof(tag));
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			GetCollection(tag).SetOptionValue(optionId, value);
 		}
 
 		internal void HexViewCreated(WpfHexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			Debug.Assert(!hexView.IsClosed);
 			if (hexView.IsClosed)
@@ -144,7 +144,7 @@ namespace dnSpy.Hex.HexGroups {
 
 		readonly HashSet<HexViewGroupOption> writeOptionHash = new HashSet<HexViewGroupOption>();
 		public void OptionChanged(HexViewGroupOption option) {
-			if (optionsStorage == null)
+			if (optionsStorage is null)
 				return;
 			if (writeOptionHash.Contains(option))
 				return;

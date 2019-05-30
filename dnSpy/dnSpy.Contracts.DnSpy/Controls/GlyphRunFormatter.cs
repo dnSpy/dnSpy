@@ -113,12 +113,12 @@ namespace dnSpy.Contracts.Controls {
 				var textProps = run.Properties ?? paragraphProperties.DefaultTextRunProperties;
 				var fontSize = textProps.FontRenderingEmSize;
 				var len = run.Length;
-				if (textProps != null) {
+				if (!(textProps is null)) {
 					height = Math.Max(height, (int)(textProps.Typeface.FontFamily.LineSpacing * fontSize));
 					baseline = Math.Max(baseline, (int)(textProps.Typeface.FontFamily.Baseline * fontSize));
 				}
 
-				if (run is TextEndOfLine || run == null) {
+				if (run is TextEndOfLine || run is null) {
 					index += len;
 					runs.Add((run, (GlyphRun?)null, 0, 0.0));
 					break;
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Controls {
 					var charBuf = getCharBuf(chrs.CharacterBufferReference);
 					var charOffset = getCharOffset(chrs.CharacterBufferReference);
 
-					if (textProps == null || !textProps.Typeface.TryGetGlyphTypeface(out var gl))
+					if (textProps is null || !textProps.Typeface.TryGetGlyphTypeface(out var gl))
 						throw new Exception("GlyphTypeface does not exists for font '" + textProps?.Typeface.FontFamily + "'.");
 
 					ushort[] glyphIndexes = new ushort[len];
@@ -294,7 +294,7 @@ namespace dnSpy.Contracts.Controls {
 
 			public override void Draw(DrawingContext drawingContext, Point origin, InvertAxes inversion) {
 				foreach (var entry in entries) {
-					if (entry.glyphRun == null || entry.textRun == null)
+					if (entry.glyphRun is null || entry.textRun is null)
 						continue;
 					if (entry.trailWhitespace == entry.textRun.Length) // All whitespace, no need to render
 						continue;
@@ -307,11 +307,11 @@ namespace dnSpy.Contracts.Controls {
 						X = origin.X + glyphRun.BaselineOrigin.X,
 						Y = (int)(origin.Y + glyphRun.GlyphTypeface.Baseline * textProps.FontRenderingEmSize)
 					});
-					if (_textFormattingMode != null)
+					if (!(_textFormattingMode is null))
 						_textFormattingMode.SetValue(glyphRun, mode);
 
 					var box = newRun.ComputeAlignmentBox();
-					if (textProps.BackgroundBrush != null) {
+					if (!(textProps.BackgroundBrush is null)) {
 						drawingContext.DrawRectangle(
 							textProps.BackgroundBrush, null,
 							new Rect(origin, box.Size));
@@ -319,7 +319,7 @@ namespace dnSpy.Contracts.Controls {
 
 					drawingContext.DrawGlyphRun(textProps.ForegroundBrush, newRun);
 
-					if (textProps.TextDecorations != null)
+					if (!(textProps.TextDecorations is null))
 						foreach (var deco in textProps.TextDecorations) {
 							var thickness = Math.Round(glyphRun.GlyphTypeface.UnderlineThickness * textProps.FontRenderingEmSize);
 							var pos = glyphRun.GlyphTypeface.UnderlinePosition -
@@ -339,9 +339,9 @@ namespace dnSpy.Contracts.Controls {
 				double currentDistance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.textRun == null)
+					if (entry.textRun is null)
 						continue;
-					if (entry.glyphRun == null) {
+					if (entry.glyphRun is null) {
 						var newDistance = currentDistance + entry.trailWhitespaceWidth;
 						if (newDistance > distance)
 							return new CharacterHit(index, 0);
@@ -368,9 +368,9 @@ namespace dnSpy.Contracts.Controls {
 				double distance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.textRun == null)
+					if (entry.textRun is null)
 						continue;
-					if (entry.glyphRun == null) {
+					if (entry.glyphRun is null) {
 						if (index == characterHit.FirstCharacterIndex)
 							return distance;
 						distance += entry.trailWhitespaceWidth;
@@ -399,9 +399,9 @@ namespace dnSpy.Contracts.Controls {
 
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.textRun == null)
+					if (entry.textRun is null)
 						continue;
-					if (entry.glyphRun == null) {
+					if (entry.glyphRun is null) {
 						if (index == firstTextSourceCharacterIndex) {
 							found = true;
 							x = d;
@@ -450,7 +450,7 @@ namespace dnSpy.Contracts.Controls {
 			public override int TrailingWhitespaceLength {
 				get {
 					foreach (var e in entries.Reverse()) {
-						if (e.glyphRun != null)
+						if (!(e.glyphRun is null))
 							return e.trailWhitespace;
 					}
 					return 0;
@@ -460,7 +460,7 @@ namespace dnSpy.Contracts.Controls {
 			public override double WidthIncludingTrailingWhitespace {
 				get {
 					foreach (var e in entries.Reverse()) {
-						if (e.glyphRun != null)
+						if (!(e.glyphRun is null))
 							return width + e.trailWhitespaceWidth;
 					}
 					return width;

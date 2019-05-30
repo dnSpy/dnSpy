@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		internal void ShowOptions(SaveOptionsVM data) {
-			if (data == null)
+			if (data is null)
 				return;
 
 			if (data is SaveModuleOptionsVM mvm) {

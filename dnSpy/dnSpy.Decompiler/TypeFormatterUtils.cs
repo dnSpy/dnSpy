@@ -65,7 +65,7 @@ namespace dnSpy.Decompiler {
 
 		public static string FilterName(string? s) {
 			const int MAX_NAME_LEN = 0x100;
-			if (s == null)
+			if (s is null)
 				return "<<NULL>>";
 
 			var sb = new StringBuilder(s.Length);
@@ -112,7 +112,7 @@ namespace dnSpy.Decompiler {
 
 		static int GetNumberOfOverloads(TypeDef? type, string name) {
 			var hash = new HashSet<MethodDef>(MethodEqualityComparer.DontCompareDeclaringTypes);
-			while (type != null) {
+			while (!(type is null)) {
 				foreach (var m in type.Methods) {
 					if (m.Name == name)
 						hash.Add(m);
@@ -123,7 +123,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public static string? GetPropertyName(IMethod? method) {
-			if (method == null)
+			if (method is null)
 				return null;
 			var name = method.Name;
 			if (name.StartsWith("get_", StringComparison.Ordinal) || name.StartsWith("set_", StringComparison.Ordinal))
@@ -135,7 +135,7 @@ namespace dnSpy.Decompiler {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			if (variable.Variable != null) {
+			if (!(variable.Variable is null)) {
 				if (variable.IsLocal)
 					return "V_" + variable.Variable.Index.ToString();
 				return "A_" + variable.Variable.Index.ToString();
@@ -146,8 +146,8 @@ namespace dnSpy.Decompiler {
 
 		public static bool IsSystemNullable(GenericInstSig gis) {
 			var gt = gis.GenericType as ValueTypeSig;
-			return gt != null &&
-				gt.TypeDefOrRef != null &&
+			return !(gt is null) &&
+				!(gt.TypeDefOrRef is null) &&
 				gt.TypeDefOrRef.DefinitionAssembly.IsCorLib() &&
 				gt.TypeDefOrRef.FullName == "System.Nullable`1";
 		}
@@ -165,7 +165,7 @@ namespace dnSpy.Decompiler {
 					return rank + currentRank;
 				rank += currentRank - 1;
 				gis2 = gis2.GenericArguments[currentRank - 1] as GenericInstSig;
-				if (gis2 == null)
+				if (gis2 is null)
 					return -1;
 			}
 			return -1;
@@ -173,9 +173,9 @@ namespace dnSpy.Decompiler {
 
 		static int GetValueTupleSimpleRank(GenericInstSig gis) {
 			var gt = gis.GenericType as ValueTypeSig;
-			if (gt == null)
+			if (gt is null)
 				return -1;
-			if (gt.TypeDefOrRef == null)
+			if (gt.TypeDefOrRef is null)
 				return -1;
 			if (gt.Namespace != "System")
 				return -1;
@@ -196,12 +196,12 @@ namespace dnSpy.Decompiler {
 			return rank;
 		}
 
-		public static bool IsDelegate(TypeDef? td) => td != null &&
+		public static bool IsDelegate(TypeDef? td) => !(td is null) &&
 			new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 			td.BaseType.DefinitionAssembly.IsCorLib();
 
 		public static (PropertyDef? property, AccessorKind kind) TryGetProperty(MethodDef? method) {
-			if (method == null)
+			if (method is null)
 				return (null, AccessorKind.None);
 			foreach (var p in method.DeclaringType.Properties) {
 				if (method == p.GetMethod)
@@ -213,7 +213,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public static (EventDef? @event, AccessorKind kind) TryGetEvent(MethodDef? method) {
-			if (method == null)
+			if (method is null)
 				return (null, AccessorKind.None);
 			foreach (var e in method.DeclaringType.Events) {
 				if (method == e.AddMethod)
@@ -226,33 +226,33 @@ namespace dnSpy.Decompiler {
 
 		public static bool IsDeprecated(IMethod? method) {
 			var md = method.ResolveMethodDef();
-			if (md == null)
+			if (md is null)
 				return false;
 			return IsDeprecated(md.CustomAttributes);
 		}
 
 		public static bool IsDeprecated(IField? field) {
 			var fd = field.ResolveFieldDef();
-			if (fd == null)
+			if (fd is null)
 				return false;
 			return IsDeprecated(fd.CustomAttributes);
 		}
 
 		public static bool IsDeprecated(PropertyDef? prop) {
-			if (prop == null)
+			if (prop is null)
 				return false;
 			return IsDeprecated(prop.CustomAttributes);
 		}
 
 		public static bool IsDeprecated(EventDef? evt) {
-			if (evt == null)
+			if (evt is null)
 				return false;
 			return IsDeprecated(evt.CustomAttributes);
 		}
 
 		public static bool IsDeprecated(ITypeDefOrRef? type) {
 			var td = type.ResolveTypeDef();
-			if (td == null)
+			if (td is null)
 				return false;
 			bool foundByRefLikeMarker = false;
 			foreach (var ca in td.CustomAttributes) {
@@ -295,17 +295,17 @@ namespace dnSpy.Decompiler {
 		}
 
 		static bool IsAwaitableType(TypeSig? type) {
-			if (type == null)
+			if (type is null)
 				return false;
 
 			var td = type.Resolve();
-			if (td == null)
+			if (td is null)
 				return false;
 			return IsAwaitableType(td);
 		}
 
 		static bool IsAwaitableType(TypeDef? td) {
-			if (td == null)
+			if (td is null)
 				return false;
 
 			// See (Roslyn): IsCustomTaskType
@@ -339,7 +339,7 @@ namespace dnSpy.Decompiler {
 			var flags = MemberSpecialFlags.None;
 
 			var md = method.ResolveMethodDef();
-			if (md != null && IsExtension(md.CustomAttributes))
+			if (!(md is null) && IsExtension(md.CustomAttributes))
 				flags |= MemberSpecialFlags.Extension;
 
 			if (IsAwaitableType(method.MethodSig.GetRetType()))
@@ -359,13 +359,13 @@ namespace dnSpy.Decompiler {
 
 		public static bool HasConstant(IHasConstant? hc, out CustomAttribute? constantAttribute) {
 			constantAttribute = null;
-			if (hc == null)
+			if (hc is null)
 				return false;
-			if (hc.Constant != null)
+			if (!(hc.Constant is null))
 				return true;
 			foreach (var ca in hc.CustomAttributes) {
 				var type = ca.AttributeType;
-				while (type != null) {
+				while (!(type is null)) {
 					var fullName = type.FullName;
 					if (fullName == "System.Runtime.CompilerServices.CustomConstantAttribute" ||
 						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
@@ -379,12 +379,12 @@ namespace dnSpy.Decompiler {
 		}
 
 		public static bool TryGetConstant(IHasConstant? hc, CustomAttribute? constantAttribute, out object? constant) {
-			if (hc?.Constant != null) {
+			if (!(hc?.Constant is null)) {
 				constant = hc.Constant.Value;
 				return true;
 			}
 
-			if (constantAttribute != null) {
+			if (!(constantAttribute is null)) {
 				if (constantAttribute.TypeFullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
 					if (TryGetDecimalConstantAttributeValue(constantAttribute, out var decimalValue)) {
 						constant = decimalValue;
@@ -442,7 +442,7 @@ namespace dnSpy.Decompiler {
 		public static bool IsReadOnlyProperty(PropertyDef property) => HasIsReadOnlyAttribute(property.CustomAttributes);
 
 		public static bool IsReadOnlyMethod(MethodDef? method) {
-			if (method == null || method.IsConstructor)
+			if (method is null || method.IsConstructor)
 				return false;
 			return HasIsReadOnlyAttribute(method.Parameters.ReturnParameter.ParamDef?.CustomAttributes);
 		}
@@ -451,11 +451,11 @@ namespace dnSpy.Decompiler {
 		public static bool IsReadOnlyType(TypeDef? td) => HasIsReadOnlyAttribute(td?.CustomAttributes);
 
 		static bool HasIsReadOnlyAttribute(CustomAttributeCollection? customAttributes) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				return false;
 			for (int i = 0; i < customAttributes.Count; i++) {
 				var ca = customAttributes[i];
-				if (ca.AttributeType?.FullName == "System.Runtime.CompilerServices.IsReadOnlyAttribute" && ca.AttributeType.DeclaringType == null)
+				if (ca.AttributeType?.FullName == "System.Runtime.CompilerServices.IsReadOnlyAttribute" && ca.AttributeType.DeclaringType is null)
 					return true;
 			}
 			return false;

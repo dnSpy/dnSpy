@@ -402,7 +402,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool Equals(ReadOnlyCollection<DmdCustomModifier>? a, ReadOnlyCollection<DmdCustomModifier>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;
@@ -416,7 +416,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool Equals(ReadOnlyCollection<DmdType>? a, ReadOnlyCollection<DmdType>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;
@@ -430,7 +430,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool Equals(ReadOnlyCollection<int>? a, ReadOnlyCollection<int>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;
@@ -730,7 +730,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public int GetHashCode(DmdCustomModifier a) => (a.IsRequired ? -1 : 0) ^ GetHashCode(a.Type);
 
 		int GetHashCode(ReadOnlyCollection<DmdCustomModifier>? a) {
-			if (a == null)
+			if (a is null)
 				return 0;
 			int hc = a.Count;
 			for (int i = 0; i < a.Count; i++)
@@ -739,7 +739,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		int GetHashCode(ReadOnlyCollection<DmdType>? a) {
-			if (a == null)
+			if (a is null)
 				return 0;
 			int hc = a.Count;
 			for (int i = 0; i < a.Count; i++)
@@ -748,7 +748,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		int GetHashCode(ReadOnlyCollection<int>? a) {
-			if (a == null)
+			if (a is null)
 				return 0;
 			int hc = a.Count;
 			for (int i = 0; i < a.Count; i++)

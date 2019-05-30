@@ -31,14 +31,14 @@ namespace dndbg.Engine {
 		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
+				return hr < 0 || process is null ? null : new CorProcess(process);
 			}
 		}
 
 		public CorAssembly? Assembly {
 			get {
 				int hr = obj.GetAssembly(out var assembly);
-				return hr < 0 || assembly == null ? null : new CorAssembly(assembly);
+				return hr < 0 || assembly is null ? null : new CorAssembly(assembly);
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 		public bool HasAssemblyRow {
 			get {
 				var mdi = GetMetaDataInterface<IMetaDataImport>();
-				return mdi != null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
+				return !(mdi is null) && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace dndbg.Engine {
 
 		string DnlibName {
 			get {
-				if (dnlibName == null)
+				if (dnlibName is null)
 					Interlocked.CompareExchange(ref dnlibName, CalculateDnlibName(this), null);
 				return dnlibName!;
 			}
@@ -104,14 +104,14 @@ namespace dndbg.Engine {
 		public CorDebugJITCompilerFlags JITCompilerFlags {
 			get {
 				var m2 = obj as ICorDebugModule2;
-				if (m2 == null)
+				if (m2 is null)
 					return 0;
 				int hr = m2.GetJITCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 			set {
 				var m2 = obj as ICorDebugModule2;
-				if (m2 == null)
+				if (m2 is null)
 					return;
 				int hr = m2.SetJITCompilerFlags(value);
 			}
@@ -163,7 +163,7 @@ namespace dndbg.Engine {
 
 		public CorFunction? GetFunctionFromToken(uint token) {
 			int hr = obj.GetFunctionFromToken(token, out var func);
-			return hr < 0 || func == null ? null : new CorFunction(func, this);
+			return hr < 0 || func is null ? null : new CorFunction(func, this);
 		}
 
 		public void EnableJITDebugging(bool trackJITInfo, bool allowJitOpts) {
@@ -176,14 +176,14 @@ namespace dndbg.Engine {
 
 		public void SetJMCStatus(bool isJustMyCode) {
 			var m2 = obj as ICorDebugModule2;
-			if (m2 == null)
+			if (m2 is null)
 				return;
 			int hr = m2.SetJMCStatus(isJustMyCode ? 1 : 0, 0, IntPtr.Zero);
 		}
 
 		public CorClass? GetClassFromToken(uint token) {
 			int hr = obj.GetClassFromToken(token, out var cls);
-			return hr < 0 || cls == null ? null : new CorClass(cls);
+			return hr < 0 || cls is null ? null : new CorClass(cls);
 		}
 
 		public T? GetMetaDataInterface<T>() where T : class {

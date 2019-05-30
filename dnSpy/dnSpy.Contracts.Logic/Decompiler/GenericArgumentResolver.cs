@@ -26,9 +26,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns>Resolved type signature.</returns>
 		/// <exception cref="System.ArgumentException">No generic arguments to resolve.</exception>
 		public static TypeSig? Resolve(TypeSig? typeSig, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methodGenArgs) {
-			if (typeSig == null)
+			if (typeSig is null)
 				return typeSig;
-			if ((typeGenArgs == null || typeGenArgs.Count == 0) && (methodGenArgs == null || methodGenArgs.Count == 0))
+			if ((typeGenArgs is null || typeGenArgs.Count == 0) && (methodGenArgs is null || methodGenArgs.Count == 0))
 				return typeSig;
 
 			var resolver = new GenericArgumentResolver(typeGenArgs, methodGenArgs);
@@ -44,9 +44,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns>Resolved method signature.</returns>
 		/// <exception cref="System.ArgumentException">No generic arguments to resolve.</exception>
 		public static MethodBaseSig? Resolve(MethodBaseSig? methodSig, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methodGenArgs) {
-			if (methodSig == null)
+			if (methodSig is null)
 				return null;
-			if ((typeGenArgs == null || typeGenArgs.Count == 0) && (methodGenArgs == null || methodGenArgs.Count == 0))
+			if ((typeGenArgs is null || typeGenArgs.Count == 0) && (methodGenArgs is null || methodGenArgs.Count == 0))
 				return methodSig;
 
 			var resolver = new GenericArgumentResolver(typeGenArgs, methodGenArgs);
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Decompiler {
 		bool ReplaceGenericArg(ref TypeSig typeSig) {
 			if (typeSig is GenericMVar genericMVar) {
 				var newSig = Read(methodGenArgs, genericMVar.Number);
-				if (newSig != null) {
+				if (!(newSig is null)) {
 					typeSig = newSig;
 					return true;
 				}
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Decompiler {
 
 			if (typeSig is GenericVar genericVar) {
 				var newSig = Read(typeGenArgs, genericVar.Number);
-				if (newSig != null) {
+				if (!(newSig is null)) {
 					typeSig = newSig;
 					return true;
 				}
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		MethodSig? ResolveGenericArgs(MethodBaseSig sig) {
-			if (sig == null)
+			if (sig is null)
 				return null;
 			if (!recursionCounter.Increment())
 				return null;
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Decompiler {
 			foreach (var p in old.Params)
 				sig.Params.Add(ResolveGenericArgs(p));
 			sig.GenParamCount = old.GenParamCount;
-			if (sig.ParamsAfterSentinel != null) {
+			if (!(sig.ParamsAfterSentinel is null)) {
 				foreach (var p in old.ParamsAfterSentinel)
 					sig.ParamsAfterSentinel.Add(ResolveGenericArgs(p));
 			}
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		TypeSig? ResolveGenericArgs(TypeSig typeSig) {
-			if (typeSig == null)
+			if (typeSig is null)
 				return null;
 			if (!recursionCounter.Increment())
 				return null;
@@ -187,15 +187,15 @@ namespace dnSpy.Contracts.Decompiler {
 			LocalSig? lsig;
 			PropertySig? psig;
 			GenericInstMethodSig? gsig;
-			if ((msig = sig as MethodSig) != null)
+			if (!((msig = sig as MethodSig) is null))
 				result = ResolveGenericArgs(msig);
-			else if ((fsig = sig as FieldSig) != null)
+			else if (!((fsig = sig as FieldSig) is null))
 				result = ResolveGenericArgs(fsig);
-			else if ((lsig = sig as LocalSig) != null)
+			else if (!((lsig = sig as LocalSig) is null))
 				result = ResolveGenericArgs(lsig);
-			else if ((psig = sig as PropertySig) != null)
+			else if (!((psig = sig as PropertySig) is null))
 				result = ResolveGenericArgs(psig);
-			else if ((gsig = sig as GenericInstMethodSig) != null)
+			else if (!((gsig = sig as GenericInstMethodSig) is null))
 				result = ResolveGenericArgs(gsig);
 			else
 				result = null;
@@ -217,7 +217,7 @@ namespace dnSpy.Contracts.Decompiler {
 			outSig.RetType = ResolveGenericArgs(inSig.RetType);
 			outSig.GenParamCount = inSig.GenParamCount;
 			UpdateSigList(outSig.Params, inSig.Params);
-			if (inSig.ParamsAfterSentinel != null) {
+			if (!(inSig.ParamsAfterSentinel is null)) {
 				outSig.ParamsAfterSentinel = new List<TypeSig>(inSig.ParamsAfterSentinel.Count);
 				UpdateSigList(outSig.ParamsAfterSentinel, inSig.ParamsAfterSentinel);
 			}

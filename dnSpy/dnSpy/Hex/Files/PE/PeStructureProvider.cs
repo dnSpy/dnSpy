@@ -55,7 +55,7 @@ namespace dnSpy.Hex.Files.PE {
 				peHeadersImpl = new PeHeadersImpl(reader, file.Span);
 				peHeadersSpan = GetSpan(peHeadersImpl.DosHeader.Span.Span, peHeadersImpl.FileHeader.Span.Span, peHeadersImpl.OptionalHeader.Span.Span, peHeadersImpl.Sections.Span.Span);
 			}
-			return peHeadersImpl != null;
+			return !(peHeadersImpl is null);
 		}
 
 		HexSpan GetSpan(params HexSpan[] spans) {
@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Files.PE {
 				return null;
 
 			var peHeaders = peHeadersImpl;
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 
 			if (peHeaders.DosHeader.Span.Span.Contains(position))
@@ -94,7 +94,7 @@ namespace dnSpy.Hex.Files.PE {
 
 		public override ComplexData? GetStructure(string id) {
 			var peHeaders = peHeadersImpl;
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 
 			switch (id) {

@@ -90,7 +90,7 @@ End Module
 			Task.Run(() => InitializeAsync(buffer, tagger, docFactory))
 			.ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -137,8 +137,8 @@ End Module
 				{
 					// Initialize completion code paths
 					var info = CompletionInfo.Create(buffer.CurrentSnapshot);
-					Debug.Assert(info != null);
-					if (info != null) {
+					Debug.Assert(!(info is null));
+					if (!(info is null)) {
 						var completionTrigger = CompletionTrigger.Invoke;
 						var completionList = await info.Value.CompletionService.GetCompletionsAsync(info.Value.Document, 0, completionTrigger);
 					}
@@ -147,8 +147,8 @@ End Module
 				{
 					// Initialize signature help code paths
 					var info = SignatureHelpInfo.Create(buffer.CurrentSnapshot);
-					Debug.Assert(info != null);
-					if (info != null) {
+					Debug.Assert(!(info is null));
+					if (!(info is null)) {
 						int sigHelpIndex = code.IndexOf("sighelp");
 						Debug.Assert(sigHelpIndex >= 0);
 						var triggerInfo = new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand);
@@ -159,8 +159,8 @@ End Module
 				{
 					// Initialize quick info code paths
 					var info = QuickInfoState.Create(buffer.CurrentSnapshot);
-					Debug.Assert(info != null);
-					if (info != null) {
+					Debug.Assert(!(info is null));
+					if (!(info is null)) {
 						int quickInfoIndex = code.IndexOf("Equals");
 						Debug.Assert(quickInfoIndex >= 0);
 						var item = await info.Value.QuickInfoService.GetItemAsync(info.Value.Document, quickInfoIndex);

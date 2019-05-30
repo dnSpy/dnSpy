@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		}
 
 		public IEnumerable<object> Create(QuickInfoItem item) {
-			if (item == null)
+			if (item is null)
 				throw new ArgumentNullException(nameof(item));
 
 			switch (item.Content.Type) {

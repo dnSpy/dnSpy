@@ -33,7 +33,7 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexPopupSpaceReservationAgent : HexSpaceReservationAgent {
-		bool IsVisible => popup.Child != null;
+		bool IsVisible => !(popup.Child is null);
 		public override bool HasFocus => IsVisible && popup.IsKeyboardFocusWithin;
 		public override bool IsMouseOver => IsVisible && popup.IsMouseOver;
 		public override event EventHandler GotFocus;
@@ -155,7 +155,7 @@ namespace dnSpy.Hex.Editor {
 
 		public override Geometry? PositionAndDisplay(Geometry reservedSpace) {
 			var spanBoundsTmp = GetVisualSpanBounds();
-			if (spanBoundsTmp == null || spanBoundsTmp.Value.IsEmpty)
+			if (spanBoundsTmp is null || spanBoundsTmp.Value.IsEmpty)
 				return null;
 			var spanBounds = WpfHexViewRectToScreenRect(spanBoundsTmp.Value);
 			var desiredSize = ToScreenSize(PopupSize);
@@ -175,7 +175,7 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 
-			if (popupRect == null)
+			if (popupRect is null)
 				return null;
 			var viewRelativeRect = HexPopupHelper.TransformFromDevice(wpfHexView, popupRect.Value);
 
@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		Rect GetClosest(Rect spanBounds, Rect? rect, Rect candidate, VSTA.PopupStyles style) {
-			if (rect == null)
+			if (rect is null)
 				return candidate;
 			double rectDist, candidateDist;
 			if ((style & VSTA.PopupStyles.PositionLeftOrRight) != 0) {
@@ -305,7 +305,7 @@ namespace dnSpy.Hex.Editor {
 
 		bool IsMouseOverSpan(MouseEventArgs e) {
 			var rect = GetVisualSpanBounds();
-			if (rect == null)
+			if (rect is null)
 				return false;
 			var point = e.MouseDevice.GetPosition(wpfHexView.VisualElement);
 			point.X += wpfHexView.ViewportLeft;
@@ -344,7 +344,7 @@ namespace dnSpy.Hex.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged += Content_SizeChanged;
 			var window = Window.GetWindow(wpfHexView.VisualElement);
-			if (window != null)
+			if (!(window is null))
 				window.LocationChanged += Window_LocationChanged;
 			content.GotFocus += Content_GotFocus;
 			content.LostFocus += Content_LostFocus;
@@ -360,7 +360,7 @@ namespace dnSpy.Hex.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged -= Content_SizeChanged;
 			var window = Window.GetWindow(wpfHexView.VisualElement);
-			if (window != null)
+			if (!(window is null))
 				window.LocationChanged -= Window_LocationChanged;
 			content.GotFocus -= Content_GotFocus;
 			content.LostFocus -= Content_LostFocus;

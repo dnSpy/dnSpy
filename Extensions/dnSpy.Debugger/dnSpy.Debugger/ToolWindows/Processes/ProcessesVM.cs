@@ -354,7 +354,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = ProcessesWindowColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}

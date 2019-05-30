@@ -124,10 +124,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public bool CanUndo => undoCommands.Count != 0;
 		public bool CanRedo => redoCommands.Count != 0;
 		public int NumberOfModifiedDocuments => GetModifiedDocuments().Count();
-		bool IsAdding => currentCommands != null;
+		bool IsAdding => !(currentCommands is null);
 
 		public void Add(IUndoCommand command) {
-			if (currentCommands == null) {
+			if (currentCommands is null) {
 				using (BeginAdd())
 					Add(command);
 			}
@@ -145,16 +145,16 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		/// method to stop adding more commands to the same group.
 		/// </summary>
 		BeginEndAdder BeginAdd() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			return new BeginEndAdder(this);
 		}
 
 		void BeginAddInternal() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			int prev = currentCommandCounter;
@@ -163,8 +163,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		void EndAddInternal() {
-			Debug.Assert(currentCommands != null);
-			if (currentCommands == null)
+			Debug.Assert(!(currentCommands is null));
+			if (currentCommands is null)
 				throw new InvalidOperationException();
 
 			currentCommands.Commands.TrimExcess();
@@ -194,8 +194,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public void Clear() => Clear(true, true, undoCommands.Count != 0 || redoCommands.Count != 0);
 
 		void Clear(bool clearUndo, bool clearRedo, bool forceCallGc) {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			bool callGc = forceCallGc;
@@ -216,8 +216,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			if (clearUndo && clearRedo) {
 				foreach (var p in undoableDocumentsProviders) {
 					foreach (var uo in p.Value.GetObjects()) {
-						Debug.Assert(uo != null);
-						if (uo != null && !IsModified(uo))
+						Debug.Assert(!(uo is null));
+						if (!(uo is null) && !IsModified(uo))
 							uo.SavedCommand = 0;
 					}
 				}
@@ -250,8 +250,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public void Undo() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			if (undoCommands.Count == 0)
@@ -268,8 +268,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public void Redo() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			if (redoCommands.Count == 0)
@@ -316,11 +316,11 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var hash = new HashSet<object>();
 			foreach (var p in undoableDocumentsProviders) {
 				foreach (var uo in p.Value.GetObjects()) {
-					Debug.Assert(uo != null);
-					if (uo != null && IsModified(uo)) {
+					Debug.Assert(!(uo is null));
+					if (!(uo is null) && IsModified(uo)) {
 						var doc = p.Value.GetDocument(uo);
-						Debug.Assert(doc != null);
-						if (doc == null)
+						Debug.Assert(!(doc is null));
+						if (doc is null)
 							throw new InvalidOperationException();
 						hash.Add(doc);
 					}
@@ -332,7 +332,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		object? GetDocument(IUndoObject uo) {
 			foreach (var p in undoableDocumentsProviders) {
 				var doc = p.Value.GetDocument(uo);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 			}
 
@@ -344,10 +344,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var hash = new HashSet<object>();
 			foreach (var doc in docs) {
 				var uo = GetUndoObject(doc);
-				if (uo == null)
+				if (uo is null)
 					continue;
 				var doc2 = GetDocument(uo);
-				if (doc2 == null)
+				if (doc2 is null)
 					continue;
 
 				hash.Add(doc2);
@@ -406,7 +406,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IEnumerable<IUndoObject> GetModifiedObjects(IUndoCommand command) {
 			foreach (var obj in command.ModifiedObjects) {
 				var uo = GetUndoObject(obj);
-				if (uo != null)
+				if (!(uo is null))
 					yield return uo;
 			}
 		}
@@ -414,7 +414,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public IUndoObject? GetUndoObject(object obj) {
 			foreach (var up in undoableDocumentsProviders) {
 				var uo = up.Value.GetUndoObject(obj);
-				if (uo != null)
+				if (!(uo is null))
 					return uo;
 			}
 
@@ -447,11 +447,11 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			foreach (var grp in list) {
 				foreach (var cmd in grp.Commands) {
 					var cmd2 = cmd as IUndoCommand2;
-					if (cmd2 == null)
+					if (cmd2 is null)
 						continue;
 					foreach (var obj in cmd2.NonModifiedObjects) {
 						var uo = GetUndoObject(obj);
-						if (uo != null)
+						if (!(uo is null))
 							yield return uo;
 					}
 				}

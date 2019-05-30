@@ -55,7 +55,7 @@ namespace dndbg.DotNet {
 		}
 
 		public override byte[] GetBlob() {
-			if (blob != null)
+			if (!(blob is null))
 				return blob;
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;

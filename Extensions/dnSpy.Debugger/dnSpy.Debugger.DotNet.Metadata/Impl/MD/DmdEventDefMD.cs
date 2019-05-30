@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					break;
 
 				case MethodSemanticsAttributes.Other:
-					if (otherMethodsList == null)
+					if (otherMethodsList is null)
 						otherMethodsList = new List<DmdMethodInfo>();
 					otherMethodsList.Add(method);
 					break;

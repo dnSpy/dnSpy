@@ -54,9 +54,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override DbgDotNetEngineValueNodeFactory? Create(string languageGuid, DbgDotNetFormatter formatter) {
-			if (languageGuid == null)
+			if (languageGuid is null)
 				throw new ArgumentNullException(nameof(languageGuid));
-			if (formatter == null)
+			if (formatter is null)
 				throw new ArgumentNullException(nameof(formatter));
 
 			bool b = Guid.TryParse(languageGuid, out var guid);
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			Debug.Fail($"Default value node factory ({LanguageConstants.DefaultLanguageGuid.ToString()}) wasn't exported");
 			var lz = toLazyFactory.Values.FirstOrDefault();
-			if (lz != null)
+			if (!(lz is null))
 				return GetFactory(formatter, lz);
 			return null;
 		}

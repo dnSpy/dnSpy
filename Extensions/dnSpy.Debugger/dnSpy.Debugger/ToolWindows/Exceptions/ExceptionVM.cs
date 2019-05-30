@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings> a, ReadOnlyCollection<DbgExceptionConditionSettings> b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;

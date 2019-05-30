@@ -412,7 +412,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = ExceptionsWindowColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}
@@ -492,7 +492,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			var category = selectedCategory?.Definition?.Name;
 			foreach (var item in realAllItems) {
-				if (category != null && item.Definition.Id.Category != category)
+				if (!(category is null) && item.Definition.Id.Category != category)
 					continue;
 				var vmc = CreateCached_UI(item);
 				if (IsMatch_UI(vmc, filterText, showOnlyEnabledExceptions))

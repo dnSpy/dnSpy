@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public EditedFieldUpdater(ModuleDocumentNode modNode, FieldDef originalField, FieldDefOptions fieldDefOptions) {
 			var node = modNode.Context.DocumentTreeView.FindNode(originalField);
-			if (node == null)
+			if (node is null)
 				throw new InvalidOperationException();
 			ownerNode = node;
 			field = originalField;

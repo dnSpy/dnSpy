@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				public double Order => 0;
 
 				public bool Write(IDecompilerOutput output, IMemberRef? member) {
-					if (member == null || member is GenericParam)
+					if (member is null || member is GenericParam)
 						return false;
 					Write(output, member);
 					return true;
@@ -63,13 +63,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public static bool IsNull(object? op) =>
-			op == null ||
+			op is null ||
 			op == NullParameter ||
 			op == InstructionVM.Null ||
 			op == LocalVM.Null;
 
 		public static object? TryGetVM(Dictionary<object, object> ops, object? objModel) {
-			if (objModel == null)
+			if (objModel is null)
 				return null;
 			if (!ops.TryGetValue(objModel, out object objVm))
 				return objModel;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object? TryGetModel(Dictionary<object, object> ops, object? objVm) {
 			if (IsNull(objVm))
 				return null;
-			Debug.Assert(objVm != null);
+			Debug.Assert(!(objVm is null));
 			if (!ops.TryGetValue(objVm, out object objModel))
 				return objVm;
 			return objModel;
@@ -331,7 +331,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static T? ReadList<T>(IList<T>? list, int index) where T : class {
-			if (list == null || index < 0 || index >= list.Count)
+			if (list is null || index < 0 || index >= list.Count)
 				return null;
 			return list[index];
 		}
@@ -344,7 +344,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case Code.Ldarg:
 				case Code.Ldarg_S:
 					arg = instr.InstructionOperandVM.Value as Parameter;
-					if (arg == null)
+					if (arg is null)
 						break;
 					if (arg.Index == 0)
 						instr.Code = Code.Ldarg_0;
@@ -360,7 +360,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				case Code.Ldarga:
 					arg = instr.InstructionOperandVM.Value as Parameter;
-					if (arg == null)
+					if (arg is null)
 						break;
 					if (byte.MinValue <= arg.Index && arg.Index <= byte.MaxValue)
 						instr.Code = Code.Ldarga_S;
@@ -403,7 +403,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case Code.Ldloc:
 				case Code.Ldloc_S:
 					local = instr.InstructionOperandVM.Value as LocalVM;
-					if (local == null)
+					if (local is null)
 						break;
 					if (local.Index == 0)
 						instr.Code = Code.Ldloc_0;
@@ -419,7 +419,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				case Code.Ldloca:
 					local = instr.InstructionOperandVM.Value as LocalVM;
-					if (local == null)
+					if (local is null)
 						break;
 					if (byte.MinValue <= local.Index && local.Index <= byte.MaxValue)
 						instr.Code = Code.Ldloca_S;
@@ -427,7 +427,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				case Code.Starg:
 					arg = instr.InstructionOperandVM.Value as Parameter;
-					if (arg == null)
+					if (arg is null)
 						break;
 					if (byte.MinValue <= arg.Index && arg.Index <= byte.MaxValue)
 						instr.Code = Code.Starg_S;
@@ -436,7 +436,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case Code.Stloc:
 				case Code.Stloc_S:
 					local = instr.InstructionOperandVM.Value as LocalVM;
-					if (local == null)
+					if (local is null)
 						break;
 					if (local.Index == 0)
 						instr.Code = Code.Stloc_0;
@@ -501,7 +501,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					default: continue;
 					}
 					var targetInstr = instr.InstructionOperandVM.Value as InstructionVM;
-					if (targetInstr == null)
+					if (targetInstr is null)
 						continue;
 
 					int afterShortInstr;
@@ -533,7 +533,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				output.Write(BoxedTextColor.Keyword, "null");
 				return;
 			}
-			Debug.Assert(obj != null);
+			Debug.Assert(!(obj is null));
 
 			if (obj is IMemberRef mr) {
 				if (simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), mr))

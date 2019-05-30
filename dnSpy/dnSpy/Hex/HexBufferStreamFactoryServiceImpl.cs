@@ -25,15 +25,15 @@ namespace dnSpy.Hex {
 	[Export(typeof(HexBufferStreamFactoryService))]
 	sealed class HexBufferStreamFactoryServiceImpl : HexBufferStreamFactoryService {
 		public override HexBufferStream Create(byte[] data, string name) {
-			if (data == null)
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			return new ByteArrayHexBufferStream(data, name);
 		}
 
 		public override HexCachedBufferStream CreateCached(HexSimpleBufferStream simpleStream, bool disposeStream) {
-			if (simpleStream == null)
+			if (simpleStream is null)
 				throw new ArgumentNullException(nameof(simpleStream));
 			return new HexCachedBufferStreamImpl(simpleStream, disposeStream);
 		}

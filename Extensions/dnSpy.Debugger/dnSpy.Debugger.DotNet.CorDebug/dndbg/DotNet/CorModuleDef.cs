@@ -148,7 +148,7 @@ namespace dndbg.DotNet {
 			mdi2 = mdi as IMetaDataImport2;
 			this.corModuleDefHelper = corModuleDefHelper;
 			var fname = corModuleDefHelper.Filename;
-			Debug.Assert(fname == null || File.Exists(fname));
+			Debug.Assert(fname is null || File.Exists(fname));
 			location = fname ?? string.Empty;
 			isManifestModule = corModuleDefHelper.IsManifestModule;
 			isExeFile = IsExeFile(isManifestModule, location);
@@ -175,7 +175,7 @@ namespace dndbg.DotNet {
 		void CreateCorLibTypes() {
 			var corLibAsm = GetCorAssemblyRef() ?? AssemblyRefUser.CreateMscorlibReferenceCLR20();
 			var corLibAsmRef = corLibAsm as AssemblyRef;
-			if (corLibAsmRef == null)
+			if (corLibAsmRef is null)
 				corLibAsmRef = new AssemblyRefUser(corLibAsm);
 			corLibTypes = new CorLibTypes(this, UpdateRowId(corLibAsmRef));
 		}
@@ -187,7 +187,7 @@ namespace dndbg.DotNet {
 				return corModuleDefHelper.CorLib;
 
 			var asmRef = TryGetCorLibAssemblyRef();
-			if (asmRef != null)
+			if (!(asmRef is null))
 				return asmRef;
 
 			return corModuleDefHelper.CorLib;
@@ -200,7 +200,7 @@ namespace dndbg.DotNet {
 				if (!IsValidToken(new MDToken(Table.AssemblyRef, rid).Raw))
 					break;
 				var asmRef = ResolveAssemblyRef(rid);
-				if (asmRef == null)
+				if (asmRef is null)
 					break;
 				if (!UTF8String.IsNullOrEmpty(asmRef.Culture))
 					continue;
@@ -208,15 +208,15 @@ namespace dndbg.DotNet {
 				if ("mscorlib".Equals(asmRef.Name, StringComparison.OrdinalIgnoreCase)) {
 					if ((pktMscorlibDesktop.Equals(asmRef.PublicKeyOrToken) || pktMscorlibDotNetCore.Equals(asmRef.PublicKeyOrToken)) &&
 						asmRef.Version != mscorlibWinMDVersion) {
-						if (bestMscorlib == null || asmRef.Version > bestMscorlib.Version)
+						if (bestMscorlib is null || asmRef.Version > bestMscorlib.Version)
 							bestMscorlib = asmRef;
 					}
 				}
-				else if (bestNonMscorlib == null && asmRef.IsCorLib())
+				else if (bestNonMscorlib is null && asmRef.IsCorLib())
 					bestNonMscorlib = asmRef;
 			}
 
-			if (bestMscorlib != null)
+			if (!(bestMscorlib is null))
 				return bestMscorlib;
 			return bestNonMscorlib;
 		}
@@ -276,7 +276,7 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 
-			if (td == null) {
+			if (td is null) {
 				created = true;
 				td = new CorTypeDef(this, rid);
 				ridToType.Add(rid, td);
@@ -293,13 +293,13 @@ namespace dndbg.DotNet {
 		}
 
 		internal CallingConventionSig? ReadSignature(byte[]? data, GenericParamContext gpContext) {
-			if (data == null)
+			if (data is null)
 				return null;
 			return SignatureReader.ReadSig(this, CorLibTypes, data, gpContext);
 		}
 
 		internal TypeSig? ReadTypeSignature(byte[]? data, GenericParamContext gpContext, out byte[]? extraData) {
-			if (data == null) {
+			if (data is null) {
 				extraData = null;
 				return null;
 			}
@@ -319,7 +319,7 @@ namespace dndbg.DotNet {
 			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out uint typeToken) ?? Array.Empty<byte>();
 			var cat = ResolveToken(typeToken, gpContext) as ICustomAttributeType;
 			var ca = CustomAttributeReader.Read(this, caBlob, cat, gpContext);
-			Debug.Assert(ca != null);
+			Debug.Assert(!(ca is null));
 			return ca;
 		}
 
@@ -334,7 +334,7 @@ namespace dndbg.DotNet {
 			uint token = hfm.OriginalToken.Raw;
 
 			var data = MDAPI.GetFieldMarshalBlob(mdi, token);
-			if (data == null)
+			if (data is null)
 				return null;
 			return MarshalBlobReader.Read(this, data, gpContext);
 		}
@@ -362,7 +362,7 @@ namespace dndbg.DotNet {
 			DllCharacteristics = DefaultDllCharacteristics;
 			if (!isExeFile)
 				Characteristics |= Characteristics.Dll;
-			if (mach == null) {
+			if (mach is null) {
 				Cor20HeaderFlags = ComImageFlags.ILOnly;
 				Characteristics |= Characteristics.LargeAddressAware;
 			}
@@ -396,10 +396,10 @@ namespace dndbg.DotNet {
 		}
 
 		string CalculateRuntimeVersion() {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return MDHeaderRuntimeVersion.MS_CLR_10;    // Could be .NET 1.0 or 1.1 but choose 1.0
 			var s = MDAPI.GetModuleVersionString(mdi2);
-			if (s != null)
+			if (!(s is null))
 				return s;
 			return MDHeaderRuntimeVersion.MS_CLR_20;
 		}
@@ -638,7 +638,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToInterfaceImpl.TryGetValue(rid, out cii)) {
-				if (cii != null)
+				if (!(cii is null))
 					return cii;
 				if (DisableMDAPICalls)
 					return null;
@@ -673,7 +673,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToMemberRef.TryGetValue(rid, out cmr)) {
-				if (cmr != null)
+				if (!(cmr is null))
 					return cmr;
 				if (DisableMDAPICalls)
 					return null;
@@ -720,7 +720,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToStandAloneSig.TryGetValue(rid, out cts)) {
-				if (cts != null)
+				if (!(cts is null))
 					return cts;
 				if (DisableMDAPICalls)
 					return null;
@@ -793,7 +793,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToTypeSpec.TryGetValue(rid, out cts)) {
-				if (cts != null)
+				if (!(cts is null))
 					return cts;
 				if (DisableMDAPICalls)
 					return null;
@@ -961,11 +961,11 @@ namespace dndbg.DotNet {
 			nestedListInitd.Add(ctd.OriginalToken.Rid);
 			bool b = ridToNested.TryGetValue(ctd.OriginalToken.Rid, out var list);
 			Debug.Assert(b);
-			return list == null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
+			return list is null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
 		}
 
 		void InitializeTypeTables() {
-			if (ridToNested != null)
+			if (!(ridToNested is null))
 				return;
 
 			var allTypes = MDAPI.GetTypeDefTokens(mdi);
@@ -996,7 +996,7 @@ namespace dndbg.DotNet {
 					enclTypeRid = 0;
 				}
 				else {
-					if (enclTypeList == null)
+					if (enclTypeList is null)
 						ridToNested[enclTypeRid] = enclTypeList = new List<uint>();
 					enclTypeList.Add(rid);
 				}
@@ -1007,7 +1007,7 @@ namespace dndbg.DotNet {
 		}
 
 		void UpdateTypeTables(CorTypeDef type) {
-			if (ridToEnclosing == null || ridToEnclosing.ContainsKey(type.OriginalToken.Rid))
+			if (ridToEnclosing is null || ridToEnclosing.ContainsKey(type.OriginalToken.Rid))
 				return;
 
 			var tokens = GetNewTokens(type.OriginalToken.Rid);
@@ -1088,7 +1088,7 @@ namespace dndbg.DotNet {
 		public bool UpdateExportedTypes() {
 			if (!corModuleDefHelper.IsDynamic)
 				return false;
-			if (exportedTypes == null)
+			if (exportedTypes is null)
 				return false;
 
 			bool addedToList = false;
@@ -1096,8 +1096,8 @@ namespace dndbg.DotNet {
 				if (!IsValidToken(new MDToken(Table.ExportedType, rid).Raw))
 					break;
 				var et = ResolveExportedType(rid);
-				Debug.Assert(et != null);
-				if (et == null)
+				Debug.Assert(!(et is null));
+				if (et is null)
 					break;
 				ExportedTypes.Add(et);
 				lastExportedTypeRidInList = rid;
@@ -1122,7 +1122,7 @@ namespace dndbg.DotNet {
 		public bool UpdateResources() {
 			if (!corModuleDefHelper.IsDynamic)
 				return false;
-			if (resources == null)
+			if (resources is null)
 				return false;
 
 			bool addedToList = false;
@@ -1139,12 +1139,12 @@ namespace dndbg.DotNet {
 
 		Resource CreateResource(uint rid) {
 			uint? implementationToken = MDAPI.GetManifestResourceImplementationToken(mdi as IMetaDataAssemblyImport, new MDToken(Table.ManifestResource, rid).Raw);
-			if (implementationToken == null)
+			if (implementationToken is null)
 				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 			var token = new MDToken(implementationToken.Value);
 
 			var mr = ResolveManifestResource(rid);
-			if (mr == null)
+			if (mr is null)
 				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 
 			if (token.Rid == 0) {
@@ -1257,7 +1257,7 @@ namespace dndbg.DotNet {
 			const bool calledFromLoadClass = false;
 			var ctd = InitializeTypeDef(rid, calledFromLoadClass, out bool created);
 			// If it was created, Initialize() has already been called
-			if (!created && ctd != null && !ctd.CompletelyLoaded)
+			if (!created && !(ctd is null) && !ctd.CompletelyLoaded)
 				Initialize(ctd, created, calledFromLoadClass);
 		}
 

@@ -304,13 +304,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public object? CreateInstance(object? context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object?[]? args, IList<DmdType>? argTypes) {
 			args = args ?? Array.Empty<object?>();
-			if (argTypes != null && args.Length != argTypes.Count)
+			if (!(argTypes is null) && args.Length != argTypes.Count)
 				throw new ArgumentException();
 			var type = GetType(typeName, false, ignoreCase);
 			if (type is null)
 				return null;
 			DmdConstructorInfo? ctor;
-			if (argTypes != null)
+			if (!(argTypes is null))
 				ctor = type.GetConstructor(bindingAttr, argTypes);
 			else {
 				ctor = null;

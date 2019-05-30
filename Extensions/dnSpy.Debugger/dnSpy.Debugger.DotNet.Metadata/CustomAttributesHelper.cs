@@ -254,12 +254,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			public MarshalAsAttributeInfo(DmdParameterInfo parameter, DmdMarshalType? marshalType) => ctor = Initialize(parameter.Member.AppDomain, marshalType);
 
 			static DmdConstructorInfo? Initialize(DmdAppDomain appDomain, DmdMarshalType? marshalType) {
-				if (marshalType == null)
+				if (marshalType is null)
 					return null;
 				var caType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_MarshalAsAttribute, isOptional: true);
 				var unmanagedTypeType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_UnmanagedType, isOptional: true);
 				var varEnumType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_VarEnum, isOptional: true);
-				if (caType is null || (object?)unmanagedTypeType == null || (object?)varEnumType == null)
+				if (caType is null || unmanagedTypeType is null || varEnumType is null)
 					return null;
 				var ctor = caType.GetConstructor(new[] { unmanagedTypeType });
 				Debug.Assert(!(ctor is null));
@@ -270,11 +270,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (Count == 0)
 					return;
 				int argsCount = 5;
-				if (marshalType!.MarshalType != null)
+				if (!(marshalType!.MarshalType is null))
 					argsCount++;
 				if (!(marshalType.MarshalTypeRef is null))
 					argsCount++;
-				if (marshalType.MarshalCookie != null)
+				if (!(marshalType.MarshalCookie is null))
 					argsCount++;
 				if (!(marshalType.SafeArrayUserDefinedSubType is null))
 					argsCount++;
@@ -289,11 +289,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SizeConst"), new DmdCustomAttributeTypedArgument(appDomain.System_Int32, marshalType.SizeConst));
 				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("IidParameterIndex"), new DmdCustomAttributeTypedArgument(appDomain.System_Int32, marshalType.IidParameterIndex));
 				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SafeArraySubType"), new DmdCustomAttributeTypedArgument(varEnumType, (int)marshalType.SafeArraySubType));
-				if (marshalType.MarshalType != null)
+				if (!(marshalType.MarshalType is null))
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalType"), new DmdCustomAttributeTypedArgument(appDomain.System_String, marshalType.MarshalType));
 				if (!(marshalType.MarshalTypeRef is null))
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalTypeRef"), new DmdCustomAttributeTypedArgument(appDomain.System_Type, marshalType.MarshalTypeRef));
-				if (marshalType.MarshalCookie != null)
+				if (!(marshalType.MarshalCookie is null))
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalCookie"), new DmdCustomAttributeTypedArgument(appDomain.System_String, marshalType.MarshalCookie));
 				if (!(marshalType.SafeArrayUserDefinedSubType is null))
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SafeArrayUserDefinedSubType"), new DmdCustomAttributeTypedArgument(appDomain.System_Type, marshalType.SafeArrayUserDefinedSubType));
@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			readonly int offset;
 
 			public FieldOffsetAttributeInfo(DmdFieldInfo field, uint? offset) {
-				if (offset != null) {
+				if (!(offset is null)) {
 					this.offset = (int)offset.Value;
 					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_FieldOffsetAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(new[] { field.AppDomain.System_Int32 });
@@ -356,7 +356,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			readonly DmdConstructorInfo? ctor;
 
 			public DllImportAttributeInfo(DmdMethodInfo method, in DmdImplMap? implMap) {
-				if (implMap != null) {
+				if (!(implMap is null)) {
 					var appDomain = method.AppDomain;
 					var caType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_DllImportAttribute, isOptional: true);
 					var charSetType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_CharSet, isOptional: true);
@@ -502,7 +502,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdType type, DmdCustomAttributeData[]? customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var serializableAttributeInfo = new SerializableAttributeInfo(type);
@@ -526,7 +526,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdFieldInfo field, DmdCustomAttributeData[]? customAttributes, uint? fieldOffset, DmdMarshalType? marshalType) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var marshalAsAttributeInfo = new MarshalAsAttributeInfo(field, marshalType);
@@ -550,7 +550,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdConstructorInfo ctor, DmdCustomAttributeData[]? customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);
@@ -570,7 +570,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdMethodInfo method, DmdCustomAttributeData[]? customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes, in DmdImplMap? implMap) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var dllImportAttributeInfo = new DllImportAttributeInfo(method, implMap);
@@ -600,7 +600,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			ReadOnlyCollectionHelpers.Create(customAttributes);
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdParameterInfo parameter, DmdCustomAttributeData[]? customAttributes, DmdMarshalType? marshalType) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var inAttributeInfo = new InAttributeInfo(parameter);
@@ -626,7 +626,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static ReadOnlyCollection<DmdCustomAttributeData> AddPseudoCustomAttributes(DmdAssembly assembly, DmdCustomAttributeData[]? customAttributes, ReadOnlyCollection<DmdCustomAttributeData> securityAttributes) {
-			if (customAttributes == null)
+			if (customAttributes is null)
 				customAttributes = Array.Empty<DmdCustomAttributeData>();
 
 			var securityAttributeInfo = new SecurityAttributeInfo(securityAttributes);

@@ -150,14 +150,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void DecrementRecursionCounter() => recursionCounter--;
 
 		void AddCustomModifier(DmdType type, bool isRequired) {
-			if (customModifiers == null)
+			if (customModifiers is null)
 				customModifiers = new List<DmdCustomModifier>();
 			customModifiers.Add(new DmdCustomModifier(type, isRequired));
 		}
 
 		DmdCustomModifier[] GetCustomModifiers() {
 			var customModifiers = this.customModifiers;
-			if (customModifiers == null || customModifiers.Count == 0)
+			if (customModifiers is null || customModifiers.Count == 0)
 				return Array.Empty<DmdCustomModifier>();
 			// Reflection reverses the custom modifiers
 			customModifiers.Reverse();

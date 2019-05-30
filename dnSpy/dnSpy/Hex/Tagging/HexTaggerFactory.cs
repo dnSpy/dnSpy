@@ -44,11 +44,11 @@ namespace dnSpy.Hex.Tagging {
 
 			var type = typeof(T);
 			foreach (var info in hexViewTaggerProviders) {
-				if (info.Metadata.TextViewRoles != null && !hexView.Roles.ContainsAny(info.Metadata.TextViewRoles))
+				if (!(info.Metadata.TextViewRoles is null) && !hexView.Roles.ContainsAny(info.Metadata.TextViewRoles))
 					continue;
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(hexView, buffer);
-					if (tagger != null)
+					if (!(tagger is null))
 						yield return tagger;
 				}
 			}
@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Tagging {
 			foreach (var info in hexBufferTaggerProviders) {
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(buffer);
-					if (tagger != null)
+					if (!(tagger is null))
 						yield return tagger;
 				}
 			}

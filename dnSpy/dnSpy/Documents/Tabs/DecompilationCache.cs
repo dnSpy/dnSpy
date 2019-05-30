@@ -75,7 +75,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
-				if (WeakContent != null) {
+				if (!(WeakContent is null)) {
 					Content = (DocumentViewerContent)WeakContent.Target;
 					WeakContent = null;
 				}
@@ -83,7 +83,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public void MakeWeakReference() {
 				var content = Interlocked.CompareExchange(ref Content, null, Content);
-				if (content != null)
+				if (!(content is null))
 					WeakContent = new WeakReference(content);
 			}
 		}
@@ -146,7 +146,7 @@ namespace dnSpy.Documents.Tabs {
 			timer = new Timer(a => {
 				timer!.Dispose();
 				var self = (DecompilationCache)weakSelf.Target;
-				if (self != null) {
+				if (!(self is null)) {
 					self.ClearOld();
 					AddTimerWait(self);
 				}
@@ -163,7 +163,7 @@ namespace dnSpy.Documents.Tabs {
 					contentType = item.ContentType;
 					item.Hit();
 					var content = item.Content;
-					if (content == null)
+					if (content is null)
 						cachedItems.Remove(key);
 					return content;
 				}
@@ -185,7 +185,7 @@ namespace dnSpy.Documents.Tabs {
 				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {
 					if (kv.Value.Age.TotalMilliseconds > OLD_ITEM_MS) {
 						kv.Value.MakeWeakReference();
-						if (kv.Value.WeakContent is WeakReference wc && wc.Target == null)
+						if (kv.Value.WeakContent is WeakReference wc && wc.Target is null)
 							cachedItems.Remove(kv.Key);
 					}
 				}
@@ -211,10 +211,10 @@ namespace dnSpy.Documents.Tabs {
 
 		static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument?> modules, Item item) {
 			var result = item.Content;
-			if (result == null && item.WeakContent != null)
+			if (result is null && !(item.WeakContent is null))
 				result = (DocumentViewerContent)item.WeakContent.Target;
 			var refs = result?.ReferenceCollection;
-			if (refs == null)
+			if (refs is null)
 				return false;
 			return InModifiedModuleHelper.IsInModifiedModule(documentService, modules, refs.Select(a => a.Data.Reference));
 		}
@@ -224,7 +224,7 @@ namespace dnSpy.Documents.Tabs {
 		public static bool IsInModifiedModule(HashSet<IDsDocument?> modules, IEnumerable<DocumentTreeNodeData> nodes) {
 			foreach (var node in nodes) {
 				var modNode = (DsDocumentNode?)node.GetModuleNode() ?? node.GetAssemblyNode();
-				if (modNode == null || modules.Contains(modNode.Document))
+				if (modNode is null || modules.Contains(modNode.Document))
 					return true;
 			}
 
@@ -237,15 +237,15 @@ namespace dnSpy.Documents.Tabs {
 				IAssembly? asmRef = null;
 				if (r is IType t)
 					asmRef = t.DefinitionAssembly;
-				if (asmRef == null && r is IMemberRef) {
+				if (asmRef is null && r is IMemberRef) {
 					var type = ((IMemberRef)r).DeclaringType;
-					if (type != null)
+					if (!(type is null))
 						asmRef = type.DefinitionAssembly;
 				}
-				if (asmRef != null && !checkedAsmRefs.Contains(asmRef)) {
+				if (!(asmRef is null) && !checkedAsmRefs.Contains(asmRef)) {
 					checkedAsmRefs.Add(asmRef);
 					var asm = documentService.FindAssembly(asmRef);
-					if (asm != null && modules.Contains(asm))
+					if (!(asm is null) && modules.Contains(asm))
 						return true;
 				}
 			}

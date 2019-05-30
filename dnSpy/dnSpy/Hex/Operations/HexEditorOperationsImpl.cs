@@ -66,7 +66,7 @@ namespace dnSpy.Hex.Operations {
 		readonly Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory;
 
 		public HexEditorOperationsImpl(HexView hexView, HexHtmlBuilderService htmlBuilderService, HexBufferFileServiceFactory hexBufferFileServiceFactory, Lazy<HexStructureInfoAggregatorFactory> hexStructureInfoAggregatorFactory, Lazy<HexReferenceHandlerService> hexReferenceHandlerService, Lazy<HexFileStructureInfoServiceFactory> hexFileStructureInfoServiceFactory) {
-			if (hexBufferFileServiceFactory == null)
+			if (hexBufferFileServiceFactory is null)
 				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
 			HexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
@@ -146,7 +146,7 @@ namespace dnSpy.Hex.Operations {
 			else
 				Selection.Select(anchorPoint, activePoint, alignPoints);
 			MoveCaretToSelection(anchorPoint, activePoint);
-			if (scrollOptions == null)
+			if (scrollOptions is null)
 				return;
 			var options = Selection.IsReversed ? VSTE.EnsureSpanVisibleOptions.ShowStart | VSTE.EnsureSpanVisibleOptions.MinimumScroll : VSTE.EnsureSpanVisibleOptions.ShowStart;
 			var flags = Caret.Position.Position.ActiveColumn == HexColumnType.Values ? HexSpanSelectionFlags.Values : HexSpanSelectionFlags.Ascii;
@@ -200,7 +200,7 @@ namespace dnSpy.Hex.Operations {
 				var line = Caret.ContainingHexViewLine.BufferLine;
 				var position = BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
 				var cell = line.ValueCells.GetCell(position);
-				if (cell == null)
+				if (cell is null)
 					return;
 
 				var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
@@ -235,7 +235,7 @@ namespace dnSpy.Hex.Operations {
 				else {
 					var position = BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
 					var cell = line.ValueCells.GetCell(position);
-					if (cell == null)
+					if (cell is null)
 						return;
 
 					if (cell.BufferStart <= BufferLines.BufferStart)
@@ -455,7 +455,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override bool InsertText(string text) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 
 			switch (Caret.Position.Position.ActiveColumn) {
@@ -472,7 +472,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		bool InsertTextValues(HexCellPosition cellPosition, string text) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (text.Length == 0)
 				return true;
@@ -484,12 +484,12 @@ namespace dnSpy.Hex.Operations {
 				return false;
 			var line = bufferLines.GetLineFromPosition(cellPosition.BufferPosition);
 			var cell = line.ValueCells.GetCell(cellPosition.BufferPosition);
-			if (cell == null)
+			if (cell is null)
 				return false;
 			if ((uint)cellPosition.CellPosition >= (uint)cell.CellSpan.Length)
 				return false;
 			var newValue = bufferLines.EditValueCell(cell, cellPosition.CellPosition, text[0]);
-			if (newValue == null)
+			if (newValue is null)
 				return false;
 
 			using (var ed = HexView.Buffer.CreateEdit()) {
@@ -504,14 +504,14 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		bool InsertTextAscii(HexCellPosition cellPosition, string text) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (text.Length == 0)
 				return true;
 
 			var encoding = Options.TryGetEncoding();
-			Debug.Assert(encoding != null);
-			if (encoding == null)
+			Debug.Assert(!(encoding is null));
+			if (encoding is null)
 				return false;
 
 			var bytes = encoding.GetBytes(text);
@@ -531,7 +531,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void SelectLine(HexViewLine viewLine, bool extendSelection) {
-			if (viewLine == null)
+			if (viewLine is null)
 				throw new ArgumentNullException(nameof(viewLine));
 
 			HexBufferPoint anchorPoint, activePoint;
@@ -569,7 +569,7 @@ namespace dnSpy.Hex.Operations {
 			case HexColumnType.Values:
 				var line = Caret.ContainingHexViewLine.BufferLine;
 				var cell = line.ValueCells.GetCell(position);
-				if (cell == null)
+				if (cell is null)
 					return;
 				SelectAndMove(cell.BufferSpan, alignPoints: false);
 				break;
@@ -607,7 +607,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override void MoveCaret(HexViewLine hexLine, double horizontalOffset, bool extendSelection, HexMoveToFlags flags) {
-			if (hexLine == null)
+			if (hexLine is null)
 				throw new ArgumentNullException(nameof(hexLine));
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
@@ -630,7 +630,7 @@ namespace dnSpy.Hex.Operations {
 					dataObj.SetData(VS_COPY_FULL_LINE_DATA_FORMAT, true);
 				if (isBoxData)
 					dataObj.SetData(VS_COPY_BOX_DATA_FORMAT, true);
-				if (htmlText != null)
+				if (!(htmlText is null))
 					dataObj.SetData(DataFormats.Html, htmlText);
 				Clipboard.SetDataObject(dataObj);
 				return true;
@@ -668,7 +668,7 @@ namespace dnSpy.Hex.Operations {
 			bool upper = !BufferLines.ValuesLowerCaseHex;
 			var span = Selection.StreamSelectionSpan;
 			var text = span.Length > bytesMaxTotalBytesToCopy ? null : ClipboardUtils.ToHexString(span, upper);
-			if (text == null)
+			if (text is null)
 				return CopyTooMuchDataError();
 			return CopyToClipboard(text, null, isFullLineData: false, isBoxData: false);
 		}
@@ -783,8 +783,8 @@ namespace dnSpy.Hex.Operations {
 			var pos = ActiveCaretBufferPosition;
 			var line = BufferLines.GetLineFromPosition(pos);
 			var cell = line.ValueCells.GetCell(pos);
-			Debug.Assert(cell != null);
-			if (cell == null)
+			Debug.Assert(!(cell is null));
+			if (cell is null)
 				return false;
 			var cellText = line.Text.Substring(cell.TextSpan.Start, cell.TextSpan.Length);
 			return CopyToClipboard(cellText, htmlText: null, isFullLineData: false, isBoxData: false);
@@ -800,10 +800,10 @@ namespace dnSpy.Hex.Operations {
 		bool CopyFileOffset() {
 			var pos = ActiveCaretBufferPosition.Position;
 			var peHeaders = TryGetPeHeaders(pos);
-			if (peHeaders != null)
+			if (!(peHeaders is null))
 				return CopyHexValue(peHeaders.BufferPositionToFilePosition(pos));
 			var file = TryGetFile(pos);
-			if (file != null)
+			if (!(file is null))
 				return CopyHexValue((pos - file.Span.Start).ToUInt64());
 			return CopyHexValue(pos.ToUInt64());
 		}
@@ -813,7 +813,7 @@ namespace dnSpy.Hex.Operations {
 		bool CopyRVA() {
 			var pos = ActiveCaretBufferPosition.Position;
 			var peHeaders = TryGetPeHeaders(pos);
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return false;
 			return CopyHexValue(peHeaders.BufferPositionToRva(pos));
 		}
@@ -830,10 +830,10 @@ namespace dnSpy.Hex.Operations {
 			get {
 				switch (Caret.Position.Position.ActiveColumn) {
 				case HexColumnType.Values:
-					return ClipboardUtils.GetData(canBeEmpty: false) != null;
+					return !(ClipboardUtils.GetData(canBeEmpty: false) is null);
 
 				case HexColumnType.Ascii:
-					return ClipboardUtils.GetText(canBeEmpty: false) != null;
+					return !(ClipboardUtils.GetText(canBeEmpty: false) is null);
 
 				case HexColumnType.Offset:
 				default:
@@ -858,7 +858,7 @@ namespace dnSpy.Hex.Operations {
 
 		bool PasteValues(HexCellPosition cellPosition) {
 			var data = ClipboardUtils.GetData(canBeEmpty: false);
-			if (data == null)
+			if (data is null)
 				return false;
 			return PasteData(cellPosition, data);
 		}
@@ -867,7 +867,7 @@ namespace dnSpy.Hex.Operations {
 			var line = BufferLines.GetLineFromPosition(cellPosition.BufferPosition);
 			var cells = cellPosition.Column == HexColumnType.Values ? line.ValueCells : line.AsciiCells;
 			var cell = cells.GetCell(cellPosition.BufferPosition);
-			if (cell == null)
+			if (cell is null)
 				return false;
 
 			var pos = cell.BufferStart;
@@ -888,7 +888,7 @@ namespace dnSpy.Hex.Operations {
 
 		bool PasteAscii(HexCellPosition cellPosition) {
 			var text = ClipboardUtils.GetText(canBeEmpty: false);
-			if (text == null)
+			if (text is null)
 				return false;
 			return InsertTextAscii(cellPosition, text);
 		}
@@ -912,21 +912,21 @@ namespace dnSpy.Hex.Operations {
 
 		bool PasteString(Encoding encoding) {
 			var text = ClipboardUtils.GetText(canBeEmpty: false);
-			if (text == null)
+			if (text is null)
 				return false;
 			return PasteData(encoding.GetBytes(text));
 		}
 
 		bool PasteStringAnd7BitEncodedLengthPrefix(Encoding encoding) {
 			var text = ClipboardUtils.GetText(canBeEmpty: true);
-			if (text == null)
+			if (text is null)
 				return false;
 			var data = encoding.GetBytes(text);
 			return PasteData(Get7BitEncodedLengthData(data));
 		}
 
 		static byte[]? Get7BitEncodedLengthData(byte[] data) {
-			if (data == null)
+			if (data is null)
 				return null;
 			uint len = (uint)data.Length;
 			int extraLen = MDUtils.Get7BitEncodedIntLength(len);
@@ -940,13 +940,13 @@ namespace dnSpy.Hex.Operations {
 
 		bool PasteBlob() {
 			var data = ClipboardUtils.GetData(canBeEmpty: true);
-			if (data == null)
+			if (data is null)
 				return false;
 			return PasteData(GetBlobData(data));
 		}
 
 		static byte[]? GetBlobData(byte[] data) {
-			if (data == null)
+			if (data is null)
 				return null;
 			uint len = (uint)data.Length;
 			int extraLen = MDUtils.GetCompressedUInt32Length(len);
@@ -959,7 +959,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		bool PasteData(byte[]? data) {
-			if (data == null)
+			if (data is null)
 				return false;
 			if (data.Length == 0)
 				return true;
@@ -1009,15 +1009,15 @@ namespace dnSpy.Hex.Operations {
 
 		public override void ScrollColumnLeft() {
 			var wpfHexView = HexView as WpfHexView;
-			Debug.Assert(wpfHexView != null);
-			if (wpfHexView != null)
+			Debug.Assert(!(wpfHexView is null));
+			if (!(wpfHexView is null))
 				wpfHexView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfHexView.FormattedLineSource.ColumnWidth);
 		}
 
 		public override void ScrollColumnRight() {
 			var wpfHexView = HexView as WpfHexView;
-			Debug.Assert(wpfHexView != null);
-			if (wpfHexView != null)
+			Debug.Assert(!(wpfHexView is null));
+			if (!(wpfHexView is null))
 				wpfHexView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfHexView.FormattedLineSource.ColumnWidth);
 		}
 
@@ -1038,7 +1038,7 @@ namespace dnSpy.Hex.Operations {
 			if (!Roles.Contains(PredefinedHexViewRoles.Zoomable))
 				return null;
 			var wpfHexView = HexView as WpfHexView;
-			Debug.Assert(wpfHexView != null);
+			Debug.Assert(!(wpfHexView is null));
 			return wpfHexView;
 		}
 
@@ -1054,21 +1054,21 @@ namespace dnSpy.Hex.Operations {
 
 		public override void ZoomIn() {
 			var wpfHexView = GetZoomableView();
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return;
 			SetZoom(wpfHexView, ZoomSelector.ZoomIn(wpfHexView.ZoomLevel));
 		}
 
 		public override void ZoomOut() {
 			var wpfHexView = GetZoomableView();
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return;
 			SetZoom(wpfHexView, ZoomSelector.ZoomOut(wpfHexView.ZoomLevel));
 		}
 
 		public override void ZoomTo(double zoomLevel) {
 			var wpfHexView = GetZoomableView();
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return;
 			SetZoom(wpfHexView, zoomLevel);
 		}
@@ -1090,7 +1090,7 @@ namespace dnSpy.Hex.Operations {
 
 		public override bool ClearData() {
 			var span = GetSelectedSpanOrCell();
-			if (span == null)
+			if (span is null)
 				return false;
 			if (span.Value.Length > bytesMaxTotalBytesToCopy)
 				return false;
@@ -1115,7 +1115,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		void MoveToValidSpan(HexSpan? span) {
-			if (span == null)
+			if (span is null)
 				return;
 			var start = span.Value.Start;
 			if (start < BufferLines.StartPosition)
@@ -1154,11 +1154,11 @@ namespace dnSpy.Hex.Operations {
 		public override void SelectAllBytesBlock() {
 			var currPos = BufferLines.FilterAndVerify(ActiveCaretBufferPosition);
 			var span = Buffer.GetNextValidSpan(currPos, fullSpan: true);
-			if (span == null)
+			if (span is null)
 				return;
 			var overlap = BufferLines.BufferSpan.Span.Overlap(span.Value);
-			Debug.Assert(overlap != null);
-			if (overlap == null)
+			Debug.Assert(!(overlap is null));
+			if (overlap is null)
 				return;
 			if (!overlap.Value.Contains(currPos))
 				return;
@@ -1169,7 +1169,7 @@ namespace dnSpy.Hex.Operations {
 		public override void MoveToNextValidStartEnd(bool extendSelection) {
 			var startPos = ActiveCaretBufferPosition;
 			var span = Buffer.GetNextValidSpan(startPos, BufferLines.EndPosition, fullSpan: false);
-			if (span == null || span.Value.IsEmpty)
+			if (span is null || span.Value.IsEmpty)
 				return;
 			HexPosition newPos;
 			if (startPos < span.Value.Start)
@@ -1180,7 +1180,7 @@ namespace dnSpy.Hex.Operations {
 				if (startPos >= BufferLines.EndPosition)
 					return;
 				span = Buffer.GetNextValidSpan(startPos + 1, BufferLines.EndPosition, fullSpan: false);
-				if (span == null)
+				if (span is null)
 					return;
 				newPos = span.Value.Start;
 			}
@@ -1190,7 +1190,7 @@ namespace dnSpy.Hex.Operations {
 		public override void MoveToPreviousValidStartEnd(bool extendSelection) {
 			var startPos = ActiveCaretBufferPosition;
 			var span = Buffer.GetPreviousValidSpan(startPos, BufferLines.StartPosition, fullSpan: false);
-			if (span == null || span.Value.IsEmpty)
+			if (span is null || span.Value.IsEmpty)
 				return;
 			HexPosition newPos;
 			if (startPos >= span.Value.End)
@@ -1201,7 +1201,7 @@ namespace dnSpy.Hex.Operations {
 				if (startPos <= BufferLines.StartPosition)
 					return;
 				span = Buffer.GetPreviousValidSpan(startPos - 1, BufferLines.StartPosition, fullSpan: false);
-				if (span == null || span.Value.IsEmpty)
+				if (span is null || span.Value.IsEmpty)
 					return;
 				newPos = span.Value.End - 1;
 			}
@@ -1225,7 +1225,7 @@ namespace dnSpy.Hex.Operations {
 		public override void GoToCodeOrStructure() {
 			var pos = ActiveCaretBufferPosition;
 			foreach (var info in HexStructureInfoAggregator.GetReferences(pos)) {
-				if (info.Value == null)
+				if (info.Value is null)
 					continue;
 				if (hexReferenceHandlerService.Value.Handle(HexView, info.Value))
 					return;
@@ -1234,7 +1234,7 @@ namespace dnSpy.Hex.Operations {
 
 		public override void FollowFieldValueReference() {
 			var span = HexFileStructureInfoService.GetFieldReferenceSpan(ActiveCaretBufferPosition);
-			if (span != null) {
+			if (!(span is null)) {
 				var point = new HexBufferPoint(Buffer, span.Value.Start);
 				if (BufferLines.IsValidPosition(point)) {
 					ViewScroller.EnsureSpanVisible(new HexBufferSpan(Buffer, new HexSpan(span.Value.Start, 0)), HexSpanSelectionFlags.Selection, VSTE.EnsureSpanVisibleOptions.ShowStart);
@@ -1248,14 +1248,14 @@ namespace dnSpy.Hex.Operations {
 		public override void SelectNestedFile() => SelectFileCore(hexBufferFileService.GetFile(ActiveCaretBufferPosition, checkNestedFiles: true));
 		public override void SelectFile() => SelectFileCore(hexBufferFileService.GetFile(ActiveCaretBufferPosition, checkNestedFiles: false));
 		void SelectFileCore(HexBufferFile? file) {
-			if (file == null)
+			if (file is null)
 				return;
 			SelectCore(file.Span);
 		}
 
 		public override void SelectStructure() {
 			var structure = hexBufferFileService.GetFileAndStructure(ActiveCaretBufferPosition)?.Structure;
-			if (structure == null)
+			if (structure is null)
 				return;
 			SelectCore(structure.Span.Span);
 		}

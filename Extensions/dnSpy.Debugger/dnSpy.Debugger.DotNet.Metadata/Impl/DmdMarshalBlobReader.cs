@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				case UnmanagedType.SafeArray:
 					var vt = CanRead ? (VarEnum)reader.ReadCompressedUInt32() : DEFAULT;
 					var udtName = CanRead ? ReadUTF8String() : null;
-					var udtRef = udtName == null ? null : DmdTypeNameParser.Parse(module, udtName, genericTypeArguments);
+					var udtRef = udtName is null ? null : DmdTypeNameParser.Parse(module, udtName, genericTypeArguments);
 					return DmdMarshalType.CreateSafeArray(vt, udtRef);
 
 				case UnmanagedType.ByValArray:

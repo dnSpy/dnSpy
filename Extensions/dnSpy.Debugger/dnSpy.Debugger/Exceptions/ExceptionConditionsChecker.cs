@@ -74,8 +74,8 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		bool CheckConditions(DbgExceptionConditionSettings settings, DbgException exception) {
-			Debug.Assert(settings.Condition != null);
-			if (settings.Condition == null)
+			Debug.Assert(!(settings.Condition is null));
+			if (settings.Condition is null)
 				return false;
 
 			switch (settings.ConditionType) {
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.Exceptions {
 			CompareStrings(exception.Module?.Name, settings.Condition);
 
 		bool CompareStrings(string? s, string? wildcardString) {
-			if (s == null || wildcardString == null)
+			if (s is null || wildcardString is null)
 				return false;
 			return WildcardsUtils.CreateRegex(wildcardString).IsMatch(s);
 		}

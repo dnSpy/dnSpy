@@ -195,7 +195,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="marker">Marker</param>
 		/// <param name="span">Span of the marker in the <see cref="ITextView"/></param>
 		public GlyphTextMarkerAndSpan(IGlyphTextMarker marker, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Marker = marker ?? throw new ArgumentNullException(nameof(marker));
 			Span = span;

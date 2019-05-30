@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="textView">Text view</param>
 		/// <param name="center">true to center the caret</param>
 		public static void EnsureCaretVisible(this ITextView textView, bool center = false) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var position = textView.Caret.Position.VirtualBufferPosition;
 			var options = EnsureSpanVisibleOptions.ShowStart;

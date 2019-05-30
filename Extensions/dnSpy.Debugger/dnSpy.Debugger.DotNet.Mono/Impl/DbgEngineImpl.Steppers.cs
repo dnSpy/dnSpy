@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		bool OnStep(StepEventRequest? stepReq) {
 			debuggerThread.VerifyAccess();
-			if (stepReq == null)
+			if (stepReq is null)
 				return false;
 			bool b = toStepper.TryGetValue(stepReq, out var info);
 			Debug.Assert(b);
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		internal void CancelStepper(StepEventRequest stepReq) {
 			debuggerThread.VerifyAccess();
-			if (stepReq != null) {
+			if (!(stepReq is null)) {
 				try {
 					using (TempBreak())
 						stepReq.Disable();

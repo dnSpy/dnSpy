@@ -34,7 +34,7 @@ namespace dnSpy.Text.Classification {
 		readonly ITextClassifier[] textClassifiers;
 
 		public TextClassifierAggregator(IClassificationTypeRegistryService classificationTypeRegistryService, IEnumerable<ITextClassifier> textClassifiers) {
-			if (textClassifiers == null)
+			if (textClassifiers is null)
 				throw new ArgumentNullException(nameof(textClassifiers));
 			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.textClassifiers = textClassifiers.ToArray();

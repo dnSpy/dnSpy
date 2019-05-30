@@ -81,17 +81,17 @@ namespace dnSpy.Documents {
 
 			info = TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness) ??
 				TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness2);
-			if (info != null)
+			if (!(info is null))
 				return info.Paths;
 
 			info = TryGetDotNetCorePathsCore(version.Major, bitness) ??
 				TryGetDotNetCorePathsCore(version.Major, bitness2);
-			if (info != null)
+			if (!(info is null))
 				return info.Paths;
 
 			info = TryGetDotNetCorePathsCore(bitness) ??
 				TryGetDotNetCorePathsCore(bitness2);
-			if (info != null)
+			if (!(info is null))
 				return info.Paths;
 
 			return null;
@@ -103,14 +103,14 @@ namespace dnSpy.Documents {
 			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
 				var info = netcorePaths[i];
 				if (info.Bitness == bitness && info.Version.Major == major) {
-					if (fpMajor == null)
+					if (fpMajor is null)
 						fpMajor = info;
 					else
 						fpMajor = BestMinorVersion(minor, fpMajor, info);
 					if (info.Version.Minor == minor) {
 						if (info.HasDotNetCoreAppPath)
 							return info;
-						if (fpMajorMinor == null)
+						if (fpMajorMinor is null)
 							fpMajorMinor = info;
 					}
 				}
@@ -146,7 +146,7 @@ namespace dnSpy.Documents {
 				if (info.Bitness == bitness && info.Version.Major == major) {
 					if (info.HasDotNetCoreAppPath)
 						return info;
-					if (fpMajor == null)
+					if (fpMajor is null)
 						fpMajor = info;
 				}
 			}
@@ -160,7 +160,7 @@ namespace dnSpy.Documents {
 				if (info.Bitness == bitness) {
 					if (info.HasDotNetCoreAppPath)
 						return info;
-					if (best == null)
+					if (best is null)
 						best = info;
 				}
 			}
@@ -246,7 +246,7 @@ namespace dnSpy.Documents {
 		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
 			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
 				installLocation = key?.GetValue("InstallLocation") as string;
-				return installLocation != null;
+				return !(installLocation is null);
 			}
 		}
 

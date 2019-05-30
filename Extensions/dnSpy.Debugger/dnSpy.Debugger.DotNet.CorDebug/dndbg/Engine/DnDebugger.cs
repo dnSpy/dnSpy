@@ -128,7 +128,7 @@ namespace dndbg.Engine {
 		public event EventHandler<CorModuleDefCreatedEventArgs> OnCorModuleDefCreated;
 		internal void CorModuleDefCreated(DnModule module) {
 			DebugVerifyThread();
-			Debug.Assert(module.CorModuleDef != null);
+			Debug.Assert(!(module.CorModuleDef is null));
 			OnCorModuleDefCreated?.Invoke(this, new CorModuleDefCreatedEventArgs(module, module.CorModuleDef));
 		}
 
@@ -356,7 +356,7 @@ namespace dndbg.Engine {
 
 		bool HasQueuedCallbacks(DebugCallbackEventArgs e) {
 			var thread = Current.Thread;
-			if (thread == null)
+			if (thread is null)
 				return false;
 			if (e.CorDebugController is null)
 				return false;
@@ -375,8 +375,8 @@ namespace dndbg.Engine {
 		// and no methods can be called because the CLR debugger could call us before this method
 		// returns.
 		bool Continue(ICorDebugController? controller, bool callOnProcessStateChanged) {
-			Debug.Assert(controller != null);
-			if (controller == null)
+			Debug.Assert(!(controller is null));
+			if (controller is null)
 				return false;
 
 			if (callOnProcessStateChanged && managedCallbackCounter == 1) {
@@ -417,8 +417,8 @@ namespace dndbg.Engine {
 				return;
 
 			var controller = Current.Controller;
-			Debug.Assert(controller != null);
-			if (controller == null)
+			Debug.Assert(!(controller is null));
+			if (controller is null)
 				return;
 
 			ResetDebuggerStates();
@@ -533,7 +533,7 @@ namespace dndbg.Engine {
 		}
 
 		CorStepper? StepIntoOver(CorFrame? frame, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs?, bool>? action = null) {
-			if (ranges == null)
+			if (ranges is null)
 				return Step(frame, stepInto ? StepKind.StepInto : StepKind.StepOver, action);
 			if (!CanStep(frame))
 				return null;
@@ -564,22 +564,22 @@ namespace dndbg.Engine {
 		}
 
 		void InitializeCurrentDebuggerState(DebugCallbackEventArgs e, ICorDebugProcess? comProcess, ICorDebugAppDomain? comAppDomain, ICorDebugThread? comThread) {
-			if (comThread != null) {
-				if (comProcess == null)
+			if (!(comThread is null)) {
+				if (comProcess is null)
 					comThread.GetProcess(out comProcess);
-				if (comAppDomain == null)
+				if (comAppDomain is null)
 					comThread.GetAppDomain(out comAppDomain);
 			}
 
-			if (comAppDomain != null) {
-				if (comProcess == null)
+			if (!(comAppDomain is null)) {
+				if (comProcess is null)
 					comAppDomain.GetProcess(out comProcess);
 			}
 
 			var process = TryGetValidProcess(comProcess);
 			DnAppDomain? appDomain;
 			DnThread? thread;
-			if (process != null) {
+			if (!(process is null)) {
 				appDomain = process.TryGetAppDomain(comAppDomain);
 				thread = process.TryGetThread(comThread);
 			}
@@ -588,16 +588,16 @@ namespace dndbg.Engine {
 				thread = null;
 			}
 
-			if (thread == null && appDomain == null && process != null)
+			if (thread is null && appDomain is null && !(process is null))
 				appDomain = process.AppDomains.FirstOrDefault();
-			if (thread == null) {
-				if (appDomain != null)
+			if (thread is null) {
+				if (!(appDomain is null))
 					thread = appDomain.Threads.FirstOrDefault();
-				else if (process != null)
+				else if (!(process is null))
 					thread = process.Threads.FirstOrDefault();
 			}
 
-			if (process == null)
+			if (process is null)
 				SetDefaultCurrentProcess(e);
 			else
 				AddDebuggerState(new DebuggerState(e, process, appDomain, thread));
@@ -613,7 +613,7 @@ namespace dndbg.Engine {
 		}
 
 		void OnProcessTerminated(DnProcess? process) {
-			if (process == null)
+			if (process is null)
 				return;
 
 			foreach (var appDomain in process.AppDomains) {
@@ -646,7 +646,7 @@ namespace dndbg.Engine {
 		}
 
 		void RemoveModuleFromBreakpoints(DnModule module) {
-			if (module == null)
+			if (module is null)
 				return;
 			foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
 				bp.RemoveModule(module);
@@ -701,7 +701,7 @@ namespace dndbg.Engine {
 				var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
 				hasReceivedCreateProcessEvent = true;
 				process = TryAdd(cpArgs.Process);
-				if (process != null) {
+				if (!(process is null)) {
 					process.CorProcess.EnableLogMessages(debugOptions.LogMessages);
 					process.CorProcess.DesiredNGENCompilerFlags = debugOptions.DebugOptionsProvider.GetDesiredNGENCompilerFlags(process);
 					process.CorProcess.SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode.AlwaysShowUpdates);
@@ -715,7 +715,7 @@ namespace dndbg.Engine {
 				var epArgs = (ExitProcessDebugCallbackEventArgs)e;
 				process = processes.TryGet(epArgs.Process);
 				InitializeCurrentDebuggerState(e, process);
-				if (process != null)
+				if (!(process is null))
 					process.SetHasExited();
 				processes.Remove(epArgs.Process);
 				OnProcessTerminated(process);
@@ -726,9 +726,9 @@ namespace dndbg.Engine {
 			case DebugCallbackKind.CreateThread:
 				var ctArgs = (CreateThreadDebugCallbackEventArgs)e;
 				process = TryGetValidProcess(ctArgs.Thread);
-				if (process != null) {
+				if (!(process is null)) {
 					var dnThread = process.TryAdd(ctArgs.Thread);
-					if (dnThread != null) {
+					if (!(dnThread is null)) {
 						CallOnThreadAdded(dnThread, true, out shouldPause);
 						if (shouldPause)
 							e.AddPauseReason(DebuggerPauseReason.Other);
@@ -745,9 +745,9 @@ namespace dndbg.Engine {
 				var etArgs = (ExitThreadDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, etArgs.AppDomain, etArgs.Thread);
 				process = TryGetValidProcess(etArgs.Thread);
-				if (process != null) {
+				if (!(process is null)) {
 					var dnThread = process.ThreadExited(etArgs.Thread);
-					if (dnThread != null) {
+					if (!(dnThread is null)) {
 						CallOnThreadAdded(dnThread, false, out shouldPause);
 						if (shouldPause)
 							e.AddPauseReason(DebuggerPauseReason.Other);
@@ -759,7 +759,7 @@ namespace dndbg.Engine {
 				var lmArgs = (LoadModuleDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, lmArgs.AppDomain, null);
 				assembly = TryGetValidAssembly(lmArgs.AppDomain, lmArgs.Module);
-				if (assembly != null) {
+				if (!(assembly is null)) {
 					var module = assembly.TryAdd(lmArgs.Module)!;
 					toDnModule.Add(module.CorModule, module);
 
@@ -782,9 +782,9 @@ namespace dndbg.Engine {
 				var umArgs = (UnloadModuleDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, umArgs.AppDomain, null);
 				assembly = TryGetValidAssembly(umArgs.AppDomain, umArgs.Module);
-				if (assembly != null) {
+				if (!(assembly is null)) {
 					var module = assembly.TryGetModule(umArgs.Module);
-					if (module != null) {
+					if (!(module is null)) {
 						OnModuleUnloaded(module);
 						CallOnModuleAdded(module, false, out shouldPause);
 						if (shouldPause)
@@ -800,8 +800,8 @@ namespace dndbg.Engine {
 				cls = lcArgs.CorClass;
 				if (!(cls is null)) {
 					var module = TryGetModule(lcArgs.CorAppDomain, cls);
-					if (module != null) {
-						if (module.CorModuleDef != null)
+					if (!(module is null)) {
+						if (!(module.CorModuleDef is null))
 							module.CorModuleDef.LoadClass(cls.Token);
 						if (module.IsDynamic) {
 							foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.DnModuleId))
@@ -820,7 +820,7 @@ namespace dndbg.Engine {
 				cls = ucArgs.CorClass;
 				if (!(cls is null)) {
 					var module = TryGetModule(ucArgs.CorAppDomain, cls);
-					if (module != null && module.CorModuleDef != null)
+					if (!(module is null) && !(module.CorModuleDef is null))
 						module.CorModuleDef.UnloadClass(cls.Token);
 				}
 				break;
@@ -844,14 +844,14 @@ namespace dndbg.Engine {
 				var cadArgs = (CreateAppDomainDebugCallbackEventArgs)e;
 				process = TryGetValidProcess(cadArgs.Process);
 				appDomain = null;
-				if (process != null && cadArgs.AppDomain != null) {
+				if (!(process is null) && !(cadArgs.AppDomain is null)) {
 					b = cadArgs.AppDomain.Attach() >= 0;
 					Debug.WriteLineIf(!b, $"CreateAppDomain: could not attach to AppDomain: {cadArgs.AppDomain.GetHashCode():X8}");
 					if (b)
 						appDomain = process.TryAdd(cadArgs.AppDomain);
 				}
 				InitializeCurrentDebuggerState(e, cadArgs.Process, cadArgs.AppDomain, null);
-				if (appDomain != null) {
+				if (!(appDomain is null)) {
 					CallOnAppDomainAdded(appDomain, true, out shouldPause);
 					if (shouldPause)
 						e.AddPauseReason(DebuggerPauseReason.Other);
@@ -862,10 +862,10 @@ namespace dndbg.Engine {
 				var eadArgs = (ExitAppDomainDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, eadArgs.Process, eadArgs.AppDomain, null);
 				process = processes.TryGet(eadArgs.Process);
-				if (process != null) {
+				if (!(process is null)) {
 					UpdateCustomNotificationList(eadArgs.CorAppDomain);
 					OnAppDomainUnloaded(appDomain = process.TryGetAppDomain(eadArgs.AppDomain));
-					if (appDomain != null) {
+					if (!(appDomain is null)) {
 						CallOnAppDomainAdded(appDomain, false, out shouldPause);
 						if (shouldPause)
 							e.AddPauseReason(DebuggerPauseReason.Other);
@@ -878,9 +878,9 @@ namespace dndbg.Engine {
 				var laArgs = (LoadAssemblyDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, laArgs.AppDomain, null);
 				appDomain = TryGetValidAppDomain(laArgs.AppDomain);
-				if (appDomain != null) {
+				if (!(appDomain is null)) {
 					assembly = appDomain.TryAdd(laArgs.Assembly);
-					if (assembly != null) {
+					if (!(assembly is null)) {
 						CallOnAssemblyAdded(assembly, true, out shouldPause);
 						if (shouldPause)
 							e.AddPauseReason(DebuggerPauseReason.Other);
@@ -892,9 +892,9 @@ namespace dndbg.Engine {
 				var uaArgs = (UnloadAssemblyDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, uaArgs.AppDomain, null);
 				appDomain = TryGetAppDomain(uaArgs.AppDomain);
-				if (appDomain != null) {
+				if (!(appDomain is null)) {
 					OnAssemblyUnloaded(assembly = appDomain.TryGetAssembly(uaArgs.Assembly));
-					if (assembly != null) {
+					if (!(assembly is null)) {
 						CallOnAssemblyAdded(assembly, false, out shouldPause);
 						if (shouldPause)
 							e.AddPauseReason(DebuggerPauseReason.Other);
@@ -912,10 +912,10 @@ namespace dndbg.Engine {
 				var ncArgs = (NameChangeDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, ncArgs.AppDomain, ncArgs.Thread);
 				appDomain = TryGetValidAppDomain(ncArgs.AppDomain);
-				if (appDomain != null)
+				if (!(appDomain is null))
 					appDomain.NameChanged();
 				var thread = TryGetValidThread(ncArgs.Thread);
-				if (thread != null)
+				if (!(thread is null))
 					thread.NameChanged();
 				CallOnNameChanged(appDomain, thread);
 				break;
@@ -934,7 +934,7 @@ namespace dndbg.Engine {
 				var bpseArgs = (BreakpointSetErrorDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, bpseArgs.AppDomain, bpseArgs.Thread);
 				var moduleId = TryGetModuleId(bpseArgs.CorFunctionBreakpoint?.Function?.Module);
-				if (moduleId != null) {
+				if (!(moduleId is null)) {
 					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(moduleId.Value)) {
 						if (bp.IsBreakpoint(bpseArgs.Breakpoint))
 							bp.SetError(DnCodeBreakpointError.CouldNotCreateBreakpoint);
@@ -1004,7 +1004,7 @@ namespace dndbg.Engine {
 				return;
 
 			var type = DnDebugEventBreakpoint.GetDebugEventBreakpointKind(e);
-			if (type != null) {
+			if (!(type is null)) {
 				foreach (var bp in DebugEventBreakpoints) {
 					if (bp.IsEnabled && bp.EventKind == type.Value && bp.Condition(new DebugEventBreakpointConditionContext(this, bp, e)))
 						e.AddPauseState(new DebugEventBreakpointPauseState(bp));
@@ -1061,10 +1061,10 @@ namespace dndbg.Engine {
 		volatile bool hasTerminated = false;
 
 		public static DnDebugger DebugProcess(DebugProcessOptions options) {
-			if (options.DebugMessageDispatcher == null)
+			if (options.DebugMessageDispatcher is null)
 				throw new ArgumentException("DebugMessageDispatcher is null");
 			var dbg = CreateDnDebugger(options);
-			if (dbg == null)
+			if (dbg is null)
 				throw new Exception("Couldn't create a debugger instance");
 			return dbg;
 		}
@@ -1083,7 +1083,7 @@ namespace dndbg.Engine {
 			var clrType = (DesktopCLRTypeDebugInfo)options.CLRTypeDebugInfo;
 			var debuggeeVersion = clrType.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename!);
 			var corDebug = CreateCorDebug(debuggeeVersion, out string clrPath);
-			if (corDebug == null)
+			if (corDebug is null)
 				throw new Exception("Could not create an ICorDebug instance");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions!, options.DebugMessageDispatcher!, clrPath, debuggeeVersion, null, isAttach: false);
 			if (options.BreakProcessKind != BreakProcessKind.None)
@@ -1111,16 +1111,16 @@ namespace dndbg.Engine {
 					var dbg = new DnDebugger(cd, options.DebugOptions!, options.DebugMessageDispatcher!, coreclrFilename, null, version, isAttach: false);
 					(dbg.outputPipe, dbg.errorPipe) = pipeInfo;
 					if (options.BreakProcessKind != BreakProcessKind.None)
-						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename!, clrType.HostFilename == null);
+						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename!, clrType.HostFilename is null);
 					cd.DebugActiveProcess((int)pid, 0, out var comProcess);
 					var dnProcess = dbg.TryAdd(comProcess);
-					if (dnProcess != null)
+					if (!(dnProcess is null))
 						dnProcess.Initialize(options.Filename, options.CurrentDirectory, options.CommandLine);
 					if (options.RedirectConsoleOutput)
 						dbg.ReadPipesAsync();
 					return dbg;
 				});
-				if (dbg2 == null)
+				if (dbg2 is null)
 					throw new Exception("Could not create a debugger instance");
 				return dbg2;
 			}
@@ -1147,7 +1147,7 @@ namespace dndbg.Engine {
 			public IntPtr DangerousGetClientHandle() => pipe.ClientSafePipeHandle.DangerousGetHandle();
 
 			public Task<int> Read() {
-				if (task == null)
+				if (task is null)
 					task = streamReader.ReadAsync(buffer, 0, buffer.Length);
 				return task;
 			}
@@ -1189,7 +1189,7 @@ namespace dndbg.Engine {
 				else
 					throw new InvalidOperationException();
 				var text = pipe.TryGetString();
-				if (text == null)
+				if (text is null)
 					return;
 				OnRedirectedOutput?.Invoke(this, new RedirectedOutputEventArgs(text, isStandardOutput: task == outputTask));
 			}
@@ -1232,7 +1232,7 @@ namespace dndbg.Engine {
 			}
 
 			var process = TryAdd(comProcess);
-			if (process != null)
+			if (!(process is null))
 				process.Initialize(options.Filename, options.CurrentDirectory, options.CommandLine);
 		}
 
@@ -1246,7 +1246,7 @@ namespace dndbg.Engine {
 			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher!, clrPath, debuggeeVersion, otherVersion, isAttach: true);
 			corDebug.DebugActiveProcess(options.ProcessId, 0, out var comProcess);
 			var dnProcess = dbg.TryAdd(comProcess);
-			if (dnProcess != null)
+			if (!(dnProcess is null))
 				dnProcess.Initialize(filename, string.Empty, string.Empty);
 			return dbg;
 		}
@@ -1343,7 +1343,7 @@ namespace dndbg.Engine {
 		public DnProcess? TryGetValidProcess(ICorDebugProcess? comProcess) {
 			DebugVerifyThread();
 			var process = processes.TryGet(comProcess);
-			if (process == null)
+			if (process is null)
 				return null;
 			if (!process.CheckValid())
 				return null;
@@ -1352,7 +1352,7 @@ namespace dndbg.Engine {
 
 		public DnProcess? TryGetValidProcess(ICorDebugAppDomain comAppDomain) {
 			DebugVerifyThread();
-			if (comAppDomain == null)
+			if (comAppDomain is null)
 				return null;
 			int hr = comAppDomain.GetProcess(out var comProcess);
 			if (hr < 0)
@@ -1394,7 +1394,7 @@ namespace dndbg.Engine {
 		public DnAppDomain? TryGetValidAppDomain(ICorDebugProcess comProcess, ICorDebugAppDomain comAppDomain) {
 			DebugVerifyThread();
 			var process = TryGetValidProcess(comProcess);
-			if (process == null)
+			if (process is null)
 				return null;
 			return process.TryGetValidAppDomain(comAppDomain);
 		}
@@ -1405,7 +1405,7 @@ namespace dndbg.Engine {
 				return null;
 
 			var appDomain = TryGetValidAppDomain(comAppDomain);
-			if (appDomain == null)
+			if (appDomain is null)
 				return null;
 
 			int hr = comModule.GetAssembly(out var comAssembly);
@@ -1428,7 +1428,7 @@ namespace dndbg.Engine {
 			if (clsMod is null)
 				return null;
 			var ad = TryGetAppDomain(appDomain.RawObject);
-			if (ad == null)
+			if (ad is null)
 				return null;
 
 			var asm = TryGetValidAssembly(appDomain.RawObject, clsMod.RawObject);
@@ -1567,7 +1567,7 @@ namespace dndbg.Engine {
 				return;
 
 			var thread = process.GetMainThread();
-			var appDomain = thread == null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
+			var appDomain = thread is null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
 			AddDebuggerState(new DebuggerState(null, process, appDomain, thread) {
 				PauseStates = new DebuggerPauseState[] {
 					new DebuggerPauseState(DebuggerPauseReason.UserBreak),

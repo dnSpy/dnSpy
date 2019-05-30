@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public DeletedFieldUpdater(ModuleDocumentNode modNode, FieldDef originalField) {
 			var node = modNode.Context.DocumentTreeView.FindNode(originalField);
-			if (node == null)
+			if (node is null)
 				throw new InvalidOperationException();
 			ownerNode = node;
 			parentNode = ownerNode.TreeNode.Parent!.Data;

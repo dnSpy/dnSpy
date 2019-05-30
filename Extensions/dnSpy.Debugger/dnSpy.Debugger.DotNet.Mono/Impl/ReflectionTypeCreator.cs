@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		List<DmdType> GetTypesList() {
-			if (typesList == null)
+			if (typesList is null)
 				return new List<DmdType>();
 			var list = typesList;
 			typesList = null;
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		void FreeTypesList(ref List<DmdType>? list) {
-			if (list == null)
+			if (list is null)
 				return;
 			typesList = list;
 			list = null;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		DmdType? CreateCore(TypeMirror type) {
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (recursionCounter++ > 100)
 				throw new InvalidOperationException();

@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string PickEnumToolTip {
 			get {
-				if (EnumType == null)
+				if (EnumType is null)
 					return dnSpy_AsmEditor_Resources.Pick_EnumType;
 				return string.Format(dnSpy_AsmEditor_Resources.EnumType, EnumType.FullName);
 			}
@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void UpdateArgumentType() {
-			if (CAArgumentVM != null) {
+			if (!(CAArgumentVM is null)) {
 				var ct = (ConstantType)ConstantTypeEnumList.SelectedItem!;
 				if (ct != ConstantType.Object && ct != ConstantType.ObjectArray)
 					CAArgumentVM.ConstantTypeVM.ConstantTypeEnumList.SelectedItem = ct;
@@ -181,7 +181,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void InitializeFrom(CANamedArgument namedArg, TypeSigCreatorOptions options) {
-			if (CAArgumentVM != null)
+			if (!(CAArgumentVM is null))
 				CAArgumentVM.PropertyChanged -= caArgumentVM_PropertyChanged;
 			CAArgumentVM = new CAArgumentVM(ownerModule, namedArg.Argument, options, null);
 			OnPropertyChanged(nameof(CAArgumentVM));
@@ -311,10 +311,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void PickEnumType() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
-			if (type != null)
+			if (!(type is null))
 				EnumType = type;
 		}
 

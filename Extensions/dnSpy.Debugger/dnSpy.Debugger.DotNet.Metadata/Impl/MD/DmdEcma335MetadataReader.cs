@@ -397,7 +397,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var reader = Metadata.PEImage.CreateReader();
 			reader.Position = (uint)Metadata.PEImage.ToFileOffset((RVA)row.RVA);
 			var body = DmdMethodBodyReader.Create(this, new DmdDataStreamImpl(ref reader), genericTypeArguments, genericMethodArguments);
-			Debug.Assert(body != null);
+			Debug.Assert(!(body is null));
 			return body;
 		}
 
@@ -571,7 +571,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		public override unsafe bool ReadMemory(uint rva, void* destination, int size) {
-			if (destination == null && size != 0)
+			if (destination is null && size != 0)
 				throw new ArgumentNullException(nameof(destination));
 			if (size < 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
@@ -608,7 +608,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 				var reader = BlobStream.CreateReader(row.Value);
 				var ca = DmdCustomAttributeReader.Read(module, new DmdDataStreamImpl(ref reader), ctor);
-				if (ca == null)
+				if (ca is null)
 					continue;
 
 				res[w++] = ca;
@@ -638,12 +638,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				var cas = DmdDeclSecurityReader.Read(module, new DmdDataStreamImpl(ref reader), action, genericTypeArguments);
 				if (cas.Length == 0)
 					continue;
-				if (res == null && firstCas == null) {
+				if (res is null && firstCas is null) {
 					firstAction = action;
 					firstCas = cas;
 				}
 				else {
-					if (res == null) {
+					if (res is null) {
 						res = new List<(DmdCustomAttributeData[], SSP.SecurityAction)>(firstCas!.Length + cas.Length);
 						res.Add((firstCas, firstAction));
 						firstCas = null;
@@ -651,9 +651,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					res.Add((cas, action));
 				}
 			}
-			if (firstCas != null)
+			if (!(firstCas is null))
 				return firstCas;
-			if (res == null)
+			if (res is null)
 				return Array.Empty<DmdCustomAttributeData>();
 			// Reflection sorts it by action
 			res.Sort((a, b) => (int)a.action - (int)b.action);

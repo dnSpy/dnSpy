@@ -108,19 +108,19 @@ namespace dnSpy.Debugger.Impl {
 					if (oldIsEnabled == newIsEnabled)
 						continue;
 					if (newIsEnabled) {
-						if (newEnabledBreakpoints == null)
+						if (newEnabledBreakpoints is null)
 							newEnabledBreakpoints = new List<DbgCodeBreakpoint>();
 						newEnabledBreakpoints.Add(info.Breakpoint);
 					}
 					else {
-						if (newDisabledBreakpoints == null)
+						if (newDisabledBreakpoints is null)
 							newDisabledBreakpoints = new List<DbgCodeBreakpoint>();
 						newDisabledBreakpoints.Add(info.Breakpoint);
 					}
 				}
-				if (newDisabledBreakpoints != null)
+				if (!(newDisabledBreakpoints is null))
 					RemoveBoundBreakpoints_DbgThread(newDisabledBreakpoints);
-				if (newEnabledBreakpoints != null)
+				if (!(newEnabledBreakpoints is null))
 					AddBoundBreakpoints_DbgThread(newEnabledBreakpoints);
 			}
 
@@ -187,8 +187,8 @@ namespace dnSpy.Debugger.Impl {
 						var runtime = module.Runtime;
 						if (runtime != lastRuntime) {
 							var engine = GetEngine_NoLock(runtime);
-							Debug.Assert(engine != null);
-							if (engine == null)
+							Debug.Assert(!(engine is null));
+							if (engine is null)
 								continue;
 							lastRuntime = runtime;
 							if (!dict.TryGetValue(engine, out lastList))

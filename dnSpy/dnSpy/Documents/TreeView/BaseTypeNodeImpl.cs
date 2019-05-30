@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			var td = TryGetTypeDef();
-			if (td != null)
+			if (!(td is null))
 				return dnImgMgr.GetImageReference(td);
 			return isBaseType ? DsImages.ClassPublic : DsImages.InterfacePublic;
 		}
@@ -44,10 +44,10 @@ namespace dnSpy.Documents.TreeView {
 
 		TypeDef? TryGetTypeDef() {
 			var td = (TypeDef)weakRefResolvedTypeDef.Target;
-			if (td != null)
+			if (!(td is null))
 				return td;
 			td = TryGetTypeDefOrRef().ResolveTypeDef();
-			if (td != null)
+			if (!(td is null))
 				weakRefResolvedTypeDef = new WeakReference(td);
 			return td;
 		}
@@ -68,7 +68,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var tdr = TryGetTypeDefOrRef();
-			if (tdr == null)
+			if (tdr is null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
 				new NodePrinter().Write(output, decompiler, tdr, GetShowToken(options));
@@ -76,10 +76,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			var td = TryGetTypeDef();
-			if (td == null)
+			if (td is null)
 				yield break;
 
-			if (td.BaseType != null)
+			if (!(td.BaseType is null))
 				yield return new BaseTypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.BaseTypeTreeNodeGroupBaseType), td.BaseType, true);
 			foreach (var iface in td.Interfaces)
 				yield return new BaseTypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);

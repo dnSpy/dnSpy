@@ -17,12 +17,12 @@ namespace Example2.Extension {
 
 		public static IOutputTextPane Instance {
 			get {
-				if (_instance == null)
+				if (_instance is null)
 					throw new InvalidOperationException("Logger hasn't been initialized yet");
 				return _instance;
 			}
 			set {
-				if (_instance != null)
+				if (!(_instance is null))
 					throw new InvalidOperationException("Can't initialize the logger twice");
 				_instance = value ?? throw new ArgumentNullException(nameof(value));
 			}
@@ -57,7 +57,7 @@ namespace Example2.Extension {
 
 			// Get the text pane if any
 			var textPane = context.Find<IOutputTextPane>();
-			if (textPane == null)
+			if (textPane is null)
 				return null;
 
 			// Check if it's our logger text pane

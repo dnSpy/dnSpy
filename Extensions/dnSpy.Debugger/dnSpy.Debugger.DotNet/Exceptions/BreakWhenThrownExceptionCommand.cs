@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			protected sealed override string? CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
 
 			public override void Execute(string context) {
-				if (context == null)
+				if (context is null)
 					return;
 				var id = new DbgExceptionId(PredefinedExceptionCategories.DotNet, context);
 				if (dbgExceptionSettingsService.Value.TryGetSettings(id, out var settings)) {
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 
 			string? GetExceptionTypeName(IMenuItemContext context) {
 				var td = GetTypeDef(context);
-				if (td == null)
+				if (td is null)
 					return null;
 				if (!IsException(td))
 					return null;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				TypeDef? td = type;
 				if (IsSystemException(td))
 					return true;
-				for (int i = 0; i < 1000 && td != null; i++) {
+				for (int i = 0; i < 1000 && !(td is null); i++) {
 					if (IsSystemException(td.BaseType))
 						return true;
 					var bt = td.BaseType;
@@ -75,8 +75,8 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			}
 
 			static bool IsSystemException(ITypeDefOrRef type) =>
-				type != null &&
-				type.DeclaringType == null &&
+				!(type is null) &&
+				type.DeclaringType is null &&
 				type.Namespace == "System" &&
 				type.Name == "Exception" &&
 				type.DefinitionAssembly.IsCorLib();
@@ -89,10 +89,10 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes == null || nodes.Length != 1)
+				if (nodes is null || nodes.Length != 1)
 					return null;
 				var node = nodes[0] as IMDTokenNode;
-				if (node == null)
+				if (node is null)
 					return null;
 				return (node.Reference as ITypeDefOrRef).ResolveTypeDef();
 			}
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 					return null;
 
 				var @ref = context.Find<TextReference>();
-				if (@ref == null || @ref.Reference == null)
+				if (@ref is null || @ref.Reference is null)
 					return null;
 
 				return (@ref.Reference as ITypeDefOrRef).ResolveTypeDef();

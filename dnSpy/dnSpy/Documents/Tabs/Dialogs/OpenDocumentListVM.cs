@@ -156,7 +156,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		bool CalculateIsVisible(DocumentListVM vm, string filterText) {
-			Debug.Assert(filterText != null && filterText.Trim().ToUpperInvariant() == filterText);
+			Debug.Assert(!(filterText is null) && filterText.Trim().ToUpperInvariant() == filterText);
 			if (string.IsNullOrEmpty(filterText) && !ShowSavedLists)
 				return true;
 			if (ShowSavedLists && !vm.IsUserList)
@@ -229,9 +229,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var b = y as DocumentListVM;
 			if (a == b)
 				return 0;
-			if (a == null)
+			if (a is null)
 				return -1;
-			if (b == null)
+			if (b is null)
 				return 1;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);
 		}

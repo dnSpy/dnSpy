@@ -43,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var completionSession = session as ICompletionSession;
-			if (completionSession == null)
+			if (completionSession is null)
 				return null;
 			return new CompletionPresenter(completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
 		}

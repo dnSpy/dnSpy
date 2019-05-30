@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			corDebugValueConverter = new CorDebugValueConverterImpl(this);
 			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
 			foreach (var info in ClassHookProvider.Create(this)) {
-				Debug.Assert(info.Hook != null);
+				Debug.Assert(!(info.Hook is null));
 				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
 				classHooks.Add(info.WellKnownType, info.Hook);
 			}
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			public ModuleDefMD? Module;
 			public int LoadClassVersion;
 			public DbgDotNetRawModuleBytes ToDbgDotNetRawModuleBytes() {
-				if (RawBytes != null)
+				if (!(RawBytes is null))
 					return new DbgDotNetRawModuleBytes(RawBytes, isFileLayout: true);
 				return DbgDotNetRawModuleBytes.None;
 			}
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return DbgDotNetRawModuleBytes.None;
 
 			var state = module.GetOrCreateData<DynamicModuleMetadataState>();
-			if (state.RawBytes != null && state.LoadClassVersion == loadClassVersion)
+			if (!(state.RawBytes is null) && state.LoadClassVersion == loadClassVersion)
 				return state.ToDbgDotNetRawModuleBytes();
 
 			var md = dnModule.GetOrCreateCorModuleDef();
@@ -172,11 +172,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				bool b = module.TryGetData<DynamicModuleMetadataState>(out state);
 				Debug.Assert(b);
 			}
-			if (state != null) {
-				if (state.Module == null)
+			if (!(state is null)) {
+				if (state.Module is null)
 					state.Module = ModuleDefMD.Load(state.RawBytes);
 				var method = state.Module.ResolveToken(methodToken) as MethodDef;
-				if (method != null) {
+				if (!(method is null)) {
 					metadataMethodToken = method.MDToken.ToInt32();
 					metadataLocalVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
 					return true;
@@ -279,7 +279,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				CorType corFieldDeclType;
 				CorValue? fieldValue;
 				var fieldDeclType = field.DeclaringType!;
-				if (obj == null) {
+				if (obj is null) {
 					if (!field.IsStatic)
 						return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 
@@ -351,7 +351,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 				CorType corFieldDeclType;
 				var fieldDeclType = field.DeclaringType!;
-				if (obj == null) {
+				if (obj is null) {
 					if (!field.IsStatic)
 						return CordbgErrorHelper.InternalError;
 
@@ -405,7 +405,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object? constant) {
 			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, constant);
-			if (dnValue != null)
+			if (!(dnValue is null))
 				return DbgDotNetValueResult.Create(dnValue);
 			return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 		}
@@ -415,7 +415,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		void InitializeStaticConstructor(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType) {
-			if (engine.CheckFuncEval(evalInfo) != null)
+			if (!(engine.CheckFuncEval(evalInfo) is null))
 				return;
 			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
 			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
@@ -436,7 +436,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 							if (field.FieldType.IsValueType) {
 								var objValue = fieldValue.GetDereferencedValue(out hr)?.GetBoxedValue(out hr);
 								var data = objValue?.ReadGenericValue();
-								if (data != null && !IsZero(data))
+								if (!(data is null) && !IsZero(data))
 									return;
 							}
 							else {
@@ -457,7 +457,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			DbgDotNetValueResult res = default;
 			try {
 				res = engine.FuncEvalCreateInstanceNoCtor_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), type);
-				if (res.Value == null || res.ValueIsException)
+				if (res.Value is null || res.ValueIsException)
 					return;
 				RuntimeHelpersRunClassConstructor(evalInfo, ilFrame, type, res.Value);
 			}
@@ -489,7 +489,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				var corAppDomain = ilFrame.GetCorAppDomain();
 				getTypeRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeMethod, objValue, Array.Empty<object>(), false);
-				if (getTypeRes.Value == null || getTypeRes.ValueIsException)
+				if (getTypeRes.Value is null || getTypeRes.ValueIsException)
 					return false;
 				var typeObj = getTypeRes.Value;
 				var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
@@ -501,7 +501,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (getTypeHandleMethod is null)
 					return false;
 				typeHandleRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false);
-				if (typeHandleRes.Value == null || typeHandleRes.ValueIsException)
+				if (typeHandleRes.Value is null || typeHandleRes.ValueIsException)
 					return false;
 				var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 				var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
@@ -574,7 +574,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.Call(obj, method, arguments);
-						if (res != null)
+						if (!(res is null))
 							return DbgDotNetValueResult.Create(res);
 					}
 				}
@@ -611,7 +611,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.CreateInstance(ctor, arguments);
-						if (res != null)
+						if (!(res is null))
 							return DbgDotNetValueResult.Create(res);
 					}
 				}
@@ -690,7 +690,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var res = engine.FuncEvalCall_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false);
 				if (res.HasError || res.ValueIsException)
 					return res;
-				Debug.Assert(res.Value != null);
+				Debug.Assert(!(res.Value is null));
 				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -768,7 +768,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var res = engine.FuncEvalCall_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false);
 				if (res.HasError || res.ValueIsException)
 					return res;
-				Debug.Assert(res.Value != null);
+				Debug.Assert(!(res.Value is null));
 				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -818,15 +818,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				stowedException = GetStowedExceptionCore(evalInfo, DbgDotNetRuntimeConstants.StowedExceptionId);
 				returnValues = GetReturnValuesCore(evalInfo);
 
-				int count = (exception != null ? 1 : 0) + (stowedException != null ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
+				int count = (!(exception is null) ? 1 : 0) + (!(stowedException is null) ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
 				if (count == 0)
 					return Array.Empty<DbgDotNetAliasInfo>();
 
 				var res = new DbgDotNetAliasInfo[count];
 				int w = 0;
-				if (exception != null)
+				if (!(exception is null))
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.Exception, exception.Type, DbgDotNetRuntimeConstants.ExceptionId, Guid.Empty, null);
-				if (stowedException != null)
+				if (!(stowedException is null))
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.StowedException, stowedException.Type, DbgDotNetRuntimeConstants.StowedExceptionId, Guid.Empty, null);
 				if (returnValues.Length != 0) {
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.ReturnValue, returnValues[returnValues.Length - 1].Value.Type, DbgDotNetRuntimeConstants.LastReturnValueId, Guid.Empty, null);
@@ -867,14 +867,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				exception = GetExceptionCore(evalInfo, DbgDotNetRuntimeConstants.ExceptionId);
 				stowedException = GetStowedExceptionCore(evalInfo, DbgDotNetRuntimeConstants.StowedExceptionId);
-				int count = (exception != null ? 1 : 0) + (stowedException != null ? 1 : 0);
+				int count = (!(exception is null) ? 1 : 0) + (!(stowedException is null) ? 1 : 0);
 				if (count == 0)
 					return Array.Empty<DbgDotNetExceptionInfo>();
 				var res = new DbgDotNetExceptionInfo[count];
 				int w = 0;
-				if (exception != null)
+				if (!(exception is null))
 					res[w++] = new DbgDotNetExceptionInfo(exception, DbgDotNetRuntimeConstants.ExceptionId, DbgDotNetExceptionInfoFlags.None);
-				if (stowedException != null)
+				if (!(stowedException is null))
 					res[w++] = new DbgDotNetExceptionInfo(stowedException, DbgDotNetRuntimeConstants.StowedExceptionId, DbgDotNetExceptionInfoFlags.StowedException);
 				if (w != res.Length)
 					throw new InvalidOperationException();
@@ -1133,10 +1133,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			DbgDotNetValueResult res = default;
 			try {
 				res = CreateValueCore(evalInfo, value);
-				if (res.ErrorMessage != null)
+				if (!(res.ErrorMessage is null))
 					return res;
 				var boxedValue = res.Value!.Box(evalInfo);
-				if (boxedValue != null)
+				if (!(boxedValue is null))
 					return boxedValue.Value;
 				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
@@ -1150,7 +1150,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public bool CanCreateObjectId(DbgDotNetValue value) {
 			var valueImpl = value as DbgDotNetValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				return false;
 			if (Dispatcher.CheckAccess())
 				return CanCreateObjectIdCore(valueImpl);
@@ -1188,7 +1188,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public DbgDotNetObjectId? CreateObjectId(DbgDotNetValue value, uint id) {
 			var valueImpl = value as DbgDotNetValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				return null;
 			if (Dispatcher.CheckAccess())
 				return CreateObjectIdCore(valueImpl, id);
@@ -1243,7 +1243,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public bool Equals(DbgDotNetObjectId objectId, DbgDotNetValue value) {
 			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
 			var valueImpl = value as DbgDotNetValueImpl;
-			if (objectIdImpl == null || valueImpl == null)
+			if (objectIdImpl is null || valueImpl is null)
 				return false;
 			if (Dispatcher.CheckAccess())
 				return EqualsCore(objectIdImpl, valueImpl);
@@ -1294,7 +1294,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public int GetHashCode(DbgDotNetObjectId objectId) {
 			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
-			if (objectIdImpl == null)
+			if (objectIdImpl is null)
 				return 0;
 			if (Dispatcher.CheckAccess())
 				return GetHashCodeCore(objectIdImpl);
@@ -1313,7 +1313,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public int GetHashCode(DbgDotNetValue value) {
 			var valueImpl = value as DbgDotNetValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				return 0;
 			if (Dispatcher.CheckAccess())
 				return GetHashCodeCore(valueImpl);
@@ -1332,7 +1332,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		public DbgDotNetValue? GetValue(DbgEvaluationInfo evalInfo, DbgDotNetObjectId objectId) {
 			var objectIdImpl = objectId as DbgDotNetObjectIdImpl;
-			if (objectIdImpl == null)
+			if (objectIdImpl is null)
 				throw new ArgumentException();
 			if (Dispatcher.CheckAccess())
 				return GetValueCore(evalInfo, objectIdImpl);
@@ -1363,7 +1363,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 			var ai = a as DbgDotNetValueImpl;
 			var bi = b as DbgDotNetValueImpl;
-			if (ai == null || bi == null) {
+			if (ai is null || bi is null) {
 				// If they're equal, they're both null
 				return ai == bi ? (bool?)null : false;
 			}

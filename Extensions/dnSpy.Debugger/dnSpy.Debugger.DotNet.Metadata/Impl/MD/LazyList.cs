@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				if (index >= length)
 					return null;
 				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
-				if (elem == null)
+				if (elem is null)
 					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1), null);
 				return elem;
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				if (index >= length)
 					return null;
 				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
-				if (elem == null)
+				if (elem is null)
 					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1, arg), null);
 				return elem;
 			}
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				if (index >= length)
 					return null;
 				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
-				if (elem == null) {
+				if (elem is null) {
 					var info = readElementByRID(index + 1, arg1, arg2);
 					if (info.containedGenericParams)
 						return info.elem;

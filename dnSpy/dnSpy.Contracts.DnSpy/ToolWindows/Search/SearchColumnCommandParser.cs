@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 			public IEnumerable<Token> GetTokens() {
 				for (;;) {
 					var word = GetNextWord(out bool isText);
-					if (word == null)
+					if (word is null)
 						break;
 					if (isText)
 						yield return new Token(TokenKind.Text, word);

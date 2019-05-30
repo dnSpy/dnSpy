@@ -85,7 +85,7 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
 		public CSharpCompilerSettingsBase CopyTo(CSharpCompilerSettingsBase other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.PreprocessorSymbols = PreprocessorSymbols;
 			other.Optimize = Optimize;

@@ -33,7 +33,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public PropertyNode(PropertyDef analyzedProperty, bool hidesParent = false) {
-			if (analyzedProperty == null)
+			if (analyzedProperty is null)
 				throw new ArgumentNullException(nameof(analyzedProperty));
 			isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
@@ -56,9 +56,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (analyzedProperty.GetMethod != null)
+			if (!(analyzedProperty.GetMethod is null))
 				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, dnSpy_Analyzer_Resources.PropertyGetterTreeNode);
-			if (analyzedProperty.SetMethod != null)
+			if (!(analyzedProperty.SetMethod is null))
 				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, dnSpy_Analyzer_Resources.PropertySetterTreeNode);
 			foreach (var accessor in analyzedProperty.OtherMethods)
 				yield return new PropertyAccessorNode(accessor, null);

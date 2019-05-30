@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="n">name</param>
 		/// <returns></returns>
 		public static string CleanName(string n) {
-			if (n == null)
+			if (n is null)
 				return n!;
 			const int MAX_LEN = 0x100;
 			if (n.Length > MAX_LEN)
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="id">Identifier</param>
 		/// <returns></returns>
 		public static string? CleanIdentifier(string id) {
-			if (id == null)
+			if (id is null)
 				return id;
 			id = IdentifierEscaper.Escape(id);
 			return CleanName(id);

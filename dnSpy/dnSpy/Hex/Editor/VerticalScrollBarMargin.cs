@@ -79,7 +79,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexScrollMap scrollMap;
 
 		public VerticalScrollBarMargin(HexScrollMapFactoryService scrollMapFactoryService, WpfHexViewHost wpfHexViewHost) {
-			if (scrollMapFactoryService == null)
+			if (scrollMapFactoryService is null)
 				throw new ArgumentNullException(nameof(scrollMapFactoryService));
 			theScrollBar = new TheScrollBar(this);
 			this.wpfHexViewHost = wpfHexViewHost ?? throw new ArgumentNullException(nameof(wpfHexViewHost));

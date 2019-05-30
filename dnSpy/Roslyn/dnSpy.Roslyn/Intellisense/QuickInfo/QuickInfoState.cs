@@ -39,14 +39,14 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		}
 
 		public static QuickInfoState? Create(ITextSnapshot snapshot) {
-			if (snapshot == null)
+			if (snapshot is null)
 				throw new ArgumentNullException(nameof(snapshot));
 			var sourceText = snapshot.AsText();
 			var document = sourceText.GetOpenDocumentInCurrentContextWithChanges();
-			if (document == null)
+			if (document is null)
 				return null;
 			var quickInfoService = QuickInfoService.GetService(document);
-			if (quickInfoService == null)
+			if (quickInfoService is null)
 				return null;
 			return new QuickInfoState(quickInfoService, document, sourceText, snapshot);
 		}

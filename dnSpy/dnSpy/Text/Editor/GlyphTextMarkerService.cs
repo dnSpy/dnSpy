@@ -96,7 +96,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IGlyphTextMarker AddMarker(GlyphTextMarkerLocationInfo location, ImageReference? glyphImage, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex, object? tag, IGlyphTextMarkerHandler? handler, Func<ITextView, bool>? textViewFilter) {
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 			switch (location) {
 			case DotNetMethodBodyGlyphTextMarkerLocationInfo bodyLoc:
@@ -131,7 +131,7 @@ namespace dnSpy.Text.Editor {
 			public GlyphTextMethodMarker(ModuleId module, uint token, uint ilOffset, ImageReference? glyphImage, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex, object? tag, IGlyphTextMarkerHandler? handler, Func<ITextView, bool>? textViewFilter) {
 				Method = new ModuleTokenId(module, token);
 				ILOffset = ilOffset;
-				GlyphImageReference = glyphImage == null || glyphImage.Value.IsDefault ? null : glyphImage;
+				GlyphImageReference = glyphImage is null || glyphImage.Value.IsDefault ? null : glyphImage;
 				MarkerTypeName = markerTypeName;
 				SelectedMarkerTypeName = selectedMarkerTypeName;
 				ClassificationType = classificationType;
@@ -158,7 +158,7 @@ namespace dnSpy.Text.Editor {
 			public GlyphTextDotNetTokenMarker(ModuleId module, uint token, ImageReference? glyphImage, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex, object? tag, IGlyphTextMarkerHandler? handler, Func<ITextView, bool>? textViewFilter) {
 				Module = module;
 				Token = token;
-				GlyphImageReference = glyphImage == null || glyphImage.Value.IsDefault ? null : glyphImage;
+				GlyphImageReference = glyphImage is null || glyphImage.Value.IsDefault ? null : glyphImage;
 				MarkerTypeName = markerTypeName;
 				SelectedMarkerTypeName = selectedMarkerTypeName;
 				ClassificationType = classificationType;
@@ -171,7 +171,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Remove(IGlyphTextMarker marker) {
-			if (marker == null)
+			if (marker is null)
 				throw new ArgumentNullException(nameof(marker));
 			var markerImpl = (IGlyphTextMarkerImpl)marker;
 			glyphTextMarkers.Remove(markerImpl);
@@ -179,7 +179,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Remove(IEnumerable<IGlyphTextMarker> markers) {
-			if (markers == null)
+			if (markers is null)
 				throw new ArgumentNullException(nameof(markers));
 			var hash = new HashSet<IGlyphTextMarkerImpl>();
 			foreach (var m in markers)
@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public GlyphTextMarkerAndSpan[] GetMarkers(ITextView textView, SnapshotSpan span) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			if (textView.TextSnapshot != span.Snapshot)
 				throw new ArgumentException();
@@ -202,10 +202,10 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void SetDotNetSpanMap(ITextView textView, IDotNetSpanMap? map) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var service = GlyphTextViewMarkerService.TryGet(textView);
-			Debug.Assert(service != null);
+			Debug.Assert(!(service is null));
 			service?.SetDotNetSpanMap(map);
 		}
 	}

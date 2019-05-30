@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public DotNetFrameworkAttachToProgramOptions CopyTo(DotNetFrameworkAttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.DebuggeeVersion = DebuggeeVersion;

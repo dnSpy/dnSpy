@@ -148,7 +148,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool ChangedUserInput(TextContentChangedEventArgs e) {
-			if (OffsetOfPrompt == null)
+			if (OffsetOfPrompt is null)
 				return false;
 			int offs = OffsetOfPrompt.Value;
 			foreach (var c in e.Changes) {
@@ -166,7 +166,7 @@ namespace dnSpy.Text.Editor {
 		void DelayScreenRefresh() {
 			if (wpfTextViewHost.IsClosed)
 				return;
-			if (screenRefreshTimer != null)
+			if (!(screenRefreshTimer is null))
 				return;
 			int ms = wpfTextView.Options.GetReplRefreshScreenOnChangeWaitMilliSeconds();
 			if (ms > 0)
@@ -177,7 +177,7 @@ namespace dnSpy.Text.Editor {
 		DispatcherTimer? screenRefreshTimer;
 
 		void RefreshScreen() {
-			if (OffsetOfPrompt == null)
+			if (OffsetOfPrompt is null)
 				return;
 			int offs = OffsetOfPrompt.Value;
 			var snapshot = wpfTextView.TextSnapshot;
@@ -195,14 +195,14 @@ namespace dnSpy.Text.Editor {
 
 		void WriteOffsetOfPrompt(int? newValue, bool force = false) {
 			if (force || OffsetOfPrompt.HasValue != newValue.HasValue) {
-				if (newValue == null) {
-					Debug.Assert(scriptOutputCachedTextColorsCollection == null);
+				if (newValue is null) {
+					Debug.Assert(scriptOutputCachedTextColorsCollection is null);
 					scriptOutputCachedTextColorsCollection = new CachedTextColorsCollection();
 					Debug.Assert(LastLine.Length == 0);
 					cachedColorsList.AddOrUpdate(wpfTextView.TextSnapshot.Length, scriptOutputCachedTextColorsCollection);
 				}
 				else {
-					Debug.Assert(scriptOutputCachedTextColorsCollection != null);
+					Debug.Assert(!(scriptOutputCachedTextColorsCollection is null));
 					scriptOutputCachedTextColorsCollection = null;
 				}
 			}
@@ -216,7 +216,7 @@ namespace dnSpy.Text.Editor {
 			ClearPendingOutput();
 			ClearUndoRedoHistory();
 			CreateEmptyLastLineIfNeededAndMoveCaret();
-			if (OffsetOfPrompt != null)
+			if (!(OffsetOfPrompt is null))
 				AddCodeSubBuffer();
 			scriptOutputCachedTextColorsCollection = null;
 			WriteOffsetOfPrompt(null, true);
@@ -226,13 +226,13 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (!IsCommandMode)
 					return false;
-				Debug.Assert(OffsetOfPrompt != null);
+				Debug.Assert(!(OffsetOfPrompt is null));
 				return CaretOffset >= OffsetOfPrompt.Value;
 			}
 		}
 
 		public int FilterOffset(int offset) {
-			Debug.Assert(OffsetOfPrompt != null);
+			Debug.Assert(!(OffsetOfPrompt is null));
 			if (offset < OffsetOfPrompt.Value)
 				offset = OffsetOfPrompt.Value;
 			var line = wpfTextView.TextSnapshot.GetLineFromPosition(offset);
@@ -249,7 +249,7 @@ namespace dnSpy.Text.Editor {
 		void ClearCurrentInput(bool removePrompt) {
 			if (!IsCommandMode)
 				return;
-			Debug.Assert(OffsetOfPrompt != null);
+			Debug.Assert(!(OffsetOfPrompt is null));
 			int offs = removePrompt ? OffsetOfPrompt.Value : FilterOffset(OffsetOfPrompt.Value);
 			MoveTo(offs);
 			var span = Span.FromBounds(offs, wpfTextView.TextSnapshot.Length);
@@ -300,7 +300,7 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(IsCommandMode);
 				if (!IsCommandMode)
 					return string.Empty;
-				Debug.Assert(OffsetOfPrompt != null);
+				Debug.Assert(!(OffsetOfPrompt is null));
 
 				string s = wpfTextView.TextBuffer.CurrentSnapshot.GetText(OffsetOfPrompt.Value, wpfTextView.TextSnapshot.Length - OffsetOfPrompt.Value);
 				return ToInputString(s, PrimaryPrompt);
@@ -349,7 +349,7 @@ namespace dnSpy.Text.Editor {
 			if (!CanClearScreen)
 				return;
 			ClearPendingOutput();
-			bool hasPrompt = OffsetOfPrompt != null;
+			bool hasPrompt = !(OffsetOfPrompt is null);
 			AddNewDocument();
 			ClearUndoRedoHistory();
 			WriteOffsetOfPrompt(null, true);
@@ -359,9 +359,9 @@ namespace dnSpy.Text.Editor {
 
 		public bool CanSaveText => true;
 		public void SaveText(string filenameNoExtension, string fileExtension, string filesFilter) {
-			if (filenameNoExtension == null)
+			if (filenameNoExtension is null)
 				throw new ArgumentNullException(nameof(filenameNoExtension));
-			if (fileExtension == null)
+			if (fileExtension is null)
 				throw new ArgumentNullException(nameof(fileExtension));
 			if (!CanSaveText)
 				return;
@@ -370,9 +370,9 @@ namespace dnSpy.Text.Editor {
 
 		public bool CanSaveCode => true;
 		public void SaveCode(string filenameNoExtension, string fileExtension, string filesFilter) {
-			if (filenameNoExtension == null)
+			if (filenameNoExtension is null)
 				throw new ArgumentNullException(nameof(filenameNoExtension));
-			if (fileExtension == null)
+			if (fileExtension is null)
 				throw new ArgumentNullException(nameof(fileExtension));
 			if (!CanSaveCode)
 				return;
@@ -383,7 +383,7 @@ namespace dnSpy.Text.Editor {
 			if (fileExtension.Length > 0 && fileExtension[0] == '.')
 				fileExtension = fileExtension.Substring(1);
 			var filename = pickSaveFilename.GetFilename(filenameNoExtension + "." + fileExtension, fileExtension, filesFilter);
-			if (filename == null)
+			if (filename is null)
 				return;
 			try {
 				File.WriteAllText(filename, fileContents);
@@ -408,9 +408,9 @@ namespace dnSpy.Text.Editor {
 		async void TextBuffer_Changed(object sender, TextContentChangedEventArgs e) {
 			if (!IsCommandMode)
 				return;
-			Debug.Assert(OffsetOfPrompt != null);
+			Debug.Assert(!(OffsetOfPrompt is null));
 			var buf = CreateReplCommandInput(e);
-			if (buf == null)
+			if (buf is null)
 				return;
 
 			int baseOffset = OffsetOfPrompt.Value;
@@ -499,10 +499,10 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(IsCommandMode);
 			if (!IsCommandMode)
 				return;
-			Debug.Assert(OffsetOfPrompt != null);
+			Debug.Assert(!(OffsetOfPrompt is null));
 
 			var command = replCommands.SelectedCommand;
-			if (command == null)
+			if (command is null)
 				return;
 
 			MoveToEnd();
@@ -523,7 +523,7 @@ namespace dnSpy.Text.Editor {
 				return;
 
 			var caretPos = wpfTextView.Caret.Position;
-			bool caretIsInEditingArea = OffsetOfPrompt != null && CaretOffset >= OffsetOfPrompt.Value;
+			bool caretIsInEditingArea = !(OffsetOfPrompt is null) && CaretOffset >= OffsetOfPrompt.Value;
 
 			ColorAndText[]? newPendingOutput = null;
 			var sb = new StringBuilder();
@@ -540,8 +540,8 @@ namespace dnSpy.Text.Editor {
 				cachedColorsList.RemoveLastCachedTextColorsCollection();
 				ClearCurrentInput(true);
 			}
-			if (newPendingOutput != null) {
-				Debug.Assert(scriptOutputCachedTextColorsCollection != null);
+			if (!(newPendingOutput is null)) {
+				Debug.Assert(!(scriptOutputCachedTextColorsCollection is null));
 				foreach (var info in newPendingOutput) {
 					sb.Append(info.Text);
 					scriptOutputCachedTextColorsCollection?.Append(info.Color, info.Text);
@@ -550,7 +550,7 @@ namespace dnSpy.Text.Editor {
 			RawAppend(sb.ToString());
 			MoveToEnd();
 			if (isCommandMode) {
-				Debug.Assert(currentCommand != null);
+				Debug.Assert(!(currentCommand is null));
 				int posBeforeNewLine = wpfTextView.TextSnapshot.Length;
 				CreateEmptyLastLineIfNeededAndMoveCaret();
 				int extraLen = wpfTextView.TextSnapshot.Length - posBeforeNewLine;
@@ -678,7 +678,7 @@ namespace dnSpy.Text.Editor {
 
 		void PrintPrompt() {
 			// Can happen if we reset the script and it throws an OperationCanceledException
-			if (OffsetOfPrompt != null)
+			if (!(OffsetOfPrompt is null))
 				return;
 
 			CreateEmptyLastLineIfNeededAndMoveCaret();
@@ -694,12 +694,12 @@ namespace dnSpy.Text.Editor {
 		/// <summary>
 		/// true if we're reading user input and new user commands get executed when enter is pressed
 		/// </summary>
-		bool IsCommandMode => OffsetOfPrompt != null;
+		bool IsCommandMode => !(OffsetOfPrompt is null);
 
 		/// <summary>
 		/// true if the script is executing and we don't accept any user input
 		/// </summary>
-		bool IsExecMode => OffsetOfPrompt == null;
+		bool IsExecMode => OffsetOfPrompt is null;
 
 		public string GetCode() {
 			int startOffset, endOffset;
@@ -805,7 +805,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void AddCodeSubBuffer() {
-			Debug.Assert(OffsetOfPrompt != null);
+			Debug.Assert(!(OffsetOfPrompt is null));
 			Debug.Assert(LastLine.Length == 0);
 			AddSubBuffer(new ReplSubBuffer(ReplBufferKind.Code, OffsetOfPrompt.Value, LastLine.Start.Position));
 		}
@@ -815,7 +815,7 @@ namespace dnSpy.Text.Editor {
 		/// new output, else create a new one.
 		/// </summary>
 		void AddOrUpdateOutputSubBuffer() {
-			Debug.Assert(OffsetOfPrompt == null);
+			Debug.Assert(OffsetOfPrompt is null);
 			Debug.Assert(LastLine.Length == 0);
 
 			int start = subBuffers.Count == 0 ? 0 : subBuffers[subBuffers.Count - 1].Span.End;
@@ -853,7 +853,7 @@ namespace dnSpy.Text.Editor {
 
 		public bool CanReplace(SnapshotSpan span, string newText) {
 			Debug.Assert(span.Snapshot == TextView.TextSnapshot);
-			if (OffsetOfPrompt == null)
+			if (OffsetOfPrompt is null)
 				return false;
 			if (span.Span.Start < OffsetOfPrompt.Value)
 				return false;
@@ -995,7 +995,7 @@ namespace dnSpy.Text.Editor {
 		readonly IReplEditor2 replEditor;
 
 		public ReplCustomLineNumberMarginOwner(IReplEditor2 replEditor, IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
+			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.replEditor = replEditor ?? throw new ArgumentNullException(nameof(replEditor));
 			replLineNumberInput1ClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ReplLineNumberInput1);
@@ -1014,11 +1014,11 @@ namespace dnSpy.Text.Editor {
 			if (!viewLine.IsFirstTextViewLineForSnapshotLine)
 				return null;
 			ReplState replState;
-			if (state == null)
+			if (state is null)
 				state = replState = new ReplState();
 			else
 				replState = (ReplState)state;
-			if (replState.BufferInfo.Buffer == null || viewLine.Start.Position < replState.BufferInfo.Buffer.Span.Start || viewLine.Start.Position >= replState.BufferInfo.Buffer.Span.End) {
+			if (replState.BufferInfo.Buffer is null || viewLine.Start.Position < replState.BufferInfo.Buffer.Span.Start || viewLine.Start.Position >= replState.BufferInfo.Buffer.Span.End) {
 				var subBufferInfo = replEditor.FindBuffer(viewLine.Start.Position);
 				var snapshot = viewLine.Snapshot;
 				Debug.Assert(subBufferInfo.Buffer.Span.Start <= snapshot.Length);

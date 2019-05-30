@@ -72,15 +72,15 @@ namespace dnSpy.Text {
 				rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
 				foreach (var md in contentTypeDefinitions.Select(a => a.Metadata)) {
 					var typeName = md.Name;
-					Debug.Assert(typeName != null);
-					if (typeName == null)
+					Debug.Assert(!(typeName is null));
+					if (typeName is null)
 						continue;
 					Debug.Assert(!rawContentTypes.ContainsKey(typeName));
 					if (rawContentTypes.ContainsKey(typeName))
 						continue;
 					var baseTypes = (md.BaseDefinition ?? Array.Empty<string>()).ToArray();
-					Debug.Assert(baseTypes != null);
-					if (baseTypes == null)
+					Debug.Assert(!(baseTypes is null));
+					if (baseTypes is null)
 						continue;
 					var rawCt = new RawContentType(typeName, baseTypes, md.MimeType);
 					rawContentTypes.Add(rawCt.Typename, rawCt);
@@ -97,7 +97,7 @@ namespace dnSpy.Text {
 
 			ContentType? TryCreate(string typeName, int recurse) {
 				var ct = TryGet(typeName);
-				if (ct != null)
+				if (!(ct is null))
 					return ct;
 
 				const int MAX_RECURSE = 1000;
@@ -115,7 +115,7 @@ namespace dnSpy.Text {
 				var baseTypes = new ContentType[rawCt.BaseTypes.Length];
 				for (int i = 0; i < baseTypes.Length; i++) {
 					var btContentType = TryCreate(rawCt.BaseTypes[i], recurse + 1);
-					if (btContentType == null)
+					if (btContentType is null)
 						return null;
 					baseTypes[i] = btContentType;
 				}
@@ -182,7 +182,7 @@ namespace dnSpy.Text {
 				throw new ArgumentException("Guid is reserved", nameof(typeName));
 			lock (lockObj) {
 				if (contentTypes.TryGetValue(typeName, out var ct)) {
-					if (ct.MimeType != null)
+					if (!(ct.MimeType is null))
 						mimeTypeToContentType.Remove(ct.MimeType);
 					contentTypes.Remove(typeName);
 				}
@@ -206,7 +206,7 @@ namespace dnSpy.Text {
 		}
 
 		public string? GetMimeType(IContentType type) {
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (type is ContentType ct)
 				return ct.MimeType;

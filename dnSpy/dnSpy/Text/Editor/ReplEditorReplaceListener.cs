@@ -28,7 +28,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplEditorReplaceListenerProvider : IReplaceListenerProvider {
 		public IReplaceListener? Create(ITextView textView) {
 			var replEditor = ReplEditorUtils.TryGetInstance(textView) as ReplEditor;
-			if (replEditor == null)
+			if (replEditor is null)
 				return null;
 			return new ReplEditorReplaceListener(replEditor);
 		}

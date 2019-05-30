@@ -35,19 +35,19 @@ namespace dnSpy.Text.Editor.Operations {
 		TextViewUndoManagerProvider(ITextBufferUndoManagerProvider textBufferUndoManagerProvider) => this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
 
 		public ITextViewUndoManager GetTextViewUndoManager(IDsWpfTextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(textViewUndoManagerKey, () => new TextViewUndoManager(textView, this, textBufferUndoManagerProvider));
 		}
 
 		public bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhenTrue] out ITextViewUndoManager? manager) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.TryGetProperty(textViewUndoManagerKey, out manager);
 		}
 
 		public void RemoveTextViewUndoManager(IDsWpfTextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			if (!textView.Properties.TryGetProperty(textViewUndoManagerKey, out TextViewUndoManager manager))
 				return;

@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="xmlDocumentation">XML documentation</param>
 		/// <returns></returns>
 		public static bool WriteXmlDoc(IXmlDocOutput output, string? xmlDocumentation) {
-			if (xmlDocumentation == null)
+			if (xmlDocumentation is null)
 				return false;
 			try {
 				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));

@@ -65,7 +65,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public void Dispose() { }
 
 		public bool MoveNext() {
-			if (indent == null) {
+			if (indent is null) {
 				for (;;) {
 					if (!iter.MoveNext())
 						return false;
@@ -105,7 +105,7 @@ start2:
 		}
 
 		void Trim(out int trimmedIndex, out int trimmedEnd) {
-			Debug.Assert(indent != null);
+			Debug.Assert(!(indent is null));
 
 			int index = iter.Current.Index;
 			int end = index + iter.Current.Length;

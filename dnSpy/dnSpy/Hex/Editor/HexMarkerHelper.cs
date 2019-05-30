@@ -62,7 +62,7 @@ namespace dnSpy.Hex.Editor {
 				double width = Math.Min(right - left, MAX_WIDTH);
 				double height = Math.Min(bottom - top, MAX_HEIGHT);
 
-				if (geo == null)
+				if (geo is null)
 					geo = new PathGeometry { FillRule = FillRule.Nonzero };
 				else
 					createOutlinedPath = true;

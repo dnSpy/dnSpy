@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Types {
 			Attributes = type.Attributes;
 			Namespace = type.Namespace;
 			Name = type.Name;
-			if (type.ClassLayout == null) {
+			if (type.ClassLayout is null) {
 				PackingSize = null;
 				ClassSize = null;
 			}
@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.Types {
 			type.Attributes = Attributes;
 			type.Namespace = Namespace ?? UTF8String.Empty;
 			type.Name = Name ?? UTF8String.Empty;
-			if (PackingSize != null || ClassSize != null)
+			if (!(PackingSize is null) || !(ClassSize is null))
 				type.ClassLayout = ownerModule.UpdateRowId(new ClassLayoutUser(PackingSize ?? 0, ClassSize ?? 0));
 			else
 				type.ClassLayout = null;

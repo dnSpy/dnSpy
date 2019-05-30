@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override LanguageEditValueProvider Create(string defaultContentType) {
-			if (defaultContentType == null)
+			if (defaultContentType is null)
 				throw new ArgumentNullException(nameof(defaultContentType));
 			return new LanguageEditValueProviderImpl(uiDispatcher, editValueProviderService, defaultContentType);
 		}
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		string GetContentType() {
-			if (language != null) {
+			if (!(language is null)) {
 				//TODO:
 			}
 			return defaultContentType;
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public override IEditValue Create(string text, EditValueFlags flags) {
 			uiDispatcher.VerifyAccess();
-			if (editValueProvider == null)
+			if (editValueProvider is null)
 				editValueProvider = editValueProviderService.Create(GetContentType(), Array.Empty<string>());
 			return editValueProvider.Create(text, flags);
 		}

@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case InstructionOperandType.SwitchTargets:
 				var list = InstructionOperandVM.Other as IList<InstructionVM>;
-				if (list != null)
+				if (!(list is null))
 					return new Instruction(opCode, new Instruction[list.Count]);
 				return new Instruction(opCode, Array.Empty<Instruction>());
 
@@ -184,7 +184,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case OperandType.InlineSwitch:
 				var targets = InstructionOperandVM.Value as System.Collections.IList;
-				return opCode.Size + 4 + (targets == null ? 0 : targets.Count * 4);
+				return opCode.Size + 4 + (targets is null ? 0 : targets.Count * 4);
 
 			case OperandType.InlineVar:
 				return opCode.Size + 2;

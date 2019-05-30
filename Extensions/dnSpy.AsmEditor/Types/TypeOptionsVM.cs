@@ -258,7 +258,7 @@ namespace dnSpy.AsmEditor.Types {
 				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -342,7 +342,7 @@ namespace dnSpy.AsmEditor.Types {
 			Sealed;
 
 		bool IsInterface() =>
-			BaseTypeSig == null &&
+			BaseTypeSig is null &&
 			(Types.TypeLayout)TypeLayout.SelectedItem! == Types.TypeLayout.AutoLayout &&
 			(Types.TypeSemantics)TypeSemantics.SelectedItem! == Types.TypeSemantics.Interface &&
 			Abstract &&
@@ -438,7 +438,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		bool IsClassBaseType(IType? type) =>
-			type != null &&
+			!(type is null) &&
 			!IsSystemEnum(type) &&
 			!IsSystemValueType(type);
 

@@ -100,7 +100,7 @@ namespace MakeEverythingPublic {
 					continue;
 
 				if (!File.Exists(patchedFilename)) {
-					if (ivtBlob == null)
+					if (ivtBlob is null)
 						ivtBlob = CreateIVTBlob(IVTString);
 					var data = File.ReadAllBytes(filename);
 					try {

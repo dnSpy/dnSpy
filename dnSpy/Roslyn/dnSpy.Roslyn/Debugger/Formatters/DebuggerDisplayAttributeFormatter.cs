@@ -76,7 +76,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				NameParts = nameParts ?? throw new ArgumentNullException(nameof(nameParts));
 				ValueParts = valueParts ?? throw new ArgumentNullException(nameof(valueParts));
 				TypeParts = typeParts ?? throw new ArgumentNullException(nameof(typeParts));
-				if (typeContext != null) {
+				if (!(typeContext is null)) {
 					lockObj = new object();
 					eeStates = new Dictionary<string, object?>(StringComparer.Ordinal);
 				}
@@ -130,7 +130,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 					try {
 						var evalInfo2 = new DbgEvaluationInfo(typeState.TypeContext!, evalInfo.Frame, evalInfo.CancellationToken);
 						evalRes = evaluator.Evaluate(evalInfo2, value, part.Text, DbgEvaluationOptions.Expression, eeState);
-						if (evalRes.Error != null) {
+						if (!(evalRes.Error is null)) {
 							output.Write(DbgTextColor.Error, "<<<");
 							output.Write(DbgTextColor.Error, evalRes.Error);
 							output.Write(DbgTextColor.Error, ">>>");
@@ -155,7 +155,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		TypeState GetOrCreateTypeState(DmdType type, DbgLanguage language) {
 			var state = StateWithKey<TypeState>.TryGet(type, language);
-			if (state != null)
+			if (!(state is null))
 				return state;
 			return GetOrCreateTypeStateCore(type, language);
 		}
@@ -199,7 +199,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			string? nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
 			if (!forceNoAttr && !(ddaType is null)) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);
-				if (attr == null) {
+				if (attr is null) {
 					if (type.CanCastTo(type.AppDomain.System_Type)) {
 						// Show the same thing VS shows
 						valueDisplayString = @"\{Name = {Name} FullName = {FullName}\}";
@@ -220,7 +220,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		}
 
 		static string? GetString(DmdCustomAttributeData ca, string propertyName) {
-			if (ca == null)
+			if (ca is null)
 				return null;
 			foreach (var arg in ca.NamedArguments) {
 				if (arg.IsField)
@@ -235,7 +235,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		}
 
 		static DisplayPart[] CreateDisplayParts(string? debuggerDisplayString) {
-			if (debuggerDisplayString == null)
+			if (debuggerDisplayString is null)
 				return Array.Empty<DisplayPart>();
 			if (debuggerDisplayString.Length == 0)
 				return new[] { DisplayPart.CreateText(string.Empty) };

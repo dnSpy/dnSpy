@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static T GetValue<T>(ISettingsSection section, string name, ref bool failed) where T : struct {
 			var v = section.Attribute<T?>(name);
-			if (v == null) {
+			if (v is null) {
 				failed = true;
 				return default;
 			}

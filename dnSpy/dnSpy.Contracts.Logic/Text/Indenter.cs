@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Text {
 				cachedStrings.Add(null);
 
 			var s = cachedStrings[level];
-			if (s != null)
+			if (!(s is null))
 				return s;
 			s = CreateIndentString(level);
 			cachedStrings[level] = s;
@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Text {
 			if (spaces == 0)
 				return new string('\t', tabs);
 
-			if (sb == null)
+			if (sb is null)
 				sb = new StringBuilder();
 			sb.Append('\t', tabs);
 			sb.Append(' ', spaces);

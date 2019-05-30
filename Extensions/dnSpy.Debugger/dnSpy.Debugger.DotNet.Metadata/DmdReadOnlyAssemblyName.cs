@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public byte[]? GetPublicKeyToken() {
-			if (publicKeyToken == null && publicKey != null) {
+			if (publicKeyToken is null && !(publicKey is null)) {
 				try {
 					publicKeyToken = AssemblyHasher.CreatePublicKeyToken(publicKey);
 				}
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="assemblyName">Assembly name</param>
 		public DmdReadOnlyAssemblyName(string assemblyName) {
-			if (assemblyName == null)
+			if (assemblyName is null)
 				throw new ArgumentNullException(nameof(assemblyName));
 			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out var name, out var version, out var cultureName, out var flags, out publicKey, out publicKeyToken, out var hashAlgorithm);
 			Name = name;
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Assembly name</param>
 		public DmdReadOnlyAssemblyName(IDmdAssemblyName name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			Name = name.Name;
 			Version = name.Version;

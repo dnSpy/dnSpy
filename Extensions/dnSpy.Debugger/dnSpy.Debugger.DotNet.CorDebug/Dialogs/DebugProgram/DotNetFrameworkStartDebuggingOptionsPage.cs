@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			Filename = newFilename;
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dnfOptions = options as DotNetFrameworkStartDebuggingOptions;
-			if (dnfOptions == null)
+			if (dnfOptions is null)
 				return;
 			Initialize(dnfOptions);
 		}

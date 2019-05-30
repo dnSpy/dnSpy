@@ -247,7 +247,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="source">Data</param>
 		public void Write(HexPosition position, byte[] source) {
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
 			Write(position, source, 0, source.LongLength);
 		}

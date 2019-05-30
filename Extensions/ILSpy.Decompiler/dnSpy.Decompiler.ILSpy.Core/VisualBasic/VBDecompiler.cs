@@ -43,7 +43,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(decompilerSettingsService != null);
+			Debug.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -190,7 +190,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform? additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
 			astBuilder.RunTransformations(transformAbortCondition);
-			if (additionalTransform != null) {
+			if (!(additionalTransform is null)) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			CSharpDecompiler.AddXmlDocumentation(ref state, GetDecompilerSettings(), astBuilder);
@@ -203,7 +203,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		BuilderState CreateAstBuilder(DecompilationContext ctx, DecompilerSettings settings, ModuleDef? currentModule = null, TypeDef? currentType = null, bool isSingleMember = false) {
-			if (currentModule == null)
+			if (currentModule is null)
 				currentModule = currentType?.Module;
 			settings = settings.Clone();
 			if (isSingleMember)
@@ -222,7 +222,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		protected override void FormatTypeName(IDecompilerOutput output, TypeDef type) {
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
@@ -243,7 +243,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			var converter = new CSharpToVBConverterVisitor(type.Module, envProvider);
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
-			if (type.TryGetByRefSig() != null) {
+			if (!(type.TryGetByRefSig() is null)) {
 				output.Write("ByRef", BoxedTextColor.Keyword);
 				output.Write(" ", BoxedTextColor.Text);
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)

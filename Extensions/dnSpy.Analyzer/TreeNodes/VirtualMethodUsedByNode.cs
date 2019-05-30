@@ -63,7 +63,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			possibleTypes = new List<ITypeDefOrRef>();
 
 			ITypeDefOrRef? type = analyzedMethod.DeclaringType.BaseType;
-			while (type != null) {
+			while (!(type is null)) {
 				possibleTypes.Add(type);
 				type = type.ResolveTypeDef()?.BaseType;
 			}
@@ -92,7 +92,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 						// virtual call to base method
 						if (instr.OpCode.Code == Code.Callvirt) {
 							MethodDef md = mr.ResolveMethodDef();
-							if (md == null) {
+							if (md is null) {
 								// cannot resolve the operand, so ignore this method
 								break;
 							}
@@ -104,7 +104,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				if (foundInstr != null) {
+				if (!(foundInstr is null)) {
 					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)

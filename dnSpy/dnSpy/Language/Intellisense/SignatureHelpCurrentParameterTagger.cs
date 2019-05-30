@@ -50,7 +50,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			var session = buffer.TryGetSignatureHelpSession();
-			if (session == null)
+			if (session is null)
 				return null;
 			if (buffer.ContentType.TypeName.EndsWith(SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix))
 				return new SignatureHelpCurrentParameterTaggerEx(buffer, signatureHelpDocumentationClassificationTag, signatureHelpParameterClassificationTag, signatureHelpParameterDocumentationClassificationTag) as ITagger<T>;
@@ -75,7 +75,7 @@ namespace dnSpy.Language.Intellisense {
 			if (session.IsDismissed)
 				yield break;
 			var parameter = session.SelectedSignature?.CurrentParameter;
-			if (parameter == null)
+			if (parameter is null)
 				yield break;
 			bool usePrettyPrintedContent = buffer.GetUsePrettyPrintedContent();
 			var locus = usePrettyPrintedContent ? parameter.PrettyPrintedLocus : parameter.Locus;
@@ -105,8 +105,8 @@ namespace dnSpy.Language.Intellisense {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var context = buffer.TryGetSignatureHelpClassifierContext();
-			Debug.Assert(context != null);
-			if (context == null || context.Session.IsDismissed)
+			Debug.Assert(!(context is null));
+			if (context is null || context.Session.IsDismissed)
 				yield break;
 			ClassificationTag tag;
 			if (context.Type == SignatureHelpClassifierContextTypes.SignatureDocumentation)

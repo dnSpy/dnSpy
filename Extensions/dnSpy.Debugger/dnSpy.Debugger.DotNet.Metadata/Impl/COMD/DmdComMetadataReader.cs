@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				Debug.Assert(IsCOMThread);
 				// It's initialized lazily and not in the ctor because the ctor is not necessarily running
 				// on the COM thread.
-				if (__metaDataAssemblyImport_DONT_USE == null)
+				if (__metaDataAssemblyImport_DONT_USE is null)
 					__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)__metaDataImport_DONT_USE;
 				return __metaDataAssemblyImport_DONT_USE;
 			}
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal uint GetEnclosingTypeDefRid_COMThread(uint typeDefRid) {
 			dispatcher.VerifyAccess();
 			InitializeTypeTables_COMThread();
-			Debug.Assert(ridToEnclosing != null);
+			Debug.Assert(!(ridToEnclosing is null));
 			bool b = ridToEnclosing.TryGetValue(typeDefRid, out uint enclTypeRid);
 			Debug.Assert(b);
 			return enclTypeRid;
@@ -207,15 +207,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal uint[] GetTypeDefNestedClassRids_COMThread(uint typeDefRid) {
 			dispatcher.VerifyAccess();
 			InitializeTypeTables_COMThread();
-			Debug.Assert(ridToNested != null);
+			Debug.Assert(!(ridToNested is null));
 			bool b = ridToNested.TryGetValue(typeDefRid, out var list);
 			Debug.Assert(b);
-			return list == null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
+			return list is null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
 		}
 
 		void InitializeTypeTables_COMThread() {
 			dispatcher.VerifyAccess();
-			if (ridToNested != null)
+			if (!(ridToNested is null))
 				return;
 
 			var allTypes = MDAPI.GetTypeDefTokens(MetaDataImport);
@@ -227,8 +227,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		void UpdateTypeTables_COMThread(uint[] tokens) {
 			dispatcher.VerifyAccess();
-			Debug.Assert(ridToNested != null);
-			Debug.Assert(ridToEnclosing != null);
+			Debug.Assert(!(ridToNested is null));
+			Debug.Assert(!(ridToEnclosing is null));
 			Array.Sort(tokens);
 			foreach (uint token in tokens) {
 				uint rid = token & 0x00FFFFFF;
@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					enclTypeRid = 0;
 				}
 				else {
-					if (enclTypeList == null)
+					if (enclTypeList is null)
 						ridToNested[enclTypeRid] = enclTypeList = new List<uint>();
 					enclTypeList.Add(rid);
 				}
@@ -269,7 +269,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 			uint typeToken = (uint)e.MetadataToken;
 			uint[] newTokens;
-			if (ridToNested != null)
+			if (!(ridToNested is null))
 				newTokens = UpdateTypeTables_COMThread(typeToken);
 			else
 				newTokens = GetNewTokens_COMThread(typeToken);
@@ -283,11 +283,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		uint[] UpdateTypeTables_COMThread(uint typeToken) {
 			dispatcher.VerifyAccess();
 			uint typeRid = typeToken & 0x00FFFFFF;
-			bool b = ridToEnclosing != null && !ridToEnclosing.ContainsKey(typeRid);
+			bool b = !(ridToEnclosing is null) && !ridToEnclosing.ContainsKey(typeRid);
 			Debug.Assert(b);
 			if (!b)
 				return new[] { typeToken };
-			Debug.Assert(ridToEnclosing != null);
+			Debug.Assert(!(ridToEnclosing is null));
 
 			var tokens = GetNewTokens_COMThread(typeRid);
 			UpdateTypeTables_COMThread(tokens);
@@ -315,7 +315,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		uint[] GetNewTokens_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			if (ridToEnclosing == null)
+			if (ridToEnclosing is null)
 				return new[] { rid };
 			var hash = tmpHash;
 			hash.Clear();
@@ -654,7 +654,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return null;
 
 			var rvaTmp = MDAPI.GetRVA(MetaDataImport, (uint)method.MetadataToken);
-			if (rvaTmp == null)
+			if (rvaTmp is null)
 				return null;
 			uint rva = rvaTmp.Value;
 
@@ -670,11 +670,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 
 			var bodyStream = dynamicModuleHelper.TryGetMethodBody(method.Module, method.MetadataToken, rva);
-			if (bodyStream == null)
+			if (bodyStream is null)
 				return null;
 			using (bodyStream) {
 				var body = DmdMethodBodyReader.Create(this, bodyStream, genericTypeArguments, genericMethodArguments);
-				Debug.Assert(body != null);
+				Debug.Assert(!(body is null));
 				return body;
 			}
 		}
@@ -725,7 +725,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				var type = ResolveExportedType_COMThread(rid);
 				if (type is null)
 					break;
-				if (result == null)
+				if (result is null)
 					result = new List<DmdTypeRef>();
 				result.Add(type);
 			}
@@ -998,7 +998,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override DmdReadOnlyAssemblyName GetName() {
-			if (assemblyName == null)
+			if (assemblyName is null)
 				InitializeAssemblyName();
 			Debug.Assert(!(assemblyName is null));
 			return assemblyName;
@@ -1006,7 +1006,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		DmdReadOnlyAssemblyName? assemblyName;
 
 		void InitializeAssemblyName() {
-			if (assemblyName != null)
+			if (!(assemblyName is null))
 				return;
 			if (IsCOMThread)
 				InitializeAssemblyName_COMThread();
@@ -1016,7 +1016,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		void InitializeAssemblyName_COMThread() {
 			dispatcher.VerifyAccess();
-			if (assemblyName != null)
+			if (!(assemblyName is null))
 				return;
 
 			const uint token = 0x20000001;
@@ -1094,7 +1094,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					continue;
 
 				var ca = DmdCustomAttributeReader.Read(module, new DmdPointerDataStream(info.addr, info.size), ctor);
-				if (ca == null)
+				if (ca is null)
 					continue;
 
 				res[w++] = ca;
@@ -1134,12 +1134,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				var cas = DmdDeclSecurityReader.Read(module, new DmdPointerDataStream(info.addr, (int)info.size), action, genericTypeArguments);
 				if (cas.Length == 0)
 					continue;
-				if (res == null && firstCas == null) {
+				if (res is null && firstCas is null) {
 					firstAction = action;
 					firstCas = cas;
 				}
 				else {
-					if (res == null) {
+					if (res is null) {
 						res = new List<(DmdCustomAttributeData[], SSP.SecurityAction)>(firstCas!.Length + cas.Length);
 						res.Add((firstCas, firstAction));
 						firstCas = null;
@@ -1147,9 +1147,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					res.Add((cas, action));
 				}
 			}
-			if (firstCas != null)
+			if (!(firstCas is null))
 				return firstCas;
-			if (res == null)
+			if (res is null)
 				return Array.Empty<DmdCustomAttributeData>();
 			// Reflection sorts it by action
 			res.Sort((a, b) => (int)a.action - (int)b.action);

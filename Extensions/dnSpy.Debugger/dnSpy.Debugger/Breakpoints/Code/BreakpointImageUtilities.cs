@@ -47,9 +47,9 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	static class BreakpointImageUtilities {
 		public static BreakpointKind GetBreakpointKind(DbgCodeBreakpoint breakpoint) {
 			var settings = breakpoint.Settings;
-			bool isAdvanced = settings.Condition != null || settings.HitCount != null || settings.Filter != null;
+			bool isAdvanced = !(settings.Condition is null) || !(settings.HitCount is null) || !(settings.Filter is null);
 			var msg = breakpoint.BoundBreakpointsMessage;
-			if (settings.Trace == null || !settings.Trace.Value.Continue) {
+			if (settings.Trace is null || !settings.Trace.Value.Continue) {
 				switch (msg.Severity) {
 				case DbgBoundCodeBreakpointSeverity.None:		break;
 				case DbgBoundCodeBreakpointSeverity.Warning:	return isAdvanced ? BreakpointKind.AdvancedBreakpointWarning : BreakpointKind.BreakpointWarning;

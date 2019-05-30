@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="removedCallback">Called when the adornment is removed</param>
 		/// <returns></returns>
 		public bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferLine line, object? tag, UIElement adornment, VSTE.AdornmentRemovedCallback? removedCallback) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return AddAdornment(behavior, line.BufferSpan, tag, adornment, removedCallback);
 		}
@@ -146,9 +146,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="line">Line</param>
 		/// <param name="match">Returns true if the adornment should be removed</param>
 		public void RemoveMatchingAdornments(HexBufferLine line, Predicate<HexAdornmentLayerElement> match) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 			RemoveMatchingAdornments(line.BufferSpan, match);
 		}

@@ -34,12 +34,12 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		void RewriteClass(XamlContext ctx, XElement elem) {
 			var type = elem.Annotation<XamlType>();
-			if (type == null || type.ResolvedType == null)
+			if (type is null || type.ResolvedType is null)
 				return;
 
 			var typeDef = type.ResolvedType.ResolveTypeDef();
 			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
-			if (typeDef == null || !comparer.Equals(typeDef.DefinitionAssembly, ctx.Module.Assembly))
+			if (typeDef is null || !comparer.Equals(typeDef.DefinitionAssembly, ctx.Module.Assembly))
 				return;
 
 			var newType = typeDef.BaseType;

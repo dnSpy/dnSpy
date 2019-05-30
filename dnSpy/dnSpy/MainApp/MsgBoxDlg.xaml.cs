@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 
 		void MsgBoxDlg_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var vm = DataContext as MsgBoxVM;
-			if (vm == null)
+			if (vm is null)
 				return;
 			if (vm.HasOKButton)
 				okButton.Focus();

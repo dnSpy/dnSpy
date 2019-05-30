@@ -111,28 +111,28 @@ namespace dnSpy.AsmEditor.Compiler {
 			var node = nodes[0];
 			var tokNode = node as IMDTokenNode;
 			var defToEdit = tokNode?.Reference as IMemberDef;
-			if (defToEdit == null)
+			if (defToEdit is null)
 				return;
 
 			TypeNode? typeNode = null;
-			for (TreeNodeData? n = node; n != null;) {
+			for (TreeNodeData? n = node; !(n is null);) {
 				if (n is TypeNode t)
 					typeNode = t;
 				n = n.TreeNode.Parent?.Data;
 			}
-			if (typeNode == null)
+			if (typeNode is null)
 				return;
 
 			var asmNode = nodes[0] as AssemblyDocumentNode;
 			ModuleDocumentNode? modNode;
-			if (asmNode != null) {
+			if (!(asmNode is null)) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 			}
 			else
 				modNode = nodes[0].GetModuleNode();
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				return;
 
 			var vm = editCodeVMCreator.CreateAddMembers(defToEdit);
@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug.Assert(vm.Result != null);
+			Debug.Assert(!(vm.Result is null));
 
 			undoCommandService.Value.Add(new AddClassMembersCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();

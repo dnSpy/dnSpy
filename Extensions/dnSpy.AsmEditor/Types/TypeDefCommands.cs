@@ -123,15 +123,15 @@ namespace dnSpy.AsmEditor.Types {
 				public readonly int Index;
 
 				public ModelInfo(TypeDef type) {
-					OwnerList = type.DeclaringType == null ? type.Module.Types : type.DeclaringType.NestedTypes;
+					OwnerList = type.DeclaringType is null ? type.Module.Types : type.DeclaringType.NestedTypes;
 					Index = OwnerList.IndexOf(type);
 					Debug.Assert(Index >= 0);
 				}
 			}
 
 			public void Delete(TypeNode[] nodes) {
-				Debug.Assert(infos == null);
-				if (infos != null)
+				Debug.Assert(infos is null);
+				if (!(infos is null))
 					throw new InvalidOperationException();
 
 				infos = new ModelInfo[nodes.Length];
@@ -146,8 +146,8 @@ namespace dnSpy.AsmEditor.Types {
 			}
 
 			public void Restore(TypeNode[] nodes) {
-				Debug.Assert(infos != null);
-				if (infos == null)
+				Debug.Assert(!(infos is null));
+				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
 				if (infos.Length != nodes.Length)
@@ -230,8 +230,8 @@ namespace dnSpy.AsmEditor.Types {
 			string ns = nsNode?.Name ?? string.Empty;
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(ns, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, false);
 
@@ -255,8 +255,8 @@ namespace dnSpy.AsmEditor.Types {
 		CreateTypeDefCommand(IList<TypeDef> ownerList, DocumentTreeNodeData ownerNode, TypeDefOptions options) {
 			this.ownerList = ownerList;
 			var modNode = ownerNode.GetModuleNode();
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				throw new InvalidOperationException();
 			nsNodeCreator = new NamespaceNodeCreator(options.Namespace, modNode);
 			typeNode = modNode.Context.DocumentTreeView.Create(options.CreateTypeDef(modNode.Document.ModuleDef!));
@@ -338,7 +338,7 @@ namespace dnSpy.AsmEditor.Types {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent!.Data is TypeNode));
+			(nodes[0] is TypeNode || (!(nodes[0].TreeNode.Parent is null) && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -348,13 +348,13 @@ namespace dnSpy.AsmEditor.Types {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug.Assert(typeNode != null);
-			if (typeNode == null)
+			Debug.Assert(!(typeNode is null));
+			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(UTF8String.Empty, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, true);
 
@@ -378,8 +378,8 @@ namespace dnSpy.AsmEditor.Types {
 			this.ownerType = ownerType;
 
 			var modNode = ownerType.GetModuleNode();
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				throw new InvalidOperationException();
 			nestedType = ownerType.Create(options.CreateTypeDef(modNode.Document.ModuleDef!));
 		}
@@ -463,8 +463,8 @@ namespace dnSpy.AsmEditor.Types {
 			var typeNode = (TypeNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDef), module, appService.DecompilerService, typeNode.TypeDef);
@@ -525,7 +525,7 @@ namespace dnSpy.AsmEditor.Types {
 		public string Description => dnSpy_AsmEditor_Resources.EditTypeCommand2;
 
 		public void Execute() {
-			if (nsNodeCreator != null) {
+			if (!(nsNodeCreator is null)) {
 				bool b = origParentChildIndex < origParentNode.TreeNode.Children.Count && origParentNode.TreeNode.Children[origParentChildIndex] == typeNode.TreeNode;
 				Debug.Assert(b);
 				if (!b)
@@ -549,7 +549,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 			else
 				newOptions.CopyTo(typeNode.TypeDef, module);
-			if (typeRefInfos != null) {
+			if (!(typeRefInfos is null)) {
 				foreach (var info in typeRefInfos) {
 					info.TypeRef.Namespace = typeNode.TypeDef.Namespace;
 					info.TypeRef.Name = typeNode.TypeDef.Name;
@@ -560,7 +560,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		public void Undo() {
-			if (nsNodeCreator != null) {
+			if (!(nsNodeCreator is null)) {
 				bool b = nsNodeCreator.NamespaceNode.TreeNode.Children.Remove(typeNode.TreeNode);
 				Debug.Assert(b);
 				if (!b)
@@ -582,7 +582,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 			else
 				origOptions.CopyTo(typeNode.TypeDef, module);
-			if (typeRefInfos != null) {
+			if (!(typeRefInfos is null)) {
 				foreach (var info in typeRefInfos) {
 					info.TypeRef.Namespace = info.OrigNamespace;
 					info.TypeRef.Name = info.OrigName;
@@ -594,8 +594,8 @@ namespace dnSpy.AsmEditor.Types {
 
 		internal static void InvalidateBaseTypeFolderNode(TypeNode typeNode) {
 			var btNode = (BaseTypeFolderNode)typeNode.TreeNode.DataChildren.FirstOrDefault(a => a is BaseTypeFolderNode);
-			Debug.Assert(btNode != null || typeNode.TreeNode.Children.Count == 0);
-			if (btNode != null)
+			Debug.Assert(!(btNode is null) || typeNode.TreeNode.Children.Count == 0);
+			if (!(btNode is null))
 				btNode.InvalidateChildren();
 		}
 

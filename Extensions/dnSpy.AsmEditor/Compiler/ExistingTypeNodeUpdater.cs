@@ -88,11 +88,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			foreach (var e in type.NewEvents) {
-				if (e.AddMethod != null)
+				if (!(e.AddMethod is null))
 					specialMethods.Add(e.AddMethod);
-				if (e.RemoveMethod != null)
+				if (!(e.RemoveMethod is null))
 					specialMethods.Add(e.RemoveMethod);
-				if (e.InvokeMethod != null)
+				if (!(e.InvokeMethod is null))
 					specialMethods.Add(e.InvokeMethod);
 				foreach (var m in e.OtherMethods)
 					specialMethods.Add(m);

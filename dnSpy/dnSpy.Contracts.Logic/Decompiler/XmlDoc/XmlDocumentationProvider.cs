@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <returns>null if we couldn't create it</returns>
 		public static XmlDocumentationProvider? Create(string fileName)
 		{
-			if (fileName == null)
+			if (fileName is null)
 				return null;
 			try {
 				return new XmlDocumentationProvider(fileName);
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <exception cref="XmlException">Invalid XML file</exception>
 		public XmlDocumentationProvider(string fileName)
 		{
-			if (fileName == null)
+			if (fileName is null)
 				throw new ArgumentNullException(nameof(fileName));
 
 			index = new IndexEntry[0];
@@ -149,7 +149,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						ReadXmlDoc(xmlReader);
 					} else {
 						string? redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
-						if (redirectionTarget != null) {
+						if (!(redirectionTarget is null)) {
 							//Debug.WriteLine("XmlDoc " + fileName + " is redirecting to " + redirectionTarget);
 							using (FileStream redirectedFs = new FileStream(redirectionTarget, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
 								using (XmlTextReader redirectedXmlReader = new XmlTextReader(redirectedFs)) {
@@ -302,7 +302,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						if (reader.LocalName == "member") {
 							int pos = linePosMapper.GetPositionForLine(reader.LineNumber) + Math.Max(reader.LinePosition - 2, 0);
 							string memberAttr = reader.GetAttribute("name");
-							if (memberAttr != null)
+							if (!(memberAttr is null))
 								indexList.Add(new IndexEntry(GetHashCode(memberAttr), pos));
 							reader.Skip();
 						}
@@ -335,7 +335,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// </summary>
 		public string? GetDocumentation(string key)
 		{
-			if (key == null)
+			if (key is null)
 				return null;
 			return GetDocumentation(key, true);
 		}
@@ -345,7 +345,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// </summary>
 		public string? GetDocumentation(StringBuilder? key)
 		{
-			if (key == null)
+			if (key is null)
 				return null;
 			//TODO: Try to prevent ToString()
 			return GetDocumentation(key.ToString(), true);
@@ -371,7 +371,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						// go through all items that have the correct hash
 						while (++m < index.Length && index[m].HashCode == hashcode) {
 							val = LoadDocumentation(key, index[m].PositionInFile);
-							if (val != null)
+							if (!(val is null))
 								break;
 						}
 						// cache the result (even if it is null)

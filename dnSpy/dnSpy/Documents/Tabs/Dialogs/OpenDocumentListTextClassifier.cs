@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var listContext = context as OpenDocumentListTextClassifierContext;
-			if (listContext == null)
+			if (listContext is null)
 				yield break;
 			if (listContext.Tag != PredefinedTextClassifierTags.DocListDialogName)
 				yield break;

@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string ClassFullName {
 			get {
-				if (Class == null)
+				if (Class is null)
 					return "null";
 				return Class.ToString();
 			}
@@ -113,33 +113,33 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void InitializeFromField() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newField = dnlibTypePicker.GetDnlibType<IField>(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.FieldDef), null, typeSigCreatorOptions.OwnerModule);
-			if (newField != null)
+			if (!(newField is null))
 				InitializeFrom(new MemberRefOptions(typeSigCreatorOptions.OwnerModule.Import(newField)));
 		}
 
 		void InitializeFromMethod() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
-			if (newMethod != null) {
+			if (!(newMethod is null)) {
 				if (typeSigCreatorOptions.OwnerModule.Import(newMethod) is MemberRef mr)
 					InitializeFrom(new MemberRefOptions(mr));
 			}
 		}
 
 		void PickType() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), Class as ITypeDefOrRef, typeSigCreatorOptions.OwnerModule);
-			if (newType != null)
+			if (!(newType is null))
 				Class = newType;
 		}
 
 		void PickTypeSpec() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec), (Class as ITypeDefOrRef).ToTypeSig(), out bool canceled);
 			if (!canceled)
@@ -147,24 +147,24 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void PickMethodDef() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameAssemblyDocumentTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
-			if (newMethod != null) {
+			if (!(newMethod is null)) {
 				var md = newMethod as MethodDef;
-				Debug.Assert(md != null);
-				if (md != null)
+				Debug.Assert(!(md is null));
+				if (!(md is null))
 					Class = md;
 			}
 		}
 
 		void PickModuleRef() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var document = dnlibTypePicker.GetDnlibType<IDsDocument>(dnSpy_AsmEditor_Resources.Pick_Module, new SameAssemblyDocumentTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
-			if (document != null) {
+			if (!(document is null)) {
 				var module = document.ModuleDef;
-				if (module != null) {
+				if (!(module is null)) {
 					var modRef = new ModuleRefUser(typeSigCreatorOptions.OwnerModule, module.Name);
 					Class = typeSigCreatorOptions.OwnerModule.UpdateRowId(modRef);
 				}
@@ -201,7 +201,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public override bool HasError {
 			get {
 				return
-					Class == null ||
+					Class is null ||
 					(IsField && TypeSigCreatorVM.HasError) ||
 					(IsMethod && MethodSigCreatorVM.HasError);
 			}

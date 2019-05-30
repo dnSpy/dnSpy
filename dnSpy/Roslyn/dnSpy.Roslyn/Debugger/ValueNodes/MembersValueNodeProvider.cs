@@ -93,8 +93,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public sealed override ulong GetChildCount(DbgEvaluationInfo evalInfo) {
 			if (!hasInitialized)
 				Initialize(evalInfo);
-			Debug.Assert(childNodeProviderInfos != null);
-			if (realProvider != null)
+			Debug.Assert(!(childNodeProviderInfos is null));
+			if (!(realProvider is null))
 				return realProvider.GetChildCount(evalInfo);
 			return childNodeProviderInfos[childNodeProviderInfos.Length - 1].EndIndex;
 		}
@@ -105,13 +105,13 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if (hasInitialized)
 				return;
 			errorMessage = InitializeCore(evalInfo);
-			if (realProvider != null)
+			if (!(realProvider is null))
 				return;
-			Debug.Assert(errorMessage != null || membersCollection.Members != null);
-			if (errorMessage == null && membersCollection.Members == null)
+			Debug.Assert(!(errorMessage is null) || !(membersCollection.Members is null));
+			if (errorMessage is null && membersCollection.Members is null)
 				errorMessage = PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			dbgManager = evalInfo.Runtime.Process.DbgManager;
-			if (errorMessage != null)
+			if (!(errorMessage is null))
 				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, 1, 0) };
 			else if ((evalOptions & DbgValueNodeEvaluationOptions.NoHideRoots) != 0 || !membersCollection.HasHideRoot || (evalOptions & DbgValueNodeEvaluationOptions.RawView) != 0 || membersCollection.Members!.Length == 0)
 				childNodeProviderInfos = new ChildNodeProviderInfo[] { new ChildNodeProviderInfo(0, (uint)membersCollection.Members!.Length, 0) };
@@ -150,7 +150,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					childNodeProviderInfos = Cache.FreeAndToArray(ref list);
 				}
 				catch {
-					if (valueNode != null)
+					if (!(valueNode is null))
 						dbgManager.Close(valueNode);
 					dbgManager.Close(list.Select(a => a.ValueNode).OfType<DbgDotNetValueNode>());
 					throw;
@@ -207,7 +207,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				DbgDotNetValueNode newNode;
 				bool canHide = true;
 				var customInfo = TryCreateInstanceValueNode(evalInfo, valueResult);
-				if (customInfo.node != null)
+				if (!(customInfo.node is null))
 					(newNode, canHide) = customInfo;
 				else if (valueResult.HasError) {
 					newNode = valueNodeFactory.CreateError(evalInfo, info.Name, valueResult.ErrorMessage!, expression, false);
@@ -249,7 +249,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {
-			Debug.Assert(childNodeProviderInfos != null);
+			Debug.Assert(!(childNodeProviderInfos is null));
 			var infos = childNodeProviderInfos;
 			ref readonly var last = ref infos[lastProviderIndex];
 			if (last.StartIndex <= childIndex && childIndex < last.EndIndex)
@@ -274,8 +274,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			Debug.Assert(this.valueNodeFactory == valueNodeFactory);
 			if (!hasInitialized)
 				Initialize(evalInfo);
-			Debug.Assert(childNodeProviderInfos != null);
-			if (realProvider != null)
+			Debug.Assert(!(childNodeProviderInfos is null));
+			if (!(realProvider is null))
 				return realProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options, formatSpecifiers);
 			DbgDotNetValueNode[]? children = null;
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
@@ -285,7 +285,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				for (int i = 0; i < res.Length && providerIndex < childNodeProviderInfos.Length; providerIndex++) {
 					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					ref readonly var providerInfo = ref childNodeProviderInfos[providerIndex];
-					if (providerInfo.ValueNode != null) {
+					if (!(providerInfo.ValueNode is null)) {
 						UpdateFormatSpecifiers(providerInfo.ValueNode, formatSpecifiers);
 						if (providerInfo.CanHide) {
 							ulong childCount = providerInfo.EndIndex - providerInfo.StartIndex;
@@ -304,7 +304,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					else {
 						while (index + (uint)i < providerInfo.EndIndex && i < res.Length) {
 							evalInfo.CancellationToken.ThrowIfCancellationRequested();
-							res[i] = errorMessage != null ?
+							res[i] = !(errorMessage is null) ?
 								valueNodeFactory.CreateError(evalInfo, errorPropertyName, errorMessage, Expression, false) :
 								CreateValueNode(evalInfo, (int)(index + (uint)i - providerInfo.StartIndex + providerInfo.BaseIndex), options, formatSpecifiers).node;
 							i++;
@@ -313,9 +313,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				}
 			}
 			catch {
-				if (children != null)
+				if (!(children is null))
 					evalInfo.Runtime.Process.DbgManager.Close(children);
-				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				throw;
 			}
 			return res;
@@ -328,12 +328,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		protected virtual void DisposeCore() { }
 
 		public sealed override void Dispose() {
-			Debug.Assert(childNodeProviderInfos == null || dbgManager != null);
+			Debug.Assert(childNodeProviderInfos is null || !(dbgManager is null));
 			DisposeCore();
 			realProvider?.Dispose();
-			if (childNodeProviderInfos != null) {
+			if (!(childNodeProviderInfos is null)) {
 				Debug.Assert(childNodeProviderInfos.Length >= 1);
-				if (childNodeProviderInfos.Length > 1 || childNodeProviderInfos[0].ValueNode != null)
+				if (childNodeProviderInfos.Length > 1 || !(childNodeProviderInfos[0].ValueNode is null))
 					dbgManager?.Close(childNodeProviderInfos.Select(a => a.ValueNode).OfType<DbgDotNetValueNode>());
 			}
 		}

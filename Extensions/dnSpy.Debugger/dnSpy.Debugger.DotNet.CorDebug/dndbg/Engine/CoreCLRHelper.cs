@@ -56,7 +56,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public unsafe static CoreCLRInfo[] GetCoreCLRInfos(int pid, string? runtimePath, string? dbgshimPath) {
 			var dbgShimState = GetOrCreateDbgShimState(runtimePath, dbgshimPath);
-			if (dbgShimState == null)
+			if (dbgShimState is null)
 				return Array.Empty<CoreCLRInfo>();
 			int hr = dbgShimState.EnumerateCLRs!((uint)pid, out var pHandleArray, out var pStringArray, out uint dwArrayLength);
 			if (hr < 0 || dwArrayLength == 0)
@@ -125,11 +125,11 @@ namespace dndbg.Engine {
 			dbgShimState.EnumerateCLRs = GetDelegate<EnumerateCLRs>(handle, "EnumerateCLRs");
 			dbgShimState.CreateVersionStringFromModule = GetDelegate<CreateVersionStringFromModule>(handle, "CreateVersionStringFromModule");
 			dbgShimState.CreateDebuggingInterfaceFromVersionEx = GetDelegate<CreateDebuggingInterfaceFromVersionEx>(handle, "CreateDebuggingInterfaceFromVersionEx");
-			if (dbgShimState.GetStartupNotificationEvent == null ||
-				dbgShimState.CloseCLREnumeration == null ||
-				dbgShimState.EnumerateCLRs == null ||
-				dbgShimState.CreateVersionStringFromModule == null ||
-				dbgShimState.CreateDebuggingInterfaceFromVersionEx == null) {
+			if (dbgShimState.GetStartupNotificationEvent is null ||
+				dbgShimState.CloseCLREnumeration is null ||
+				dbgShimState.EnumerateCLRs is null ||
+				dbgShimState.CreateVersionStringFromModule is null ||
+				dbgShimState.CreateDebuggingInterfaceFromVersionEx is null) {
 				NativeMethods.FreeLibrary(handle);
 				return null;
 			}
@@ -168,7 +168,7 @@ namespace dndbg.Engine {
 			string? clrPath = info.CoreCLRFilename;
 			otherVersion = info.Version;
 
-			if (clrPath == null || otherVersion == null) {
+			if (clrPath is null || otherVersion is null) {
 				var infos = GetCoreCLRInfos(pid, runtimePath: null, dbgshimPath: info.DbgShimFilename);
 				if (infos.Length != 0) {
 					clrPath = clrPath ?? infos[0].CoreCLRTypeInfo.CoreCLRFilename;
@@ -180,7 +180,7 @@ namespace dndbg.Engine {
 			coreclrFilename = clrPath ?? throw new ArgumentException($"Couldn't get the CLR path");
 
 			var dbgShimState = GetOrCreateDbgShimState(null, info.DbgShimFilename);
-			if (dbgShimState == null)
+			if (dbgShimState is null)
 				return null;
 
 			int hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx!(CorDebugInterfaceVersion.CorDebugVersion_4_0, otherVersion, out object obj);
@@ -189,7 +189,7 @@ namespace dndbg.Engine {
 
 		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, IntPtr outputHandle, IntPtr errorHandle, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string?, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
-			if (dbgShimState == null)
+			if (dbgShimState is null)
 				throw new Exception($"Could not load {dbgshimFilename}: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
 
 			var startupEvent = IntPtr.Zero;
@@ -197,7 +197,7 @@ namespace dndbg.Engine {
 			IntPtr pHandleArray = IntPtr.Zero, pStringArray = IntPtr.Zero;
 			uint dwArrayLength = 0;
 
-			bool useHost = info.HostFilename != null;
+			bool useHost = !(info.HostFilename is null);
 			var pi = new PROCESS_INFORMATION();
 			bool error = true, calledSetEvent = false;
 			try {
@@ -268,7 +268,7 @@ namespace dndbg.Engine {
 				var version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out string coreclrFilename);
 				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx!(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out object obj);
 				var corDebug = obj as ICorDebug;
-				if (corDebug == null)
+				if (corDebug is null)
 					throw new Exception($"Could not create a ICorDebug: hr=0x{hr:X8}");
 				var dbg = createDnDebugger(corDebug, coreclrFilename, pi.dwProcessId, version);
 				for (uint i = 0; i < dwArrayLength; i++)

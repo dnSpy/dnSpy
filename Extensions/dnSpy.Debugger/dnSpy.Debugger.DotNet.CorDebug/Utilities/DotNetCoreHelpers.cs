@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			if (bitness != 32 && bitness != 64)
 				throw new ArgumentOutOfRangeException(nameof(bitness));
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
-			if (pathEnvVar == null)
+			if (pathEnvVar is null)
 				return null;
 			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
 			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
 				installLocation = key?.GetValue("InstallLocation") as string;
-				return installLocation != null;
+				return !(installLocation is null);
 			}
 		}
 
@@ -139,16 +139,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 
 					using (var mod = ModuleDefMD.Load(peImage, new ModuleCreationOptions())) {
 						var asm = mod.Assembly;
-						if (asm == null)
+						if (asm is null)
 							return false;
 
 						var ca = asm.CustomAttributes.Find("System.Runtime.Versioning.TargetFrameworkAttribute");
-						if (ca == null)
+						if (ca is null)
 							return false;
 						if (ca.ConstructorArguments.Count != 1)
 							return false;
 						string s = ca.ConstructorArguments[0].Value as UTF8String;
-						if (s == null)
+						if (s is null)
 							return false;
 
 						// See corclr/src/mscorlib/src/System/Runtime/Versioning/BinaryCompatibility.cs

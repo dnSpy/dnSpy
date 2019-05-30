@@ -54,10 +54,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (analyzedEvent.AddMethod != null)
+			if (!(analyzedEvent.AddMethod is null))
 				yield return new EventAccessorNode(analyzedEvent.AddMethod, dnSpy_Analyzer_Resources.EventAdderTreeNodeName);
 
-			if (analyzedEvent.RemoveMethod != null)
+			if (!(analyzedEvent.RemoveMethod is null))
 				yield return new EventAccessorNode(analyzedEvent.RemoveMethod, dnSpy_Analyzer_Resources.EventRemoverTreeNodeName);
 
 			foreach (var accessor in analyzedEvent.OtherMethods)

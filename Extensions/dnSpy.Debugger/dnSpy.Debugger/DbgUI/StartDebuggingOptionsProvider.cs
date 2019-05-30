@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DbgUI {
 			foreach (var page in pages) {
 				if (oldOptions?.pageGuid == page.Guid)
 					page.InitializePreviousOptions(WithBreakKind(oldOptions!.Value.options, defaultBreakKind));
-				else if (oldOptions == null && lastOptions?.pageGuid == page.Guid)
+				else if (oldOptions is null && lastOptions?.pageGuid == page.Guid)
 					page.InitializeDefaultOptions(filename, breakKind, WithBreakKind(lastOptions!.Value.options, defaultBreakKind));
 				else
 					page.InitializeDefaultOptions(filename, breakKind, null);
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		static StartDebuggingOptions WithBreakKind(StartDebuggingOptions options, string? breakKind) {
-			if (breakKind == null)
+			if (breakKind is null)
 				return options;
 			options = (StartDebuggingOptions)options.Clone();
 			options.BreakKind = breakKind;
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DbgUI {
 			var engineGuids = new List<Guid>();
 			foreach (var lz in genericDebugEngineGuidProviders) {
 				var engineGuid = lz.Value.GetEngineGuid(filename);
-				if (engineGuid != null)
+				if (!(engineGuid is null))
 					engineGuids.Add(engineGuid.Value);
 			}
 
@@ -140,14 +140,14 @@ namespace dnSpy.Debugger.DbgUI {
 						if (page.Guid == lastGuid)
 							return lastGuid;
 
-						if (firstResult == null || order < firstOrder!.Value) {
+						if (firstResult is null || order < firstOrder!.Value) {
 							firstResult = page.Guid;
 							firstOrder = order;
 						}
 					}
 				}
 				// The order of the engine guids is important so exit as soon as we find a match
-				if (firstResult != null)
+				if (!(firstResult is null))
 					break;
 			}
 			return firstResult;

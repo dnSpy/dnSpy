@@ -87,16 +87,16 @@ namespace dnSpy.Menus {
 		}
 
 		public IContextMenuProvider InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsProvider? provider, IContextMenuInitializer? initCtxMenu, string? ctxMenuGuid) =>
-			InitializeContextMenu(elem, new Guid(guid), provider, initCtxMenu, ctxMenuGuid == null ? (Guid?)null : new Guid(ctxMenuGuid));
+			InitializeContextMenu(elem, new Guid(guid), provider, initCtxMenu, ctxMenuGuid is null ? (Guid?)null : new Guid(ctxMenuGuid));
 
 		void InitializeMenuItemObjects() {
-			if (guidToGroups != null)
+			if (!(guidToGroups is null))
 				return;
 
 			InitializeMenus();
-			Debug.Assert(guidToMenu != null);
+			Debug.Assert(!(guidToMenu is null));
 			InitializeMenuItems();
-			Debug.Assert(guidToGroups != null);
+			Debug.Assert(!(guidToGroups is null));
 		}
 
 		void InitializeMenus() {
@@ -152,7 +152,7 @@ namespace dnSpy.Menus {
 					continue;
 
 				var guidString = item.Metadata.Guid;
-				if (guidString != null) {
+				if (!(guidString is null)) {
 					b = Guid.TryParse(guidString, out var guid);
 					Debug.Assert(b, $"MenuItem: Couldn't parse Guid property: '{guidString}'");
 					if (!b)
@@ -202,7 +202,7 @@ namespace dnSpy.Menus {
 		WeakReference prevEventArgs = new WeakReference(null);
 		internal bool? ShowContextMenu(object evArgs, FrameworkElement ctxMenuElem, Guid topLevelMenuGuid, Guid ownerMenuGuid, GuidObject creatorObject, IGuidObjectsProvider? provider, IContextMenuInitializer? initCtxMenu, bool openedFromKeyboard) {
 			InitializeMenuItemObjects();
-			Debug.Assert(guidToGroups != null);
+			Debug.Assert(!(guidToGroups is null));
 
 			// There could be nested context menu handler calls, eg. first text editor followed by
 			// the TabControl. We don't wan't the TabControl to disable the text editor's ctx menu.
@@ -236,7 +236,7 @@ namespace dnSpy.Menus {
 				ctx.Dispose();
 				ctxMenuElem.ContextMenu = new ContextMenu();
 			};
-			if (initCtxMenu != null)
+			if (!(initCtxMenu is null))
 				initCtxMenu.Initialize(ctx, menu);
 			ctxMenuElem.ContextMenu = menu;
 			prevEventArgs.Target = evArgs;
@@ -283,8 +283,8 @@ namespace dnSpy.Menus {
 		}
 
 		MenuItem Create(IMenuItem item, IMenuItemMetadata metadata, MenuItemContext ctx, IInputElement? commandTarget, MenuItem? menuItem, bool isCtxMenu) {
-			Debug.Assert(guidToGroups != null);
-			if (menuItem == null)
+			Debug.Assert(!(guidToGroups is null));
+			if (menuItem is null)
 				menuItem = new MenuItem();
 			menuItem.CommandTarget = commandTarget;
 
@@ -302,17 +302,17 @@ namespace dnSpy.Menus {
 
 			var cmdHolder = item as ICommandHolder;
 			bool lastIsEnabledCallValue = false;
-			if (iconImgRef != null) {
-				if (cmdHolder == null)
+			if (!(iconImgRef is null)) {
+				if (cmdHolder is null)
 					lastIsEnabledCallValue = item.IsEnabled(ctx);
 				else {
 					var routedCommand = cmdHolder.Command as RoutedCommand;
-					lastIsEnabledCallValue = commandTarget == null || routedCommand == null || routedCommand.CanExecute(ctx, commandTarget);
+					lastIsEnabledCallValue = commandTarget is null || routedCommand is null || routedCommand.CanExecute(ctx, commandTarget);
 				}
 				Add16x16Image(menuItem, iconImgRef.Value, lastIsEnabledCallValue);
 			}
 
-			if (metadata.Guid != null) {
+			if (!(metadata.Guid is null)) {
 				var itemGuid = Guid.Parse(metadata.Guid);
 				if (guidToGroups.ContainsKey(itemGuid)) {
 					menuItem.Items.Add(new MenuItem());
@@ -338,7 +338,7 @@ namespace dnSpy.Menus {
 				iconImgRef = null;
 			};
 
-			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => {
+			menuItem.Command = !(cmdHolder is null) ? cmdHolder.Command : new RelayCommand(a => {
 				Debug.Assert(!ctx.IsDisposed);
 				if (ctx?.IsDisposed == false) {
 					item.Execute(ctx);
@@ -348,7 +348,7 @@ namespace dnSpy.Menus {
 				if (ctx?.IsDisposed != false)
 					return false;
 				bool b = item.IsEnabled(ctx);
-				if (lastIsEnabledCallValue != b && iconImgRef != null)
+				if (lastIsEnabledCallValue != b && !(iconImgRef is null))
 					Add16x16Image(menuItem, iconImgRef.Value, lastIsEnabledCallValue = b);
 				return b;
 			});
@@ -365,7 +365,7 @@ namespace dnSpy.Menus {
 
 		void Reinitialize(MenuItem menuItem) {
 			// To trigger this condition: Open the menu, then hold down LEFT or RIGHT for a few secs
-			if (menuItem.Items.Count != 1 || !(menuItem.Items[0] is MenuItem first) || first.Header != null) {
+			if (menuItem.Items.Count != 1 || !(menuItem.Items[0] is MenuItem first) || !(first.Header is null)) {
 				menuItem.Items.Clear();
 				menuItem.Items.Add(new MenuItem());
 			}
@@ -373,7 +373,7 @@ namespace dnSpy.Menus {
 
 		void InitializeSubMenu(MenuItem menuItem, MenuItemContext ctx, Guid ownerMenuGuid, IInputElement? commandTarget, bool isCtxMenu) {
 			Reinitialize(menuItem);
-			Debug.Assert(guidToGroups != null);
+			Debug.Assert(!(guidToGroups is null));
 
 			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out var groups);
 			Debug.Assert(b);
@@ -390,7 +390,7 @@ namespace dnSpy.Menus {
 
 		MenuItemContext? InitializeMainSubMenu(MenuItem menuItem, MenuMD md, IInputElement? commandTarget) {
 			Reinitialize(menuItem);
-			Debug.Assert(guidToGroups != null);
+			Debug.Assert(!(guidToGroups is null));
 
 			var guid = new Guid(md.Metadata.Guid);
 			bool b = guidToGroups.TryGetValue(guid, out var groups);
@@ -412,8 +412,8 @@ namespace dnSpy.Menus {
 
 		public Menu CreateMenu(Guid menuGuid, IInputElement? commandTarget) {
 			InitializeMenuItemObjects();
-			Debug.Assert(guidToGroups != null);
-			Debug.Assert(guidToMenu != null);
+			Debug.Assert(!(guidToGroups is null));
+			Debug.Assert(!(guidToMenu is null));
 
 			var menu = new Menu();
 
@@ -437,7 +437,7 @@ namespace dnSpy.Menus {
 				};
 				topMenuItem.SubmenuClosed += (s, e) => {
 					if (e.Source == topMenuItem) {
-						Debug.Assert(ctxTmp != null);
+						Debug.Assert(!(ctxTmp is null));
 						ctxTmp?.Dispose();
 						ctxTmp = null;
 

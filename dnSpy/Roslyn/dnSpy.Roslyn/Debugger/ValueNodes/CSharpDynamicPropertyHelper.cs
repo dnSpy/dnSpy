@@ -26,7 +26,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	static class CSharpDynamicPropertyHelper {
 		public static bool IsCSharpDynamicProperty(DmdType type) =>
-			type.MetadataNamespace == null &&
+			type.MetadataNamespace is null &&
 			type.MetadataName == "DynamicProperty" &&
 			type.DeclaringType is DmdType declType &&
 			declType.MetadataNamespace == "Microsoft.CSharp.RuntimeBinder" &&
@@ -48,7 +48,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				state.NameField = type.GetField("name", type.AppDomain.System_String, throwOnError: false);
 				state.ValueField = type.GetField("value", type.AppDomain.System_Object, throwOnError: false);
 			}
-			if ((object?)state.NameField == null || (object?)state.ValueField == null)
+			if (state.NameField is null || state.ValueField is null)
 				return default;
 
 			DbgDotNetValueResult nameValue = default;

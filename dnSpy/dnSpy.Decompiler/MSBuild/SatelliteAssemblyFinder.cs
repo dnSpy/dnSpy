@@ -38,7 +38,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public IEnumerable<ModuleDef> GetSatelliteAssemblies(ModuleDef module) {
 			var asm = module.Assembly;
-			if (asm == null)
+			if (asm is null)
 				yield break;
 			var satAsmName = new AssemblyNameInfo(asm);
 			satAsmName.Name = asm.Name + ".resources";
@@ -46,7 +46,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				if (!File.Exists(filename))
 					continue;
 				var satAsm = TryOpenAssembly(filename);
-				if (satAsm == null || !AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(satAsmName, satAsm))
+				if (satAsm is null || !AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(satAsmName, satAsm))
 					continue;
 				yield return satAsm.ManifestModule;
 			}
@@ -99,7 +99,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					return null;
 				try {
 					mod = ModuleDefMD.Load(filename);
-					if (mod.Assembly == null || UTF8String.IsNullOrEmpty(mod.Assembly.Culture)) {
+					if (mod.Assembly is null || UTF8String.IsNullOrEmpty(mod.Assembly.Culture)) {
 						mod.Dispose();
 						return null;
 					}

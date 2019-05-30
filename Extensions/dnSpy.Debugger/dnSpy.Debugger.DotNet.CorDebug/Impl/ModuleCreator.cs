@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			else {
 				var manifestModule = engine.TryGetModule(modules[0].CorModule);
-				if (manifestModule == null)
+				if (manifestModule is null)
 					throw new InvalidOperationException();
 				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule!.Assembly;
 				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static Func<DmdLazyMetadataBytes> CreateDynamicGetMetadataDelegate(DbgEngineImpl engine, DnModule dnModule) {
 			Debug.Assert(dnModule.IsDynamic);
 			var comMetadata = dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
-			if (comMetadata == null)
+			if (comMetadata is null)
 				throw new InvalidOperationException();
 			var result = new DmdLazyMetadataBytesCom(comMetadata, engine.GetDynamicModuleHelper(dnModule), engine.DmdDispatcher);
 			return () => result;
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
 				var bytes = dnModule.Process.CorProcess.ReadMemory(dnModule.Address, (int)dnModule.Size);
-				if (bytes != null) {
+				if (!(bytes is null)) {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			finally {
 				try {
-					if (tempFilename != null)
+					if (!(tempFilename is null))
 						File.Delete(tempFilename);
 				}
 				catch { }

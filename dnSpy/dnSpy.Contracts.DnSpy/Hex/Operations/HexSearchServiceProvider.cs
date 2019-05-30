@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// <param name="pattern">Pattern. Supported characters: whitespace, hex digits and the wildcard character '?'</param>
 		/// <returns></returns>
 		public HexSearchService CreateByteSearchService(string pattern) {
-			if (pattern == null)
+			if (pattern is null)
 				throw new ArgumentNullException(nameof(pattern));
 			int byteLength = GetByteLength(pattern);
 			if (byteLength <= 0)
@@ -200,7 +200,7 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// <param name="pattern">Pattern</param>
 		/// <returns></returns>
 		public bool IsValidByteSearchString(string pattern) {
-			if (pattern == null)
+			if (pattern is null)
 				throw new ArgumentNullException(nameof(pattern));
 			return GetByteLength(pattern) > 0;
 		}
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Hex.Operations {
 		/// <param name="pattern">Bytes to search for</param>
 		/// <returns></returns>
 		public HexSearchService CreateByteSearchService(byte[] pattern) {
-			if (pattern == null)
+			if (pattern is null)
 				throw new ArgumentNullException(nameof(pattern));
 			var mask = new byte[pattern.Length];
 			for (int i = 0; i < mask.Length; i++)

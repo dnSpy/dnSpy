@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected TypeVMBase(T value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(onUpdated) {
 			type = default!;
-			if (options != null) {
+			if (!(options is null)) {
 				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected abstract TypeSig ToTypeSig(T type);
 		protected abstract T ToType(TypeSig type);
-		internal static string ToString(IType type) => type == null ? "null" : type.FullName;
+		internal static string ToString(IType type) => type is null ? "null" : type.FullName;
 	}
 
 	sealed class TypeSigVM : TypeVMBase<TypeSig> {
@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected TypeListDataFieldVMBase(IList<T> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(onUpdated) {
-			if (options != null) {
+			if (!(options is null)) {
 				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected override string OnNewValue(IList<T> value) {
 			types.Clear();
-			if (value != null)
+			if (!(value is null))
 				types.AddRange(value);
 			return CalculateStringValue();
 		}

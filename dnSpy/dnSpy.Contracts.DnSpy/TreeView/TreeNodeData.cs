@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.TreeView {
 		public ITreeNode TreeNode {
 			get => treeNode;
 			set {
-				if (treeNode != null)
+				if (!(treeNode is null))
 					throw new InvalidOperationException();
 				treeNode = value ?? throw new ArgumentNullException(nameof(value));
 			}
@@ -199,11 +199,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="self">This</param>
 		/// <returns></returns>
 		public static T? GetAncestorOrSelf<T>(this TreeNodeData? self) where T : TreeNodeData {
-			while (self != null) {
+			while (!(self is null)) {
 				if (self is T found)
 					return found;
 				var parent = self.TreeNode.Parent;
-				if (parent == null)
+				if (parent is null)
 					break;
 				self = parent.Data;
 			}

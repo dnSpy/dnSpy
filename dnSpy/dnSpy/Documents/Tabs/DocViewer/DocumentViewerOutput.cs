@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		internal string GetCachedText() {
-			if (cachedText == null)
+			if (cachedText is null)
 				throw new InvalidOperationException();
 			return cachedText;
 		}
@@ -120,7 +120,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal DocumentViewerContent CreateContent(Dictionary<string, object> dataDict) {
 			VerifyState(State.CustomDataProviders);
 			state = State.ContentCreated;
-			Debug.Assert(cachedText != null);
+			Debug.Assert(!(cachedText is null));
 			Debug.Assert(cachedText == stringBuilder.ToString());
 			return new DocumentViewerContent(cachedText, cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
 		}
@@ -198,7 +198,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			VerifyState(State.GeneratingContent);
 			if (addIndent)
 				AddIndent();
-			if (reference == null) {
+			if (reference is null) {
 				AddText(text, index, length, color);
 				return;
 			}
@@ -209,7 +209,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public void AddUIElement(Func<UIElement> createElement) {
 			VerifyState(State.GeneratingContent);
-			if (createElement == null)
+			if (createElement is null)
 				throw new ArgumentNullException(nameof(createElement));
 			if (addIndent)
 				AddIndent();
@@ -219,9 +219,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public void AddButton(string buttonText, Action clickHandler) {
 			VerifyState(State.GeneratingContent);
-			if (buttonText == null)
+			if (buttonText is null)
 				throw new ArgumentNullException(nameof(buttonText));
-			if (clickHandler == null)
+			if (clickHandler is null)
 				throw new ArgumentNullException(nameof(clickHandler));
 			AddUIElement(() => {
 				var button = new Button { Content = buttonText };

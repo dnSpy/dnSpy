@@ -116,21 +116,21 @@ namespace dnSpy.Bookmarks.TextEditor {
 		LocationsResult GetLocation(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			var allLocations = new List<BookmarkLocation>();
 			var textView = GetTextView(tab);
-			if (textView == null)
+			if (textView is null)
 				return new LocationsResult(bookmarksService, null, allLocations);
-			Debug.Assert(tab != null);
+			Debug.Assert(!(tab is null));
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
 			TextViewBookmarkLocationResult? res = null;
 			foreach (var lz in textViewBookmarkLocationProviders) {
 				var result = lz.Value.CreateLocation(tab, textView, pos);
-				if (result?.Location == null)
+				if (result?.Location is null)
 					continue;
 				allLocations.Add(result.Value.Location);
 				if (result.Value.Span.Snapshot != textView.TextSnapshot)
 					continue;
-				if (res == null || result.Value.Span.Start < res.Value.Span.Start)
+				if (res is null || result.Value.Span.Start < res.Value.Span.Start)
 					res = result;
 			}
 			return new LocationsResult(bookmarksService, res, allLocations);
@@ -191,7 +191,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			}
 
 			public void Dispose() {
-				if (location != null)
+				if (!(location is null))
 					bookmarksService.Value.Close(location);
 			}
 
@@ -205,11 +205,11 @@ namespace dnSpy.Bookmarks.TextEditor {
 		ToggleCreateBreakpointInfoResult GetToggleCreateBookmarkInfo(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			using (var info = GetLocation(tab, position)) {
 				var locRes = info.locRes;
-				var bms = locRes == null ? Array.Empty<Bookmark>() : GetBookmarks(locRes.Value);
+				var bms = locRes is null ? Array.Empty<Bookmark>() : GetBookmarks(locRes.Value);
 				if (bms.Length != 0)
 					return new ToggleCreateBreakpointInfoResult(bookmarksService, ToggleCreateBookmarkKind.Delete, bms, null);
 				else {
-					if (locRes == null || locRes.Value.Location == null)
+					if (locRes is null || locRes.Value.Location is null)
 						return new ToggleCreateBreakpointInfoResult(bookmarksService, ToggleCreateBookmarkKind.None, Array.Empty<Bookmark>(), null);
 					return new ToggleCreateBreakpointInfoResult(bookmarksService, ToggleCreateBookmarkKind.Add, Array.Empty<Bookmark>(), info.TakeOwnership(locRes.Value.Location));
 				}
@@ -221,7 +221,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 				switch (info.kind) {
 				case ToggleCreateBookmarkKind.Add:
 					var bookmark = bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.TakeOwnershipOfLocation()!, new BookmarkSettings() { IsEnabled = true }));
-					if (bookmark != null)
+					if (!(bookmark is null))
 						bookmarkNavigator.Value.SetActiveBookmarkNoCheck(bookmark);
 					break;
 
@@ -313,18 +313,18 @@ namespace dnSpy.Bookmarks.TextEditor {
 		public override bool CanClearAllBookmarksInDocument => true;
 		public override void ClearAllBookmarksInDocument() {
 			var currentDoc = GetDocument(bookmarkNavigator.Value.ActiveBookmark);
-			if (currentDoc == null)
+			if (currentDoc is null)
 				return;
 			bookmarksService.Value.Remove(bookmarksService.Value.Bookmarks.Where(a => currentDoc.Equals(GetDocument(a))).ToArray());
 		}
 
 		BookmarkDocument? GetDocument(Bookmark? bookmark) {
 			uiDispatcher.VerifyAccess();
-			if (bookmark == null)
+			if (bookmark is null)
 				return null;
 			foreach (var lz in bookmarkDocumentProviders) {
 				var doc = lz.Value.GetDocument(bookmark);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 			}
 			return null;

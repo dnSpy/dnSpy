@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			nodes != null &&
+			!(nodes is null) &&
 			nodes.Length > 0 &&
 			nodes.All(a => a is NamespaceNode);
 
@@ -100,9 +100,9 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 
 			public void Delete(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
-				Debug.Assert(parents != null && nodes.Length == parents.Length);
-				Debug.Assert(infos == null);
-				if (infos != null)
+				Debug.Assert(!(parents is null) && nodes.Length == parents.Length);
+				Debug.Assert(infos is null);
+				if (!(infos is null))
 					throw new InvalidOperationException();
 
 				infos = new ModuleInfo[nodes.Length];
@@ -110,8 +110,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 					var module = parents[i].GetModule();
-					Debug.Assert(module != null);
-					if (module == null)
+					Debug.Assert(!(module is null));
+					if (module is null)
 						throw new InvalidOperationException();
 
 					var info = new ModuleInfo(module, node.TreeNode.Children.Count);
@@ -131,8 +131,8 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 
 			public void Restore(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
-				Debug.Assert(infos != null);
-				if (infos == null)
+				Debug.Assert(!(infos is null));
+				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
 				if (infos.Length != nodes.Length)
@@ -210,19 +210,19 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			nodes != null &&
+			!(nodes is null) &&
 			nodes.Length > 0 &&
 			nodes.All(a => a is NamespaceNode) &&
 			nodes.Any(a => ((NamespaceNode)a).Name != string.Empty) &&
 			IsInSameModule(nodes) &&
-			nodes[0].TreeNode.Parent != null &&
+			!(nodes[0].TreeNode.Parent is null) &&
 			nodes[0].TreeNode.Parent!.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		static bool IsInSameModule(DocumentTreeNodeData[] nodes) {
-			if (nodes == null || nodes.Length == 0)
+			if (nodes is null || nodes.Length == 0)
 				return false;
 			var module = nodes[0].GetModule();
-			if (module == null)
+			if (module is null)
 				return false;
 			for (int i = 0; i < nodes.Length; i++) {
 				if (module != nodes[i].GetModule())
@@ -261,8 +261,8 @@ namespace dnSpy.AsmEditor.Namespace {
 		NamespaceNode? GetTarget() => nodes.Nodes.Length == 0 ? null : (NamespaceNode)nodes.Nodes[0].TreeNode.Parent!.DataChildren.First(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		public void Execute() {
-			Debug.Assert(infos == null);
-			if (infos != null)
+			Debug.Assert(infos is null);
+			if (!(infos is null))
 				throw new InvalidOperationException();
 
 			nodes.Delete();
@@ -290,8 +290,8 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public void Undo() {
-			Debug.Assert(infos != null);
-			if (infos == null)
+			Debug.Assert(!(infos is null));
+			if (infos is null)
 				throw new InvalidOperationException();
 
 			for (int i = infos.Length - 1; i >= 0; i--) {
@@ -320,7 +320,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public IEnumerable<object> ModifiedObjects {
 			get {
-				if (nsTarget != null)
+				if (!(nsTarget is null))
 					yield return nsTarget;
 				foreach (var n in nodes.Nodes)
 					yield return n;
@@ -362,7 +362,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			nodes != null &&
+			!(nodes is null) &&
 			nodes.Length == 1 &&
 			nodes[0] is NamespaceNode;
 
@@ -412,8 +412,8 @@ namespace dnSpy.AsmEditor.Namespace {
 			existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent!.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			origParentNode = (DocumentTreeNodeData)nsNode.TreeNode.Parent.Data;
@@ -437,7 +437,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public void Execute() {
 			UTF8String newNamespace = newName;
-			if (existingNsNode != null) {
+			if (!(existingNsNode is null)) {
 				Debug.Assert(origChildren.Length == nsNode.TreeNode.Children.Count);
 				nsNode.TreeNode.Children.Clear();
 				foreach (var typeNode in origChildren) {
@@ -466,7 +466,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public void Undo() {
-			if (existingNsNode != null) {
+			if (!(existingNsNode is null)) {
 				Debug.Assert(nsNode.TreeNode.Children.Count == 0);
 				foreach (var typeNode in origChildren) {
 					bool b = existingNsNode.TreeNode.Children.Remove(typeNode.TreeNode);

@@ -38,7 +38,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			var session = buffer.TryGetSignatureHelpSession();
-			if (session == null)
+			if (session is null)
 				return null;
 			return new SignatureHelpTagger(session, buffer, themeClassificationTypeService) as ITagger<T>;
 		}
@@ -79,7 +79,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var signature = session.SelectedSignature as Signature;
-			if (signature == null)
+			if (signature is null)
 				yield break;
 
 			var usePrettyPrintedContent = buffer.GetUsePrettyPrintedContent();

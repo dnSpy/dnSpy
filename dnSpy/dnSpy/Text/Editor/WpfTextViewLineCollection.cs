@@ -35,7 +35,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextSnapshot snapshot;
 
 		public WpfTextViewLineCollection(IWpfTextView textView, ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
-			if (lines == null)
+			if (lines is null)
 				throw new ArgumentNullException(nameof(lines));
 			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
@@ -136,7 +136,7 @@ namespace dnSpy.Text.Editor {
 			if (bufferPosition.Snapshot != snapshot)
 				throw new ArgumentException();
 			var line = GetTextViewLineContainingBufferPosition(bufferPosition);
-			if (line == null)
+			if (line is null)
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 			return line.GetCharacterBounds(bufferPosition);
 		}
@@ -144,7 +144,7 @@ namespace dnSpy.Text.Editor {
 		public int GetIndexOfTextLine(ITextViewLine textLine) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
-			if (textLine == null)
+			if (textLine is null)
 				throw new ArgumentNullException(nameof(textLine));
 			for (int i = 0; i < lines.Count; i++) {
 				if (lines[i] == textLine)
@@ -173,7 +173,7 @@ namespace dnSpy.Text.Editor {
 			MarkerHelper.AddGeometries(textView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
 				geo = geo!.GetOutlinedPathGeometry();
-			if (geo != null && geo.CanFreeze)
+			if (!(geo is null) && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
@@ -201,7 +201,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentException();
 			var span = FormattedSpan.Overlap(bufferSpan);
 			var list = new List<TextBounds>();
-			if (span == null)
+			if (span is null)
 				return new Collection<TextBounds>(list);
 
 			bool found = false;
@@ -227,7 +227,7 @@ namespace dnSpy.Text.Editor {
 			if (bufferPosition.Snapshot != snapshot)
 				throw new ArgumentException();
 			var line = GetTextViewLineContainingBufferPosition(bufferPosition);
-			if (line == null)
+			if (line is null)
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 			return line.GetTextElementSpan(bufferPosition);
 		}
@@ -275,7 +275,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void CopyTo(ITextViewLine[] array, int arrayIndex) {
-			if (array == null)
+			if (array is null)
 				throw new ArgumentNullException(nameof(array));
 			for (int i = 0; i < lines.Count; i++)
 				array[arrayIndex + i] = lines[i];

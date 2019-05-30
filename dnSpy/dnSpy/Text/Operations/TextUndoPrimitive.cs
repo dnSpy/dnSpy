@@ -40,13 +40,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public bool CanMerge(ITextUndoPrimitive older) {
-			if (older == null)
+			if (older is null)
 				throw new ArgumentNullException(nameof(older));
 			return false;//TODO:
 		}
 
 		public ITextUndoPrimitive Merge(ITextUndoPrimitive older) {
-			if (older == null)
+			if (older is null)
 				throw new ArgumentNullException(nameof(older));
 			throw new NotSupportedException();//TODO:
 		}

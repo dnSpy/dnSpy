@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Name == null;
+		public bool IsDefault => Name is null;
 
 		/// <summary>
 		/// Span of file

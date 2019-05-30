@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(CorDebugStartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.Filename = Filename;

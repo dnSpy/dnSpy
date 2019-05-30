@@ -39,7 +39,7 @@ namespace dnSpy.Documents.TreeView {
 		readonly ModuleDocumentNode moduleNode;
 
 		public ReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDocumentNode moduleNode) {
-			Debug.Assert(moduleNode.Document.ModuleDef != null);
+			Debug.Assert(!(moduleNode.Document.ModuleDef is null));
 			TreeNodeGroup = treeNodeGroup;
 			this.moduleNode = moduleNode;
 		}
@@ -48,7 +48,7 @@ namespace dnSpy.Documents.TreeView {
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.ReferencesFolder);
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(moduleNode.Document.ModuleDef != null);
+			Debug.Assert(!(moduleNode.Document.ModuleDef is null));
 			foreach (var asmRef in moduleNode.Document.ModuleDef.GetAssemblyRefs())
 				yield return new AssemblyReferenceNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.AssemblyRefTreeNodeGroupReferences), moduleNode.Document.ModuleDef, asmRef);
 			foreach (var modRef in moduleNode.Document.ModuleDef.GetModuleRefs())

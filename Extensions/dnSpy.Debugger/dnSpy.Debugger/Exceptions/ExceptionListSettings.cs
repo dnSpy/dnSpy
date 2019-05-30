@@ -87,11 +87,11 @@ namespace dnSpy.Debugger.Exceptions {
 
 				foreach (var exSect in categorySect.SectionsWithName("Exception")) {
 					var diffType = exSect.Attribute<DiffType?>("DiffType");
-					if (diffType == null)
+					if (diffType is null)
 						continue;
 
 					var idKind = exSect.Attribute<DbgExceptionIdKind?>("IdKind");
-					if (idKind == null)
+					if (idKind is null)
 						continue;
 
 					DbgExceptionId id;
@@ -102,14 +102,14 @@ namespace dnSpy.Debugger.Exceptions {
 
 					case DbgExceptionIdKind.Code:
 						var code = exSect.Attribute<int?>("Code");
-						if (code == null)
+						if (code is null)
 							continue;
 						id = new DbgExceptionId(category, code.Value);
 						break;
 
 					case DbgExceptionIdKind.Name:
 						var name = exSect.Attribute<string>("Name");
-						if (name == null)
+						if (name is null)
 							continue;
 						id = new DbgExceptionId(category, name);
 						break;
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Exceptions {
 		bool ReadSettings(ISettingsSection section, out DbgExceptionSettings settings) {
 			settings = default;
 			var flags = section.Attribute<DbgExceptionDefinitionFlags?>("Flags");
-			if (flags == null)
+			if (flags is null)
 				return false;
 			ReadOnlyCollection<DbgExceptionConditionSettings>? condSettings;
 			var condSects = section.SectionsWithName("Conditions");
@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.Exceptions {
 					var condSect = condSects[i];
 					var condType = condSect.Attribute<DbgExceptionConditionType?>("Type");
 					var cond = condSect.Attribute<string>("Condition");
-					if (condType == null || string.IsNullOrWhiteSpace(cond) || !IsValid(condType.Value))
+					if (condType is null || string.IsNullOrWhiteSpace(cond) || !IsValid(condType.Value))
 						return false;
 					conds[i] = new DbgExceptionConditionSettings(condType.Value, cond);
 				}

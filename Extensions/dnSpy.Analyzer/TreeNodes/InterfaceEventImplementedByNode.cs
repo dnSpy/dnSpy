@@ -39,7 +39,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ImplementedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			if (analyzedMethod == null)
+			if (analyzedMethod is null)
 				yield break;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
@@ -48,24 +48,24 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (!type.HasInterfaces || analyzedMethod == null)
+			if (!type.HasInterfaces || analyzedMethod is null)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
 			var implementedInterfaceRef = iff?.Interface;
-			if (implementedInterfaceRef == null)
+			if (implementedInterfaceRef is null)
 				yield break;
 
 			//TODO: Can we compare event types too?
 			foreach (EventDef ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+				if (!(accessor is null) && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new EventNode(ev) { Context = Context };
 				}
 			}
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (accessor != null && accessor.HasOverrides &&
+				if (!(accessor is null) && accessor.HasOverrides &&
 					accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new EventNode(ev) { Context = Context };
 				}

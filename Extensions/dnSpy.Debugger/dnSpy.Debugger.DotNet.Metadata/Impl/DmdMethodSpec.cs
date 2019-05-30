@@ -62,20 +62,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdParameterInfo ReturnParameter {
 			get {
-				if (__parameters_DONT_USE == null)
+				if (__parameters_DONT_USE is null)
 					InitializeParameters();
 				return __returnParameter_DONT_USE!;
 			}
 		}
 
 		public override ReadOnlyCollection<DmdParameterInfo> GetParameters() {
-			if (__parameters_DONT_USE == null)
+			if (__parameters_DONT_USE is null)
 				InitializeParameters();
 			return __parameters_DONT_USE!;
 		}
 
 		void InitializeParameters() {
-			if (__parameters_DONT_USE != null)
+			if (!(__parameters_DONT_USE is null))
 				return;
 
 			var newRP = new DmdCreatedParameterInfo(this, genericMethodDefinition.ReturnParameter, methodSignature.ReturnType);
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				parameters[i] = new DmdCreatedParameterInfo(this, defParameters[i], paramTypes[i]);
 
 			lock (LockObject) {
-				if (__parameters_DONT_USE == null) {
+				if (__parameters_DONT_USE is null) {
 					__returnParameter_DONT_USE = newRP;
 					__parameters_DONT_USE = ReadOnlyCollectionHelpers.Create(parameters);
 				}

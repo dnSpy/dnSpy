@@ -37,9 +37,9 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		DbgEvaluationResult CreateResult(DbgRuntime runtime, DbgEngineEvaluationResult result) {
-			if (result.Error != null)
+			if (!(result.Error is null))
 				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.FormatSpecifiers, result.Flags);
-			Debug.Assert(result.Value != null);
+			Debug.Assert(!(result.Value is null));
 			try {
 				var value = new DbgValueImpl(runtime, result.Value);
 				runtime.CloseOnContinue(value);
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override object? CreateExpressionEvaluatorState() => engineExpressionEvaluator.CreateExpressionEvaluatorState();
 
 		public override DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? state) {
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -64,14 +64,14 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (expression == null)
+			if (expression is null)
 				throw new ArgumentNullException(nameof(expression));
 			Debug.Assert((evalInfo.Context.Options & DbgEvaluationContextOptions.NoMethodBody) == 0, "Missing method debug info");
 			return CreateResult(evalInfo.Context.Runtime, engineExpressionEvaluator.Evaluate(evalInfo, expression, options, state));
 		}
 
 		public override DbgEEAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options) {
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -79,9 +79,9 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (expression == null)
+			if (expression is null)
 				throw new ArgumentNullException(nameof(expression));
-			if (valueExpression == null)
+			if (valueExpression is null)
 				throw new ArgumentNullException(nameof(valueExpression));
 			var result = engineExpressionEvaluator.Assign(evalInfo, expression, valueExpression, options);
 			return CreateResult(result);

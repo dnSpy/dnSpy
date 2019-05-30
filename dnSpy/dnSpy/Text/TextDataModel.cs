@@ -31,13 +31,13 @@ namespace dnSpy.Text {
 		EventHandler<TextDataModelContentTypeChangedEventArgs>? realContentTypeChanged;
 		public event EventHandler<TextDataModelContentTypeChangedEventArgs> ContentTypeChanged {
 			add {
-				if (realContentTypeChanged == null)
+				if (realContentTypeChanged is null)
 					textBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 				realContentTypeChanged += value;
 			}
 			remove {
 				realContentTypeChanged -= value;
-				if (realContentTypeChanged == null)
+				if (realContentTypeChanged is null)
 					textBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
 			}
 		}

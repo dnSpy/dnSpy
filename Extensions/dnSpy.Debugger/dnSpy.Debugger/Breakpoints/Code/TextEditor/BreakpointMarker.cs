@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				if (bp.IsHidden)
 					continue;
 				var location = dbgBreakpointGlyphTextMarkerLocationProviderService.GetLocation(bp);
-				if (location != null) {
+				if (!(location is null)) {
 					bp.GetOrCreateData(() => new BreakpointData(location));
 					UpdateMarker(bp);
 					continue;
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				if (!bp.TryGetData(out BreakpointData? data))
 					continue;
 				bps.Add(bp);
-				if (data.Marker == null)
+				if (data.Marker is null)
 					continue;
 				if (data.Info == breakpointInfos![(int)BreakpointImageUtilities.GetBreakpointKind(bp)])
 					continue;
@@ -177,10 +177,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				return;
 
 			var info = breakpointInfos![(int)BreakpointImageUtilities.GetBreakpointKind(bp)];
-			if (data.Info == info && data.Marker != null)
+			if (data.Info == info && !(data.Marker is null))
 				return;
 			data.Info = info;
-			if (data.Marker != null)
+			if (!(data.Marker is null))
 				glyphTextMarkerService.Value.Remove(data.Marker);
 
 			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, bp, breakpointGlyphTextMarkerHandler, textViewFilter);
@@ -193,9 +193,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			foreach (var info in glyphTextMarkerService.Value.GetMarkers(textView, span)) {
 				if (info.Marker.Tag is DbgCodeBreakpoint bp) {
 					bool reset = false;
-					if (locationSpan.Snapshot == null || locationSpan == info.Span || (reset = info.Span.Start < locationSpan.Start)) {
+					if (locationSpan.Snapshot is null || locationSpan == info.Span || (reset = info.Span.Start < locationSpan.Start)) {
 						locationSpan = info.Span;
-						if (locations == null)
+						if (locations is null)
 							locations = new List<DbgCodeLocation>();
 						else if (reset)
 							locations.Clear();
@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 					}
 				}
 			}
-			if (locations != null)
+			if (!(locations is null))
 				return new DbgTextViewBreakpointLocationResult(locations.Select(a => a.Clone()).ToArray(), new VirtualSnapshotSpan(locationSpan));
 			return null;
 		}

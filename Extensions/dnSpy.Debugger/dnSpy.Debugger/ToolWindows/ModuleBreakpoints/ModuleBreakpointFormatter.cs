@@ -34,13 +34,13 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		internal static ModuleBreakpointFormatter Create_DONT_USE() => new ModuleBreakpointFormatter();
 
 		void WriteInt32Decimal(IDbgTextWriter output, int? value) {
-			if (value == null)
+			if (value is null)
 				return;
 			output.Write(DbgTextColor.Number, value.Value.ToString());
 		}
 
 		void WriteBoolean(IDbgTextWriter output, bool? value) {
-			if (value == null)
+			if (value is null)
 				return;
 			output.WriteYesNo(value.Value);
 		}

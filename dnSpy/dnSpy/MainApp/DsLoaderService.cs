@@ -56,12 +56,12 @@ namespace dnSpy.MainApp {
 		}
 
 		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args) {
-			Debug.Assert(windowLoader != null);
+			Debug.Assert(!(windowLoader is null));
 			windowLoader.Initialize(content, window, args);
 		}
 
 		internal void LoadAllCodeFinished() {
-			Debug.Assert(windowLoader != null);
+			Debug.Assert(!(windowLoader is null));
 			windowLoader = null;
 			OnAppLoaded?.Invoke(this, EventArgs.Empty);
 		}

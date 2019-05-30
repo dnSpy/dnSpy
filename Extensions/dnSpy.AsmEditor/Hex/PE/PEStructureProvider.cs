@@ -32,10 +32,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 	[Export(typeof(PEStructureProviderFactory))]
 	sealed class PEStructureProviderFactoryImpl : PEStructureProviderFactory {
 		public override PEStructureProvider? TryGetProvider(HexBufferFile file) {
-			if (file == null)
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			return file.Properties.GetOrCreateSingletonProperty(typeof(PEStructureProviderImpl), () => new PEStructureProviderImpl(file, peHeaders));
 		}
@@ -89,9 +89,9 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly TablesStreamVM? tablesStream;
 
 		public PEStructureProviderImpl(HexBufferFile file, PeHeaders peHeaders) {
-			if (file == null)
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
-			if (peHeaders == null)
+			if (peHeaders is null)
 				throw new ArgumentNullException(nameof(peHeaders));
 			if (peHeaders != file.GetHeaders<PeHeaders>())
 				throw new ArgumentException();
@@ -110,10 +110,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				sections[i] = new ImageSectionHeaderVM(buffer, peHeaders.Sections[i].Data);
 			var dnHeaders = file.GetHeaders<DotNetHeaders>();
 			storageStreams = Array.Empty<StorageStreamVM>();
-			if (dnHeaders != null) {
+			if (!(dnHeaders is null)) {
 				imageCor20Header = new ImageCor20HeaderVM(buffer, dnHeaders.Cor20);
 				var mdHeaders = dnHeaders.MetadataHeaders;
-				if (mdHeaders != null) {
+				if (!(mdHeaders is null)) {
 					storageSignature = new StorageSignatureVM(buffer, mdHeaders.MetadataHeader);
 					storageHeader = new StorageHeaderVM(buffer, mdHeaders.MetadataHeader);
 					storageStreams = new StorageStreamVM[mdHeaders.Streams.Count];
@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 
 					var metadataTables = new MetadataTableVM[0x40];
-					if (mdHeaders.TablesStream != null) {
+					if (!(mdHeaders.TablesStream is null)) {
 						tablesStream = new TablesStreamVM(buffer, mdHeaders.TablesStream, metadataTables);
 						var stringsHeapSpan = GetSpan(mdHeaders.StringsStream);
 						var guidHeapSpan = GetSpan(mdHeaders.GUIDStream);

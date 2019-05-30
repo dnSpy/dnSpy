@@ -147,7 +147,7 @@ namespace dnSpy.Documents.Tabs {
 
 			var flvm = win.SelectedItems.FirstOrDefault();
 			var oldSelected = documentListService.SelectedDocumentList;
-			if (flvm != null) {
+			if (!(flvm is null)) {
 				documentListLoader.SaveCurrentDocumentsToList();
 				documentListService.Add(flvm.DocumentList);
 				documentListService.SelectedDocumentList = flvm.DocumentList;
@@ -155,7 +155,7 @@ namespace dnSpy.Documents.Tabs {
 
 			vm.Save();
 
-			if (flvm == null)
+			if (flvm is null)
 				return;
 			var documentList = flvm.DocumentList;
 			if (documentList == oldSelected)
@@ -219,7 +219,7 @@ namespace dnSpy.Documents.Tabs {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCodeEditorRoutedCommand,
 				(s, e) => documentTabService.ActiveTab?.TrySetFocus(),
-				(s, e) => e.CanExecute = documentTabService.ActiveTab != null,
+				(s, e) => e.CanExecute = !(documentTabService.ActiveTab is null),
 				ModifierKeys.Control | ModifierKeys.Alt, Key.D0,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0,
 				ModifierKeys.None, Key.F7);
@@ -236,7 +236,7 @@ namespace dnSpy.Documents.Tabs {
 
 	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 30)]
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) => GetFilename(context) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetFilename(context) is null);
 
 		static string? GetFilename(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
@@ -254,7 +254,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var filename = GetFilename(context);
-			if (filename == null)
+			if (filename is null)
 				return;
 			var args = $"/select,{filename}";
 			try {

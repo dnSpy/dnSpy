@@ -40,10 +40,10 @@ namespace dnSpy.Tabs {
 		public ITabGroup? ActiveTabGroup {
 			get => ActiveIndex < 0 ? null : stackedContent[ActiveIndex];
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				var g = value as TabGroup;
-				if (g == null)
+				if (g is null)
 					throw new InvalidOperationException();
 				SetActive(g);
 			}
@@ -194,7 +194,7 @@ namespace dnSpy.Tabs {
 				SetActive(dstTabGroup);
 		}
 
-		public bool MoveToNextTabGroupCanExecute => ActiveIndex >= 0 && ActiveIndex + 1 < stackedContent.Count && stackedContent[ActiveIndex].ActiveTabItemImpl != null;
+		public bool MoveToNextTabGroupCanExecute => ActiveIndex >= 0 && ActiveIndex + 1 < stackedContent.Count && !(stackedContent[ActiveIndex].ActiveTabItemImpl is null);
 
 		public void MoveToNextTabGroup() {
 			if (!MoveToNextTabGroupCanExecute)
@@ -202,7 +202,7 @@ namespace dnSpy.Tabs {
 			Move(stackedContent[ActiveIndex + 1], stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItemImpl);
 		}
 
-		public bool MoveToPreviousTabGroupCanExecute => ActiveIndex > 0 && stackedContent[ActiveIndex].ActiveTabItemImpl != null;
+		public bool MoveToPreviousTabGroupCanExecute => ActiveIndex > 0 && !(stackedContent[ActiveIndex].ActiveTabItemImpl is null);
 
 		public void MoveToPreviousTabGroup() {
 			if (!MoveToPreviousTabGroupCanExecute)
@@ -335,10 +335,10 @@ namespace dnSpy.Tabs {
 		}
 
 		public void Close(ITabGroup tabGroup) {
-			if (tabGroup == null)
+			if (tabGroup is null)
 				throw new ArgumentNullException(nameof(tabGroup));
 			var impl = tabGroup as TabGroup;
-			if (impl == null)
+			if (impl is null)
 				throw new InvalidOperationException();
 			impl.CloseAllTabs();
 		}

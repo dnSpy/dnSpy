@@ -45,14 +45,14 @@ namespace dnSpy.Hex.Adornments {
 		}
 
 		public override void ClearToolTip() {
-			if (toolTipAgent != null)
+			if (!(toolTipAgent is null))
 				spaceReservationManager.RemoveAgent(toolTipAgent);
 		}
 
 		public override void ShowToolTip(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, object toolTipContent, VSTA.PopupStyles style) {
 			if (bufferSpan.IsDefault)
 				throw new ArgumentException();
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				throw new ArgumentNullException(nameof(toolTipContent));
 			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
@@ -60,7 +60,7 @@ namespace dnSpy.Hex.Adornments {
 			ClearToolTip();
 
 			var uiElement = GetUIElement(toolTipContent);
-			if (uiElement == null)
+			if (uiElement is null)
 				throw new ArgumentException();
 
 			spaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;

@@ -55,7 +55,7 @@ namespace dnSpy.ToolWindows {
 		public IToolWindowGroup? ActiveTabGroup {
 			get => GetToolWindowGroup(tabGroupService.ActiveTabGroup);
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				var tg = GetTabGroup(value);
 				tabGroupService.ActiveTabGroup = tg ?? throw new InvalidOperationException();
@@ -89,7 +89,7 @@ namespace dnSpy.ToolWindows {
 		static ToolWindowContent? GetToolWindowContent(ITabContent? selected) => ((TabContentImpl?)selected)?.Content;
 
 		void TabGroupService_TabSelectionChanged(object sender, TabSelectedEventArgs e) {
-			if (e.Selected != null) {
+			if (!(e.Selected is null)) {
 				Debug.Assert(e.TabGroup.ActiveTabContent == e.Selected);
 				e.TabGroup.SetFocus(e.Selected);
 			}
@@ -103,15 +103,15 @@ namespace dnSpy.ToolWindows {
 		public IToolWindowGroup Create() => new ToolWindowGroup(this, tabGroupService.Create());
 
 		public void Close(IToolWindowGroup group) {
-			if (group == null)
+			if (group is null)
 				throw new ArgumentNullException(nameof(group));
 			var impl = group as ToolWindowGroup;
-			if (impl == null)
+			if (impl is null)
 				throw new InvalidOperationException();
 			tabGroupService.Close(impl.TabGroup);
 		}
 
-		public bool CloseAllTabsCanExecute => tabGroupService.ActiveTabGroup != null && tabGroupService.ActiveTabGroup.TabContents.Count() > 1 && tabGroupService.CloseAllTabsCanExecute;
+		public bool CloseAllTabsCanExecute => !(tabGroupService.ActiveTabGroup is null) && tabGroupService.ActiveTabGroup.TabContents.Count() > 1 && tabGroupService.CloseAllTabsCanExecute;
 		public void CloseAllTabs() => tabGroupService.CloseAllTabs();
 		public bool NewHorizontalTabGroupCanExecute => tabGroupService.NewHorizontalTabGroupCanExecute;
 		public void NewHorizontalTabGroup() => tabGroupService.NewHorizontalTabGroup(a => new ToolWindowGroup(this, a));

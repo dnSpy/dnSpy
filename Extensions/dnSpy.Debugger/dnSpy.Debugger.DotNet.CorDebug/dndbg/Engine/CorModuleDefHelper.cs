@@ -40,12 +40,12 @@ namespace dndbg.Engine {
 		public IAssembly CorLib {
 			get {
 				var corAsm = module.AppDomain.Assemblies.FirstOrDefault();
-				Debug.Assert(corAsm != null);
-				if (corAsm == null)
+				Debug.Assert(!(corAsm is null));
+				if (corAsm is null)
 					return AssemblyRefUser.CreateMscorlibReferenceCLR20();
 				var corMod = corAsm.Modules.FirstOrDefault();
-				Debug.Assert(corMod != null);
-				if (corMod == null)
+				Debug.Assert(!(corMod is null));
+				if (corMod is null)
 					return AssemblyRefUser.CreateMscorlibReferenceCLR20();
 				return corMod.GetOrCreateCorModuleDef().Assembly;
 			}
@@ -149,12 +149,12 @@ namespace dndbg.Engine {
 				return null;
 
 			var offs = RVAToAddressOffset(rva);
-			if (offs == null)
+			if (offs is null)
 				return null;
 			addr += offs.Value;
 
 			var data = module.Process.CorProcess.ReadMemory(addr, size);
-			Debug.Assert(data != null && data.Length == size);
+			Debug.Assert(!(data is null) && data.Length == size);
 			return data;
 		}
 
@@ -177,7 +177,7 @@ namespace dndbg.Engine {
 
 		ImageSectionHeader[] GetOrCreateSectionHeaders() {
 			var h = sectionHeaders;
-			if (h != null)
+			if (!(h is null))
 				return h;
 
 			try {

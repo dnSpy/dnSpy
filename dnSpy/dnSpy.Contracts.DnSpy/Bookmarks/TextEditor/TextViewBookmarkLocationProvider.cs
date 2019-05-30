@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
 		public TextViewBookmarkLocationResult(BookmarkLocation location, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Span = new VirtualSnapshotSpan(span);
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
 		public TextViewBookmarkLocationResult(BookmarkLocation location, VirtualSnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Span = span;

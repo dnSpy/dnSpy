@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 			if (columnText.Length != definitions.Length)
 				throw new InvalidOperationException();
 			foreach (var cmd in searchCommands) {
-				if (cmd.ColumnId == null) {
+				if (cmd.ColumnId is null) {
 					bool match = false;
 					foreach (var text in columnText) {
 						bool b = text.IndexOf(cmd.SearchText, stringComparison) >= 0;
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				return spans;
 
 			foreach (var cmd in searchCommands) {
-				if (cmd.ColumnId != null && cmd.ColumnId != columnId)
+				if (!(cmd.ColumnId is null) && cmd.ColumnId != columnId)
 					continue;
 				if (cmd.Negate)
 					continue;

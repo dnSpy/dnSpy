@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		/// <returns></returns>
 		public static DmdConstructorInfo? GetDynamicMetaObjectProviderDebugViewConstructor(DmdAppDomain appDomain) {
 			var state = appDomain.GetOrCreateData<CtorState>();
-			if (state.Assembly == null) {
+			if (state.Assembly is null) {
 				state.Assembly = appDomain.GetAssembly(debugViewAssemblyName);
 				var type = state.Assembly?.GetType("Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView", DmdGetTypeOptions.None);
 				state.Constructor = type?.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis, 0, appDomain.System_Void, new[] { appDomain.System_Object }, throwOnError: false) as DmdConstructorInfo;

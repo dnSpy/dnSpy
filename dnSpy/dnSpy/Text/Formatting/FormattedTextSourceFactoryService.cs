@@ -43,15 +43,15 @@ namespace dnSpy.Text.Formatting {
 			Create(sourceTextSnapshot, visualBufferSnapshot, tabSize, baseIndent, wordWrapWidth, maxAutoIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap, false);
 
 		public IFormattedLineSource Create(ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, IClassifier aggregateClassifier, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap, bool isViewWrapEnabled) {
-			if (sourceTextSnapshot == null)
+			if (sourceTextSnapshot is null)
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
-			if (visualBufferSnapshot == null)
+			if (visualBufferSnapshot is null)
 				throw new ArgumentNullException(nameof(visualBufferSnapshot));
-			if (aggregateClassifier == null)
+			if (aggregateClassifier is null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
-			if (sequencer == null)
+			if (sequencer is null)
 				throw new ArgumentNullException(nameof(sequencer));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (tabSize <= 0)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));

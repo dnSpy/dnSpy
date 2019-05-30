@@ -40,12 +40,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				List<DbgCodeBreakpoint>? bpsToRemove = null;
 				foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
 					if (bp.IsTemporary) {
-						if (bpsToRemove == null)
+						if (bpsToRemove is null)
 							bpsToRemove = new List<DbgCodeBreakpoint>();
 						bpsToRemove.Add(bp);
 					}
 				}
-				if (bpsToRemove != null)
+				if (!(bpsToRemove is null))
 					dbgCodeBreakpointsService.Value.Remove(bpsToRemove.ToArray());
 			}
 		}

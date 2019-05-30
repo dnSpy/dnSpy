@@ -40,9 +40,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public string CreatedBy {
 			get {
-				if (createdBy == null)
+				if (createdBy is null)
 					CalculateInfo();
-				Debug.Assert(createdBy != null);
+				Debug.Assert(!(createdBy is null));
 				return createdBy;
 			}
 		}
@@ -50,9 +50,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public string FileVersion {
 			get {
-				if (fileVersion == null)
+				if (fileVersion is null)
 					CalculateInfo();
-				Debug.Assert(fileVersion != null);
+				Debug.Assert(!(fileVersion is null));
 				return fileVersion;
 			}
 		}
@@ -92,10 +92,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		string? GetCreatedBy(ModuleDef mod) {
 			var asm = mod.Assembly;
-			if (asm == null)
+			if (asm is null)
 				return null;
 			var ca = asm.CustomAttributes.Find("System.Reflection.AssemblyCompanyAttribute");
-			if (ca == null)
+			if (ca is null)
 				return null;
 			if (ca.ConstructorArguments.Count != 1)
 				return null;
@@ -119,7 +119,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		static string Filter(string s) {
-			if (s == null)
+			if (s is null)
 				return string.Empty;
 			const int MAX = 512;
 			if (s.Length > MAX)

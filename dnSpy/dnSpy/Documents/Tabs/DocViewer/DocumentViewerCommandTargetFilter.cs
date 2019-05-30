@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		DocumentViewer? __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (TryGetInstance() == null)
+			if (TryGetInstance() is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -67,7 +67,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var documentViewer = TryGetInstance();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {

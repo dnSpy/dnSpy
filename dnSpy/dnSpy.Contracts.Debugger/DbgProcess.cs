@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="destination">Destination buffer</param>
 		public void ReadMemory(ulong address, byte[] destination) {
-			if (destination == null)
+			if (destination is null)
 				throw new ArgumentNullException(nameof(destination));
 			ReadMemory(address, destination, 0, destination.Length);
 		}
@@ -183,7 +183,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="address">Address in the debugged process</param>
 		/// <param name="source">Source buffer</param>
 		public void WriteMemory(ulong address, byte[] source) {
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
 			WriteMemory(address, source, 0, source.Length);
 		}

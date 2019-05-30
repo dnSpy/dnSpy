@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_DOCVIEWER_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetMemberRef(context) is null);
 			static IMemberRef? GetMemberRef(IMenuItemContext context) => GetMemberRef(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 
@@ -46,7 +46,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
 		sealed class SearchCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) => GetMemberRef(context) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetMemberRef(context) is null);
 			static IMemberRef? GetMemberRef(IMenuItemContext context) => CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
 			public override void Execute(IMenuItemContext context) => SearchMsdn(GetMemberRef(context));
 		}
@@ -61,7 +61,7 @@ namespace dnSpy.Documents.Tabs {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes == null)
+				if (nodes is null)
 					yield break;
 				foreach (var node in nodes) {
 					if (node is IMDTokenNode tokNode) {
@@ -99,7 +99,7 @@ namespace dnSpy.Documents.Tabs {
 		static IMemberDef? Resolve(IMemberRef? memberRef) {
 			var member = ResolveDef(memberRef);
 			var md = member as MethodDef;
-			if (md == null)
+			if (md is null)
 				return member;
 
 			if (md.SemanticsAttributes == 0)
@@ -145,7 +145,7 @@ namespace dnSpy.Documents.Tabs {
 				return IsAccessible((TypeDef)def);
 
 			var md = def as IMemberDef;
-			if (md == null)
+			if (md is null)
 				return false;
 			if (!IsAccessible(md.DeclaringType))
 				return false;
@@ -166,10 +166,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static bool IsAccessible(TypeDef type) {
-			if (type == null)
+			if (type is null)
 				return false;
 			while (true) {
-				if (type.DeclaringType == null)
+				if (type.DeclaringType is null)
 					break;
 				switch (type.Visibility) {
 				case TypeAttributes.NotPublic:
@@ -193,10 +193,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static bool IsAccessible(MethodDef method) =>
-			method != null && (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
+			!(method is null) && (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
 
 		static bool IsAccessible(FieldDef field) =>
-			field != null && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
+			!(field is null) && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
 
 		static bool IsAccessible(PropertyDef prop) =>
 			prop.GetMethods.Any(m => IsAccessible(m)) ||
@@ -211,14 +211,14 @@ namespace dnSpy.Documents.Tabs {
 
 		static string GetAddress(IMemberRef memberRef) {
 			var member = Resolve(memberRef);
-			if (member == null)
+			if (member is null)
 				return string.Empty;
 
-			if (member.DeclaringType != null && member.DeclaringType.IsEnum && member is FieldDef && ((FieldDef)member).IsLiteral)
+			if (!(member.DeclaringType is null) && member.DeclaringType.IsEnum && member is FieldDef && ((FieldDef)member).IsLiteral)
 				member = member.DeclaringType;
 
 			string memberName;
-			if (member.DeclaringType == null)
+			if (member.DeclaringType is null)
 				memberName = member.FullName;
 			else
 				memberName = $"{member.DeclaringType.FullName}.{member.Name.Replace('.', '-')}";
@@ -241,7 +241,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public static void SearchMsdn(IMemberRef? memberRef) {
-			if (memberRef != null)
+			if (!(memberRef is null))
 				SearchMsdn(GetAddress(memberRef));
 		}
 

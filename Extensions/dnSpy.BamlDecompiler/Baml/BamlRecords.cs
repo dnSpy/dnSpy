@@ -984,7 +984,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public override void Write(BamlBinaryWriter writer) {
 			writer.Write(TypeId);
-			if (RuntimeName != null) {
+			if (!(RuntimeName is null)) {
 				writer.Write(RuntimeName);
 			}
 		}

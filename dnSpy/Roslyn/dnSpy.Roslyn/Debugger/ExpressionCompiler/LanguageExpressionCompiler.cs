@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			// We attach the state to the module, and not to the app domain, so the Roslyn compilation
 			// doesn't get recreated everytime we change the module.
 			var module = frame.Module;
-			if (module == null)
+			if (module is null)
 				throw new InvalidOperationException();
 			return module.GetOrCreateData<T>();
 		}
@@ -127,7 +127,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 
 		(CompilerGeneratedVariableInfo[] infos, bool[] notCompilerGenerated) CreateCompilerGeneratedVariableInfos(List<DbgMethodDebugScope> allScopes, DbgMethodDebugInfo methodDebugInfo) {
 			var locals = methodDebugInfo.Method.Body?.Variables;
-			if (locals == null || locals.Count == 0)
+			if (locals is null || locals.Count == 0)
 				return (Array.Empty<CompilerGeneratedVariableInfo>(), Array.Empty<bool>());
 			var notCompilerGenerated = new bool[locals.Count];
 			foreach (var scope in allScopes) {
@@ -166,7 +166,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			var containingScopes = new List<DbgMethodDebugScope>();
 			RoslynExpressionCompilerMethods.GetAllScopes(methodDebugInfo.Scope, stack, allScopes, containingScopes, langDebugInfo.ILOffset);
 
-			if (compilerGeneratedVariableInfos == null)
+			if (compilerGeneratedVariableInfos is null)
 				(compilerGeneratedVariableInfos, notCompilerGenerated) = CreateCompilerGeneratedVariableInfos(allScopes, methodDebugInfo);
 
 			info.Compiler = GetCompiler(methodDebugInfo.Compiler);
@@ -200,7 +200,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			int maxSlotIndex = -1;
 			foreach (var scope in scopes) {
 				foreach (var local in scope.Locals) {
-					if (local.HoistedField == null)
+					if (local.HoistedField is null)
 						continue;
 					if (TryGetHoistedLocalSlotIndex(local.HoistedField, compiler, out var slotIndex))
 						maxSlotIndex = Math.Max(maxSlotIndex, slotIndex);
@@ -217,7 +217,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			scopeBuilder.Count = maxSlots;
 			foreach (var scope in scopes) {
 				foreach (var local in scope.Locals) {
-					if (local.HoistedField == null)
+					if (local.HoistedField is null)
 						continue;
 					if (TryGetHoistedLocalSlotIndex(local.HoistedField, compiler, out var slotIndex)) {
 						Debug.Assert((uint)slotIndex < (uint)scopeBuilder.Count);
@@ -380,15 +380,15 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string? errorMessage, DbgDotNetText name) {
-			if (errorMessage != null)
+			if (!(errorMessage is null))
 				return new DbgDotNetCompilationResult(errorMessage);
-			Debug.Assert(compileResult != null);
-			if (compileResult == null)
+			Debug.Assert(!(compileResult is null));
+			if (compileResult is null)
 				return new DbgDotNetCompilationResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var customTypeInfoGuid = compileResult.GetCustomTypeInfo(out var payload);
 			DbgDotNetCustomTypeInfo? customTypeInfo;
-			if (payload != null)
+			if (!(payload is null))
 				customTypeInfo = new DbgDotNetCustomTypeInfo(customTypeInfoGuid, payload);
 			else
 				customTypeInfo = null;
@@ -413,11 +413,11 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string? errorMessage) {
-			Debug.Assert(errorMessage == null || (assembly == null || assembly.Length == 0));
+			Debug.Assert(errorMessage is null || (assembly is null || assembly.Length == 0));
 
-			if (errorMessage != null)
+			if (!(errorMessage is null))
 				return new DbgDotNetCompilationResult(errorMessage);
-			if (assembly == null || assembly.Length == 0)
+			if (assembly is null || assembly.Length == 0)
 				return new DbgDotNetCompilationResult(Array.Empty<byte>(), Array.Empty<DbgDotNetCompiledExpressionResult>());
 
 			var compiledExpressions = new DbgDotNetCompiledExpressionResult[infos.Length];
@@ -488,13 +488,13 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 					flags |= DbgEvaluationResultFlags.BooleanExpression;
 
 				DbgDotNetCustomTypeInfo? customTypeInfo;
-				if (info.CustomTypeInfo != null)
+				if (!(info.CustomTypeInfo is null))
 					customTypeInfo = new DbgDotNetCustomTypeInfo(info.CustomTypeInfoId, info.CustomTypeInfo);
 				else
 					customTypeInfo = null;
 
 				var resultFlags = DbgDotNetCompiledExpressionResultFlags.None;
-				Debug.Assert(state.NotCompilerGenerated != null);
+				Debug.Assert(!(state.NotCompilerGenerated is null));
 				if (info.Kind == LocalAndMethodKind.Local && (uint)info.Index < (uint)state.NotCompilerGenerated.Length && !state.NotCompilerGenerated[info.Index])
 					resultFlags |= DbgDotNetCompiledExpressionResultFlags.CompilerGenerated;
 				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, null, resultFlags, info.Index);

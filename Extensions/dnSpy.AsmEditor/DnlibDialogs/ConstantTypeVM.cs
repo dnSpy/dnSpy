@@ -141,7 +141,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public object? ValueNoSpecialNull => ConvertValueNoSpecialNull(Value);
 
 		public static object? ConvertValueNoSpecialNull(object? value) {
-			if (value == null)
+			if (value is null)
 				return value;
 			if (value is Null)
 				return null;
@@ -248,13 +248,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value is EnumInfo enumInfo) {
 					if (enumInfo.IsArray) {
-						Debug.Assert(enumInfo.Value == null || enumInfo.Value is System.Collections.IList);
+						Debug.Assert(enumInfo.Value is null || enumInfo.Value is System.Collections.IList);
 						SetSelectedItem(ConstantType.EnumArray);
 						EnumArray.Value = enumInfo;
-						if (ArraysCanBeNull && enumInfo.Value == null) EnumArrayIsNull = true;
+						if (ArraysCanBeNull && enumInfo.Value is null) EnumArrayIsNull = true;
 					}
 					else {
-						Debug.Assert(enumInfo.Value != null && !(enumInfo.Value is System.Collections.IList));
+						Debug.Assert(!(enumInfo.Value is null) && !(enumInfo.Value is System.Collections.IList));
 						SetSelectedItem(ConstantType.Enum);
 						Enum.Value = enumInfo;
 					}
@@ -708,7 +708,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool ArraysCanBeNull { get; }
 
 		public ConstantTypeVM(ModuleDef ownerModule, object? value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions? options = null) {
-			if (options == null) {
+			if (options is null) {
 				IList<ConstantType> clist = validConstants;
 				if (clist.IndexOf(ConstantType.Type) >= 0 ||
 					clist.IndexOf(ConstantType.TypeArray) >= 0 ||

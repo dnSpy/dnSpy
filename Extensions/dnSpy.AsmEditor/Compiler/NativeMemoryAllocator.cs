@@ -31,11 +31,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public static void Free(void* memory, int size) {
-			if (memory == null && size != 0)
+			if (memory is null && size != 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
 			if (size < 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
-			if (memory == null)
+			if (memory is null)
 				return;
 			Marshal.FreeHGlobal((IntPtr)memory);
 		}

@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
 			var valueImpl = value as DbgEngineValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				throw new ArgumentException();
 			var dnValue = valueImpl.DotNetValue;
 			formatter.FormatValue(evalInfo, output, dnValue, options, cultureInfo);
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) {
 			var valueImpl = value as DbgEngineValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				throw new ArgumentException();
 			var dnValue = valueImpl.DotNetValue;
 			formatter.FormatType(evalInfo, output, dnValue.Type, null, options, cultureInfo);

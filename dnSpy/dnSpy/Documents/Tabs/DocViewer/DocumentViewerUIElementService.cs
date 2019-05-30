@@ -182,7 +182,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void RegisterTagger(IDocumentViewerUIElementTagger tagger) {
-			if (this.tagger != null)
+			if (!(this.tagger is null))
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
@@ -207,10 +207,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (!cachedUIElements.TryGetValue(index, out var uiElem)) {
 						uiElem = info.CreateElement();
 						cachedUIElements.Add(index, uiElem);
-						Debug.Assert(uiElem != null);
+						Debug.Assert(!(uiElem is null));
 						uiElem?.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 					}
-					if (uiElem == null)
+					if (uiElem is null)
 						continue;
 
 					var textHeight = Math.Ceiling(uiElem.DesiredSize.Height);

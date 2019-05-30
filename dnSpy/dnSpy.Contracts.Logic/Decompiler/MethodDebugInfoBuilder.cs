@@ -111,7 +111,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public MethodDebugInfo Create() {
 			TextSpan? methodSpan;
-			if (StartPosition != null && EndPosition != null && StartPosition.Value <= EndPosition.Value)
+			if (!(StartPosition is null) && !(EndPosition is null) && StartPosition.Value <= EndPosition.Value)
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;

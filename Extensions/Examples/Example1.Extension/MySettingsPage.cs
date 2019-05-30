@@ -45,7 +45,7 @@ namespace Example1.Extension {
 		// ViewModel with a DataTemplate defined in a resource dictionary.
 		public override object? UIObject {
 			get {
-				if (uiObject == null) {
+				if (uiObject is null) {
 					uiObject = new MySettingsControl();
 					uiObject.DataContext = newSettings;
 				}

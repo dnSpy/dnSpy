@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public static IBlockStructureServiceDataProvider? TryCreate(IDocumentViewer documentViewer) {
 			var lazyColl = documentViewer.Content.GetCustomData<LazyBlockStructureCollection>(DocumentViewerContentDataIds.BlockStructure);
-			return lazyColl == null ? null : new BlockStructureServiceDataProvider(lazyColl);
+			return lazyColl is null ? null : new BlockStructureServiceDataProvider(lazyColl);
 		}
 
 		public void GetData(SnapshotSpan lineExtent, List<BlockStructureData> list) => lazyCollection.Collection.GetData(lineExtent, list);

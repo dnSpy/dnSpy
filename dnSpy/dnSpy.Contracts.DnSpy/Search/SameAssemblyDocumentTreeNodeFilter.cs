@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Search {
 		}
 
 		public override DocumentTreeNodeFilterResult GetResult(ModuleDef mod) {
-			if (allowedAsm == null && mod != allowedMod)
+			if (allowedAsm is null && mod != allowedMod)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
 			return base.GetResult(mod);
 		}

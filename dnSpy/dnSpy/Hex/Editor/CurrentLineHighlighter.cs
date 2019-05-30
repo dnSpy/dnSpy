@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Editor {
 		void UpdateEnableState() {
 			enabled = wpfHexView.Options.IsHighlightCurrentLineEnabled();
 			if (enabled) {
-				if (adornmentLayer == null)
+				if (adornmentLayer is null)
 					adornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.CurrentLineHighlighter);
 				if (!hasHookedEvents) {
 					RegisterEnabledEvents();
@@ -138,7 +138,7 @@ namespace dnSpy.Hex.Editor {
 				adornmentLayer?.RemoveAllAdornments();
 				return;
 			}
-			Debug.Assert(adornmentLayer != null);
+			Debug.Assert(!(adornmentLayer is null));
 
 			var line = wpfHexView.Caret.ContainingHexViewLine;
 			if (line.IsVisible()) {
@@ -214,7 +214,7 @@ namespace dnSpy.Hex.Editor {
 			set {
 				if (!TWPF.BrushComparer.Equals(foregroundBrush, value)) {
 					foregroundBrush = value;
-					if (foregroundBrush == null)
+					if (foregroundBrush is null)
 						pen = null;
 					else {
 						pen = new Pen(foregroundBrush, PEN_THICKNESS);
@@ -233,10 +233,10 @@ namespace dnSpy.Hex.Editor {
 		Geometry? geometry;
 
 		public void SetLine(HexViewLine line, double width) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			var newRect = new Rect(PEN_THICKNESS / 2, PEN_THICKNESS / 2, Math.Max(0, width - PEN_THICKNESS), Math.Max(0, line.TextHeight + HexFormattedLineImpl.DEFAULT_BOTTOM_SPACE - PEN_THICKNESS));
-			if (geometry != null && newRect == geometryRect)
+			if (!(geometry is null) && newRect == geometryRect)
 				return;
 			geometryRect = newRect;
 			if (geometryRect.Height == 0 || geometryRect.Width == 0)
@@ -251,7 +251,7 @@ namespace dnSpy.Hex.Editor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
-			if (geometry != null)
+			if (!(geometry is null))
 				drawingContext.DrawGeometry(BackgroundBrush, pen, geometry);
 		}
 	}

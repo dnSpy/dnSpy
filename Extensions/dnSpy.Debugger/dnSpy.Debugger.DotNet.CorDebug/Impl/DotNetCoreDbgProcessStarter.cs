@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public override bool IsSupported(string filename, out ProcessStarterResult result) {
 			result = ProcessStarterResult.None;
 
-			if (!DotNetCoreHelpers.IsDotNetCoreExecutable(filename) || GetPathToDotNetExeHost() == null)
+			if (!DotNetCoreHelpers.IsDotNetCoreExecutable(filename) || GetPathToDotNetExeHost() is null)
 				return false;
 
 			var extension = Path.GetExtension(filename);
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override bool TryStart(string filename, [NotNullWhenFalse] out string? error) {
 			var dotnetExeFilename = GetPathToDotNetExeHost();
-			Debug.Assert(dotnetExeFilename != null);
+			Debug.Assert(!(dotnetExeFilename is null));
 			var startInfo = new ProcessStartInfo(dotnetExeFilename);
 			startInfo.WorkingDirectory = Path.GetDirectoryName(filename);
 			startInfo.Arguments = $"exec \"{filename}\"";

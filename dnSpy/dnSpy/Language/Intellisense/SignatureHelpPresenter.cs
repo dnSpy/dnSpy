@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 		public bool HasParameter {
 			get {
 				var parameter = session.SelectedSignature?.CurrentParameter;
-				return parameter != null &&
+				return !(parameter is null) &&
 					!string.IsNullOrEmpty(parameter.Documentation) &&
 					!string.IsNullOrEmpty(parameter.Name);
 			}
@@ -106,7 +106,7 @@ namespace dnSpy.Language.Intellisense {
 #pragma warning restore CS0169
 
 		public SignatureHelpPresenter(ISignatureHelpSession session, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
-			if (textBufferFactoryService == null)
+			if (textBufferFactoryService is null)
 				throw new ArgumentNullException(nameof(textBufferFactoryService));
 			this.session = session ?? throw new ArgumentNullException(nameof(session));
 			control = new SignatureHelpPresenterControl { DataContext = this };
@@ -118,7 +118,7 @@ namespace dnSpy.Language.Intellisense {
 			this.classifierAggregatorService = classifierAggregatorService ?? throw new ArgumentNullException(nameof(classifierAggregatorService));
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
-			Debug.Assert(defaultExtendedContentType != null);
+			Debug.Assert(!(defaultExtendedContentType is null));
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			session.Dismissed += Session_Dismissed;
 			session.SelectedSignatureChanged += Session_SelectedSignatureChanged;
@@ -137,7 +137,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void UnregisterCurrentSignature() {
-			if (currentSignature == null)
+			if (currentSignature is null)
 				return;
 			currentSignature.CurrentParameterChanged -= Signature_CurrentParameterChanged;
 		}
@@ -147,7 +147,7 @@ namespace dnSpy.Language.Intellisense {
 				return;
 			UnregisterCurrentSignature();
 			var signature = session.SelectedSignature;
-			if (signature == null)
+			if (signature is null)
 				return;
 			// Can happen if the session removes a sig
 			if (!session.Signatures.Contains(signature))
@@ -200,12 +200,12 @@ namespace dnSpy.Language.Intellisense {
 			var snapshot = session.TextView.TextSnapshot;
 			foreach (var sig in session.Signatures) {
 				var atSpan = sig.ApplicableToSpan;
-				if (atSpan == null)
+				if (atSpan is null)
 					continue;
-				if (spanTrackingMode == null)
+				if (spanTrackingMode is null)
 					spanTrackingMode = atSpan.TrackingMode;
 				var span = atSpan.GetSpan(snapshot);
-				if (currSpan == null)
+				if (currSpan is null)
 					currSpan = span;
 				else
 					currSpan = new SnapshotSpan(snapshot, Span.FromBounds(Math.Min(currSpan.Value.Start.Position, span.Start.Position), Math.Max(currSpan.Value.End.Position, span.End.Position)));
@@ -238,7 +238,7 @@ namespace dnSpy.Language.Intellisense {
 			var doc = signature?.Documentation;
 			if (string.IsNullOrEmpty(doc))
 				return null;
-			Debug.Assert(signature != null);
+			Debug.Assert(!(signature is null));
 
 			return CreateUIObject(doc, GetExtendedClassifierContentType(), new SignatureDocumentationSignatureHelpClassifierContext(session, signature));
 		}
@@ -248,27 +248,27 @@ namespace dnSpy.Language.Intellisense {
 				return null;
 
 			var signature = session.SelectedSignature;
-			if (signature == null)
+			if (signature is null)
 				return null;
 
 			bool prettyPrintedContent = false;
 			var text = signature.Content;
-			if (text == null) {
+			if (text is null) {
 				prettyPrintedContent = true;
 				text = signature.PrettyPrintedContent;
 			}
-			if (text == null)
+			if (text is null)
 				return null;
 			signatureTextBuffer.Properties[SignatureHelpConstants.UsePrettyPrintedContentBufferKey] = prettyPrintedContent;
 			signatureTextBuffer.Replace(new Span(0, signatureTextBuffer.CurrentSnapshot.Length), text);
 			var oldContentType = signatureTextBuffer.ContentType;
 			var atSpan = signature.ApplicableToSpan;
-			Debug.Assert(atSpan != null);
-			if (atSpan != null) {
+			Debug.Assert(!(atSpan is null));
+			if (!(atSpan is null)) {
 				var span = atSpan.GetStartPoint(atSpan.TextBuffer.CurrentSnapshot);
 				signatureTextBuffer.ChangeContentType(GetSigHelpContentType(span.Snapshot.ContentType), null);
 			}
-			if (signatureClassifier == null || oldContentType != signatureTextBuffer.ContentType) {
+			if (signatureClassifier is null || oldContentType != signatureTextBuffer.ContentType) {
 				UnregisterSignatureClassifierEvents();
 				signatureClassifier = classifierAggregatorService.GetClassifier(signatureTextBuffer);
 				RegisterSignatureClassifierEvents();
@@ -280,13 +280,13 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void RegisterSignatureClassifierEvents() {
-			if (signatureClassifier == null)
+			if (signatureClassifier is null)
 				return;
 			signatureClassifier.ClassificationChanged += SignatureClassifier_ClassificationChanged;
 		}
 
 		void UnregisterSignatureClassifierEvents() {
-			if (signatureClassifier == null)
+			if (signatureClassifier is null)
 				return;
 			signatureClassifier.ClassificationChanged -= SignatureClassifier_ClassificationChanged;
 			(signatureClassifier as IDisposable)?.Dispose();
@@ -313,7 +313,7 @@ namespace dnSpy.Language.Intellisense {
 		IContentType GetSigHelpContentType(IContentType contentType) {
 			var sigHelpContentTypeString = contentType.TypeName + SignatureHelpConstants.SignatureHelpContentTypeSuffix;
 			var sigHelpContentType = contentTypeRegistryService.GetContentType(sigHelpContentTypeString);
-			if (sigHelpContentType == null)
+			if (sigHelpContentType is null)
 				sigHelpContentType = contentTypeRegistryService.AddContentType(sigHelpContentTypeString, new[] { ContentTypes.SignatureHelp });
 			return sigHelpContentType;
 		}
@@ -324,7 +324,7 @@ namespace dnSpy.Language.Intellisense {
 
 			var oldContentType = otherTextBuffer.ContentType;
 			otherTextBuffer.ChangeContentType(contentType, null);
-			if (otherClassifier == null || oldContentType != contentType) {
+			if (otherClassifier is null || oldContentType != contentType) {
 				(otherClassifier as IDisposable)?.Dispose();
 				otherClassifier = classifierAggregatorService.GetClassifier(otherTextBuffer);
 			}
@@ -339,10 +339,10 @@ namespace dnSpy.Language.Intellisense {
 		IContentType GetExtendedClassifierContentType() => TryGetExtendedClassifierContentTypeCore() ?? defaultExtendedContentType;
 		IContentType? TryGetExtendedClassifierContentTypeCore() {
 			var signature = session.SelectedSignature;
-			if (signature == null)
+			if (signature is null)
 				return null;
 			var atSpan = signature.ApplicableToSpan;
-			if (atSpan == null)
+			if (atSpan is null)
 				return null;
 			var bufferContentType = atSpan.TextBuffer.CurrentSnapshot.ContentType;
 			return contentTypeRegistryService.GetContentType(bufferContentType.TypeName + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix);
@@ -353,7 +353,7 @@ namespace dnSpy.Language.Intellisense {
 				return null;
 
 			var parameter = session.SelectedSignature?.CurrentParameter;
-			if (parameter == null)
+			if (parameter is null)
 				return null;
 			var name = parameter.Name;
 			if (string.IsNullOrEmpty(name))
@@ -369,7 +369,7 @@ namespace dnSpy.Language.Intellisense {
 				return null;
 
 			var parameter = session.SelectedSignature?.CurrentParameter;
-			if (parameter == null)
+			if (parameter is null)
 				return null;
 			var text = parameter.Documentation;
 			if (string.IsNullOrEmpty(text))

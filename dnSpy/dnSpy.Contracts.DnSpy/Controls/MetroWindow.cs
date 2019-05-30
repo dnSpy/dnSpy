@@ -61,8 +61,8 @@ namespace dnSpy.Contracts.Controls {
 			base.OnSourceInitialized(e);
 
 			var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-			Debug.Assert(hwndSource != null);
-			if (hwndSource != null) {
+			Debug.Assert(!(hwndSource is null));
+			if (!(hwndSource is null)) {
 				hwndSource.AddHook(WndProc);
 				wpfDpi = new Size(96.0 * hwndSource.CompositionTarget.TransformToDevice.M11, 96.0 * hwndSource.CompositionTarget.TransformToDevice.M22);
 
@@ -218,11 +218,11 @@ namespace dnSpy.Contracts.Controls {
 
 		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var border = d as Border;
-			Debug.Assert(border != null);
-			if (border == null)
+			Debug.Assert(!(border is null));
+			if (border is null)
 				return;
 			var win = Window.GetWindow(border) as MetroWindow;
-			if (win == null)
+			if (win is null)
 				return;
 
 			new MaximizedWindowFixer(win, border);
@@ -252,7 +252,7 @@ namespace dnSpy.Contracts.Controls {
 			void MetroWindow_StateChanged(object sender, EventArgs e) => UpdatePadding((MetroWindow)sender);
 
 			void UpdatePadding(MetroWindow window) {
-				Debug.Assert(window != null);
+				Debug.Assert(!(window is null));
 
 				var state = window.IsFullScreen ? WindowState.Maximized : window.WindowState;
 				switch (state) {
@@ -319,7 +319,7 @@ namespace dnSpy.Contracts.Controls {
 		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var win = (MetroWindow)d;
 			var wc = (WindowChrome)win.GetValue(WindowChrome.WindowChromeProperty);
-			if (wc == null)
+			if (wc is null)
 				return;
 
 			win.InitializeWindowCaptionAndResizeBorder(wc);
@@ -663,10 +663,10 @@ namespace dnSpy.Contracts.Controls {
 
 		static void ShowSystemMenu(object? o) {
 			var depo = o as DependencyObject;
-			if (depo == null)
+			if (depo is null)
 				return;
 			var win = Window.GetWindow(depo);
-			if (win == null)
+			if (win is null)
 				return;
 
 			var scale = 1.0;
@@ -683,7 +683,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void SetScaleTransform(DependencyObject? textObj, DependencyObject? vc, double scale) {
 			Debug.Assert(textObj != this);
-			if (vc == null || textObj == null)
+			if (vc is null || textObj is null)
 				return;
 
 			if (scale == 1)

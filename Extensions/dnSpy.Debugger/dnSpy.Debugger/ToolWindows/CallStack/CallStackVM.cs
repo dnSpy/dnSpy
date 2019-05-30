@@ -367,7 +367,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		// UI thread
 		void RefreshLanguage_UI() {
 			callStackContext.UIDispatcher.VerifyAccess();
-			var language = framesThread == null ? null : dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
+			var language = framesThread is null ? null : dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
 			foreach (var vm in AllItems)
 				(vm as NormalStackFrameVM)?.SetLanguage_UI(language);
 		}
@@ -395,7 +395,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				ClearAllItems_UI();
 			}
 
-			var language = framesThread == null ? null : dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
+			var language = framesThread is null ? null : dbgLanguageService.Value.GetCurrentLanguage(framesThread.Runtime.RuntimeKindGuid);
 
 			int activeFrameIndex = framesInfo.ActiveFrameIndex;
 			if (framesToAdd > 0) {
@@ -445,8 +445,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if ((vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) == 0)
 				return null;
 			var location = vm.Frame.Location;
-			var breakpoint = location == null ? null : dbgCodeBreakpointsService.Value.TryGetBreakpoint(location);
-			if (breakpoint == null || breakpoint.IsHidden)
+			var breakpoint = location is null ? null : dbgCodeBreakpointsService.Value.TryGetBreakpoint(location);
+			if (breakpoint is null || breakpoint.IsHidden)
 				return null;
 			if (!usedBreakpoints.TryGetValue(breakpoint, out var hash)) {
 				usedBreakpoints.Add(breakpoint, hash = new HashSet<NormalStackFrameVM>());

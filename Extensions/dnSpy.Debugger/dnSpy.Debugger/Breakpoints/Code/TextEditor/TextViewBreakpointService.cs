@@ -96,9 +96,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		LocationsResult GetLocations(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			var allLocations = new List<DbgCodeLocation>();
 			var textView = GetTextView(tab);
-			if (textView == null)
+			if (textView is null)
 				return new LocationsResult(dbgManager, null, allLocations);
-			Debug.Assert(tab != null);
+			Debug.Assert(!(tab is null));
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			foreach (var loc in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, pos))
 				UpdateResult(allLocations, textView, ref res, loc, useIfSameSpan: false);
 			SnapshotSpan span;
-			if (res != null) {
+			if (!(res is null)) {
 				var resSpan = res.Value.Span.SnapshotSpan;
 				var newStart = Min(pos.Position, resSpan.Start);
 				var newEnd = Max(pos.Position, resSpan.End);
@@ -123,12 +123,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		static SnapshotPoint Max(SnapshotPoint a, SnapshotPoint b) => a >= b ? a : b;
 
 		static void UpdateResult(List<DbgCodeLocation> allLocations, ITextView textView, ref DbgTextViewBreakpointLocationResult? res, DbgTextViewBreakpointLocationResult? result, bool useIfSameSpan) {
-			if (result?.Locations == null)
+			if (result?.Locations is null)
 				return;
 			allLocations.AddRange(result.Value.Locations);
 			if (result.Value.Span.Snapshot != textView.TextSnapshot)
 				return;
-			if (res == null)
+			if (res is null)
 				res = result;
 			else if (useIfSameSpan) {
 				if (result.Value.Span.Start == res.Value.Span.Start)
@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 
 			public void Dispose() {
-				if (locations != null && locations.Length > 0)
+				if (!(locations is null) && locations.Length > 0)
 					dbgManager.Value.Close(locations);
 			}
 		}
@@ -199,14 +199,14 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		ToggleCreateBreakpointInfoResult GetToggleCreateBreakpointInfo(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			using (var info = GetLocations(tab, position)) {
 				var locRes = info.locRes;
-				var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
+				var bps = locRes is null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
 				if (bps.Length != 0) {
 					if (bps.All(a => a.IsEnabled))
 						return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgCodeLocation>());
 					return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgCodeLocation>());
 				}
 				else {
-					if (locRes == null || locRes.Value.Locations.Length == 0)
+					if (locRes is null || locRes.Value.Locations.Length == 0)
 						return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgCodeLocation>());
 					return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locRes.Value.Locations.Select(a => a.Clone()).ToArray());
 				}

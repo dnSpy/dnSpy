@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public DeletedEventUpdater(ModuleDocumentNode modNode, EventDef originalEvent) {
 			var node = modNode.Context.DocumentTreeView.FindNode(originalEvent);
-			if (node == null)
+			if (node is null)
 				throw new InvalidOperationException();
 			ownerNode = node;
 			parentNode = ownerNode.TreeNode.Parent!.Data;

@@ -121,7 +121,7 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
 		public VisualBasicCompilerSettingsBase CopyTo(VisualBasicCompilerSettingsBase other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.PreprocessorSymbols = PreprocessorSymbols;
 			other.Optimize = Optimize;

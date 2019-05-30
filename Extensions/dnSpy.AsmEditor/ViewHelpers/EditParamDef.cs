@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public ParamDefVM? Edit(string? title, ParamDefVM pd) {
 			var win = new ParamDefDlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = pd;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

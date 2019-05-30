@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointCondition? condition) {
-			if (condition == null) {
+			if (condition is null) {
 				EnableConditionalExpression = false;
 				ConditionalExpression_Items.SelectedIndex = 0;
 				ConditionalExpression_Text = string.Empty;
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointHitCount? hitCount) {
-			if (hitCount == null) {
+			if (hitCount is null) {
 				EnableHitCount = false;
 				HitCount_Items.SelectedIndex = 0;
 				HitCount_Text.Value = 1;
@@ -200,7 +200,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointFilter? filter) {
-			if (filter == null) {
+			if (filter is null) {
 				EnableFilter = false;
 				Filter_Text = string.Empty;
 			}
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointTrace? trace) {
-			if (trace == null) {
+			if (trace is null) {
 				EnableTrace = false;
 				Trace_Text = string.Empty;
 				Trace_Continue = true;
@@ -317,12 +317,12 @@ $TNAME");
 			HasErrorUpdated();
 		}
 
-		public bool HasFilterExpressionError => EnableFilter && lastFilterError != null;
+		public bool HasFilterExpressionError => EnableFilter && !(lastFilterError is null);
 		public string? FilterExpressionError => EnableFilter ? lastFilterError : null;
 		string? lastFilterError;
 
 		void StartVerifyFilterTimer() {
-			if (verifyFilterTimer != null)
+			if (!(verifyFilterTimer is null))
 				return;
 			verifyFilterTimer = new Timer(1000);
 			verifyFilterTimer.Elapsed += VerifyFilterTimer_Elapsed;

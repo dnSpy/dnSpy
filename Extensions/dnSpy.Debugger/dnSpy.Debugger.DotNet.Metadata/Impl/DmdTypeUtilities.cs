@@ -66,13 +66,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public static DmdType[]? ToDmdType(this IList<Type>? types, DmdAppDomain appDomain) {
-			if (types == null)
+			if (types is null)
 				return null;
 			return ToDmdTypeNoNull(types, appDomain);
 		}
 
 		public static DmdType[] ToDmdTypeNoNull(this IList<Type> types, DmdAppDomain appDomain) {
-			if (types == null)
+			if (types is null)
 				throw new ArgumentNullException(nameof(types));
 			if (types.Count == 0)
 				return Array.Empty<DmdType>();

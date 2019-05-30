@@ -48,11 +48,11 @@ namespace dnSpy.Hex.Files {
 		readonly HexFileStructureInfoService hexFileStructureInfoService;
 
 		public DefaultHexStructureInfoProvider(HexView hexView, HexBufferFileServiceFactory hexBufferFileServiceFactory, HexFileStructureInfoServiceFactory hexFileStructureInfoServiceFactory) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
-			if (hexBufferFileServiceFactory == null)
+			if (hexBufferFileServiceFactory is null)
 				throw new ArgumentNullException(nameof(hexBufferFileServiceFactory));
-			if (hexFileStructureInfoServiceFactory == null)
+			if (hexFileStructureInfoServiceFactory is null)
 				throw new ArgumentNullException(nameof(hexFileStructureInfoServiceFactory));
 			hexBufferFileService = hexBufferFileServiceFactory.Create(hexView.Buffer);
 			hexFileStructureInfoService = hexFileStructureInfoServiceFactory.Create(hexView);
@@ -60,18 +60,18 @@ namespace dnSpy.Hex.Files {
 
 		public override IEnumerable<HexStructureField> GetFields(HexPosition position) {
 			var info = hexBufferFileService.GetFileAndStructure(position);
-			if (info == null)
+			if (info is null)
 				yield break;
 
 			var structure = info.Value.Structure;
 			var field = structure.GetSimpleField(position);
-			Debug.Assert(field != null);
-			if (field == null)
+			Debug.Assert(!(field is null));
+			if (field is null)
 				yield break;
 			yield return new HexStructureField(field.Data.Span, HexStructureFieldKind.CurrentField);
 
 			var indexes = hexFileStructureInfoService.GetSubStructureIndexes(position);
-			if (indexes != null) {
+			if (!(indexes is null)) {
 				if (indexes.Length == 0) {
 					for (int i = 0; i < structure.FieldCount; i++) {
 						var span = structure.GetFieldByIndex(i).Data.Span;

@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public void InitializeFrom(IList<InstructionVM>? instrs) {
 			InstructionsListVM.Clear();
-			if (instrs != null)
+			if (!(instrs is null))
 				InstructionsListVM.AddRange(instrs.Select(a => new SwitchInstructionVM(a)));
 			SelectedIndex = InstructionsListVM.Count == 0 ? -1 : 0;
 		}

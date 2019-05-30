@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		static readonly string MonoExeFilter = $"mono.exe|mono.exe";
 		void PickMonoExePath() {
 			var newMonoExePath = pickFilename.GetFilename(Filename, "exe", MonoExeFilter);
-			if (newMonoExePath == null)
+			if (newMonoExePath is null)
 				return;
 
 			MonoExePath = newMonoExePath;
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var msdOptions = options as MonoStartDebuggingOptions;
-			if (msdOptions == null)
+			if (msdOptions is null)
 				return;
 			Initialize(msdOptions);
 		}

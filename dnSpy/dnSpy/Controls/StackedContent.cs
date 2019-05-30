@@ -92,9 +92,9 @@ namespace dnSpy.Controls {
 			public ChildInfo(TChild child, StackedContentChildInfo? lengthInfo) {
 				Child = child;
 				LengthInfo = lengthInfo?.Clone() ?? new StackedContentChildInfo();
-				if (LengthInfo.Horizontal.GridLength == null)
+				if (LengthInfo.Horizontal.GridLength is null)
 					LengthInfo.Horizontal.GridLength = new GridLength(1, GridUnitType.Star);
-				if (LengthInfo.Vertical.GridLength == null)
+				if (LengthInfo.Vertical.GridLength is null)
 					LengthInfo.Vertical.GridLength = new GridLength(1, GridUnitType.Star);
 			}
 		}
@@ -127,7 +127,7 @@ namespace dnSpy.Controls {
 				return state;
 			}
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (IsHorizontal != value.IsHorizontal)
 					return;
@@ -150,7 +150,7 @@ namespace dnSpy.Controls {
 			children = new List<ChildInfo>();
 			grid = new Grid();
 			grid.SetResourceReference(FrameworkElement.StyleProperty, "StackedContentGridStyle");
-			if (margin != null)
+			if (!(margin is null))
 				grid.Margin = margin.Value;
 			this.isHorizontal = isHorizontal;
 			this.splitterLength = splitterLength;
@@ -171,7 +171,7 @@ namespace dnSpy.Controls {
 		}
 
 		public void Remove(TChild child) {
-			if (child == null)
+			if (child is null)
 				throw new ArgumentNullException(nameof(child));
 			int index = IndexOf(child);
 			Debug.Assert(index >= 0);
@@ -212,9 +212,9 @@ namespace dnSpy.Controls {
 					}
 
 					var rowDef = new RowDefinition() { Height = GetGridLength(info.LengthInfo.Vertical.GridLength!.Value, -d) };
-					if (info.LengthInfo.Vertical.MaxLength != null)
+					if (!(info.LengthInfo.Vertical.MaxLength is null))
 						rowDef.MaxHeight = info.LengthInfo.Vertical.MaxLength.Value;
-					if (info.LengthInfo.Vertical.MinLength != null)
+					if (!(info.LengthInfo.Vertical.MinLength is null))
 						rowDef.MinHeight = info.LengthInfo.Vertical.MinLength.Value;
 					grid.RowDefinitions.Add(rowDef);
 					var uiel = GetUIElement(info.Child);
@@ -246,9 +246,9 @@ namespace dnSpy.Controls {
 					}
 
 					var colDef = new ColumnDefinition() { Width = GetGridLength(info.LengthInfo.Horizontal.GridLength!.Value, -d) };
-					if (info.LengthInfo.Horizontal.MaxLength != null)
+					if (!(info.LengthInfo.Horizontal.MaxLength is null))
 						colDef.MaxWidth = info.LengthInfo.Horizontal.MaxLength.Value;
-					if (info.LengthInfo.Horizontal.MinLength != null)
+					if (!(info.LengthInfo.Horizontal.MinLength is null))
 						colDef.MinWidth = info.LengthInfo.Horizontal.MinLength.Value;
 					grid.ColumnDefinitions.Add(colDef);
 					var uiel = GetUIElement(info.Child);
@@ -300,7 +300,7 @@ namespace dnSpy.Controls {
 		static UIElement GetUIElement(TChild child) {
 			var obj = child.UIObject;
 			var uiel = obj as UIElement;
-			if (uiel == null)
+			if (uiel is null)
 				uiel = new ContentPresenter { Content = obj };
 			return uiel;
 		}

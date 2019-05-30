@@ -37,14 +37,14 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override bool Handle(HexView hexView, object reference, IList<string>? tags) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
-			if (reference == null)
+			if (reference is null)
 				throw new ArgumentNullException(nameof(reference));
 			object? newRef = ConvertReference(hexView, reference);
-			if (newRef == null)
+			if (newRef is null)
 				return false;
-			if (tags == null)
+			if (tags is null)
 				tags = Array.Empty<string>();
 			foreach (var lz in hexReferenceHandlers) {
 				if (lz.Value.Handle(hexView, newRef, tags))

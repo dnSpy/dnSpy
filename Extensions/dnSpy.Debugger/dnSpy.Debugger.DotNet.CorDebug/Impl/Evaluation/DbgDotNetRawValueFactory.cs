@@ -35,8 +35,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		static DbgDotNetRawValueFactory() {
 			var ctor = typeof(DateTime).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(ulong) }, null);
-			Debug.Assert(ctor != null);
-			if (ctor != null) {
+			Debug.Assert(!(ctor is null));
+			if (!(ctor is null)) {
 				var dm = new DynamicMethod("DateTime_ctor_UInt64", typeof(DateTime), new[] { typeof(ulong) }, true);
 				var ilg = dm.GetILGenerator();
 				ilg.Emit(OpCodes.Ldarg_0);
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 1)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Boolean, data[0] != 0);
 
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 2)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.CharUtf16, BitConverter.ToChar(data, 0));
 
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 1)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int8, (sbyte)data[0]);
 
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 1)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt8, data[0]);
 
@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 2)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int16, BitConverter.ToInt16(data, 0));
 
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 2)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt16, BitConverter.ToUInt16(data, 0));
 
@@ -150,7 +150,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 4)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int32, BitConverter.ToInt32(data, 0));
 
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 4)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt32, BitConverter.ToUInt32(data, 0));
 
@@ -166,7 +166,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 8)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int64, BitConverter.ToInt64(data, 0));
 
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 8)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt64, BitConverter.ToUInt64(data, 0));
 
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 4)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Float32, BitConverter.ToSingle(data, 0));
 
@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 8)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Float64, BitConverter.ToDouble(data, 0));
 
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 16)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
 
 				var decimalBits = new int[4];
@@ -217,9 +217,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (v.Size != 8)
 					break;
 				data = v.ReadGenericValue();
-				if (data == null)
+				if (data is null)
 					break;
-				if (DateTime_ctor_UInt64 != null)
+				if (!(DateTime_ctor_UInt64 is null))
 					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, DateTime_ctor_UInt64(BitConverter.ToUInt64(data, 0)));
 				return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, default(DateTime));
 
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					if (v.Size != (uint)type.AppDomain.Runtime.PointerSize)
 						break;
 					data = v.ReadGenericValue();
-					if (data == null)
+					if (data is null)
 						break;
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)BitConverter.ToInt32(data, 0));
@@ -238,7 +238,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					if (v.Size != (uint)type.AppDomain.Runtime.PointerSize)
 						break;
 					data = v.ReadGenericValue();
-					if (data == null)
+					if (data is null)
 						break;
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, BitConverter.ToUInt32(data, 0));
@@ -272,7 +272,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			if (hasValueValue is null)
 				return false;
 			var rawValue = hasValueValue.ReadGenericValue();
-			if (rawValue == null || rawValue.Length != 1)
+			if (rawValue is null || rawValue.Length != 1)
 				return false;
 			if (rawValue[0] == 0)
 				return true;

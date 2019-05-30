@@ -61,7 +61,7 @@ namespace dnSpy.TreeView {
 		ITreeView ITreeNode.TreeView => TreeView;
 
 		public TreeNodeImpl(TreeViewImpl treeViewImpl, TreeNodeData data) {
-			Debug.Assert(data.TreeNode == null);
+			Debug.Assert(data.TreeNode is null);
 			TreeView = treeViewImpl;
 			nodeList = new SharpTreeNodeChildrenList(this);
 			Data = data;

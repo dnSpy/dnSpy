@@ -43,7 +43,7 @@ namespace dnSpy.Controls {
 		static readonly object toolTipDummy = new object();
 
 		void InitializeChildrens() {
-			if (expander != null)
+			if (!(expander is null))
 				return;
 
 			ToolTip = toolTipDummy;
@@ -64,8 +64,8 @@ namespace dnSpy.Controls {
 				Focusable = false
 			};
 
-			expander.Checked += (sender, e) => { if (Node != null) Node.IsExpanded = true; };
-			expander.Unchecked += (sender, e) => { if (Node != null) Node.IsExpanded = false; };
+			expander.Checked += (sender, e) => { if (!(Node is null)) Node.IsExpanded = true; };
+			expander.Unchecked += (sender, e) => { if (!(Node is null)) Node.IsExpanded = false; };
 
 			AddVisualChild(expander);
 			AddVisualChild(icon);
@@ -76,8 +76,8 @@ namespace dnSpy.Controls {
 
 		protected override void OnToolTipOpening(ToolTipEventArgs e) {
 			if (ToolTip == toolTipDummy) {
-				ToolTip = Node == null ? null : Node.ToolTip;
-				if (ToolTip == null)
+				ToolTip = Node is null ? null : Node.ToolTip;
+				if (ToolTip is null)
 					e.Handled = true;
 			}
 			base.OnToolTipOpening(e);
@@ -165,7 +165,7 @@ namespace dnSpy.Controls {
 		void UpdateChildren(SharpTreeNode? node) {
 			InitializeChildrens();
 
-			if (node == null || ParentItem == null)
+			if (node is null || ParentItem is null)
 				return;
 
 			var newIndent = CalculateIndent(node);

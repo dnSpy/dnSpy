@@ -132,7 +132,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			var rva2 = MDAPI.GetRVA(mdi, token);
-			if (rva2 == null)
+			if (rva2 is null)
 				return false;
 			rva = (RVA)rva2.Value;
 			return true;

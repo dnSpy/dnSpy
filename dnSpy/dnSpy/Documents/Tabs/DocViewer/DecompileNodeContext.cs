@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public T UIThread<T>(Func<T> func) {
-			if (func == null)
+			if (func is null)
 				throw new ArgumentNullException(nameof(func));
 			if (dispatcher.CheckAccess())
 				return func();

@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public void WriteVersion(IDbgTextWriter output, DbgModule module) {
 			var versionString = module.Version;
-			if (versionString != null) {
+			if (!(versionString is null)) {
 				const int MAX_VER_LEN = 100;
 				if (versionString.Length <= MAX_VER_LEN)
 					output.Write(DbgTextColor.Text, versionString);
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public void WriteTimestamp(IDbgTextWriter output, DbgModule module) {
 			var date = module.Timestamp;
-			if (date != null) {
+			if (!(date is null)) {
 				var dateString = date.Value.ToLocalTime().ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(DbgTextColor.Text, dateString);
 			}

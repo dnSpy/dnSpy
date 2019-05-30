@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(decompilerSettingsService != null);
+			Debug.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -104,7 +104,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			MethodDef? inlinedMethod = null;
 			AsyncMethodDebugInfo? asyncInfo = null;
 			string? compilerName = null;
-			if (abortBeforeStep != null) {
+			if (!(abortBeforeStep is null)) {
 				var optimizer = new ILAstOptimizer();
 				optimizer.Optimize(context, ilMethod, out stateMachineKind, out inlinedMethod, out asyncInfo, abortBeforeStep.Value);
 				compilerName = optimizer.CompilerName;
@@ -122,10 +122,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
-				.Where(v => v != null && !v.IsParameter).Distinct();
+				.Where(v => !(v is null) && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
 				output.Write(IdentifierEscaper.Escape(v.Name), v.GetTextReferenceObject(), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
-				if (v.Type != null) {
+				if (!(v.Type is null)) {
 					output.Write(" ", BoxedTextColor.Text);
 					output.Write(":", BoxedTextColor.Punctuation);
 					output.Write(" ", BoxedTextColor.Text);
@@ -148,7 +148,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
-			var builder = new MethodDebugInfoBuilder(settingsVersion, stateMachineKind, inlinedMethod ?? method, inlinedMethod != null ? method : null, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
+			var builder = new MethodDebugInfoBuilder(settingsVersion, stateMachineKind, inlinedMethod ?? method, !(inlinedMethod is null) ? method : null, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
 			builder.CompilerName = compilerName;
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);
@@ -162,14 +162,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		IEnumerable<ILVariable> GetVariables(ILBlock ilMethod) {
 			foreach (var n in ilMethod.GetSelfAndChildrenRecursive(new List<ILNode>())) {
 				var expr = n as ILExpression;
-				if (expr != null) {
+				if (!(expr is null)) {
 					var v = expr.Operand as ILVariable;
-					if (v != null)
+					if (!(v is null))
 						yield return v;
 					continue;
 				}
 				var cb = n as ILTryCatchBlock.CatchBlockBase;
-				if (cb != null && cb.ExceptionVariable != null)
+				if (!(cb is null) && !(cb.ExceptionVariable is null))
 					yield return cb.ExceptionVariable;
 			}
 		}
@@ -228,17 +228,17 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			var eventInfo = StartKeywordBlock(output, ".event", ev);
 
-			if (ev.AddMethod != null) {
+			if (!(ev.AddMethod is null)) {
 				var info = StartKeywordBlock(output, ".add", ev.AddMethod);
 				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
-			if (ev.InvokeMethod != null) {
+			if (!(ev.InvokeMethod is null)) {
 				var info = StartKeywordBlock(output, ".invoke", ev.InvokeMethod);
 				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
-			if (ev.RemoveMethod != null) {
+			if (!(ev.RemoveMethod is null)) {
 				var info = StartKeywordBlock(output, ".remove", ev.RemoveMethod);
 				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
@@ -251,11 +251,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			output.Write(" ", BoxedTextColor.Text);
 			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, MetadataTextColorProvider.GetColor(field));
 			var c = field.Constant;
-			if (c != null) {
+			if (!(c is null)) {
 				output.Write(" ", BoxedTextColor.Text);
 				output.Write("=", BoxedTextColor.Operator);
 				output.Write(" ", BoxedTextColor.Text);
-				if (c.Value == null)
+				if (c.Value is null)
 					output.Write("null", BoxedTextColor.Keyword);
 				else {
 					switch (c.Type) {
@@ -320,7 +320,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, $"Type: {type.FullName}");
-			if (type.BaseType != null) {
+			if (!(type.BaseType is null)) {
 				WriteCommentBegin(output, true);
 				output.Write("Base type: ", BoxedTextColor.Comment);
 				output.Write(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, DecompilerReferenceFlags.None, BoxedTextColor.Comment);

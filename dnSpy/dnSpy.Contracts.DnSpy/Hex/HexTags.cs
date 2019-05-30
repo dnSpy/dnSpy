@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Hex {
 		readonly HashSet<string> tags;
 
 		internal HexTags(IEnumerable<string> tags) {
-			if (tags == null)
+			if (tags is null)
 				throw new ArgumentNullException(nameof(tags));
 			this.tags = new HashSet<string>(tags, StringComparer.OrdinalIgnoreCase);
 		}

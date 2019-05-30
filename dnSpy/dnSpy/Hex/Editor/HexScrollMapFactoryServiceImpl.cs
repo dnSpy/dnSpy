@@ -25,7 +25,7 @@ namespace dnSpy.Hex.Editor {
 	[Export(typeof(HexScrollMapFactoryService))]
 	sealed class HexScrollMapFactoryServiceImpl : HexScrollMapFactoryService {
 		public override HexScrollMap Create(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return new HexScrollMapImpl(hexView);
 		}

@@ -59,7 +59,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		IEnumerable<ITagSpan<IClassificationTag>> GetXamlAttributeValueTags() {
 			foreach (var info in xamlAttributeValueClassifier.GetTags()) {
 				var tag = GetClassificationTag(info.Kind);
-				if (tag == null)
+				if (tag is null)
 					continue;
 				yield return new TagSpan<IClassificationTag>(info.Span, tag);
 			}

@@ -46,7 +46,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 		protected override bool IsIdentifierPartCharacter(char c) => Utilities.UnicodeCharacterUtilities.IsIdentifierPartCharacter(c);
 
 		void AddCastBegin(StringBuilder sb, DmdType? castType) {
-			if ((object?)castType == null)
+			if (castType is null)
 				return;
 			sb.Append("((");
 			new Formatters.CSharp.CSharpTypeFormatter(new DbgStringBuilderTextWriter(sb), TypeFormatterOptions, null).Format(castType, null);
@@ -54,7 +54,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 		}
 
 		void AddCastEnd(StringBuilder sb, DmdType? castType) {
-			if ((object?)castType == null)
+			if (castType is null)
 				return;
 			sb.Append(')');
 		}
@@ -116,7 +116,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 			typeFormatter.Format(method.DeclaringType!, null);
 			var valueFormatter = new Formatters.CSharp.CSharpPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(DbgTextColor.Operator, ".");
-			if ((object?)property != null) {
+			if (!(property is null)) {
 				if (property.GetIndexParameters().Count != 0) {
 					output.Write(DbgTextColor.Keyword, Keyword_this);
 					WriteMethodParameterList(output, method, typeFormatter, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose);
@@ -139,7 +139,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 				}
 				else {
 					var operatorInfo = Formatters.CSharp.Operators.TryGetOperatorInfo(method.Name);
-					if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
+					if (!(operatorInfo is null) && method is DmdMethodInfo methodInfo) {
 						bool isExplicitOrImplicit = operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit";
 
 						for (int i = 0; i < operatorInfo.Length; i++) {
@@ -201,7 +201,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 		}
 
 		void WriteRefIfByRef(IDbgTextWriter output, DmdParameterInfo? param) {
-			if ((object?)param == null)
+			if (param is null)
 				return;
 			var type = param.ParameterType;
 			if (!type.IsByRef)

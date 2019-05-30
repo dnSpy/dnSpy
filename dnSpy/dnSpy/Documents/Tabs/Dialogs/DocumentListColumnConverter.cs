@@ -34,7 +34,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as DocumentListVM;
 			var tag = parameter as string;
-			if (vm == null || tag == null)
+			if (vm is null || tag is null)
 				return null;
 
 			var writer = Cache.GetWriter();

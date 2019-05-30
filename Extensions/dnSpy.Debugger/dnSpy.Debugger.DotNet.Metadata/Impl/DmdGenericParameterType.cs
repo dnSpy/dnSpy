@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() {
-			if (__genericParameterConstraints_DONT_USE != null)
+			if (!(__genericParameterConstraints_DONT_USE is null))
 				return __genericParameterConstraints_DONT_USE;
 			var res = CreateGenericParameterConstraints();
 			Interlocked.CompareExchange(ref __genericParameterConstraints_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);

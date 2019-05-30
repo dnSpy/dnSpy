@@ -54,9 +54,9 @@ namespace dnSpy.Debugger.Attach {
 		}
 
 		public static AttachableProcessInfo Create(ProcessProvider processProvider, AttachProgramOptions options) {
-			if (processProvider == null)
+			if (processProvider is null)
 				throw new ArgumentNullException(nameof(processProvider));
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			var name = options.Name;
 			var title = options.Title;
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Attach {
 			var commandLine = options.CommandLine;
 			var architecture = options.Architecture;
 			var operatingSystem = options.OperatingSystem;
-			if (name == null || title == null || filename == null || commandLine == null || architecture == null || operatingSystem == null) {
+			if (name is null || title is null || filename is null || commandLine is null || architecture is null || operatingSystem is null) {
 				var info = GetDefaultProperties(processProvider, options);
 				name = name ?? info.name ?? string.Empty;
 				title = title ?? info.title ?? string.Empty;
@@ -73,8 +73,8 @@ namespace dnSpy.Debugger.Attach {
 				architecture = architecture ?? info.arch;
 				operatingSystem = operatingSystem ?? info.operatingSystem;
 			}
-			Debug.Assert(architecture != null);
-			Debug.Assert(operatingSystem != null);
+			Debug.Assert(!(architecture is null));
+			Debug.Assert(!(operatingSystem is null));
 			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture ?? DbgArchitecture.X86, operatingSystem ?? DbgOperatingSystem.Windows);
 		}
 
@@ -93,12 +93,12 @@ namespace dnSpy.Debugger.Attach {
 			DbgOperatingSystem? operatingSystem = default;
 
 			var process = processProvider.GetProcess(attachProgramOptions.ProcessId);
-			if (process != null) {
-				if (attachProgramOptions.CommandLine == null)
+			if (!(process is null)) {
+				if (attachProgramOptions.CommandLine is null)
 					commandLine = Win32CommandLineProvider.TryGetCommandLine(process.Handle);
-				if (attachProgramOptions.Title == null)
+				if (attachProgramOptions.Title is null)
 					title = process.MainWindowTitle;
-				if (attachProgramOptions.Architecture == null) {
+				if (attachProgramOptions.Architecture is null) {
 					int bitness = ProcessUtilities.GetBitness(process.Handle);
 					var processArchitecture = RuntimeInformation.ProcessArchitecture;
 					switch (processArchitecture) {
@@ -123,12 +123,12 @@ namespace dnSpy.Debugger.Attach {
 						break;
 					}
 				}
-				if (attachProgramOptions.Name == null)
+				if (attachProgramOptions.Name is null)
 					name = Path.GetFileName(attachProgramOptions.Filename ?? GetProcessName(process));
-				if (attachProgramOptions.Filename == null)
+				if (attachProgramOptions.Filename is null)
 					filename = GetProcessName(process);
 			}
-			if (attachProgramOptions.OperatingSystem == null) {
+			if (attachProgramOptions.OperatingSystem is null) {
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					operatingSystem = DbgOperatingSystem.Windows;
 				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))

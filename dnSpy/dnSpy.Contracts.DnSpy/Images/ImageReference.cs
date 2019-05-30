@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// true if it's the default instance
 		/// </summary>
-		public bool IsDefault => Assembly == null && Name == null;
+		public bool IsDefault => Assembly is null && Name is null;
 
 		/// <summary>
 		/// Assembly of image or null if <see cref="Name"/> is a URI
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Images {
 		/// <returns></returns>
 		public static bool TryParse(string? value, out ImageReference result) {
 			result = default;
-			if (value == null)
+			if (value is null)
 				return false;
 			if (value == string.Empty)
 				return true;
@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Images {
 		public override string ToString() {
 			if (IsDefault)
 				return string.Empty;
-			if (Assembly == null)
+			if (Assembly is null)
 				return Name;
 			return Assembly.GetName().Name + "," + Name;
 		}

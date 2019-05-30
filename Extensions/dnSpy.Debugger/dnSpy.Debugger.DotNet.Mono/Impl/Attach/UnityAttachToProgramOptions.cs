@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Attach {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public UnityAttachToProgramOptions CopyTo(UnityAttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			return other;

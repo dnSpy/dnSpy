@@ -48,18 +48,18 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return null;
 		}
 
-		public override bool CanSerialize(DbgCodeLocation location) => TryGetSerializer(location.Type) != null;
+		public override bool CanSerialize(DbgCodeLocation location) => !(TryGetSerializer(location.Type) is null);
 
 		public override void Serialize(ISettingsSection section, DbgCodeLocation location) {
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 
 			var bpType = location.Type;
 			var serializer = TryGetSerializer(bpType);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return;
 
 			section.Attribute("__BPT", bpType);
@@ -67,16 +67,16 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override DbgCodeLocation? Deserialize(ISettingsSection? section) {
-			if (section == null)
+			if (section is null)
 				return null;
 
 			var typeFullName = section.Attribute<string>("__BPT");
-			Debug.Assert(typeFullName != null);
-			if (typeFullName == null)
+			Debug.Assert(!(typeFullName is null));
+			if (typeFullName is null)
 				return null;
 			var serializer = TryGetSerializer(typeFullName);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return null;
 
 			return serializer.Value.Deserialize(section);

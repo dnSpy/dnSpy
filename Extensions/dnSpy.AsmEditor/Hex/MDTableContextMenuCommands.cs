@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public void Initialize(DependencyObject d) {
 			var lv = d as ListView;
-			if (lv == null)
+			if (lv is null)
 				return;
 			if (!(lv.DataContext is MetadataTableVM))
 				return;
@@ -101,9 +101,9 @@ namespace dnSpy.AsmEditor.Hex {
 
 		MDTableContext? CreateMDTableContext() {
 			var tab = documentTabService.ActiveTab;
-			if (tab != null) {
+			if (!(tab is null)) {
 				var listView = FindListView(tab);
-				if (listView != null && UIUtils.HasSelectedChildrenFocus(listView))
+				if (!(listView is null) && UIUtils.HasSelectedChildrenFocus(listView))
 					return MenuMDTableCommand.ToMDTableContext(listView, false);
 			}
 
@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static ListView? FindListView(IDocumentTab tab) {
 			var o = tab.UIContext.UIObject as DependencyObject;
-			while (o != null) {
+			while (!(o is null)) {
 				if (o is ListView lv && InitDataTemplateAP.GetInitialize(lv))
 					return lv;
 				var children = UIUtils.GetChildren(o).ToArray();
@@ -131,12 +131,12 @@ namespace dnSpy.AsmEditor.Hex {
 
 		bool ICommand.CanExecute(object parameter) {
 			var ctx = CreateMDTableContext();
-			return ctx != null && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
+			return !(ctx is null) && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
 		}
 
 		void ICommand.Execute(object parameter) {
 			var ctx = CreateMDTableContext();
-			if (ctx != null)
+			if (!(ctx is null))
 				cmd.Execute(ctx);
 		}
 	}
@@ -156,10 +156,10 @@ namespace dnSpy.AsmEditor.Hex {
 		internal static MDTableContext? ToMDTableContext(object? obj, bool isContextMenu) => ToMDTableContext(obj as ListView, isContextMenu);
 
 		internal static MDTableContext? ToMDTableContext(ListView? listView, bool isContextMenu) {
-			if (listView == null)
+			if (listView is null)
 				return null;
 			var mdVM = listView.DataContext as MetadataTableVM;
-			if (mdVM == null)
+			if (mdVM is null)
 				return null;
 
 			return new MDTableContext(listView, mdVM, (MetadataTableNode)mdVM.Owner!, isContextMenu);
@@ -233,7 +233,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(MDTableContext context) {
 			var recVM = Ask(dnSpy_AsmEditor_Resources.GoToRowIdentifier_Title, context);
-			if (recVM != null)
+			if (!(recVM is null))
 				UIUtils.ScrollSelectAndSetFocus(context.ListView, recVM);
 		}
 
@@ -277,11 +277,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(IDocumentTabService documentTabService, MDTableContext context) {
 			var @ref = GetAddressReference(context);
-			if (@ref != null)
+			if (!(@ref is null))
 				documentTabService.FollowReference(@ref);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) => GetAddressReference(context) != null;
+		static bool IsEnabledInternal(MDTableContext context) => !(GetAddressReference(context) is null);
 
 		static AddressReference? GetAddressReference(MDTableContext context) {
 			if (context.Records.Length == 0)
@@ -382,7 +382,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(MDTableContext context) {
 			var data = GetPasteData(context);
-			if (data == null)
+			if (data is null)
 				return;
 
 			var buffer = context.MetadataTableVM.Buffer;
@@ -390,14 +390,14 @@ namespace dnSpy.AsmEditor.Hex {
 			HexBufferWriterHelper.Write(buffer, context.Records[0].Span.Start, data);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) => GetPasteData(context) != null;
+		static bool IsEnabledInternal(MDTableContext context) => !(GetPasteData(context) is null);
 
 		static byte[]? GetPasteData(MDTableContext context) {
 			if (context.Records.Length == 0)
 				return null;
 
 			var data = ClipboardUtils.GetData(canBeEmpty: false);
-			if (data == null || data.Length == 0)
+			if (data is null || data.Length == 0)
 				return null;
 
 			if (data.Length % context.MetadataTableVM.TableInfo.RowSize != 0)
@@ -412,7 +412,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static string? GetHeaderInternal(MDTableContext context) {
 			var data = GetPasteData(context);
-			if (data == null)
+			if (data is null)
 				return null;
 			int recs = data.Length / context.MetadataTableVM.TableInfo.RowSize;
 			if (recs <= 1)

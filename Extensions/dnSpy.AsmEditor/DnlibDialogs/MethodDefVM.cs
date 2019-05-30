@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string FullName {
 			get {
 				var md = Method;
-				return md == null ? "null" : md.FullName;
+				return md is null ? "null" : md.FullName;
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Method)) {
-				if (Method == null)
+				if (Method is null)
 					return dnSpy_AsmEditor_Resources.MethodCantBeNull;
 				return string.Empty;
 			}
@@ -62,6 +62,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError => Method != null;
+		public override bool HasError => !(Method is null);
 	}
 }

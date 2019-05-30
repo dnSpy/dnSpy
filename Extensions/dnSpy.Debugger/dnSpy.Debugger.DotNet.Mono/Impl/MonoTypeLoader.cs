@@ -49,10 +49,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public override TypeMirror? Load(AssemblyMirror assembly, string typeFullName) {
 			var res = engine.CheckFuncEval(evalInfo.Context);
-			if (res != null)
+			if (!(res is null))
 				return null;
 			var appDomain = evalInfo.Frame.AppDomain;
-			if (appDomain == null)
+			if (appDomain is null)
 				return null;
 			var state = appDomain.GetOrCreateData<LoaderState>();
 			if (!state.LoadedTypes.Add(typeFullName))

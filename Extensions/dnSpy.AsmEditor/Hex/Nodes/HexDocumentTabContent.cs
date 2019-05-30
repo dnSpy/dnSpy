@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var dc = content as HexDocumentTabContent;
-			if (dc == null)
+			if (dc is null)
 				return null;
 
 			return GUID_SerializedContent;
@@ -51,7 +51,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (guid != GUID_SerializedContent)
 				return null;
 			var hexNode = context.Nodes.Length != 1 ? null : context.Nodes[0] as HexNode;
-			if (hexNode == null)
+			if (hexNode is null)
 				return null;
 
 			return new HexDocumentTabContent(hexNode);

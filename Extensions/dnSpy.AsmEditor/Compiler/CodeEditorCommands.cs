@@ -49,10 +49,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID))
 				return null;
 			var codeEditor = context.Find<ICodeEditor>();
-			if (codeEditor == null)
+			if (codeEditor is null)
 				return null;
 			var vm = EditCodeVM.TryGet(codeEditor.TextView);
-			if (vm == null)
+			if (vm is null)
 				return null;
 			return new CodeEditorContext(vm, codeEditor);
 		}

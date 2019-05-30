@@ -25,7 +25,7 @@ namespace dndbg.Engine {
 		public CorFunction? Function {
 			get {
 				int hr = obj.GetFunction(out var func);
-				return hr < 0 || func == null ? null : new CorFunction(func);
+				return hr < 0 || func is null ? null : new CorFunction(func);
 			}
 		}
 

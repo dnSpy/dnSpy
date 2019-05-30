@@ -89,7 +89,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		public IEnumerable<ClassifierResult> GetColors(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
 				var color = GetClassificationType(cspan) ?? defaultColor;
-				if (color != null)
+				if (!(color is null))
 					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color);
 			}
 		}
@@ -125,10 +125,10 @@ namespace dnSpy.Roslyn.Text.Classification {
 
 		object? GetClassificationType2(ClassifiedSpan cspan) {
 			var symRes = GetSymbolResult(cspan.TextSpan);
-			if (symRes.Color != null)
+			if (!(symRes.Color is null))
 				return symRes.Color;
 			var symbol = symRes.Symbol;
-			if (symbol == null)
+			if (symbol is null)
 				return null;
 the_switch:
 			switch (symbol.Kind) {
@@ -223,7 +223,7 @@ the_switch:
 					return roslynClassificationTypes.ValueType;
 
 				case TypeKind.TypeParameter:
-					if ((symbol as ITypeParameterSymbol)?.DeclaringMethod != null)
+					if (!((symbol as ITypeParameterSymbol)?.DeclaringMethod is null))
 						return roslynClassificationTypes.MethodGenericParameter;
 					return roslynClassificationTypes.TypeGenericParameter;
 
@@ -256,7 +256,7 @@ the_switch:
 				return roslynClassificationTypes.Local;
 
 			case SymbolKind.TypeParameter:
-				return (symbol as ITypeParameterSymbol)?.DeclaringMethod != null ?
+				return !((symbol as ITypeParameterSymbol)?.DeclaringMethod is null) ?
 					roslynClassificationTypes.MethodGenericParameter : roslynClassificationTypes.TypeGenericParameter;
 
 			case SymbolKind.Preprocessing:
@@ -300,13 +300,13 @@ the_switch:
 
 			case ClassificationTypeNames.ClassName:
 				symRes = GetSymbolResult(cspan.TextSpan);
-				if (symRes.Color != null)
+				if (!(symRes.Color is null))
 					return symRes.Color;
 				if (symRes.Symbol?.IsStatic == true)
 					return roslynClassificationTypes.StaticType;
 				if (symRes.Symbol?.IsSealed == true)
 					return roslynClassificationTypes.SealedType;
-				Debug.WriteLineIf(symRes.Symbol == null, "Couldn't get ClassName classification type");
+				Debug.WriteLineIf(symRes.Symbol is null, "Couldn't get ClassName classification type");
 				return roslynClassificationTypes.Type;
 
 			case ClassificationTypeNames.Comment:
@@ -359,7 +359,7 @@ the_switch:
 
 			case ClassificationTypeNames.TypeParameterName:
 				classificationType = GetClassificationType2(cspan);
-				Debug.WriteLineIf(classificationType == null, "Couldn't get TypeParameterName color type");
+				Debug.WriteLineIf(classificationType is null, "Couldn't get TypeParameterName color type");
 				return classificationType ?? roslynClassificationTypes.TypeGenericParameter;
 
 			case ClassificationTypeNames.VerbatimStringLiteral:

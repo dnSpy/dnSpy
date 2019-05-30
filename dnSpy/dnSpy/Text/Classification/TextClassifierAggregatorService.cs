@@ -38,14 +38,14 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public ITextClassifierAggregator Create(IContentType contentType) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 			var list = new List<ITextClassifier>();
 			foreach (var lz in textClassifierProviders) {
 				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				var classifier = lz.Value.Create(contentType);
-				if (classifier != null)
+				if (!(classifier is null))
 					list.Add(classifier);
 			}
 			return new TextClassifierAggregator(classificationTypeRegistryService, list);

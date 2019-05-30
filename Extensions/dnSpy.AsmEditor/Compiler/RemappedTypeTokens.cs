@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public bool TryGetValue(uint token, out uint newToken) {
 			Debug.Assert(isReadOnly);
 			var arrayDict = this.arrayDict;
-			if (arrayDict != null) {
+			if (!(arrayDict is null)) {
 				// Most likely code path
 
 				if (token == enclosingTypeToken) {

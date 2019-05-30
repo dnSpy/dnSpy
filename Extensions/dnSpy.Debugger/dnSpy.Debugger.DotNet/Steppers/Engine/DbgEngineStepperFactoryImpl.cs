@@ -41,11 +41,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		}
 
 		public override DbgEngineStepper Create(IDbgDotNetRuntime runtime, DbgDotNetEngineStepper stepper, DbgThread thread) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
-			if (stepper == null)
+			if (stepper is null)
 				throw new ArgumentNullException(nameof(stepper));
-			if (thread == null)
+			if (thread is null)
 				throw new ArgumentNullException(nameof(thread));
 			return new DbgEngineStepperImpl(dbgLanguageService, dbgDotNetDebugInfoService, debuggerSettings, runtime, stepper, thread);
 		}

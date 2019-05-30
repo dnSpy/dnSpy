@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.MVVM {
 				return list[Index].Value;
 			}
 			set {
-				if (value != null && !object.Equals(SelectedItem, value))
+				if (!(value is null) && !object.Equals(SelectedItem, value))
 					SelectedIndex = GetIndex(value);
 			}
 		}

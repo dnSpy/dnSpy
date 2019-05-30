@@ -84,13 +84,13 @@ namespace dnSpy.Roslyn.Debugger {
 			new GenericParamConstraintUser((ITypeDefOrRef)generatedModule!.Import(gpc.Constraint));
 
 		public byte[] Compile(out DSEELocalAndMethod[] locals, out string typeName, out string? errorMessage) {
-			if (generatedModule == null) {
+			if (generatedModule is null) {
 				locals = Array.Empty<DSEELocalAndMethod>();
 				typeName = string.Empty;
 				errorMessage = null;
 				return Array.Empty<byte>();
 			}
-			Debug.Assert(getLocalsType != null);
+			Debug.Assert(!(getLocalsType is null));
 
 			foreach (var p in sourceMethod.Parameters) {
 				var name = language.GetVariableName(GetName(p), isThis: p.IsHiddenThisParameter);
@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Debugger {
 			}
 
 			var body = sourceMethod.Body;
-			if (body != null) {
+			if (!(body is null)) {
 				foreach (var l in body.Variables) {
 					var name = language.GetVariableName(GetName(l), isThis: false);
 					const LocalAndMethodKind kind = LocalAndMethodKind.Local;
@@ -140,8 +140,8 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		(string methodName, DkmClrCompilationResultFlags flags) AddMethod(TypeSig type, int index, bool isLocal) {
-			Debug.Assert(generatedModule != null);
-			Debug.Assert(getLocalsType != null);
+			Debug.Assert(!(generatedModule is null));
+			Debug.Assert(!(getLocalsType is null));
 			var methodName = methodNamePrefix + methodNameIndex++.ToString();
 
 			var callConv = CallingConvention.Default;
@@ -152,7 +152,7 @@ namespace dnSpy.Roslyn.Debugger {
 			if (methodSig.RetType.IsByRef)
 				methodSig.RetType = methodSig.RetType.Next.RemovePinnedAndModifiers();
 
-			if (lastMethodSig != null) {
+			if (!(lastMethodSig is null)) {
 				foreach (var p in lastMethodSig.Params)
 					methodSig.Params.Add(p);
 			}
@@ -220,7 +220,7 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		Instruction LoadIndirect(TypeSig? type) {
-			Debug.Assert(generatedModule != null);
+			Debug.Assert(!(generatedModule is null));
 			switch (type.GetElementType()) {
 			case ElementType.Boolean:		return Instruction.Create(OpCodes.Ldind_I1);
 			case ElementType.Char:			return Instruction.Create(OpCodes.Ldind_U2);

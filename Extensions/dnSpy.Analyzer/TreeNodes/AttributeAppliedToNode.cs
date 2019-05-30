@@ -39,9 +39,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public static bool CanShow(TypeDef type) => type.IsClass && IsCustomAttribute(type);
 
 		static bool IsCustomAttribute(TypeDef type) {
-			while (type != null) {
+			while (!(type is null)) {
 				var bt = type.BaseType.ResolveTypeDef();
-				if (bt == null)
+				if (bt is null)
 					return false;
 				if (bt.FullName == "System.Attribute")
 					return true;
@@ -60,7 +60,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedType.HasCustomAttributes) {
 				foreach (CustomAttribute ca in analyzedType.CustomAttributes) {
 					ITypeDefOrRef t = ca.AttributeType;
-					if (t != null && t.Name == "AttributeUsageAttribute" && t.Namespace == "System" &&
+					if (!(t is null) && t.Name == "AttributeUsageAttribute" && t.Namespace == "System" &&
 						ca.ConstructorArguments.Count > 0 &&
 						ca.ConstructorArguments[0].Value is int) {
 						usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
@@ -110,7 +110,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var module in modules) {
 				if ((usage & AttributeTargets.Assembly) != 0) {
 					AssemblyDef asm = module.Assembly;
-					if (asm != null && !checkedAsms.Contains(asm) && asm.HasCustomAttributes) {
+					if (!(asm is null) && !checkedAsms.Contains(asm) && asm.HasCustomAttributes) {
 						checkedAsms.Add(asm);
 						foreach (var attribute in asm.CustomAttributes) {
 							if (new SigComparer().Equals(attribute.AttributeType, tr)) {
@@ -267,7 +267,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
+			if (asm is null) {
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, analyzedType);
 				yield break;
 			}
@@ -275,7 +275,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var m in asm.Modules)
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
 
-			var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
+			var assemblies = Context.DocumentService.GetDocuments().Where(a => !(a.AssemblyDef is null));
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
@@ -288,7 +288,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 				if (found) {
 					var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
-					if (typeref != null) {
+					if (!(typeref is null)) {
 						foreach (var m in assembly.AssemblyDef.Modules)
 							yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
 					}
@@ -298,7 +298,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
+			if (asm is null) {
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, analyzedType);
 				yield break;
 			}
@@ -314,20 +314,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 					if (attribute.ConstructorArguments.Count == 0)
 						continue;
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-					if (assemblyName == null)
+					if (assemblyName is null)
 						continue;
 					assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
 					friendAssemblies.Add(assemblyName);
 				}
 
 				if (friendAssemblies.Count > 0) {
-					var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
+					var assemblies = Context.DocumentService.GetDocuments().Where(a => !(a.AssemblyDef is null));
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
 						if (friendAssemblies.Contains(assembly.AssemblyDef!.Name)) {
 							var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
-							if (typeref != null) {
+							if (!(typeref is null)) {
 								foreach (var m in assembly.AssemblyDef.Modules)
 									yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
 							}

@@ -27,11 +27,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public DocumentTreeNodeData? FindNode(IDocumentTreeView documentTreeView, object? @ref) => FindNode(documentTreeView, @ref as TokenReference);
 
 		internal static MetadataTableRecordNode? FindNode(IDocumentTreeView documentTreeView, TokenReference? tokRef) {
-			if (tokRef == null)
+			if (tokRef is null)
 				return null;
 
 			var modNode = documentTreeView.FindNode(tokRef.ModuleDef);
-			if (modNode == null)
+			if (modNode is null)
 				return null;
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var peNode = (PENode)modNode.TreeNode.DataChildren.FirstOrDefault(a => a is PENode);

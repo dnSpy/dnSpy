@@ -136,7 +136,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				progressListener.SetProgress(maxProgress);
 			}
 			finally {
-				if (satelliteAssemblyFinder != null)
+				if (!(satelliteAssemblyFinder is null))
 					satelliteAssemblyFinder.Dispose();
 			}
 		}

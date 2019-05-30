@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			else {
 				var manifestModule = engine.TryGetModule(monoModule.Assembly.ManifestModule);
-				if (manifestModule == null)
+				if (manifestModule is null)
 					throw new InvalidOperationException();
 				reflectionAssembly = ((DbgMonoDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule!.Assembly;
 				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
 				var bytes = moduleSize == 0 ? null : engine.DbgRuntime.Process.ReadMemory(moduleAddress, (int)moduleSize);
-				if (bytes != null) {
+				if (!(bytes is null)) {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
@@ -296,7 +296,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			finally {
 				try {
-					if (tempFilename != null)
+					if (!(tempFilename is null))
 						File.Delete(tempFilename);
 				}
 				catch { }

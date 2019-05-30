@@ -30,7 +30,7 @@ namespace dnSpy.Hex.Files {
 	[Export(typeof(HexFieldFormatterFactory))]
 	sealed class HexFieldFormatterFactoryImpl : HexFieldFormatterFactory {
 		public override HexFieldFormatter Create(HexTextWriter writer, HexFieldFormatterOptions options, HexNumberOptions arrayIndexOptions, HexNumberOptions valueNumberOptions) {
-			if (writer == null)
+			if (writer is null)
 				throw new ArgumentNullException(nameof(writer));
 			return new HexFieldFormatterImpl(writer, options, new NumberFormatter(arrayIndexOptions), new NumberFormatter(valueNumberOptions));
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override void WriteField(ComplexData structure, HexPosition position) {
-			if (structure == null)
+			if (structure is null)
 				throw new ArgumentNullException(nameof(structure));
 			if (!structure.Span.Span.Contains(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
@@ -85,27 +85,27 @@ namespace dnSpy.Hex.Files {
 			ComplexData? str = structure;
 			for (;;) {
 				var field = str.GetFieldByPosition(position);
-				if (field == null)
+				if (field is null)
 					break;
 				field.WriteName(this);
 				str = field.Data as ComplexData;
-				if (str == null)
+				if (str is null)
 					break;
 			}
 		}
 
 		public override void WriteValue(ComplexData structure, HexPosition position) {
-			if (structure == null)
+			if (structure is null)
 				throw new ArgumentNullException(nameof(structure));
 			if (!structure.Span.Span.Contains(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
 			var field = structure.GetSimpleField(position);
-			Debug.Assert(field != null);
-			if (field == null)
+			Debug.Assert(!(field is null));
+			if (field is null)
 				return;
 			var data = field.Data as SimpleData;
-			Debug.Assert(data != null);
-			if (data == null)
+			Debug.Assert(!(data is null));
+			if (data is null)
 				return;
 			try {
 				data.WriteValue(this);
@@ -225,7 +225,7 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override void WriteFilename(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			filename = FilterStringLength(filename);
 			var parts = filename.Split(pathSeparators);

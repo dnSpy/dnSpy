@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 
 			var method = weakMethod?.Target as MethodDef ?? owner.GetDefinition<MethodDef>(location.Module, location.Token);
-			if (method == null) {
+			if (method is null) {
 				if (printedToken)
 					output.Write(DbgTextColor.Error, "???");
 				else

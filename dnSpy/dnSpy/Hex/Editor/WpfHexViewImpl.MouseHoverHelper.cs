@@ -51,7 +51,7 @@ namespace dnSpy.Hex.Editor {
 				static bool EqualLines(HexBufferLine a, HexBufferLine b) {
 					if ((object)a == b)
 						return true;
-					if ((object)a == null || (object)b == null)
+					if (a is null || b is null)
 						return false;
 					return a.LineProvider == b.LineProvider && a.BufferSpan.Equals(b.BufferSpan);
 				}
@@ -81,7 +81,7 @@ namespace dnSpy.Hex.Editor {
 				var loc = HexMouseLocation.TryCreateTextOnly(owner, e, fullLineHeight: false);
 				LinePosition? newPosition;
 
-				if (loc == null)
+				if (loc is null)
 					newPosition = null;
 				else if (loc.Position > loc.HexViewLine.TextSpan.End)
 					newPosition = null;
@@ -117,13 +117,13 @@ namespace dnSpy.Hex.Editor {
 				add {
 					if (owner.IsClosed)
 						return;
-					if (value == null)
+					if (value is null)
 						return;
 					handlers.Add(new MouseHoverHandler(value));
 					UpdateTimer();
 				}
 				remove {
-					if (value == null)
+					if (value is null)
 						return;
 					for (int i = 0; i < handlers.Count; i++) {
 						if (handlers[i].Handler == value) {
@@ -148,13 +148,13 @@ namespace dnSpy.Hex.Editor {
 			Stopwatch? timerStart;
 
 			void Timer_Tick(object sender, EventArgs e) {
-				if (owner.IsClosed || !owner.VisualElement.IsVisible || position == null || !owner.BufferLines.BufferSpan.Contains(position.Value.Line.BufferSpan)) {
+				if (owner.IsClosed || !owner.VisualElement.IsVisible || position is null || !owner.BufferLines.BufferSpan.Contains(position.Value.Line.BufferSpan)) {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
 				}
-				Debug.Assert(timerStart != null);
+				Debug.Assert(!(timerStart is null));
 				var list = GetHandlersToNotify();
-				if (list != null) {
+				if (!(list is null)) {
 					var mhe = new HexMouseHoverEventArgs(owner, position.Value.Line, position.Value.Column);
 					foreach (var h in list) {
 						h.Raised = true;
@@ -165,7 +165,7 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			long GetElapsedTimerStartTicks() {
-				if (timerStart == null)
+				if (timerStart is null)
 					return 0;
 				return timerStart.ElapsedMilliseconds * 10000;
 			}
@@ -178,7 +178,7 @@ namespace dnSpy.Hex.Editor {
 						continue;
 					// If it's close enough to the requested time, notify the handler.
 					if (h.DelayTicks - h.DelayTicks / 10 <= elapsedTicks) {
-						if (list == null)
+						if (list is null)
 							list = new List<MouseHoverHandler>();
 						list.Add(h);
 					}
@@ -193,7 +193,7 @@ namespace dnSpy.Hex.Editor {
 				if (ticksLeft < 0)
 					StopTimer();
 				else {
-					if (timerStart == null)
+					if (timerStart is null)
 						timerStart = Stopwatch.StartNew();
 					timer.Interval = TimeSpan.FromTicks(Math.Max(10000, ticksLeft));
 					timer.Start();
@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			long GetTicksLeft() {
-				if (position == null)
+				if (position is null)
 					return -1;
 				bool found = false;
 				long ticks = long.MaxValue;

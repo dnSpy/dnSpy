@@ -143,9 +143,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 							if (rank <= 0)
 								OutputWrite("???", DbgTextColor.Error);
 							else {
-								if (aryValue == null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
+								if (aryValue is null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
 									dimensionInfos = null;
-								if (ShowArrayValueSizes && dimensionInfos != null && dimensionInfos.Length == rank) {
+								if (ShowArrayValueSizes && !(dimensionInfos is null) && dimensionInfos.Length == rank) {
 									for (int i = 0; i < rank; i++) {
 										if (i > 0) {
 											OutputWrite(",", DbgTextColor.Punctuation);
@@ -171,7 +171,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 						else {
 							Debug.Assert(aryType.IsSZArray);
 							OutputWrite(ARRAY_OPEN_PAREN, DbgTextColor.Punctuation);
-							if (ShowArrayValueSizes && aryValue != null && !aryValue.IsNull) {
+							if (ShowArrayValueSizes && !(aryValue is null) && !aryValue.IsNull) {
 								if (aryValue.GetArrayCount(out elementCount))
 									WriteUInt32(elementCount);
 							}
@@ -211,7 +211,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 						int tupleIndex = 0;
 						for (;;) {
 							tupleType = WriteTupleFields(tupleType, ref tupleIndex);
-							if ((object?)tupleType != null)
+							if (!(tupleType is null))
 								WriteCommaSpace();
 							else
 								break;
@@ -279,7 +279,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			}
 			finally {
 				recursionCounter--;
-				if (arrayTypesList != null) {
+				if (!(arrayTypesList is null)) {
 					foreach (var info in arrayTypesList) {
 						if (info.value != value)
 							info.value?.Dispose();
@@ -316,7 +316,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				Format(args[i], null);
 				//TODO: Write tuple name used in source
 				string? fieldName = null;
-				if (fieldName != null) {
+				if (!(fieldName is null)) {
 					WriteSpace();
 					OutputWrite(fieldName, DbgTextColor.InstanceField);
 				}

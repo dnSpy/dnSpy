@@ -53,12 +53,12 @@ namespace dnSpy.MainApp.Settings {
 					foreach (var ext in openExtensions) {
 						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
-							name = key == null ? null : key.GetValue(string.Empty) as string;
+							name = key is null ? null : key.GetValue(string.Empty) as string;
 						if (string.IsNullOrEmpty(name))
 							continue;
 
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\" + name + @"\shell\" + EXPLORER_MENU_TEXT)) {
-							if (key != null)
+							if (!(key is null))
 								count++;
 						}
 					}
@@ -70,7 +70,7 @@ namespace dnSpy.MainApp.Settings {
 					null;
 			}
 			set {
-				if (value == null)
+				if (value is null)
 					return;
 				bool enabled = value.Value;
 

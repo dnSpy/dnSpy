@@ -36,9 +36,9 @@ namespace dnSpy.Roslyn.Text.Classification {
 		}
 
 		public ITaggedTextElementProvider Create(IContentType contentType, string category) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
-			if (category == null)
+			if (category is null)
 				throw new ArgumentNullException(nameof(category));
 			return new TaggedTextElementProvider(contentType, textClassifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(category));
 		}

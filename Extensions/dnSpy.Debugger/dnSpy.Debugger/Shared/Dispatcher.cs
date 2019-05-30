@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Shared {
 		public void BeginInvoke(Action callback) => BeginInvoke(callback, throwIfShutdownStarted: false);
 
 		void BeginInvoke(Action callback, bool throwIfShutdownStarted) {
-			if (callback == null)
+			if (callback is null)
 				throw new ArgumentNullException(nameof(callback));
 			lock (lockObj) {
 				if (hasShutdownStarted) {
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Shared {
 		}
 
 		public TResult Invoke<TResult>(Func<TResult> callback) {
-			if (callback == null)
+			if (callback is null)
 				throw new ArgumentNullException(nameof(callback));
 			if (CheckAccess()) {
 				var prevContext = SynchronizationContext.Current;
@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Shared {
 		}
 
 		public void Invoke(Action callback) {
-			if (callback == null)
+			if (callback is null)
 				throw new ArgumentNullException(nameof(callback));
 			Invoke<object?>(() => { callback(); return null; });
 		}

@@ -84,12 +84,12 @@ namespace dnSpy.Search {
 
 		public override void Execute(IMenuItemContext context) {
 			var res = GetReference(context);
-			if (res == null)
+			if (res is null)
 				return;
 			searchService.Value.FollowResult(res, newTab);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
 
 		ISearchResult? GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID))

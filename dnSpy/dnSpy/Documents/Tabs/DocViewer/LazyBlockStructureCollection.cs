@@ -27,8 +27,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public BlockStructureCollection Collection {
 			get {
-				if (coll == null) {
-					Debug.Assert(ranges != null);
+				if (coll is null) {
+					Debug.Assert(!(ranges is null));
 					coll = new BlockStructureCollection(ranges);
 					ranges = null;
 				}

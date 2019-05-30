@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) {
 			var thread = dbgManager.Value.CurrentThread.Current;
-			if (thread == null || thread.Runtime.RuntimeKindGuid != e.RuntimeKindGuid)
+			if (thread is null || thread.Runtime.RuntimeKindGuid != e.RuntimeKindGuid)
 				return;
 			UI(() => RefreshNodes_UI());
 		}
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				language = info.language;
 				LanguageChanged?.Invoke(this, EventArgs.Empty);
 			}
-			bool newIsReadOnly = info.frame == null;
+			bool newIsReadOnly = info.frame is null;
 			NodesChanged?.Invoke(this, EventArgs.Empty);
 			SetIsReadOnly_UI(newIsReadOnly);
 		}
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			if (!isOpen)
 				return (null, null);
 			var frame = dbgCallStackService.Value.ActiveFrame;
-			if (frame == null)
+			if (frame is null)
 				return (null, null);
 			var language = dbgLanguageService.Value.GetCurrentLanguage(frame.Runtime.RuntimeKindGuid);
 			return (language, frame);
@@ -146,11 +146,11 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public override GetNodesResult GetNodes(DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions) {
 			uiDispatcher.VerifyAccess();
 			var info = TryGetLanguage();
-			if (info.frame == null)
+			if (info.frame is null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false, recreateAllNodes: false);
-			Debug.Assert(info.language != null);
+			Debug.Assert(!(info.language is null));
 			var evalInfo = TryGetEvaluationInfo(info);
-			if (evalInfo == null)
+			if (evalInfo is null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
 			Debug.Assert(evalInfo.Frame == info.frame);
 			try {
@@ -203,12 +203,12 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public override DbgEvaluationInfo? TryGetEvaluationInfo() => TryGetEvaluationInfo(TryGetLanguage());
 
 		DbgEvaluationInfo? TryGetEvaluationInfo((DbgLanguage? language, DbgStackFrame? frame) info) {
-			if (evalContextInfo.EvalInfo != null && evalContextInfo.Language == info.language && evalContextInfo.EvalInfo.Frame == info.frame)
+			if (!(evalContextInfo.EvalInfo is null) && evalContextInfo.Language == info.language && evalContextInfo.EvalInfo.Frame == info.frame)
 				return evalContextInfo.EvalInfo;
 
 			evalContextInfo.Language = info.language;
-			if (info.frame != null) {
-				Debug.Assert(info.language != null);
+			if (!(info.frame is null)) {
+				Debug.Assert(!(info.language is null));
 				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
 				var cancellationToken = CancellationToken.None;
 				var context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);

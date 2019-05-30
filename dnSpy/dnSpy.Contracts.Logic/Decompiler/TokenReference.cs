@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(TokenReference? other) => other != null && Token == other.Token && ModuleDef == other.ModuleDef;
+		public bool Equals(TokenReference? other) => !(other is null) && Token == other.Token && ModuleDef == other.ModuleDef;
 
 		/// <summary>
 		/// Equals()
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Equals()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() => (ModuleDef == null ? 0 : ModuleDef.GetHashCode()) ^ (int)Token;
+		public override int GetHashCode() => (ModuleDef is null ? 0 : ModuleDef.GetHashCode()) ^ (int)Token;
 
 		/// <summary>
 		/// ToString()

@@ -47,7 +47,7 @@ namespace dnSpy.Settings {
 		public void RemoveAttribute(string name) => sectionAttributes.RemoveAttribute(name);
 
 		public void CopyFrom(ISettingsSection section) {
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			foreach (var attr in section.Attributes)
 				Attribute(attr.Item1, attr.Item2);

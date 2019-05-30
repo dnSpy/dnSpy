@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				ModuleBreakpoint.Order = null;
 			else {
 				var order = SimpleTypeConverter.ParseInt32(value, int.MinValue, int.MaxValue, out var error);
-				if (error == null)
+				if (error is null)
 					ModuleBreakpoint.Order = order;
 				else {
 					// Keep original value

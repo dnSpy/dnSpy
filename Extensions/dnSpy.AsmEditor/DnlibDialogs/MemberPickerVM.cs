@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (selectedItem != value) {
 					selectedItem = value;
 					OnPropertyChanged(nameof(SelectedItem));
-					if (value != null) {
+					if (!(value is null)) {
 						searchResult = null;
 						OnPropertyChanged(nameof(SearchResult));
 					}
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public object? SelectedDnlibObject {
 			get {
 				var res = SearchResult;
-				if (res != null) {
+				if (!(res is null)) {
 					var obj = res.Object;
 
 					if (obj is AssemblyDef && filter.GetResult((AssemblyDef)obj).IsMatch)
@@ -105,7 +105,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 
 				var item = documentTreeView.TreeView.FromImplNode(SelectedItem);
-				if (item != null) {
+				if (!(item is null)) {
 					if (item is AssemblyDocumentNode && filter.GetResult(((AssemblyDocumentNode)item).Document.AssemblyDef!).IsMatch)
 						return ((AssemblyDocumentNode)item).Document;
 					else if (item is ModuleDocumentNode && filter.GetResult(((ModuleDocumentNode)item).Document.ModuleDef!).IsMatch)
@@ -185,7 +185,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (searchResult != value) {
 					searchResult = value;
 					OnPropertyChanged(nameof(SearchResult));
-					if (value != null) {
+					if (!(value is null)) {
 						selectedItem = null;
 						OnPropertyChanged(nameof(SelectedItem));
 					}
@@ -246,7 +246,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public bool SelectItem(object? item) {
 			var node = documentTreeView.FindNode(item);
-			if (node == null)
+			if (node is null)
 				return false;
 
 			documentTreeView.TreeView.SelectItems(new TreeNodeData[] { node });
@@ -261,11 +261,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void OpenNewAssembly() {
-			if (openAssembly == null)
+			if (openAssembly is null)
 				throw new InvalidOperationException();
 
 			var file = openAssembly.Open();
-			if (file == null)
+			if (file is null)
 				return;
 
 			documentTreeView.DocumentService.GetOrAdd(file);
@@ -295,7 +295,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool searchCompleted;
 
 		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
-			if (sender == null || sender != fileSearcher || searchCompleted)
+			if (sender is null || sender != fileSearcher || searchCompleted)
 				return;
 			searchCompleted = true;
 			SearchResults.Remove(fileSearcher!.SearchingResult!);
@@ -303,7 +303,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void FileSearcher_OnNewSearchResults(object sender, SearchResultEventArgs e) {
-			if (sender == null || sender != fileSearcher)
+			if (sender is null || sender != fileSearcher)
 				return;
 			Debug.Assert(!searchCompleted);
 			if (searchCompleted)
@@ -332,7 +332,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void CancelSearch() {
 			TooManyResults = false;
 			delayedSearch.Cancel();
-			if (fileSearcher != null) {
+			if (!(fileSearcher is null)) {
 				fileSearcher.Cancel();
 				fileSearcher = null;
 			}
@@ -341,9 +341,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected override string? Verify(string columnName) {
 			if (columnName == nameof(SelectedItem) || columnName == nameof(SearchResult)) {
-				if (SelectedItem == null && SearchResult == null)
+				if (SelectedItem is null && SearchResult is null)
 					return dnSpy_AsmEditor_Resources.PickMember_TypeMustBeSelected;
-				if (SelectedDnlibObject == null)
+				if (SelectedDnlibObject is null)
 					return GetErrorMessage();
 				return string.Empty;
 			}
@@ -368,9 +368,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public int Compare(object x, object y) {
 			var a = x as ISearchResult;
 			var b = y as ISearchResult;
-			if (a == null)
+			if (a is null)
 				return 1;
-			if (b == null)
+			if (b is null)
 				return -1;
 			if (a == b)
 				return 0;

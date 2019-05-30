@@ -36,7 +36,7 @@ namespace dndbg.Engine {
 		/// <param name="key">Key</param>
 		/// <returns></returns>
 		public TValue? TryGet(TKey? key) {
-			if (key == null)
+			if (key is null)
 				return null;
 
 			dict.TryGetValue(key, out var value);
@@ -50,11 +50,11 @@ namespace dndbg.Engine {
 		/// <param name="key">Key</param>
 		/// <returns></returns>
 		public TValue? Add(TKey? key) {
-			if (key == null)
+			if (key is null)
 				return null;
 
 			var value = TryGet(key);
-			if (value != null)
+			if (!(value is null))
 				return value;
 
 			var createdValue = createValue(key);
@@ -67,7 +67,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="key">Key</param>
 		public bool Remove(TKey? key) {
-			if (key == null)
+			if (key is null)
 				return false;
 
 			return dict.Remove(key);

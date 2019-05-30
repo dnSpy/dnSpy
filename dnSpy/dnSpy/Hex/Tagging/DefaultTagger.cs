@@ -117,7 +117,7 @@ namespace dnSpy.Hex.Tagging {
 			}
 
 			var allValid = context.Line.HexBytes.AllValid;
-			if (allValid == null) {
+			if (allValid is null) {
 				foreach (var cell in context.Line.ValueCells.GetVisibleCells()) {
 					if (!IsValid(cell, context.Line))
 						yield return new HexTextTagSpan<HexClassificationTag>(cell.FullSpan, hexClassificationTags.HexErrorTag);

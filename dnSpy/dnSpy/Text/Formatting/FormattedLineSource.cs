@@ -55,13 +55,13 @@ namespace dnSpy.Text.Formatting {
 		const int MAX_LINE_LENGTH = 5000;
 
 		public FormattedLineSource(ITextFormatterProvider textFormatterProvider, ITextParagraphPropertiesFactoryService? textParagraphPropertiesFactoryService, ITextSnapshot sourceTextSnapshot, ITextSnapshot visualBufferSnapshot, int tabSize, double baseIndent, double wordWrapWidth, double maxAutoIndent, bool useDisplayMode, IClassifier aggregateClassifier, ITextAndAdornmentSequencer sequencer, IClassificationFormatMap classificationFormatMap, bool isViewWrapEnabled) {
-			if (textFormatterProvider == null)
+			if (textFormatterProvider is null)
 				throw new ArgumentNullException(nameof(textFormatterProvider));
-			if (sourceTextSnapshot == null)
+			if (sourceTextSnapshot is null)
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
-			if (visualBufferSnapshot == null)
+			if (visualBufferSnapshot is null)
 				throw new ArgumentNullException(nameof(visualBufferSnapshot));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (tabSize <= 0)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
@@ -93,7 +93,7 @@ namespace dnSpy.Text.Formatting {
 			coll[0].Span.GetSpans(SourceTextSnapshot)[0].Start.GetContainingLine();
 
 		public Collection<IFormattedLine> FormatLineInVisualBuffer(ITextSnapshotLine visualLine) {
-			if (visualLine == null)
+			if (visualLine is null)
 				throw new ArgumentNullException(nameof(visualLine));
 			if (visualLine.Snapshot != TopTextSnapshot)
 				throw new ArgumentException();
@@ -233,7 +233,7 @@ namespace dnSpy.Text.Formatting {
 			var props = classificationFormatMap.GetTextProperties(cspan.ClassificationType);
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
-				if (last.AdornmentElement == null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
+				if (last.AdornmentElement is null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
 					list[list.Count - 1] = new LinePart(list.Count - 1, last.Column, Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties!);
 					return;
 				}

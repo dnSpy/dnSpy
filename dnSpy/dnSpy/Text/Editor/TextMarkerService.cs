@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(ITextMarkerProviderFactory))]
 	sealed class TextMarkerProviderFactory : ITextMarkerProviderFactory {
 		public SimpleTagger<TextMarkerTag> GetTextMarkerTagger(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return textBuffer.Properties.GetOrCreateSingletonProperty(() => new SimpleTagger<TextMarkerTag>(textBuffer));
 		}
@@ -58,7 +58,7 @@ namespace dnSpy.Text.Editor {
 		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) => this.textMarkerProviderFactory = textMarkerProviderFactory;
 
 		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 			return textMarkerProviderFactory.GetTextMarkerTagger(buffer) as ITagger<T>;
 		}
@@ -146,7 +146,7 @@ namespace dnSpy.Text.Editor {
 			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -172,7 +172,7 @@ namespace dnSpy.Text.Editor {
 			public int ZIndex { get; }
 
 			public MarkerElement(SnapshotSpan span, string type, int zIndex, Geometry geometry) {
-				if (span.Snapshot == null)
+				if (span.Snapshot is null)
 					throw new ArgumentException();
 				Span = span;
 				Type = type ?? throw new ArgumentNullException(nameof(type));
@@ -234,14 +234,14 @@ namespace dnSpy.Text.Editor {
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(wpfTextView.TextSnapshot)) {
 					var intersection = wpfTextView.TextViewLines.FormattedSpan.Intersection(span);
-					if (intersection != null) {
-						if (intersectionSpans == null)
+					if (!(intersection is null)) {
+						if (intersectionSpans is null)
 							intersectionSpans = new List<SnapshotSpan>();
 						intersectionSpans.Add(intersection.Value);
 					}
 				}
 			}
-			if (intersectionSpans != null)
+			if (!(intersectionSpans is null))
 				UpdateRange(new NormalizedSnapshotSpanCollection(intersectionSpans));
 		}
 
@@ -259,13 +259,13 @@ namespace dnSpy.Text.Editor {
 
 		void AddMarkerElements(NormalizedSnapshotSpanCollection spans) {
 			foreach (var tag in tagAggregator.GetTags(spans)) {
-				if (tag.Tag?.Type == null)
+				if (tag.Tag?.Type is null)
 					continue;
 				foreach (var span in tag.Span.GetSpans(wpfTextView.TextSnapshot)) {
 					if (!span.IntersectsWith(wpfTextView.TextViewLines.FormattedSpan))
 						continue;
 					var markerElement = TryCreateMarkerElement(span, tag.Tag);
-					if (markerElement == null)
+					if (markerElement is null)
 						continue;
 					var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 					bool added = layer.AddAdornment(AdornmentPositioningBehavior.TextRelative, markerElement.Span, null, markerElement, onRemovedDelegate);
@@ -345,7 +345,7 @@ namespace dnSpy.Text.Editor {
 				newPen = new Pen(scBrush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -354,9 +354,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
-			Debug.Assert(tag.Type != null);
+			Debug.Assert(!(tag.Type is null));
 			var geo = wpfTextView.TextViewLines.GetMarkerGeometry(span);
-			if (geo == null)
+			if (geo is null)
 				return null;
 
 			var type = tag.Type ?? string.Empty;

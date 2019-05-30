@@ -43,11 +43,11 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineFormatter bufferLines, string delimiter, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
-			if (bufferLines == null)
+			if (bufferLines is null)
 				throw new ArgumentNullException(nameof(bufferLines));
-			if (delimiter == null)
+			if (delimiter is null)
 				throw new ArgumentNullException(nameof(delimiter));
 			if (spans.Count != 0 && spans[0].Buffer != bufferLines.Buffer)
 				throw new ArgumentException();
@@ -56,11 +56,11 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
-			if (delimiter == null)
+			if (delimiter is null)
 				throw new ArgumentNullException(nameof(delimiter));
 
 			return GenerateHtmlFragmentCore(hexView.BufferLines, spans, hexView, delimiter, cancellationToken);
@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Formatting {
 			HexClassifier? classifier = null;
 			try {
 				VSTC.IClassificationFormatMap classificationFormatMap;
-				if (hexView != null) {
+				if (!(hexView is null)) {
 					classifier = viewClassifierAggregatorService.GetClassifier(hexView);
 					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(hexView);
 				}
@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Formatting {
 				const int tabSize = 4;
 				var builder = new HexHtmlBuilder(classificationFormatMap, delimiter, tabSize);
 				if (spans.Count != 0) {
-					Debug.Assert(classifier != null);
+					Debug.Assert(!(classifier is null));
 					builder.Add(bufferLines, classifier, spans, cancellationToken);
 				}
 				return builder.Create();

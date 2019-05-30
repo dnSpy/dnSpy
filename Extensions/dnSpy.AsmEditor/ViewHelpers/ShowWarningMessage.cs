@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		public ShowWarningMessage(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public void Show(Guid? guid, string msg) {
-			if (guid == null)
+			if (guid is null)
 				MsgBox.Instance.Show(msg, MsgBoxButton.OK, ownerWindow);
 			else
 				MsgBox.Instance.ShowIgnorableMessage(guid.Value, msg, MsgBoxButton.OK, ownerWindow);

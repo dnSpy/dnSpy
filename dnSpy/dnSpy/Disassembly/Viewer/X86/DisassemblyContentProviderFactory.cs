@@ -57,7 +57,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		readonly string? moduleName;
 
 		public DisassemblyContentProviderFactory(DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver? symbolResolver, string? header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
-			if (blocks == null)
+			if (blocks is null)
 				throw new ArgumentNullException(nameof(blocks));
 			this.deps = deps ?? throw new ArgumentNullException(nameof(deps));
 			this.bitness = bitness;
@@ -75,7 +75,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		public DisassemblyContentProvider Create() {
 			var blocks = BlockFactory.Create(bitness, this.blocks);
 			var cachedSymResolver = new CachedSymbolResolver();
-			if (symbolResolver != null) {
+			if (!(symbolResolver is null)) {
 				var addresses = GetPossibleSymbolAddresses(blocks);
 				if (addresses.Length != 0) {
 					var symbolResolverResults = new SymbolResolverResult[addresses.Length];

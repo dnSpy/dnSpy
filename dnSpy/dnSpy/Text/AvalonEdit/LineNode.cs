@@ -61,7 +61,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal LineNode LeftMost {
 			get {
 				LineNode node = this;
-				while (node.left != null)
+				while (!(node.left is null))
 					node = node.left;
 				return node;
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal LineNode RightMost {
 			get {
 				LineNode node = this;
-				while (node.right != null)
+				while (!(node.right is null))
 					node = node.right;
 				return node;
 			}

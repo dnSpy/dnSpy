@@ -59,13 +59,13 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			if (!context.Colorize)
 				yield break;
 			var completionContext = context as CompletionDisplayTextClassifierContext;
-			if (completionContext == null)
+			if (completionContext is null)
 				yield break;
 			var completion = completionContext.Completion as RoslynCompletion;
-			if (completion == null)
+			if (completion is null)
 				yield break;
 			var completionSet = completionContext.CompletionSet as RoslynCompletionSet;
-			if (completionSet == null)
+			if (completionSet is null)
 				yield break;
 
 			// The completion API doesn't create tagged text so try to extract that information
@@ -104,8 +104,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			// The text is usually identical to the description and it's classified
 			var description = completionSet.GetDescriptionAsync(completion).GetAwaiter().GetResult();
 			var indexes = GetMatchIndexes(completion, description);
-			if (indexes != null) {
-				Debug.Assert(description != null);
+			if (!(indexes is null)) {
+				Debug.Assert(!(description is null));
 				int pos = 0;
 				var parts = description.TaggedParts;
 				int endIndex = indexes.Value.endIndex;
@@ -133,9 +133,9 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 		};
 
 		(int index, int endIndex)? GetMatchIndexes(RoslynCompletion? completion, CompletionDescription? description) {
-			if (completion == null || description == null)
+			if (completion is null || description is null)
 				return null;
-			if (stringBuilder == null)
+			if (stringBuilder is null)
 				stringBuilder = new StringBuilder();
 			else
 				stringBuilder.Clear();

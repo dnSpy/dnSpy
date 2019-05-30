@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		IOutputTextPane? __outputTextPane;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (TryGetInstance() == null)
+			if (TryGetInstance() is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.OutputTextPaneGroup) {
@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var textPane = TryGetInstance();
-			if (textPane == null)
+			if (textPane is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.OutputTextPaneGroup) {

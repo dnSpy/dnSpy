@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		readonly DbgCorDebugInternalRuntime runtime;
 
 		public ManagedDebuggerPatcherX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			process = context.Process;
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 
 			var debuggeeVersion = runtime.Version.Version;
 			bool isClrV2OrOlder =
-				debuggeeVersion != null &&
+				!(debuggeeVersion is null) &&
 				(debuggeeVersion.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
 				debuggeeVersion.StartsWith("v2.", StringComparison.OrdinalIgnoreCase));
 

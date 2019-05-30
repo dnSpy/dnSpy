@@ -606,7 +606,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="types">Method parameter types or null</param>
 		/// <returns></returns>
 		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType>? types) {
-			if (types == null)
+			if (types is null)
 				return GlobalType.GetMethod(name, bindingAttr);
 			return GlobalType.GetMethod(name, bindingAttr, callConvention, types);
 		}
@@ -669,7 +669,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="size">Number of bytes to read</param>
 		/// <returns></returns>
 		public unsafe bool ReadMemory(uint rva, byte[] destination, int destinationIndex, int size) {
-			if (destination == null)
+			if (destination is null)
 				throw new ArgumentNullException(nameof(destination));
 			if ((uint)destinationIndex > (uint)destination.Length)
 				throw new ArgumentOutOfRangeException(nameof(destinationIndex));

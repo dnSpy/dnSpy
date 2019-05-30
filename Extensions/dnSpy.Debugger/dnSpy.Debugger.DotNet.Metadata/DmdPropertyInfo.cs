@@ -241,7 +241,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (method is null)
 				throw new ArgumentException();
 			object?[] parameters;
-			if (index == null || index.Length == 0)
+			if (index is null || index.Length == 0)
 				parameters = new[] { value };
 			else {
 				parameters = new object[index.Length + 1];

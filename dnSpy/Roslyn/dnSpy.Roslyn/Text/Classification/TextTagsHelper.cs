@@ -32,7 +32,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		/// <param name="textTag">One of the text tags found in <see cref="TextTags"/></param>
 		/// <returns></returns>
 		public static TextColor ToTextColor(string textTag) {
-			if (textTag == null)
+			if (textTag is null)
 				return TextColor.Text;
 			switch (textTag) {
 			case TextTags.Alias:			return TextColor.Namespace;

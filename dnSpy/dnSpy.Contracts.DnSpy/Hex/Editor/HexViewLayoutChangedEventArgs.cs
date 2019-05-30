@@ -98,9 +98,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="newOrReformattedLines">New or reformatted lines</param>
 		/// <param name="translatedLines">Translated lines</param>
 		public HexViewLayoutChangedEventArgs(HexViewState oldState, HexViewState newState, IList<HexViewLine> newOrReformattedLines, IList<HexViewLine> translatedLines) {
-			if (newOrReformattedLines == null)
+			if (newOrReformattedLines is null)
 				throw new ArgumentNullException(nameof(newOrReformattedLines));
-			if (translatedLines == null)
+			if (translatedLines is null)
 				throw new ArgumentNullException(nameof(translatedLines));
 			OldViewState = oldState ?? throw new ArgumentNullException(nameof(oldState));
 			NewViewState = newState ?? throw new ArgumentNullException(nameof(newState));

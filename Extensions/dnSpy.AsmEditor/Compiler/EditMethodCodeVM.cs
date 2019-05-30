@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			state.CancellationToken.ThrowIfCancellationRequested();
 
 			var type = methodToEdit.DeclaringType;
-			while (type.DeclaringType != null)
+			while (!(type.DeclaringType is null))
 				type = type.DeclaringType;
 
 			DecompileTypeMethods options;

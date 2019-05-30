@@ -31,9 +31,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		protected virtual DbgDotNetValue? CreateObjValue() => null;
 		protected DbgDotNetValue ObjValue {
 			get {
-				if (__objValue_DONT_USE == null) {
+				if (__objValue_DONT_USE is null) {
 					__objValue_DONT_USE = CreateObjValue();
-					if (__objValue_DONT_USE == null)
+					if (__objValue_DONT_USE is null)
 						throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 				}
 				return __objValue_DONT_USE;

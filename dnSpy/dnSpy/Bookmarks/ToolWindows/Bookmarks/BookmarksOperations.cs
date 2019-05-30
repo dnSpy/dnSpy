@@ -272,7 +272,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			var filename = pickFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
 			if (!File.Exists(filename))
 				return;
-			Debug.Assert(filename != null);
+			Debug.Assert(!(filename is null));
 			var settingsService = settingsServiceFactory.Value.Create();
 			try {
 				settingsService.Open(filename);
@@ -316,7 +316,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 				SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
 			else {
 				var newLabels = messageBoxService.Ask<string>(dnSpy_Resources.EditLabelsMsgBoxLabel, SelectedItems[0].GetLabelsString(), dnSpy_Resources.EditLabelsTitle);
-				if (newLabels != null) {
+				if (!(newLabels is null)) {
 					var labelsColl = BookmarkVM.CreateLabelsCollection(newLabels);
 					bookmarksService.Value.Modify(SelectedItems.Select(a => {
 						var bm = a.Bookmark;

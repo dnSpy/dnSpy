@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Files.PE {
 		readonly HexSpan fileSpan;
 
 		public PeHeadersImpl(PeHeadersReader reader, HexSpan fileSpan) {
-			if (reader == null)
+			if (reader is null)
 				throw new ArgumentNullException(nameof(reader));
 			DosHeader = reader.DosHeader!;
 			FileHeader = reader.FileHeader!;

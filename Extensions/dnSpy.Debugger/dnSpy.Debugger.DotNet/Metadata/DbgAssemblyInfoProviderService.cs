@@ -38,11 +38,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			this.dbgAssemblyInfoProviderFactories = dbgAssemblyInfoProviderFactories.ToArray();
 
 		public override DbgAssemblyInfoProvider? Create(DbgRuntime runtime) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			foreach (var lz in dbgAssemblyInfoProviderFactories) {
 				var provider = lz.Value.Create(runtime);
-				if (provider != null)
+				if (!(provider is null))
 					return provider;
 			}
 			return null;

@@ -23,7 +23,7 @@ using System.Linq;
 namespace dndbg.Engine {
 	static class CorDebugExtensions {
 		public static T[]? ToCorDebugArray<T>(this IEnumerable<COMObject<T>>? objs) where T : class {
-			if (objs == null)
+			if (objs is null)
 				return null;
 			return objs.Select(o => o.RawObject).ToArray();
 		}

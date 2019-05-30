@@ -52,9 +52,9 @@ namespace dnSpy.Text {
 		}
 
 		public static void AddColorizer(ITextBuffer textBuffer, CachedColorsList cachedColorsList) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			if (cachedColorsList == null)
+			if (cachedColorsList is null)
 				throw new ArgumentNullException(nameof(cachedColorsList));
 			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListTagger), () => CachedColorsListTagger.Create(cachedColorsList));
 		}
@@ -78,11 +78,11 @@ namespace dnSpy.Text {
 			new CachedColorsListTagger(cachedColorsList);
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			Debug.Assert(ThemeClassificationTypeService != null);
-			Debug.Assert(ClassificationTypeRegistryService != null);
-			if (ThemeClassificationTypeService == null || ClassificationTypeRegistryService == null)
+			Debug.Assert(!(ThemeClassificationTypeService is null));
+			Debug.Assert(!(ClassificationTypeRegistryService is null));
+			if (ThemeClassificationTypeService is null || ClassificationTypeRegistryService is null)
 				yield break;
-			if (textClassificationType == null)
+			if (textClassificationType is null)
 				textClassificationType = ThemeClassificationTypeService.GetClassificationType(TextColor.Text);
 
 			var snapshot = spans[0].Snapshot;

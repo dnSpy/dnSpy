@@ -32,14 +32,14 @@ using dnlib.PE;
 namespace dndbg.Engine {
 	static class MDAPI {
 		static bool IsGlobal(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			int hr = mdi.IsGlobal(token, out int bGlobal);
 			return hr == 0 && bGlobal != 0;
 		}
 
 		public static bool IsValidToken(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			return mdi.IsValidToken(token);
 		}
@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 		public unsafe static bool GetClassLayout(IMetaDataImport? mdi, uint token, out ushort packingSize, out uint classSize) {
 			packingSize = 0;
 			classSize = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 
 			uint dwPackSize = 0, ulClassSize = 0;
@@ -61,7 +61,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint? GetRVA(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int hr = mdi.GetRVA(token, out uint ulCodeRVA, IntPtr.Zero);
@@ -71,7 +71,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static UTF8String? GetUtf8Name(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			int hr = mdi.GetNameFromToken(token, out var pszUtf8NamePtr);
 			if (hr != 0 || pszUtf8NamePtr == IntPtr.Zero)
@@ -88,7 +88,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetPermissionSetTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -119,7 +119,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static SecurityAction GetPermissionSetAction(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwAction;
 			int hr = mdi.GetPermissionSetProps(token, new IntPtr(&dwAction), IntPtr.Zero, IntPtr.Zero);
@@ -127,7 +127,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetPermissionSetBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			IntPtr pvPermission;
 			uint cbPermission;
@@ -143,7 +143,7 @@ namespace dndbg.Engine {
 		public unsafe static bool GetPinvokeMapProps(IMetaDataImport? mdi, uint token, out PInvokeAttributes attrs, out uint moduleToken) {
 			attrs = 0;
 			moduleToken = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 
 			uint dwMappingFlags, mrImportDLL;
@@ -156,7 +156,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetPinvokeMapName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chImportName;
@@ -173,7 +173,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetMemberRefName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chMember;
@@ -190,7 +190,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetMemberRefClassToken(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tk;
 			int hr = mdi.GetMemberRefProps(token, new IntPtr(&tk), IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -198,7 +198,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetMemberRefSignatureBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			IntPtr pvSigBlob;
 			uint cbSig;
@@ -212,7 +212,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetMethodOwnerRid(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -225,7 +225,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetMethodTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -256,7 +256,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetMethodSignatureBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cbSigBlob;
 			IntPtr pvSigBlob;
@@ -270,7 +270,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe string? GetMethodName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chMethod;
@@ -291,7 +291,7 @@ namespace dndbg.Engine {
 		public static unsafe bool GetMethodAttributes(IMetaDataImport? mdi, uint token, out MethodAttributes dwAttr, out MethodImplAttributes dwImplFlags) {
 			dwAttr = 0;
 			dwImplFlags = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			uint dwAttr2, dwImplFlags2;
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr2), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwImplFlags2));
@@ -303,7 +303,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static MethodOverrideInfo[] GetMethodOverrides(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<MethodOverrideInfo>();
 			var iter = IntPtr.Zero;
 			try {
@@ -340,7 +340,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetMethodSemanticsTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -371,14 +371,14 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static MethodSemanticsAttributes GetMethodSemanticsAttributes(IMetaDataImport? mdi, uint token, uint tkPropEvent) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			int hr = mdi.GetMethodSemantics(token, tkPropEvent, out uint dwSemanticsFlags);
 			return hr == 0 ? (MethodSemanticsAttributes)dwSemanticsFlags : 0;
 		}
 
 		public unsafe static uint GetInterfaceImplOwnerRid(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 
 			uint ownerToken;
@@ -388,7 +388,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetInterfaceImplTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -419,7 +419,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetInterfaceImplInterfaceToken(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 
 			uint tkIface;
@@ -428,7 +428,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetParamTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -459,7 +459,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetParamName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chName;
@@ -478,7 +478,7 @@ namespace dndbg.Engine {
 		public unsafe static bool GetParamSeqAndAttrs(IMetaDataImport? mdi, uint token, out uint seq, out ParamAttributes attrs) {
 			seq = uint.MaxValue;
 			attrs = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 
 			uint ulSequence, dwAttr;
@@ -493,7 +493,7 @@ namespace dndbg.Engine {
 
 		public unsafe static object? GetParamConstant(IMetaDataImport? mdi, uint token, out CorElementType constantType) {
 			constantType = CorElementType.End;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cchValue;
 			IntPtr pValue;
@@ -506,7 +506,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetParamOwnerRid(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint ownerToken;
 			int hr = mdi.GetParamProps(token, new IntPtr(&ownerToken), IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -517,7 +517,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe string? GetTypeRefName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint chName;
 			char[]? nameBuf = null;
@@ -536,7 +536,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe uint GetTypeRefResolutionScope(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tkResolutionScope;
 			int hr = mdi.GetTypeRefProps(token, new IntPtr(&tkResolutionScope), IntPtr.Zero, 0, IntPtr.Zero);
@@ -544,7 +544,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetTypeDefTokens(IMetaDataImport? mdi) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 
 			var iter = IntPtr.Zero;
@@ -580,7 +580,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetTypeDefExtends(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tkExtends;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&tkExtends));
@@ -588,7 +588,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe string? GetTypeDefName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint chTypeDef;
 			char[]? nameBuf = null;
@@ -607,7 +607,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe TypeAttributes? GetTypeDefAttributes(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint dwTypeDefFlags;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwTypeDefFlags), IntPtr.Zero);
@@ -615,7 +615,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe uint GetTypeDefEnclosingType(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwTypeDefFlags;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwTypeDefFlags), IntPtr.Zero);
@@ -632,7 +632,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetGenericParamOwner(IMetaDataImport2? mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return 0;
 			uint ownerToken;
 			int hr = mdi2.GetGenericParamProps(token, IntPtr.Zero, IntPtr.Zero, new IntPtr(&ownerToken), IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -643,7 +643,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe string? GetGenericParamName(IMetaDataImport2? mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return null;
 
 			char[]? nameBuf = null;
@@ -665,7 +665,7 @@ namespace dndbg.Engine {
 		public static unsafe bool GetGenericParamNumAndAttrs(IMetaDataImport2? mdi2, uint token, out ushort number, out GenericParamAttributes attrs) {
 			number = ushort.MaxValue;
 			attrs = 0;
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return false;
 
 			uint ulParamSeq, dwParamFlags;
@@ -679,7 +679,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetGenericParamTokens(IMetaDataImport2? mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return Array.Empty<uint>();
 
 			var iter = IntPtr.Zero;
@@ -711,7 +711,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetGenericParamConstraintOwnerRid(IMetaDataImport2? mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return 0;
 			uint ownerToken;
 			int hr = mdi2.GetGenericParamConstraintProps(token, new IntPtr(&ownerToken), IntPtr.Zero);
@@ -722,7 +722,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetGenericParamConstraintTypeToken(IMetaDataImport2? mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return 0;
 			uint tkConstraintType;
 			int hr = mdi2.GetGenericParamConstraintProps(token, IntPtr.Zero, new IntPtr(&tkConstraintType));
@@ -732,7 +732,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetGenericParamConstraintTokens(IMetaDataImport2? mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return Array.Empty<uint>();
 
 			var iter = IntPtr.Zero;
@@ -764,7 +764,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe byte[]? GetStandAloneSigBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int hr = mdi.GetSigFromToken(token, out var pvSig, out uint cbSig);
@@ -776,7 +776,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static COR_FIELD_OFFSET[]? GetFieldOffsets(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int cFieldOffset = 0;
@@ -789,7 +789,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetFieldMarshalBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int hr = mdi.GetFieldMarshal(token, out var pvNativeType, out uint cbNativeType);
@@ -803,7 +803,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetFieldOwnerRid(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -816,7 +816,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe string? GetFieldName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint chField = 0, dwAttr = 0;
 			char[]? nameBuf = null;
@@ -835,7 +835,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetFieldTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -866,7 +866,7 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe byte[]? GetFieldSignatureBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			uint sigLen = 0;
@@ -881,7 +881,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static FieldAttributes GetFieldAttributes(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwAttr;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -891,7 +891,7 @@ namespace dndbg.Engine {
 
 		public unsafe static object? GetFieldConstant(IMetaDataImport? mdi, uint token, out CorElementType constantType) {
 			constantType = CorElementType.End;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cchValue;
 			IntPtr pValue;
@@ -905,7 +905,7 @@ namespace dndbg.Engine {
 
 		unsafe static object? ReadConstant(IntPtr addr, uint size, CorElementType elementType) {
 			var p = (byte*)addr;
-			if (p == null)
+			if (p is null)
 				return null;
 
 			// size is always 0 unless it's a string...
@@ -928,7 +928,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetEventOwnerRid(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -941,7 +941,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static EventAttributes GetEventAttributes(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwEventFlags;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwEventFlags), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -949,7 +949,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetEventName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint chEvent;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chEvent), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -966,7 +966,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetEventTypeToken(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tkEventType;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&tkEventType), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -977,7 +977,7 @@ namespace dndbg.Engine {
 			addToken = 0;
 			removeToken = 0;
 			fireToken = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			uint addTokenTmp, removeTokenTmp, fireTokenTmp;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&addTokenTmp), new IntPtr(&removeTokenTmp), new IntPtr(&fireTokenTmp), IntPtr.Zero, 0, IntPtr.Zero);
@@ -990,7 +990,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetEventOtherMethodTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			uint count;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
@@ -1006,7 +1006,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetEventTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -1037,7 +1037,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetPropertyOwnerRid(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -1050,7 +1050,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetPropertyTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -1081,7 +1081,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetPropertyName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint chProperty;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chProperty), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -1100,7 +1100,7 @@ namespace dndbg.Engine {
 		public unsafe static bool GetPropertyGetterSetter(IMetaDataImport? mdi, uint token, out uint mdGetter, out uint mdSetter) {
 			mdGetter = 0;
 			mdSetter = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			uint mdSetterTmp, mdGetterTmp;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&mdSetterTmp), new IntPtr(&mdGetterTmp), IntPtr.Zero, 0, IntPtr.Zero);
@@ -1112,7 +1112,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetPropertyOtherMethodTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			uint count;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
@@ -1128,7 +1128,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static PropertyAttributes GetPropertyAttributes(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwPropFlags;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwPropFlags), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -1136,7 +1136,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetPropertySignatureBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			IntPtr pvSig;
 			uint cbSig;
@@ -1151,7 +1151,7 @@ namespace dndbg.Engine {
 
 		public unsafe static object? GetPropertyConstant(IMetaDataImport? mdi, uint token, out CorElementType constantType) {
 			constantType = CorElementType.End;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cchDefaultValue;
 			IntPtr pDefaultValue;
@@ -1164,7 +1164,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetTypeSpecSignatureBlob(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int hr = mdi.GetTypeSpecFromToken(token, out var pvSig, out uint cbSig);
@@ -1178,7 +1178,7 @@ namespace dndbg.Engine {
 
 		public unsafe static byte[]? GetMethodSpecProps(IMetaDataImport2? mdi2, uint token, out uint method) {
 			method = 0;
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return null;
 
 			int hr = mdi2.GetMethodSpecProps(token, out method, out var pvSigBlob, out uint cbSigBlob);
@@ -1191,7 +1191,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetAssemblyRefSimpleName(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chName = 0;
@@ -1211,7 +1211,7 @@ namespace dndbg.Engine {
 
 		public unsafe static Version? GetAssemblyRefVersionAndLocale(IMetaDataAssemblyImport? mdai, uint token, out string? locale) {
 			locale = null;
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			ASSEMBLYMETADATA data;
 			char[]? nameBuf = null;
@@ -1231,7 +1231,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetAssemblyRefHash(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			IntPtr pbHashValue;
 			uint cbHashValue;
@@ -1246,7 +1246,7 @@ namespace dndbg.Engine {
 
 		public unsafe static PublicKeyBase? GetAssemblyRefPublicKeyOrToken(IMetaDataAssemblyImport? mdai, uint token, out AssemblyAttributes attrs) {
 			attrs = 0;
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			IntPtr pbPublicKeyOrToken;
 			uint cbPublicKeyOrToken, dwAssemblyFlags;
@@ -1264,7 +1264,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetAssemblySimpleName(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chName = 0;
@@ -1284,7 +1284,7 @@ namespace dndbg.Engine {
 
 		public unsafe static Version? GetAssemblyVersionAndLocale(IMetaDataAssemblyImport? mdai, uint token, out string? locale) {
 			locale = null;
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			ASSEMBLYMETADATA data;
 			char[]? nameBuf = null;
@@ -1304,7 +1304,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static AssemblyHashAlgorithm? GetAssemblyHashAlgorithm(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			uint ulHashAlgId;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, new IntPtr(&ulHashAlgId), IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -1314,7 +1314,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static AssemblyAttributes? GetAssemblyAttributes(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			uint dwAssemblyFlags;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwAssemblyFlags));
@@ -1324,7 +1324,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static PublicKey? GetAssemblyPublicKey(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			IntPtr pbPublicKey;
 			uint cbPublicKey;
@@ -1338,7 +1338,7 @@ namespace dndbg.Engine {
 
 		public static Machine? GetModuleMachineAndPEKind(IMetaDataImport2? mdi2, out CorPEKind peKind) {
 			peKind = 0;
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return null;
 			int hr = mdi2.GetPEKind(out uint dwPEKind, out uint dwMachine);
 			if (hr != 0)
@@ -1348,7 +1348,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetModuleVersionString(IMetaDataImport2? mdi2) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return null;
 			char[]? nameBuf = null;
 			int hr = mdi2.GetVersionString(IntPtr.Zero, 0, out uint ccBufSize);
@@ -1366,7 +1366,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetModuleName(IMetaDataImport? mdi) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? nameBuf = null;
 			uint cchName = 0;
@@ -1385,7 +1385,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static Guid? GetModuleMvid(IMetaDataImport? mdi) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			Guid guid;
 			int hr = mdi.GetScopeProps(IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&guid));
@@ -1396,7 +1396,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetModuleRefName(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? nameBuf = null;
 			int hr = mdi.GetModuleRefProps(token, IntPtr.Zero, 0, out uint chName);
@@ -1414,7 +1414,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetUserString(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			char[]? stringBuf = null;
 			int hr = mdi.GetUserString(token, IntPtr.Zero, 0, out uint chString);
@@ -1432,7 +1432,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetCustomAttributeByName(IMetaDataImport? mdi, uint token, string name) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			IntPtr addr;
 			uint size;
@@ -1446,13 +1446,13 @@ namespace dndbg.Engine {
 		}
 
 		public static bool HasAttribute(IMetaDataImport? mdi, uint token, string attributeName) {
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			return mdi.GetCustomAttributeByName(token, attributeName, IntPtr.Zero, IntPtr.Zero) == 0;
 		}
 
 		public unsafe static uint[] GetCustomAttributeTokens(IMetaDataImport? mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -1484,7 +1484,7 @@ namespace dndbg.Engine {
 
 		public unsafe static byte[]? GetCustomAttributeBlob(IMetaDataImport? mdi, uint token, out uint typeToken) {
 			typeToken = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int hr = mdi.GetCustomAttributeProps(token, IntPtr.Zero, out typeToken, out var pBlob, out uint cbSize);
@@ -1497,7 +1497,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static FileAttributes? GetFileAttributes(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			uint dwFileFlags;
 			int hr = mdai.GetFileProps(token, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwFileFlags));
@@ -1505,7 +1505,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetFileName(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chName;
@@ -1522,7 +1522,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static byte[]? GetFileHash(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			IntPtr pbHashValue;
 			uint cbHashValue;
@@ -1567,7 +1567,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetExportedTypeName(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chName;
@@ -1587,7 +1587,7 @@ namespace dndbg.Engine {
 			implementation = 0;
 			typeDefId = 0;
 			attrs = 0;
-			if (mdai == null)
+			if (mdai is null)
 				return false;
 
 			uint tkImplementation, tkTypeDef, dwExportedTypeFlags;
@@ -1633,7 +1633,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string? GetManifestResourceName(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			char[]? nameBuf = null;
 			uint chName;
@@ -1653,7 +1653,7 @@ namespace dndbg.Engine {
 			offset = 0;
 			implementation = 0;
 			attrs = 0;
-			if (mdai == null)
+			if (mdai is null)
 				return false;
 
 			uint tkImplementation, dwOffset, dwResourceFlags;
@@ -1668,7 +1668,7 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint? GetManifestResourceImplementationToken(IMetaDataAssemblyImport? mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			uint tkImplementation;
 			int hr = mdai.GetManifestResourceProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&tkImplementation), IntPtr.Zero, IntPtr.Zero);

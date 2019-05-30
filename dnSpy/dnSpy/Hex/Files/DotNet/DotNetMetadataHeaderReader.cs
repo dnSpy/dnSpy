@@ -67,7 +67,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var lastStreamOffset = MetadataSpan.Start;
 			for (int i = 0; i < StorageStreamHeaders.Length; i++) {
 				var stream = ReadStorageStreamHeader(pos, sb);
-				if (stream == null)
+				if (stream is null)
 					return false;
 				StorageStreamHeaders[i] = stream.Value;
 				pos = stream.Value.Span.End;

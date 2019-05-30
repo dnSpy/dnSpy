@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			engine.VerifyCorDebugThread();
 
 			var dbgModule = module.GetDebuggerModule();
-			if (dbgModule == null || !engine.TryGetDnModule(dbgModule, out var dnModule))
+			if (dbgModule is null || !engine.TryGetDnModule(dbgModule, out var dnModule))
 				throw new InvalidOperationException();
 
 			// rva can be 0 if it's a dynamic module. module.Address will also be 0.

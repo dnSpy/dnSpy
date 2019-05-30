@@ -88,11 +88,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
 		public static TextBlock Create(string text, TextFormattingRunProperties defaultProperties, IEnumerable<TextRunPropertiesAndSpan> orderedPropsAndSpans, Flags flags = Flags.None) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
-			if (defaultProperties == null)
+			if (defaultProperties is null)
 				throw new ArgumentNullException(nameof(defaultProperties));
-			if (orderedPropsAndSpans == null)
+			if (orderedPropsAndSpans is null)
 				throw new ArgumentNullException(nameof(orderedPropsAndSpans));
 			text = WpfUnicodeUtils.ReplaceBadChars(text);
 
@@ -175,7 +175,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties? properties, Flags flags) {
 			var run = new DOC.Run(text);
 
-			if (properties == null)
+			if (properties is null)
 				return run;
 
 			if (!properties.BackgroundBrushEmpty)

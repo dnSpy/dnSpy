@@ -28,7 +28,7 @@ namespace Example2.Extension {
 				// Serialize() doesn't add anything extra to 'section', but if it did, you'd have to
 				// get that info here and return null if the serialized data wasn't found.
 				var node = context.Nodes.Length == 1 ? context.Nodes[0] as AssemblyChildNode : null;
-				if (node != null)
+				if (!(node is null))
 					return new AssemblyChildNodeTabContent(node);
 			}
 			return null;
@@ -125,7 +125,7 @@ namespace Example2.Extension {
 		public override object? DeserializeUIState(ISettingsSection section) {
 			var value1 = section.Attribute<string>(nameof(MyUIState.Value1));
 			var value2 = section.Attribute<bool?>(nameof(MyUIState.Value2));
-			if (value1 == null || value2 == null)
+			if (value1 is null || value2 is null)
 				return null;
 
 			return new MyUIState(value1, value2.Value);
@@ -135,7 +135,7 @@ namespace Example2.Extension {
 		// Saves the object returned by CreateUIState()
 		public override void SerializeUIState(ISettingsSection section, object? obj) {
 			var d = obj as MyUIState;
-			if (d == null)
+			if (d is null)
 				return;
 
 			section.Attribute(nameof(d.Value1), d.Value1);
@@ -150,7 +150,7 @@ namespace Example2.Extension {
 		// Restores the UI state
 		public override void RestoreUIState(object? obj) {
 			var d = obj as MyUIState;
-			if (d == null)
+			if (d is null)
 				return;
 
 			// Here's where you'd restore the UI state, eg position etc.

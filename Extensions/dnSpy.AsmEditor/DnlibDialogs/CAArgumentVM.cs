@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				break;
 
 			case ElementType.String:
-				if (value == null)
+				if (value is null)
 					return Null<string>.Instance;
 				else if (value is string)
 					return value;
@@ -148,12 +148,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			case ElementType.Class:
 				tdr = ((ClassOrValueTypeSig)type).TypeDefOrRef;
 				if (tdr.IsSystemType()) {
-					if (value == null)
+					if (value is null)
 						return Null<TypeSig>.Instance;
 					return value;
 				}
 				td = tdr.ResolveTypeDef();
-				if (td != null && !td.IsEnum)
+				if (!(td is null) && !td.IsEnum)
 					break;
 				return new EnumInfo() {
 					EnumType = tdr,
@@ -163,7 +163,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 			case ElementType.SZArray:
 				var elemType = type.Next.RemovePinnedAndModifiers();
-				if (value == null) {
+				if (value is null) {
 					switch (elemType.GetElementType()) {
 					case ElementType.Boolean:	return Null<bool[]>.Instance;
 					case ElementType.Char:		return Null<char[]>.Instance;
@@ -185,14 +185,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 						if (tdr.IsSystemType())
 							return Null<Type[]>.Instance;
 						td = tdr.ResolveTypeDef();
-						if (td != null && !td.IsEnum)
+						if (!(td is null) && !td.IsEnum)
 							break;
 						return EnumInfo.CreateNullArray(tdr);
 					}
 					break;
 				}
 				var oldList = value as IList<CAArgument>;
-				if (oldList == null)
+				if (oldList is null)
 					break;
 
 				switch (elemType.GetElementType()) {
@@ -216,7 +216,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					if (tdr.IsSystemType())
 						return ConvertArray<TypeSig>(elemType, oldList);
 					td = tdr.ResolveTypeDef();
-					if (td != null && !td.IsEnum)
+					if (!(td is null) && !td.IsEnum)
 						break;
 					return ConvertEnum(elemType, oldList);
 				}
@@ -231,10 +231,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		object ConvertEnum(TypeSig elemType, IList<CAArgument> oldList) {
 			var td = elemType.ScopeType.ResolveTypeDef();
 			ElementType underlyingElemType = ElementType.End;
-			if (td != null && td.IsEnum)
+			if (!(td is null) && td.IsEnum)
 				underlyingElemType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType();
 			if (!(ElementType.Boolean <= underlyingElemType && underlyingElemType <= ElementType.R8)) {
-				if (oldList.Count > 0 && oldList[0].Value != null)
+				if (oldList.Count > 0 && !(oldList[0].Value is null))
 					underlyingElemType = ModelUtils.GetElementType(oldList[0].Value.GetType());
 			}
 
@@ -286,7 +286,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				var res = ConvertFromModel(arg.Type, arg.Value);
 				if (res is T)
 					list[i] = (T)res;
-				else if (!tIsValueType && (res == null || res == Null<T>.Instance)) {
+				else if (!tIsValueType && (res is null || res == Null<T>.Instance)) {
 					object? n = null;
 					list[i] = (T)n!;
 				}
@@ -304,7 +304,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		CAArgument CreateCAArgument(TypeSig ownerType, object? value) {
-			if (value == null || value is Null) {
+			if (value is null || value is Null) {
 				var t = ownerType.RemovePinnedAndModifiers();
 				t = t is SZArraySig ? t.Next : t;
 				if (t.RemovePinnedAndModifiers().GetElementType() == ElementType.Object)
@@ -336,7 +336,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					return new CAArgument(enumSig, enumInfo.Value);
 				var res = CreateArray(enumSig, enumInfo.Value);
 				var list = (IList<CAArgument>?)res.Value;
-				if (list != null) {
+				if (!(list is null)) {
 					for (int i = 0; i < list.Count; i++)
 						list[i] = new CAArgument(enumSig, list[i].Value);
 				}
@@ -382,8 +382,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		CAArgument CreateArray(TypeSig elemType, object? value) {
 			var aryType = new SZArraySig(elemType);
 			var list = value as System.Collections.IList;
-			Debug.Assert(list != null || value == null);
-			if (list == null)
+			Debug.Assert(!(list is null) || value is null);
+			if (list is null)
 				return new CAArgument(aryType, null);
 			var ary = new List<CAArgument>(list.Count);
 

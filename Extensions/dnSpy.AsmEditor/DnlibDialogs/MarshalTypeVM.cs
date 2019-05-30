@@ -347,9 +347,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				OwnerMethod = ownerMethod,
 				NullTypeSigAllowed = allowNullTypeSig,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
+			if (!(ownerMethod is null) && ownerMethod.GenericParameters.Count > 0)
 				typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			var typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			typeSigCreator.PropertyChanged += handler;
@@ -465,8 +465,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					throw new InvalidOperationException();
 			}
 			set {
-				IsEnabled = value != null;
-				if (value == null)
+				IsEnabled = !(value is null);
+				if (value is null)
 					return;
 
 				switch (value.NativeType) {

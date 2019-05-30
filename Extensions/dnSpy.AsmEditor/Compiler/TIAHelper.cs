@@ -64,14 +64,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static Info? GetInfo(TypeDef td) {
-			if (td == null)
+			if (td is null)
 				return null;
 			if (td.IsWindowsRuntime)
 				return null;
 
 			UTF8String? scope = null, identifier = null;
 			var tia = td.CustomAttributes.Find("System.Runtime.InteropServices.TypeIdentifierAttribute");
-			if (tia != null) {
+			if (!(tia is null)) {
 				if (tia.ConstructorArguments.Count >= 2) {
 					if (tia.ConstructorArguments[0].Type.GetElementType() != ElementType.String)
 						return null;
@@ -83,8 +83,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			else {
 				var mod = td.Module;
-				var asm = mod == null ? null : mod.Assembly;
-				if (asm == null)
+				var asm = mod is null ? null : mod.Assembly;
+				if (asm is null)
 					return null;
 				bool isTypeLib = asm.CustomAttributes.IsDefined("System.Runtime.InteropServices.ImportedFromTypeLibAttribute") ||
 								asm.CustomAttributes.IsDefined("System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute");
@@ -98,12 +98,12 @@ namespace dnSpy.AsmEditor.Compiler {
 					gca = td.CustomAttributes.Find("System.Runtime.InteropServices.GuidAttribute");
 				else {
 					var mod = td.Module;
-					var asm = mod == null ? null : mod.Assembly;
-					if (asm == null)
+					var asm = mod is null ? null : mod.Assembly;
+					if (asm is null)
 						return null;
 					gca = asm.CustomAttributes.Find("System.Runtime.InteropServices.GuidAttribute");
 				}
-				if (gca == null)
+				if (gca is null)
 					return null;
 				if (gca.ConstructorArguments.Count < 1)
 					return null;
@@ -134,12 +134,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool CheckEquivalent(TypeDef td) {
-			Debug.Assert(td != null);
+			Debug.Assert(!(td is null));
 
-			for (int i = 0; td != null && i < 1000; i++) {
+			for (int i = 0; !(td is null) && i < 1000; i++) {
 				if (i != 0) {
 					var info = GetInfo(td);
-					if (info == null)
+					if (info is null)
 						return false;
 				}
 
@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return false;
 
 				var declType = td.DeclaringType;
-				if (declType == null)
+				if (declType is null)
 					return td.IsPublic;
 
 				if (!td.IsNestedPublic)
@@ -167,10 +167,10 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public static bool Equivalent(TypeDef td1, TypeDef td2) {
 			var info1 = GetInfo(td1);
-			if (info1 == null)
+			if (info1 is null)
 				return false;
 			var info2 = GetInfo(td2);
-			if (info2 == null)
+			if (info2 is null)
 				return false;
 			if (!CheckEquivalent(td1) || !CheckEquivalent(td2))
 				return false;
@@ -187,7 +187,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				else {
 					var bt1 = td1.BaseType;
 					var bt2 = td2.BaseType;
-					if (bt1 == null || bt2 == null)
+					if (bt1 is null || bt2 is null)
 						return false;
 					if (td1.IsDelegate) {
 						if (!td2.IsDelegate)
@@ -209,9 +209,9 @@ namespace dnSpy.AsmEditor.Compiler {
 
 				td1 = td1.DeclaringType;
 				td2 = td2.DeclaringType;
-				if (td1 == null && td2 == null)
+				if (td1 is null && td2 is null)
 					break;
-				if (td1 == null || td2 == null)
+				if (td1 is null || td2 is null)
 					return false;
 			}
 
@@ -221,7 +221,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		static bool DelegateEquals(TypeDef td1, TypeDef td2) {
 			var invoke1 = td1.FindMethod(InvokeString);
 			var invoke2 = td2.FindMethod(InvokeString);
-			if (invoke1 == null || invoke2 == null)
+			if (invoke1 is null || invoke2 is null)
 				return false;
 
 			//TODO: Compare method signatures. Prevent infinite recursion...
@@ -240,7 +240,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public static bool IsTypeDefEquivalent(TypeDef td) {
-			if (TIAHelper.GetInfo(td) == null)
+			if (TIAHelper.GetInfo(td) is null)
 				return false;
 			return TIAHelper.CheckEquivalent(td);
 		}

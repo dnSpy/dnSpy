@@ -98,8 +98,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			var data = new MethodBodyVM(new MethodBodyOptions(methodNode.MethodDef), module, appService.DecompilerService, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
@@ -108,7 +108,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			win.Owner = appService.MainWindow;
 			win.Title = $"{win.Title} - {methodNode.ToString()}";
 
-			if (data.IsCilBody && offsets != null)
+			if (data.IsCilBody && !(offsets is null))
 				data.CilBodyVM.Select(offsets);
 
 			if (win.ShowDialog() != true)
@@ -165,20 +165,20 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		internal static bool IsVisibleInternal(IMenuItemContext? context) => IsVisible(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
 		static bool IsVisible(IList<MethodSourceStatement>? list) =>
-			list != null &&
+			!(list is null) &&
 			list.Count != 0 &&
-			list[0].Method.Body != null &&
+			!(list[0].Method.Body is null) &&
 			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
 
 		void Execute(IList<MethodSourceStatement>? list) {
-			if (list == null)
+			if (list is null)
 				return;
 
 			var method = list[0].Method;
 			var methodNode = appService.DocumentTreeView.FindNode(method);
-			if (methodNode == null) {
+			if (methodNode is null) {
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
 				return;
 			}
@@ -193,7 +193,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		IList<MethodSourceStatement>? GetStatements() {
 			var documentViewer = appService.DocumentTabService.ActiveTab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;

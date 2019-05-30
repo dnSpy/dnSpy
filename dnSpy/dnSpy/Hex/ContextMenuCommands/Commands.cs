@@ -57,7 +57,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		protected override HexViewContext? CreateContext(IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
-			if (hexView == null)
+			if (hexView is null)
 				return null;
 			return new HexViewContext(hexView);
 		}
@@ -191,8 +191,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 			var hexView = ctx.HexView;
 
@@ -217,8 +217,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 			var hexView = ctx.HexView;
 

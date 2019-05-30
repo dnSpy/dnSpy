@@ -58,7 +58,7 @@ namespace dnSpy.Tabs {
 
 		public void InstallZoom(IUIObjectProvider provider, FrameworkElement? elem) {
 			var zoomable = (provider as IZoomableProvider)?.Zoomable ?? provider as IZoomable;
-			if (zoomable != null)
+			if (!(zoomable is null))
 				InstallScaleCore(provider, zoomable);
 			else
 				InstallScaleCore(provider, elem);
@@ -66,7 +66,7 @@ namespace dnSpy.Tabs {
 
 		void InstallScaleCore(IUIObjectProvider provider, IZoomable zoomable) {
 			UninstallScale();
-			if (zoomable == null)
+			if (zoomable is null)
 				return;
 			this.zoomable = zoomable;
 			SetZoomValue(zoomable.ZoomValue, force: true);
@@ -76,7 +76,7 @@ namespace dnSpy.Tabs {
 			UninstallScale();
 			zoomElement = elem;
 			uiObjectProvider = provider;
-			if (zoomElement == null)
+			if (zoomElement is null)
 				return;
 			zoomElement.PreviewMouseWheel += ZoomElement_PreviewMouseWheel;
 			zoomElement.CommandBindings.AddRange(commandBindings);
@@ -87,9 +87,9 @@ namespace dnSpy.Tabs {
 		void UninstallScale() {
 			zoomable = null;
 			uiObjectProvider = null;
-			if (zoomElement == null)
+			if (zoomElement is null)
 				return;
-			if (metroWindow != null)
+			if (!(metroWindow is null))
 				metroWindow.WindowDpiChanged -= MetroWindow_WindowDpiChanged;
 			zoomElement.Loaded -= ZoomElement_Loaded;
 			zoomElement.PreviewMouseWheel -= ZoomElement_PreviewMouseWheel;
@@ -142,29 +142,29 @@ namespace dnSpy.Tabs {
 
 			currentZoomValue = newZoomValue;
 
-			if (zoomElement != null)
+			if (!(zoomElement is null))
 				AddScaleTransform();
 		}
 
 		void AddScaleTransform() {
-			Debug.Assert(zoomElement != null);
+			Debug.Assert(!(zoomElement is null));
 			var mwin = GetWindow();
-			if (mwin != null) {
+			if (!(mwin is null)) {
 				mwin.SetScaleTransform(zoomElement, currentZoomValue);
 				DsImage.SetZoom(zoomElement, currentZoomValue);
 			}
 		}
 
 		MetroWindow? GetWindow() {
-			Debug.Assert(zoomElement != null);
-			if (metroWindow != null)
+			Debug.Assert(!(zoomElement is null));
+			if (!(metroWindow is null))
 				return metroWindow;
-			if (zoomElement == null)
+			if (zoomElement is null)
 				return null;
 
 			var win = Window.GetWindow(zoomElement);
 			metroWindow = win as MetroWindow;
-			if (metroWindow != null) {
+			if (!(metroWindow is null)) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				return metroWindow;
 			}
@@ -178,14 +178,14 @@ namespace dnSpy.Tabs {
 		}
 
 		void MetroWindow_WindowDpiChanged(object sender, EventArgs e) {
-			Debug.Assert(sender != null && sender == metroWindow);
+			Debug.Assert(!(sender is null) && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(zoomElement, currentZoomValue);
 		}
 
 		void ZoomElement_Loaded(object sender, RoutedEventArgs e) {
 			var fe = (FrameworkElement)sender;
 			fe.Loaded -= ZoomElement_Loaded;
-			if (zoomElement != null)
+			if (!(zoomElement is null))
 				AddScaleTransform();
 		}
 

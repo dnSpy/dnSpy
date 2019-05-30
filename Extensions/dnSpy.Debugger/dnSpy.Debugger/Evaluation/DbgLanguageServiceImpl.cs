@@ -111,8 +111,8 @@ namespace dnSpy.Debugger.Evaluation {
 					Debug.Assert(langs.Count != 0);
 					if (langs.Count == 0 || langs[0].Name == PredefinedDbgLanguageNames.None)
 						continue;
-					var runtimeName = kv.Value.Providers.FirstOrDefault(a => a.Value.RuntimeDisplayName != null)?.Value.RuntimeDisplayName;
-					if (runtimeName == null)
+					var runtimeName = kv.Value.Providers.FirstOrDefault(a => !(a.Value.RuntimeDisplayName is null))?.Value.RuntimeDisplayName;
+					if (runtimeName is null)
 						continue;
 					var languageName = GetCurrentLanguage(kv.Key).Name;
 					var languages = langs.Select(a => new LanguageInfo(a.Name, a.DisplayName)).ToArray();
@@ -124,11 +124,11 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void SetDefaultLanguageName(Guid runtimeKindGuid, string languageName) {
-			if (languageName == null)
+			if (languageName is null)
 				throw new ArgumentNullException(nameof(languageName));
 			lock (lockObj) {
 				if (runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info)) {
-					if (info.DefaultLanguageName == null)
+					if (info.DefaultLanguageName is null)
 						info.DefaultLanguageName = languageName;
 				}
 			}
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.Evaluation {
 				if (!runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info))
 					runtimeKindInfos.Add(runtimeKindGuid, info = new RuntimeInfo(Array.Empty<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>()));
 				var languages = info.Languages;
-				if (languages == null) {
+				if (languages is null) {
 					var langs = new List<DbgLanguage>();
 					var hash = new HashSet<string>(StringComparer.Ordinal);
 					foreach (var lz in info.Providers) {
@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void SetCurrentLanguage(Guid runtimeKindGuid, DbgLanguage language) {
-			if (language == null)
+			if (language is null)
 				throw new ArgumentNullException(nameof(language));
 			dbgManager.Value.Dispatcher.BeginInvoke(() => SetCurrentLanguage_DbgThread(runtimeKindGuid, language));
 		}
@@ -167,7 +167,7 @@ namespace dnSpy.Debugger.Evaluation {
 			lock (lockObj) {
 				if (!runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info))
 					return;
-				if (info.Languages == null)
+				if (info.Languages is null)
 					return;
 				if (!info.Languages.Contains(language))
 					return;
@@ -182,11 +182,11 @@ namespace dnSpy.Debugger.Evaluation {
 			lock (lockObj) {
 				if (!runtimeKindInfos.TryGetValue(runtimeKindGuid, out var info))
 					runtimeKindInfos.Add(runtimeKindGuid, info = new RuntimeInfo(Array.Empty<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>>()));
-				if (info.Languages == null)
+				if (info.Languages is null)
 					GetLanguageInfos();
-				if (info.Languages == null)
+				if (info.Languages is null)
 					throw new InvalidOperationException();
-				if (info.CurrentLanguage == null)
+				if (info.CurrentLanguage is null)
 					info.CurrentLanguage = info.Languages.FirstOrDefault(a => a.Name == info.DefaultLanguageName) ?? info.Languages.First();
 				return info.CurrentLanguage;
 			}

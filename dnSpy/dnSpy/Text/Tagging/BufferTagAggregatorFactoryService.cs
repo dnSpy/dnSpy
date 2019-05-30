@@ -39,14 +39,14 @@ namespace dnSpy.Text.Tagging {
 
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer) where T : ITag => CreateTagAggregator<T>(textBuffer, TagAggregatorOptions.None);
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextBuffer textBuffer, TagAggregatorOptions options) where T : ITag {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new TextBufferTagAggregator<T>(taggerFactory, bufferGraphFactoryService.CreateBufferGraph(textBuffer), textBuffer, options);
 		}
 
 		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextBuffer textBuffer) where T : ITag => CreateSynchronousTagAggregator<T>(textBuffer, TagAggregatorOptions.None);
 		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextBuffer textBuffer, TagAggregatorOptions options) where T : ITag {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new TextBufferTagAggregator<T>(taggerFactory, bufferGraphFactoryService.CreateBufferGraph(textBuffer), textBuffer, options);
 		}

@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Text {
 		public void Clear() => result.Clear();
 
 		public void Write(DbgTextColor color, string? text) {
-			if (text != null)
+			if (!(text is null))
 				result.Add(new ClassifiedText(color, text));
 		}
 

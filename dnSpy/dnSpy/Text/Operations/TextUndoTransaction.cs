@@ -52,7 +52,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public void AddUndo(ITextUndoPrimitive undo) {
-			if (undo == null)
+			if (undo is null)
 				throw new ArgumentNullException(nameof(undo));
 			if (State != UndoTransactionState.Open)
 				throw new InvalidOperationException();

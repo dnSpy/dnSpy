@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		IEditValueProvider NameEditValueProvider {
 			get {
 				threadContext.UIDispatcher.VerifyAccess();
-				if (nameEditValueProvider == null)
+				if (nameEditValueProvider is null)
 					nameEditValueProvider = editValueProviderService.Create(ContentTypes.ThreadsWindowName, Array.Empty<string>());
 				return nameEditValueProvider;
 			}
@@ -603,14 +603,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
 		void InitializeNothingMatched(string filterText, SimpleProcessVM? selectedProcess) =>
-			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process == null);
+			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process is null);
 
 		public int Compare(ThreadVM x, ThreadVM y) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = ThreadsWindowColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}
@@ -696,7 +696,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		bool IsMatch_UI(ThreadVM vm, string filterText, SimpleProcessVM? selectedProcess) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
-			if (selectedProcess?.Process != null && selectedProcess.Process != vm.Thread.Process)
+			if (!(selectedProcess?.Process is null) && selectedProcess.Process != vm.Thread.Process)
 				return false;
 			// Common case check, we don't need to allocate any strings
 			if (filterText == string.Empty)
@@ -856,7 +856,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					break;
 				}
 			}
-			if (selectedProcess == null || selectedProcess.Process == process)
+			if (selectedProcess is null || selectedProcess.Process == process)
 				SelectedProcess = processes.FirstOrDefault();
 		}
 
@@ -884,8 +884,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			public static readonly SimpleProcessVMComparer Instance = new SimpleProcessVMComparer();
 			SimpleProcessVMComparer() { }
 			public int Compare(SimpleProcessVM x, SimpleProcessVM y) {
-				bool x1 = x.Process == null;
-				bool y1 = y.Process == null;
+				bool x1 = x.Process is null;
+				bool y1 = y.Process is null;
 				if (x1 != y1) {
 					if (x1)
 						return -1;

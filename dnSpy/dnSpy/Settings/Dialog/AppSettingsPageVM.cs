@@ -77,7 +77,7 @@ namespace dnSpy.Settings.Dialog {
 
 		PageAndUIObject? GetOrCreatePageAndUIObject() {
 			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
-			if (uiObj != null)
+			if (!(uiObj is null))
 				return createdPageAndUIObject ?? (createdPageAndUIObject = new PageAndUIObject(this, CreateUIObject(uiObj)));
 
 			// Try to pick a visible child
@@ -112,7 +112,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public IEnumerable<string> GetSearchableStrings(FrameworkElement fwElem) {
-			if (searchableStrings == null) {
+			if (searchableStrings is null) {
 				var list = new List<string>();
 				foreach (var s in GetDataTemplateStrings(fwElem))
 					list.Add(UIHelpers.RemoveAccessKeys(s));
@@ -126,7 +126,7 @@ namespace dnSpy.Settings.Dialog {
 
 		IEnumerable<string> GetDataTemplateStrings(FrameworkElement fwElem) {
 			var obj = Page.GetStringsObject();
-			if (obj == null)
+			if (obj is null)
 				return Array.Empty<string>();
 
 			if (obj is UIElement uiElem)
@@ -134,21 +134,21 @@ namespace dnSpy.Settings.Dialog {
 
 			var key = new DataTemplateKey(obj as Type ?? obj.GetType());
 			var dt = fwElem.TryFindResource(key) as DataTemplate;
-			if (dt == null)
+			if (dt is null)
 				return Array.Empty<string>();
 
 			return GetStrings(dt.LoadContent());
 		}
 
 		static IEnumerable<string> GetStrings(DependencyObject obj) {
-			if (obj == null)
+			if (obj is null)
 				yield break;
 			var objString = TryGetString(obj);
-			if (objString != null)
+			if (!(objString is null))
 				yield return objString;
 			foreach (var childObj in LogicalTreeHelper.GetChildren(obj)) {
 				var child = childObj as DependencyObject;
-				if (child == null)
+				if (child is null)
 					continue;
 				foreach (var s in GetStrings(child))
 					yield return s;
@@ -159,17 +159,17 @@ namespace dnSpy.Settings.Dialog {
 			string? s;
 
 			s = (obj as GroupBox)?.Header as string;
-			if (s != null)
+			if (!(s is null))
 				return s;
 
 			// Label, CheckBox, Button, TextControl and others
 			s = (obj as ContentControl)?.Content as string;
-			if (s != null)
+			if (!(s is null))
 				return s;
 
 			Debug.Assert(!(obj is TextBlock), $"Use {nameof(TextControl)} instead so the text can be highlighted");
 			s = (obj as TextBlock)?.Text;
-			if (s != null)
+			if (!(s is null))
 				return s;
 
 			return null;

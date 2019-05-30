@@ -40,11 +40,11 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		IEnumerable<IMemberDef> GetDefsToRemove() {
 			var ep = Type.Module.EntryPoint;
-			if (ep != null && ep.DeclaringType == Type)
+			if (!(ep is null) && ep.DeclaringType == Type)
 				yield return ep;
 
 			var d = FindInitializeComponent();
-			if (d != null) {
+			if (!(d is null)) {
 				yield return d;
 				foreach (var f in DotNetUtils.GetFields(d)) {
 					if (f.FieldType.RemovePinnedAndModifiers().GetElementType() == ElementType.Boolean)
@@ -53,14 +53,14 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 
 			var connMeth = FindConnectMethod();
-			if (connMeth != null) {
+			if (!(connMeth is null)) {
 				yield return connMeth;
 				foreach (var f in DotNetUtils.GetFields(connMeth))
 					yield return f;
 			}
 
 			var delMeth = FindCreateDelegateMethod();
-			if (delMeth != null)
+			if (!(delMeth is null))
 				yield return delMeth;
 		}
 
@@ -85,13 +85,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		static bool IsConnect(MethodDef md) {
-			if (md == null || md.IsStatic || md.Parameters.Count != 3)
+			if (md is null || md.IsStatic || md.Parameters.Count != 3)
 				return false;
 			if (md.ReturnType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void)
 				return false;
 
 			var sig = md.MethodSig;
-			if (sig == null || sig.Params.Count != 2)
+			if (sig is null || sig.Params.Count != 2)
 				return false;
 			if (sig.Params[0].RemovePinnedAndModifiers().GetElementType() != ElementType.I4)
 				return false;
@@ -99,7 +99,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				return false;
 
 			foreach (var o in md.Overrides) {
-				if (o.MethodDeclaration == null || o.MethodDeclaration.DeclaringType == null)
+				if (o.MethodDeclaration is null || o.MethodDeclaration.DeclaringType is null)
 					continue;
 				if (o.MethodDeclaration.DeclaringType.FullName != "System.Windows.Markup.IComponentConnector")
 					continue;
@@ -122,11 +122,11 @@ namespace dnSpy.Decompiler.MSBuild {
 				var sig = m.MethodSig;
 				if (sig.GetParamCount() != 2)
 					continue;
-				if (sig.RetType.RemovePinnedAndModifiers() == null || sig.RetType.RemovePinnedAndModifiers().ToString() != "System.Delegate")
+				if (sig.RetType.RemovePinnedAndModifiers() is null || sig.RetType.RemovePinnedAndModifiers().ToString() != "System.Delegate")
 					continue;
-				if (sig.Params[0].RemovePinnedAndModifiers() == null || sig.Params[0].RemovePinnedAndModifiers().ToString() != "System.Type")
+				if (sig.Params[0].RemovePinnedAndModifiers() is null || sig.Params[0].RemovePinnedAndModifiers().ToString() != "System.Type")
 					continue;
-				if (sig.Params[1].RemovePinnedAndModifiers() == null || sig.Params[1].RemovePinnedAndModifiers().GetElementType() != ElementType.String)
+				if (sig.Params[1].RemovePinnedAndModifiers() is null || sig.Params[1].RemovePinnedAndModifiers().GetElementType() != ElementType.String)
 					continue;
 
 				return m;

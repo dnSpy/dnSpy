@@ -36,17 +36,17 @@ namespace dnSpy.Menus {
 			OpenedFromKeyboard = openedFromKeyboard;
 			this.guidObjects = new List<GuidObject>();
 			this.guidObjects.Add(creatorObject);
-			if (guidObjects != null)
+			if (!(guidObjects is null))
 				this.guidObjects.AddRange(guidObjects);
 			state = new Dictionary<object, object>();
 		}
 
 		public T? GetOrCreateState<T>(object key, Func<T> createState) where T : class {
-			Debug.Assert(key != null);
+			Debug.Assert(!(key is null));
 			T? value;
 			if (state.TryGetValue(key, out object o)) {
 				value = o as T;
-				Debug.Assert(o == null || value != null);
+				Debug.Assert(o is null || !(value is null));
 				return value;
 			}
 			value = createState();

@@ -52,7 +52,7 @@ namespace dnSpy.Bookmarks.Impl {
 		void BMThread(Action callback) => uiDispatcher.UI(callback);
 
 		public override void Modify(BookmarkAndSettings[] settings) {
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			BMThread(() => ModifyCore(settings));
 		}
@@ -63,8 +63,8 @@ namespace dnSpy.Bookmarks.Impl {
 			lock (lockObj) {
 				foreach (var info in settings) {
 					var bmImpl = info.Bookmark as BookmarkImpl;
-					Debug.Assert(bmImpl != null);
-					if (bmImpl == null)
+					Debug.Assert(!(bmImpl is null));
+					if (bmImpl is null)
 						continue;
 					Debug.Assert(bookmarks.Contains(bmImpl));
 					if (!bookmarks.Contains(bmImpl))
@@ -91,7 +91,7 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override Bookmark[] Add(BookmarkInfo[] bookmarks) {
-			if (bookmarks == null)
+			if (bookmarks is null)
 				throw new ArgumentNullException(nameof(bookmarks));
 			var bmImpls = new List<BookmarkImpl>(bookmarks.Length);
 			List<BMObject>? objsToClose = null;
@@ -99,7 +99,7 @@ namespace dnSpy.Bookmarks.Impl {
 				for (int i = 0; i < bookmarks.Length; i++) {
 					var location = bookmarks[i].Location;
 					if (locationToBookmark.ContainsKey(location)) {
-						if (objsToClose == null)
+						if (objsToClose is null)
 							objsToClose = new List<BMObject>();
 						objsToClose.Add(location);
 					}
@@ -122,7 +122,7 @@ namespace dnSpy.Bookmarks.Impl {
 					if (this.bookmarks.Contains(bm))
 						continue;
 					if (locationToBookmark.ContainsKey(bm.Location)) {
-						if (objsToClose == null)
+						if (objsToClose is null)
 							objsToClose = new List<BMObject>();
 						objsToClose.Add(bm);
 					}
@@ -133,7 +133,7 @@ namespace dnSpy.Bookmarks.Impl {
 					}
 				}
 			}
-			if (objsToClose != null) {
+			if (!(objsToClose is null)) {
 				foreach (var obj in objsToClose)
 					obj.Close();
 			}
@@ -142,7 +142,7 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override void Remove(Bookmark[] bookmarks) {
-			if (bookmarks == null)
+			if (bookmarks is null)
 				throw new ArgumentNullException(nameof(bookmarks));
 			BMThread(() => RemoveCore(bookmarks));
 		}
@@ -153,8 +153,8 @@ namespace dnSpy.Bookmarks.Impl {
 			lock (lockObj) {
 				foreach (var bm in bookmarks) {
 					var bmImpl = bm as BookmarkImpl;
-					Debug.Assert(bmImpl != null);
-					if (bmImpl == null)
+					Debug.Assert(!(bmImpl is null));
+					if (bmImpl is null)
 						continue;
 					if (!this.bookmarks.Contains(bmImpl))
 						continue;
@@ -188,7 +188,7 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override void Close(BMObject[] objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			BMThread(() => Close_BMThread(objs));
 		}

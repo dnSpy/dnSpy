@@ -38,7 +38,7 @@ namespace dndbg.Engine {
 		public CorClass? Class {
 			get {
 				int hr = obj.GetClass(out var cls);
-				if (hr >= 0 && cls != null)
+				if (hr >= 0 && !(cls is null))
 					return new CorClass(cls);
 
 				// Here if it's an extern method, eg. it's not IL code, but native code
@@ -61,14 +61,14 @@ namespace dndbg.Engine {
 		public bool JustMyCode {
 			get {
 				var func2 = obj as ICorDebugFunction2;
-				if (func2 == null)
+				if (func2 is null)
 					return false;
 				int hr = func2.GetJMCStatus(out int status);
 				return hr >= 0 && status != 0;
 			}
 			set {
 				var func2 = obj as ICorDebugFunction2;
-				if (func2 == null)
+				if (func2 is null)
 					return;
 				int hr = func2.SetJMCStatus(value ? 1 : 0);
 			}
@@ -84,7 +84,7 @@ namespace dndbg.Engine {
 		public uint VersionNumber {
 			get {
 				var func2 = obj as ICorDebugFunction2;
-				if (func2 == null)
+				if (func2 is null)
 					return CurrentVersionNumber;
 				int hr = func2.GetVersionNumber(out uint ver);
 				return hr < 0 ? 0 : ver;
@@ -101,14 +101,14 @@ namespace dndbg.Engine {
 		public CorCode? ILCode {
 			get {
 				int hr = obj.GetILCode(out var code);
-				return hr < 0 || code == null ? null : new CorCode(code);
+				return hr < 0 || code is null ? null : new CorCode(code);
 			}
 		}
 
 		public CorCode? NativeCode {
 			get {
 				int hr = obj.GetNativeCode(out var code);
-				return hr < 0 || code == null ? null : new CorCode(code);
+				return hr < 0 || code is null ? null : new CorCode(code);
 			}
 		}
 

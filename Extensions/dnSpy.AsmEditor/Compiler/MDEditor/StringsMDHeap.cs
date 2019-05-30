@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 				newData.Add(new byte[1]);
 				currentOffset++;
 			}
-			if (data == null || data.Length == 0)
+			if (data is null || data.Length == 0)
 				return 0;
 			CheckValidName(data);
 			newData.Add(data);
@@ -74,6 +74,6 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		}
 
 		public override bool MustRewriteHeap() => newData.Count > 0;
-		public override bool ExistsInMetadata => stringsStream.StreamHeader != null;
+		public override bool ExistsInMetadata => !(stringsStream.StreamHeader is null);
 	}
 }

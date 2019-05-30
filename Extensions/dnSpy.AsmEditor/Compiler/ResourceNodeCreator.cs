@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ResourceNodeCreator(ResourcesFolderNode rsrcListNode, ResourceNode[] nodes) {
 			module = rsrcListNode.GetModule()!;
-			Debug.Assert(module != null);
+			Debug.Assert(!(module is null));
 			this.rsrcListNode = rsrcListNode;
 			this.nodes = nodes;
 		}

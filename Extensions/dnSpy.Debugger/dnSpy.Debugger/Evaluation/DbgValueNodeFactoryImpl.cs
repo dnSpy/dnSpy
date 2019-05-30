@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Evaluation {
 				}
 			}
 			catch {
-				runtime.Process.DbgManager.Close(res.Select(a => a.ValueNode).Where(a => a != null));
+				runtime.Process.DbgManager.Close(res.Select(a => a.ValueNode).Where(a => !(a is null)));
 				throw;
 			}
 			return res;
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override DbgCreateValueNodeResult[] Create(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions) {
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -70,13 +70,13 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (expressions == null)
+			if (expressions is null)
 				throw new ArgumentNullException(nameof(expressions));
 			return CreateResult(evalInfo.Frame.Runtime, engineValueNodeFactory.Create(evalInfo, expressions));
 		}
 
 		public override DbgValueNode[] Create(DbgEvaluationInfo evalInfo, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options) {
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (objectIds == null)
+			if (objectIds is null)
 				throw new ArgumentNullException(nameof(objectIds));
 			if (objectIds.Length == 0)
 				return Array.Empty<DbgValueNode>();

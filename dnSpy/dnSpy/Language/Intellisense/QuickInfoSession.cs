@@ -81,8 +81,8 @@ namespace dnSpy.Language.Intellisense {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var source = provider.Value.TryCreateQuickInfoSource(textBuffer);
-				if (source != null) {
-					if (list == null)
+				if (!(source is null)) {
+					if (list is null)
 						list = new List<IQuickInfoSource>();
 					list.Add(source);
 				}
@@ -91,7 +91,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void DisposeQuickInfoSources() {
-			if (quickInfoSources != null) {
+			if (!(quickInfoSources is null)) {
 				foreach (var source in quickInfoSources)
 					source.Dispose();
 				quickInfoSources = null;
@@ -120,11 +120,11 @@ namespace dnSpy.Language.Intellisense {
 				source.AugmentQuickInfoSession(this, newContent, out var applicableToSpanTmp);
 				if (IsDismissed)
 					return;
-				if (applicableToSpan == null)
+				if (applicableToSpan is null)
 					applicableToSpan = applicableToSpanTmp;
 			}
 
-			if (newContent.Count == 0 || applicableToSpan == null)
+			if (newContent.Count == 0 || applicableToSpan is null)
 				Dismiss();
 			else {
 				QuickInfoContent.BeginBulkOperation();
@@ -134,9 +134,9 @@ namespace dnSpy.Language.Intellisense {
 
 				HasInteractiveContent = CalculateHasInteractiveContent();
 				ApplicableToSpan = applicableToSpan;
-				if (quickInfoPresenter == null) {
+				if (quickInfoPresenter is null) {
 					quickInfoPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
-					if (quickInfoPresenter == null) {
+					if (quickInfoPresenter is null) {
 						Dismiss();
 						return;
 					}

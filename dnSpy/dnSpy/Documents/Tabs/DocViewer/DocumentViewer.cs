@@ -68,18 +68,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 				var dvCtrl = documentViewer.documentViewerControl;
 				var loc = dvCtrl.TextView.GetTextEditorPosition(args.OpenedFromKeyboard);
-				if (loc != null) {
+				if (!(loc is null)) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 
 					var @ref = dvCtrl.GetReferenceInfo(loc.Position);
-					if (@ref != null)
+					if (!(@ref is null))
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.ToTextReference());
 				}
 			}
 		}
 
 		public DocumentViewer(IWpfCommandService wpfCommandService, IDocumentViewerServiceImpl documentViewerServiceImpl, IMenuService menuService, DocumentViewerControl documentViewerControl) {
-			if (menuService == null)
+			if (menuService is null)
 				throw new ArgumentNullException(nameof(menuService));
 			this.wpfCommandService = wpfCommandService ?? throw new ArgumentNullException(nameof(wpfCommandService));
 			this.documentViewerServiceImpl = documentViewerServiceImpl ?? throw new ArgumentNullException(nameof(documentViewerServiceImpl));
@@ -139,7 +139,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override object? CreateUIState() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (cachedEditorPositionState != null)
+			if (!(cachedEditorPositionState is null))
 				return cachedEditorPositionState;
 			return new EditorPositionState(documentViewerControl.TextView);
 		}
@@ -148,12 +148,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			var state = obj as EditorPositionState;
-			if (state == null)
+			if (state is null)
 				return;
 
 			var textView = documentViewerControl.TextView;
 			if (!textView.VisualElement.IsLoaded) {
-				bool start = cachedEditorPositionState == null;
+				bool start = cachedEditorPositionState is null;
 				cachedEditorPositionState = state;
 				if (start)
 					textView.VisualElement.Loaded += VisualElement_Loaded;
@@ -197,7 +197,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
-			if (cachedEditorPositionState == null)
+			if (cachedEditorPositionState is null)
 				return;
 			InitializeState(cachedEditorPositionState);
 			cachedEditorPositionState = null;
@@ -206,7 +206,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override object? DeserializeUIState(ISettingsSection section) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			var caretAffinity = section.Attribute<PositionAffinity?>("CaretAffinity");
 			var caretVirtualSpaces = section.Attribute<int?>("CaretVirtualSpaces");
@@ -215,9 +215,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var topLinePosition = section.Attribute<int?>("TopLinePosition");
 			var topLineVerticalDistance = section.Attribute<double?>("TopLineVerticalDistance");
 
-			if (caretAffinity == null || caretVirtualSpaces == null || caretPosition == null)
+			if (caretAffinity is null || caretVirtualSpaces is null || caretPosition is null)
 				return null;
-			if (viewportLeft == null || topLinePosition == null || topLineVerticalDistance == null)
+			if (viewportLeft is null || topLinePosition is null || topLineVerticalDistance is null)
 				return null;
 			return new EditorPositionState(caretAffinity.Value, caretVirtualSpaces.Value, caretPosition.Value, viewportLeft.Value, topLinePosition.Value, topLineVerticalDistance.Value);
 		}
@@ -225,11 +225,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override void SerializeUIState(ISettingsSection section, object? obj) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			var state = obj as EditorPositionState;
-			Debug.Assert(state != null);
-			if (state == null)
+			Debug.Assert(!(state is null));
+			if (state is null)
 				return;
 
 			section.Attribute("CaretAffinity", state.CaretAffinity);
@@ -243,7 +243,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public bool SetContent(DocumentViewerContent content, IContentType? contentType) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			if (documentViewerControl.SetContent(content, contentType)) {
 				outputData.Clear();
@@ -259,7 +259,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void AddContentData(object key, object data) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			outputData.Add(key, data);
 		}
@@ -267,7 +267,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public object? GetContentData(object key) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			outputData.TryGetValue(key, out object data);
 			return data;
@@ -278,8 +278,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Debug.Assert(!isDisposed);
 			if (isDisposed)
 				return;
-			Debug.Assert(DocumentTab != null);
-			if (DocumentTab == null)
+			Debug.Assert(!(DocumentTab is null));
+			if (DocumentTab is null)
 				return;
 			DocumentTab.FollowReference(textRef, newTab);
 		}
@@ -314,7 +314,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void ShowCancelButton(string? message, Action onCancel) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (onCancel == null)
+			if (onCancel is null)
 				throw new ArgumentNullException(nameof(onCancel));
 			documentViewerControl.ShowCancelButton(onCancel, message);
 		}

@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Steppers {
 		public override bool IsStepping {
 			get {
 				lock (lockObj)
-					return stepperTag != null;
+					return !(stepperTag is null);
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Steppers {
 			Dispatcher.VerifyAccess();
 			bool wasStepping;
 			lock (lockObj) {
-				wasStepping = stepperTag != null && stepperTag == e.Tag;
+				wasStepping = !(stepperTag is null) && stepperTag == e.Tag;
 				stepperTag = null;
 				thread = (DbgThreadImpl?)e.Thread ?? thread;
 			}
@@ -85,11 +85,11 @@ namespace dnSpy.Debugger.Steppers {
 
 		internal void RaiseError_DbgThread(string error) {
 			Dispatcher.VerifyAccess();
-			if (error == null)
+			if (error is null)
 				throw new ArgumentNullException(nameof(error));
 			bool wasStepping;
 			lock (lockObj) {
-				wasStepping = stepperTag != null;
+				wasStepping = !(stepperTag is null);
 				stepperTag = null;
 			}
 			if (wasStepping)
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Steppers {
 			bool canStep;
 			object? stepperTagTmp;
 			lock (lockObj) {
-				canStep = stepperTag == null;
+				canStep = stepperTag is null;
 				if (canStep)
 					stepperTag = new object();
 				stepperTagTmp = stepperTag;
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Steppers {
 		public override void Cancel() {
 			object stepperTagTmp;
 			lock (lockObj) {
-				if (stepperTag == null)
+				if (stepperTag is null)
 					return;
 				stepperTagTmp = stepperTag;
 				stepperTag = null;

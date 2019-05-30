@@ -43,7 +43,7 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public Collection<ITextBuffer> GetTextBuffers(Predicate<ITextBuffer> match) {
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 			if (match(TopBuffer))
 				return new Collection<ITextBuffer> { TopBuffer };
@@ -51,21 +51,21 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public IMappingPoint CreateMappingPoint(SnapshotPoint point, PointTrackingMode trackingMode) {
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
 			return new MappingPoint(this, point, trackingMode);
 		}
 
 		public IMappingSpan CreateMappingSpan(SnapshotSpan span, SpanTrackingMode trackingMode) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			return new MappingSpan(this, span, trackingMode);
 		}
 
 		public SnapshotPoint? MapDownToBuffer(SnapshotPoint position, PointTrackingMode trackingMode, ITextBuffer targetBuffer, PositionAffinity affinity) {
-			if (position.Snapshot == null)
+			if (position.Snapshot is null)
 				throw new ArgumentException();
-			if (targetBuffer == null)
+			if (targetBuffer is null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 
 			if (position.Snapshot.TextBuffer != TopBuffer)
@@ -76,21 +76,21 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public SnapshotPoint? MapDownToSnapshot(SnapshotPoint position, PointTrackingMode trackingMode, ITextSnapshot targetSnapshot, PositionAffinity affinity) {
-			if (position.Snapshot == null)
+			if (position.Snapshot is null)
 				throw new ArgumentException();
-			if (targetSnapshot == null)
+			if (targetSnapshot is null)
 				throw new ArgumentNullException(nameof(targetSnapshot));
 
 			var res = MapDownToBuffer(position, trackingMode, targetSnapshot.TextBuffer, affinity);
-			if (res == null)
+			if (res is null)
 				return null;
 			return res.Value.TranslateTo(targetSnapshot, trackingMode);
 		}
 
 		public SnapshotPoint? MapDownToFirstMatch(SnapshotPoint position, PointTrackingMode trackingMode, Predicate<ITextSnapshot> match, PositionAffinity affinity) {
-			if (position.Snapshot == null)
+			if (position.Snapshot is null)
 				throw new ArgumentException();
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 
 			if (position.Snapshot.TextBuffer != TopBuffer)
@@ -101,9 +101,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public SnapshotPoint? MapDownToInsertionPoint(SnapshotPoint position, PointTrackingMode trackingMode, Predicate<ITextSnapshot> match) {
-			if (position.Snapshot == null)
+			if (position.Snapshot is null)
 				throw new ArgumentException();
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 
 			if (position.Snapshot.TextBuffer != TopBuffer)
@@ -114,9 +114,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public NormalizedSnapshotSpanCollection MapDownToBuffer(SnapshotSpan span, SpanTrackingMode trackingMode, ITextBuffer targetBuffer) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
-			if (targetBuffer == null)
+			if (targetBuffer is null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 
 			if (span.Snapshot.TextBuffer != TopBuffer)
@@ -127,9 +127,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public NormalizedSnapshotSpanCollection MapDownToSnapshot(SnapshotSpan span, SpanTrackingMode trackingMode, ITextSnapshot targetSnapshot) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
-			if (targetSnapshot == null)
+			if (targetSnapshot is null)
 				throw new ArgumentNullException(nameof(targetSnapshot));
 
 			if (span.Snapshot.TextBuffer != TopBuffer)
@@ -140,9 +140,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public NormalizedSnapshotSpanCollection MapDownToFirstMatch(SnapshotSpan span, SpanTrackingMode trackingMode, Predicate<ITextSnapshot> match) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 
 			if (span.Snapshot.TextBuffer != TopBuffer)
@@ -153,9 +153,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public SnapshotPoint? MapUpToBuffer(SnapshotPoint point, PointTrackingMode trackingMode, PositionAffinity affinity, ITextBuffer targetBuffer) {
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
-			if (targetBuffer == null)
+			if (targetBuffer is null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 
 			if (point.Snapshot.TextBuffer != TopBuffer)
@@ -166,21 +166,21 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public SnapshotPoint? MapUpToSnapshot(SnapshotPoint point, PointTrackingMode trackingMode, PositionAffinity affinity, ITextSnapshot targetSnapshot) {
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
-			if (targetSnapshot == null)
+			if (targetSnapshot is null)
 				throw new ArgumentNullException(nameof(targetSnapshot));
 
 			var res = MapUpToBuffer(point, trackingMode, affinity, targetSnapshot.TextBuffer);
-			if (res == null)
+			if (res is null)
 				return null;
 			return res.Value.TranslateTo(targetSnapshot, trackingMode);
 		}
 
 		public SnapshotPoint? MapUpToFirstMatch(SnapshotPoint point, PointTrackingMode trackingMode, Predicate<ITextSnapshot> match, PositionAffinity affinity) {
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 
 			if (point.Snapshot.TextBuffer != TopBuffer)
@@ -191,9 +191,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public NormalizedSnapshotSpanCollection MapUpToBuffer(SnapshotSpan span, SpanTrackingMode trackingMode, ITextBuffer targetBuffer) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
-			if (targetBuffer == null)
+			if (targetBuffer is null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 
 			if (span.Snapshot.TextBuffer != TopBuffer)
@@ -204,9 +204,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public NormalizedSnapshotSpanCollection MapUpToSnapshot(SnapshotSpan span, SpanTrackingMode trackingMode, ITextSnapshot targetSnapshot) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
-			if (targetSnapshot == null)
+			if (targetSnapshot is null)
 				throw new ArgumentNullException(nameof(targetSnapshot));
 
 			if (span.Snapshot.TextBuffer != TopBuffer)
@@ -217,9 +217,9 @@ namespace dnSpy.Text.Projection {
 		}
 
 		public NormalizedSnapshotSpanCollection MapUpToFirstMatch(SnapshotSpan span, SpanTrackingMode trackingMode, Predicate<ITextSnapshot> match) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 
 			if (span.Snapshot.TextBuffer != TopBuffer)

@@ -49,7 +49,7 @@ namespace dnSpy.Documents.TreeView {
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!createChildren)
 				yield break;
-			if (derivedTypesFinder != null)
+			if (!(derivedTypesFinder is null))
 				derivedTypesFinder.Cancel();
 			derivedTypesFinder = new DerivedTypesFinder(this, type);
 		}

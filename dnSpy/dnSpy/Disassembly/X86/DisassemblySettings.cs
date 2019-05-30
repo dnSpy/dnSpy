@@ -596,7 +596,7 @@ namespace dnSpy.Disassembly.X86 {
 		}
 
 		protected DisassemblySettings CopyTo(DisassemblySettings other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.UpperCasePrefixes = UpperCasePrefixes;
 			other.UpperCaseMnemonics = UpperCaseMnemonics;

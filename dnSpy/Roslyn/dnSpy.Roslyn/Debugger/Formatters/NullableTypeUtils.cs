@@ -39,12 +39,12 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				switch (field.Name) {
 				case HasValueFieldName:
 				case HasValueFieldName_Mono:
-					if ((object?)hasValueField != null)
+					if (!(hasValueField is null))
 						return (null, null);
 					hasValueField = field;
 					break;
 				case ValueFieldName:
-					if ((object?)valueField != null)
+					if (!(valueField is null))
 						return (null, null);
 					valueField = field;
 					break;
@@ -53,7 +53,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				}
 			}
 
-			if ((object?)hasValueField == null || (object?)valueField == null)
+			if (hasValueField is null || valueField is null)
 				return (null, null);
 			return (hasValueField, valueField);
 		}

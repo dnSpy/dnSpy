@@ -41,7 +41,7 @@ namespace dnSpy.Metadata {
 		}
 
 		public ModuleId Create(ModuleDef? module) {
-			if (module == null)
+			if (module is null)
 				return new ModuleId();
 			var res = moduleDictionary.GetValue(module, callbackCreateCore).Value;
 			// Don't cache dynamic modules. The reason is that their ModuleIds could change,
@@ -52,11 +52,11 @@ namespace dnSpy.Metadata {
 		}
 
 		StrongBox<ModuleId> CreateCore(ModuleDef module) {
-			if (factories == null) {
+			if (factories is null) {
 				var list = new List<IModuleIdFactory>(moduleIdFactoryProviders.Length);
 				foreach (var provider in moduleIdFactoryProviders) {
 					var factory = provider.Value.Create();
-					if (factory != null)
+					if (!(factory is null))
 						list.Add(factory);
 				}
 				factories = list.ToArray();
@@ -64,7 +64,7 @@ namespace dnSpy.Metadata {
 
 			foreach (var factory in factories) {
 				var id = factory.Create(module);
-				if (id != null)
+				if (!(id is null))
 					return new StrongBox<ModuleId>(id.Value);
 			}
 

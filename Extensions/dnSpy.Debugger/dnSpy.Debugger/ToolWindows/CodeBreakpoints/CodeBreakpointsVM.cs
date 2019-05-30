@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEditValueProvider LabelsEditValueProvider {
 			get {
 				codeBreakpointContext.UIDispatcher.VerifyAccess();
-				if (labelsEditValueProvider == null)
+				if (labelsEditValueProvider is null)
 					labelsEditValueProvider = editValueProviderService.Create(ContentTypes.CodeBreakpointsWindowLabels, Array.Empty<string>());
 				return labelsEditValueProvider;
 			}
@@ -463,7 +463,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = CodeBreakpointsColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}

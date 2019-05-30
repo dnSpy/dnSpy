@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DbgUI {
 		void DbgManager_ProcessPaused(object sender, ProcessPausedEventArgs e) {
 			Debug.Assert(dbgCallStackService.Thread == e.Thread);
 			var info = GetLocation();
-			if (info.location != null) {
+			if (!(info.location is null)) {
 				dbgCallStackService.ActiveFrameIndex = info.frameIndex;
 				referenceNavigatorService.Value.GoTo(info.location);
 			}
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DbgUI {
 			var frames = dbgCallStackService.Frames.Frames;
 			for (int i = 0; i < frames.Count; i++) {
 				var location = frames[i].Location;
-				if (location != null)
+				if (!(location is null))
 					return (location, i);
 			}
 			return (null, -1);

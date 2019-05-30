@@ -37,13 +37,13 @@ namespace dnSpy.Hex {
 
 		public override event EventHandler<HexBufferSpanInvalidatedEventArgs> BufferSpanInvalidated {
 			add {
-				if (bufferSpanInvalidated == null)
+				if (bufferSpanInvalidated is null)
 					stream.BufferStreamSpanInvalidated += HexBufferStream_BufferStreamSpanInvalidated;
 				bufferSpanInvalidated += value;
 			}
 			remove {
 				bufferSpanInvalidated -= value;
-				if (bufferSpanInvalidated == null)
+				if (bufferSpanInvalidated is null)
 					stream.BufferStreamSpanInvalidated -= HexBufferStream_BufferStreamSpanInvalidated;
 			}
 		}
@@ -75,18 +75,18 @@ namespace dnSpy.Hex {
 			currentHexVersion = currentHexVersion.SetChanges(changes, reiteratedVersionNumber);
 
 		Thread? ownerThread;
-		bool CheckAccess() => ownerThread == null || ownerThread == Thread.CurrentThread;
+		bool CheckAccess() => ownerThread is null || ownerThread == Thread.CurrentThread;
 		void VerifyAccess() {
 			if (!CheckAccess())
 				throw new InvalidOperationException();
 		}
 
 		HexEditImpl? hexEditInProgress;
-		public override bool EditInProgress => hexEditInProgress != null;
+		public override bool EditInProgress => !(hexEditInProgress is null);
 		public override bool CheckEditAccess() => CheckAccess();
 
 		public override void TakeThreadOwnership() {
-			if (ownerThread != null && ownerThread != Thread.CurrentThread)
+			if (!(ownerThread is null) && ownerThread != Thread.CurrentThread)
 				throw new InvalidOperationException();
 			ownerThread = Thread.CurrentThread;
 		}
@@ -115,7 +115,7 @@ namespace dnSpy.Hex {
 
 		bool RaiseChangingGetIsCanceled(object? editTag) {
 			var c = Changing;
-			if (c == null)
+			if (c is null)
 				return false;
 
 			Action<HexContentChangingEventArgs>? cancelAction = null;

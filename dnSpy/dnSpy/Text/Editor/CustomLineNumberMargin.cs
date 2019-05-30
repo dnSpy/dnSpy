@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
 
 		void ICustomLineNumberMargin.SetOwner(ICustomLineNumberMarginOwner owner) {
-			if (this.owner != null)
+			if (!(this.owner is null))
 				throw new InvalidOperationException();
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			if (Visibility == Visibility.Visible)
@@ -70,14 +70,14 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState? state) {
-			if (owner == null)
+			if (owner is null)
 				return null;
 			CustomLineNumberState customState;
-			if (state == null)
+			if (state is null)
 				state = customState = new CustomLineNumberState();
 			else
 				customState = (CustomLineNumberState)state;
-			if (state.SnapshotLine == null || state.SnapshotLine.EndIncludingLineBreak != viewLine.Start)
+			if (state.SnapshotLine is null || state.SnapshotLine.EndIncludingLineBreak != viewLine.Start)
 				state.SnapshotLine = viewLine.Start.GetContainingLine();
 			else
 				state.SnapshotLine = state.SnapshotLine.Snapshot.GetLineFromLineNumber(state.SnapshotLine.LineNumber + 1);
@@ -85,14 +85,14 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected override int? GetMaxLineDigitsCore() {
-			Debug.Assert(owner != null);
+			Debug.Assert(!(owner is null));
 			return owner?.GetMaxLineNumberDigits();
 		}
 
 		protected override TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, LineNumberState state, int lineNumber) {
-			Debug.Assert(owner != null);
-			Debug.Assert(state != null);
-			if (owner == null)
+			Debug.Assert(!(owner is null));
+			Debug.Assert(!(state is null));
+			if (owner is null)
 				throw new InvalidOperationException();
 			var customState = (CustomLineNumberState)state;
 			return owner.GetLineNumberTextFormattingRunProperties(viewLine, customState.SnapshotLine!, lineNumber, customState.State);

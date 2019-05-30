@@ -69,11 +69,11 @@ namespace dnSpy.Contracts.Images {
 		/// </summary>
 		/// <param name="textView">Text view with which to initialize <see cref="Zoom"/> and <see cref="DpiObject"/></param>
 		public ImageOptions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView != null) {
+			Debug.Assert(!(wpfTextView is null));
+			if (!(wpfTextView is null)) {
 				Zoom = new Size(wpfTextView.ZoomLevel / 100, wpfTextView.ZoomLevel / 100);
 				DpiObject = wpfTextView.VisualElement;
 			}

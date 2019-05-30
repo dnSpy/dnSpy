@@ -75,9 +75,9 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			public int Compare(DbgObjectId x, DbgObjectId y) {
 				if (x == y)
 					return 0;
-				if (x == null)
+				if (x is null)
 					return -1;
-				if (y == null)
+				if (y is null)
 					return 1;
 				return x.Id.CompareTo(y.Id);
 			}

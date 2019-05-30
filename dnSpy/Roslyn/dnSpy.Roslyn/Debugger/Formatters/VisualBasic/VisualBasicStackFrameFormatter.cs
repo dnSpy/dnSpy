@@ -135,7 +135,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			if (runtime.Dispatcher.CheckAccess())
 				return false;
 			var sig = runtime.GetFrameMethod(evalInfo)?.GetMethodSignature();
-			return sig != null && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
+			return !(sig is null) && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
 		}
 
 		public void Format() {
@@ -162,7 +162,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var method = runtime.GetFrameMethod(evalInfo);
-			if ((object?)method == null)
+			if (method is null)
 				OutputWrite("???", DbgTextColor.Error);
 			else {
 				var propInfo = TypeFormatterUtils.TryGetProperty(method);
@@ -273,7 +273,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					var value = parameterValue.Value;
 					if (value?.Type.IsByRef == true)
 						value = dereferencedValue = value.LoadIndirect().Value;
-					if (value == null)
+					if (value is null)
 						OutputWrite("???", DbgTextColor.Error);
 					else
 						valueFormatter.Format(value);
@@ -334,7 +334,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				break;
 			}
 
-			if (loc != null) {
+			if (!(loc is null)) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
@@ -441,7 +441,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			else
 				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
 
-			if (operatorInfo != null) {
+			if (!(operatorInfo is null)) {
 				for (int i = 0; i < operatorInfo.Length - 1; i++) {
 					WriteOperatorInfoString(operatorInfo[i]);
 					WriteSpace();
@@ -494,7 +494,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'A' <= s[0] && s[0] <= 'Z' ? DbgTextColor.Keyword : DbgTextColor.Operator);
 
 		void WriteMethodName(DmdMethodBase method, string name, string[]? operatorInfo) {
-			if (operatorInfo != null)
+			if (!(operatorInfo is null))
 				WriteOperatorInfoString(operatorInfo[operatorInfo.Length - 1]);
 			else
 				WriteIdentifier(name, TypeFormatterUtils.GetColor(method, canBeModule: true));

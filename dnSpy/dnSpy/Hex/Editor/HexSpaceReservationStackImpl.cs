@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Editor {
 		IEnumerable<HexSpaceReservationManagerImpl> SpaceReservationManagers {
 			get {
 				foreach (var mgr in spaceReservationManagers) {
-					if (mgr != null)
+					if (!(mgr is null))
 						yield return mgr;
 				}
 			}
@@ -70,13 +70,13 @@ namespace dnSpy.Hex.Editor {
 		public override HexSpaceReservationManager GetSpaceReservationManager(string name) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			int index = GetNameIndex(name);
 			if (index < 0)
 				throw new ArgumentException();
 			var mgr = spaceReservationManagers[index];
-			if (mgr == null) {
+			if (mgr is null) {
 				mgr = new HexSpaceReservationManagerImpl(wpfHexView);
 				mgr.GotAggregateFocus += HexSpaceReservationManager_GotAggregateFocus;
 				mgr.LostAggregateFocus += HexSpaceReservationManager_LostAggregateFocus;
@@ -114,7 +114,7 @@ namespace dnSpy.Hex.Editor {
 				return;
 			GeometryGroup? geometry = null;
 			foreach (var mgr in SpaceReservationManagers) {
-				if (geometry == null)
+				if (geometry is null)
 					geometry = new GeometryGroup();
 				mgr.PositionAndDisplay(geometry);
 			}
@@ -124,7 +124,7 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			for (int i = 0; i < spaceReservationManagers.Length; i++) {
 				var mgr = spaceReservationManagers[i];
-				if (mgr != null) {
+				if (!(mgr is null)) {
 					spaceReservationManagers[i] = null;
 					mgr.GotAggregateFocus -= HexSpaceReservationManager_GotAggregateFocus;
 					mgr.LostAggregateFocus -= HexSpaceReservationManager_LostAggregateFocus;

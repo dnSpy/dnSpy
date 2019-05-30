@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="tokens">Tokens of all methods that reference this method body</param>
 		protected DotNetMethodBody(DotNetMethodProvider methodProvider, string name, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
 			: base(name, span) {
-			if (tokens == null)
+			if (tokens is null)
 				throw new ArgumentOutOfRangeException(nameof(tokens));
 			if (tokens.Count == 0)
 				throw new ArgumentOutOfRangeException(nameof(tokens));

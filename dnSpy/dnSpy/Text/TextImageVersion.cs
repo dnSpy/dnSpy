@@ -42,7 +42,7 @@ namespace dnSpy.Text {
 		}
 
 		public int TrackTo(VersionedPosition other, PointTrackingMode mode) {
-			if (other.Version == null)
+			if (other.Version is null)
 				throw new ArgumentException(nameof(other));
 			if (other.Version.VersionNumber == VersionNumber)
 				return other.Position;
@@ -52,7 +52,7 @@ namespace dnSpy.Text {
 		}
 
 		public Span TrackTo(VersionedSpan span, SpanTrackingMode mode) {
-			if (span.Version == null)
+			if (span.Version is null)
 				throw new ArgumentException(nameof(span));
 			if (span.Version.VersionNumber == VersionNumber)
 				return span.Span;

@@ -30,7 +30,7 @@ namespace dnSpy.Text {
 		readonly PointTrackingMode trackingMode;
 
 		public MappingPoint(IBufferGraph bufferGraph, SnapshotPoint snapshotPoint, PointTrackingMode trackingMode) {
-			if (snapshotPoint.Snapshot == null)
+			if (snapshotPoint.Snapshot is null)
 				throw new ArgumentException();
 			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
 			this.snapshotPoint = snapshotPoint;
@@ -38,7 +38,7 @@ namespace dnSpy.Text {
 		}
 
 		public SnapshotPoint? GetPoint(Predicate<ITextBuffer> match, PositionAffinity affinity) {
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 			if (match(AnchorBuffer))
 				return GetPoint(AnchorBuffer.CurrentSnapshot, affinity);
@@ -46,13 +46,13 @@ namespace dnSpy.Text {
 		}
 
 		public SnapshotPoint? GetPoint(ITextSnapshot targetSnapshot, PositionAffinity affinity) {
-			if (targetSnapshot == null)
+			if (targetSnapshot is null)
 				throw new ArgumentNullException(nameof(targetSnapshot));
 			return snapshotPoint.TranslateTo(targetSnapshot, trackingMode);
 		}
 
 		public SnapshotPoint? GetPoint(ITextBuffer targetBuffer, PositionAffinity affinity) {
-			if (targetBuffer == null)
+			if (targetBuffer is null)
 				throw new ArgumentNullException(nameof(targetBuffer));
 			return GetPoint(targetBuffer.CurrentSnapshot, affinity);
 		}

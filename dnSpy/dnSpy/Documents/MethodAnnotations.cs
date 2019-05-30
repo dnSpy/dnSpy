@@ -44,7 +44,7 @@ namespace dnSpy.Documents {
 			public bool Equals(Key other) {
 				var m = method.Target;
 				var om = other.method.Target;
-				if (m == null || om == null)
+				if (m is null || om is null)
 					return false;
 				return m == om;
 			}
@@ -65,10 +65,10 @@ namespace dnSpy.Documents {
 			Timer? timer = null;
 			WeakReference weakSelf = new WeakReference(ma);
 			timer = new Timer(a => {
-				Debug.Assert(timer != null);
+				Debug.Assert(!(timer is null));
 				timer.Dispose();
 				var self = (MethodAnnotations)weakSelf.Target;
-				if (self != null) {
+				if (!(self is null)) {
 					self.ClearGarbageCollectedItems();
 					AddTimerWait(self);
 				}
@@ -96,7 +96,7 @@ namespace dnSpy.Documents {
 		void ClearGarbageCollectedItems() {
 			lock (lockObj) {
 				foreach (var kv in new List<KeyValuePair<Key, bool>>(infos)) {
-					if (kv.Key.method.Target == null)
+					if (kv.Key.method.Target is null)
 						infos.Remove(kv.Key);
 				}
 			}

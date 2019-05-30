@@ -34,11 +34,11 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorModuleDef GetOrCreateCorModuleDef() {
 			Debugger.DebugVerifyThread();
-			if (CorModuleDef != null)
+			if (!(CorModuleDef is null))
 				return CorModuleDef;
 
 			Assembly.InitializeAssemblyAndModules();
-			Debug.Assert(CorModuleDef != null);
+			Debug.Assert(!(CorModuleDef is null));
 			return CorModuleDef;
 		}
 

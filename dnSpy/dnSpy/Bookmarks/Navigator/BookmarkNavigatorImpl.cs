@@ -99,7 +99,7 @@ namespace dnSpy.Bookmarks.Navigator {
 			uiDispatcher.VerifyAccess();
 			var currentDocument = GetDocument(activeBookmark);
 			foreach (var bm in GetBookmarks(increment)) {
-				if (currentDocument == null)
+				if (currentDocument is null)
 					return bm;
 				var doc = GetDocument(bm);
 				if (currentDocument.Equals(doc))
@@ -110,11 +110,11 @@ namespace dnSpy.Bookmarks.Navigator {
 
 		BookmarkDocument? GetDocument(Bookmark? bookmark) {
 			uiDispatcher.VerifyAccess();
-			if (bookmark == null)
+			if (bookmark is null)
 				return null;
 			foreach (var lz in bookmarkDocumentProviders) {
 				var doc = lz.Value.GetDocument(bookmark);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 			}
 			return null;
@@ -122,7 +122,7 @@ namespace dnSpy.Bookmarks.Navigator {
 
 		Bookmark? GetNextBookmarkWithSameLabel(int increment) {
 			uiDispatcher.VerifyAccess();
-			if (currentLabels == null)
+			if (currentLabels is null)
 				currentLabels = activeBookmark?.Labels ?? emptyLabels;
 			foreach (var bm in GetBookmarks(increment)) {
 				if (SameLabel(currentLabels, bm.Labels))
@@ -133,7 +133,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		static bool SameLabel(ReadOnlyCollection<string> validLabels, ReadOnlyCollection<string> labels) {
-			if (labels == null)
+			if (labels is null)
 				labels = emptyLabels;
 			if (validLabels.Count == 0)
 				return labels.Count == 0;
@@ -163,7 +163,7 @@ namespace dnSpy.Bookmarks.Navigator {
 
 		void SelectAndGoTo(Bookmark? bookmark, bool keepLabels = false) {
 			uiDispatcher.VerifyAccess();
-			if (bookmark == null)
+			if (bookmark is null)
 				return;
 			var currentLabelsTmp = currentLabels;
 			ActiveBookmark = bookmark;
@@ -177,7 +177,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		void SetActiveBookmark(Bookmark? bookmark, bool verifyBookmark) {
 			uiDispatcher.VerifyAccess();
 			currentLabels = null;
-			if (bookmark == null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(bookmark)))
+			if (bookmark is null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(bookmark)))
 				bookmark = viewBookmarkProvider.DefaultBookmark;
 			if (activeBookmark == bookmark)
 				return;

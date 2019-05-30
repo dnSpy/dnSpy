@@ -100,7 +100,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 		}
 
 		void StopTimer() {
-			if (timer != null) {
+			if (!(timer is null)) {
 				timer.Tick -= Timer_Tick_UI;
 				timer.Stop();
 				timer = null;

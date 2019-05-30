@@ -80,7 +80,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <summary>
 		/// Gets if this stack is empty.
 		/// </summary>
-		public bool IsEmpty => next == null;
+		public bool IsEmpty => next is null;
 
 		/// <summary>
 		/// Gets an enumerator that iterates through the stack top-to-bottom.

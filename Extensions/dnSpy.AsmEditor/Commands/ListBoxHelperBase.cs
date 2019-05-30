@@ -212,7 +212,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void OnDataContextChanged(object dataContext) {
-			if (coll != null)
+			if (!(coll is null))
 				throw new InvalidOperationException("DataContext changed more than once");
 
 			// Can't add M, N etc as shortcuts so must use a key down handler
@@ -221,7 +221,7 @@ namespace dnSpy.AsmEditor.Commands {
 			OnDataContextChangedInternal(dataContext);
 
 			foreach (var handler in contextMenuHandlers) {
-				if (handler == null)
+				if (handler is null)
 					continue;
 				if (handler.Modifiers == ModifierKeys.None &&
 					(Key.A <= handler.Key && handler.Key <= Key.Z))
@@ -239,7 +239,7 @@ namespace dnSpy.AsmEditor.Commands {
 				return;
 
 			foreach (var handler in contextMenuHandlers) {
-				if (handler == null)
+				if (handler is null)
 					continue;
 				if (handler.Modifiers != Keyboard.Modifiers)
 					continue;
@@ -271,7 +271,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 			bool addSep = false;
 			foreach (var handler in handlers) {
-				if (handler == null) {
+				if (handler is null) {
 					addSep = true;
 					continue;
 				}
@@ -281,9 +281,9 @@ namespace dnSpy.AsmEditor.Commands {
 				menuItem.Header = ResourceHelper.GetString(handler, listBox.SelectedItems.Count > 1 ? handler.HeaderPlural ?? handler.Header : handler.Header);
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
-				if (handler.Icon != null)
+				if (!(handler.Icon is null))
 					Add16x16Image(menuItem, handler.Icon.Value, menuItem.IsEnabled);
-				if (handler.InputGestureText != null)
+				if (!(handler.InputGestureText is null))
 					menuItem.InputGestureText = ResourceHelper.GetString(handler, handler.InputGestureText);
 
 				if (addSep) {
@@ -336,7 +336,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		ClipboardData? GetClipboardData() {
 			var cpData = ClipboardDataHolder.TryGet<ClipboardData>();
-			if (cpData == null)
+			if (cpData is null)
 				return null;
 			if (!CanUseClipboardData(cpData.Data, cpData.Id == copiedDataId))
 				return null;
@@ -349,7 +349,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		void PasteItems(int relIndex) {
 			var cpData = GetClipboardData();
-			if (cpData == null)
+			if (cpData is null)
 				return;
 			var copiedData = cpData.Data;
 
@@ -362,8 +362,8 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		void PasteItems() => PasteItems(0);
-		bool PasteItemsCanExecute() => GetClipboardData() != null;
+		bool PasteItemsCanExecute() => !(GetClipboardData() is null);
 		void PasteAfterItems() => PasteItems(1);
-		bool PasteAfterItemsCanExecute() => listBox.SelectedIndex >= 0 && GetClipboardData() != null;
+		bool PasteAfterItemsCanExecute() => listBox.SelectedIndex >= 0 && !(GetClipboardData() is null);
 	}
 }

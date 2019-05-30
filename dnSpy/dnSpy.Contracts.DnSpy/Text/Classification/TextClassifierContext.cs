@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// </summary>
 		public PropertyCollection Properties {
 			get {
-				if (properties == null)
+				if (properties is null)
 					Interlocked.CompareExchange(ref properties, new PropertyCollection(), null);
 				return properties!;
 			}

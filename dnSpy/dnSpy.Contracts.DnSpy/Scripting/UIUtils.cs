@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Scripting {
 					return;
 				}
 			}), DispatcherPriority.Send);
-			if (exInfo != null)
+			if (!(exInfo is null))
 				exInfo.Throw();
 		}
 
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Scripting {
 					return default;
 				}
 			}), DispatcherPriority.Send);
-			if (exInfo != null)
+			if (!(exInfo is null))
 				exInfo.Throw();
 			return res;
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Scripting {
 				ExceptionDispatchInfo? exInfo = null;
 				var res = (T)dispatcher.Invoke(new Func<T>(() => {
 					try {
-						if (enumerator == null)
+						if (enumerator is null)
 							enumerator = getIter().GetEnumerator();
 						if (!(canContinue = enumerator.MoveNext()))
 							return default;
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Scripting {
 						return default;
 					}
 				}), DispatcherPriority.Send);
-				if (exInfo != null)
+				if (!(exInfo is null))
 					exInfo.Throw();
 				if (!canContinue)
 					break;

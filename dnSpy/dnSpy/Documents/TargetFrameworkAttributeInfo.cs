@@ -34,7 +34,7 @@ namespace dnSpy.Documents {
 
 		public static bool TryCreateTargetFrameworkInfo(ModuleDef module, out TargetFrameworkAttributeInfo info) {
 			var asm = module?.Assembly;
-			if (asm != null) {
+			if (!(asm is null)) {
 				if (asm.TryGetOriginalTargetFrameworkAttribute(out var framework, out var version, out var profile)) {
 					info = new TargetFrameworkAttributeInfo(framework, version, profile);
 					return true;

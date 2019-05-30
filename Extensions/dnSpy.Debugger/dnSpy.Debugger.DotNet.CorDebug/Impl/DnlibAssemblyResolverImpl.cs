@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (dict.TryGetValue(assembly, out res))
 				return res;
 			res = Lookup_CorDebug(assembly);
-			if (res != null) {
+			if (!(res is null)) {
 				dict[assembly] = res;
 				dict[res] = res;
 			}
@@ -49,13 +49,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		AssemblyDef? Lookup_CorDebug(IAssembly assembly) {
 			engine.VerifyCorDebugThread();
-			if (assembly == null)
+			if (assembly is null)
 				return null;
 			var asm = appDomain.GetAssembly(new DmdReadOnlyAssemblyName(assembly.FullName));
-			if (asm == null)
+			if (asm is null)
 				return null;
 			var dbgModule = asm.ManifestModule.GetDebuggerModule();
-			if (dbgModule == null)
+			if (dbgModule is null)
 				return null;
 			if (!engine.TryGetDnModule(dbgModule, out var dnModule))
 				return null;

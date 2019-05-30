@@ -81,9 +81,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		internal void SetErrorMessage(string errorMessage) => this.errorMessage = errorMessage;
 
 		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
-			if (options.NameOutput != null)
+			if (!(options.NameOutput is null))
 				FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
-			if (options.ValueOutput != null)
+			if (!(options.ValueOutput is null))
 				FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
 		}
 
@@ -102,13 +102,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		protected abstract ref readonly ClassifiedTextCollection CachedActualType { get; }
 
 		public sealed override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
-			if (options.NameOutput != null)
+			if (!(options.NameOutput is null))
 				FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
-			if (options.ValueOutput != null)
+			if (!(options.ValueOutput is null))
 				FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
-			if (options.ExpectedTypeOutput != null)
+			if (!(options.ExpectedTypeOutput is null))
 				WriteTo(options.ExpectedTypeOutput, CachedExpectedType);
-			if (options.ActualTypeOutput != null)
+			if (!(options.ActualTypeOutput is null))
 				WriteTo(options.ActualTypeOutput, CachedActualType);
 		}
 
@@ -209,14 +209,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class ChildDbgValueRawNode : DebuggerValueRawNode {
-		public override bool HasInitializedUnderlyingData => __dbgValueNode_DONT_USE != null;
+		public override bool HasInitializedUnderlyingData => !(__dbgValueNode_DONT_USE is null);
 		internal DebuggerValueRawNode Parent => parent;
 		internal uint DbgValueNodeChildIndex { get; }
 
 		internal override DbgValueNode DebuggerValueNode {
 			get {
 				var dbgNode = __dbgValueNode_DONT_USE;
-				if (dbgNode == null) {
+				if (dbgNode is null) {
 					__dbgValueNode_DONT_USE = dbgNode = reader.GetDebuggerNode(this);
 					debuggerValueNodeChanged(this, debuggerValueNodeChangedData);
 				}

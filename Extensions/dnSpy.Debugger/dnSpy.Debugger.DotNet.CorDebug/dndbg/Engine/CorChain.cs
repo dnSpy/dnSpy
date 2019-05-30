@@ -26,7 +26,7 @@ namespace dndbg.Engine {
 		public CorThread? Thread {
 			get {
 				int hr = obj.GetThread(out var thread);
-				return hr < 0 || thread == null ? null : new CorThread(thread);
+				return hr < 0 || thread is null ? null : new CorThread(thread);
 			}
 		}
 
@@ -44,35 +44,35 @@ namespace dndbg.Engine {
 		public CorFrame? ActiveFrame {
 			get {
 				int hr = obj.GetActiveFrame(out var frame);
-				return hr < 0 || frame == null ? null : new CorFrame(frame);
+				return hr < 0 || frame is null ? null : new CorFrame(frame);
 			}
 		}
 
 		public CorChain? Callee {
 			get {
 				int hr = obj.GetCallee(out var callee);
-				return hr < 0 || callee == null ? null : new CorChain(callee);
+				return hr < 0 || callee is null ? null : new CorChain(callee);
 			}
 		}
 
 		public CorChain? Caller {
 			get {
 				int hr = obj.GetCaller(out var caller);
-				return hr < 0 || caller == null ? null : new CorChain(caller);
+				return hr < 0 || caller is null ? null : new CorChain(caller);
 			}
 		}
 
 		public CorChain? Next {
 			get {
 				int hr = obj.GetNext(out var next);
-				return hr < 0 || next == null ? null : new CorChain(next);
+				return hr < 0 || next is null ? null : new CorChain(next);
 			}
 		}
 
 		public CorChain? Previous {
 			get {
 				int hr = obj.GetPrevious(out var prev);
-				return hr < 0 || prev == null ? null : new CorChain(prev);
+				return hr < 0 || prev is null ? null : new CorChain(prev);
 			}
 		}
 

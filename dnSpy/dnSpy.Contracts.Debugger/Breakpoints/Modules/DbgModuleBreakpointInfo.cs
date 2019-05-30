@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		/// <param name="module">Module</param>
 		public DbgModuleBreakpointInfo(DbgModule module) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			ModuleName = module.Name ?? string.Empty;
 			IsDynamic = module.IsDynamic;

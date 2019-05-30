@@ -124,7 +124,7 @@ namespace dnSpy.Roslyn.Text {
 			// This internal Roslyn method was copied from roslyn/src/Workspaces/Core/Portable/Workspace/TextExtensions.cs
 			if (Workspace.TryGetWorkspace(text.Container, out var workspace)) {
 				var id = workspace.GetDocumentIdInCurrentContext(text.Container);
-				if (id == null || !workspace.CurrentSolution.ContainsDocument(id))
+				if (id is null || !workspace.CurrentSolution.ContainsDocument(id))
 					return null;
 
 				var sol = workspace.CurrentSolution.WithDocumentText(id, text, PreservationMode.PreserveIdentity);

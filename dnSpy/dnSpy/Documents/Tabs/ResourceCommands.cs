@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public static ResourceRef? TryCreate(object? o) {
 			if (o is PropertyDef pd) {
-				if (pd.SetMethod != null)
+				if (!(pd.SetMethod is null))
 					return null;
 				o = pd.GetMethod;
 			}
@@ -52,13 +52,13 @@ namespace dnSpy.Documents.Tabs {
 			if (!(md?.DeclaringType is TypeDef type))
 				return null;
 			var resourceName = GetResourceName(md);
-			if (resourceName == null)
+			if (resourceName is null)
 				return null;
 			var resourcesFilename = GetResourcesFilename(type);
-			if (resourcesFilename == null)
+			if (resourcesFilename is null)
 				return null;
 			var module = type.Module;
-			if (module == null)
+			if (module is null)
 				return null;
 
 			return new ResourceRef(module, resourcesFilename, resourceName);
@@ -71,10 +71,10 @@ namespace dnSpy.Documents.Tabs {
 				if (m.MethodSig.GetParamCount() != 0)
 					continue;
 				var ret = m.MethodSig.GetRetType();
-				if (ret == null || ret.FullName != "System.Resources.ResourceManager")
+				if (ret is null || ret.FullName != "System.Resources.ResourceManager")
 					continue;
 				var body = m.Body;
-				if (body == null)
+				if (body is null)
 					continue;
 
 				ITypeDefOrRef? resourceType = null;
@@ -86,14 +86,14 @@ namespace dnSpy.Documents.Tabs {
 					}
 					if (instr.OpCode.Code == Code.Newobj) {
 						var ctor = instr.Operand as IMethod;
-						if (ctor == null || ctor.DeclaringType == null || ctor.DeclaringType.FullName != "System.Resources.ResourceManager")
+						if (ctor is null || ctor.DeclaringType is null || ctor.DeclaringType.FullName != "System.Resources.ResourceManager")
 							continue;
 						var ctorFullName = ctor.FullName;
 						if (ctorFullName == "System.Void System.Resources.ResourceManager::.ctor(System.Type)")
-							return resourceType == null ? null : resourceType.ReflectionFullName + ".resources";
+							return resourceType is null ? null : resourceType.ReflectionFullName + ".resources";
 						if (ctorFullName == "System.Void System.Resources.ResourceManager::.ctor(System.String,System.Reflection.Assembly)" ||
 							ctorFullName == "System.Void System.Resources.ResourceManager::.ctor(System.String,System.Reflection.Assembly,System.Type)")
-							return resourceName == null ? null : resourceName + ".resources";
+							return resourceName is null ? null : resourceName + ".resources";
 					}
 				}
 			}
@@ -106,7 +106,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return null;
 
 			bool foundGetMethod = false;
@@ -118,12 +118,12 @@ namespace dnSpy.Documents.Tabs {
 				}
 				if (instr.OpCode.Code == Code.Callvirt) {
 					var getStringMethod = instr.Operand as IMethod;
-					if (getStringMethod == null)
+					if (getStringMethod is null)
 						continue;
 					if (getStringMethod.Name != "GetObject" && getStringMethod.Name != "GetStream" && getStringMethod.Name != "GetString")
 						continue;
 					var getStringDeclType = getStringMethod.DeclaringType;
-					if (getStringDeclType == null || getStringDeclType.FullName != "System.Resources.ResourceManager")
+					if (getStringDeclType is null || getStringDeclType.FullName != "System.Resources.ResourceManager")
 						continue;
 					foundGetMethod = true;
 					break;
@@ -133,7 +133,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static bool IsResourcesClass(TypeDef type) {
-			if (type.BaseType == null || type.BaseType.FullName != "System.Object")
+			if (type.BaseType is null || type.BaseType.FullName != "System.Object")
 				return false;
 			if (type.Fields.Count != 2)
 				return false;
@@ -163,7 +163,7 @@ namespace dnSpy.Documents.Tabs {
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
 			static ResourceRef? TryCreate(TextReference @ref) {
-				if (@ref == null)
+				if (@ref is null)
 					return null;
 				return ResourceRef.TryCreate(@ref.Reference);
 			}
@@ -187,7 +187,7 @@ namespace dnSpy.Documents.Tabs {
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
 			static ResourceRef? TryCreate(TreeNodeData[] nodes) {
-				if (nodes == null || nodes.Length != 1)
+				if (nodes is null || nodes.Length != 1)
 					return null;
 				if (nodes[0] is IMDTokenNode tokNode)
 					return ResourceRef.TryCreate(tokNode.Reference);
@@ -203,29 +203,29 @@ namespace dnSpy.Documents.Tabs {
 			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));
 		}
 
-		static bool IsVisible(ResourceRef? resRef) => resRef != null;
+		static bool IsVisible(ResourceRef? resRef) => !(resRef is null);
 
 		static void Execute(IDocumentTabService documentTabService, ResourceRef? resRef) {
-			if (resRef == null)
+			if (resRef is null)
 				return;
 			var modNode = documentTabService.DocumentTreeView.FindNode(resRef.Module);
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				return;
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var resDirNode = modNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourcesFolderNode);
-			Debug.Assert(resDirNode != null);
-			if (resDirNode == null)
+			Debug.Assert(!(resDirNode is null));
+			if (resDirNode is null)
 				return;
 			resDirNode.TreeNode.EnsureChildrenLoaded();
 			var resSetNode = resDirNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementSetNode && ((ResourceElementSetNode)a).Name == resRef.Filename);
-			Debug.Assert(resSetNode != null);
-			if (resSetNode == null)
+			Debug.Assert(!(resSetNode is null));
+			if (resSetNode is null)
 				return;
 			resSetNode.TreeNode.EnsureChildrenLoaded();
 			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementNode && ((ResourceElementNode)a).Name == resRef.ResourceName);
-			Debug.Assert(resNode != null);
-			if (resNode == null)
+			Debug.Assert(!(resNode is null));
+			if (resNode is null)
 				return;
 			documentTabService.FollowReference(resNode);
 		}

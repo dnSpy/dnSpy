@@ -35,17 +35,17 @@ namespace dnSpy.AsmEditor.Commands {
 
 		CodeContext? CreateContext() {
 			var documentViewer = documentTabService.ActiveTab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			if (!documentViewer.UIObject.IsKeyboardFocusWithin)
 				return null;
 
 			var refInfo = documentViewer.SelectedReference;
-			if (refInfo == null)
+			if (refInfo is null)
 				return null;
 
 			var node = documentTabService.DocumentTreeView.FindNode(refInfo.Value.Data.Reference);
-			var nodes = node == null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
+			var nodes = node is null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, refInfo.Value.Data.IsDefinition, null);
 		}
 
@@ -56,13 +56,13 @@ namespace dnSpy.AsmEditor.Commands {
 
 		bool ICommand.CanExecute(object parameter) {
 			var ctx = CreateContext();
-			return ctx != null && command.IsVisible(ctx) && command.IsEnabled(ctx);
+			return !(ctx is null) && command.IsVisible(ctx) && command.IsEnabled(ctx);
 		}
 
 		void ICommand.Execute(object parameter) {
 			var ctx = CreateContext();
-			Debug.Assert(ctx != null);
-			if (ctx != null)
+			Debug.Assert(!(ctx is null));
+			if (!(ctx is null))
 				command.Execute(ctx);
 		}
 	}

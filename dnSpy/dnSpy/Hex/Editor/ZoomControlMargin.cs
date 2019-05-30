@@ -89,8 +89,8 @@ namespace dnSpy.Hex.Editor {
 						return;
 					}
 					if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-						Debug.Assert(originalZoomLevel != null);
-						if (originalZoomLevel != null)
+						Debug.Assert(!(originalZoomLevel is null));
+						if (!(originalZoomLevel is null))
 							HexViewZoomLevel = originalZoomLevel.Value;
 						UpdateTextWithZoomLevel();
 						owner.wpfHexViewHost.HexView.VisualElement.Focus();
@@ -116,13 +116,13 @@ namespace dnSpy.Hex.Editor {
 					UpdateTextWithZoomLevel();
 
 					// The combobox is too tall, but I want to use the style from the UI.Wpf dll
-					if (horizontalScrollBarMargin == null) {
+					if (horizontalScrollBarMargin is null) {
 						horizontalScrollBarMargin = owner.wpfHexViewHost.GetHexViewMargin(PredefinedHexMarginNames.HorizontalScrollBar);
-						Debug.Assert(horizontalScrollBarMargin != null);
-						if (horizontalScrollBarMargin != null)
+						Debug.Assert(!(horizontalScrollBarMargin is null));
+						if (!(horizontalScrollBarMargin is null))
 							horizontalScrollBarMargin.VisualElement.SizeChanged += VisualElement_SizeChanged;
 					}
-					if (horizontalScrollBarMargin != null)
+					if (!(horizontalScrollBarMargin is null))
 						Height = horizontalScrollBarMargin.VisualElement.Height;
 				}
 				else
@@ -140,7 +140,7 @@ namespace dnSpy.Hex.Editor {
 
 			bool TryUpdateZoomLevel() {
 				double? newValue = zoomLevelConverter.ConvertBack(Text, typeof(double), null, CultureInfo.CurrentUICulture) as double?;
-				if (newValue == null || newValue.Value < VSTE.ZoomConstants.MinZoom || newValue.Value > VSTE.ZoomConstants.MaxZoom)
+				if (newValue is null || newValue.Value < VSTE.ZoomConstants.MinZoom || newValue.Value > VSTE.ZoomConstants.MaxZoom)
 					return false;
 				HexViewZoomLevel = newValue.Value;
 				return true;
@@ -148,7 +148,7 @@ namespace dnSpy.Hex.Editor {
 
 			public void Dispose() {
 				IsVisibleChanged -= ZoomControlMargin_IsVisibleChanged;
-				if (horizontalScrollBarMargin != null)
+				if (!(horizontalScrollBarMargin is null))
 					horizontalScrollBarMargin.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 			}
 		}

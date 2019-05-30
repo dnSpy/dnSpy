@@ -54,7 +54,7 @@ namespace dnSpy.Documents.Tabs {
 		[ImportingConstructor]
 		NavigationCommandInstaller(IDocumentTabService documentTabService, IAppWindow appWindow) {
 			this.documentTabService = documentTabService;
-			Debug.Assert(Application.Current != null && Application.Current.MainWindow != null);
+			Debug.Assert(!(Application.Current is null) && !(Application.Current.MainWindow is null));
 			var cmds = appWindow.MainWindowCommands;
 			cmds.Add(NavigationCommands.BrowseBack, new RelayCommand(a => BrowseBack(), a => CanBrowseBack));
 			cmds.Add(NavigationCommands.BrowseForward, new RelayCommand(a => BrowseForward(), a => CanBrowseForward));

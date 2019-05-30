@@ -33,7 +33,7 @@ namespace dndbg.Engine {
 		public CorType? FirstTypeParameter {
 			get {
 				int hr = obj.GetFirstTypeParameter(out var type);
-				return hr < 0 || type == null ? null : new CorType(type);
+				return hr < 0 || type is null ? null : new CorType(type);
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = typeEnum.Next(1, out var type, out uint count);
-					if (hr != 0 || type == null)
+					if (hr != 0 || type is null)
 						break;
 					yield return new CorType(type);
 				}
@@ -56,7 +56,7 @@ namespace dndbg.Engine {
 		public CorClass? Class {
 			get {
 				int hr = obj.GetClass(out var cls);
-				return hr < 0 || cls == null ? null : new CorClass(cls);
+				return hr < 0 || cls is null ? null : new CorClass(cls);
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace dndbg.Engine {
 
 		public CorValue? GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
 			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
 		public bool Equals(CorType? other) => !(other is null) && RawObject == other.RawObject;

@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			bool raiseBoundBreakpointsMessageChanged;
 			lock (lockObj) {
 				settings = newSettings;
-				if (settings.Labels == null)
+				if (settings.Labels is null)
 					settings.Labels = emptyLabels;
 				var oldMessage = boundBreakpointsMessage;
 				boundBreakpointsMessage = CalculateBoundBreakpointsMessage_NoLock();
@@ -225,26 +225,26 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			DbgBoundCodeBreakpointMessage? warningMsg = null;
 			foreach (var bp in boundCodeBreakpoints) {
 				var msg = bp.Message;
-				Debug.Assert(msg.Message != null);
-				if (msg.Message == null)
+				Debug.Assert(!(msg.Message is null));
+				if (msg.Message is null)
 					continue;
 				switch (msg.Severity) {
 				case DbgBoundCodeBreakpointSeverity.None:
 					break;
 
 				case DbgBoundCodeBreakpointSeverity.Warning:
-					if (warningMsg == null)
+					if (warningMsg is null)
 						warningMsg = msg;
 					break;
 
 				case DbgBoundCodeBreakpointSeverity.Error:
-					if (errorMsg == null)
+					if (errorMsg is null)
 						errorMsg = msg;
 					break;
 
 				default:
 					Debug.Fail($"Unknown message severity: {msg.Severity}");
-					if (errorMsg == null)
+					if (errorMsg is null)
 						errorMsg = new DbgBoundCodeBreakpointMessage(DbgBoundCodeBreakpointSeverity.Error, "???");
 					break;
 				}

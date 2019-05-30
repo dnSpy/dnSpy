@@ -65,12 +65,12 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public TList<IDsDocument> Children {
 			get {
-				if (children == null) {
+				if (children is null) {
 					lock (lockObj) {
-						if (children == null) {
+						if (children is null) {
 							children = CreateChildren();
-							Debug.Assert(children != null);
-							if (children == null)
+							Debug.Assert(!(children is null));
+							if (children is null)
 								children = new TList<IDsDocument>();
 						}
 					}
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Documents {
 		TList<IDsDocument>? children;
 
 		/// <inheritdoc/>
-		public bool ChildrenLoaded => children != null;
+		public bool ChildrenLoaded => !(children is null);
 
 		/// <summary>
 		/// Creates the children
@@ -197,14 +197,14 @@ namespace dnSpy.Contracts.Documents {
 		}
 
 		void LoadSymbols() {
-			Debug.Assert(ModuleDef != null);
+			Debug.Assert(!(ModuleDef is null));
 			// Happens if a module has been removed but then the exact same instance
 			// was re-added.
-			if (ModuleDef.PdbState != null)
+			if (!(ModuleDef.PdbState is null))
 				return;
 
 			var m = ModuleDef as ModuleDefMD;
-			if (m == null)
+			if (m is null)
 				return;
 			try {
 				m.LoadPdb();
@@ -274,8 +274,8 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		protected override TList<IDsDocument> CreateChildren() {
 			var asm = AssemblyDef;
-			var list = new TList<IDsDocument>(asm == null ? 1 : asm.Modules.Count);
-			if (isAsmNode && asm != null) {
+			var list = new TList<IDsDocument>(asm is null ? 1 : asm.Modules.Count);
+			if (isAsmNode && !(asm is null)) {
 				bool foundThis = false;
 				foreach (var module in asm.Modules) {
 					if (ModuleDef == module) {
@@ -300,9 +300,9 @@ namespace dnSpy.Contracts.Documents {
 			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef!, false, true) => module = modmodule;
 
 		protected override TList<IDsDocument> CreateChildren() {
-			Debug.Assert(module != null);
+			Debug.Assert(!(module is null));
 			var list = new TList<IDsDocument>();
-			if (module != null)
+			if (!(module is null))
 				list.Add(module);
 			module = null;
 			return list;
@@ -318,7 +318,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="document">Document</param>
 		public static void DisableMemoryMappedIO(IDsDocument document) {
-			if (document == null)
+			if (document is null)
 				return;
 			DisableMemoryMappedIO(document.PEImage);
 		}
@@ -328,7 +328,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="peImage">PE image</param>
 		public static void DisableMemoryMappedIO(IPEImage? peImage) {
-			if (peImage == null)
+			if (peImage is null)
 				return;
 			// Files in the GAC are read-only so there's no need to disable memory mapped I/O to
 			// allow other programs to write to the file.

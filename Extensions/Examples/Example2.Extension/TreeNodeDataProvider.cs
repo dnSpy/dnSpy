@@ -55,8 +55,8 @@ namespace Example2.Extension {
 					return 0;
 				var a = x as AssemblyChildNode;
 				var b = y as AssemblyChildNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				// More checks can be added here...
 				return 0;
 			}
@@ -137,8 +137,8 @@ namespace Example2.Extension {
 					return 0;
 				var a = x as ModuleChildNode;
 				var b = y as ModuleChildNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				// More checks can be added here...
 				return 0;
 			}
@@ -174,8 +174,8 @@ namespace Example2.Extension {
 					return 0;
 				var a = x as SomeMessageNode;
 				var b = y as SomeMessageNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				return StringComparer.OrdinalIgnoreCase.Compare(a.Message, b.Message);
 			}
 		}
@@ -187,7 +187,7 @@ namespace Example2.Extension {
 	sealed class SomeMessageNodeDecompiler : IDecompileNode {
 		public bool Decompile(IDecompileNodeContext context, DocumentTreeNodeData node) {
 			var msgNode = node as SomeMessageNode;
-			if (msgNode == null)
+			if (msgNode is null)
 				return false;
 
 			context.Decompiler.WriteCommentLine(context.Output, "The secret message has been decrypted.");

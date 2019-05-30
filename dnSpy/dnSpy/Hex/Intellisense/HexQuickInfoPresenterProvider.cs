@@ -27,7 +27,7 @@ namespace dnSpy.Hex.Intellisense {
 	sealed class HexQuickInfoPresenterProvider : HexIntellisensePresenterProvider {
 		public override HexIntellisensePresenter? TryCreateIntellisensePresenter(HexIntellisenseSession session) {
 			var quickInfoSession = session as HexQuickInfoSession;
-			if (quickInfoSession == null)
+			if (quickInfoSession is null)
 				return null;
 			if (quickInfoSession.TrackMouse)
 				return new HexQuickInfoPresenter(quickInfoSession);

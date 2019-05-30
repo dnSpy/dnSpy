@@ -43,7 +43,7 @@ namespace dnSpy.MainApp {
 		MainMenuToolbarCommand(IMenuService menuService) => this.menuService = menuService;
 
 		public override object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget) {
-			if (menu == null)
+			if (menu is null)
 				menu = menuService.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), commandTarget);
 			return menu;
 		}
@@ -103,7 +103,7 @@ namespace dnSpy.MainApp {
 		AppWindow? appWindow = null;
 
 		public Binding GetBinding(IToolBarItemContext context) {
-			Debug.Assert(appWindow != null && appWindow.MainWindow != null);
+			Debug.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
 			return new Binding(nameof(appWindow.MainWindow.IsFullScreen)) {
 				Source = appWindow.MainWindow,
 			};
@@ -114,7 +114,7 @@ namespace dnSpy.MainApp {
 
 		bool initd = false;
 		public override bool IsVisible(IToolBarItemContext context) {
-			Debug.Assert(appWindow != null && appWindow.MainWindow != null);
+			Debug.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
 			if (!initd) {
 				appWindow.MainWindow.IsFullScreenChanged += (s, e) => appWindow.RefreshToolBar();
 				initd = true;

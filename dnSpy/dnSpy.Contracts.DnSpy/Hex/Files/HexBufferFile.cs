@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="filename">Filename if possible, otherwise any name</param>
 		/// <param name="tags">Tags, see eg. <see cref="PredefinedBufferFileTags"/></param>
 		protected HexBufferFile(HexBuffer buffer, HexSpan span, string name, string filename, string[] tags) {
-			if (tags == null)
+			if (tags is null)
 				throw new ArgumentNullException(nameof(tags));
 			Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 			Span = span;
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// true if it's a nested file (<see cref="ParentFile"/> is not null)
 		/// </summary>
-		public bool IsNestedFile => ParentFile != null;
+		public bool IsNestedFile => !(ParentFile is null);
 
 		/// <summary>
 		/// Gets all nested files

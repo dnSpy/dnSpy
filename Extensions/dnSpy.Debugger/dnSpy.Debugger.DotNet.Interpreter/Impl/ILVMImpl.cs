@@ -33,10 +33,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 		}
 
 		public override ILValue Execute(DebuggerRuntime debuggerRuntime, ILVMExecuteState state) {
-			if (debuggerRuntime == null)
+			if (debuggerRuntime is null)
 				throw new ArgumentNullException(nameof(debuggerRuntime));
 			var stateImpl = state as ILVMExecuteStateImpl;
-			if (stateImpl == null)
+			if (stateImpl is null)
 				throw new ArgumentException();
 			return debuggerILInterpreter.Execute(debuggerRuntime, stateImpl);
 		}

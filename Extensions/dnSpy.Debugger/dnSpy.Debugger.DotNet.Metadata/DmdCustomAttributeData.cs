@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		[Conditional("DEBUG")]
 		static void VerifyValue(object? value) {
-			if (value == null || value is DmdType || value is IList<DmdCustomAttributeTypedArgument>)
+			if (value is null || value is DmdType || value is IList<DmdCustomAttributeTypedArgument>)
 				return;
 			switch (Type.GetTypeCode(value.GetType())) {
 			case TypeCode.Boolean:
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public override string ToString() => ToString(false);
 
 		internal string ToString(bool typed) {
-			if (Value == null)
+			if (Value is null)
 				return typed ? "null" : "(" + ArgumentType?.Name + ")null";
 			if (ArgumentType.IsEnum)
 				return typed ? Value.ToString() : "(" + ArgumentType.FullName + ")" + Value.ToString();

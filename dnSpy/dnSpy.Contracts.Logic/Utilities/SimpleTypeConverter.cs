@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="upper">true to use upper case hex numbers</param>
 		/// <returns></returns>
 		public static string ByteArrayToString(IList<byte>? value, bool upper = true) {
-			if (value == null)
+			if (value is null)
 				return string.Empty;
 			var chars = new char[value.Count * 2];
 			for (int i = 0, j = 0; i < value.Count; i++) {
@@ -133,7 +133,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="useDecimal">true to use decimal, false to use hex, null to use decimal if possible, hex otherwise</param>
 		/// <returns></returns>
 		public static string ToString(ulong value, ulong min, ulong max, bool? useDecimal) {
-			if (useDecimal == null) {
+			if (useDecimal is null) {
 				if (decimalUInt64.Contains(value))
 					return value.ToString();
 			}
@@ -153,7 +153,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="useDecimal">true to use decimal, false to use hex, null to use decimal if possible, hex otherwise</param>
 		/// <returns></returns>
 		public static string ToString(long value, long min, long max, bool? useDecimal) {
-			if (useDecimal == null) {
+			if (useDecimal is null) {
 				if (decimalInt64.Contains(value))
 					return value.ToString();
 			}
@@ -261,7 +261,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// the input string is null</param>
 		/// <returns></returns>
 		public static string ToString(string? s, bool canHaveNull) {
-			if (s == null)
+			if (s is null)
 				return canHaveNull ? "null" : string.Empty;
 			var sb = new StringBuilder(s.Length + 10);
 			sb.Append('"');
@@ -317,7 +317,7 @@ namespace dnSpy.Contracts.Utilities {
 
 		static ulong ParseUnsigned(string s, ulong min, ulong max, out string? error) {
 			error = TryParseUnsigned(s, min, max, out ulong value);
-			if (error != null)
+			if (!(error is null))
 				return 0;
 			return value;
 		}
@@ -421,7 +421,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static char ParseChar(string s, out string? error) {
 			int index = 0;
 			char c = ParseChar(s, ref index, out error);
-			if (error != null)
+			if (!(error is null))
 				return (char)0;
 			SkipSpaces(s, ref index);
 			if (index != s.Length)
@@ -495,7 +495,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static string? ParseString(string s, bool canHaveNull, out string? error) {
 			int index = 0;
 			var res = ParseString(s, canHaveNull, ref index, out error);
-			if (error != null)
+			if (!(error is null))
 				return null;
 			SkipSpaces(s, ref index);
 			if (index != s.Length)
@@ -692,7 +692,7 @@ namespace dnSpy.Contracts.Utilities {
 
 		static long ParseSigned(string s, long min, long max, object minObject, out string? error) {
 			error = TryParseSigned(s, min, max, minObject, out long value);
-			if (error != null)
+			if (!(error is null))
 				return 0;
 			return value;
 		}
@@ -738,7 +738,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static long ParseInt64(string s, long min, long max, out string? error) => (long)ParseSigned(s, min, max, min, out error);
 
 		static string ToString<T>(IList<T> list, Func<T, string> toString) {
-			if (list == null)
+			if (list is null)
 				return string.Empty;
 			var sb = new StringBuilder();
 			for (int i = 0; i < list.Count; i++) {
@@ -882,7 +882,7 @@ namespace dnSpy.Contracts.Utilities {
 					return null;
 				}
 				var res = parseValue(value);
-				if (res.error != null) {
+				if (!(res.error is null)) {
 					error = res.error;
 					return null;
 				}
@@ -907,7 +907,7 @@ namespace dnSpy.Contracts.Utilities {
 			while (true) {
 				int oldIndex = index;
 				list.Add(parseValue(data, s, ref index, out error));
-				if (error != null)
+				if (!(error is null))
 					return null;
 				Debug.Assert(oldIndex < index);
 				if (oldIndex >= index)

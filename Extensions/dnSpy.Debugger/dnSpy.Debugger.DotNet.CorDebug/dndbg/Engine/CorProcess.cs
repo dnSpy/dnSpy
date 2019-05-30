@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = threadEnum.Next(1, out var thread, out uint count);
-					if (hr != 0 || thread == null)
+					if (hr != 0 || thread is null)
 						break;
 					yield return new CorThread(thread);
 				}
@@ -61,7 +61,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = appDomainEnum.Next(1, out var appDomain, out uint count);
-					if (hr != 0 || appDomain == null)
+					if (hr != 0 || appDomain is null)
 						break;
 					yield return new CorAppDomain(appDomain);
 				}
@@ -89,14 +89,14 @@ namespace dndbg.Engine {
 		public CorDebugJITCompilerFlags DesiredNGENCompilerFlags {
 			get {
 				var p2 = obj as ICorDebugProcess2;
-				if (p2 == null)
+				if (p2 is null)
 					return 0;
 				int hr = p2.GetDesiredNGENCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 			set {
 				var p2 = obj as ICorDebugProcess2;
-				if (p2 == null)
+				if (p2 is null)
 					return;
 				int hr = p2.SetDesiredNGENCompilerFlags(value);
 			}

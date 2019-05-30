@@ -212,11 +212,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			for (; pos <= end; pos += ptrSize) {
 				tableFormat = null;
 				var ecc = ReadECClass(pos, true);
-				if (ecc == null)
+				if (ecc is null)
 					continue;
 				for (long pos2 = pos; pos2 <= end; pos2 += 3 * ptrSize) {
 					ecc = ReadECClass(pos2, false);
-					if (ecc == null)
+					if (ecc is null)
 						break;
 					eccList.Add(ecc.Value);
 				}
@@ -233,27 +233,27 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 				return null;
 
 			var name = ReadAsciizIdPtr(pos);
-			if (name == null)
+			if (name is null)
 				return null;
 			var ns = ReadAsciizIdPtr(pos + ptrSize);
-			if (ns == null)
+			if (ns is null)
 				return null;
 			var funcs = ReadECFuncs(ReadRva(pos + ptrSize * 2), first);
-			if (funcs == null)
+			if (funcs is null)
 				return null;
 
 			return new ECClass(ns, name, funcs);
 		}
 
 		ECFunc[]? ReadECFuncs(uint? rva, bool first) {
-			if (rva == null || rva.Value == 0)
+			if (rva is null || rva.Value == 0)
 				return null;
 			var funcs = new List<ECFunc>();
 
 			var pos = (long)peImage.ToFileOffset((RVA)rva.Value);
-			if (tableFormat == null)
+			if (tableFormat is null)
 				InitializeTableFormat(pos);
-			if (tableFormat == null)
+			if (tableFormat is null)
 				return null;
 			var tblSize = tableFormat == TableFormat.V1 ? 5 * ptrSize : 3 * ptrSize;
 			for (;;) {
@@ -282,14 +282,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 					methRva = ReadRva(pos + ptrSize * 1);
 					name = ReadAsciizIdPtr(pos + ptrSize * 2);
 				}
-				if (name == null || methRva == null)
+				if (name is null || methRva is null)
 					return null;
 				if (methRva.Value != 0 && !IsCodeRva(methRva.Value))
 					return null;
 				uint sigRva = 0;
 				if (hasSig) {
 					var srva = ReadRva(pos + tblSize);
-					if (srva == null || srva.Value == 0)
+					if (srva is null || srva.Value == 0)
 						return null;
 					sigRva = srva.Value;
 				}
@@ -316,7 +316,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 				ulong nullPtr1 = ReadPtr(pos + ptrSize * 2);
 				ulong nullPtr2 = ReadPtr(pos + ptrSize * 3);
 				var name = ReadAsciizIdPtr(pos + ptrSize * 4);
-				if (nullPtr1 == 0 && nullPtr2 == 0 && name != null && methRva != null && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
+				if (nullPtr1 == 0 && nullPtr2 == 0 && !(name is null) && !(methRva is null) && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
 					tableFormat = TableFormat.V1;
 					return;
 				}
@@ -326,7 +326,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			if (pos + ptrSize * (3 + (hasSig ? 1 : 0)) < reader.Length) {
 				uint? methRva = ReadRva(pos + ptrSize * 1);
 				var name = ReadAsciizIdPtr(pos + ptrSize * 2);
-				if (name != null && methRva != null && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
+				if (!(name is null) && !(methRva is null) && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
 					tableFormat = TableFormat.V2;
 					return;
 				}
@@ -337,7 +337,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			if (rva == 0)
 				return false;
 			var textSect = FindSection(".text");
-			if (textSect == null)
+			if (textSect is null)
 				return false;
 			return (uint)textSect.VirtualAddress <= rva && rva < (uint)textSect.VirtualAddress + Math.Max(textSect.VirtualSize, textSect.SizeOfRawData);
 		}
@@ -345,13 +345,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		string? ReadAsciizIdPtr(long pos) => ReadAsciizId(ReadRva(pos));
 
 		string? ReadAsciizId(uint? rva) {
-			if (rva == null || rva.Value == 0)
+			if (rva is null || rva.Value == 0)
 				return null;
 			reader.Position = (uint)peImage.ToFileOffset((RVA)rva.Value);
 			var bytes = reader.TryReadBytesUntil(0);
 			const int MIN_ID_LEN = 2;
 			const int MAX_ID_LEN = 256;
-			if (bytes == null || bytes.Length < MIN_ID_LEN || bytes.Length > MAX_ID_LEN)
+			if (bytes is null || bytes.Length < MIN_ID_LEN || bytes.Length > MAX_ID_LEN)
 				return null;
 			foreach (var b in bytes) {
 				var ch = (char)b;

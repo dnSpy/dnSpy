@@ -50,10 +50,10 @@ namespace dnSpy.AsmEditor.Commands {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			var textRef = context.Find<TextReference>();
-			if (textRef == null)
+			if (textRef is null)
 				return null;
 			var node = documentTreeView.FindNode(textRef.Reference);
-			var nodes = node == null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
+			var nodes = node is null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, textRef.IsDefinition, context);
 		}
 	}

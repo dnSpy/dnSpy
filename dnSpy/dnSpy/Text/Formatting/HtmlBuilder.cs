@@ -45,9 +45,9 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public void Add(ISynchronousClassifier classifier, NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) {
-			if (classifier == null)
+			if (classifier is null)
 				throw new ArgumentNullException(nameof(classifier));
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			foreach (var span in spans) {
 				if (spansCount > 0)

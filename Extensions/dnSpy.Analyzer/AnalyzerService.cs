@@ -144,7 +144,7 @@ namespace dnSpy.Analyzer {
 		void ActivateNode() {
 			var nodes = TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as TreeNodeData;
-			if (node != null)
+			if (!(node is null))
 				node.Activate();
 		}
 
@@ -196,7 +196,7 @@ namespace dnSpy.Analyzer {
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
-				Debug.Assert(context != null);
+				Debug.Assert(!(context is null));
 				var node = (ITreeNode)e.Argument;
 				if (node.Data is AnalyzerTreeNodeData d)
 					d.Context = context;
@@ -215,7 +215,7 @@ namespace dnSpy.Analyzer {
 		public void Add(AnalyzerTreeNodeData node) {
 			if (node is EntityNode an) {
 				var found = TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
-				if (found != null) {
+				if (!(found is null)) {
 					found.TreeNode.IsExpanded = true;
 					TreeView.SelectItems(new TreeNodeData[] { found });
 					TreeView.Focus();
@@ -229,7 +229,7 @@ namespace dnSpy.Analyzer {
 		}
 
 		public void OnActivated(AnalyzerTreeNodeData node) {
-			if (node == null)
+			if (node is null)
 				throw new ArgumentNullException(nameof(node));
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
 			FollowNode(node, newTab, null);
@@ -242,17 +242,17 @@ namespace dnSpy.Analyzer {
 			var entityNode = node as EntityNode;
 			var srcRef = entityNode?.SourceRef;
 
-			bool code = useCodeRef ?? srcRef != null;
+			bool code = useCodeRef ?? !(srcRef is null);
 			if (code) {
-				if (srcRef == null)
+				if (srcRef is null)
 					return;
 				documentTabService.FollowReference(srcRef.Value.Method, newTab, true, a => {
-					if (!a.HasMovedCaret && a.Success && srcRef != null)
+					if (!a.HasMovedCaret && a.Success && !(srcRef is null))
 						a.HasMovedCaret = GoTo(a.Tab, srcRef.Value.Method, srcRef.Value.ILOffset, srcRef.Value.Reference);
 				});
 			}
 			else {
-				if (@ref == null)
+				if (@ref is null)
 					return;
 				documentTabService.FollowReference(@ref, newTab);
 			}
@@ -266,24 +266,24 @@ namespace dnSpy.Analyzer {
 			var srcRef = entityNode?.SourceRef;
 
 			if (useCodeRef)
-				return srcRef != null;
-			return @ref != null;
+				return !(srcRef is null);
+			return !(@ref is null);
 		}
 
 		bool GoTo(IDocumentTab tab, MethodDef method, uint? ilOffset, object? @ref) {
-			if (method == null || ilOffset == null)
+			if (method is null || ilOffset is null)
 				return false;
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return false;
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var methodStatement = methodDebugService.FindByCodeOffset(method, ilOffset.Value);
-			if (methodStatement == null)
+			if (methodStatement is null)
 				return false;
 
 			var textSpan = methodStatement.Value.Statement.TextSpan;
 			var loc = FindLocation(documentViewer.Content.ReferenceCollection.FindFrom(textSpan.Start), documentViewer.TextView.TextSnapshot, methodStatement.Value.Statement.TextSpan.End, @ref);
-			if (loc == null)
+			if (loc is null)
 				loc = textSpan.Start;
 
 			documentViewer.MoveCaretToPosition(loc.Value);
@@ -352,7 +352,7 @@ namespace dnSpy.Analyzer {
 				if (new SigComparer(flags).Equals(prop, b as PropertyDef))
 					return true;
 				var bm = b as IMethod;
-				return bm != null &&
+				return !(bm is null) &&
 					(new SigComparer(flags).Equals(prop.GetMethod, bm) ||
 					new SigComparer(flags).Equals(prop.SetMethod, bm));
 			}
@@ -361,7 +361,7 @@ namespace dnSpy.Analyzer {
 				if (new SigComparer(flags).Equals(evt, b as EventDef))
 					return true;
 				var bm = b as IMethod;
-				return bm != null &&
+				return !(bm is null) &&
 					(new SigComparer(flags).Equals(evt.AddMethod, bm) ||
 					new SigComparer(flags).Equals(evt.InvokeMethod, bm) ||
 					new SigComparer(flags).Equals(evt.RemoveMethod, bm));

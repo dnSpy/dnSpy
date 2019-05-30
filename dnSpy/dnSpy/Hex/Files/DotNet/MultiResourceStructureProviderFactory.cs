@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override bool Initialize() {
 			multiFileResources = DotNetMultiFileResourcesImpl.TryRead(file);
-			return multiFileResources != null;
+			return !(multiFileResources is null);
 		}
 
 		public override ComplexData? GetStructure(HexPosition position) =>

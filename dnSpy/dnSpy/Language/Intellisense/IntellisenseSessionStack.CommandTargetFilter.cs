@@ -33,14 +33,14 @@ namespace dnSpy.Language.Intellisense {
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
 				wpfTextView = owner.wpfTextView as IDsWpfTextView;
-				Debug.Assert(wpfTextView != null);
+				Debug.Assert(!(wpfTextView is null));
 			}
 
 			public void HookKeyboard() {
 				Debug.Assert(!hasHookedKeyboard);
 				if (hasHookedKeyboard)
 					return;
-				if (wpfTextView == null)
+				if (wpfTextView is null)
 					return;
 				wpfTextView.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseSessionStack);
 				hasHookedKeyboard = true;
@@ -49,7 +49,7 @@ namespace dnSpy.Language.Intellisense {
 			public void UnhookKeyboard() {
 				if (!hasHookedKeyboard)
 					return;
-				if (wpfTextView == null)
+				if (wpfTextView is null)
 					return;
 				wpfTextView.CommandTarget.RemoveFilter(this);
 				hasHookedKeyboard = false;
@@ -57,7 +57,7 @@ namespace dnSpy.Language.Intellisense {
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (group == CommandConstants.TextEditorGroup) {
-					if (TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId) != null)
+					if (!(TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId) is null))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;
@@ -71,7 +71,7 @@ namespace dnSpy.Language.Intellisense {
 			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.TextEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId);
-					if (command != null && owner.ExecuteKeyboardCommand(command.Value))
+					if (!(command is null) && owner.ExecuteKeyboardCommand(command.Value))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;

@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			TreeNode.EnsureChildrenLoaded();
 			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
 				var node = child.FindNode(structure, field);
-				if (node != null)
+				if (!(node is null))
 					return node;
 			}
 

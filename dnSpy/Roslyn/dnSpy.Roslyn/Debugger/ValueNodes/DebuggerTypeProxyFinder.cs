@@ -50,20 +50,20 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 						if (ca.ConstructorArguments.Count != 1)
 							continue;
 						var proxyType = DebuggerTypeProxyFinder.GetType(assembly, ca.ConstructorArguments[0].Value);
-						if ((object?)proxyType == null)
+						if (proxyType is null)
 							continue;
 
 						DmdType? targetType = null;
 						foreach (var namedArg in ca.NamedArguments) {
 							var prop = namedArg.MemberInfo as DmdPropertyInfo;
-							if ((object?)prop == null)
+							if (prop is null)
 								continue;
 							if (prop.Name == nameof(DebuggerTypeProxyAttribute.Target) || prop.Name == nameof(DebuggerTypeProxyAttribute.TargetTypeName)) {
 								targetType = DebuggerTypeProxyFinder.GetType(assembly, namedArg.TypedValue.Value);
 								break;
 							}
 						}
-						if ((object?)targetType == null)
+						if (targetType is null)
 							continue;
 
 						dict[new TypeKey(targetType)] = proxyType;
@@ -110,15 +110,15 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				DmdConstructorInfo? proxyCtor;
 
 				var ca = currentType.FindCustomAttribute(proxyAttr, inherit: false);
-				if (ca != null && ca.ConstructorArguments.Count == 1) {
+				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
 					proxyCtor = GetConstructor(GetType(currentType.Assembly, ca.ConstructorArguments[0].Value), currentType);
-					if ((object?)proxyCtor != null)
+					if (!(proxyCtor is null))
 						return proxyCtor;
 				}
 
 				var asmState = GetAssemblyState(currentType.Assembly);
 				proxyCtor = GetConstructor(asmState.GetProxyType(currentType), currentType);
-				if ((object?)proxyCtor != null)
+				if (!(proxyCtor is null))
 					return proxyCtor;
 
 				currentType = currentType.BaseType;
@@ -128,7 +128,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		static DmdConstructorInfo? GetConstructor(DmdType? proxyType, DmdType targetType) {
-			if ((object?)proxyType == null)
+			if (proxyType is null)
 				return null;
 			if (proxyType.IsConstructedGenericType)
 				return null;

@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 				expressions.Clear();
 				foreach (var exprSect in sect.SectionsWithName("Expression")) {
 					var expr = exprSect.Attribute<string>("Value");
-					if (expr == null)
+					if (expr is null)
 						continue;
 					expressions.Add(expr);
 				}
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		}
 
 		void Save(WatchInfo info) {
-			if (info.Section != null)
+			if (!(info.Section is null))
 				watchSection.RemoveSection(info.Section);
 			var sect = info.Section = watchSection.CreateSection("Watch");
 			sect.Attribute("Index", info.WindowIndex);

@@ -26,10 +26,10 @@ namespace dnSpy.Language.Intellisense {
 	[Export(typeof(IIntellisenseSessionStackMapService))]
 	sealed class IntellisenseSessionStackMapService : IIntellisenseSessionStackMapService {
 		public IIntellisenseSessionStack GetStackForTextView(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var wpfTextView = textView as IWpfTextView;
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new InvalidOperationException();
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(IntellisenseSessionStack), () => new IntellisenseSessionStack(wpfTextView));
 		}

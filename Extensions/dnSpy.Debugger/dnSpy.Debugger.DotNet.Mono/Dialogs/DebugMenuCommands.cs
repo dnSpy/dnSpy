@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
 				};
 				showAttachToProcessDialog.Value.Attach(options);
 			}
-			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging == null || dbgManager.Value.IsDebugging == mustBeDebugging;
+			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging is null || dbgManager.Value.IsDebugging == mustBeDebugging;
 			public override string? GetHeader(IMenuItemContext context) => string.Format(dnSpy_Debugger_DotNet_Mono_Resources.AttachToProcessXCommand, "_Unity");
 		}
 

@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override DebuggerRuntime2 Create(DbgRuntime runtime) {
 			var state = StateWithKey<State>.GetOrCreate(runtime, this);
-			if (state.DebuggerRuntime == null)
+			if (state.DebuggerRuntime is null)
 				state.DebuggerRuntime = new DebuggerRuntimeImpl(dbgObjectIdService, runtime.GetDotNetRuntime(), runtime.Process.PointerSize, dotNetClassHookFactories);
 			return state.DebuggerRuntime;
 		}

@@ -44,7 +44,7 @@ namespace dnSpy.Output {
 
 		OutputControl OutputControl {
 			get {
-				if (outputControl.DataContext == null)
+				if (outputControl.DataContext is null)
 					outputControl.DataContext = OutputService;
 				return outputControl;
 			}
@@ -110,8 +110,8 @@ namespace dnSpy.Output {
 
 		void SelectLog(int tmpIndex) {
 			var vm = OutputService.SelectLog(tmpIndex);
-			Debug.Assert(vm != null);
-			if (vm == null)
+			Debug.Assert(!(vm is null));
+			if (vm is null)
 				return;
 			vm.FocusedElement?.Focus();
 			// Must use Loaded prio or the normal text editor could get focus

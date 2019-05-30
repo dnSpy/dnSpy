@@ -179,7 +179,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public static bool IsMatch(DmdType type, string? @namespace, string name, DmdBindingFlags bindingAttr) {
 			// Namespace comparison is exact
-			if (@namespace != null && type.Namespace != @namespace)
+			if (!(@namespace is null) && type.Namespace != @namespace)
 				return false;
 			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
 				return StringComparer.OrdinalIgnoreCase.Equals(type.Name, name);

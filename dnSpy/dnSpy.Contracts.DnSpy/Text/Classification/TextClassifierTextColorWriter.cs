@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Text.Classification {
 
 		/// <inheritdoc/>
 		public void Write(object color, string? text) {
-			if (text == null)
+			if (text is null)
 				return;
 			colors.Add(new SpanData<object>(new Span(sb.Length, text.Length), color));
 			sb.Append(text);

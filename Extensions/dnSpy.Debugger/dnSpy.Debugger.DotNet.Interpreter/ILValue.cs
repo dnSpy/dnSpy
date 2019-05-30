@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		public ConstantInt32ILValue(DmdAppDomain appDomain, int value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Int32;
 			Value = value;
@@ -429,7 +429,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		public ConstantInt64ILValue(DmdAppDomain appDomain, long value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Int64;
 			Value = value;
@@ -477,7 +477,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		public ConstantFloatILValue(DmdAppDomain appDomain, double value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Double;
 			Value = value;
@@ -579,7 +579,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		protected ConstantNativeIntILValue(DmdAppDomain appDomain, int value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_IntPtr;
 			this.value = value;
@@ -591,7 +591,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		protected ConstantNativeIntILValue(DmdAppDomain appDomain, long value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_IntPtr;
 			this.value = value;
@@ -636,7 +636,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// true if it was created by a ldvirtftn instruction, false it was created by a ldftn instruction
 		/// </summary>
-		public bool IsVirtual => VirtualThisObject != null;
+		public bool IsVirtual => !(VirtualThisObject is null);
 
 		/// <summary>
 		/// Gets the this value if and only if this was created by a ldvirtftn instruction, otherwise it's null
@@ -692,7 +692,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="size">Size of memory</param>
 		public NativeMemoryILValue(DmdAppDomain appDomain, int size) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Void.MakePointerType();
 			data = new byte[size];

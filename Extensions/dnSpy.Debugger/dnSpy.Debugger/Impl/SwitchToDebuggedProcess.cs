@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Impl {
 			if (!e.CurrentChanged)
 				return;
 			var newProcess = ((DbgManager)sender).CurrentProcess.Current;
-			if (newProcess != null)
+			if (!(newProcess is null))
 				currentProcess = newProcess;
 		}
 
@@ -74,10 +74,10 @@ namespace dnSpy.Debugger.Impl {
 			// Ignore it the first time because the OS will give the debugged process focus
 			if (ignoreSetForeground)
 				return;
-			if (process == null)
+			if (process is null)
 				process = ((DbgManager)sender).Processes.FirstOrDefault(a => a.State == DbgProcessState.Running);
 			// Fails if the process hasn't been created yet (eg. the engine hasn't connected to the process yet)
-			if (process == null)
+			if (process is null)
 				return;
 			if (!debuggerSettings.FocusActiveProcess)
 				return;

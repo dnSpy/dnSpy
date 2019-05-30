@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Formatting {
 		HexAndAdornmentSequencerFactoryServiceImpl(HexViewTagAggregatorFactoryService hexViewTagAggregatorFactoryService) => this.hexViewTagAggregatorFactoryService = hexViewTagAggregatorFactoryService;
 
 		public override HexAndAdornmentSequencer Create(HexView view) {
-			if (view == null)
+			if (view is null)
 				throw new ArgumentNullException(nameof(view));
 			return view.Properties.GetOrCreateSingletonProperty(typeof(HexAndAdornmentSequencer), () => new HexAndAdornmentSequencerImpl(view, hexViewTagAggregatorFactoryService.CreateTagAggregator<HexSpaceNegotiatingAdornmentTag>(view)));
 		}

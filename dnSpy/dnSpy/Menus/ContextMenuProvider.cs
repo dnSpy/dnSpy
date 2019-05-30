@@ -49,7 +49,7 @@ namespace dnSpy.Menus {
 				return false;
 
 			var o = e.OriginalSource as DependencyObject;
-			while (o != null) {
+			while (!(o is null)) {
 				if (o == element)
 					return false;
 
@@ -68,7 +68,7 @@ namespace dnSpy.Menus {
 				return;
 
 			bool? b = menuService.ShowContextMenu(e, element, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), provider, initCtxMenu, e.CursorLeft == -1 && e.CursorTop == -1);
-			if (b == null)
+			if (b is null)
 				return;
 			if (!b.Value)
 				e.Handled = true;

@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		internal string AssemblySimpleName {
 			get {
-				if (assemblySimpleName == null)
+				if (assemblySimpleName is null)
 					assemblySimpleName = CalculateAssemblySimpleName();
 				return assemblySimpleName;
 			}
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		internal void Add(DmdModuleImpl module) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			lock (LockObject) {
 				Debug.Assert(!modules.Contains(module));
@@ -93,10 +93,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override void Remove(DmdModule module) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			var moduleImpl = module as DmdModuleImpl;
-			if (moduleImpl == null)
+			if (moduleImpl is null)
 				throw new InvalidOperationException();
 			lock (LockObject) {
 				bool b = modules.Remove(moduleImpl);
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdModule? GetModule(string name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			// Make a copy of it so we don't hold a lock while calling module.ScopeName
 			DmdModule[] modulesCopy;
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdReadOnlyAssemblyName GetName() {
-			if (asmName == null) {
+			if (asmName is null) {
 				var newAsmName = metadataReader.GetName();
 				Debug.Assert(string.IsNullOrEmpty(assemblySimpleName) || newAsmName.Name == assemblySimpleName);
 				var flags = newAsmName.RawFlags;
@@ -231,9 +231,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return null;
 
 				DmdAssemblyImpl? targetAssembly = assembly;
-				if (assemblyName != null && !assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
+				if (!(assemblyName is null) && !assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
 					targetAssembly = (DmdAssemblyImpl?)targetAssembly.AppDomain.GetAssembly(assemblyName);
-					if (targetAssembly == null)
+					if (targetAssembly is null)
 						return null;
 				}
 
@@ -241,7 +241,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				DmdTypeUtilities.SplitFullName(typeNames[0], out var @namespace, out string name);
 
 				var module = targetAssembly.ManifestModule;
-				if (module == null)
+				if (module is null)
 					return null;
 				var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
 				type = targetAssembly.GetType(typeRef, ignoreCase);
@@ -261,7 +261,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdType? GetType(string typeName, DmdGetTypeOptions options) {
-			if (typeName == null)
+			if (typeName is null)
 				throw new ArgumentNullException(nameof(typeName));
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
@@ -275,7 +275,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
-			if (securityAttributes != null)
+			if (!(securityAttributes is null))
 				return securityAttributes;
 			var cas = metadataReader.ReadSecurityAttributes(0x20000001);
 			Interlocked.CompareExchange(ref securityAttributes, ReadOnlyCollectionHelpers.Create(cas), null);
@@ -284,7 +284,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		volatile ReadOnlyCollection<DmdCustomAttributeData>? securityAttributes;
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
-			if (customAttributes != null)
+			if (!(customAttributes is null))
 				return customAttributes;
 			var cas = metadataReader.ReadCustomAttributes(0x20000001);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas, GetSecurityAttributesData());

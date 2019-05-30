@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public MethodSpecVM? Edit(string? title, MethodSpecVM pd) {
 			var win = new MethodSpecDlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = pd;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

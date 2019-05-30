@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 		}
 
 		bool IsSameAsOurFrame(MDS.StackFrame otherFrame) {
-			if (otherFrame == null)
+			if (otherFrame is null)
 				return false;
 
 			// None of the properties below can throw, all values are cached in the StackFrame instance

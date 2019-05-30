@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		static HexSpan[] Normalize(IEnumerable<HexSpan> spans) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			var list = new List<HexSpan>(spans);
 			if (list.Count <= 1)
@@ -140,7 +140,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
 		public bool Equals(NormalizedHexSpanCollection? other) {
-			if ((object?)other == null)
+			if (other is null)
 				return false;
 			if (Count != other.Count)
 				return false;

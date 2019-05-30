@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		}
 
 		void AddOptions(AttachProgramOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			bool start;
 			lock (lockObj) {
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 					if (providerNames.Length != 0 && Array.IndexOf(providerNames, lz.Metadata.Name) < 0)
 						continue;
 					var provider = lz.Value.Create(allFactories);
-					if (provider == null)
+					if (provider is null)
 						continue;
 					providerInfos.Add(new ProviderInfo(this, providerContext, provider));
 				}

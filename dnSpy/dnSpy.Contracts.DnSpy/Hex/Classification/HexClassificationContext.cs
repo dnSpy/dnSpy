@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Line == null;
+		public bool IsDefault => Line is null;
 
 		/// <summary>
 		/// Gets the buffer line
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <param name="line">Line info</param>
 		/// <param name="lineSpan">Line span to classify</param>
 		public HexClassificationContext(HexBufferLine line, VST.Span lineSpan) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (!line.TextSpan.Contains(lineSpan))
 				throw new ArgumentOutOfRangeException(nameof(lineSpan));

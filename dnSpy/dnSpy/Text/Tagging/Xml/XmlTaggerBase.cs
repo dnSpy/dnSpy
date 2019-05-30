@@ -33,19 +33,19 @@ namespace dnSpy.Text.Tagging.Xml {
 		int classificationsVersion;
 
 		protected XmlTaggerBase(TaggerClassificationTypes taggerClassificationTypes) {
-			if (taggerClassificationTypes == null)
+			if (taggerClassificationTypes is null)
 				throw new ArgumentNullException(nameof(taggerClassificationTypes));
-			Debug.Assert(taggerClassificationTypes.Attribute?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.AttributeQuotes?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.AttributeValue?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.AttributeValueXaml?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.CDataSection?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.Comment?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.Delimiter?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.Keyword?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.Name?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.ProcessingInstruction?.ClassificationType != null);
-			Debug.Assert(taggerClassificationTypes.Text?.ClassificationType != null);
+			Debug.Assert(!(taggerClassificationTypes.Attribute?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.AttributeQuotes?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.AttributeValue?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.AttributeValueXaml?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.CDataSection?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.Comment?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.Delimiter?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.Keyword?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.Name?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.ProcessingInstruction?.ClassificationType is null));
+			Debug.Assert(!(taggerClassificationTypes.Text?.ClassificationType is null));
 			this.taggerClassificationTypes = taggerClassificationTypes;
 		}
 
@@ -54,7 +54,7 @@ namespace dnSpy.Text.Tagging.Xml {
 				yield break;
 
 			var snapshot = spans[0].Snapshot;
-			if (classifications == null || classificationsVersion != snapshot.Version.VersionNumber) {
+			if (classifications is null || classificationsVersion != snapshot.Version.VersionNumber) {
 				//TODO: Do this asynchronously
 				classificationsVersion = snapshot.Version.VersionNumber;
 				classifications = CreateClassifications(snapshot);
@@ -87,10 +87,10 @@ namespace dnSpy.Text.Tagging.Xml {
 			var classifier = new XmlClassifier(snapshot);
 			for (;;) {
 				var info = classifier.GetNext();
-				if (info == null)
+				if (info is null)
 					break;
 				var classificationTag = GetClassificationTag(info.Value.Kind);
-				if (classificationTag == null)
+				if (classificationTag is null)
 					continue;
 				builder.Add(info.Value.Span, classificationTag);
 			}

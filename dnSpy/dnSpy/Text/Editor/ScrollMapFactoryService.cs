@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ScrollMapFactoryService : IScrollMapFactoryService {
 		public IScrollMap Create(ITextView textView) => Create(textView, false);
 		public IScrollMap Create(ITextView textView, bool areElisionsExpanded) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return new ScrollMap(textView, areElisionsExpanded);
 		}

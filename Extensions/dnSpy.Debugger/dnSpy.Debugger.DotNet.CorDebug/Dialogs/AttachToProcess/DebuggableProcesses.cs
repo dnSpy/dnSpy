@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 					}
 					if (process.HasExited)
 						continue;
-					if (isValidProcess != null) {
+					if (!(isValidProcess is null)) {
 						if (!isValidProcess(process) || process.HasExited)
 							continue;
 					}

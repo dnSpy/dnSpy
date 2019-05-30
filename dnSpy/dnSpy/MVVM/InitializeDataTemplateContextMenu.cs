@@ -32,7 +32,7 @@ namespace dnSpy.MVVM {
 
 		public void Initialize(DependencyObject d) {
 			var fwe = d as FrameworkElement;
-			if (fwe == null)
+			if (fwe is null)
 				return;
 
 			menuService.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);

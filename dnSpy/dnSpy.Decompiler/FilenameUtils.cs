@@ -43,12 +43,12 @@ namespace dnSpy.Decompiler {
 			char[]? textChars = null;
 			for (int i = 0; i < text.Length; i++) {
 				if (invalidFileNameChars.Contains(text[i])) {
-					if (textChars == null)
+					if (textChars is null)
 						textChars = text.ToCharArray();
 					textChars[i] = '-';
 				}
 			}
-			if (textChars != null)
+			if (!(textChars is null))
 				text = new string(textChars);
 
 			if (ReservedFileNames.Contains(text))

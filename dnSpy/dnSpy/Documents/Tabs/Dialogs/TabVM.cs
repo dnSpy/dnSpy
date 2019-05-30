@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public string Module {
 			get {
-				if (document == null)
+				if (document is null)
 					return string.Empty;
 				return System.IO.Path.GetFileName(document.Filename);
 			}
@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public string Path {
 			get {
-				if (document == null)
+				if (document is null)
 					return string.Empty;
 				return document.Filename;
 			}

@@ -37,11 +37,11 @@ namespace dnSpy.Hex.Intellisense {
 		HexIntellisensePresenterFactoryServiceImpl([ImportMany] IEnumerable<Lazy<HexIntellisensePresenterProvider, VSUTIL.IOrderable>> intellisensePresenterProviders) => this.intellisensePresenterProviders = VSUTIL.Orderer.Order(intellisensePresenterProviders).ToArray();
 
 		public override HexIntellisensePresenter? TryCreateIntellisensePresenter(HexIntellisenseSession session) {
-			if (session == null)
+			if (session is null)
 				throw new ArgumentNullException(nameof(session));
 			foreach (var lz in intellisensePresenterProviders) {
 				var presenter = lz.Value.TryCreateIntellisensePresenter(session);
-				if (presenter != null)
+				if (!(presenter is null))
 					return presenter;
 			}
 			return null;

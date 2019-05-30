@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation? location, DbgEvaluationContextOptions options, TimeSpan funcEvalTimeout, CancellationToken cancellationToken) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			if (runtime.RuntimeKindGuid != RuntimeKindGuid)
 				throw new ArgumentException();

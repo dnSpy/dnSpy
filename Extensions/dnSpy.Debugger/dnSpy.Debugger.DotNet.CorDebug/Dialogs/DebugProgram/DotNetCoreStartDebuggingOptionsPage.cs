@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		void PickNewHostFilename() {
 			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			HostFilename = newFilename;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			Filename = newFilename;
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as DotNetCoreStartDebuggingOptions;
-			if (dncOptions == null)
+			if (dncOptions is null)
 				return;
 			Initialize(dncOptions);
 		}

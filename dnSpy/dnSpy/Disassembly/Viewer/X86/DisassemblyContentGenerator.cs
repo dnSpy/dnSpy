@@ -151,7 +151,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		}
 
 		public static void Write(int bitness, DisassemblyContentOutput output, string? header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
-			if (variableInfo == null)
+			if (variableInfo is null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {
 				const string LINE = "********************************************";
@@ -160,14 +160,14 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				WriteComment(output, commentPrefix, LINE);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
-			if (header != null) {
+			if (!(header is null)) {
 				WriteComment(output, commentPrefix, header);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
-			if (moduleName != null)
+			if (!(moduleName is null))
 				WriteComment(output, commentPrefix, moduleName);
-			if (methodName != null)
+			if (!(methodName is null))
 				WriteComment(output, commentPrefix, methodName);
 			ulong codeSize = 0;
 			foreach (var block in blocks) {
@@ -192,7 +192,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 						sb.Append(' ');
 					}
 					var name = varInfo.Name ?? GetName(variableInfo, varInfo);
-					if (name != null) {
+					if (!(name is null)) {
 						printedName = true;
 						if (varInfo.Index >= 0)
 							sb.Append('(');

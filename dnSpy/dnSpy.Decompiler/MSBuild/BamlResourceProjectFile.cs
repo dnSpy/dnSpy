@@ -110,10 +110,10 @@ namespace dnSpy.Decompiler.MSBuild {
 				}
 
 				var body = GetInitializeComponentBody();
-				Debug.Assert(body != null);
-				if (body != null) {
+				Debug.Assert(!(body is null));
+				if (!(body is null)) {
 					var startupUri = GetStartupUri(body);
-					if (startupUri != null)
+					if (!(startupUri is null))
 						writer.WriteAttributeString("StartupUri", startupUri);
 
 					foreach (var info in GetEvents(body))
@@ -133,14 +133,14 @@ namespace dnSpy.Decompiler.MSBuild {
 				if (instrs[i].OpCode.Code != Code.Ldftn && instrs[i].OpCode.Code != Code.Ldvirtftn)
 					continue;
 				var m = instrs[i].Operand as MethodDef;
-				if (m == null)
+				if (m is null)
 					continue;
 				if (instrs[i + 1].OpCode.Code != Code.Newobj)
 					continue;
 				if (instrs[i + 2].OpCode.Code != Code.Call)
 					continue;
 				var addMethod = instrs[i + 2].Operand as IMethod;
-				if (addMethod == null || addMethod.MethodSig.GetParamCount() != 1)
+				if (addMethod is null || addMethod.MethodSig.GetParamCount() != 1)
 					continue;
 				if (!addMethod.Name.StartsWith("add_"))
 					continue;

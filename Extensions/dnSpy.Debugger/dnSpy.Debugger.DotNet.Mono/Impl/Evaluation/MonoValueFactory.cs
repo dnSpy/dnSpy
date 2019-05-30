@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		static TypeMirror GetType(DbgEngineImpl engine, DmdType type) => MonoDebugTypeCreator.GetType(engine, type, null);
 
 		public static Value? TryCreateSyntheticValue(DbgEngineImpl engine, AppDomainMirror appDomain, DmdType fieldType, object? constant) {
-			if (constant == null)
+			if (constant is null)
 				return new PrimitiveValue(appDomain.VirtualMachine, ElementType.Object, null);
 			var res = TryCreateSyntheticValueCore(appDomain, constant);
 			if (fieldType.IsEnum)

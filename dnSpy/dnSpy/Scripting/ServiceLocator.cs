@@ -32,22 +32,22 @@ namespace dnSpy.Scripting {
 		Dispatcher? dispatcher;
 
 		public T Resolve<T>() where T : class {
-			Debug.Assert(exportProvider != null);
-			Debug.Assert(dispatcher != null);
-			if (exportProvider == null)
+			Debug.Assert(!(exportProvider is null));
+			Debug.Assert(!(dispatcher is null));
+			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => exportProvider.GetExportedValue<T>());
 		}
 
 		public T? TryResolve<T>() where T : class {
-			Debug.Assert(exportProvider != null);
-			Debug.Assert(dispatcher != null);
-			if (exportProvider == null)
+			Debug.Assert(!(exportProvider is null));
+			Debug.Assert(!(dispatcher is null));
+			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => {
 				// VS-MEF doesn't have GetExportedValueOrDefault()
 				var res = exportProvider.GetExports<T, IDictionary<string, object>>(null).SingleOrDefault();
-				if (res == null)
+				if (res is null)
 					return null;
 				return res.Value;
 			});
@@ -55,7 +55,7 @@ namespace dnSpy.Scripting {
 
 		public void SetExportProvider(Dispatcher dispatcher, ExportProvider exportProvider) {
 			this.dispatcher = dispatcher;
-			if (this.exportProvider != null)
+			if (!(this.exportProvider is null))
 				throw new InvalidOperationException();
 			this.exportProvider = exportProvider ?? throw new ArgumentNullException(nameof(exportProvider));
 		}

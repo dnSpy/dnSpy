@@ -213,7 +213,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		public override GetModuleReferencesResult GetModuleReferences(DbgRuntime runtime, DbgStackFrame frame, DmdType[] typeReferences) {
 			var reflectionModule = frame.Module?.GetReflectionModule();
-			if (reflectionModule == null)
+			if (reflectionModule is null)
 				return new GetModuleReferencesResult(dnSpy_Debugger_DotNet_Resources.CantEvaluateWhenCurrentFrameIsNative);
 			return GetModuleReferences(runtime, reflectionModule, typeReferences);
 		}
@@ -234,7 +234,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		GetModuleReferencesResult CreateGetModuleReferencesResult(ModuleReferencesState state) {
-			if (state.SourceModuleReference == null || state.SourceModuleReference.MetadataAddress == IntPtr.Zero || state.SourceModuleReference.MetadataSize == 0)
+			if (state.SourceModuleReference is null || state.SourceModuleReference.MetadataAddress == IntPtr.Zero || state.SourceModuleReference.MetadataSize == 0)
 				return new GetModuleReferencesResult(dnSpy_Debugger_DotNet_Resources.ModuleMetadataNotFoundOrInvalid);
 			return new GetModuleReferencesResult(state.ModuleReferences!);
 		}
@@ -302,7 +302,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				foreach (var modInfo in info.Modules) {
 					foreach (var asmRef in modInfo.Module.GetReferencedAssemblies()) {
 						var asm = appDomain.GetAssembly(asmRef);
-						if (asm != null) {
+						if (!(asm is null)) {
 							if (!hash.Contains(asm))
 								stack.Add(new AssemblyInfo(asm));
 						}
@@ -322,11 +322,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						modRef = intrinsicsState.ModuleReference;
 					else
 						modRef = GetOrCreateModuleReference(rtState, runtime, modInfo);
-					if (modRef == null)
+					if (modRef is null)
 						continue;
 					modRefs.Add(modRef);
 					if (modInfo.Module == sourceModule) {
-						Debug.Assert(state.SourceModuleReference == null);
+						Debug.Assert(state.SourceModuleReference is null);
 						state.SourceModuleReference = modRef;
 					}
 				}
@@ -340,7 +340,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		static bool Equals(DbgModuleReference[]? a, List<DbgModuleReference> b) {
-			if (a == null)
+			if (a is null)
 				return false;
 			if (a.Length != b.Count)
 				return false;
@@ -373,21 +373,21 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						}
 					}
 				}
-				if (modRef != null) {
+				if (!(modRef is null)) {
 					modRef.Update(module.RefreshedVersion);
 					return modRef;
 				}
 			}
 
-			if (module != null && !module.IsDynamic && !module.IsInMemory && File.Exists(module.Filename)) {
+			if (!(module is null) && !module.IsDynamic && !module.IsInMemory && File.Exists(module.Filename)) {
 				modRef = GetOrCreateFileModuleReference(rtState, runtime, modInfo, module);
-				if (modRef != null)
+				if (!(modRef is null))
 					return modRef;
 			}
 
-			if (module != null) {
+			if (!(module is null)) {
 				var info = runtime.GetDotNetRuntime().GetRawModuleBytes(module);
-				if (info.RawBytes != null) {
+				if (!(info.RawBytes is null)) {
 					var state = module.GetOrCreateData<RawModuleBytesModuleState>();
 					if (state.Equals(info))
 						return state.ModuleReference;
@@ -467,7 +467,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 
 			foreach (var asmRef in state.NonLoadedAssemblies) {
-				if (appDomain.GetAssembly(asmRef) != null)
+				if (!(appDomain.GetAssembly(asmRef) is null))
 					return false;
 			}
 
@@ -493,7 +493,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				if (am != info.Module || am.DynamicModuleVersion != info.DynamicModuleVersion)
 					return false;
 				var dm = info.DebuggerModuleOrNull ?? am.GetDebuggerModule();
-				if (dm != null && dm.RefreshedVersion != info.DebuggerModuleVersion)
+				if (!(dm is null) && dm.RefreshedVersion != info.DebuggerModuleVersion)
 					return false;
 			}
 			return true;

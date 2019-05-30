@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 				if (Constructor is MethodDef mdCtor) {
 					var declType = mdCtor.DeclaringType;
-					if (declType != null)
+					if (!(declType is null))
 						return declType.FullName;
 				}
 
@@ -152,11 +152,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void Hook(NotifyCollectionChangedEventArgs e) {
-			if (e.OldItems != null) {
+			if (!(e.OldItems is null)) {
 				foreach (INotifyPropertyChanged i in e.OldItems)
 					i.PropertyChanged -= arg_PropertyChanged;
 			}
-			if (e.NewItems != null) {
+			if (!(e.NewItems is null)) {
 				foreach (INotifyPropertyChanged i in e.NewItems)
 					i.PropertyChanged += arg_PropertyChanged;
 			}
@@ -168,7 +168,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void CreateArguments() {
-			int count = Constructor == null ? 0 : Constructor.MethodSig.GetParamCount();
+			int count = Constructor is null ? 0 : Constructor.MethodSig.GetParamCount();
 			while (ConstructorArguments.Count > count)
 				ConstructorArguments.RemoveAt(ConstructorArguments.Count - 1);
 			while (ConstructorArguments.Count < count) {
@@ -180,10 +180,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		static CAArgument CreateCAArgument(TypeSig type) => new CAArgument(type, ModelUtils.GetDefaultValue(type, true));
 
 		void PickConstructor() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newCtor = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Constructor, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
-			if (newCtor != null)
+			if (!(newCtor is null))
 				Constructor = newCtor;
 		}
 
@@ -191,14 +191,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public CustomAttributeOptions CreateCustomAttributeOptions() => CopyTo(new CustomAttributeOptions());
 
 		void InitializeFrom(CustomAttributeOptions options) {
-			IsRawData = options.RawData != null;
+			IsRawData = !(options.RawData is null);
 			RawData.Value = options.RawData!;
 			Constructor = options.Constructor;
 			ConstructorArguments.Clear();
-			var sig = Constructor == null ? null : Constructor.MethodSig;
+			var sig = Constructor is null ? null : Constructor.MethodSig;
 			for (int i = 0; i < options.ConstructorArguments.Count; i++) {
 				TypeSig? type = null;
-				if (sig != null && i < sig.Params.Count)
+				if (!(sig is null) && i < sig.Params.Count)
 					type = sig.Params[i];
 				ConstructorArguments.Add(new CAArgumentVM(ownerModule, options.ConstructorArguments[i], new TypeSigCreatorOptions(ownerModule, decompilerService), type));
 			}
@@ -214,7 +214,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				options.RawData = RawData.Value.ToArray();
 			else {
 				options.RawData = null;
-				int count = Constructor == null ? 0 : Constructor.MethodSig.GetParamCount();
+				int count = Constructor is null ? 0 : Constructor.MethodSig.GetParamCount();
 				for (int i = 0; i < count; i++)
 					options.ConstructorArguments.Add(ConstructorArguments[i].CreateCAArgument(Constructor!.MethodSig.Params[i]));
 				options.NamedArguments.AddRange(CANamedArgumentsVM.Collection.Select(a => a.CreateCANamedArgument()));
@@ -224,7 +224,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public override bool HasError {
 			get {
-				return Constructor == null ||
+				return Constructor is null ||
 					(IsRawData && RawData.HasError) ||
 					(!IsRawData &&
 						(ConstructorArguments.Any(a => a.HasError) ||

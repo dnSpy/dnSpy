@@ -112,7 +112,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		protected override bool WriteLocationCore(ITextColorWriter output, BookmarkLocationFormatterOptions options) {
 			var method = weakMethod?.Target as MethodDef ?? GetDefinition<MethodDef>();
-			if (method == null)
+			if (method is null)
 				return false;
 			if (weakMethod?.Target != method)
 				weakMethod = new WeakReference(method);
@@ -136,7 +136,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		protected override bool WriteLocationCore(ITextColorWriter output, BookmarkLocationFormatterOptions options) {
 			var def = weakMember?.Target as IMemberDef ?? GetDefinition<IMemberDef>();
-			if (def == null)
+			if (def is null)
 				return false;
 			if (weakMember?.Target != def)
 				weakMember = new WeakReference(def);

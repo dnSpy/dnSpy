@@ -117,8 +117,8 @@ namespace dnSpy.Themes {
 
 		void InitializeResources() {
 			var app = Application.Current;
-			Debug.Assert(app != null);
-			if (app != null)
+			Debug.Assert(!(app is null));
+			if (!(app is null))
 				((Theme)Theme).UpdateResources(app.Resources);
 		}
 
@@ -135,7 +135,7 @@ namespace dnSpy.Themes {
 		}
 
 		void SwitchThemeIfNecessary() {
-			if (theme == null || theme.IsHighContrast != IsHighContrast)
+			if (theme is null || theme.IsHighContrast != IsHighContrast)
 				Theme = GetThemeOrDefault(CurrentDefaultThemeGuid);
 		}
 

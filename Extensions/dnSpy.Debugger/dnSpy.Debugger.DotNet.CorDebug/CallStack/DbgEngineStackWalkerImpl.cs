@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				enumerator = EmptyEnumerator<CorFrame>.Empty;
 				return Array.Empty<DbgEngineStackFrame>();
 			}
-			if (enumerator == null)
+			if (enumerator is null)
 				enumerator = dnThread.GetAllFrames(framesBuffer!).GetEnumerator();
 			var list = engine.stackFrameData.DbgEngineStackFrameList;
 			try {
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
-			if (framesBuffer != null)
+			if (!(framesBuffer is null))
 				engine.ReturnFramesBuffer(ref framesBuffer);
 			framesBuffer = null;
 			enumerator?.Dispose();

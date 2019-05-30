@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Modules {
 
 		void IModuleLoader.LoadModules(DbgModule[] modules, DbgLoadModuleReferenceHandlerOptions options) {
 			uiDispatcher.VerifyAccess();
-			if (modules == null)
+			if (modules is null)
 				throw new ArgumentNullException(nameof(modules));
 			var hash = new HashSet<DbgModule>(modules);
 			foreach (var lz in dbgLoadModuleReferenceHandlers) {

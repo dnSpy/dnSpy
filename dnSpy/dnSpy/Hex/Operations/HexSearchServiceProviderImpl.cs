@@ -29,7 +29,7 @@ namespace dnSpy.Hex.Operations {
 			new ByteHexSearchService(pattern, mask);
 
 		public override HexSearchService CreateUtf8StringSearchService(string pattern, bool isCaseSensitive) {
-			if (pattern == null)
+			if (pattern is null)
 				throw new ArgumentNullException(nameof(pattern));
 			if (pattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(pattern));
@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Operations {
 		}
 
 		public override HexSearchService CreateUtf16StringSearchService(string pattern, bool isCaseSensitive, bool isBigEndian) {
-			if (pattern == null)
+			if (pattern is null)
 				throw new ArgumentNullException(nameof(pattern));
 			if (pattern.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(pattern));

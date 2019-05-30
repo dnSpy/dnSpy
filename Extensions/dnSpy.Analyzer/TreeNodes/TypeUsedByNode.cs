@@ -43,7 +43,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<EntityNode> FindTypeUsage(TypeDef? type) {
-			if (type == null)
+			if (type is null)
 				yield break;
 			if (type == analyzedType)
 				yield break;
@@ -63,7 +63,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
-			if (property != null)
+			if (!(property is null))
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };
 
 			return new MethodNode(method) { Context = Context, SourceRef = sourceRef };
@@ -72,7 +72,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool IsUsedInTypeRefs(IEnumerable<ITypeDefOrRef> types) => types.Any(IsUsedInTypeRef);
 
 		bool IsUsedInTypeRef(ITypeDefOrRef? type) {
-			if (type == null)
+			if (type is null)
 				return false;
 
 			return TypeMatches(type.DeclaringType)
@@ -80,7 +80,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		bool IsUsedInTypeDef(TypeDef? type) {
-			if (type == null)
+			if (type is null)
 				return false;
 
 			return IsUsedInTypeRef(type)
@@ -89,7 +89,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		bool IsUsedInFieldRef(IField? field) {
-			if (field == null || !field.IsField)
+			if (field is null || !field.IsField)
 				return false;
 
 			return TypeMatches(field.DeclaringType)
@@ -97,7 +97,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		bool IsUsedInMethodRef(IMethod? method) {
-			if (method == null || !method.IsMethod)
+			if (method is null || !method.IsMethod)
 				return false;
 
 			return TypeMatches(method.DeclaringType)
@@ -108,9 +108,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool IsUsedInMethodDef(MethodDef? method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method) || IsUsedInMethodBody(method, ref sourceRef);
 
 		bool IsUsedInMethodBody(MethodDef? method, ref SourceRef? sourceRef) {
-			if (method == null)
+			if (method is null)
 				return false;
-			if (method.Body == null)
+			if (method.Body is null)
 				return false;
 
 			foreach (var instruction in method.Body.Instructions) {
@@ -136,8 +136,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
 		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
-		bool TypeMatches(IType? tref) => tref != null && new SigComparer().Equals(analyzedType, tref);
-		public static bool CanShow(TypeDef? type) => type != null;
+		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref);
+		public static bool CanShow(TypeDef? type) => !(type is null);
 	}
 
 	sealed class AnalyzerEntityTreeNodeComparer : IEqualityComparer<EntityNode> {

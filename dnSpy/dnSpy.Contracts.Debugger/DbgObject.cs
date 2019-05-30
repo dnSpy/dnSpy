@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="dispatcher">Dispatcher</param>
 		public void Close(DbgDispatcher dispatcher) {
-			if (dispatcher == null)
+			if (dispatcher is null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			dispatcher.VerifyAccess();
 			// This sometimes happens, eg. a cached frame gets closed by its thread, but also by the owner (eg. call stack service)
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger {
 
 			(RuntimeTypeHandle key, object data)[] data;
 			lock (lockObj) {
-				data = dataList == null || dataList.Count == 0 ? Array.Empty<(RuntimeTypeHandle, object)>() : dataList.ToArray();
+				data = dataList is null || dataList.Count == 0 ? Array.Empty<(RuntimeTypeHandle, object)>() : dataList.ToArray();
 				dataList?.Clear();
 			}
 			foreach (var kv in data)
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <returns></returns>
 		public bool TryGetData<T>([NotNullWhenTrue] out T? value) where T : class {
 			lock (lockObj) {
-				if (dataList != null) {
+				if (!(dataList is null)) {
 					var type = typeof(T).TypeHandle;
 					foreach (var kv in dataList) {
 						if (kv.key.Equals(type)) {
@@ -152,10 +152,10 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="create">Creates the data if it doesn't exist</param>
 		/// <returns></returns>
 		public T GetOrCreateData<T>(Func<T> create) where T : class {
-			if (create == null)
+			if (create is null)
 				throw new ArgumentNullException(nameof(create));
 			lock (lockObj) {
-				if (dataList == null)
+				if (dataList is null)
 					dataList = new List<(RuntimeTypeHandle, object)>();
 				var type = typeof(T).TypeHandle;
 				foreach (var kv in dataList) {

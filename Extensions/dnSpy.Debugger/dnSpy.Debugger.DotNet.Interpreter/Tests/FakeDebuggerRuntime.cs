@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 		}
 
 		static void InitializeValue(ref ILValue value, DmdType valueType) {
-			if (value != null)
+			if (!(value is null))
 				return;
 
 			if (!valueType.IsValueType) {

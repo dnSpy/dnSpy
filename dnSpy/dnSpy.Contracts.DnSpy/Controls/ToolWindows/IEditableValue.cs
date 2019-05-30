@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		public override bool CanEdit => canEdit();
 
 		public EditableValueImpl(Func<string?> getText, Action<string?> setText, Func<bool>? canEdit = null, EditableValueOptions options = EditableValueOptions.None) {
-			if (getText == null)
+			if (getText is null)
 				throw new ArgumentNullException(nameof(getText));
 			this.getText = () => new EditableValueTextInfo(getText() ?? string.Empty);
 			this.setText = setText ?? throw new ArgumentNullException(nameof(setText));

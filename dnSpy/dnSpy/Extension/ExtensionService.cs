@@ -42,12 +42,12 @@ namespace dnSpy.Extension {
 
 		public IEnumerable<LoadedExtension> LoadedExtensions {
 			get {
-				Debug.Assert(loadedExtensions != null, "Called too early");
+				Debug.Assert(!(loadedExtensions is null), "Called too early");
 				return (loadedExtensions ?? Array.Empty<LoadedExtension>());
 			}
 			internal set {
-				Debug.Assert(loadedExtensions == null);
-				if (loadedExtensions != null)
+				Debug.Assert(loadedExtensions is null);
+				if (!(loadedExtensions is null))
 					throw new InvalidOperationException();
 				loadedExtensions = value.ToArray();
 			}

@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		WpfDebugMessageDispatcher WpfDebugMessageDispatcher {
 			get {
-				if (__wpfDebugMessageDispatcher == null)
+				if (__wpfDebugMessageDispatcher is null)
 					Interlocked.CompareExchange(ref __wpfDebugMessageDispatcher, new WpfDebugMessageDispatcher(Dispatcher), null);
 				return __wpfDebugMessageDispatcher!;
 			}
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal void Terminate() {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
-			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+			if (!(Dispatcher is null) && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvokeShutdown();
 		}
 

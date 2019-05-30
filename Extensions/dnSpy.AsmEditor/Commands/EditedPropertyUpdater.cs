@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public EditedPropertyUpdater(ModuleDocumentNode modNode, PropertyDef originalProperty, PropertyDefOptions propertyDefOptions) {
 			var node = modNode.Context.DocumentTreeView.FindNode(originalProperty);
-			if (node == null)
+			if (node is null)
 				throw new InvalidOperationException();
 			ownerNode = node;
 			property = originalProperty;

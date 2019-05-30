@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 			public VariablesWindowToolWindowContent Content {
 				get {
-					if (content == null)
+					if (content is null)
 						content = createContent();
 					return content;
 				}

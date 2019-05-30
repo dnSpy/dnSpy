@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 
 			var dbgModule = method.Module.GetDebuggerModule();
-			if (dbgModule == null)
+			if (dbgModule is null)
 				return false;
 			if (!engine.TryGetDnModule(dbgModule, out var dnModule))
 				return false;

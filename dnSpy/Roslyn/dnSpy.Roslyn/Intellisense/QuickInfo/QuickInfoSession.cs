@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		static readonly object thisInstanceKey = new object();
 
 		public QuickInfoSession(QuickInfoState state, SnapshotPoint triggerPoint, bool trackMouse, IQuickInfoBroker quickInfoBroker, ITextView textView) {
-			if (state.QuickInfoService == null)
+			if (state.QuickInfoService is null)
 				throw new ArgumentException();
 			if (triggerPoint.Snapshot != state.Snapshot)
 				throw new ArgumentNullException(nameof(triggerPoint));
@@ -58,7 +58,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		public void Start() => StartAsync()
 			.ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		async Task StartAsync() {
@@ -68,7 +68,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			}
 
 			Item = await State.QuickInfoService.GetItemAsync(State.Document, triggerPoint.Position, cancellationToken);
-			if (isDisposed || cancellationToken.IsCancellationRequested || Item == null) {
+			if (isDisposed || cancellationToken.IsCancellationRequested || Item is null) {
 				Dispose();
 				return;
 			}
@@ -83,7 +83,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		}
 
 		public static QuickInfoSession? TryGetSession(IQuickInfoSession session) {
-			if (session == null)
+			if (session is null)
 				return null;
 			if (session.Properties.TryGetProperty(thisInstanceKey, out QuickInfoSession instance))
 				return instance;
@@ -98,7 +98,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		}
 
 		void DisposeCancellationToken() {
-			if (cancellationTokenSource == null)
+			if (cancellationTokenSource is null)
 				return;
 			cancellationTokenSource.Cancel();
 			cancellationTokenSource.Dispose();

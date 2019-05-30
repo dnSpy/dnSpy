@@ -38,16 +38,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			var mr = attribute.Type.Annotations
 				.OfType<IMemberRef>()
 				.FirstOrDefault();
-			return mr == null ? string.Empty : mr.FullName;
+			return mr is null ? string.Empty : mr.FullName;
 		}
 
 		/*
 var annotation = type.Annotation<TypeReference>();
-if (annotation == null )
+if (annotation is null )
 	return null;
 
 IEntity current = null;
-if (entity != null) {
+if (!(entity is null)) {
 	var typeInfo = entity.Annotation<TypeReference>();
 	current = loader.ReadTypeReference(typeInfo).Resolve(context).GetDefinition();
 }
@@ -57,11 +57,11 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 
 		public TypeKind GetTypeKindForAstType(ICSharpCode.NRefactory.CSharp.AstType type) {
 			var annotation = type.Annotation<ITypeDefOrRef>();
-			if (annotation == null)
+			if (annotation is null)
 				return TypeKind.Unknown;
 
 			var definition = annotation.ResolveTypeDef();
-			if (definition == null)
+			if (definition is null)
 				return TypeKind.Unknown;
 			if (definition.IsClass)
 				return TypeKind.Class;
@@ -78,12 +78,12 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 		public TypeCode ResolveExpression(ICSharpCode.NRefactory.CSharp.Expression expression) {
 			var annotation = expression.Annotations.OfType<TypeInformation>().FirstOrDefault();
 
-			if (annotation == null || annotation.InferredType == null)
+			if (annotation is null || annotation.InferredType is null)
 				return TypeCode.Object;
 
 			var definition = annotation.InferredType.ScopeType.ResolveTypeDef();
 
-			if (definition == null)
+			if (definition is null)
 				return TypeCode.Object;
 
 			switch (definition.FullName) {
@@ -102,12 +102,12 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 
 			var annotation = expression.Annotations.OfType<TypeInformation>().FirstOrDefault();
 
-			if (annotation == null || annotation.InferredType == null)
+			if (annotation is null || annotation.InferredType is null)
 				return null;
 
 			var definition = annotation.InferredType.ScopeType.ResolveTypeDef();
 
-			if (definition == null)
+			if (definition is null)
 				return null;
 
 			return !definition.IsValueType;
@@ -116,7 +116,7 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 		public IEnumerable<ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier> CreateMemberSpecifiersForInterfaces(IEnumerable<ICSharpCode.NRefactory.VB.Ast.AstType> interfaces) {
 			foreach (var type in interfaces) {
 				var def = type.Annotation<ITypeDefOrRef>().ResolveTypeDef();
-				if (def == null)
+				if (def is null)
 					continue;
 				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
 					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(method));
@@ -128,27 +128,27 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 			}
 		}
 
-		public bool HasEvent(ICSharpCode.NRefactory.VB.Ast.Expression expression) => expression.Annotation<EventDef>() != null;
+		public bool HasEvent(ICSharpCode.NRefactory.VB.Ast.Expression expression) => !(expression.Annotation<EventDef>() is null);
 
 		public bool IsMethodGroup(ICSharpCode.NRefactory.CSharp.Expression expression) {
 			var annotation = expression.Annotation<MethodDef>();
-			if (annotation == null)
+			if (annotation is null)
 				return false;
-			return expression.Annotation<PropertyDef>() == null && expression.Annotation<EventDef>() == null;
+			return expression.Annotation<PropertyDef>() is null && expression.Annotation<EventDef>() is null;
 		}
 
 		public ICSharpCode.NRefactory.CSharp.ParameterDeclaration[] GetParametersForProperty(ICSharpCode.NRefactory.CSharp.PropertyDeclaration property) {
 			var propInfo = property.Annotation<PropertyDef>();
 
-			if (propInfo == null)
+			if (propInfo is null)
 				return new ICSharpCode.NRefactory.CSharp.ParameterDeclaration[0];
 
 			sb.Clear();
 			var getMethod = propInfo.GetMethod;
-			if (getMethod != null)
+			if (!(getMethod is null))
 				return getMethod.Parameters.Where(p => p.IsNormalMethodParameter).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
 			var setMethod = propInfo.SetMethod;
-			if (setMethod != null) {
+			if (!(setMethod is null)) {
 				var ps = setMethod.Parameters.Where(p => p.IsNormalMethodParameter).ToArray();
 				if (ps.Length > 1)
 					return ps.Take(ps.Length - 1).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
@@ -159,7 +159,7 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 
 		ICSharpCode.NRefactory.CSharp.ParameterModifier GetModifiers(Parameter p) {
 			var pd = p.ParamDef;
-			if (pd != null) {
+			if (!(pd is null)) {
 				if (pd.IsOut && pd.IsIn)
 					return ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref;
 				if (pd.IsOut)

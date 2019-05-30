@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		}
 
 		public override void AddExpressions(string[] expressions) {
-			if (expressions == null)
+			if (expressions is null)
 				throw new ArgumentNullException(nameof(expressions));
 			if (expressions.Length == 0)
 				return;

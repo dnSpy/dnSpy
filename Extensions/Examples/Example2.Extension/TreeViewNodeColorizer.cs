@@ -70,7 +70,7 @@ namespace Example2.Extension {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tvContext = context as TreeViewNodeClassifierContext;
-			if (tvContext == null)
+			if (tvContext is null)
 				yield break;
 
 			// Don't do a thing if it's a tooltip

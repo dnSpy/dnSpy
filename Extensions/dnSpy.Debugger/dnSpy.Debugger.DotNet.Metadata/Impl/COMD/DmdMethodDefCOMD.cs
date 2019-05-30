@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			DmdImplMap? implMap;
 			if (IsPinvokeImpl) {
 				var name = MDAPI.GetPinvokeMapName(reader.MetaDataImport, (uint)MetadataToken);
-				if (name == null || !MDAPI.GetPinvokeMapProps(reader.MetaDataImport, (uint)MetadataToken, out var attrs, out uint moduleToken))
+				if (name is null || !MDAPI.GetPinvokeMapProps(reader.MetaDataImport, (uint)MetadataToken, out var attrs, out uint moduleToken))
 					implMap = null;
 				else {
 					var module = MDAPI.GetModuleRefName(reader.MetaDataImport, moduleToken) ?? string.Empty;

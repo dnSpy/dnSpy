@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var vm = TryGetInstance();
-			if (vm == null)
+			if (vm is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == EditCodeCommandConstants.EditCodeGroup) {
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var vm = TryGetInstance();
-			if (vm == null)
+			if (vm is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == EditCodeCommandConstants.EditCodeGroup) {

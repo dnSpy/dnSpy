@@ -245,7 +245,7 @@ namespace dnSpy.Contracts.Hex {
 						return lastCorrectDataPos ?? bestGuess;
 					info = GetSpanInfo(pos);
 					if (info.HasData == validData) {
-						if (lastCorrectDataPos == null)
+						if (lastCorrectDataPos is null)
 							lastCorrectDataPos = info.Span.Start;
 					}
 					else {
@@ -284,7 +284,7 @@ namespace dnSpy.Contracts.Hex {
 			var pos = span.Start;
 			for (;;) {
 				var info = GetNextValidSpan(pos, span.End, fullSpan);
-				if (info == null)
+				if (info is null)
 					break;
 				yield return info.Value;
 				pos = info.Value.End;
@@ -628,7 +628,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="destination">Destination array</param>
 		public void ReadBytes(HexPosition position, byte[] destination) {
-			if (destination == null)
+			if (destination is null)
 				throw new ArgumentNullException(nameof(destination));
 			ReadBytes(position, destination, 0, destination.LongLength);
 		}

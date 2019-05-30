@@ -108,7 +108,7 @@ namespace dnSpy.Disassembly.Viewer {
 		public DisassemblyContentSettingsBase Clone() => CopyTo(new DisassemblyContentSettingsBase());
 
 		public DisassemblyContentSettingsBase CopyTo(DisassemblyContentSettingsBase other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.ShowInstructionAddress = ShowInstructionAddress;
 			other.ShowInstructionBytes = ShowInstructionBytes;

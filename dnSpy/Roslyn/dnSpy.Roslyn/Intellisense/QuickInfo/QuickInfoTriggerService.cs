@@ -41,7 +41,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		QuickInfoTriggerServiceProvider(IQuickInfoBroker quickInfoBroker) => this.quickInfoBroker = quickInfoBroker;
 
 		public IQuickInfoTriggerService Create(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(QuickInfoTriggerService), () => new QuickInfoTriggerService(quickInfoBroker, textView));
 		}
@@ -65,10 +65,10 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		}
 
 		public bool TryTrigger(SnapshotPoint point, bool trackMouse) {
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
 			var info = QuickInfoState.Create(point.Snapshot);
-			if (info == null)
+			if (info is null)
 				return false;
 
 			currentQuickInfoSession?.Dispose();

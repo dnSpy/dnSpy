@@ -44,9 +44,9 @@ namespace dnSpy.Search {
 		}
 
 		public IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			if (documentTreeView == null)
+			if (documentTreeView is null)
 				throw new ArgumentNullException(nameof(documentTreeView));
 			var searchResultContext = new SearchResultContext(classificationFormatMap, textElementProvider, decompilerService.Decompiler) {
 				SyntaxHighlight = true,

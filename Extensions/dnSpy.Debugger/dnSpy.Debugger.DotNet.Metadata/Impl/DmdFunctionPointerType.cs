@@ -62,10 +62,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (returnType is null)
 				return null;
 			var parameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetParameterTypes());
-			if (parameterTypes == null)
+			if (parameterTypes is null)
 				return null;
 			var varArgsParameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetVarArgsParameterTypes());
-			if (varArgsParameterTypes == null)
+			if (varArgsParameterTypes is null)
 				return null;
 			return (DmdTypeBase)returnType.AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, returnType, parameterTypes, varArgsParameterTypes, GetCustomModifiers());
 		}

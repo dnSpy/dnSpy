@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Intellisense {
 		HexToolTipServiceFactoryImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public override HexToolTipService Get(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexToolTipServiceImpl), () => new HexToolTipServiceImpl(viewTagAggregatorFactoryService, hexView));
 		}
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Intellisense {
 		readonly HexToolTipInfo[] infos;
 
 		public HexToolTipInfoCollection(HexToolTipInfo[] infos) {
-			if (infos == null)
+			if (infos is null)
 				throw new ArgumentNullException(nameof(infos));
 			if (infos.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(infos));
@@ -90,23 +90,23 @@ namespace dnSpy.Hex.Intellisense {
 			FullBufferSpan = HexBufferSpan.FromBounds(start, end);
 
 			Array.Sort(infos, (a, b) => {
-				if ((a.ToolTip != null) != (b.ToolTip != null))
-					return a.ToolTip != null ? -1 : 1;
+				if ((!(a.ToolTip is null)) != (!(b.ToolTip is null)))
+					return !(a.ToolTip is null) ? -1 : 1;
 				if (a.BufferSpan.Length != b.BufferSpan.Length)
 					return a.BufferSpan.Length.CompareTo(b.BufferSpan.Length);
 				return Array.IndexOf(infos, a) - Array.IndexOf(infos, b);
 			});
 			BufferSpan = infos[0].BufferSpan;
-			Debug.Assert(infos[0].ToolTip != null);
+			Debug.Assert(!(infos[0].ToolTip is null));
 
 			int index = 0;
 			foreach (var info in infos.OrderBy(a => a.BufferSpan.Start)) {
-				if (info.ClassificationType == null) {
-					info.ClassificationType = info.ToolTip != null ?
+				if (info.ClassificationType is null) {
+					info.ClassificationType = !(info.ToolTip is null) ?
 						CTC.ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField :
 						(index & 1) == 0 ? CTC.ThemeClassificationTypeNameKeys.HexToolTipServiceField0 :
 						CTC.ThemeClassificationTypeNameKeys.HexToolTipServiceField1;
-					if (info.ToolTip == null)
+					if (info.ToolTip is null)
 						index++;
 				}
 			}
@@ -151,20 +151,20 @@ namespace dnSpy.Hex.Intellisense {
 			RemoveToolTipInfo();
 
 			toolTipInfoCollection = hexToolTipService.GetToolTipInfo(session.TriggerPoint.BufferPosition);
-			if (toolTipInfoCollection == null)
+			if (toolTipInfoCollection is null)
 				return;
 
 			applicableToSpan = new HexBufferSpanSelection(toolTipInfoCollection.BufferSpan, HexSpanSelectionFlags.Selection);
 			hexToolTipService.SetActiveToolTip(toolTipInfoCollection);
 			session.Dismissed += Session_Dismissed;
 			foreach (var info in toolTipInfoCollection) {
-				if (info.ToolTip != null)
+				if (!(info.ToolTip is null))
 					quickInfoContent.Add(info.ToolTip);
 			}
 		}
 
 		void RemoveToolTipInfo() {
-			if (toolTipInfoCollection != null) {
+			if (!(toolTipInfoCollection is null)) {
 				hexToolTipService.RemoveActiveToolTip(toolTipInfoCollection);
 				toolTipInfoCollection = null;
 			}
@@ -219,7 +219,7 @@ namespace dnSpy.Hex.Intellisense {
 		bool highlightStructureUnderMouseCursor;
 
 		public HexToolTipServiceImpl(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService, HexView hexView) {
-			if (viewTagAggregatorFactoryService == null)
+			if (viewTagAggregatorFactoryService is null)
 				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 			this.hexView = hexView ?? throw new ArgumentNullException(nameof(hexView));
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<HexToolTipStructureSpanTag>(hexView);
@@ -238,7 +238,7 @@ namespace dnSpy.Hex.Intellisense {
 			if (newValue == highlightStructureUnderMouseCursor)
 				return;
 			highlightStructureUnderMouseCursor = newValue;
-			if (activeToolTipInfoCollection != null)
+			if (!(activeToolTipInfoCollection is null))
 				tagger?.RaiseTagsChanged(activeToolTipInfoCollection.FullBufferSpan);
 		}
 
@@ -264,7 +264,7 @@ namespace dnSpy.Hex.Intellisense {
 				if (!tagSpan.Span.Contains(position))
 					continue;
 
-				if (tagSpan.Tag.ToolTip != null) {
+				if (!(tagSpan.Tag.ToolTip is null)) {
 					if (!tagSpan.Tag.BufferSpan.Contains(position))
 						continue;
 					toolTips++;
@@ -287,7 +287,7 @@ namespace dnSpy.Hex.Intellisense {
 		HexToolTipInfoCollection? activeToolTipInfoCollection;
 
 		public override void RemoveActiveToolTip(HexToolTipInfoCollection collection) {
-			if (collection == null)
+			if (collection is null)
 				throw new ArgumentNullException(nameof(collection));
 			if (hexView.IsClosed)
 				return;
@@ -298,7 +298,7 @@ namespace dnSpy.Hex.Intellisense {
 
 		void RemoveCurrentToolTip() {
 			var oldCollection = activeToolTipInfoCollection;
-			if (oldCollection == null)
+			if (oldCollection is null)
 				return;
 			activeToolTipInfoCollection = null;
 			tagger?.RaiseTagsChanged(oldCollection.FullBufferSpan);
@@ -308,7 +308,7 @@ namespace dnSpy.Hex.Intellisense {
 			if (!highlightStructureUnderMouseCursor)
 				yield break;
 			var collection = activeToolTipInfoCollection;
-			if (collection == null)
+			if (collection is null)
 				yield break;
 
 			foreach (var span in spans) {
@@ -321,7 +321,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		public override void RegisterTagger(IHexToolTipServiceTagger tagger) {
-			if (this.tagger != null)
+			if (!(this.tagger is null))
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}

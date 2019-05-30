@@ -146,7 +146,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			public override bool Equals(object? obj) {
 				var other = obj as XmlNameTextViewerReference;
-				return other != null && nsRef.Equals(other.nsRef) && name == other.name && refKind == other.refKind;
+				return !(other is null) && nsRef.Equals(other.nsRef) && name == other.name && refKind == other.refKind;
 			}
 
 			public override int GetHashCode() => nsRef.GetHashCode() ^ name.GetHashCode() ^ (int)refKind;
@@ -157,7 +157,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) => XmlNamespaceReference = nsRef ?? throw new ArgumentNullException(nameof(nsRef));
 			public override bool Equals(object? obj) {
 				var other = obj as XmlNamespaceTextViewerReference;
-				return other != null && XmlNamespaceReference.Equals(other.XmlNamespaceReference);
+				return !(other is null) && XmlNamespaceReference.Equals(other.XmlNamespaceReference);
 			}
 			public override int GetHashCode() => XmlNamespaceReference.GetHashCode();
 		}
@@ -364,7 +364,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void ReadTag(in Token lessThanToken) {
 			var tagName = ReadNameToken();
-			if (tagName == null)
+			if (tagName is null)
 				return;
 
 			var oldXmlNamespaces = xmlNamespaces;
@@ -394,7 +394,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (token.Kind != TokenKind.LessThanSlash)
 						return;
 					var tagEndName = ReadNameToken();
-					if (tagEndName == null)
+					if (tagEndName is null)
 						return;
 					var greaterThanToken = GetNextToken();
 					if (greaterThanToken.Kind != TokenKind.GreaterThan)
@@ -434,7 +434,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public XmlNamespaceDefinition GetOrCreate(string xmlNsAlias) {
 				XmlNamespaces? curr = this;
 				XmlNamespaceDefinition def;
-				while (curr != null) {
+				while (!(curr is null)) {
 					if (curr.namespaces.TryGetValue(xmlNsAlias, out def))
 						return def;
 					curr = curr.previous;
@@ -461,7 +461,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 			public override bool Equals(object? obj) {
 				var other = obj as XmlNamespaceDefinition;
-				return other != null && Name == other.Name;
+				return !(other is null) && Name == other.Name;
 			}
 			public override int GetHashCode() => Name.GetHashCode();
 		}
@@ -477,7 +477,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		XmlNamespaceReference GetAttributeNamespaceReference(Span aliasSpan) {
 			var nsRef = TryGetAttributeNamespaceReference(aliasSpan);
-			if (nsRef != null)
+			if (!(nsRef is null))
 				return nsRef;
 			var nsName = GetSubstring(aliasSpan);
 			nsRef = new XmlNamespaceReference(nsName);
@@ -548,7 +548,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					}
 					else {
 						SaveReference(name, XmlNameReferenceKind.Attribute, findDefsOnly: false);
-						if (xamlAttributeParser != null)
+						if (!(xamlAttributeParser is null))
 							ParseXamlString(new Span(value.Span.Start + 1, value.Span.Length - 2));
 					}
 					SaveString(value);
@@ -572,7 +572,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void ParseXamlString(Span span) {
-			Debug.Assert(xamlAttributeParser != null);
+			Debug.Assert(!(xamlAttributeParser is null));
 
 			// Absolute minimum is "{x}", but most likely it's longer
 			if (span.Length <= 3)
@@ -601,21 +601,21 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void Undo(in Token token) {
-			Debug.Assert(cachedToken == null);
-			if (cachedToken != null)
+			Debug.Assert(cachedToken is null);
+			if (!(cachedToken is null))
 				throw new InvalidOperationException();
 			cachedToken = token;
 		}
 
 		Token PeekToken() {
-			if (cachedToken != null)
+			if (!(cachedToken is null))
 				return cachedToken.Value;
 			cachedToken = GetNextToken();
 			return cachedToken.Value;
 		}
 
 		Token GetNextToken() {
-			if (cachedToken != null) {
+			if (!(cachedToken is null)) {
 				var token = cachedToken.Value;
 				cachedToken = null;
 				return token;
@@ -626,7 +626,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		Token? cachedToken;
 
 		Token ReadTokenCore() {
-			Debug.Assert(cachedToken == null);
+			Debug.Assert(cachedToken is null);
 
 			SkipWhitespace();
 			int startPos = textPosition;

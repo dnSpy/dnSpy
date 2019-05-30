@@ -138,7 +138,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexUInt16(StringBuilder dest, HexValueFormatterFlags flags, ushort? v) {
 			Debug.Assert(FormattedLength == 4);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			WriteHexUInt16(dest, flags, v.Value);
 			return 0;
@@ -146,7 +146,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexUInt32(StringBuilder dest, HexValueFormatterFlags flags, uint? v) {
 			Debug.Assert(FormattedLength == 8);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			WriteHexUInt32(dest, flags, v.Value);
 			return 0;
@@ -154,7 +154,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexUInt64(StringBuilder dest, HexValueFormatterFlags flags, ulong? v) {
 			Debug.Assert(FormattedLength == 16);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			WriteHexUInt64(dest, flags, v.Value);
 			return 0;
@@ -162,7 +162,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexSByte(StringBuilder dest, HexValueFormatterFlags flags, sbyte? v) {
 			Debug.Assert(FormattedLength == 3);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			var value = v.Value;
 			int spaces;
@@ -181,7 +181,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexInt16(StringBuilder dest, HexValueFormatterFlags flags, short? v) {
 			Debug.Assert(FormattedLength == 5);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			var value = v.Value;
 			int spaces;
@@ -200,7 +200,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexInt32(StringBuilder dest, HexValueFormatterFlags flags, int? v) {
 			Debug.Assert(FormattedLength == 9);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			var value = v.Value;
 			int spaces;
@@ -219,7 +219,7 @@ namespace dnSpy.Hex {
 
 		protected int FormatHexInt64(StringBuilder dest, HexValueFormatterFlags flags, long? v) {
 			Debug.Assert(FormattedLength == 17);
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			var value = v.Value;
 			int spaces;
@@ -237,49 +237,49 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatDecimalUInt16(StringBuilder dest, HexValueFormatterFlags flags, ushort? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatDecimalUInt32(StringBuilder dest, HexValueFormatterFlags flags, uint? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatDecimalUInt64(StringBuilder dest, HexValueFormatterFlags flags, ulong? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatDecimalSByte(StringBuilder dest, HexValueFormatterFlags flags, sbyte? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatDecimalInt16(StringBuilder dest, HexValueFormatterFlags flags, short? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatDecimalInt32(StringBuilder dest, HexValueFormatterFlags flags, int? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatDecimalInt64(StringBuilder dest, HexValueFormatterFlags flags, long? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			return WriteFormattedValue(dest, v.Value.ToString(culture));
 		}
 
 		protected int FormatSingle(StringBuilder dest, HexValueFormatterFlags flags, float? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			var value = v.Value;
 			if (float.IsNaN(value))
@@ -292,7 +292,7 @@ namespace dnSpy.Hex {
 		}
 
 		protected int FormatDouble(StringBuilder dest, HexValueFormatterFlags flags, double? v) {
-			if (v == null)
+			if (v is null)
 				return WriteInvalid(dest);
 			var value = v.Value;
 			if (double.IsNaN(value))

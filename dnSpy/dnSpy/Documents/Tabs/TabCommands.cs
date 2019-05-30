@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs {
 
 		internal static void OpenNewTabInternal(IDocumentTabService documentTabService, bool clone = true) {
 			var activeTab = documentTabService.ActiveTab;
-			if (activeTab == null)
+			if (activeTab is null)
 				return;
 			if (clone && !activeTab.Content.CanClone)
 				return;
@@ -70,21 +70,21 @@ namespace dnSpy.Documents.Tabs {
 		bool CanOpenNewTab => CanOpenNewTabInternal(documentTabService);
 		void OpenNewTab() => OpenNewTabInternal(documentTabService);
 
-		bool CanCloseActiveTab => documentTabService.TabGroupService.ActiveTabGroup != null && documentTabService.TabGroupService.ActiveTabGroup.CloseActiveTabCanExecute;
+		bool CanCloseActiveTab => !(documentTabService.TabGroupService.ActiveTabGroup is null) && documentTabService.TabGroupService.ActiveTabGroup.CloseActiveTabCanExecute;
 		void CloseActiveTab() {
-			if (documentTabService.TabGroupService.ActiveTabGroup != null)
+			if (!(documentTabService.TabGroupService.ActiveTabGroup is null))
 				documentTabService.TabGroupService.ActiveTabGroup.CloseActiveTab();
 		}
 
-		bool CanSelectNextTab => documentTabService.TabGroupService.ActiveTabGroup != null && documentTabService.TabGroupService.ActiveTabGroup.SelectNextTabCanExecute;
+		bool CanSelectNextTab => !(documentTabService.TabGroupService.ActiveTabGroup is null) && documentTabService.TabGroupService.ActiveTabGroup.SelectNextTabCanExecute;
 		void SelectNextTab() {
-			if (documentTabService.TabGroupService.ActiveTabGroup != null)
+			if (!(documentTabService.TabGroupService.ActiveTabGroup is null))
 				documentTabService.TabGroupService.ActiveTabGroup.SelectNextTab();
 		}
 
-		bool CanSelectPrevTab => documentTabService.TabGroupService.ActiveTabGroup != null && documentTabService.TabGroupService.ActiveTabGroup.SelectPreviousTabCanExecute;
+		bool CanSelectPrevTab => !(documentTabService.TabGroupService.ActiveTabGroup is null) && documentTabService.TabGroupService.ActiveTabGroup.SelectPreviousTabCanExecute;
 		void SelectPrevTab() {
-			if (documentTabService.TabGroupService.ActiveTabGroup != null)
+			if (!(documentTabService.TabGroupService.ActiveTabGroup is null))
 				documentTabService.TabGroupService.ActiveTabGroup.SelectPreviousTab();
 		}
 	}
@@ -113,7 +113,7 @@ namespace dnSpy.Documents.Tabs {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID))
 				return null;
 			var tabGroup = context.Find<ITabGroup>();
-			if (tabGroup == null || !documentTabService.Owns(tabGroup))
+			if (tabGroup is null || !documentTabService.Owns(tabGroup))
 				return null;
 			return new TabGroupContext(tabGroup);
 		}
@@ -148,7 +148,7 @@ namespace dnSpy.Documents.Tabs {
 			: base(documentTabService) {
 		}
 
-		public override bool IsVisible(TabGroupContext context) => context.TabGroup.ActiveTabContent != null;
+		public override bool IsVisible(TabGroupContext context) => !(context.TabGroup.ActiveTabContent is null);
 		public override bool IsEnabled(TabGroupContext context) => context.TabGroup.CloseAllButActiveTabCanExecute;
 		public override void Execute(TabGroupContext context) => context.TabGroup.CloseAllButActiveTab();
 	}
@@ -326,18 +326,18 @@ namespace dnSpy.Documents.Tabs {
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var @ref = GetReference(context, out var documentViewer);
-			if (@ref != null)
+			if (!(@ref is null))
 				documentViewer!.DocumentTab.FollowReferenceNewTab(@ref);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => GetReference(context, out var documentViewer) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetReference(context, out var documentViewer) is null);
 
 		static object? GetReference(IMenuItemContext context, out IDocumentViewer? documentViewer) {
 			documentViewer = null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			documentViewer = context.Find<IDocumentViewer>();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			return context.Find<TextReference>();
 		}
@@ -390,7 +390,7 @@ namespace dnSpy.Documents.Tabs {
 			: base(documentTabService) {
 		}
 
-		public override bool IsVisible(MenuTabGroupContext context) => context.TabGroup != null && context.TabGroup.CloseActiveTabCanExecute;
+		public override bool IsVisible(MenuTabGroupContext context) => !(context.TabGroup is null) && context.TabGroup.CloseActiveTabCanExecute;
 		public override void Execute(MenuTabGroupContext context) => context.TabGroup?.CloseActiveTab();
 	}
 
@@ -603,8 +603,8 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static string GetShortMenuItemHeader(string s) {
-			Debug.Assert(s != null);
-			if (s == null)
+			Debug.Assert(!(s is null));
+			if (s is null)
 				s = string.Empty;
 			const int MAX_LEN = 40;
 			if (s.Length > MAX_LEN)
@@ -632,7 +632,7 @@ namespace dnSpy.Documents.Tabs {
 
 			// The original tab group gets back its keyboard focus by ShowDialog(). Make sure that
 			// the correct tab is activated.
-			if (vm.LastActivated != null)
+			if (!(vm.LastActivated is null))
 				vm.LastActivated.Tab.DocumentTabService.SetFocus(vm.LastActivated.Tab);
 		}
 	}

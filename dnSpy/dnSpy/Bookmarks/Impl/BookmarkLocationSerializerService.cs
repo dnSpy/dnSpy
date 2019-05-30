@@ -48,15 +48,15 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override void Serialize(ISettingsSection section, BookmarkLocation location) {
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 
 			var bmType = location.Type;
 			var serializer = TryGetSerializer(bmType);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return;
 
 			section.Attribute("__BMT", bmType);
@@ -64,16 +64,16 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override BookmarkLocation? Deserialize(ISettingsSection? section) {
-			if (section == null)
+			if (section is null)
 				return null;
 
 			var typeFullName = section.Attribute<string>("__BMT");
-			Debug.Assert(typeFullName != null);
-			if (typeFullName == null)
+			Debug.Assert(!(typeFullName is null));
+			if (typeFullName is null)
 				return null;
 			var serializer = TryGetSerializer(typeFullName);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return null;
 
 			return serializer.Value.Deserialize(section);

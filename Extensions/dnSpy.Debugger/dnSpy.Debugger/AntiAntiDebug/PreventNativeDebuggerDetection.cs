@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 					catch (DbgHookException ex) {
 						errorMessage = ex.Message ?? "???";
 					}
-					if (errorMessage != null)
+					if (!(errorMessage is null))
 						errors.Add($"{lz.Metadata.Dll}!{lz.Metadata.Function}: {errorMessage}");
 				}
 

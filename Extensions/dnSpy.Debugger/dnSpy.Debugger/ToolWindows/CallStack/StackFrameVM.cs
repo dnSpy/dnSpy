@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					breakpointKindInitd = true;
 					breakpointKind = GetBreakpointKind();
 				}
-				if (breakpointKind == null)
+				if (breakpointKind is null)
 					return ImageReference.None;
 				return BreakpointImageUtilities.GetImage(breakpointKind.Value);
 			}
@@ -157,12 +157,12 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		protected override ClassifiedTextCollection CreateName() {
-			Debug.Assert(language != null);
-			if (language != null && !frame.IsClosed) {
+			Debug.Assert(!(language is null));
+			if (!(language is null) && !frame.IsClosed) {
 				const CultureInfo? cultureInfo = null;
 				CancellationToken cancellationToken = default;
 
-				if (evaluationContext == null)
+				if (evaluationContext is null)
 					evaluationContext = language.CreateContext(frame, options: DbgEvaluationContextOptions.NoMethodBody, cancellationToken: cancellationToken);
 				var evalInfo = new DbgEvaluationInfo(evaluationContext, frame, cancellationToken);
 				language.Formatter.FormatFrame(evalInfo, Context.ClassifiedTextWriter, Context.StackFrameFormatterOptions, Context.ValueFormatterOptions, cultureInfo);

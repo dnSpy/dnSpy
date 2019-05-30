@@ -88,7 +88,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 		}
 
 		public override string? IsValidExpression(string expr) {
-			if (expr == null)
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
 			lock (lockObj) {
 				if (toCompiledExpr.TryGetValue(expr, out var compiledExpr))
@@ -98,14 +98,14 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 		}
 
 		public override DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider) {
-			if (expr == null)
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (variableProvider == null)
+			if (variableProvider is null)
 				throw new ArgumentNullException(nameof(variableProvider));
 			var compiledExpr = GetOrCompile(expr);
-			if (compiledExpr.CompilationError != null)
+			if (!(compiledExpr.CompilationError is null))
 				return new DbgFilterExpressionEvaluatorResult(compiledExpr.CompilationError);
-			if (compiledExpr.RuntimeError != null)
+			if (!(compiledExpr.RuntimeError is null))
 				return new DbgFilterExpressionEvaluatorResult(compiledExpr.RuntimeError);
 
 			bool evalResult;
@@ -163,13 +163,13 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 
 		CompiledExpr CreateCompiledExpr(string expr) {
 			var compRes = Compile(expr);
-			if (compRes.error != null)
+			if (!(compRes.error is null))
 				return new CompiledExpr(compRes.error);
 
 			try {
 				using (var delCreator = new EvalDelegateCreator(compRes.assembly!, FilterExpressionClassName, EvalMethodName)) {
 					var del = delCreator.CreateDelegate();
-					if (del != null)
+					if (!(del is null))
 						return new CompiledExpr(del);
 				}
 			}

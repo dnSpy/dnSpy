@@ -61,7 +61,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			applicableToSpan = null;
 
 			var qiSession = QuickInfoSession.TryGetSession(session);
-			if (qiSession == null) {
+			if (qiSession is null) {
 				// Mouse hovered over something and the default quick info controller created
 				// a quick info session.
 
@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 				session.Properties.AddProperty(hasTriggeredQuickInfoKey, null);
 
 				var point = session.GetTriggerPoint(session.TextView.TextSnapshot);
-				if (point != null)
+				if (!(point is null))
 					quickInfoTriggerServiceProvider.Create(session.TextView).TryTrigger(point.Value, session.TrackMouse);
 				return;
 			}
@@ -81,8 +81,8 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			quickInfoTriggerServiceProvider.CloseOtherSessions(session);
 
 			var item = qiSession.Item;
-			Debug.Assert(item != null);
-			if (item == null)
+			Debug.Assert(!(item is null));
+			if (item is null)
 				return;
 			var info = qiSession.State;
 

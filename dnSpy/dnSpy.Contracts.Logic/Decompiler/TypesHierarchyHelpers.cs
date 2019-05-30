@@ -24,17 +24,17 @@ using dnlib.DotNet;
 namespace dnSpy.Contracts.Decompiler {
 	public static class TypesHierarchyHelpers {
 		public static bool IsBaseType(TypeDef? baseType, TypeDef? derivedType, bool resolveTypeArguments) {
-			if (baseType == null || derivedType == null)
+			if (baseType is null || derivedType is null)
 				return false;
 			if (resolveTypeArguments)
 				return BaseTypes(derivedType).Any(t => t.Resolve() == baseType);
 			else {
 				var comparableBaseType = baseType.ResolveTypeDef();
-				if (comparableBaseType == null)
+				if (comparableBaseType is null)
 					return false;
-				while (derivedType.BaseType != null) {
+				while (!(derivedType.BaseType is null)) {
 					var resolvedBaseType = derivedType.BaseType.Resolve();
-					if (resolvedBaseType == null)
+					if (resolvedBaseType is null)
 						return false;
 					if (comparableBaseType == resolvedBaseType)
 						return true;
@@ -52,9 +52,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns>true if <paramref name="childMethod"/> hides or overrides <paramref name="parentMethod"/>,
 		/// otherwise false.</returns>
 		public static bool IsBaseMethod(MethodDef? parentMethod, MethodDef? childMethod) {
-			if (parentMethod == null)
+			if (parentMethod is null)
 				return false;
-			if (childMethod == null)
+			if (childMethod is null)
 				return false;
 
 			if (parentMethod.Name != childMethod.Name)
@@ -77,9 +77,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns>true if the <paramref name="childProperty"/> hides or overrides <paramref name="parentProperty"/>,
 		/// otherwise false.</returns>
 		public static bool IsBaseProperty(PropertyDef? parentProperty, PropertyDef? childProperty) {
-			if (parentProperty == null)
+			if (parentProperty is null)
 				return false;
-			if (childProperty == null)
+			if (childProperty is null)
 				return false;
 
 			if (parentProperty.Name != childProperty.Name)
@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		public static bool IsBaseEvent(EventDef? parentEvent, EventDef childEvent) {
-			if (parentEvent == null || parentEvent.Name != childEvent.Name)
+			if (parentEvent is null || parentEvent.Name != childEvent.Name)
 				return false;
 
 			return FindBaseEvents(childEvent).Any(m => m == parentEvent);
@@ -107,12 +107,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="method">The method which overrides or hides methods from base types.</param>
 		/// <returns>Methods overriden or hidden by the specified method.</returns>
 		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method) {
-			if (method == null)
+			if (method is null)
 				yield break;
 
 			foreach (var baseType in BaseTypes(method.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
-				if (baseTypeDef == null)
+				if (baseTypeDef is null)
 					continue;
 				foreach (var baseMethod in baseTypeDef.Methods) {
 					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, method.DeclaringType)) {
@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		private static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod) {
-			if (mCandidate == null || mCandidateSig == null || mMethod == null)
+			if (mCandidate is null || mCandidateSig is null || mMethod is null)
 				return false;
 
 			if (mCandidate.Name != mMethod.Name)
@@ -142,7 +142,7 @@ namespace dnSpy.Contracts.Decompiler {
 					return false;
 			}
 
-			if (mMethod.MethodSig == null || mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
+			if (mMethod.MethodSig is null || mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
 				return false;
 
 			if (mCandidate.Parameters.Count != mMethod.Parameters.Count)
@@ -165,11 +165,11 @@ namespace dnSpy.Contracts.Decompiler {
 
 		public static bool MatchInterfaceMethod(MethodDef candidate, MethodDef method, ITypeDefOrRef interfaceContextType) {
 			var genericInstSig = interfaceContextType.TryGetGenericInstSig();
-			if (genericInstSig != null) {
-				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate == null ? null : candidate.MethodSig, genericInstSig.GenericArguments, null), method);
+			if (!(genericInstSig is null)) {
+				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate is null ? null : candidate.MethodSig, genericInstSig.GenericArguments, null), method);
 			}
 			else {
-				return MatchMethod(candidate, candidate == null ? null : candidate.MethodSig, method);
+				return MatchMethod(candidate, candidate is null ? null : candidate.MethodSig, method);
 			}
 		}
 
@@ -179,18 +179,18 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="property">The property which overrides or hides properties from base types.</param>
 		/// <returns>Properties overriden or hidden by the specified property.</returns>
 		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef? property) {
-			if (property == null)
+			if (property is null)
 				yield break;
 
 			var accMeth = property.GetMethod ?? property.SetMethod;
-			if (accMeth != null && accMeth.HasOverrides)
+			if (!(accMeth is null) && accMeth.HasOverrides)
 				yield break;
 
 			bool isIndexer = property.IsIndexer();
 
 			foreach (var baseType in BaseTypes(property.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
-				if (baseTypeDef == null)
+				if (baseTypeDef is null)
 					continue;
 				foreach (var baseProperty in baseTypeDef.Properties) {
 					if (MatchProperty(baseProperty, Resolve(baseProperty.PropertySig, baseType), property)
@@ -199,7 +199,7 @@ namespace dnSpy.Contracts.Decompiler {
 							continue;
 						yield return baseProperty;
 						var anyPropertyAccessor = baseProperty.GetMethod ?? baseProperty.SetMethod;
-						if (anyPropertyAccessor != null && anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
+						if (!(anyPropertyAccessor is null) && anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
 							yield break;
 					}
 				}
@@ -207,37 +207,37 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		private static bool MatchProperty(PropertyDef? mCandidate, MethodBaseSig? mCandidateSig, PropertyDef? mProperty) {
-			if (mCandidate == null || mCandidateSig == null || mProperty == null)
+			if (mCandidate is null || mCandidateSig is null || mProperty is null)
 				return false;
 			if (mCandidate.Name != mProperty.Name)
 				return false;
 
 			var accMeth = mCandidate.GetMethod ?? mCandidate.SetMethod;
-			if (accMeth != null && accMeth.HasOverrides)
+			if (!(accMeth is null) && accMeth.HasOverrides)
 				return false;
 
-			if (mProperty.PropertySig == null || mCandidateSig.GenParamCount != mProperty.PropertySig.GenParamCount)
+			if (mProperty.PropertySig is null || mCandidateSig.GenParamCount != mProperty.PropertySig.GenParamCount)
 				return false;
 
 			return new SigComparer().Equals(mCandidateSig.Params, mProperty.PropertySig.Params);
 		}
 
 		public static IEnumerable<EventDef> FindBaseEvents(EventDef? eventDef) {
-			if (eventDef == null)
+			if (eventDef is null)
 				yield break;
 
 			var eventType = eventDef.EventType.ToTypeSig();
 
 			foreach (var baseType in BaseTypes(eventDef.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
-				if (baseTypeDef == null)
+				if (baseTypeDef is null)
 					continue;
 				foreach (var baseEvent in baseTypeDef.Events) {
 					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSig(), baseType), eventDef, eventType) &&
 						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
 						yield return baseEvent;
 						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
-						if (anyEventAccessor != null && anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
+						if (!(anyEventAccessor is null) && anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
 							yield break;
 					}
 				}
@@ -245,13 +245,13 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		private static bool MatchEvent(EventDef? mCandidate, TypeSig? mCandidateType, EventDef? mEvent, TypeSig? mEventType) {
-			if (mCandidate == null || mCandidateType == null || mEvent == null || mEventType == null)
+			if (mCandidate is null || mCandidateType is null || mEvent is null || mEventType is null)
 				return false;
 			if (mCandidate.Name != mEvent.Name)
 				return false;
 
 			var m = mCandidate.AddMethod ?? mCandidate.RemoveMethod;
-			if (m == null || m.HasOverrides)
+			if (m is null || m.HasOverrides)
 				return false;
 
 			if (!new SigComparer().Equals(mCandidateType, mEventType))
@@ -267,9 +267,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="derivedType">The derived type.</param>
 		/// <returns>true if the member is visible from derived type, othewise false.</returns>
 		public static bool IsVisibleFromDerived(IMemberDef? baseMember, TypeDef? derivedType) {
-			if (baseMember == null)
+			if (baseMember is null)
 				return false;
-			if (derivedType == null)
+			if (derivedType is null)
 				return false;
 
 			MethodAttributes attrs = GetAccessAttributes(baseMember) & MethodAttributes.MemberAccessMask;
@@ -283,14 +283,14 @@ namespace dnSpy.Contracts.Decompiler {
 				var derivedTypeAsm = derivedType.Module.Assembly;
 				var asm = baseMember.DeclaringType.Module.Assembly;
 
-				if (derivedTypeAsm != null && asm != null && asm.HasCustomAttributes) {
+				if (!(derivedTypeAsm is null) && !(asm is null) && asm.HasCustomAttributes) {
 					foreach (var attribute in asm.CustomAttributes) {
 						if (!Compare(attribute.AttributeType, systemRuntimeCompilerServicesString, internalsVisibleToAttributeString))
 							continue;
 						if (attribute.ConstructorArguments.Count == 0)
 							continue;
 						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-						if (assemblyName == null)
+						if (assemblyName is null)
 							continue;
 						assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
 						if (assemblyName == derivedTypeAsm.Name)
@@ -307,7 +307,7 @@ namespace dnSpy.Contracts.Decompiler {
 		static readonly UTF8String internalsVisibleToAttributeString = new UTF8String("InternalsVisibleToAttribute");
 
 		static bool Compare(ITypeDefOrRef? type, UTF8String expNs, UTF8String expName) {
-			if (type == null)
+			if (type is null)
 				return false;
 
 			if (type is TypeRef tr)
@@ -327,12 +327,12 @@ namespace dnSpy.Contracts.Decompiler {
 
 			if (member is PropertyDef prop) {
 				var accMeth = prop.GetMethod ?? prop.SetMethod;
-				return accMeth == null ? 0 : accMeth.Attributes;
+				return accMeth is null ? 0 : accMeth.Attributes;
 			}
 
 			if (member is EventDef evnt) {
 				var m = evnt.AddMethod ?? evnt.RemoveMethod;
-				return m == null ? 0 : m.Attributes;
+				return m is null ? 0 : m.Attributes;
 			}
 
 			if (member is TypeDef nestedType) {
@@ -347,23 +347,23 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		private static IEnumerable<TypeSig> BaseTypes(TypeDef typeDef) {
-			if (typeDef == null)
+			if (typeDef is null)
 				yield break;
-			if (typeDef.BaseType == null)
+			if (typeDef.BaseType is null)
 				yield break;
 
 			TypeSig? baseType = typeDef.ToTypeSig();
 			do {
 				var genericArgs = baseType is GenericInstSig ? ((GenericInstSig)baseType).GenericArguments : null;
 				baseType = GenericArgumentResolver.Resolve(typeDef.BaseType.ToTypeSig(), genericArgs, null);
-				if (baseType == null)
+				if (baseType is null)
 					yield break;
 				yield return baseType;
 
 				typeDef = typeDef.BaseType.ResolveTypeDef();
-				if (typeDef == null)
+				if (typeDef is null)
 					break;
-			} while (typeDef.BaseType != null);
+			} while (!(typeDef.BaseType is null));
 		}
 
 		private static TypeSig? Resolve(TypeSig? type, TypeSig? typeContext) {

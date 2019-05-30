@@ -99,10 +99,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 		string VerifyInstruction(ListVM<InstructionVM> list) {
 			var item = list.SelectedItem;
 			var instr = item as InstructionVM;
-			if (item != null && instr == null)
+			if (!(item is null) && instr is null)
 				return dnSpy_AsmEditor_Resources.Error_OnlyInstrsCanBeSelected;
 
-			if (instr != null && instr.Index == -1)
+			if (!(instr is null) && instr.Index == -1)
 				return dnSpy_AsmEditor_Resources.Error_InstrHasBeenRemoved;
 
 			return string.Empty;
@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void EditCatchType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 
 			var newType = typeSigCreator.Create(typeSigCreatorOptions, CatchType.ToTypeSig(), out bool canceled);
@@ -143,8 +143,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static InstructionVM? RemoveNullInstance(InstructionVM? vm) {
-			Debug.Assert(vm != null);
-			if (vm == null || vm == InstructionVM.Null)
+			Debug.Assert(!(vm is null));
+			if (vm is null || vm == InstructionVM.Null)
 				return null;
 			return vm;
 		}

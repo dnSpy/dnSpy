@@ -42,20 +42,20 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
 			var fileNode = context.Owner.Data as DsDocumentNode;
-			Debug.Assert(fileNode != null);
-			if (fileNode == null)
+			Debug.Assert(!(fileNode is null));
+			if (fileNode is null)
 				yield break;
 
 			bool hasPENode = HasPENode(fileNode);
 			var peImage = fileNode.Document.PEImage;
-			Debug.Assert(!hasPENode || peImage != null);
-			if (hasPENode && peImage != null) {
+			Debug.Assert(!hasPENode || !(peImage is null));
+			if (hasPENode && !(peImage is null)) {
 				Func<HexBufferFile> createBufferFile = () => {
 					var buffer = hexBufferService.Value.GetOrCreate(peImage);
 					var service = hexBufferFileServiceFactory.Value.Create(buffer);
 					var pePosition = HexPosition.Zero;
 					var bufferFile = service.GetFile(pePosition, checkNestedFiles: false);
-					Debug.Assert(bufferFile != null, "File hasn't been created");
+					Debug.Assert(!(bufferFile is null), "File hasn't been created");
 					return bufferFile;
 				};
 				yield return new PENode(createBufferFile, peStructureProviderFactory.Value);
@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public static bool HasPENode(DsDocumentNode node) {
-			if (node == null)
+			if (node is null)
 				return false;
 
 			var peImage = node.Document.PEImage;
@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			// RVA/FileOffset won't work and the wrong data will be displayed, eg. in the .NET
 			// storage stream nodes.
 			bool loadedFromFile = node.Document.Key is FilenameKey;
-			return loadedFromFile && peImage != null;
+			return loadedFromFile && !(peImage is null);
 		}
 	}
 

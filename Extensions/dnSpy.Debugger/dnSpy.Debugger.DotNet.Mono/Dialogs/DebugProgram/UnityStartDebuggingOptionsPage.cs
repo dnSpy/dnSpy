@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var usdOptions = options as UnityStartDebuggingOptions;
-			if (usdOptions == null)
+			if (usdOptions is null)
 				return;
 			Initialize(usdOptions);
 		}

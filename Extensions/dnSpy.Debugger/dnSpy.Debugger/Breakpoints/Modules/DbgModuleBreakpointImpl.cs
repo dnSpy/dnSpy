@@ -125,11 +125,11 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			lock (lockObj) {
 				if (!settings.IsEnabled)
 					return false;
-				if (settings.IsDynamic != null && settings.IsDynamic.Value != module.IsDynamic)
+				if (!(settings.IsDynamic is null) && settings.IsDynamic.Value != module.IsDynamic)
 					return false;
-				if (settings.IsInMemory != null && settings.IsInMemory.Value != module.IsInMemory)
+				if (!(settings.IsInMemory is null) && settings.IsInMemory.Value != module.IsInMemory)
 					return false;
-				if (settings.Order != null && settings.Order.Value != module.Order)
+				if (!(settings.Order is null) && settings.Order.Value != module.Order)
 					return false;
 				if (!WildcardsMatch(settings.ModuleName, module.ModuleName, ref moduleNameRegexWeakRef))
 					return false;

@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="publicKey">Public key or null</param>
 		public void SetPublicKey(byte[]? publicKey) {
 			this.publicKey = publicKey;
-			if (publicKey == null)
+			if (publicKey is null)
 				RawFlags &= ~DmdAssemblyNameFlags.PublicKey;
 			else
 				RawFlags |= DmdAssemblyNameFlags.PublicKey;
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public byte[]? GetPublicKeyToken() {
-			if (publicKeyToken == null && publicKey != null) {
+			if (publicKeyToken is null && !(publicKey is null)) {
 				try {
 					publicKeyToken = AssemblyHasher.CreatePublicKeyToken(publicKey);
 				}
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		internal static T[]? CloneArray<T>(T[]? array) {
-			if (array == null)
+			if (array is null)
 				return null;
 			var res = new T[array.Length];
 			Array.Copy(array, res, res.Length);
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="assemblyName">Assembly name</param>
 		public DmdAssemblyName(string assemblyName) {
-			if (assemblyName == null)
+			if (assemblyName is null)
 				throw new ArgumentNullException(nameof(assemblyName));
 			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out var name, out var version, out var cultureName, out var flags, out publicKey, out publicKeyToken, out var hashAlgorithm);
 			Name = name;
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Assembly name</param>
 		public DmdAssemblyName(IDmdAssemblyName name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			Name = name.Name;
 			Version = name.Version;

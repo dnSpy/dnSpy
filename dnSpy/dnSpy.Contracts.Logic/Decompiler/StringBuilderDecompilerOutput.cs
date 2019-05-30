@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="stringBuilder">String builder to use. Its <see cref="StringBuilder.Clear"/> method gets called by the constructor</param>
 		/// <param name="indenter">Indenter or null</param>
 		public StringBuilderDecompilerOutput(StringBuilder stringBuilder, Indenter? indenter = null) {
-			if (stringBuilder == null)
+			if (stringBuilder is null)
 				throw new ArgumentNullException(nameof(stringBuilder));
 			stringBuilder.Clear();
 			sb = stringBuilder;

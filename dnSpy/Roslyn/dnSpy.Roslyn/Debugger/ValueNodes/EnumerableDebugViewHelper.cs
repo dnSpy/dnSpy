@@ -83,8 +83,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var toArrayMethd = type.GetMethod(nameof(List<int>.ToArray), DmdSignatureCallingConvention.HasThis,
 					0, genArgs[0].MakeArrayType(), Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
 
-				Debug.Assert(((object?)ctor != null) == ((object?)toArrayMethd != null));
-				if ((object?)ctor == null || (object?)toArrayMethd == null)
+				Debug.Assert((!(ctor is null)) == (!(toArrayMethd is null)));
+				if (ctor is null || toArrayMethd is null)
 					return default;
 				return (ctor, toArrayMethd);
 			}
@@ -99,8 +99,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var toArrayMethd = type?.GetMethod(nameof(ArrayList.ToArray), DmdSignatureCallingConvention.HasThis,
 					0, appDomain.System_Object.MakeArrayType(), Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
 
-				Debug.Assert(((object?)ctor != null) == ((object?)toArrayMethd != null));
-				if ((object?)ctor == null || (object?)toArrayMethd == null)
+				Debug.Assert((!(ctor is null)) == (!(toArrayMethd is null)));
+				if (ctor is null || toArrayMethd is null)
 					return default;
 				return (ctor, toArrayMethd);
 			}

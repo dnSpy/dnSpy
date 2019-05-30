@@ -53,7 +53,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		readonly ColumnFormatter? columnFormatter;
 
 		public DbgDotNetValueNodeImpl(LanguageValueNodeFactory valueNodeFactory, DbgDotNetValueNodeProvider? childNodeProvider, DbgDotNetText name, DbgDotNetValueNodeInfo? nodeInfo, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType? expectedType, DmdType? actualType, string? errorMessage, DbgDotNetText valueText, ReadOnlyCollection<string>? formatSpecifiers, ColumnFormatter? columnFormatter) {
-			if (name.Parts == null && columnFormatter == null)
+			if (name.Parts is null && columnFormatter is null)
 				throw new ArgumentException();
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 			this.childNodeProvider = childNodeProvider;
@@ -77,13 +77,13 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override bool FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
 			if (columnFormatter?.FormatName(evalInfo, output, formatter, options, cultureInfo) == true)
 				return true;
-			if (Value == null)
+			if (Value is null)
 				return false;
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
 				return false;
 			var languageFormatter = formatter as LanguageFormatter;
-			Debug.Assert(languageFormatter != null);
-			if (languageFormatter == null)
+			Debug.Assert(!(languageFormatter is null));
+			if (languageFormatter is null)
 				return false;
 			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options, cultureInfo);
 			return displayAttrFormatter.FormatName(Value);
@@ -93,7 +93,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if (columnFormatter?.FormatValue(evalInfo, output, formatter, options, cultureInfo) == true)
 				return true;
 
-			if (valueText.Parts != null) {
+			if (!(valueText.Parts is null)) {
 				valueText.WriteTo(output);
 				return true;
 			}
@@ -109,13 +109,13 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			FormatDebuggerDisplayAttributeType(evalInfo, output, formatter, valueOptions, cultureInfo);
 
 		bool FormatDebuggerDisplayAttributeType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgDotNetFormatter formatter, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
-			if (Value == null)
+			if (Value is null)
 				return false;
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
 				return false;
 			var languageFormatter = formatter as LanguageFormatter;
-			Debug.Assert(languageFormatter != null);
-			if (languageFormatter == null)
+			Debug.Assert(!(languageFormatter is null));
+			if (languageFormatter is null)
 				return false;
 			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options, cultureInfo);
 			return displayAttrFormatter.FormatType(Value);
@@ -125,7 +125,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			childNodeProvider?.GetChildCount(evalInfo) ?? 0;
 
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
-			if (childNodeProvider == null)
+			if (childNodeProvider is null)
 				return Array.Empty<DbgDotNetValueNode>();
 			return childNodeProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options, formatSpecifiers);
 		}

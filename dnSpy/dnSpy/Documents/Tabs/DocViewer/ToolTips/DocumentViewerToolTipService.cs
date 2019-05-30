@@ -66,9 +66,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		DocumentViewerToolTipService? TryGetInstance() {
-			if (__documentViewerToolTipService == null) {
+			if (__documentViewerToolTipService is null) {
 				var docViewer = textView.TextBuffer.TryGetDocumentViewer();
-				if (docViewer != null)
+				if (!(docViewer is null))
 					__documentViewerToolTipService = documentViewerToolTipServiceProvider.GetService(docViewer);
 			}
 			return __documentViewerToolTipService;
@@ -77,7 +77,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var service = TryGetInstance();
-			if (service == null)
+			if (service is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -96,7 +96,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var service = TryGetInstance();
-			if (service == null)
+			if (service is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -152,7 +152,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		public IQuickInfoSource? TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var docViewer = textBuffer.TryGetDocumentViewer();
-			if (docViewer == null)
+			if (docViewer is null)
 				return null;
 			return new DocumentViewerToolTipServiceQuickInfoSource(documentViewerToolTipServiceProvider.GetService(docViewer));
 		}
@@ -199,10 +199,10 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				return;
 			var snapshot = session.TextView.TextSnapshot;
 			var point = session.GetTriggerPoint(snapshot);
-			if (point == null)
+			if (point is null)
 				return;
 			var spanData = GetReference(point.Value.Position, false);
-			if (spanData == null)
+			if (spanData is null)
 				return;
 			var info = spanData.Value;
 			Debug.Assert(info.Span.End <= snapshot.Length);
@@ -210,7 +210,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				return;
 
 			var toolTipContent = CreateToolTipContent(GetDecompiler(), info.Data.Reference);
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				return;
 
 			quickInfoContent.Add(toolTipContent);
@@ -225,7 +225,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				return false;
 			var pos = caretPos.BufferPosition;
 			var spanData = GetReference(pos.Position, true);
-			if (spanData == null)
+			if (spanData is null)
 				return false;
 			var info = spanData.Value;
 			var snapshot = pos.Snapshot;
@@ -241,15 +241,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		IDecompiler GetDecompiler() => (documentViewer.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
 
 		object? CreateToolTipContent(IDecompiler decompiler, object @ref) {
-			if (decompiler == null)
+			if (decompiler is null)
 				return null;
-			if (@ref == null)
+			if (@ref is null)
 				return null;
 
 			var ctx = new ToolTipProviderContext(dotNetImageService, decompiler, codeToolTipSettings, documentViewer, classificationFormatMap, themeClassificationTypeService, classificationTypeRegistryService);
 			foreach (var provider in documentViewerToolTipProviders) {
 				var toolTipContent = provider.Value.Create(ctx, @ref);
-				if (toolTipContent != null)
+				if (!(toolTipContent is null))
 					return toolTipContent;
 			}
 

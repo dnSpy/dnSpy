@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void SetLineSeparatorCollection(LineSeparatorCollection coll) {
 			if (textView.IsClosed)
 				return;
-			if (coll == null)
+			if (coll is null)
 				coll = LineSeparatorCollection.Empty;
 			if (lineSeparatorCollection == coll)
 				return;

@@ -36,9 +36,9 @@ namespace dnSpy.Hex.Editor {
 		WpfHexViewMarginInfo[] margins;
 
 		public WpfHexViewContainerMargin(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, WpfHexViewHost wpfHexViewHost, string name, bool isHorizontal) {
-			if (wpfHexViewMarginProviderCollectionProvider == null)
+			if (wpfHexViewMarginProviderCollectionProvider is null)
 				throw new ArgumentNullException(nameof(wpfHexViewMarginProviderCollectionProvider));
-			if (wpfHexViewHost == null)
+			if (wpfHexViewHost is null)
 				throw new ArgumentNullException(nameof(wpfHexViewHost));
 			grid = new Grid();
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Editor {
 
 			foreach (var info in margins) {
 				var margin = info.Margin.GetHexViewMargin(marginName);
-				if (margin != null)
+				if (!(margin is null))
 					return margin;
 			}
 
