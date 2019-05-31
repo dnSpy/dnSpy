@@ -24,7 +24,7 @@
     <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <DnlibVersion>3.2.0</DnlibVersion>
-    <IcedVersion>1.2.0</IcedVersion>
+    <IcedVersion>1.3.0</IcedVersion>
     <MSBuildNuGetVersion>16.0.461</MSBuildNuGetVersion>
     <MSDiagRuntimeVersion>1.0.5</MSDiagRuntimeVersion>
     <MSRegistryVersion>4.5.0</MSRegistryVersion>
