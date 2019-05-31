@@ -24,9 +24,9 @@
     <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
 
     <!-- Update app.config whenever this value changes -->
-    <DnSpyAssemblyVersion>6.0.4.0</DnSpyAssemblyVersion>
+    <DnSpyAssemblyVersion>6.0.5.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
-    <DnSpyAssemblyInformationalVersion>v6.0.4</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyInformationalVersion>v6.0.5</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2019 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
     <NoWarn>NU1701</NoWarn>
@@ -34,7 +34,7 @@
     <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <DnlibVersion>3.2.0</DnlibVersion>
-    <IcedVersion>1.2.0</IcedVersion>
+    <IcedVersion>1.3.0</IcedVersion>
     <MSBuildNuGetVersion>16.0.461</MSBuildNuGetVersion>
     <MSDiagRuntimeVersion>1.0.5</MSDiagRuntimeVersion>
     <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>

@@ -1359,7 +1359,7 @@
     <value>_8 байтів</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
-    <value>_Розтягнути по ширині</value>
+    <value>_Розтягнути по Ширині</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
     <value>_Базове Зміщення</value>
@@ -1582,7 +1582,7 @@
     <value>Довжина</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
-    <value>Перейти до метаданих</value>
+    <value>Перейти до Метаданих</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
     <value>_Токен</value>
@@ -1621,7 +1621,7 @@
     <value>Вибрати файл</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>Вибрати вкладений файл</value>
+    <value>Вибрати Вкладений Файл</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
     <value>Вибрати спеціальне</value>
@@ -1708,7 +1708,7 @@
     <value>Назва</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>Ні одна закладка не співпадає із фільтром.</value>
+    <value>Жодна закладка не співпадає з фільтром.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
     <value>Пошук</value>
@@ -1717,7 +1717,7 @@
     <value>За_кладки</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>Вікно _закладок</value>
+    <value>Вікно _Закладок</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
     <value>Експортувати всі закладки, що відповідають поточним умовам пошуку</value>
@@ -1744,7 +1744,7 @@
     <value>Перемістити курсор до попередньої закладки.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Імпортувати закладки із файла</value>
+    <value>Імпортувати закладки із файлу</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
     <value>Видалити закладку</value>
@@ -1777,7 +1777,7 @@
     <value>Ctrl+{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Вимкнути закладку</value>
+    <value>Вимкнути Закладку</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
     <value>Редагувати Мітки</value>
