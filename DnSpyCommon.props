@@ -42,7 +42,7 @@
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
     <RoslynVersion>2.10.0</RoslynVersion>
-    <SCCompositionVersion>4.6.0-preview3.19128.7</SCCompositionVersion>
+    <SCCompositionVersion>4.6.0-preview5.19224.8</SCCompositionVersion>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />
