@@ -212,7 +212,9 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			foreach (var options in e.AttachProgramOptions) {
 				if (!dbgManager.CanDebugRuntime(options.ProcessId, options.RuntimeId))
 					continue;
-				var vm = new ProgramVM(processProvider, options, attachToProcessContext);
+				var vm = ProgramVM.Create(processProvider, options, attachToProcessContext);
+				if (vm is null)
+					continue;
 				realAllItems.Add(vm);
 				if (IsMatch(vm, filterText)) {
 					int index = GetInsertionIndex(vm, AllItems);

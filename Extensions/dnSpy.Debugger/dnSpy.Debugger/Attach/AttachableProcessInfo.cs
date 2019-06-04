@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Attach {
 			OperatingSystem = operatingSystem;
 		}
 
-		public static AttachableProcessInfo Create(ProcessProvider processProvider, AttachProgramOptions options) {
+		public static AttachableProcessInfo? Create(ProcessProvider processProvider, AttachProgramOptions options) {
 			if (processProvider is null)
 				throw new ArgumentNullException(nameof(processProvider));
 			if (options is null)
@@ -73,8 +73,10 @@ namespace dnSpy.Debugger.Attach {
 				architecture = architecture ?? info.arch;
 				operatingSystem = operatingSystem ?? info.operatingSystem;
 			}
-			Debug.Assert(!(architecture is null));
-			Debug.Assert(!(operatingSystem is null));
+			if (architecture is null)
+				return null;
+			if (operatingSystem is null)
+				return null;
 			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture ?? DbgArchitecture.X86, operatingSystem ?? DbgOperatingSystem.Windows);
 		}
 

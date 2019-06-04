@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.Attach {
 					throw new ArgumentNullException(nameof(options));
 				lock (lockObj) {
 					var info = AttachableProcessInfo.Create(processProvider, options);
-					if (IsMatch(info))
+					if (!(info is null) && IsMatch(info))
 						result.Add(new AttachableProcessImpl(dbgManager.Value, options, info));
 				}
 			}
