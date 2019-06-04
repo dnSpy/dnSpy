@@ -97,7 +97,7 @@ namespace dndbg.Engine {
 				c = GetCode(func);
 			}
 			else {
-				if ((object?)c.Function?.Module != module.CorModule)
+				if (!object.Equals(c.Function?.Module, module.CorModule))
 					return DnCodeBreakpointError.OtherError;
 			}
 			if (c is null)

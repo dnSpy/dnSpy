@@ -42,7 +42,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public bool IsManifestModule => (object?)Assembly?.ManifestModule == this;
+		public bool IsManifestModule => Equals(Assembly?.ManifestModule);
 
 		public bool HasAssemblyRow {
 			get {
