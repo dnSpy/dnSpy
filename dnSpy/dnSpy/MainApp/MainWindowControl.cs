@@ -315,9 +315,11 @@ namespace dnSpy.MainApp {
 
 			void ToolWindowGroupService_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) => mainWindowControl.TabGroupCollectionChanged(this);
 
+			const double DEFAULT_MIN_HEIGHT = 20;
+			const double DEFAULT_MIN_WIDTH = 20;
 			public StackedContentChildInfo GetSizeInfo() => new StackedContentChildInfo {
-				Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
-				Vertical = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
+				Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel), min: DEFAULT_MIN_WIDTH),
+				Vertical = new GridChildLength(new GridLength(Length, GridUnitType.Pixel), min: DEFAULT_MIN_HEIGHT),
 			};
 		}
 
