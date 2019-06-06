@@ -157,7 +157,7 @@
     <value>否(_N)</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>_OK</value>
+    <value>确定(_O)</value>
   </data>
   <data name="Button_Save" xml:space="preserve">
     <value>保存(_S)...</value>
@@ -166,13 +166,13 @@
     <value>是(_Y)</value>
   </data>
   <data name="CantConvertInputToType" xml:space="preserve">
-    <value>无法转换输入位所需类型：{0}</value>
+    <value>无法转换输入为所需类型：{0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
     <value>关闭除当前外的所有标签组</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>仅保留此标签页(_A)</value>
+    <value>除此之外全部关闭(_A)</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
     <value>关闭所有标签页(_L)</value>
@@ -190,7 +190,7 @@
     <value>Ctrl+C</value>
   </data>
   <data name="CopyMDTokenCommand" xml:space="preserve">
-    <value>复制MD标记(_C)</value>
+    <value>复制 MD 标记(_C)</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
     <value>无法启动浏览器</value>
@@ -238,7 +238,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="FullScreenCommand" xml:space="preserve">
-    <value>全屏(_U)</value>
+    <value>全屏显示(_U)</value>
   </data>
   <data name="FullScreenKey" xml:space="preserve">
     <value>Shift+Alt+Enter</value>
@@ -250,7 +250,7 @@
     <value>转到入口点(_E)</value>
   </data>
   <data name="GoToGlobalCctorCommand" xml:space="preserve">
-    <value>转到 &lt;模块&gt;.cctor (_R)</value>
+    <value>转到 &lt;模块&gt; .cctor(_R)</value>
   </data>
   <data name="GoToLine_EnterLineNum" xml:space="preserve">
     <value>输入行号</value>

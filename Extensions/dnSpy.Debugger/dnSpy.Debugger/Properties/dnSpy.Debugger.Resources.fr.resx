@@ -1522,4 +1522,7 @@ Voulez-vous vraiment étendre cet élément ?</value>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Chercher un processus</value>
   </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
 </root>

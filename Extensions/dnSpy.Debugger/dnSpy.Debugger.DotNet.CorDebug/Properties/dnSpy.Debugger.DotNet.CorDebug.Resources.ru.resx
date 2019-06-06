@@ -218,7 +218,7 @@
     <value>Естественный фрейм {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Переход домена приложения</value>
+    <value>Переход AppDomain</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
     <value>Инициализация Класса</value>

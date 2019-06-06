@@ -1771,7 +1771,7 @@
     <value>Перейменувати</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Перейти на закладку</value>
+    <value>Перейти на Закладку</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
@@ -1783,16 +1783,16 @@
     <value>Редагувати Мітки</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Увімкнути закладку</value>
+    <value>Увімкнути Закладку</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>_Експортувати обране...</value>
+    <value>_Експортувати Обране...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Видалити всі закладки</value>
+    <value>Видалити Усі Закладки</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Видалити закладку</value>
+    <value>Видалити Закладку</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>Вибр_ати усе</value>
@@ -1810,7 +1810,7 @@
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Показати оголошення типів</value>
+    <value>Показати Оголошення Типів</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>Показати ключові слова вбудованих типів</value>
@@ -1849,7 +1849,7 @@
     <value>Увімкнути _Усі закладки</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Увімкнути закладку</value>
+    <value>Увімкнути Закладку</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
     <value>Наступна _Закладка</value>
@@ -1885,7 +1885,7 @@
     <value>Перемикати закладку</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>Позначки</value>
+    <value>Мітки</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
     <value>Редагувати Мітки</value>

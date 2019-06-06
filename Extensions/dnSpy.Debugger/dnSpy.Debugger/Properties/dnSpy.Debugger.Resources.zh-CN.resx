@@ -175,13 +175,13 @@
     <value>地址</value>
   </data>
   <data name="Column_AppDomain" xml:space="preserve">
-    <value>AppDomain</value>
+    <value>程序域</value>
   </data>
   <data name="Column_DynamicModule" xml:space="preserve">
-    <value>Dynamic</value>
+    <value>动态</value>
   </data>
   <data name="Column_InMemoryModule" xml:space="preserve">
-    <value>InMemory</value>
+    <value>内存内</value>
   </data>
   <data name="Column_Module" xml:space="preserve">
     <value>模块</value>
@@ -967,7 +967,7 @@
     <value>去除断点</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
-    <value>编辑 AppDomain 名称</value>
+    <value>编辑程序域名称</value>
   </data>
   <data name="EditModuleNameCommand" xml:space="preserve">
     <value>编辑模块名称</value>
@@ -976,7 +976,7 @@
     <value>编辑模块加载顺序</value>
   </data>
   <data name="EditProcessNameCommand" xml:space="preserve">
-    <value>编辑过程名称</value>
+    <value>编辑进程名称</value>
   </data>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
     <value>去除所有断点</value>
@@ -1523,5 +1523,8 @@
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>搜索进程</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
   </data>
 </root>

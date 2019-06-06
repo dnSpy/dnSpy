@@ -124,7 +124,7 @@
     <value>追加类型</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>禁用 JIT编译优化(_D)</value>
+    <value>禁用 JIT 编译优化(_D)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
     <value>启用 JIT 编译跟踪(_J)</value>
@@ -148,7 +148,7 @@
     <value>.NET 版本(_V)</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>Hash算法(_H)</value>
+    <value>Hash 算法(_H)</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
     <value>名称(_N)</value>
@@ -235,7 +235,7 @@
     <value>创建常量</value>
   </data>
   <data name="CreateCustomAttribute" xml:space="preserve">
-    <value>创建自定义属性</value>
+    <value>创建自定义特性</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
     <value>创建事件(_C)...</value>
@@ -265,7 +265,7 @@
     <value>创建泛型参数约束</value>
   </data>
   <data name="CreateMethodOverride" xml:space="preserve">
-    <value>创建方法覆盖</value>
+    <value>创建方法重写</value>
   </data>
   <data name="CreateMethodSignature" xml:space="preserve">
     <value>创建方法签名</value>
@@ -280,7 +280,7 @@
     <value>创建返回类型</value>
   </data>
   <data name="CreateSecurityAttribute" xml:space="preserve">
-    <value>创建安全属性</value>
+    <value>创建安全特性</value>
   </data>
   <data name="CreateSecurityDeclaration" xml:space="preserve">
     <value>创建安全声明</value>
@@ -298,7 +298,7 @@
     <value>创建 {0} 类型签名</value>
   </data>
   <data name="Create_TypeSig" xml:space="preserve">
-    <value>创建 TypeSig</value>
+    <value>创建类型签名</value>
   </data>
   <data name="Create_TypeSigs" xml:space="preserve">
     <value>创建类型签名</value>
@@ -1013,10 +1013,10 @@
     <value>复制文件偏移</value>
   </data>
   <data name="CopyMetaDataToken" xml:space="preserve">
-    <value>复制MD标记(_D)</value>
+    <value>复制 MD 标记(_D)</value>
   </data>
   <data name="CopyMetaDataTokens" xml:space="preserve">
-    <value>复制MD标记(_M)</value>
+    <value>复制 MD 标记(_M)</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
     <value>复制 RVA</value>
@@ -1807,7 +1807,7 @@
     <value>保留堆偏移量</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>保留所有MD标记(_R)</value>
+    <value>保留所有 MD 标记(_R)</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
     <value>如果文件仍然被混淆，行ID可能需要被保留。</value>
@@ -2246,7 +2246,7 @@
     <value>找不到编辑的类型： {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>关闭过时的内存缓存模块(_C)</value>
+    <value>关闭过时的内存内模块(_C)</value>
   </data>
   <data name="CloseAllMissingFilesCommand" xml:space="preserve">
     <value>关闭所有已丢失的文件(_C)</value>

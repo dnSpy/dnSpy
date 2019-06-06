@@ -1524,4 +1524,7 @@ Biztosan ki akarja nyitni?</value>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Folyamat keresése</value>
   </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
 </root>
