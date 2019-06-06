@@ -381,7 +381,7 @@ namespace dnSpy.Decompiler.CSharp {
 					OutputWrite(Keyword_out, BoxedTextColor.Keyword);
 					WriteSpace();
 				}
-				else if (pd != null && (!pd.IsIn && !pd.IsOut && TypeFormatterUtils.IsReadOnlyParameter(pd))) {
+				else if (pd != null && (pd.IsIn && !pd.IsOut && TypeFormatterUtils.IsReadOnlyParameter(pd))) {
 					OutputWrite(Keyword_in, BoxedTextColor.Keyword);
 					WriteSpace();
 				}
