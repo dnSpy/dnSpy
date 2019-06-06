@@ -14,6 +14,7 @@
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
+    <SatelliteResourceLanguages>de;es;es-ES;fa;fr;hu;it;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
 
     <!-- Update app.config whenever this value changes -->
     <DnSpyAssemblyVersion>6.0.5.0</DnSpyAssemblyVersion>
