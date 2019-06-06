@@ -736,8 +736,17 @@ namespace dnSpy.Documents.TreeView {
 				return;
 
 			var origFilenames = filenames;
-			var existingFiles = new HashSet<string>(DocumentService.GetDocuments().Select(a => a.Filename ?? string.Empty), StringComparer.OrdinalIgnoreCase);
-			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
+			var documents = DocumentService.GetDocuments();
+			var toDoc = new Dictionary<string, IDsDocument>(StringComparer.OrdinalIgnoreCase);
+			foreach (var document in documents) {
+				var filename = document.Filename ?? string.Empty;
+				toDoc[filename] = document;
+			}
+			foreach (var filename in filenames) {
+				if (File.Exists(filename) && toDoc.TryGetValue(filename, out var doc))
+					doc.IsAutoLoaded = false;
+			}
+			filenames = filenames.Where(a => File.Exists(a) && !toDoc.ContainsKey(a)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(a => Path.GetFileNameWithoutExtension(a), StringComparer.CurrentCultureIgnoreCase).ToArray();
 			TreeNodeData newSelectedNode = null;
 
 			IWshRuntimeLibrary.WshShell ws = null;
@@ -794,10 +803,10 @@ namespace dnSpy.Documents.TreeView {
 				if (newSelectedNode == null)
 					newSelectedNode = node;
 
-				existingFiles.Add(document.Filename);
+				toDoc[document.Filename] = document;
 			}
 
-			if (filenames.Any() && !filenames.Any(f => existingFiles.Contains(f)))
+			if (filenames.Any() && !filenames.Any(f => toDoc.ContainsKey(f)))
 				MsgBox.Instance.Show(dnSpy_Resources.AssemblyExplorer_AllFilesFilteredOut);
 
 			if (newSelectedNode == null) {
