@@ -173,6 +173,11 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract bool FocusActiveProcess { get; set; }
 
 		/// <summary>
+		/// Give focus to the debugger when eg. a breakpoint is hit
+		/// </summary>
+		public abstract bool FocusDebuggerWhenProcessBreaks { get; set; }
+
+		/// <summary>
 		/// Show return values in Locals window
 		/// </summary>
 		public abstract bool ShowReturnValues { get; set; }

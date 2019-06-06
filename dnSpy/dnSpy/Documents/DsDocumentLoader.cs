@@ -65,6 +65,7 @@ namespace dnSpy.Documents {
 			if (!(document is null) && !hash.Contains(document)) {
 				loadedDocuments.Add(document);
 				hash.Add(document);
+				document.IsAutoLoaded = f.IsAutoLoaded;
 			}
 		}
 

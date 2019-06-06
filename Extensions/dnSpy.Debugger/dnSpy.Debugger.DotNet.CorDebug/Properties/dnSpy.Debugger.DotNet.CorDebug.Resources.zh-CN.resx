@@ -218,7 +218,7 @@
     <value>本机帧 {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Appdomain Transition</value>
+    <value>程序域转换</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
     <value>类初始化</value>

@@ -48,11 +48,11 @@ namespace dnSpy.Controls {
 		};
 
 		public static StackedContentChildInfo CreateVertical(GridLength length, double? min = null, double? max = null) => new StackedContentChildInfo {
-			Vertical = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
+			Vertical = new GridChildLength(length, min, max),
 		};
 
 		public static StackedContentChildInfo CreateHorizontal(GridLength length, double? min = null, double? max = null) => new StackedContentChildInfo {
-			Horizontal = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
+			Horizontal = new GridChildLength(length, min, max),
 		};
 	}
 

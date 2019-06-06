@@ -271,7 +271,7 @@
     <value>用户 GAC 路径。路径可以用 '{0}' 分隔或你可以使用 --user-gac's 选择</value>
   </data>
   <data name="CmdLineDescription_VSVersion" xml:space="preserve">
-    <value>Visual Studio 版本。如VS2005 ，2008 ，...，{0}</value>
+    <value>Visual Studio 版本，2005，2008，...，{0}</value>
   </data>
   <data name="CmdLineLanguage" xml:space="preserve">
     <value>语言</value>

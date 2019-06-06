@@ -1520,4 +1520,7 @@ Tem certeza que deseja expandi-la?</value>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Procurar processo</value>
   </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
 </root>

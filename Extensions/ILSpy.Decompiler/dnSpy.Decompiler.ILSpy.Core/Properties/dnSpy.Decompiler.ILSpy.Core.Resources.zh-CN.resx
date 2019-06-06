@@ -178,7 +178,7 @@
     <value>要显示的数组元素最大数量</value>
   </data>
   <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
-    <value>Máxima longitud de la cadena</value>
+    <value>最大字符串长度</value>
   </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>添加private标识符到类成员</value>

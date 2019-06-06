@@ -175,7 +175,7 @@
     <value>Адрес</value>
   </data>
   <data name="Column_AppDomain" xml:space="preserve">
-    <value>Домен приложения</value>
+    <value>AppDomain</value>
   </data>
   <data name="Column_DynamicModule" xml:space="preserve">
     <value>Дин. модуль</value>
@@ -327,10 +327,10 @@
 {0}</value>
   </data>
   <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
-    <value>Не могу вычислить пока дебаггер остановлен</value>
+    <value>Не могу вычислить пока отладчик остановлен</value>
   </data>
   <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
-    <value>Не могу вычислить пока появляется необработанное исключение</value>
+    <value>Не могу вычислить пока имеется необработанное исключение</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
     <value>Не могу запустить '{0}'
@@ -391,7 +391,7 @@
     <value>_Сохранить...</value>
   </data>
   <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
-    <value>Ошибка при сохранении данных в '{0}'
+    <value>Ошибка сохранения данных в '{0}'
 ОШИБКА: {1}</value>
   </data>
   <data name="Locals_Ask_TooManyItems" xml:space="preserve">
@@ -418,7 +418,7 @@
     <value>Копировать имя файла</value>
   </data>
   <data name="ModuleSaveModulesTitle" xml:space="preserve">
-    <value>Сохранить модули</value>
+    <value>Сохранение модулей</value>
   </data>
   <data name="ModuleSaveModuleTitle" xml:space="preserve">
     <value>Сохранение модуля</value>
@@ -769,7 +769,7 @@
     <value>Сообщения фильтрации _шагов</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>Сообщения о выходе _потока</value>
+    <value>Сообщения о завершении _потока</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
     <value>Сообщения MDA</value>
@@ -784,7 +784,7 @@
     <value>В {1} произошло необработанное исключение типа '{0}'</value>
   </data>
   <data name="DebugLogExitProcess" xml:space="preserve">
-    <value>Программа «{0}» завершилась с кодом {1} (0x{1:x}).</value>
+    <value>Программа '{0}' завершилась с кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
     <value>Поток 0x{0:x} завершился с кодом {1} (0x{1:x}).</value>
@@ -883,7 +883,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="DetachProcessCommand" xml:space="preserve">
-    <value>_Отсоединение Процесса</value>
+    <value>_Отсоединиться от процесса</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
     <value>Отсоединить, _когда отладка завершится</value>
@@ -1523,5 +1523,8 @@
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Поиск процесса</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
   </data>
 </root>

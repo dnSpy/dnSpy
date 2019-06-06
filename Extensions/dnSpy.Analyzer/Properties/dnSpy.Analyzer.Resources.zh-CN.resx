@@ -154,7 +154,7 @@
     <value>显示方法内的引用</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>显示方法内引用（新标签页）(_T)</value>
+    <value>显示方法内的引用（新标签页）(_T)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
     <value>转到引用（新标签页）(_B)</value>
