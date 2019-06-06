@@ -524,6 +524,25 @@ namespace dnSpy.Debugger.Settings {
 		}
 		bool focusActiveProcess = true;
 
+		public override bool FocusDebuggerWhenProcessBreaks {
+			get {
+				lock (lockObj)
+					return focusDebuggerWhenProcessBreaks;
+			}
+			set {
+				bool modified;
+				lock (lockObj) {
+					modified = focusDebuggerWhenProcessBreaks != value;
+					focusDebuggerWhenProcessBreaks = value;
+				}
+				if (modified) {
+					OnPropertyChanged(nameof(FocusDebuggerWhenProcessBreaks));
+					OnModified();
+				}
+			}
+		}
+		bool focusDebuggerWhenProcessBreaks = true;
+
 		public override bool ShowReturnValues {
 			get {
 				lock (lockObj)
@@ -705,6 +724,7 @@ namespace dnSpy.Debugger.Settings {
 			other.SuppressJITOptimization_SystemModules = SuppressJITOptimization_SystemModules;
 			other.SuppressJITOptimization_ProgramModules = SuppressJITOptimization_ProgramModules;
 			other.FocusActiveProcess = FocusActiveProcess;
+			other.FocusDebuggerWhenProcessBreaks = FocusDebuggerWhenProcessBreaks;
 			other.ShowReturnValues = ShowReturnValues;
 			other.RedirectGuiConsoleOutput = RedirectGuiConsoleOutput;
 			other.ShowOnlyPublicMembers = ShowOnlyPublicMembers;
@@ -756,6 +776,7 @@ namespace dnSpy.Debugger.Settings {
 			SuppressJITOptimization_SystemModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_SystemModules)) ?? SuppressJITOptimization_SystemModules;
 			SuppressJITOptimization_ProgramModules = sect.Attribute<bool?>(nameof(SuppressJITOptimization_ProgramModules)) ?? SuppressJITOptimization_ProgramModules;
 			FocusActiveProcess = sect.Attribute<bool?>(nameof(FocusActiveProcess)) ?? FocusActiveProcess;
+			FocusDebuggerWhenProcessBreaks = sect.Attribute<bool?>(nameof(FocusDebuggerWhenProcessBreaks)) ?? FocusDebuggerWhenProcessBreaks;
 			ShowReturnValues = sect.Attribute<bool?>(nameof(ShowReturnValues)) ?? ShowReturnValues;
 			RedirectGuiConsoleOutput = sect.Attribute<bool?>(nameof(RedirectGuiConsoleOutput)) ?? RedirectGuiConsoleOutput;
 			ShowOnlyPublicMembers = sect.Attribute<bool?>(nameof(ShowOnlyPublicMembers)) ?? ShowOnlyPublicMembers;
@@ -798,6 +819,7 @@ namespace dnSpy.Debugger.Settings {
 			sect.Attribute(nameof(SuppressJITOptimization_SystemModules), SuppressJITOptimization_SystemModules);
 			sect.Attribute(nameof(SuppressJITOptimization_ProgramModules), SuppressJITOptimization_ProgramModules);
 			sect.Attribute(nameof(FocusActiveProcess), FocusActiveProcess);
+			sect.Attribute(nameof(FocusDebuggerWhenProcessBreaks), FocusDebuggerWhenProcessBreaks);
 			sect.Attribute(nameof(ShowReturnValues), ShowReturnValues);
 			sect.Attribute(nameof(RedirectGuiConsoleOutput), RedirectGuiConsoleOutput);
 			sect.Attribute(nameof(ShowOnlyPublicMembers), ShowOnlyPublicMembers);

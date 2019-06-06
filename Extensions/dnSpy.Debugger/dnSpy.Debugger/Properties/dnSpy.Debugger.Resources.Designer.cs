@@ -19,7 +19,7 @@ namespace dnSpy.Debugger.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_Debugger_Resources {
@@ -1209,6 +1209,15 @@ namespace dnSpy.Debugger.Properties {
         public static string DbgSettings_FocusActiveProcess {
             get {
                 return ResourceManager.GetString("DbgSettings_FocusActiveProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bring dnSpy to the foreground when breaking in the debugger.
+        /// </summary>
+        public static string DbgSettings_FocusDebuggerWhenProcessBreaks {
+            get {
+                return ResourceManager.GetString("DbgSettings_FocusDebuggerWhenProcessBreaks", resourceCulture);
             }
         }
         

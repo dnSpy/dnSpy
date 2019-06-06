@@ -28,10 +28,12 @@ namespace dnSpy.Debugger.DbgUI {
 	abstract class CurrentStatementUpdater : IDbgManagerStartListener {
 		readonly DbgCallStackService dbgCallStackService;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
+		readonly Lazy<DebuggerSettings> debuggerSettings;
 
-		protected CurrentStatementUpdater(DbgCallStackService dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService) {
+		protected CurrentStatementUpdater(DbgCallStackService dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DebuggerSettings> debuggerSettings) {
 			this.dbgCallStackService = dbgCallStackService;
 			this.referenceNavigatorService = referenceNavigatorService;
+			this.debuggerSettings = debuggerSettings;
 		}
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.ProcessPaused += DbgManager_ProcessPaused;
@@ -45,7 +47,8 @@ namespace dnSpy.Debugger.DbgUI {
 				dbgCallStackService.ActiveFrameIndex = info.frameIndex;
 				referenceNavigatorService.Value.GoTo(info.location);
 			}
-			ActivateMainWindow();
+			if (debuggerSettings.Value.FocusDebuggerWhenProcessBreaks)
+				ActivateMainWindow();
 		}
 
 		(DbgCodeLocation location, int frameIndex) GetLocation() {

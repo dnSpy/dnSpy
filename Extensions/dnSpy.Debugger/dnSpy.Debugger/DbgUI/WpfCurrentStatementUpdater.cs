@@ -34,8 +34,8 @@ namespace dnSpy.Debugger.DbgUI {
 		readonly Lazy<IAppWindow> appWindow;
 
 		[ImportingConstructor]
-		WpfCurrentStatementUpdater(UIDispatcher uiDispatcher, Lazy<IAppWindow> appWindow, DbgCallStackService dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService)
-			: base(dbgCallStackService, referenceNavigatorService) {
+		WpfCurrentStatementUpdater(UIDispatcher uiDispatcher, Lazy<IAppWindow> appWindow, DbgCallStackService dbgCallStackService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DebuggerSettings> debuggerSettings)
+			: base(dbgCallStackService, referenceNavigatorService, debuggerSettings) {
 			this.uiDispatcher = uiDispatcher;
 			this.appWindow = appWindow;
 		}
