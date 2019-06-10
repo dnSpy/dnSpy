@@ -22,6 +22,9 @@
     <DnSpyAssemblyInformationalVersion>v6.0.5</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2019 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
+    <!-- AD0001: buggy Roslyn analyzer(s) crash, disable that warning -->
+    <NoWarn>AD0001</NoWarn>
+
     <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <DnlibVersion>3.2.0</DnlibVersion>
