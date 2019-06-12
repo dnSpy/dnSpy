@@ -325,7 +325,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 			var td = method.DeclaringType.ResolveTypeDef();
 			if (td != null) {
-				var s = TypeFormatterUtils.GetNumberOfOverloadsString(td, method.Name);
+				var s = TypeFormatterUtils.GetNumberOfOverloadsString(td, method);
 				if (s != null)
 					OutputWrite(s, BoxedTextColor.Text);
 			}
