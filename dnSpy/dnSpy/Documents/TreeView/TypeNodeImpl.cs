@@ -59,7 +59,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, TypeDef, GetShowToken(options));
+			new NodeFormatter().Write(output, decompiler, TypeDef, GetShowToken(options));
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
 			var res = filter.GetResult(TypeDef);

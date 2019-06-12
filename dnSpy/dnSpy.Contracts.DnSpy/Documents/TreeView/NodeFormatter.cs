@@ -26,9 +26,9 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Documents.TreeView {
 	/// <summary>
-	/// Node printer
+	/// Node formatter
 	/// </summary>
-	public readonly struct NodePrinter {
+	public readonly struct NodeFormatter {
 		static bool IsExe(ModuleDef mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
 		static bool IsExe(IPEImage peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 

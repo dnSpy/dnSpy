@@ -51,7 +51,7 @@ namespace dnSpy.Documents.TreeView {
 		List<TypeDef> typesToCreate;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().WriteNamespace(output, decompiler, Name);
+			new NodeFormatter().WriteNamespace(output, decompiler, Name);
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
 			var p = TreeNode.Parent;

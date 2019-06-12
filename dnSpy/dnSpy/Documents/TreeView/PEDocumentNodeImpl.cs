@@ -44,7 +44,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
-				new NodePrinter().Write(output, decompiler, Document);
+				new NodeFormatter().Write(output, decompiler, Document);
 			else {
 				output.Write(BoxedTextColor.Text, TargetFrameworkUtils.GetArchString(Document.PEImage.ImageNTHeaders.FileHeader.Machine));
 

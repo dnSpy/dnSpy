@@ -69,7 +69,7 @@ namespace dnSpy.Documents.TreeView {
 			if (td == null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
-				new NodePrinter().Write(output, decompiler, td, GetShowToken(options));
+				new NodeFormatter().Write(output, decompiler, td, GetShowToken(options));
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {

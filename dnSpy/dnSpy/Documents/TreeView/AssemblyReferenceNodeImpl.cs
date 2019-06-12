@@ -49,7 +49,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, AssemblyRef, GetShowToken(options));
+			new NodeFormatter().Write(output, decompiler, AssemblyRef, GetShowToken(options));
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			var document = Context.DocumentTreeView.DocumentService.Resolve(AssemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDsDotNetDocument;

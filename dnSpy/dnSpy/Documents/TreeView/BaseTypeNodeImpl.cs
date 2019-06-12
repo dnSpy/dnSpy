@@ -71,7 +71,7 @@ namespace dnSpy.Documents.TreeView {
 			if (tdr == null)
 				output.Write(BoxedTextColor.Error, "???");
 			else
-				new NodePrinter().Write(output, decompiler, tdr, GetShowToken(options));
+				new NodeFormatter().Write(output, decompiler, tdr, GetShowToken(options));
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {

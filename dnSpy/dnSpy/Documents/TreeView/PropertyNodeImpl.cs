@@ -37,7 +37,7 @@ namespace dnSpy.Documents.TreeView {
 			: base(property) => TreeNodeGroup = treeNodeGroup;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, PropertyDef, GetShowToken(options), null);
+			new NodeFormatter().Write(output, decompiler, PropertyDef, GetShowToken(options), null);
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			foreach (var m in PropertyDef.GetMethods)
