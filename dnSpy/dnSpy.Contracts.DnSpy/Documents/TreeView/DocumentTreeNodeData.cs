@@ -111,6 +111,15 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="output">Output</param>
 		/// <param name="decompiler">Decompiler</param>
 		/// <param name="options">Options</param>
+		public void Write(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+			WriteCore(output, decompiler, options);
+
+		/// <summary>
+		/// Writes the contents
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="decompiler">Decompiler</param>
+		/// <param name="options">Options</param>
 		protected abstract void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options);
 
 		/// <summary>

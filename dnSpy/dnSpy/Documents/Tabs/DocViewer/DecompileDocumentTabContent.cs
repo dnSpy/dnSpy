@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using dnSpy.Contracts.Decompiler;
@@ -30,10 +29,23 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Text.Classification;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
+	[Export(typeof(DecompilerTabContentContext))]
+	sealed class DecompilerTabContentContext {
+		public DecompilerTabContentTextElementProvider DecompilerTabContentTextElementProvider { get; }
+		public IDocumentTreeViewSettings DocumentTreeViewSettings { get; }
+
+		[ImportingConstructor]
+		DecompilerTabContentContext(DecompilerTabContentTextElementProvider decompilerTabContentTextElementProvider, IDocumentTreeViewSettings documentTreeViewSettings) {
+			DecompilerTabContentTextElementProvider = decompilerTabContentTextElementProvider;
+			DocumentTreeViewSettings = documentTreeViewSettings;
+		}
+	}
+
 	[Export, ExportDocumentTabContentFactory(Order = TabConstants.ORDER_DECOMPILEDOCUMENTTABCONTENTFACTORY)]
 	sealed class DecompileDocumentTabContentFactory : IDocumentTabContentFactory {
 		public IDsDocumentService DocumentService { get; }
@@ -44,9 +56,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public IContentTypeRegistryService ContentTypeRegistryService { get; }
 		public IDocumentViewerContentFactoryProvider DocumentViewerContentFactoryProvider { get; }
 		public IDocumentWriterService DocumentWriterService { get; }
+		readonly DecompilerTabContentContext decompilerTabContentContext;
 
 		[ImportingConstructor]
-		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IDocumentWriterService documentWriterService) {
+		DecompileDocumentTabContentFactory(IDsDocumentService documentService, IDocumentTreeNodeDecompiler documentTreeNodeDecompiler, IDecompilerService decompilerService, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService, IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider, IDocumentWriterService documentWriterService, DecompilerTabContentContext decompilerTabContentContext) {
 			DocumentService = documentService;
 			DocumentTreeNodeDecompiler = documentTreeNodeDecompiler;
 			DecompilerService = decompilerService;
@@ -55,13 +68,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			ContentTypeRegistryService = contentTypeRegistryService;
 			DocumentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			DocumentWriterService = documentWriterService;
+			this.decompilerTabContentContext = decompilerTabContentContext;
 		}
 
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) =>
-			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler);
+			new DecompileDocumentTabContent(this, context.Nodes, DecompilerService.Decompiler, decompilerTabContentContext);
 
 		public DecompileDocumentTabContent Create(DocumentTreeNodeData[] nodes) =>
-			new DecompileDocumentTabContent(this, nodes, DecompilerService.Decompiler);
+			new DecompileDocumentTabContent(this, nodes, DecompilerService.Decompiler, decompilerTabContentContext);
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
 
@@ -80,57 +94,69 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			var langGuid = section.Attribute<Guid?>("Language") ?? DecompilerConstants.LANGUAGE_CSHARP;
 			var language = DecompilerService.FindOrDefault(langGuid);
-			return new DecompileDocumentTabContent(this, context.Nodes, language);
+			return new DecompileDocumentTabContent(this, context.Nodes, language, decompilerTabContentContext);
 		}
 	}
 
 	sealed class DecompileDocumentTabContent : AsyncDocumentTabContent, IDecompilerTabContent {
 		readonly DecompileDocumentTabContentFactory decompileDocumentTabContentFactory;
 		readonly DocumentTreeNodeData[] nodes;
+		readonly DecompilerTabContentContext context;
 
 		public IDecompiler Decompiler { get; set; }
 
-		public DecompileDocumentTabContent(DecompileDocumentTabContentFactory decompileDocumentTabContentFactory, DocumentTreeNodeData[] nodes, IDecompiler decompiler) {
+		public DecompileDocumentTabContent(DecompileDocumentTabContentFactory decompileDocumentTabContentFactory, DocumentTreeNodeData[] nodes, IDecompiler decompiler, DecompilerTabContentContext context) {
 			this.decompileDocumentTabContentFactory = decompileDocumentTabContentFactory;
 			this.nodes = nodes;
 			Decompiler = decompiler;
+			this.context = context;
 		}
 
 		public override DocumentTabContent Clone() =>
-			new DecompileDocumentTabContent(decompileDocumentTabContentFactory, nodes, Decompiler);
+			new DecompileDocumentTabContent(decompileDocumentTabContentFactory, nodes, Decompiler, context);
 		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			(DocumentTabUIContext)locator.Get<IDocumentViewer>();
 
-		public override string Title => GetText(isToolTip: false);
+		public override string Title {
+			get {
+				var writer = new TextClassifierTextColorWriter();
+				WriteTo(writer, isToolTip: false);
+				return writer.ToString();
+			}
+		}
 
-		string GetText(bool isToolTip) {
-			if (nodes.Length == 0)
-				return dnSpy_Resources.EmptyTabTitle;
+		void WriteTo(ITextColorWriter writer, bool isToolTip) {
+			if (nodes.Length == 0) {
+				writer.Write(dnSpy_Resources.EmptyTabTitle);
+				return;
+			}
 			var options = DocumentNodeWriteOptions.Title;
 			if (isToolTip)
 				options |= DocumentNodeWriteOptions.ToolTip;
-			if (nodes.Length == 1)
-				return nodes[0].ToString(Decompiler, options);
-			var sb = new StringBuilder();
+			bool needSep = false;
 			foreach (var node in nodes) {
-				if (sb.Length > 0) {
+				if (needSep) {
 					if (isToolTip) {
-						sb.AppendLine();
-						sb.AppendLine();
+						writer.WriteLine();
+						writer.WriteLine();
 					}
 					else
-						sb.Append(", ");
+						writer.Write(", ");
 				}
-				sb.Append(node.ToString(Decompiler, options));
+				node.Write(writer, Decompiler, options);
+				needSep = true;
 			}
-			return sb.ToString();
 		}
 
 		public override object ToolTip {
 			get {
 				if (nodes.Length == 0)
 					return null;
-				return GetText(isToolTip: true);
+				var writer = new TextClassifierTextColorWriter();
+				WriteTo(writer, isToolTip: true);
+				var classifierContext = new DecompilerTabContentClassifierContext(writer.Text, isToolTip: false, colorize: context.DocumentTreeViewSettings.SyntaxHighlight, colors: writer.Colors);
+				var elem = context.DecompilerTabContentTextElementProvider.CreateTextElement(classifierContext, DecompilerTabContentContentTypes.ToolTip, TextElementFlags.None);
+				return elem;
 			}
 		}
 
