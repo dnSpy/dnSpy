@@ -71,5 +71,11 @@ namespace dnSpy.Contracts.Text.Classification {
 			colors.Clear();
 			sb.Clear();
 		}
+
+		/// <summary>
+		/// Gets all text
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() => Text;
 	}
 }

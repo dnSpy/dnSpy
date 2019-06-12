@@ -101,8 +101,9 @@ namespace dnSpy.Decompiler {
 			return s.Substring(index + 1);
 		}
 
-		public static string? GetNumberOfOverloadsString(TypeDef type, string name) {
-			int overloads = TypeFormatterUtils.GetNumberOfOverloads(type, name);
+		public static string? GetNumberOfOverloadsString(TypeDef type, IMethod method) {
+			string name = method.Name;
+			int overloads = TypeFormatterUtils.GetNumberOfOverloads(type, name, checkBaseTypes: !(name == ".ctor" || name == ".cctor"));
 			if (overloads == 1)
 				return $" (+ {dnSpy_Decompiler_Resources.ToolTip_OneMethodOverload})";
 			else if (overloads > 1)
@@ -110,15 +111,18 @@ namespace dnSpy.Decompiler {
 			return null;
 		}
 
-		static int GetNumberOfOverloads(TypeDef? type, string name) {
+		static int GetNumberOfOverloads(TypeDef? type, string name, bool checkBaseTypes) {
 			var hash = new HashSet<MethodDef>(MethodEqualityComparer.DontCompareDeclaringTypes);
 			while (!(type is null)) {
 				foreach (var m in type.Methods) {
 					if (m.Name == name)
 						hash.Add(m);
 				}
+				if (!checkBaseTypes)
+					break;
 				type = type.BaseType.ResolveTypeDef();
 			}
+			Debug.Assert(hash.Count >= 1);
 			return hash.Count - 1;
 		}
 
