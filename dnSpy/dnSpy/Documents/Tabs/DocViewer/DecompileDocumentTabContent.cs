@@ -113,8 +113,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return nodes[0].ToString(Decompiler, options);
 			var sb = new StringBuilder();
 			foreach (var node in nodes) {
-				if (sb.Length > 0)
-					sb.Append(", ");
+				if (sb.Length > 0) {
+					if (isToolTip) {
+						sb.AppendLine();
+						sb.AppendLine();
+					}
+					else
+						sb.Append(", ");
+				}
 				sb.Append(node.ToString(Decompiler, options));
 			}
 			return sb.ToString();
