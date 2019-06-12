@@ -35,8 +35,15 @@ namespace dnSpy.Documents.TreeView {
 		public FieldNodeImpl(ITreeNodeGroup treeNodeGroup, FieldDef field)
 			: base(field) => TreeNodeGroup = treeNodeGroup;
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, FieldDef, GetShowToken(options));
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				WriteMemberRef(output, decompiler, FieldDef);
+				output.WriteLine();
+				WriteFilename(output);
+			}
+			else
+				new NodeFormatter().Write(output, decompiler, FieldDef, GetShowToken(options));
+		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
 			var res = filter.GetResult(FieldDef);

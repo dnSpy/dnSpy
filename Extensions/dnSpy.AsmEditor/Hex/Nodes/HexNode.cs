@@ -62,7 +62,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) => WriteCore(output, options);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			WriteCore(output, options);
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				output.WriteLine();
+				WriteFilename(output);
+			}
+		}
+
 		protected abstract void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options);
 
 		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {

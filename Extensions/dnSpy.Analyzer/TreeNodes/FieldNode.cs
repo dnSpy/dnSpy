@@ -37,7 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			decompiler.WriteType(output, analyzedField.DeclaringType, true);
 			output.Write(BoxedTextColor.Operator, ".");
-			new NodePrinter().Write(output, decompiler, analyzedField, Context.ShowToken);
+			new NodeFormatter().Write(output, decompiler, analyzedField, Context.ShowToken);
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {

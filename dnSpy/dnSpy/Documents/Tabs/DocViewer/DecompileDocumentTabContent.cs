@@ -102,28 +102,30 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
 			(DocumentTabUIContext)locator.Get<IDocumentViewer>();
 
-		public override string Title {
-			get {
-				if (nodes.Length == 0)
-					return dnSpy_Resources.EmptyTabTitle;
-				var options = DocumentNodeWriteOptions.Title;
-				if (nodes.Length == 1)
-					return nodes[0].ToString(Decompiler, options);
-				var sb = new StringBuilder();
-				foreach (var node in nodes) {
-					if (sb.Length > 0)
-						sb.Append(", ");
-					sb.Append(node.ToString(Decompiler, options));
-				}
-				return sb.ToString();
+		public override string Title => GetText(isToolTip: false);
+
+		string GetText(bool isToolTip) {
+			if (nodes.Length == 0)
+				return dnSpy_Resources.EmptyTabTitle;
+			var options = DocumentNodeWriteOptions.Title;
+			if (isToolTip)
+				options |= DocumentNodeWriteOptions.ToolTip;
+			if (nodes.Length == 1)
+				return nodes[0].ToString(Decompiler, options);
+			var sb = new StringBuilder();
+			foreach (var node in nodes) {
+				if (sb.Length > 0)
+					sb.Append(", ");
+				sb.Append(node.ToString(Decompiler, options));
 			}
+			return sb.ToString();
 		}
 
 		public override object? ToolTip {
 			get {
 				if (nodes.Length == 0)
 					return null;
-				return Title;
+				return GetText(isToolTip: true);
 			}
 		}
 

@@ -63,8 +63,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return hexNode; }
 		}
 
-		public override string Title => hexNode.ToString();
-		public override object? ToolTip => hexNode.ToString();
+		public override string Title => hexNode.ToString(DocumentNodeWriteOptions.Title);
+		public override object? ToolTip => hexNode.ToString(DocumentNodeWriteOptions.Title | DocumentNodeWriteOptions.ToolTip);
 
 		readonly HexNode hexNode;
 

@@ -50,8 +50,8 @@ namespace Example2.Extension {
 			get { yield return node; }
 		}
 
-		public override string Title => node.ToString();
-		public override object? ToolTip => node.ToString();
+		public override string Title => node.ToString(DocumentNodeWriteOptions.Title);
+		public override object? ToolTip => node.ToString(DocumentNodeWriteOptions.Title | DocumentNodeWriteOptions.ToolTip);
 
 		readonly AssemblyChildNode node;
 

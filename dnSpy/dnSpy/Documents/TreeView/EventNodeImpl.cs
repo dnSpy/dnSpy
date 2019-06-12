@@ -36,8 +36,15 @@ namespace dnSpy.Documents.TreeView {
 		public EventNodeImpl(ITreeNodeGroup treeNodeGroup, EventDef @event)
 			: base(@event) => TreeNodeGroup = treeNodeGroup;
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, EventDef, GetShowToken(options));
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				WriteMemberRef(output, decompiler, EventDef);
+				output.WriteLine();
+				WriteFilename(output);
+			}
+			else
+				new NodeFormatter().Write(output, decompiler, EventDef, GetShowToken(options));
+		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!(EventDef.AddMethod is null))

@@ -148,8 +148,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			return null;
 		}
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Text, dnSpy_AsmEditor_Resources.HexNode_PE);
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				output.WriteLine();
+				WriteFilename(output);
+			}
+		}
+
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override ITreeNodeGroup? TreeNodeGroup => PETreeNodeGroup.Instance;

@@ -41,6 +41,6 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, Document);
+			new NodeFormatter().Write(output, decompiler, Document);
 	}
 }

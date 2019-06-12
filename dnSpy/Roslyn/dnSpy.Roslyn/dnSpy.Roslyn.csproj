@@ -12,7 +12,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NullableContextOptions>enable</NullableContextOptions>
-    <CodeAnalysisRuleSet>..\..\..\DisableBuggyRoslynAnalyzerThatPreventsCompilingThisProjectRemoveWhenItsNotBuggyAnymore.ruleset</CodeAnalysisRuleSet>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 

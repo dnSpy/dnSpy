@@ -50,7 +50,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			decompiler.WriteType(output, analyzedEvent.DeclaringType, true);
 			output.Write(BoxedTextColor.Operator, ".");
-			new NodePrinter().Write(output, decompiler, analyzedEvent, Context.ShowToken);
+			new NodeFormatter().Write(output, decompiler, analyzedEvent, Context.ShowToken);
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
