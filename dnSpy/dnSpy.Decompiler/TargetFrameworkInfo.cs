@@ -302,7 +302,12 @@ namespace dnSpy.Decompiler {
 				return "Windows Universal " + Version;
 
 			case ".NETCoreApp":
-				return ".NET Core " + Version;
+				if (Version.StartsWith("1.") || Version.StartsWith("2.") || Version.StartsWith("3.")) {
+					// .NET Core 1.0-3.x
+					return ".NET Core " + Version;
+				}
+				// .NET 5.0+
+				return ".NET " + Version;
 
 			case ".NETPlatform":
 				return ".NET Platform " + Version;
