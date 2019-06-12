@@ -35,8 +35,14 @@ namespace dnSpy.Documents.TreeView {
 		public ModuleReferenceNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleRef moduleRef)
 			: base(moduleRef) => TreeNodeGroup = treeNodeGroup;
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			new NodeFormatter().Write(output, decompiler, ModuleRef, GetShowToken(options));
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				output.WriteLine();
+				WriteFilename(output);
+			}
+		}
+
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
 			filter.GetResult(ModuleRef).FilterType;
 	}

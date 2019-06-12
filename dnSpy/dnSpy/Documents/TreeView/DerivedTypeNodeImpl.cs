@@ -66,10 +66,17 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var td = TryGetTypeDef();
-			if (td == null)
-				output.Write(BoxedTextColor.Error, "???");
-			else
-				new NodeFormatter().Write(output, decompiler, td, GetShowToken(options));
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				WriteMemberRef(output, decompiler, td);
+				output.WriteLine();
+				WriteFilename(output);
+			}
+			else {
+				if (td is null)
+					output.Write(BoxedTextColor.Error, "???");
+				else
+					new NodeFormatter().Write(output, decompiler, td, GetShowToken(options));
+			}
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {

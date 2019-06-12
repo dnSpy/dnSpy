@@ -118,7 +118,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		protected bool GetShowToken(DocumentNodeWriteOptions options) => (options & DocumentNodeWriteOptions.Title) != 0 ? false : Context.ShowToken;
+		protected bool GetShowToken(DocumentNodeWriteOptions options) =>
+			(options & DocumentNodeWriteOptions.ToolTip) != 0 || (options & DocumentNodeWriteOptions.Title) == 0 ? Context.ShowToken : false;
 
 		/// <summary>
 		/// Gets the data shown in a tooltip
@@ -332,6 +333,26 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			if (data.Length != 0)
 				dataObject.SetData(DocumentTreeViewConstants.DATAFORMAT_COPIED_ROOT_NODES, data);
 			return dataObject;
+		}
+
+		/// <summary>
+		/// Writes the filename of the module
+		/// </summary>
+		/// <param name="output">Output</param>
+		protected void WriteFilename(ITextColorWriter output) => output.WriteFilename(this.GetModule()?.Location ?? "???");
+
+		/// <summary>
+		/// Writes the member
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="decompiler">Decompiler</param>
+		/// <param name="member">Member</param>
+		protected void WriteMemberRef(ITextColorWriter output, IDecompiler decompiler, IMemberRef member) {
+			decompiler.WriteToolTip(output, member, member as IHasCustomAttribute);
+			if (member.DeclaringType is ITypeDefOrRef declType) {
+				output.WriteLine();
+				decompiler.WriteToolTip(output, declType, declType);
+			}
 		}
 	}
 
