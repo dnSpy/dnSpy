@@ -13,7 +13,7 @@
     <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
     <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
     <IsSelfContainedDotNetCore Condition=" '$(IsDotNetCore)' == 'true' ">true</IsSelfContainedDotNetCore>
-    <Features>strict</Features>
+    <Features>strict;nullablePublicOnly</Features>
     <LangVersion>8.0</LangVersion>
     <LangVersion Condition=" $(MSBuildProjectFile.EndsWith('.vbproj')) " >latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
