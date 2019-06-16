@@ -1,9 +1,4 @@
 @echo off
-
-REM TODO remove this when appveyor build image has .NET Core 3.0 installed
-powershell -NoLogo -NoProfile -File build.ps1 -ExecutionPolicy Bypass
-
-
 echo dotnet SDK version
 dotnet --version
 
