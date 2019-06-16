@@ -59,6 +59,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableDebuggerDetection}">
                 <Grid>

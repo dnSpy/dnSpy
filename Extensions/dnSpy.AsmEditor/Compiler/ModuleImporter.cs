@@ -1607,8 +1607,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool IsSource(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, sourceModule.Name);
 		bool IsTarget(ModuleRef modRef) => StringComparer.OrdinalIgnoreCase.Equals(modRef?.Name, targetModule.Name);
 
-		TypeDef? TryImportTypeDef(TypeDef? type) => !(type is null) && oldTypeToNewType.TryGetValue(type, out var importedType) ? importedType.TargetType : type;
-		MethodDef? TryImportMethodDef(MethodDef? method) => !(method is null) && oldMethodToNewMethod.TryGetValue(method, out var importedMethod) ? importedMethod.TargetMember : method;
+		// The type/method could be in some external assembly, eg. System.Private.CoreLib, don't return those defs.
+		TypeDef? TryImportTypeDef(TypeDef? type) => !(type is null) && oldTypeToNewType.TryGetValue(type, out var importedType) ? importedType.TargetType : null;
+		MethodDef? TryImportMethodDef(MethodDef? method) => !(method is null) && oldMethodToNewMethod.TryGetValue(method, out var importedMethod) ? importedMethod.TargetMember : null;
 
 		TypeSig? Import(TypeSig type) {
 			if (type is null)

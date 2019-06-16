@@ -156,7 +156,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var writer = new TextClassifierTextColorWriter();
 				WriteTo(writer, isToolTip: true);
 				var classifierContext = new DecompilerTabContentClassifierContext(writer.Text, isToolTip: false, colorize: context.DocumentTreeViewSettings.SyntaxHighlight, colors: writer.Colors);
-				var elem = context.DecompilerTabContentTextElementProvider.CreateTextElement(classifierContext, DecompilerTabContentContentTypes.ToolTip, TextElementFlags.None);
+				var elem = context.DecompilerTabContentTextElementProvider.CreateTextElement(classifierContext, DecompilerTabContentContentTypes.DecompilerTabContentToolTip, TextElementFlags.None);
 				return elem;
 			}
 		}

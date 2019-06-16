@@ -39,7 +39,7 @@
     <IcedVersion>1.3.0</IcedVersion>
     <MSBuildNuGetVersion>16.0.461</MSBuildNuGetVersion>
     <MSDiagRuntimeVersion>1.0.5</MSDiagRuntimeVersion>
-    <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>
+    <MSVSCompositionVersion>16.1.8</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>

@@ -23,13 +23,13 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs.DocViewer {
 	static class DecompilerTabContentContentTypes {
-		public const string ToolTip = nameof(ToolTip);
+		public const string DecompilerTabContentToolTip = nameof(DecompilerTabContentToolTip);
 	}
 
 	static class ContentTypeDefinitions {
 #pragma warning disable CS0169
 		[Export]
-		[Name(DecompilerTabContentContentTypes.ToolTip)]
+		[Name(DecompilerTabContentContentTypes.DecompilerTabContentToolTip)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition DecompilerTabContentToolTip;
 #pragma warning restore CS0169
