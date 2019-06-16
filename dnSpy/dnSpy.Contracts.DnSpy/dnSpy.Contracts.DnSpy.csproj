@@ -64,7 +64,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ookii.Dialogs" Version="$(OokiiDialogsVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Composition.NetFxAttributes" Version="$(MSVSCompositionNetFxAttributesVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Composition.NetFxAttributes" Version="$(MSVSCompositionVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>

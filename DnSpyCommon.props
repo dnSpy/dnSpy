@@ -32,8 +32,7 @@
     <MSBuildNuGetVersion>16.0.461</MSBuildNuGetVersion>
     <MSDiagRuntimeVersion>1.0.5</MSDiagRuntimeVersion>
     <MSRegistryVersion>4.5.0</MSRegistryVersion>
-    <MSVSCompositionNetFxAttributesVersion>15.8.117</MSVSCompositionNetFxAttributesVersion>
-    <MSVSCompositionVersion>15.8.117</MSVSCompositionVersion>
+    <MSVSCompositionVersion>16.1.8</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
