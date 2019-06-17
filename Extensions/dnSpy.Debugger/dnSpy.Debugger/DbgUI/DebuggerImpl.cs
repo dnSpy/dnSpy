@@ -33,6 +33,7 @@ using dnSpy.Contracts.Debugger.Attach.Dialogs;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.Debugger.Steppers;
 using dnSpy.Contracts.Documents;
@@ -468,27 +469,56 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 		bool? oldIsRunning;
 
+		static string GetProcessName(DbgProcess process) {
+			var processName = process.Name;
+			if (string.IsNullOrEmpty(processName))
+				processName = "???";
+			return processName;
+		}
+
+		static string GetExceptionName(DbgException ex) {
+			var id = ex.Id;
+			if (id.HasCode)
+				return id.ToString();
+			if (id.HasName)
+				return id.Name;
+			return "???";
+		}
+
 		static string GetStatusBarMessage(IList<DbgBreakInfo> breakInfos) {
 			if (breakInfos.Count == 0)
 				return dnSpy_Debugger_Resources.StatusBar_Running;
 
 			var info = GetBreakInfo(breakInfos);
+			DbgModule module;
 			switch (info.Kind) {
 			case DbgBreakInfoKind.Message:
 				var e = (DbgMessageEventArgs)info.Data;
 				switch (e.Kind) {
 				case DbgMessageKind.ModuleLoaded:
-					var module = ((DbgMessageModuleLoadedEventArgs)e).Module;
+					module = ((DbgMessageModuleLoadedEventArgs)e).Module;
 					if (module.IsDynamic || module.IsInMemory)
 						return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadModule1, module.IsDynamic ? 1 : 0, module.IsInMemory ? 1 : 0, module.Address, module.Size, module.Name);
 					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadModule2, module.Address, module.Size, module.Name);
 
 				case DbgMessageKind.ExceptionThrown:
 					var ex = ((DbgMessageExceptionThrownEventArgs)e).Exception;
-					return ex.IsUnhandled ? dnSpy_Debugger_Resources.Debug_EventDescription_UnhandledException : dnSpy_Debugger_Resources.Debug_EventDescription_Exception;
+					var exMsg = ex.IsUnhandled ? dnSpy_Debugger_Resources.Debug_EventDescription_UnhandledException : dnSpy_Debugger_Resources.Debug_EventDescription_Exception;
+					exMsg += $" : pid={ex.Process.Id}({GetProcessName(ex.Process)}), {GetExceptionName(ex)}";
+					if (!string.IsNullOrEmpty(ex.Message))
+						exMsg += $" : {ex.Message}";
+					return exMsg;
 
 				case DbgMessageKind.BoundBreakpoint:
-					return dnSpy_Debugger_Resources.StatusBar_BreakpointHit;
+					var bbe = (DbgMessageBoundBreakpointEventArgs)e;
+					var bpMsg = $"{dnSpy_Debugger_Resources.StatusBar_BreakpointHit} #{bbe.BoundBreakpoint.Breakpoint.Id} : pid={bbe.BoundBreakpoint.Process.Id}({GetProcessName(bbe.BoundBreakpoint.Process)})";
+					module = bbe.BoundBreakpoint.Module;
+					if (!(module is null))
+						bpMsg += $", {module.Name}";
+					if (bbe.BoundBreakpoint.HasAddress)
+						bpMsg += $", 0x{bbe.BoundBreakpoint.Address.ToString("X")}";
+					//TODO: show bbe.BoundBreakpoint.Breakpoint.Location
+					return bpMsg;
 
 				case DbgMessageKind.ProcessCreated:
 				case DbgMessageKind.ProcessExited:
