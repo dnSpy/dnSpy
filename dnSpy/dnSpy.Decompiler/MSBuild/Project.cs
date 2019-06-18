@@ -415,16 +415,17 @@ namespace dnSpy.Decompiler.MSBuild {
 				Debug.Assert(e.ResourceData.Code == ResourceTypeCode.ByteArray || e.ResourceData.Code == ResourceTypeCode.Stream);
 				var data = (byte[])((BuiltInResourceData)e.ResourceData).Data;
 
-				if (decompileBaml && e.Name.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
-					var filename = resourceNameCreator.GetBamlResourceName(e.Name, out string typeFullName);
+				var rsrcName = Uri.UnescapeDataString(e.Name);
+				if (decompileBaml && rsrcName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
+					var filename = resourceNameCreator.GetBamlResourceName(rsrcName, out string typeFullName);
 					yield return new BamlResourceProjectFile(filename, data, typeFullName, (bamlData, stream) => Options.DecompileBaml(module, bamlData, Options.DecompilationContext.CancellationToken, stream));
 				}
 				else if (StringComparer.InvariantCultureIgnoreCase.Equals(splashScreenImageName, e.Name)) {
-					var filename = resourceNameCreator.GetXamlResourceFilename(e.Name);
+					var filename = resourceNameCreator.GetXamlResourceFilename(rsrcName);
 					yield return new SplashScreenProjectFile(filename, data, e.Name);
 				}
 				else {
-					var filename = resourceNameCreator.GetXamlResourceFilename(e.Name);
+					var filename = resourceNameCreator.GetXamlResourceFilename(rsrcName);
 					yield return new ResourceProjectFile(filename, data, e.Name);
 				}
 			}

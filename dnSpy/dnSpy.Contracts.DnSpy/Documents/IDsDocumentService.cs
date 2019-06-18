@@ -129,7 +129,7 @@ namespace dnSpy.Contracts.Documents {
 
 		/// <summary>
 		/// Can be called once to set a delegate instance that will execute code in a certain
-		/// thread. <see cref="CollectionChanged"/> can be called in any thread unless this method
+		/// thread. <see cref="CollectionChanged"/> can be called on any thread unless this method
 		/// gets called.
 		/// </summary>
 		/// <param name="action">Action</param>

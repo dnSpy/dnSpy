@@ -321,7 +321,7 @@ namespace dnSpy.Search {
 				return;
 
 			if (res.IsMatch) {
-				bool m = IsMatch(resElNode.Name, resElNode);
+				bool m = IsMatch(resElNode.Name, resElNode) || IsMatch(Uri.UnescapeDataString(resElNode.Name), resElNode);
 				if (!m) {
 					if (resElNode.ResourceElement.ResourceData is BuiltInResourceData builtin) {
 						var val = builtin.Data;

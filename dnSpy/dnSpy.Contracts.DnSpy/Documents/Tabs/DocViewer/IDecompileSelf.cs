@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	public interface IDecompileSelf {
 		/// <summary>
 		/// Decompiles itself or returns false if someone else should have a try. This method can be
-		/// called in any thread.
+		/// called on any thread.
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>

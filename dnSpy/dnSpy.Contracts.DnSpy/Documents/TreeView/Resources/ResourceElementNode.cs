@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 		/// <inheritdoc/>
 		protected sealed override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
-			output.WriteFilename(resourceElement.Name);
+			output.WriteFilename(Uri.UnescapeDataString(resourceElement.Name));
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
 				if (TreeNode.Parent?.Data is ResourceNode parentNode) {
 					output.WriteLine();

@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	public interface IDecompileNode {
 		/// <summary>
 		/// Decompiles <paramref name="node"/> or returns false if someone else should have a try.
-		/// This method can be called in any thread.
+		/// This method can be called on any thread.
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <param name="node">Node to decompile</param>
