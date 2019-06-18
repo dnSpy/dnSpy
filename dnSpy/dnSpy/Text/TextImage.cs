@@ -83,6 +83,6 @@ namespace dnSpy.Text {
 			return TextImageUtils.GetLineNumberFromPosition(lineOffsets, position, Length);
 		}
 
-		internal uint[] GetOrCreateLineOffsets() => lineOffsets ?? (lineOffsets = TextImageUtils.CreateLineOffsets(this));
+		internal uint[] GetOrCreateLineOffsets() => lineOffsets ??= TextImageUtils.CreateLineOffsets(this);
 	}
 }

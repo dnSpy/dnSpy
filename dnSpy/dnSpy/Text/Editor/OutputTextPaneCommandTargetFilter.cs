@@ -29,8 +29,7 @@ namespace dnSpy.Text.Editor {
 
 		public OutputTextPaneCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		IOutputTextPane TryGetInstance() =>
-			__outputTextPane ?? (__outputTextPane = OutputTextPaneUtils.TryGetInstance(textView));
+		IOutputTextPane TryGetInstance() => __outputTextPane ??= OutputTextPaneUtils.TryGetInstance(textView);
 		IOutputTextPane? __outputTextPane;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

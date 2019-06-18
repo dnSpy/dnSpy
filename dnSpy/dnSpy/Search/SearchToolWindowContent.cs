@@ -31,7 +31,7 @@ namespace dnSpy.Search {
 	sealed class SearchToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ISearchService> searchService;
 
-		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchService));
+		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ??= new SearchToolWindowContent(searchService);
 		SearchToolWindowContent? searchToolWindowContent;
 
 		[ImportingConstructor]

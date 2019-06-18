@@ -216,7 +216,7 @@ namespace dnSpy.Text.Classification {
 			list.Add(classificationType);
 			var baseTypes = classificationType.BaseTypes.ToArray();
 			if (baseTypes.Length > 1)
-				Array.Sort(baseTypes, classificationTypeComparer ?? (classificationTypeComparer = new ClassificationTypeComparer(this)));
+				Array.Sort(baseTypes, classificationTypeComparer ??= new ClassificationTypeComparer(this));
 			foreach (var bt in baseTypes)
 				AddBaseTypes(list, bt);
 		}
@@ -231,17 +231,11 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
-
 		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) => throw new NotImplementedException();//TODO:
-
 		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
-
 		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
-
 		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) => throw new NotImplementedException();//TODO:
-
 		public void BeginBatchUpdate() => throw new NotImplementedException();//TODO:
-
 		public void EndBatchUpdate() => throw new NotImplementedException();//TODO:
 
 		sealed class ClassificationTypeComparer : IComparer<IClassificationType> {

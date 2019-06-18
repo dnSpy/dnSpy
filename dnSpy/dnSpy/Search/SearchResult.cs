@@ -211,7 +211,7 @@ namespace dnSpy.Search {
 			return mr is null ? 0 : mr.Order;
 		}
 
-		string GetCompareString() => compareString ?? (compareString = ToString());
+		string GetCompareString() => compareString ??= ToString();
 		string? compareString = null;
 	}
 

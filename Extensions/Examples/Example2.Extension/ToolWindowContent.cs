@@ -46,7 +46,7 @@ namespace Example2.Extension {
 	[Export(typeof(IToolWindowContentProvider))]
 	sealed class MainToolWindowContentProvider : IToolWindowContentProvider {
 		// Caches the created tool window
-		ToolWindowContentImpl ToolWindowContent => myToolWindowContent ?? (myToolWindowContent = new ToolWindowContentImpl());
+		ToolWindowContentImpl ToolWindowContent => myToolWindowContent ??= new ToolWindowContentImpl();
 		ToolWindowContentImpl? myToolWindowContent;
 
 		// Add any deps to the constructor if needed, else remove the constructor

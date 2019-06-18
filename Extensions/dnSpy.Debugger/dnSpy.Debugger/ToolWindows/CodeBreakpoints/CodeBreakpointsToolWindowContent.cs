@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	sealed class CodeBreakpointsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ICodeBreakpointsContent> codeBreakpointsContent;
 
-		public CodeBreakpointsToolWindowContent CodeBreakpointsToolWindowContent => codeBreakpointsToolWindowContent ?? (codeBreakpointsToolWindowContent = new CodeBreakpointsToolWindowContent(codeBreakpointsContent));
+		public CodeBreakpointsToolWindowContent CodeBreakpointsToolWindowContent => codeBreakpointsToolWindowContent ??= new CodeBreakpointsToolWindowContent(codeBreakpointsContent);
 		CodeBreakpointsToolWindowContent? codeBreakpointsToolWindowContent;
 
 		[ImportingConstructor]

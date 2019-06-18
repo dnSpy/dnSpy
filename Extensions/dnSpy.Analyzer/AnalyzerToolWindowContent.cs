@@ -31,7 +31,7 @@ namespace dnSpy.Analyzer {
 	sealed class AnalyzerToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IAnalyzerService> analyzerService;
 
-		public AnalyzerToolWindowContent DocumentTreeViewWindowContent => analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerService));
+		public AnalyzerToolWindowContent DocumentTreeViewWindowContent => analyzerToolWindowContent ??= new AnalyzerToolWindowContent(analyzerService);
 		AnalyzerToolWindowContent? analyzerToolWindowContent;
 
 		[ImportingConstructor]

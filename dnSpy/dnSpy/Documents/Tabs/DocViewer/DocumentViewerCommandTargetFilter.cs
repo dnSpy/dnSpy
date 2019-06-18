@@ -28,8 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public DocumentViewerCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		DocumentViewer TryGetInstance() =>
-			__documentViewer ?? (__documentViewer = DocumentViewer.TryGetInstance(textView));
+		DocumentViewer TryGetInstance() => __documentViewer ??= DocumentViewer.TryGetInstance(textView);
 		DocumentViewer? __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

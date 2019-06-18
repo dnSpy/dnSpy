@@ -44,7 +44,7 @@ namespace dnSpy.Settings.Dialog {
 		internal AppSettingsPage Page { get; }
 		public object? UIObject => VisiblePageAndUIObject?.UIObject;
 		internal AppSettingsPageVM? VisiblePage => VisiblePageAndUIObject?.Page;
-		PageAndUIObject? VisiblePageAndUIObject => pageAndUIObject ?? (pageAndUIObject = GetOrCreatePageAndUIObject());
+		PageAndUIObject? VisiblePageAndUIObject => pageAndUIObject ??= GetOrCreatePageAndUIObject();
 		PageAndUIObject? pageAndUIObject;
 
 		sealed class PageAndUIObject {
@@ -78,7 +78,7 @@ namespace dnSpy.Settings.Dialog {
 		PageAndUIObject? GetOrCreatePageAndUIObject() {
 			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
 			if (!(uiObj is null))
-				return createdPageAndUIObject ?? (createdPageAndUIObject = new PageAndUIObject(this, CreateUIObject(uiObj)));
+				return createdPageAndUIObject ??= new PageAndUIObject(this, CreateUIObject(uiObj));
 
 			// Try to pick a visible child
 			foreach (var child in Children) {

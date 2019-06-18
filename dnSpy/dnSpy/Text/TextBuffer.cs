@@ -182,9 +182,9 @@ namespace dnSpy.Text {
 				TextContentChangedEventArgs? args = null;
 				//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 				//		raised after all of these three events have been raised.
-				ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
-				Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
-				ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
+				ChangedHighPriority?.Invoke(this, args ??= new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag));
+				Changed?.Invoke(this, args ??= new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag));
+				ChangedLowPriority?.Invoke(this, args ??= new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag));
 			}
 			PostChanged?.Invoke(this, EventArgs.Empty);
 		}

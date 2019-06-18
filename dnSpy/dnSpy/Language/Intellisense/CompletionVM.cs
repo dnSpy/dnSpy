@@ -32,7 +32,7 @@ namespace dnSpy.Language.Intellisense {
 		public object SuffixObject => this;
 		public Completion Completion { get; }
 
-		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ?? (attributeIcons = CreateAttributeIcons());
+		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ??= CreateAttributeIcons();
 		IEnumerable<CompletionIconVM>? attributeIcons;
 
 		public CompletionVM(Completion completion) {

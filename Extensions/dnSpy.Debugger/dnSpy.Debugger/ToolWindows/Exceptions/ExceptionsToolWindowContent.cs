@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	sealed class ExceptionsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 
-		public ExceptionsToolWindowContent ExceptionsToolWindowContent => exceptionsToolWindowContent ?? (exceptionsToolWindowContent = new ExceptionsToolWindowContent(exceptionsContent));
+		public ExceptionsToolWindowContent ExceptionsToolWindowContent => exceptionsToolWindowContent ??= new ExceptionsToolWindowContent(exceptionsContent);
 		ExceptionsToolWindowContent? exceptionsToolWindowContent;
 
 		[ImportingConstructor]

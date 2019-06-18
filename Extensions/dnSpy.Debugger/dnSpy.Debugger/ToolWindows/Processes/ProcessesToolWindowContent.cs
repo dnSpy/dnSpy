@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessesToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IProcessesContent> processesContent;
 
-		public ProcessesToolWindowContent ProcessesToolWindowContent => processesToolWindowContent ?? (processesToolWindowContent = new ProcessesToolWindowContent(processesContent));
+		public ProcessesToolWindowContent ProcessesToolWindowContent => processesToolWindowContent ??= new ProcessesToolWindowContent(processesContent);
 		ProcessesToolWindowContent? processesToolWindowContent;
 
 		[ImportingConstructor]

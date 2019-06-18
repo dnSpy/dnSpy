@@ -30,8 +30,7 @@ namespace dnSpy.Text.Editor {
 
 		public ReplCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		ReplEditor? TryGetInstance() =>
-			__replEditor ?? (__replEditor = ReplEditorUtils.TryGetInstance(textView) as ReplEditor);
+		ReplEditor? TryGetInstance() => __replEditor ??= ReplEditorUtils.TryGetInstance(textView) as ReplEditor;
 		ReplEditor? __replEditor;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

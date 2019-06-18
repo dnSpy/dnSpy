@@ -29,8 +29,8 @@ namespace dnSpy.Text {
 
 		public ITextBuffer AnchorBuffer => snapshotSpan.Snapshot.TextBuffer;
 		public IBufferGraph BufferGraph { get; }
-		public IMappingPoint Start => start ?? (start = new MappingPoint(BufferGraph, snapshotSpan.Start, PointTrackingMode));
-		public IMappingPoint End => end ?? (end = new MappingPoint(BufferGraph, snapshotSpan.End, PointTrackingMode));
+		public IMappingPoint Start => start ??= new MappingPoint(BufferGraph, snapshotSpan.Start, PointTrackingMode);
+		public IMappingPoint End => end ??= new MappingPoint(BufferGraph, snapshotSpan.End, PointTrackingMode);
 		PointTrackingMode PointTrackingMode => spanTrackingMode == SpanTrackingMode.EdgeExclusive || spanTrackingMode == SpanTrackingMode.EdgeNegative ? PointTrackingMode.Negative : PointTrackingMode.Positive;
 
 		public MappingSpan(IBufferGraph bufferGraph, SnapshotSpan snapshotSpan, SpanTrackingMode trackingMode) {

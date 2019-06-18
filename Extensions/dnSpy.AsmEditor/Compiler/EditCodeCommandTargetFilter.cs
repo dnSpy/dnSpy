@@ -39,8 +39,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		EditCodeVM TryGetInstance() =>
-			__editCodeVM ?? (__editCodeVM = EditCodeVM.TryGet(textView));
+		EditCodeVM TryGetInstance() => __editCodeVM ??= EditCodeVM.TryGet(textView);
 		EditCodeVM? __editCodeVM;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

@@ -100,8 +100,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.bracePairService = bracePairService;
 		}
 
-		IDocumentViewer? TryGetInstance() =>
-			__documentViewer ?? (__documentViewer = DocumentViewerExtensions.TryGetDocumentViewer(textView.TextBuffer));
+		IDocumentViewer? TryGetInstance() => __documentViewer ??= DocumentViewerExtensions.TryGetDocumentViewer(textView.TextBuffer);
 		IDocumentViewer? __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

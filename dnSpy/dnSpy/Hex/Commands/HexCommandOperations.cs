@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Commands {
 		readonly Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService;
 		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
-		HexBufferFileService HexBufferFileService => __hexBufferFileService ?? (__hexBufferFileService = hexBufferFileServiceFactory.Value.Create(HexView.Buffer));
+		HexBufferFileService HexBufferFileService => __hexBufferFileService ??= hexBufferFileServiceFactory.Value.Create(HexView.Buffer);
 		HexBufferFileService? __hexBufferFileService;
 
 		public HexCommandOperationsImpl(IMessageBoxService messageBoxService, Lazy<HexEditorGroupFactoryService> hexEditorGroupFactoryService, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory, HexView hexView) {

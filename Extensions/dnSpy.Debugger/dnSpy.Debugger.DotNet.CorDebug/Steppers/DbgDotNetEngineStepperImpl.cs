@@ -222,7 +222,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 
 			public SessionImpl(object? tag) : base(tag) { }
 			public ReturnValuesCollection GetOrCreateReturnValuesCollection(DbgEngineImpl engine, int maxReturnValues) =>
-				returnValuesCollection ?? (returnValuesCollection = new ReturnValuesCollection(engine, maxReturnValues));
+				returnValuesCollection ??= new ReturnValuesCollection(engine, maxReturnValues);
 			public void ClearReturnValues() => returnValuesCollection?.ClearReturnValues();
 			public DbgDotNetReturnValueInfo[] TakeOwnershipOfReturnValues() => returnValuesCollection?.TakeOwnershipOfReturnValues() ?? Array.Empty<DbgDotNetReturnValueInfo>();
 			public void Dispose() => returnValuesCollection?.Dispose();

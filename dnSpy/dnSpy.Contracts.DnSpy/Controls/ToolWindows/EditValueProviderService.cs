@@ -199,8 +199,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 	sealed class EditValueCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		EditValueImpl TryGetInstance() =>
-			__editValueImpl ?? (__editValueImpl = EditValueImpl.TryGetInstance(textView));
+		EditValueImpl TryGetInstance() => __editValueImpl ??= EditValueImpl.TryGetInstance(textView);
 		EditValueImpl? __editValueImpl;
 
 		public EditValueCommandTargetFilter(ITextView textView) => this.textView = textView;

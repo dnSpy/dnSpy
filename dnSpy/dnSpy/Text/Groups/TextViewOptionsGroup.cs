@@ -99,7 +99,7 @@ namespace dnSpy.Text.Groups {
 				GetContentTypes(bt, list);
 		}
 
-		TextViewGroupOptionCollection ErrorCollection => errorCollection ?? (errorCollection = new TextViewGroupOptionCollection(contentTypeRegistryService.UnknownContentType));
+		TextViewGroupOptionCollection ErrorCollection => errorCollection ??= new TextViewGroupOptionCollection(contentTypeRegistryService.UnknownContentType);
 		TextViewGroupOptionCollection? errorCollection;
 
 		public bool HasOption<T>(string contentType, EditorOptionKey<T> option) => HasOption(contentType, option.Name);

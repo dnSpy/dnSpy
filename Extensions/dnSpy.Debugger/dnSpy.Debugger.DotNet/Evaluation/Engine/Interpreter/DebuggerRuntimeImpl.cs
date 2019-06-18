@@ -83,9 +83,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			anyClassHooks = anyClassHooksList.ToArray();
 		}
 
-		VariablesProvider DefaultArgumentsProvider => defaultArgumentsProvider ?? (defaultArgumentsProvider = new DefaultArgumentsProviderImpl(runtime));
+		VariablesProvider DefaultArgumentsProvider => defaultArgumentsProvider ??= new DefaultArgumentsProviderImpl(runtime);
 		VariablesProvider? defaultArgumentsProvider;
-		VariablesProvider DefaultLocalsProvider => defaultLocalsProvider ?? (defaultLocalsProvider = new DefaultLocalsProviderImpl(runtime));
+		VariablesProvider DefaultLocalsProvider => defaultLocalsProvider ??= new DefaultLocalsProviderImpl(runtime);
 		VariablesProvider? defaultLocalsProvider;
 
 		VariablesProvider argumentsProvider;

@@ -35,7 +35,7 @@ namespace dnSpy.Output {
 	sealed class OutputToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IOutputContent> outputContent;
 
-		public OutputToolWindowContent OutputToolWindowContent => outputToolWindowContent ?? (outputToolWindowContent = new OutputToolWindowContent(outputContent));
+		public OutputToolWindowContent OutputToolWindowContent => outputToolWindowContent ??= new OutputToolWindowContent(outputContent);
 		OutputToolWindowContent? outputToolWindowContent;
 
 		[ImportingConstructor]

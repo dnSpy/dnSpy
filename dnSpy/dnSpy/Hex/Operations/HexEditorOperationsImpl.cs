@@ -53,10 +53,10 @@ namespace dnSpy.Hex.Operations {
 		HexViewScroller ViewScroller => HexView.ViewScroller;
 		HexBufferPoint ActiveCaretBufferPosition => Caret.Position.Position.ActivePosition.BufferPosition;
 
-		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ?? (__hexStructureInfoAggregator = hexStructureInfoAggregatorFactory.Value.Create(HexView));
+		HexStructureInfoAggregator HexStructureInfoAggregator => __hexStructureInfoAggregator ??= hexStructureInfoAggregatorFactory.Value.Create(HexView);
 		HexStructureInfoAggregator? __hexStructureInfoAggregator;
 
-		HexFileStructureInfoService HexFileStructureInfoService => __hexFileStructureInfoService ?? (__hexFileStructureInfoService = hexFileStructureInfoServiceFactory.Value.Create(HexView));
+		HexFileStructureInfoService HexFileStructureInfoService => __hexFileStructureInfoService ??= hexFileStructureInfoServiceFactory.Value.Create(HexView);
 		HexFileStructureInfoService? __hexFileStructureInfoService;
 
 		readonly HexHtmlBuilderService htmlBuilderService;

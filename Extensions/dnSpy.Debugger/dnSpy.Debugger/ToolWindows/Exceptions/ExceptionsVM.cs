@@ -473,12 +473,12 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		sealed class ExceptionVMCached {
 			public ExceptionVM VM { get; }
-			public string Name => name ?? (name = GetName_UI(VM));
-			public string Category => category ?? (category = GetCategory_UI(VM));
-			public string Conditions => conditions ?? (conditions = GetConditions_UI(VM));
+			public string Name => name ??= GetName_UI(VM);
+			public string Category => category ??= GetCategory_UI(VM);
+			public string Conditions => conditions ??= GetConditions_UI(VM);
 
 			// The order must match searchColumnDefinitions
-			public string[] AllStrings => allStrings ?? (allStrings = new[] { Name, Category, Conditions });
+			public string[] AllStrings => allStrings ??= new[] { Name, Category, Conditions };
 
 			string? name;
 			string? category;

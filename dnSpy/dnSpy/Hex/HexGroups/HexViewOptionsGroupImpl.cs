@@ -77,7 +77,7 @@ namespace dnSpy.Hex.HexGroups {
 			return coll;
 		}
 
-		HexViewGroupOptionCollection ErrorCollection => errorCollection ?? (errorCollection = new HexViewGroupOptionCollection(Guid.NewGuid().ToString()));
+		HexViewGroupOptionCollection ErrorCollection => errorCollection ??= new HexViewGroupOptionCollection(Guid.NewGuid().ToString());
 		HexViewGroupOptionCollection? errorCollection;
 
 		public override bool HasOption<T>(string tag, VSTE.EditorOptionKey<T> option) => HasOption(tag, option.Name);

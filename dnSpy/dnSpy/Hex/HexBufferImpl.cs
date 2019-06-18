@@ -157,9 +157,9 @@ namespace dnSpy.Hex {
 				HexContentChangedEventArgs? args = null;
 				//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 				//		raised after all of these three events have been raised.
-				ChangedHighPriority?.Invoke(this, args ?? (args = new HexContentChangedEventArgs(beforeVersion, afterVersion, editTag)));
-				Changed?.Invoke(this, args ?? (args = new HexContentChangedEventArgs(beforeVersion, afterVersion, editTag)));
-				ChangedLowPriority?.Invoke(this, args ?? (args = new HexContentChangedEventArgs(beforeVersion, afterVersion, editTag)));
+				ChangedHighPriority?.Invoke(this, args ??= new HexContentChangedEventArgs(beforeVersion, afterVersion, editTag));
+				Changed?.Invoke(this, args ??= new HexContentChangedEventArgs(beforeVersion, afterVersion, editTag));
+				ChangedLowPriority?.Invoke(this, args ??= new HexContentChangedEventArgs(beforeVersion, afterVersion, editTag));
 			}
 			PostChanged?.Invoke(this, EventArgs.Empty);
 		}

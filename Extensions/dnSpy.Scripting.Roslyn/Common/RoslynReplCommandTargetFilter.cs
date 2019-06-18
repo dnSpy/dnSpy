@@ -31,8 +31,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.textView = textView;
 		}
 
-		ScriptControlVM TryGetInstance() =>
-			__replEditor ?? (__replEditor = RoslynReplEditorUtils.TryGetInstance(textView));
+		ScriptControlVM TryGetInstance() => __replEditor ??= RoslynReplEditorUtils.TryGetInstance(textView);
 		ScriptControlVM? __replEditor;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {

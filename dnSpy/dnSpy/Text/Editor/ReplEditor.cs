@@ -474,7 +474,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public string SearchText {
-			get => searchText ?? (searchText = CurrentInput);
+			get => searchText ??= CurrentInput;
 			set => searchText = value;
 		}
 		string searchText = string.Empty;

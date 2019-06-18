@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public IAssembly Assembly => gacFileInfo.Assembly;
 		public OpenFromGACVM Owner { get; }
 
-		public string VersionString => versionString ?? (versionString = (Version ?? new Version(0, 0, 0, 0)).ToString());
+		public string VersionString => versionString ??= (Version ?? new Version(0, 0, 0, 0)).ToString();
 		string? versionString;
 
 		public string CreatedBy {

@@ -31,7 +31,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	sealed class BookmarksToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IBookmarksContent> bookmarksContent;
 
-		public BookmarksToolWindowContent BookmarksToolWindowContent => bookmarksToolWindowContent ?? (bookmarksToolWindowContent = new BookmarksToolWindowContent(bookmarksContent));
+		public BookmarksToolWindowContent BookmarksToolWindowContent => bookmarksToolWindowContent ??= new BookmarksToolWindowContent(bookmarksContent);
 		BookmarksToolWindowContent? bookmarksToolWindowContent;
 
 		[ImportingConstructor]

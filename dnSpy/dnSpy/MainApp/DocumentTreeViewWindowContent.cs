@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 	sealed class DocumentTreeViewWindowContentProvider : IToolWindowContentProvider {
 		readonly IDocumentTreeView documentTreeView;
 
-		DocumentTreeViewWindowContent DocumentTreeViewWindowContent => documentTreeViewWindowContent ?? (documentTreeViewWindowContent = new DocumentTreeViewWindowContent(documentTreeView.TreeView));
+		DocumentTreeViewWindowContent DocumentTreeViewWindowContent => documentTreeViewWindowContent ??= new DocumentTreeViewWindowContent(documentTreeView.TreeView);
 		DocumentTreeViewWindowContent? documentTreeViewWindowContent;
 
 		[ImportingConstructor]

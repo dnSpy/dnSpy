@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 	sealed class ModulesToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IModulesContent> modulesContent;
 
-		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ?? (modulesToolWindowContent = new ModulesToolWindowContent(modulesContent));
+		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ??= new ModulesToolWindowContent(modulesContent);
 		ModulesToolWindowContent? modulesToolWindowContent;
 
 		[ImportingConstructor]
