@@ -92,8 +92,10 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		AssemblyDef TryOpenAssembly(string filename) {
 			lock (openedModules) {
-				if (openedModules.TryGetValue(filename, out var mod))
+				if (openedModules.TryGetValue(filename, out var mod)){
+					openedModules[filename] = mod;
 					return mod.Assembly;
+				}					
 				openedModules[filename] = null;
 				if (!File.Exists(filename))
 					return null;
