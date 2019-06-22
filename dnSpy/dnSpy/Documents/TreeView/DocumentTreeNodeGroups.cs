@@ -327,8 +327,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as TypeReferenceNode;
 			var b = y as TypeReferenceNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 
 			var ar = GetTypeDefOrRef(a.TypeRef);
 			var br = GetTypeDefOrRef(b.TypeRef);
@@ -492,8 +492,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as TypeSpecsFolderNode;
 			var b = y as TypeSpecsFolderNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return -1;
 		}
 	}
@@ -507,8 +507,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as MethodReferencesFolderNode;
 			var b = y as MethodReferencesFolderNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return -1;
 		}
 	}
@@ -522,8 +522,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as PropertyReferencesFolderNode;
 			var b = y as PropertyReferencesFolderNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return -1;
 		}
 	}
@@ -537,8 +537,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as EventReferencesFolderNode;
 			var b = y as EventReferencesFolderNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return -1;
 		}
 	}
@@ -552,8 +552,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as FieldReferencesFolderNode;
 			var b = y as FieldReferencesFolderNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return -1;
 		}
 	}
@@ -567,8 +567,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as MethodReferenceNode;
 			var b = y as MethodReferenceNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return MethodRefComparer.Instance.Compare(a.MethodRef, b.MethodRef);
 		}
 	}
@@ -582,8 +582,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as PropertyReferenceNode;
 			var b = y as PropertyReferenceNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return PropertyRefComparer.Instance.Compare(a.PropertyRef, b.PropertyRef);
 		}
 	}
@@ -597,8 +597,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as EventReferenceNode;
 			var b = y as EventReferenceNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return EventRefComparer.Instance.Compare(a.EventRef, b.EventRef);
 		}
 	}
@@ -612,8 +612,8 @@ namespace dnSpy.Documents.TreeView {
 			if (x == y) return 0;
 			var a = x as FieldReferenceNode;
 			var b = y as FieldReferenceNode;
-			if (a == null) return -1;
-			if (b == null) return 1;
+			if (a is null) return -1;
+			if (b is null) return 1;
 			return MemberRefComparer.Instance.Compare(a.FieldRef, b.FieldRef);
 		}
 	}

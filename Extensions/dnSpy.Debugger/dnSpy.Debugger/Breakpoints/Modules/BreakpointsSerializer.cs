@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 					bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
 				if (!(bpSettings.IsInMemory is null))
 					bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
-				if (bpSettings.IsLoaded != null)
+				if (!(bpSettings.IsLoaded is null))
 					bpSect.Attribute("IsLoaded", bpSettings.IsLoaded);
 				if (!(bpSettings.Order is null))
 					bpSect.Attribute("Order", bpSettings.Order);

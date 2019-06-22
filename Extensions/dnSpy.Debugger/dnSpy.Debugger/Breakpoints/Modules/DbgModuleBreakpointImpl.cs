@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 					return false;
 				if (!(settings.IsInMemory is null) && settings.IsInMemory.Value != module.IsInMemory)
 					return false;
-				if (settings.IsLoaded != null && settings.IsLoaded.Value != module.IsLoaded)
+				if (!(settings.IsLoaded is null) && settings.IsLoaded.Value != module.IsLoaded)
 					return false;
 				if (!(settings.Order is null) && settings.Order.Value != module.Order)
 					return false;
