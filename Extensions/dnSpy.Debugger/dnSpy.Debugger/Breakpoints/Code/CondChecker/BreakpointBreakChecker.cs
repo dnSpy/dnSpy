@@ -43,8 +43,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.MessageBoundBreakpoint += DbgManager_MessageBoundBreakpoint;
 
 		void DbgManager_MessageBoundBreakpoint(object sender, DbgMessageBoundBreakpointEventArgs e) {
-			e.Pause = ShouldBreak(e.BoundBreakpoint, e.Thread);
-			if (e.Pause && e.BoundBreakpoint.Breakpoint.IsOneShot)
+			bool pause = ShouldBreak(e.BoundBreakpoint, e.Thread);
+			e.Pause = pause;
+			if (pause && e.BoundBreakpoint.Breakpoint.IsOneShot)
 				e.BoundBreakpoint.Breakpoint.Remove();
 		}
 
