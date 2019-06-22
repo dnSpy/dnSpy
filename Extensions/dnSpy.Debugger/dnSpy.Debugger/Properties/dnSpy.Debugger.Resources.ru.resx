@@ -142,7 +142,7 @@
     <value>Присоединиться к процессу</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Используйте 64-бит dnSpy для присоединения к 64-битным процессам</value>
+    <value>Используйте 64-битный dnSpy для присоединения к 64-битным процессам</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
     <value>Используйте 32-бит dnSpy для присоединения к 32-битным процессам</value>
@@ -1526,5 +1526,8 @@
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
     <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
   </data>
 </root>

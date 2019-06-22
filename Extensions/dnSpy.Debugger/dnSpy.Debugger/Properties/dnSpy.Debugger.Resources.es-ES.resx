@@ -1522,6 +1522,9 @@ ERROR: {1}</value>
     <value>Búsqueda de un proceso</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>Lleva dnSpy al primer plano al romper en el depurador</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
   </data>
 </root>

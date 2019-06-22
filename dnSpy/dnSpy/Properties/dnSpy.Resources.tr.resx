@@ -2036,4 +2036,22 @@ Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;Bilinmiyor&gt;</value>
   </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>Olaylar</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Alanlar</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>Yöntemler</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Özellikler</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
+  </data>
 </root>

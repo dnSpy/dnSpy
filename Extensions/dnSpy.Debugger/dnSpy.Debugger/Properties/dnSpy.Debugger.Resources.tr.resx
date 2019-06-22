@@ -1525,6 +1525,9 @@ Genişletmek istediğinizden emin misiniz?</value>
     <value>Bir işlemi ara</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>Hata ayıklayıcısını keserken dnSpy'ı ön plana getirin</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
   </data>
 </root>

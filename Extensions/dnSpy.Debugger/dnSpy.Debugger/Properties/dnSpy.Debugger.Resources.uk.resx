@@ -1526,4 +1526,7 @@
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
     <value>Bring dnSpy to the foreground when breaking in the debugger</value>
   </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
+  </data>
 </root>

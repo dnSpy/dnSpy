@@ -2039,4 +2039,22 @@
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;未知&gt;</value>
   </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>事件</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>字段</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>方法</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>属性</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
+  </data>
 </root>

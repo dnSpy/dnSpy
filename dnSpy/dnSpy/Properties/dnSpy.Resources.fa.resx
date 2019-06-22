@@ -2040,4 +2040,22 @@
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;نامشخص&gt;</value>
   </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>رویدادها</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Fieldها</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>متود ها</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Propertieها</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
+  </data>
 </root>

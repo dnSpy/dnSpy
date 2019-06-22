@@ -172,7 +172,7 @@
     <value>Закрити всі вкладки групи, крім цьої</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>Закрити _усі окрім цієї</value>
+    <value>Закрити _ Усі окрім цієї</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
     <value>За_крити усі закладки</value>
@@ -1795,7 +1795,7 @@
     <value>Видалити Закладку</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
-    <value>Вибр_ати усе</value>
+    <value>Вибр_ати Усе</value>
   </data>
   <data name="ShortCutKeyCtrlA" xml:space="preserve">
     <value>Ctrl+A</value>
@@ -1816,34 +1816,34 @@
     <value>Показати ключові слова вбудованих типів</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
-    <value>Показати імена _модулів</value>
+    <value>Показати Імена _Модулів</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
-    <value>Показати простори імен</value>
+    <value>Показати Простори Імен</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
-    <value>Показати імена _параметрів</value>
+    <value>Показати Імена _Параметрів</value>
   </data>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
-    <value>Показати типи параметрів</value>
+    <value>Показати Типи Параметрів</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>Показати типи, що повертаються</value>
+    <value>Показати Типи, що Повертаються</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Показувати токени</value>
+    <value>Показувати Токени</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
     <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Очистити усі закладки в документі</value>
+    <value>Очистити Усі Закладки в Документі</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Очистити закладки</value>
+    <value>_Очистити Закладки</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Вимкнути _Усі закладки</value>
+    <value>Вимкнути _Усі Закладки</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
     <value>Увімкнути _Усі закладки</value>
@@ -1855,10 +1855,10 @@
     <value>Наступна _Закладка</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>Наступна закладка в документі</value>
+    <value>Наступна Закладка в Документі</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Наступна закладка із тою ж міткою</value>
+    <value>Наступна Закладка із Тою ж Міткою</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
     <value>_Попередня закладка</value>
@@ -2036,5 +2036,23 @@
   </data>
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;Невідомо&gt;</value>
+  </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>Події</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>Методи</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Властивості</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
   </data>
 </root>
