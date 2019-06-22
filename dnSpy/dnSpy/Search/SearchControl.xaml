@@ -67,11 +67,12 @@
                 <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchGacAssemblies}" IsChecked="{Binding SearchSettings.SearchGacAssemblies}" />
             </WrapPanel>
         </Grid>
+        <!-- VirtualizingStackPanel.VirtualizationMode="Recycling" isn't used, see https://github.com/0xd4d/dnSpy/issues/1163 -->
         <ListBox Grid.Row="1"
                  Name="searchListBox"
                  SelectionMode="Single"
                  VirtualizingStackPanel.IsVirtualizing="True"
-                 VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 VirtualizingStackPanel.VirtualizationMode="Standard"
                  mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
                  BorderThickness="{Binding TooManyResults, Converter={StaticResource BooleanToThicknessConverter}, ConverterParameter=1|0}"
                  BorderBrush="{DynamicResource CommonControlsTextBoxBorderError}"
