@@ -2040,4 +2040,22 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;Unknown&gt;</value>
   </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>Methods</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
+  </data>
 </root>

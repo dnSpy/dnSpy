@@ -262,11 +262,7 @@ namespace dnSpy.Documents.Tabs {
 			if (e.Node is DerivedTypeNode derivedTypeNode) {
 				var td = derivedTypeNode.TypeDef;
 				Debug.Assert(td != null);
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					var typeNode = DocumentTreeView.FindNode(td);
-					if (typeNode != null)
-						DocumentTreeView.TreeView.SelectItems(new[] { typeNode });
-				}));
+				SelectType(td);
 				return;
 			}
 
@@ -274,11 +270,28 @@ namespace dnSpy.Documents.Tabs {
 				var tdr = baseTypeNode.TypeDefOrRef;
 				Debug.Assert(tdr != null);
 				var td = tdr?.ScopeType.ResolveTypeDef();
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-					var typeNode = DocumentTreeView.FindNode(td);
-					if (typeNode != null)
-						DocumentTreeView.TreeView.SelectItems(new[] { typeNode });
-				}));
+				SelectType(td);
+				return;
+			}
+
+			if (e.Node is TypeReferenceNode typeRefNode) {
+				SelectType(typeRefNode.TypeRef.ResolveTypeDef());
+				return;
+			}
+			if (e.Node is MethodReferenceNode methodRefNode) {
+				SelectMethod(methodRefNode.MethodRef.ResolveMethodDef());
+				return;
+			}
+			if (e.Node is PropertyReferenceNode propertyRefNode) {
+				SelectMethod(propertyRefNode.PropertyRef.ResolveMethodDef());
+				return;
+			}
+			if (e.Node is EventReferenceNode eventRefNode) {
+				SelectMethod(eventRefNode.EventRef.ResolveMethodDef());
+				return;
+			}
+			if (e.Node is FieldReferenceNode fieldRefNode) {
+				SelectField(fieldRefNode.FieldRef.ResolveField());
 				return;
 			}
 
@@ -286,6 +299,30 @@ namespace dnSpy.Documents.Tabs {
 			if (tab == null)
 				return;
 			SetFocus(tab);
+		}
+
+		void SelectType(TypeDef td) {
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				var typeNode = DocumentTreeView.FindNode(td);
+				if (!(typeNode is null))
+					DocumentTreeView.TreeView.SelectItems(new[] { typeNode });
+			}));
+		}
+
+		void SelectMethod(MethodDef md) {
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				var methodNode = DocumentTreeView.FindNode(md);
+				if (!(methodNode is null))
+					DocumentTreeView.TreeView.SelectItems(new[] { methodNode });
+			}));
+		}
+
+		void SelectField(FieldDef fd) {
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				var fieldNode = DocumentTreeView.FindNode(fd);
+				if (!(fieldNode is null))
+					DocumentTreeView.TreeView.SelectItems(new[] { fieldNode });
+			}));
 		}
 
 		void DocumentTreeView_NodesTextChanged(object sender, EventArgs e) {

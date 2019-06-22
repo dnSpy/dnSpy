@@ -967,7 +967,18 @@ namespace dnSpy.Decompiler.VisualBasic {
 						Write(gsType, typeGenArgs, methGenArgs);
 					else {
 						var gp = ((GenericSig)type).GenericParam;
-						Write(gp);
+						if (!(gp is null))
+							Write(gp);
+						else {
+							if (type.ElementType == ElementType.MVar) {
+								OutputWrite("!!", BoxedTextColor.MethodGenericParameter);
+								OutputWrite(((GenericSig)type).Number.ToString(), BoxedTextColor.MethodGenericParameter);
+							}
+							else {
+								OutputWrite("!", BoxedTextColor.TypeGenericParameter);
+								OutputWrite(((GenericSig)type).Number.ToString(), BoxedTextColor.TypeGenericParameter);
+							}
+						}
 					}
 					break;
 

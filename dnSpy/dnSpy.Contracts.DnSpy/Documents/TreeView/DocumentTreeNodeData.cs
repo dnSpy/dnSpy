@@ -351,6 +351,22 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		protected void WriteFilename(ITextColorWriter output) => output.WriteFilename(this.GetModule()?.Location ?? "???");
 
 		/// <summary>
+		/// Writes a module/assembly
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="scope">Scope</param>
+		protected void WriteScope(ITextColorWriter output, IScope scope) {
+			if (scope is AssemblyRef asmRef)
+				output.Write(asmRef);
+			else if (scope is ModuleRef modRef)
+				output.WriteModule(modRef.Name);
+			else if (scope is ModuleDef modDef)
+				output.WriteModule(modDef.Name);
+			else
+				output.Write(BoxedTextColor.Error, "???");
+		}
+
+		/// <summary>
 		/// Writes the member
 		/// </summary>
 		/// <param name="output">Output</param>

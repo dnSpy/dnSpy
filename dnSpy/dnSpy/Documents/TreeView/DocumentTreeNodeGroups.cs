@@ -19,6 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
@@ -54,6 +57,17 @@ namespace dnSpy.Documents.TreeView {
 			case DocumentTreeNodeGroupType.PropertyTreeNodeGroupType: return PropertyTreeNodeGroupType;
 			case DocumentTreeNodeGroupType.ResourceTreeNodeGroup: return ResourceTreeNodeGroup;
 			case DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup: return ResourceElementTreeNodeGroup;
+			case DocumentTreeNodeGroupType.TypeReferenceTreeNodeGroupTypeReferences: return TypeReferenceTreeNodeGroupTypeReferences;
+			case DocumentTreeNodeGroupType.TypeSpecsFolderTreeNodeGroupTypeReference: return TypeSpecsFolderTreeNodeGroupTypeReference;
+			case DocumentTreeNodeGroupType.MethodReferencesFolderTreeNodeGroupTypeReference: return MethodReferencesFolderTreeNodeGroupTypeReference;
+			case DocumentTreeNodeGroupType.FieldReferencesFolderTreeNodeGroupTypeReference: return FieldReferencesFolderTreeNodeGroupTypeReference;
+			case DocumentTreeNodeGroupType.PropertyReferencesFolderTreeNodeGroupTypeReference: return PropertyReferencesFolderTreeNodeGroupTypeReference;
+			case DocumentTreeNodeGroupType.EventReferencesFolderTreeNodeGroupTypeReference: return EventReferencesFolderTreeNodeGroupTypeReference;
+			case DocumentTreeNodeGroupType.TypeSpecTreeNodeGroupTypeSpecsFolder: return TypeSpecTreeNodeGroupTypeSpecsFolder;
+			case DocumentTreeNodeGroupType.MethodReferenceTreeNodeGroupMethodReferencesFolder: return MethodReferenceTreeNodeGroupMethodReferencesFolder;
+			case DocumentTreeNodeGroupType.FieldReferenceTreeNodeGroupFieldReferencesFolder: return FieldReferenceTreeNodeGroupFieldReferencesFolder;
+			case DocumentTreeNodeGroupType.PropertyReferenceTreeNodeGroupPropertyReferencesFolder: return PropertyReferenceTreeNodeGroupPropertyReferencesFolder;
+			case DocumentTreeNodeGroupType.EventReferenceTreeNodeGroupEventReferencesFolder: return EventReferenceTreeNodeGroupEventReferencesFolder;
 			default: throw new ArgumentException();
 			}
 		}
@@ -94,6 +108,20 @@ namespace dnSpy.Documents.TreeView {
 
 		readonly ITreeNodeGroup2 ResourceTreeNodeGroup = new ResourceTreeNodeGroup(DocumentTreeViewConstants.ORDER_RESOURCE);
 		readonly ITreeNodeGroup2 ResourceElementTreeNodeGroup = new ResourceElementTreeNodeGroup(DocumentTreeViewConstants.ORDER_RESOURCE_ELEM);
+
+		readonly ITreeNodeGroup2 TypeReferenceTreeNodeGroupTypeReferences = new TypeReferenceTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPEREFS_TYPEREF);
+
+		readonly ITreeNodeGroup2 TypeSpecsFolderTreeNodeGroupTypeReference = new TypeSpecsFolderTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPEREF_TYPESPECFOLDER);
+		readonly ITreeNodeGroup2 MethodReferencesFolderTreeNodeGroupTypeReference = new MethodReferencesFolderTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPEREF_METHODREFFOLDER);
+		readonly ITreeNodeGroup2 PropertyReferencesFolderTreeNodeGroupTypeReference = new PropertyReferencesFolderTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPEREF_PROPERTYREFFOLDER);
+		readonly ITreeNodeGroup2 EventReferencesFolderTreeNodeGroupTypeReference = new EventReferencesFolderTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPEREF_EVENTREFFOLDER);
+		readonly ITreeNodeGroup2 FieldReferencesFolderTreeNodeGroupTypeReference = new FieldReferencesFolderTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPEREF_FIELDREFFOLDER);
+
+		readonly ITreeNodeGroup2 TypeSpecTreeNodeGroupTypeSpecsFolder = new TypeReferenceTreeNodeGroup(DocumentTreeViewConstants.ORDER_TYPESPECS_TYPESPEC);
+		readonly ITreeNodeGroup2 MethodReferenceTreeNodeGroupMethodReferencesFolder = new MethodReferenceTreeNodeGroup(DocumentTreeViewConstants.ORDER_METHODREFS_METHODREF);
+		readonly ITreeNodeGroup2 PropertyReferenceTreeNodeGroupPropertyReferencesFolder = new PropertyReferenceTreeNodeGroup(DocumentTreeViewConstants.ORDER_EVENTREFS_EVENTREF);
+		readonly ITreeNodeGroup2 EventReferenceTreeNodeGroupEventReferencesFolder = new EventReferenceTreeNodeGroup(DocumentTreeViewConstants.ORDER_FIELDREFS_FIELDREF);
+		readonly ITreeNodeGroup2 FieldReferenceTreeNodeGroupFieldReferencesFolder = new FieldReferenceTreeNodeGroup(DocumentTreeViewConstants.ORDER_FIELDREFS_FIELDREF);
 
 		public void SetMemberOrder(MemberKind[] newOrders) {
 			if (newOrders == null)
@@ -288,6 +316,77 @@ namespace dnSpy.Documents.TreeView {
 		}
 	}
 
+	sealed class TypeReferenceTreeNodeGroup : ITreeNodeGroup2 {
+		readonly StringBuilder sb = new StringBuilder();
+
+		public TypeReferenceTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as TypeReferenceNode;
+			var b = y as TypeReferenceNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+
+			var ar = GetTypeDefOrRef(a.TypeRef);
+			var br = GetTypeDefOrRef(b.TypeRef);
+			var an = GetName(ar);
+			var bn = GetName(br);
+			int c = StringComparer.OrdinalIgnoreCase.Compare(an, bn);
+			if (c != 0) return c;
+			c = GetOrder(a.TypeRef) - GetOrder(b.TypeRef);
+			if (c != 0) return c;
+			return a.TypeRef.MDToken.ToInt32() - b.TypeRef.MDToken.ToInt32();
+		}
+
+		string GetName(ITypeDefOrRef tdr) {
+			if (tdr.DeclaringType is null)
+				return tdr.Name;
+			int parents = 0;
+			ITypeDefOrRef parent;
+			for (parent = tdr.DeclaringType; !(parent is null); parent = parent.DeclaringType)
+				parents++;
+			bool needSep = false;
+			// parents should be small so we don't need to use a List<T>/Stack<T>
+			while (parents >= 0) {
+				parent = tdr;
+				for (int i = 0; i < parents; i++) {
+					parent = tdr.DeclaringType;
+					Debug.Assert(!(parent is null));
+				}
+				if (needSep)
+					sb.Append('.');
+				sb.Append(parent.Name.String);
+				needSep = true;
+				parents--;
+			}
+			var res = sb.ToString();
+			sb.Clear();
+			return res;
+		}
+
+		int GetOrder(ITypeDefOrRef typeRef) {
+			if (typeRef is TypeDef)
+				return 0;
+			if (typeRef is TypeRef)
+				return 1;
+			return 2;
+		}
+
+		static ITypeDefOrRef GetTypeDefOrRef(ITypeDefOrRef typeRef) {
+			if (typeRef is TypeSpec ts) {
+				var sig = ts.TypeSig.RemovePinnedAndModifiers();
+				if (sig is TypeDefOrRefSig tdrs)
+					return tdrs.TypeDefOrRef ?? typeRef;
+				if (sig is GenericInstSig gis)
+					return gis.GenericType?.TypeDefOrRef ?? typeRef;
+			}
+			return typeRef;
+		}
+	}
+
 	sealed class MethodTreeNodeGroup : ITreeNodeGroup2 {
 		public MethodTreeNodeGroup(double order) => Order = order;
 
@@ -381,6 +480,141 @@ namespace dnSpy.Documents.TreeView {
 			int cx = (int)a.ResourceElement.ResourceData.Code.FixUserType();
 			int cy = (int)b.ResourceElement.ResourceData.Code.FixUserType();
 			return cx.CompareTo(cy);
+		}
+	}
+
+	sealed class TypeSpecsFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public TypeSpecsFolderTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as TypeSpecsFolderNode;
+			var b = y as TypeSpecsFolderNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return -1;
+		}
+	}
+
+	sealed class MethodReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public MethodReferencesFolderTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as MethodReferencesFolderNode;
+			var b = y as MethodReferencesFolderNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return -1;
+		}
+	}
+
+	sealed class PropertyReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public PropertyReferencesFolderTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as PropertyReferencesFolderNode;
+			var b = y as PropertyReferencesFolderNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return -1;
+		}
+	}
+
+	sealed class EventReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public EventReferencesFolderTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as EventReferencesFolderNode;
+			var b = y as EventReferencesFolderNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return -1;
+		}
+	}
+
+	sealed class FieldReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public FieldReferencesFolderTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as FieldReferencesFolderNode;
+			var b = y as FieldReferencesFolderNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return -1;
+		}
+	}
+
+	sealed class MethodReferenceTreeNodeGroup : ITreeNodeGroup2 {
+		public MethodReferenceTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as MethodReferenceNode;
+			var b = y as MethodReferenceNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return MethodRefComparer.Instance.Compare(a.MethodRef, b.MethodRef);
+		}
+	}
+
+	sealed class PropertyReferenceTreeNodeGroup : ITreeNodeGroup2 {
+		public PropertyReferenceTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as PropertyReferenceNode;
+			var b = y as PropertyReferenceNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return PropertyRefComparer.Instance.Compare(a.PropertyRef, b.PropertyRef);
+		}
+	}
+
+	sealed class EventReferenceTreeNodeGroup : ITreeNodeGroup2 {
+		public EventReferenceTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as EventReferenceNode;
+			var b = y as EventReferenceNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return EventRefComparer.Instance.Compare(a.EventRef, b.EventRef);
+		}
+	}
+
+	sealed class FieldReferenceTreeNodeGroup : ITreeNodeGroup2 {
+		public FieldReferenceTreeNodeGroup(double order) => Order = order;
+
+		public double Order { get; set; }
+
+		public int Compare(TreeNodeData x, TreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as FieldReferenceNode;
+			var b = y as FieldReferenceNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			return MemberRefComparer.Instance.Compare(a.FieldRef, b.FieldRef);
 		}
 	}
 }

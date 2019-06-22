@@ -47,6 +47,7 @@ namespace dnSpy.Documents.TreeView {
 
 			yield return new ResourcesFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourcesFolderTreeNodeGroupModule), Document.ModuleDef);
 			yield return new ReferencesFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ReferencesFolderTreeNodeGroupModule), this);
+			yield return new TypeReferencesFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ReferencesFolderTreeNodeGroupModule), this);
 
 			var nsDict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var td in Document.ModuleDef.Types) {

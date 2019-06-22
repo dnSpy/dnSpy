@@ -51,6 +51,39 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary><see cref="ReferencesFolderNode"/></summary>
 		public const string REFERENCES_FOLDER_NODE_GUID = "D2C27572-6874-4287-BE59-2D2A28C4D80B";
 
+		/// <summary><see cref="TypeReferencesFolderNode"/></summary>
+		public const string TYPE_REFERENCES_FOLDER_NODE_GUID = "83ACAAE4-9259-4604-BC85-B39A35B07FD4";
+
+		/// <summary><see cref="TypeSpecsFolderNode"/></summary>
+		public const string TYPESPECS_FOLDER_NODE_GUID = "153D216A-2BD1-4225-BC4D-E455946B9256";
+
+		/// <summary><see cref="MethodReferencesFolderNode"/></summary>
+		public const string METHODREFS_FOLDER_NODE_GUID = "04C761DE-E4DB-4CE0-9334-A648C2387128";
+
+		/// <summary><see cref="PropertyReferencesFolderNode"/></summary>
+		public const string PROPERTYREFS_FOLDER_NODE_GUID = "BD6AABA1-4C2D-404B-BDD5-F1E615B36E0A";
+
+		/// <summary><see cref="EventReferencesFolderNode"/></summary>
+		public const string EVENTREFS_FOLDER_NODE_GUID = "F9FC4077-674A-4609-ADE4-058B9A8A5C87";
+
+		/// <summary><see cref="FieldReferencesFolderNode"/></summary>
+		public const string FIELDREFS_FOLDER_NODE_GUID = "1C8C675B-ABBA-474F-A4FA-B8540D83B9B5";
+
+		/// <summary><see cref="TypeReferenceNode"/></summary>
+		public const string TYPE_REFERENCE_NODE_GUID = "CA5B076C-ECB7-4D9D-B83D-641B6B17D04D";
+
+		/// <summary><see cref="MethodReferenceNode"/></summary>
+		public const string METHOD_REFERENCE_NODE_GUID = "859E5B0F-BAD7-46EB-91EB-304E73F1D7D2";
+
+		/// <summary><see cref="FieldReferenceNode"/></summary>
+		public const string FIELD_REFERENCE_NODE_GUID = "BF9CB347-9B00-4EEC-8602-9C0331352C6E";
+
+		/// <summary><see cref="PropertyReferenceNode"/></summary>
+		public const string PROPERTY_REFERENCE_NODE_GUID = "8A3FF9AB-F79D-477B-8F94-5606969EDAC9";
+
+		/// <summary><see cref="EventReferenceNode"/></summary>
+		public const string EVENT_REFERENCE_NODE_GUID = "FD9A67C7-1391-4F6A-86D9-A46352063C66";
+
 		/// <summary><see cref="NamespaceNode"/></summary>
 		public const string NAMESPACE_NODE_GUID = "21FE74FA-4413-4F4F-964C-63DC966D66CC";
 
@@ -221,6 +254,39 @@ namespace dnSpy.Contracts.Documents.TreeView {
 
 		/// <summary>Order of <see cref="ResourceElementNode"/>s</summary>
 		public const double ORDER_RESOURCE_ELEM = 0;
+
+		/// <summary>Order of <see cref="TypeReferenceNode"/>s</summary>
+		public const double ORDER_TYPEREFS_TYPEREF = 0;
+
+		/// <summary>Order of <see cref="TypeSpecsFolderNode"/>s</summary>
+		public const double ORDER_TYPEREF_TYPESPECFOLDER = 0;
+
+		/// <summary>Order of <see cref="MethodReferencesFolderNode"/>s</summary>
+		public const double ORDER_TYPEREF_METHODREFFOLDER = 100;
+
+		/// <summary>Order of <see cref="PropertyReferencesFolderNode"/>s</summary>
+		public const double ORDER_TYPEREF_PROPERTYREFFOLDER = 200;
+
+		/// <summary>Order of <see cref="EventReferencesFolderNode"/>s</summary>
+		public const double ORDER_TYPEREF_EVENTREFFOLDER = 300;
+
+		/// <summary>Order of <see cref="FieldReferencesFolderNode"/>s</summary>
+		public const double ORDER_TYPEREF_FIELDREFFOLDER = 400;
+
+		/// <summary>Order of <see cref="TypeReferenceNode"/>s</summary>
+		public const double ORDER_TYPESPECS_TYPESPEC = 0;
+
+		/// <summary>Order of <see cref="MethodReferenceNode"/>s</summary>
+		public const double ORDER_METHODREFS_METHODREF = 0;
+
+		/// <summary>Order of <see cref="PropertyReferenceNode"/>s</summary>
+		public const double ORDER_PROPERTYREFS_PROPERTYREF = 0;
+
+		/// <summary>Order of <see cref="EventReferenceNode"/>s</summary>
+		public const double ORDER_EVENTREFS_EVENTREF = 0;
+
+		/// <summary>Order of <see cref="FieldReferenceNode"/>s</summary>
+		public const double ORDER_FIELDREFS_FIELDREF = 0;
 
 		/// <summary>Order of <see cref="ResourceElementSetNode"/> provider</summary>
 		public const double ORDER_RSRCPROVIDER_RSRCELEMSET = 0;
