@@ -54,8 +54,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			var module = moduleNode.Document.ModuleDef as ModuleDefMD;
-			if (!(module is null)) {
+			if (moduleNode.Document.ModuleDef is ModuleDefMD module) {
 				var typeDict = new MemberReferenceFinder(module).Find();
 				foreach (var kv in typeDict) {
 					var type = kv.Key;
@@ -427,9 +426,9 @@ namespace dnSpy.Documents.TreeView {
 				return false;
 			var events = method.DeclaringType.Events;
 			for (int i = 0; i < events.Count; i++) {
-				var pd = events[i];
-				if (pd.AddMethod == method || pd.RemoveMethod == method || pd.InvokeMethod == method) {
-					@event = pd;
+				var ed = events[i];
+				if (ed.AddMethod == method || ed.RemoveMethod == method || ed.InvokeMethod == method) {
+					@event = ed;
 					return true;
 				}
 			}
