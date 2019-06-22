@@ -734,6 +734,7 @@ namespace dnSpy.Documents.TreeView {
 		void OnDropFiles(int index, string[] filenames) {
 			if (!context.CanDragAndDrop)
 				return;
+			filenames = GetFiles(filenames);
 
 			var origFilenames = filenames;
 			var documents = DocumentService.GetDocuments();
@@ -823,6 +824,17 @@ namespace dnSpy.Documents.TreeView {
 			}
 			if (!(newSelectedNode is null))
 				TreeView.SelectItems(new[] { newSelectedNode });
+		}
+
+		static string[] GetFiles(string[] filenames) {
+			var result = new List<string>(filenames.Length);
+			foreach (var filename in filenames) {
+				if (File.Exists(filename))
+					result.Add(filename);
+				else if (Directory.Exists(filename))
+					result.AddRange(Directory.GetFiles(filename, "*", SearchOption.AllDirectories));
+			}
+			return result.ToArray();
 		}
 
 		DsDocumentNode[]? GetNewSortedNodes() {
