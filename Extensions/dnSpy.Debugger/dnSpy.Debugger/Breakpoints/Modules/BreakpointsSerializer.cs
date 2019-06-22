@@ -43,9 +43,10 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 					ModuleName = bpSect.Attribute<string>("ModuleName"),
 					IsDynamic = bpSect.Attribute<bool?>("IsDynamic"),
 					IsInMemory = bpSect.Attribute<bool?>("IsInMemory"),
+					IsLoaded = bpSect.Attribute<bool?>("IsLoaded"),
 					Order = bpSect.Attribute<int?>("Order"),
 					AppDomainName = bpSect.Attribute<string>("AppDomainName"),
-					ProcessName = bpSect.Attribute<string>("ProcessName")
+					ProcessName = bpSect.Attribute<string>("ProcessName"),
 				};
 				settings.Add(bpSettings);
 			}
@@ -64,6 +65,8 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 					bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
 				if (bpSettings.IsInMemory != null)
 					bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
+				if (bpSettings.IsLoaded != null)
+					bpSect.Attribute("IsLoaded", bpSettings.IsLoaded);
 				if (bpSettings.Order != null)
 					bpSect.Attribute("Order", bpSettings.Order);
 				if (!string.IsNullOrEmpty(bpSettings.AppDomainName))

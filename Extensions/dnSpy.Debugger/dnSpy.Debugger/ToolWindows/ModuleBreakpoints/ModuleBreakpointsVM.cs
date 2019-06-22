@@ -163,6 +163,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.Name, dnSpy_Debugger_Resources.Column_Name),
 					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.DynamicModule, dnSpy_Debugger_Resources.Column_DynamicModule),
 					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.InMemoryModule, dnSpy_Debugger_Resources.Column_InMemoryModule),
+					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.LoadModule, dnSpy_Debugger_Resources.Column_LoadModule),
 					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.Order, dnSpy_Debugger_Resources.Column_Order),
 					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.Process, dnSpy_Debugger_Resources.Column_Process),
 					new GridViewColumnDesc(ModuleBreakpointsWindowColumnIds.AppDomain, dnSpy_Debugger_Resources.Column_AppDomain),
@@ -403,6 +404,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 			case ModuleBreakpointsWindowColumnIds.InMemoryModule:
 				diff = Comparer<bool?>.Default.Compare(x.IsInMemory, y.IsInMemory);
+				break;
+
+			case ModuleBreakpointsWindowColumnIds.LoadModule:
+				diff = Comparer<bool?>.Default.Compare(x.IsLoaded, y.IsLoaded);
 				break;
 
 			case ModuleBreakpointsWindowColumnIds.Order:

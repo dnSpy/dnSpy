@@ -128,6 +128,10 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 						formatter.WriteInMemory(output, vm.ModuleBreakpoint);
 						break;
 
+					case ModuleBreakpointsWindowColumnIds.LoadModule:
+						formatter.WriteLoadModule(output, vm.ModuleBreakpoint);
+						break;
+
 					case ModuleBreakpointsWindowColumnIds.Order:
 						formatter.WriteOrder(output, vm.ModuleBreakpoint);
 						break;
@@ -168,6 +172,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public override void AddModuleBreakpoint() {
 			var settings = new DbgModuleBreakpointSettings {
 				IsEnabled = true,
+				IsLoaded = true,
 				ModuleName = "*mymodule*",
 			};
 			dbgModuleBreakpointsService.Value.Add(settings);

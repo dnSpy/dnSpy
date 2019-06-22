@@ -24,8 +24,9 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public const int Name = 1;
 		public const int DynamicModule = 2;
 		public const int InMemoryModule = 3;
-		public const int Order = 4;
-		public const int Process = 5;
-		public const int AppDomain = 6;
+		public const int LoadModule = 4;
+		public const int Order = 5;
+		public const int Process = 6;
+		public const int AppDomain = 7;
 	}
 }

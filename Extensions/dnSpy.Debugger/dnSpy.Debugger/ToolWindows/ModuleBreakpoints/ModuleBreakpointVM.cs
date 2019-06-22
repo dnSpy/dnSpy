@@ -55,6 +55,15 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			}
 		}
 
+		public bool? IsLoaded {
+			get => settings.IsLoaded;
+			set {
+				if (settings.IsLoaded == value)
+					return;
+				ModuleBreakpoint.IsLoaded = value;
+			}
+		}
+
 		public IModuleBreakpointContext Context { get; }
 		public DbgModuleBreakpoint ModuleBreakpoint { get; }
 		public object ModuleNameObject => new FormatterObject<ModuleBreakpointVM>(this, PredefinedTextClassifierTags.ModuleBreakpointsWindowModuleName);
@@ -136,6 +145,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				OnPropertyChanged(nameof(IsDynamic));
 			if (oldSettings.IsInMemory != newSettings.IsInMemory)
 				OnPropertyChanged(nameof(IsInMemory));
+			if (oldSettings.IsLoaded != newSettings.IsLoaded)
+				OnPropertyChanged(nameof(IsLoaded));
 			if (oldSettings.Order != newSettings.Order)
 				OnPropertyChanged(nameof(OrderObject));
 			if (oldSettings.ProcessName != newSettings.ProcessName)

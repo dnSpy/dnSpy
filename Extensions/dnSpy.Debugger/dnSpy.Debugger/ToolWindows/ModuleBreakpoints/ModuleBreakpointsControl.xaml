@@ -132,6 +132,13 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.LoadModule}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_LoadModule}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox Focusable="False" IsChecked="{Binding IsLoaded}" IsThreeState="True" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:ModuleBreakpointsWindowColumnIds.Order}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Order}" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

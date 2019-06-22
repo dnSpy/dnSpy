@@ -53,6 +53,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		public abstract bool? IsInMemory { get; set; }
 
 		/// <summary>
+		/// true if it was loaded, false if it was unloaded, and null if any value
+		/// </summary>
+		public abstract bool? IsLoaded { get; set; }
+
+		/// <summary>
 		/// Order or null if any value
 		/// </summary>
 		public abstract int? Order { get; set; }

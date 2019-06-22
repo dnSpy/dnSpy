@@ -30,10 +30,18 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		ModuleBreakpointHitChecker(DbgModuleBreakpointsService dbgModuleBreakpointsService) =>
 			this.dbgModuleBreakpointsService = dbgModuleBreakpointsService;
 
-		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.MessageModuleLoaded += DbgManager_MessageModuleLoaded;
+		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
+			dbgManager.MessageModuleLoaded += DbgManager_MessageModuleLoaded;
+			dbgManager.MessageModuleUnloaded += DbgManager_MessageModuleUnloaded;
+		}
 
 		void DbgManager_MessageModuleLoaded(object sender, DbgMessageModuleLoadedEventArgs e) {
-			if (dbgModuleBreakpointsService.IsMatch(new DbgModuleBreakpointInfo(e.Module)))
+			if (dbgModuleBreakpointsService.IsMatch(new DbgModuleBreakpointInfo(e.Module, isLoaded: true)))
+				e.Pause = true;
+		}
+
+		void DbgManager_MessageModuleUnloaded(object sender, DbgMessageModuleUnloadedEventArgs e) {
+			if (dbgModuleBreakpointsService.IsMatch(new DbgModuleBreakpointInfo(e.Module, isLoaded: false)))
 				e.Pause = true;
 		}
 	}

@@ -71,6 +71,15 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			}
 		}
 
+		public override bool? IsLoaded {
+			get => Settings.IsLoaded;
+			set {
+				var settings = Settings;
+				settings.IsLoaded = value;
+				Settings = settings;
+			}
+		}
+
 		public override int? Order {
 			get => Settings.Order;
 			set {
@@ -128,6 +137,8 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				if (settings.IsDynamic != null && settings.IsDynamic.Value != module.IsDynamic)
 					return false;
 				if (settings.IsInMemory != null && settings.IsInMemory.Value != module.IsInMemory)
+					return false;
+				if (settings.IsLoaded != null && settings.IsLoaded.Value != module.IsLoaded)
 					return false;
 				if (settings.Order != null && settings.Order.Value != module.Order)
 					return false;
