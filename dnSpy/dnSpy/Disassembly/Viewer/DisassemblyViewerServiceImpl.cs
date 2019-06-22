@@ -43,7 +43,7 @@ namespace dnSpy.Disassembly.Viewer {
 			settings = new DisassemblyViewerServiceSettingsImpl();
 		}
 
-		public override void Show(DisassemblyContentProvider contentProvider, bool newTab, string title) {
+		public override void Show(DisassemblyContentProvider contentProvider, bool newTab) {
 			if (contentProvider == null)
 				throw new ArgumentNullException(nameof(contentProvider));
 
@@ -52,7 +52,7 @@ namespace dnSpy.Disassembly.Viewer {
 				tab = documentTabService.OpenEmptyTab();
 			else
 				tab = documentTabService.GetOrCreateActiveTab();
-			var tabContent = new DisassemblyDocumentTabContent(documentViewerContentFactoryProvider, asmContentType, contentProvider, title);
+			var tabContent = new DisassemblyDocumentTabContent(documentViewerContentFactoryProvider, asmContentType, contentProvider);
 			tab.Show(tabContent, null, null);
 		}
 	}

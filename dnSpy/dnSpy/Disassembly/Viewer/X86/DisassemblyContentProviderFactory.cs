@@ -54,9 +54,10 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		readonly X86NativeCodeInfo codeInfo;
 		readonly NativeVariableInfo[] variableInfo;
 		readonly string methodName;
+		readonly string shortMethodName;
 		readonly string moduleName;
 
-		public DisassemblyContentProviderFactory(DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public DisassemblyContentProviderFactory(DisassemblyContentProviderFactoryDependencies deps, int bitness, DisassemblyContentFormatterOptions formatterOptions, Contracts.Disassembly.ISymbolResolver symbolResolver, string header, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string shortMethodName, string moduleName) {
 			if (blocks == null)
 				throw new ArgumentNullException(nameof(blocks));
 			this.deps = deps ?? throw new ArgumentNullException(nameof(deps));
@@ -69,6 +70,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			this.codeInfo = codeInfo as X86NativeCodeInfo;
 			this.variableInfo = variableInfo;
 			this.methodName = methodName;
+			this.shortMethodName = shortMethodName;
 			this.moduleName = moduleName;
 		}
 
@@ -87,7 +89,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				if (!string.IsNullOrEmpty(block.Label))
 					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(SymbolKindUtils.ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
 			}
-			return new DisassemblyContentProviderImpl(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, moduleName);
+			return new DisassemblyContentProviderImpl(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, shortMethodName, moduleName);
 		}
 
 		static ulong[] GetPossibleSymbolAddresses(Block[] blocks) {

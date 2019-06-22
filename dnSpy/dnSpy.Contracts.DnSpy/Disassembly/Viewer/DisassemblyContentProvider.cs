@@ -26,6 +26,16 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 	/// </summary>
 	public abstract class DisassemblyContentProvider {
 		/// <summary>
+		/// Gets the title or null. This can be shown in the UI
+		/// </summary>
+		public virtual string Title => null;
+
+		/// <summary>
+		/// Gets a few lines that can be shown in a UI tooltip or null to not show anything
+		/// </summary>
+		public virtual string Description => null;
+
+		/// <summary>
 		/// Raised when the content is changed
 		/// </summary>
 		public abstract event EventHandler OnContentChanged;

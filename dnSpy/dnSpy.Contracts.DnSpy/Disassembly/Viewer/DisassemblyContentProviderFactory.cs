@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 	/// </summary>
 	public abstract class DisassemblyContentProviderFactory {
 		/// <summary>
-		/// Creates a <see cref="DisassemblyContentProvider"/> that can be passed to <see cref="DisassemblyViewerService.Show(DisassemblyContentProvider, string)"/>
+		/// Creates a <see cref="DisassemblyContentProvider"/> that can be passed to <see cref="DisassemblyViewerService.Show(DisassemblyContentProvider)"/>
 		/// </summary>
 		/// <param name="code">Native code</param>
 		/// <param name="formatterOptions">Options</param>

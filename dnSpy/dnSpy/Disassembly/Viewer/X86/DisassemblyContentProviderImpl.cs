@@ -20,13 +20,35 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Disassembly.X86;
+using dnSpy.Properties;
 using Iced.Intel;
 
 namespace dnSpy.Disassembly.Viewer.X86 {
 	sealed class DisassemblyContentProviderImpl : DisassemblyContentProvider {
+		public override string Title => shortMethodName ?? methodName;
+
+		public override string Description {
+			get {
+				if (methodName is null)
+					return null;
+				var sb = new StringBuilder();
+				if (optimization == NativeCodeOptimization.Unoptimized) {
+					sb.AppendLine(DisassemblyContentGenerator.LINE);
+					sb.AppendLine(dnSpy_Resources.Disassembly_MethodIsNotOptimized);
+					sb.AppendLine(DisassemblyContentGenerator.LINE);
+				}
+				if (!(moduleName is null))
+					sb.AppendLine(moduleName);
+				sb.AppendLine(methodName);
+				sb.Append(DisassemblyContentGenerator.GetCodeSizeString(blocks));
+				return sb.ToString();
+			}
+		}
+
 		readonly int bitness;
 		readonly CachedSymbolResolver cachedSymbolResolver;
 		readonly DisassemblyContentSettings disasmSettings;
@@ -40,6 +62,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		readonly X86NativeCodeInfo codeInfo;
 		readonly NativeVariableInfo[] variableInfo;
 		readonly string methodName;
+		readonly string shortMethodName;
 		readonly string moduleName;
 		readonly SymbolResolverImpl symbolResolver;
 		bool hasRegisteredEvents;
@@ -87,7 +110,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			}
 		}
 
-		public DisassemblyContentProviderImpl(int bitness, CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, NativeCodeOptimization optimization, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public DisassemblyContentProviderImpl(int bitness, CachedSymbolResolver cachedSymbolResolver, DisassemblyContentSettings disasmSettings, IMasmDisassemblySettings masmSettings, INasmDisassemblySettings nasmSettings, IGasDisassemblySettings gasSettings, DisassemblyContentFormatterOptions formatterOptions, string header, NativeCodeOptimization optimization, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string shortMethodName, string moduleName) {
 			this.bitness = bitness;
 			this.cachedSymbolResolver = cachedSymbolResolver ?? throw new ArgumentNullException(nameof(cachedSymbolResolver));
 			this.disasmSettings = disasmSettings ?? throw new ArgumentNullException(nameof(disasmSettings));
@@ -101,12 +124,13 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			this.codeInfo = codeInfo;
 			this.variableInfo = variableInfo;
 			this.methodName = methodName;
+			this.shortMethodName = shortMethodName;
 			this.moduleName = moduleName;
 			symbolResolver = new SymbolResolverImpl(this);
 		}
 
 		public override DisassemblyContentProvider Clone() =>
-			new DisassemblyContentProviderImpl(bitness, cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, moduleName);
+			new DisassemblyContentProviderImpl(bitness, cachedSymbolResolver, disasmSettings, masmSettings, nasmSettings, gasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, shortMethodName, moduleName);
 
 		(Formatter formatter, string commentPrefix, DisassemblyContentKind contentKind) GetDisassemblerInfo(X86Disassembler disasm) {
 			switch (disasm) {

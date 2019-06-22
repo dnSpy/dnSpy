@@ -150,11 +150,12 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			return null;
 		}
 
+		internal const string LINE = "********************************************";
+
 		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
 			if (variableInfo == null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {
-				const string LINE = "********************************************";
 				WriteComment(output, commentPrefix, LINE);
 				WriteComment(output, commentPrefix, dnSpy_Resources.Disassembly_MethodIsNotOptimized);
 				WriteComment(output, commentPrefix, LINE);
@@ -169,13 +170,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				WriteComment(output, commentPrefix, moduleName);
 			if (methodName != null)
 				WriteComment(output, commentPrefix, methodName);
-			ulong codeSize = 0;
-			foreach (var block in blocks) {
-				var instrs = block.Instructions;
-				if (instrs.Length > 0)
-					codeSize += instrs[instrs.Length - 1].Instruction.NextIP - block.Address;
-			}
-			WriteComment(output, commentPrefix, $"Size: {codeSize} (0x{codeSize:X})");
+			WriteComment(output, commentPrefix, GetCodeSizeString(blocks));
 			output.Write(Environment.NewLine, BoxedTextColor.Text);
 
 			bool upperCaseHex = (formatterOptions & InternalFormatterOptions.UpperCaseHex) != 0;
@@ -288,6 +283,21 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}
 			}
+		}
+
+		internal static string GetCodeSizeString(Block[] blocks) {
+			ulong codeSize = GetCodeSize(blocks);
+			return $"Size: {codeSize} (0x{codeSize:X})";
+		}
+
+		static ulong GetCodeSize(Block[] blocks) {
+			ulong codeSize = 0;
+			foreach (var block in blocks) {
+				var instrs = block.Instructions;
+				if (instrs.Length > 0)
+					codeSize += instrs[instrs.Length - 1].Instruction.NextIP - block.Address;
+			}
+			return codeSize;
 		}
 
 		static string FormatAddress(int bitness, ulong address, bool upperCaseHex) {

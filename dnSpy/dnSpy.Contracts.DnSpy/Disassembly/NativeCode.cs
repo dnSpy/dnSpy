@@ -55,6 +55,11 @@ namespace dnSpy.Contracts.Disassembly {
 		public string MethodName { get; }
 
 		/// <summary>
+		/// Short method name or null
+		/// </summary>
+		public string ShortMethodName { get; }
+
+		/// <summary>
 		/// Module name or null
 		/// </summary>
 		public string ModuleName { get; }
@@ -68,14 +73,16 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <param name="codeInfo">Extra code info or null</param>
 		/// <param name="variableInfo">Variable info or null</param>
 		/// <param name="methodName">Method name or null</param>
+		/// <param name="shortMethodName">Short method name or null</param>
 		/// <param name="moduleName">Module name or null</param>
-		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
+		public NativeCode(NativeCodeKind kind, NativeCodeOptimization optimization, NativeCodeBlock[] blocks, NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string shortMethodName, string moduleName) {
 			Kind = kind;
 			Optimization = optimization;
 			Blocks = blocks ?? throw new ArgumentNullException(nameof(blocks));
 			CodeInfo = codeInfo;
 			VariableInfo = variableInfo;
 			MethodName = methodName;
+			ShortMethodName = shortMethodName;
 			ModuleName = moduleName;
 		}
 	}

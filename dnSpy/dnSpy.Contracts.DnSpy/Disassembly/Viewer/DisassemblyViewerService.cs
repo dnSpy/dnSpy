@@ -31,15 +31,13 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		/// Shows the disassembly in a viewer
 		/// </summary>
 		/// <param name="contentProvider">Content provider</param>
-		/// <param name="title">Tab title or null</param>
-		public void Show(DisassemblyContentProvider contentProvider, string title = null) => Show(contentProvider, Settings.OpenNewTab, title);
+		public void Show(DisassemblyContentProvider contentProvider) => Show(contentProvider, Settings.OpenNewTab);
 
 		/// <summary>
 		/// Shows the disassembly in a viewer
 		/// </summary>
 		/// <param name="contentProvider">Content provider</param>
 		/// <param name="newTab">true to always create a new tab, false to re-use an existing disassembly viewer</param>
-		/// <param name="title">Tab title or null</param>
-		public abstract void Show(DisassemblyContentProvider contentProvider, bool newTab, string title = null);
+		public abstract void Show(DisassemblyContentProvider contentProvider, bool newTab);
 	}
 }
