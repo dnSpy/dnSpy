@@ -251,8 +251,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 			string? methodName = null, shortMethodName = null;
 			if (!(reflectionMethod is null)) {
-				methodName = reflectionMethod.ToString() + " (0x" + reflectionMethod.MetadataToken.ToString("X8") + ")";
 				shortMethodName = reflectionMethod.ToString();
+				methodName = shortMethodName + " (0x" + reflectionMethod.MetadataToken.ToString("X8") + ")";
 			}
 			nativeCode = new DbgDotNetNativeCode(codeKind, optimization, blocks, codeInfo, methodName, shortMethodName, reflectionMethod?.Module.FullyQualifiedName);
 			return true;

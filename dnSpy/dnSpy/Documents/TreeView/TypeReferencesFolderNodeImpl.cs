@@ -467,8 +467,8 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			if (imageReference is null) {
-				if (FieldRef.ResolveMethodDef() is MethodDef md)
-					imageReference = dnImgMgr.GetImageReference(md);
+				if (FieldRef.ResolveFieldDef() is FieldDef fd)
+					imageReference = dnImgMgr.GetImageReference(fd);
 				else
 					imageReference = DsImages.FieldPublic;
 			}

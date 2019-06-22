@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger.DotNet.Code;
 using Microsoft.CodeAnalysis.ExpressionEvaluator;
