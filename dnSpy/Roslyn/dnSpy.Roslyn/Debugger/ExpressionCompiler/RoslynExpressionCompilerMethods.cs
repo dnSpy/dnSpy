@@ -43,7 +43,6 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				}
 			}
 			foreach (var info in compilerGeneratedVariables) {
-				Debug.Assert(res[info.Index] is null);
 				if (res[info.Index] is null)
 					res[info.Index] = info.Name;
 			}
